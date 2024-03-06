@@ -35,11 +35,13 @@ paths:
         required: true
       responses:
         "201":
-          description: ResponseInfo with hearing(s) updated successfully
+          description: success
           content:
-            '*/*':
+            text/plain:
               schema:
-                $ref: '#/components/schemas/HearingResponse'
+                  type: string
+                  format: uuid
+                  description: ID of the hearing object created
         "400":
           description: hearing(s) creation failed
           content:
@@ -47,6 +49,7 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
       x-codegen-request-body-name: hearingRequest
+
   /hearing/v1/update:
     post:
       tags:
@@ -124,6 +127,84 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
   
+  /hearing/v1/status/update:
+    post:
+      tags:
+        - Hearing
+      summary: status update
+      description: update the status of a hearing, typically called by workflow
+      parameters:
+        - name: status
+          in: query
+          description: the new status value for the summon
+          schema:
+            type: string
+      responses:
+        "201":
+          description: status updated successfully
+
+        "400":
+          description: hearing(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /hearing/v1/status/{Id}:
+    get:
+      tags:
+      - Hearing
+      summary: get status of specific Hearing
+      operationId: getHearingStatus
+      parameters:
+      - name: Id
+        in: path
+        description: the ID of the Hearing whose status is requested
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+      responses:
+        "201":
+          description: ResponseInfo with Hearing status
+          content:
+            text/plain:
+              schema:
+                type: string
+                description: status of the Hearing
+        "400":
+          description: failed to get Hearing status
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+
+  /hearing/v1/date/update:
+    post:
+      tags:
+        - Hearing
+      summary: status update
+      description: update the status of a hearing, typically called by workflow
+      parameters:
+        - name: date
+          in: query
+          description: the new status value for the summon
+          schema:
+            type: string
+            format: datetime
+      responses:
+        "201":
+          description: date updated successfully
+
+        "400":
+          description: hearing(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
   /order/v1/create:
     post:
       tags:
@@ -280,9 +361,10 @@ paths:
         "201":
           description: ResponseInfo with summon status
           content:
-            '*/*': 
+            text/plain:
               schema:
                 type: string
+                description: status of the summom
         "400":
           description: failed to get summon status
           content:
@@ -326,7 +408,7 @@ components:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         hearingSummary:
-          $ref: '#/components/schemas/HearingSummary'
+          $ref: '#/components/schemas/Hearing'
 
     OrderRequest:
       type: object
@@ -379,57 +461,63 @@ components:
         id:
           type: string
           format: uuid
-          description: auto generated primary for internal reference
+          minLength: 36
+          maxLength: 36
           readOnly: true
+          description: auto generated primary key for internal reference
         tenantId:
           type: string
           description: This is tenantId of the case
         filingNumber:
           type: string
           format: uuid
-          description: hearing could be associated with case prior to admission. in this case, a filing number is used to link to the case
+          minLength: 36
+          maxLength: 36
+          description: hearing could be associated with case prior to admission. in this case, a filing number is used to link to the case 
         applicationNumber:
           type: string
           description: hearing can also be associated with an application number for a case
-        cnrNumber:
+        caseNumber:
           type: string
           format: uuid
+          minLength: 36
+          maxLength: 36
           description: This field holds information about the case, this hearing is associated with
         hearingType:
           type: string
-          description: This field holds information about purpose of hearing. Master Data
+          description: This field holds information about purpose of hearing. Master Data ID
           example: admission, trail, judgment, evidence, plea
-        isScheduled:
+        status:
           type: boolean
-          description: help differentiate between hearing that is concluded or is scheduled and yet to happen
+          description: work flow status
+          example: scheduled, in progress, in transcription, closed
         hearingDate:
           type: string
           format: date
-          description: This field holds information about date of hearing. If isScheduled is true, then this is a future date (mostly, till the date of hearing)
-        hearingTitle:
-          type: string
-          description: If a title is given to a hearing which could be a hearing sequence number + case title. makes it easier to display on screen, on cause list, in case listing
-        attendance:
+          nullable: true
+          description: This field holds information about date of hearing
+        requiredPeople:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: ID of the users who are required for this hearing
+              wasPresent:
+                type: boolean
+                description: their attendance status for the hearing. this will updated at the time or after the hearing
+        transcript:
           type: array
           items:
             type: string
-            description: names of people who attended the hearing
-        transcript:
-          type: string
-          description: the hearing transcript
+            description: the hearing transcript IDs
         vcLink:
           type: string
           format: url
+          nullable: true
           description: the link for the online vc for participating in the hearing
-        bench:
-          $ref: '#/components/schemas/Bench'
-        witnessList:
-          type: array
-          description: TODO - map to Witness entity
-          items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/User'
-        payment:
-          $ref: '#/components/schemas/Payment'
         documents:
           type: array
           items:
@@ -442,109 +530,161 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
         workflow:
           $ref: '#/components/schemas/Workflow'
-
+        notes:
+          type: string
+          description: summary notes of the hearing 
     HearingSummary:
       type: object
       properties:
-        hearingId:
+        id:
           type: string
           format: uuid
-          description: ID of the hearing
-        hearingTitle:
+          minLength: 36
+          maxLength: 36
+          description: points to this.id
+        filingNumber:
           type: string
-          description: If a title is given to a hearing which could be a hearing sequence number + case title. makes it easier to display on screen, on cause list, in case listing
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: points to Hearing.filingNumber
+        cnrNumber:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: points to Hearing.cnrNumber
+        notes:
+          type: string
+          description: points to Hearing.notes
     Application:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          minLength: 36
+          maxLength: 36
           description: auto generated primary for internal reference
           readOnly: true
         filingNumber:
           type: string
           format: uuid
-          description: application will reference the case by either filing number or CNR number
-        cnrNumber:
+          minLength: 36
+          maxLength: 36
+          description: reference to the case by either filing number or CNR number
+        caseNumber:
           type: string
           format: uuid
-        dateCreated:
+          minLength: 36
+          maxLength: 36
+          description: reference to the case by either filing number or CNR number
+        createdDate:
           type: string
           format: date
           description: the date on which the order was created. Can be treated as the start date also
+        onBehalfOf:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: ID of the users for whom the application has been raised
         applicationType:
-          type: integer
-          format: int32
+          type: string
           description: Master Data ID
         applicationNumber:
           type: string
+          minLength: 24
+          maxLength: 48
           description: number assigned to the application. applications are numbered serially for the court and affixed with the year.
+          example: Application 1 of the year 2024
         status:
           type: string
-          description: the status of the order. mostly will be open and closed, but allowing to be extensible and hence string
-
-        document:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+          description: workflow status
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
     Order:
       type: object
       properties:
         id:
           type: string
           format: uuid
+          minLength: 36
+          maxLength: 36
           description: auto generated primary for internal reference
           readOnly: true
         applicationId:
           type: string
           format: uuid
+          minLength: 36
+          maxLength: 36
           description: ID of the application the order is based on. Could be null if not based on any application
         filingNumber:
           type: string
           format: uuid
-          description: order can happen even before a case is admitted, hence will need to use filing number in that scenario
-        cnrNumber:
+          minLength: 36
+          maxLength: 36
+          description: reference to the case by either filing number or CNR number
+        caseNumber:
           type: string
           format: uuid
+          minLength: 36
+          maxLength: 36
+          description: reference to the case by either filing number or CNR number
         hearingNumber:
           type: string
           format: uuid
+          minLength: 36
+          maxLength: 36
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
           type: string
+          minLength: 24
+          maxLength: 256
           description: Order date and Case Name For example it will be Order number 1 for Rajpal et all vs State of Kerala
-        dateCreated:
+        createdDate:
           type: string
           format: date
           description: the date on which the order was created. Can be treated as the start date also
+        issuedBy:
+          type: object
+          properties:
+            benchID: 
+              type: string
+            judgeID:
+              type: string
+            courtID:
+              type: string
         orderType:
-          type: integer
-          format: int32
+          type: string
           description: Master Data ID
         orderCategory:
-          type: integer
-          format: int32
+          type: string
           description: Master data ID
           example: Intermediate, Judgement
-
-        orderTitle:
-          type: string
-          description: name of the order
         status:
           type: string
-          description: the status of the order. mostly will be open and closed, but allowing to be extensible and hence string
-        document:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
-        task:
-          $ref: '#/components/schemas/Task'
+          description: workflow status
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
     Task:
       type: object
       properties:
@@ -557,10 +697,22 @@ components:
           type: string
           format: uuid
           description: ID of the order, this task is linked to
-        dateCreated:
+        filingNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        caseNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        createdDate:
           type: string
           format: date
           description: the date on which the task was created. Can be treated as the start date also
+        effectiveDate:
+          type: string
+          format: date
+          description: the date from which the order comes into effect
         taskDescription:
           type: string
           description: details of the specific task to be done
@@ -568,17 +720,25 @@ components:
           type: string
           format: date
           description: the date by which the task needs to be closed
+        penalty:
+          $ref: '#/components/schemas/Penalty'
         status:
           type: string
-          description: the status of the task. mostly will be open and closed, but allowing to be extensible and hence string
+          description: workflow status
         assignedTo:
           type: string
           description: it could be the ID of a user in the system like lawyer, litigant, respondent etc, but could also be the name of someone not in the system like police person
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
     Summons:
       type: object
       properties:
@@ -591,13 +751,21 @@ components:
           type: string
           format: uuid
           description: ID of the order, this task is linked to
-        dateCreated:
+        filingNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        caseNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        createdDate:
           type: string
         deliveryDate:
           type: string
         status:
           type: string
-          description: Master data
+          description: workflow status
         feesAmount:
           type: string
         deliveryChannel:
@@ -607,13 +775,17 @@ components:
         issuedTo:
           type: string
           description: it could be the ID of a user in the system like lawyer, litigant, respondent etc, but could also be the name of someone not in the system like police person
-        document:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
     Bail:
       type: object
       properties:
@@ -626,10 +798,20 @@ components:
           type: string
           format: uuid
           description: ID of the order, this task is linked to
-        dateCreated:
+        filingNumber:
           type: string
-        document:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        caseNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        createdDate:
+          type: string
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         bailType:
           type: string
           description: (Master Data).
@@ -648,6 +830,8 @@ components:
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
     Warrant:
       type: object
       properties:
@@ -660,7 +844,15 @@ components:
           type: string
           format: uuid
           description: ID of the order, this task is linked to
-        dateCreated:
+        filingNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        caseNumber:
+          type: string
+          format: uuid
+          description: reference to the case by either filing number or CNR number
+        createdDate:
           type: string
         status:
           type: string
@@ -668,13 +860,17 @@ components:
         issuedTo:
           type: string
           description: it could be the ID of a user in the system like lawyer, litigant, respondent etc, but could also be the name of someone not in the system like police person
-        document:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: '#/components/schemas/Workflow'
     CourtEmployee:
       type: array
       items:
@@ -737,7 +933,7 @@ components:
           type: integer
           format: int32
           description: Court room number to which this bench is assigned
-    Payment:
+    Penalty:
       type: object
       properties:
         id:
