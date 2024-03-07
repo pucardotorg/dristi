@@ -1,11 +1,11 @@
 openapi: 3.0.0
 info:
-  title: Case registry and CourtCase APIs
+  title: CaseFacts registry and Case APIs
   description: |
-    ### API specs for e-filing court cases ###
-    This set of API specifications are related to e-filing a court case. 
-    1. Case registry - this contains the essential details of the case regardless of which dispute resolution mechanism is used to resolve the case.
-    2. Court case service - These APIs deal with specifics of filing a court case and associated procedural details
+    ### API specs for e-filing cases ###
+    This set of API specifications are related to e-filing a case. 
+    1. CaseFacts - This contains the essential details of the case termed as "Material" regardless of which dispute resolution mechanism is used to resolve the case.
+    2. Case - These APIs deal with specifics of filing a court case and associated procedural details
     3. Witness mapping - APIs to map and unmap witnesses to a case. Witnesses are added initially during case filing time and can be continually modified throughout the case lifecycle. 
   version: 1.0.0
 tags:
@@ -22,7 +22,7 @@ paths:
   /case/v1/_create:
     post:
       tags:
-        - Case
+        - CaseFacts
       summary: Create new case .
       description: |
         To create new case in the system
@@ -31,7 +31,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/CaseRequest'
+              $ref: '#/components/schemas/CaseFactsRequest'
         required: true
       responses:
         '201':
@@ -39,7 +39,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CaseResponse'
+                $ref: '#/components/schemas/CaseFactsResponse'
         '400':
           description: Case(s) creation failed
           content:
@@ -59,7 +59,7 @@ paths:
           '*/*':
             schema:
               $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseRequest
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseFactsRequest
         required: true
       responses:
         '201':
@@ -68,7 +68,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseFactsResponse
         '400':
           description: Case(s) updation failed
           content:
@@ -82,20 +82,14 @@ paths:
       tags:
         - Case
       summary: check if a specific case exists by using case number
-      description: >-
-        Gets the list of case requests for a particular ULB based on search
-        criteria.
-      parameters:
-        - name: caseNumber
-          in: query
-          description: Search by list of UUID
-          schema:
-            type: string
-        - name: cnrNumber
-          in: query
-          description: Search by cnr number of case request
-          schema:
-            type: string
+      requestBody:
+        description: Details for the case(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsRequest
+        required: true
       responses:
         '201':
           description: ReponseInfo with case(s) search successfully
@@ -103,9 +97,9 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsResponse
         '400':
-          description: Case(s) get failed
+          description: Search failed
           content:
             '*/*':
               schema:
@@ -224,7 +218,7 @@ paths:
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 components:
   schemas:
-    CourtCase:
+    Case:
       type: object
       required: [tenantId,caseId, courtId, filingNumber]
       oneOf:
@@ -253,7 +247,28 @@ components:
           maxLength: 128
         caseId:
           type: string
-          description: The reference to the case ID in the case registry
+          description: The reference to the case ID in the case facts registry
+        filingNumber:
+          type: string
+          description: >-
+            When a case is filed in Court,  diary number immediately issued, It
+            is a temporary number given to the filing. Subsequently, regular CNR
+            will be issued upon admission of the case. The format of this number
+            to be defined in master data. IDGen to use that format to generate
+            numbers.
+          minLength: 2
+          maxLength: 64
+        physicalFileNumber:
+          type: string
+          description: The physical file docket number of the case if applicable
+          minLength: 2
+          maxLength: 64
+        cnrNumber:
+          type: string
+          description: >-
+            This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
+          minLength: 2
+          maxLength: 64
         complainantAdvocates:
           type: array
           items:
@@ -283,27 +298,7 @@ components:
           description: >-
             Employee ID of the individual Judge assigned to the case. Bench or
             judge is assigned depending on the court/case type. 
-        filingNumber:
-          type: string
-          description: >-
-            When a case is filed in Court,  diary number immediately issued, It
-            is a temporary number given to the filing. Subsequently, regular CNR
-            will be issued upon admission of the case. The format of this number
-            to be defined in master data. IDGen to use that format to generate
-            numbers.
-          minLength: 2
-          maxLength: 64
-        physicalFileNumber:
-          type: string
-          description: The physical file docket number of the case if applicable
-          minLength: 2
-          maxLength: 64
-        caseNumber:
-          type: string
-          description: >-
-            This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
-          minLength: 2
-          maxLength: 64
+
         linkedCases:
           type: array
           description: Case numbers of related cases - child cases, appealed case etc
@@ -325,19 +320,17 @@ components:
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-    Case:
+    
+    CaseFacts:
+      description: This entity contains the "material facts" of the case such as the primary issues, legal principals and the clauses under which the case is filed.
       required:
         - caseId
         - tenantId
         - filingDate
         - caseCategory
-        - legalCodes
+        - statutesAndSections
         - complainants
         - respondents
-      oneOf:
-        - required:
-            - judge
-            - bench
       type: object
       properties:
         id:
@@ -372,7 +365,7 @@ components:
           format: date
           description: >-
             Date of case filing in epoch time. This is the date when the case
-            entered the system.
+            entered the judicial system.
           example: 1709542147
         caseCategory:
           type: string
@@ -391,18 +384,13 @@ components:
           description: >-
             The access code to be shared with advocates/complainants/respondents
             to join the case.
-        status:
-          type: string
-          description: >-
-            The current status of the case as pulled from the Workflow service.
-            Workflow service will hold the entire history of hte case.
-        legalCodes:
+        statutesAndSections:
           type: array
           description: >-
             The legal provisions -- acts/sections/subsections -- under which a
             case is filed
           items:
-            $ref: '#/components/schemas/LegalCode'
+            $ref: '#/components/schemas/StatuteSection'
         complainants:
           type: array
           items:
@@ -417,6 +405,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Witness'
+        status:
+          type: string
+          description: >-
+            The current status of the case as pulled from the Workflow service.
+            Workflow service will hold the entire history of hte case.
         documents:
           type: array
           items:
@@ -433,11 +426,12 @@ components:
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-    LegalCode:
+    
+    StatuteSection:
       type: object
       description: >-
-        Holds the statute ID and the corresponding sections & subsections
-        applicable to the case.
+        Holds the statute ID and the corresponding section & subsections
+        applicable to the case. Each statuteId and section will be a unique combo. 
       required: [tenantId, statuteId]
       properties:
         id:
@@ -461,7 +455,7 @@ components:
           type: array
           description: >-
             Holds an array of subsections under which this case is filed. This
-            can be master or a free form text entry field.
+            can be a master or a free form text entry field.
           items:
             type: string
         additionalDetails:
@@ -544,7 +538,7 @@ components:
       type: object
       required: [tenantId]
       oneOf:
-        - required: [filingNumber, caseNumber]
+        - required: [filingNumber, cnrNumber]
       properties:
         id:
           type: string
@@ -554,18 +548,26 @@ components:
           readOnly: true
         tenantId:
           type: string
-          description: The tenant where this case is operational
+          description: The tenant where this case is operational currently
+        advocateId:
+          type: string
+          description: The advocate ID associated with the case
         filingNumber:
           type: string
           description: The filing number of the case prior to admission
-        caseNumber:
+        cnrNumber:
           type: string
-          description: The CNR number of the case available post admission
+          description: The CNR number of the case available post admission in case the advocate is involved only post admission.
         representing:
           type: array
           items:
             $ref: '#/components/schemas/Party'
           minItems: 1
+        isActive:
+          type: boolean
+          description: Field used for soft delete of records. Will be false if this entity
+            is not active within the system.
+          default: true
         documents:
           type: array
           description: >-
@@ -585,7 +587,7 @@ components:
     
     Advocate:
       type: object
-      required: [tenantId,barNumber,userId]
+      required: [tenantId, userId]
       properties:
         id:
           type: string
@@ -611,6 +613,7 @@ components:
           description: >-
             Field used for soft delete of records. Will be false if this entity
             is not active within the system.
+          default: true
         documents:
           type: array
           description: >-
@@ -674,6 +677,7 @@ components:
           description: >-
             Field used for soft delete of records. Will be false if this entity
             is not active within the system.
+          default: true
         documents:
           type: array
           description: >-
@@ -722,7 +726,7 @@ components:
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-    CaseRequest:
+    CaseFactsRequest:
       type: object
       properties:
         requestInfo:
@@ -731,8 +735,8 @@ components:
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/Case'
-    CaseResponse:
+            $ref: '#/components/schemas/CaseFacts'
+    CaseFactsResponse:
       type: object
       properties:
         responseInfo:
@@ -741,11 +745,11 @@ components:
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/Case'
+            $ref: '#/components/schemas/CaseFacts'
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-    CourtCaseRequest:
+    CaseRequest:
       type: object
       properties:
         requestInfo:
@@ -754,8 +758,8 @@ components:
         casegroups:
           type: array
           items:
-            $ref: '#/components/schemas/CourtCase'
-    CourtCaseResponse:
+            $ref: '#/components/schemas/Case'
+    CaseResponse:
       type: object
       properties:
         requestInfo:
@@ -764,4 +768,37 @@ components:
         casegroups:
           type: array
           items:
-            $ref: '#/components/schemas/CourtCase'
+            $ref: '#/components/schemas/Case'
+    
+    CaseExistsRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseCriteria'
+    
+    CaseExistsResponse:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseCriteria'
+
+    CaseCriteria:
+      type: object
+      properties:
+        cnrNumber:
+          type: string
+        filingNumber:
+          type: string
+        exists:
+          type: boolean
+
