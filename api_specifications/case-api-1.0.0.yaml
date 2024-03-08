@@ -376,7 +376,7 @@ components:
         caseType:
           type: string
           description: isFresh or appeal or any other case type as required
-          example: NEW, APPEAL etc..
+          example: FRESH, APPELLATE etc..
           minLength: 2
           maxLength: 64
         accessCode:
