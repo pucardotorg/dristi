@@ -12,7 +12,7 @@ export const WorksSearch = {
         //actual response
 
         //,
-        const response = await Digit.CustomService.getResponse({ url:'/estimate-service/estimate/v1/_search', params:{tenantId,...filters} });
+        const response = await Digit.CustomService.getResponse({ url:'/estimate/v1/_search', params:{tenantId,...filters} });
         return response?.estimates
     },
      

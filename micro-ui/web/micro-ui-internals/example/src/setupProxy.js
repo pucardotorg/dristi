@@ -38,6 +38,7 @@ module.exports = function (app) {
     "/pdf-service",
     "/pg-service",
     "/vehicle",
+    "/estimate",
     "/vendor",
     "/property-services",
     "/fsm-calculator/v1/billingSlab/_search",
