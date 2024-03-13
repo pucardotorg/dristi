@@ -37,7 +37,7 @@ const SampleCard = () => {
       },
       {
         label: t("Sample View"),
-        link: `/${window?.contextPath}/employee/sample/sample-view?tenantId=ddd&estimateNumber=ssss`,
+        link: `/${window?.contextPath}/employee/sample/sample-view??tenantId=pg.citya&estimateNumber=ES/2023-24/002390&projectNumber=PJ/2023-24/02/002830`,
 
       },
       
