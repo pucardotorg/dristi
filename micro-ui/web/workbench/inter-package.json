@@ -21,9 +21,9 @@
     "dev:css": "cd packages/css && yarn start",
     "publish:css": "cd packages/css && yarn publish --access public",
     "dev:example": "cd example && yarn start",
-    "dev:campaign": "cd packages/modules/campaign-manager && yarn start",
+    "dev:sample": "cd packages/modules/sample && yarn start",
     "build": "run-p build:**",
-    "build:campaign": "cd packages/modules/campaign-manager && yarn build",
+    "build:sample": "cd packages/modules/sample && yarn build",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },
