@@ -96,6 +96,18 @@ paths:
           description: Search by tenantId of case request
           schema:
             type: string
+        - name: fromDate
+          in: query
+          description: search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          description: search hearings within date range
+          schema:
+            type: string
+            format: date
         - name: limit
           in: query
           description: No of record return
@@ -759,6 +771,10 @@ components:
           type: string
           format: date
           description: the date on which the order was created. Can be treated as the start date also
+        createdBy:
+          type: string
+          format: uuid
+          description: ID of the person (lawyer) who created the application
         onBehalfOf:
           type: array
           items:
@@ -798,12 +814,14 @@ components:
           maxLength: 36
           description: auto generated primary for internal reference
           readOnly: true
-        applicationId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: ID of the application the order is based on. Could be null if not based on any application
+        applicationIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+            description: ID of the application the order is based on. Could be null if not based on any application
         caseId:
           type: string
           format: uuid
