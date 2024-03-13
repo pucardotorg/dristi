@@ -3,7 +3,7 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import { default as EmployeeApp } from "./pages/employee";
 import SampleCard from "./components/SampleCard";
-
+import ViewEstimateComponent from "./components/ViewEstimateComponent";
 export const SampleModule = ({ stateCode, userType, tenants }) => {
  
   const { path, url } = useRouteMatch();
@@ -14,6 +14,7 @@ export const SampleModule = ({ stateCode, userType, tenants }) => {
     stateCode,
     moduleCode,
     language,
+    
   });
 
   if (isLoading) {
@@ -24,7 +25,8 @@ export const SampleModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   SampleModule,
-  SampleCard
+  SampleCard,
+  ViewEstimatePage: ViewEstimateComponent,
 };
 //init <modulename >component
 export const initSampleComponents = () => {

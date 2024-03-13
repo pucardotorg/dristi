@@ -33,7 +33,7 @@ const ProjectBreadCrumb = ({ location }) => {
 
 const App = ({ path, stateCode, userType, tenants }) => {
   const commonProps = { stateCode, userType, tenants, path };
-  console.log(" aaapppppp")
+  
 
 
   return (

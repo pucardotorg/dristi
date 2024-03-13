@@ -1,5 +1,5 @@
+//not working todo
 import React from 'react'
-import ViewEstimateComponent from '../../components/ViewEstimateComponent';
 const View = () => {
   const ViewEstimate = Digit.ComponentRegistryService.getComponent("ViewEstimatePage");
   return (

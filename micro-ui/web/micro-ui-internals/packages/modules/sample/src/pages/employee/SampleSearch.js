@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader, Button, AddFilled } from "@egovernments/digit-ui-react-components";
 import searchWageSeekerConfig from "../../configs/searchWageSeekerConfig";
 import { useHistory, useLocation } from "react-router-dom";
-
+// not working todo
 const SearchWageSeeker = () => {
   console.log('sssssssssssssssssssssssssssssss')
   const { t } = useTranslation();
