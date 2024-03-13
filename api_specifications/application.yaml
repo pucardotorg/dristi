@@ -18,7 +18,7 @@ paths:
     post:
       tags:
         - Application
-      summary: create application requests.
+      summary: create new application
       requestBody:
         description: Details for the new application + RequestInfo meta data.
         content:

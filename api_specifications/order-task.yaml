@@ -20,7 +20,7 @@ paths:
     post:
       tags:
         - Order
-      summary: create hearing requests.
+      summary: create new order
       requestBody:
         description: Details for the new order + RequestInfo meta data.
         content:
