@@ -1,5 +1,5 @@
 openapi: 3.0.0
-
+ 
 info:
   title: API specs for eCourts
   description: 
@@ -131,7 +131,7 @@ paths:
         - Hearing
       summary: status update
       description: update the status of a hearing, typically called by workflow
-      parameters:
+      parameters: 
         - name: status
           in: query
           description: the new status value for the summon
@@ -140,6 +140,30 @@ paths:
       responses:
         "201":
           description: status updated successfully
+
+        "400":
+          description: hearing(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /hearing/v1/date/update:
+    post:
+      tags:
+        - Hearing
+      summary: status update
+      description: update the status of a hearing, typically called by workflow
+      parameters:
+        - name: date
+          in: query
+          description: the new status value for the summon
+          schema:
+            type: string
+            format: datetime
+      responses:
+        "201":
+          description: date updated successfully
 
         "400":
           description: hearing(s) get failed
@@ -178,6 +202,36 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
+  /hearing/v1/exists/{Id}:
+    get:
+      tags:
+      - Hearing
+      summary: check if hearing exists
+      operationId: getIsHearingValid
+      parameters:
+      - name: Id
+        in: path
+        description: the ID of the Hearing 
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+      responses:
+        "201":
+          description: true if exists, else false
+          content:
+            text/plain:
+              schema:
+                type: boolean
+                description: true if exists, else false
+        "400":
+          description: failed to validate hearing
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
   /hearing/v1/summary/{caseId}:
     get:
       tags:
@@ -207,25 +261,51 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
-  /hearing/v1/date/update:
-    post:
+  /hearing/v1/summary/today:
+    get:
       tags:
-        - Hearing
-      summary: status update
-      description: update the status of a hearing, typically called by workflow
-      parameters:
-        - name: date
-          in: query
-          description: the new status value for the summon
-          schema:
-            type: string
-            format: datetime
+      - Hearing
+      summary: get summary Hearings for today
+      operationId: getSummaryHearingForToday
+
       responses:
         "201":
-          description: date updated successfully
-
+          description: ResponseInfo with Hearing status
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingSummaryListResponse'
         "400":
-          description: hearing(s) get failed
+          description: failed to get Hearing status
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /hearing/v1/summary/date/{date}:
+    get:
+      tags:
+      - Hearing
+      summary: get summary Hearings for specific date
+      operationId: getSummaryHearingForDate
+      parameters:
+      - name: date
+        in: path
+        description: the date for which hearings are requested
+        required: true
+        schema:
+          type: string
+          format: date
+
+      responses:
+        "201":
+          description: ResponseInfo with Hearing status
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingSummaryListResponse'
+        "400":
+          description: failed to get Hearing status
           content:
             '*/*':
               schema:
@@ -257,6 +337,7 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
       x-codegen-request-body-name: orderRequest
+      
   /order/v1/update:
     post:
       tags:
@@ -283,6 +364,36 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
       x-codegen-request-body-name: orderRequest
+
+  /order/v1/exists/{Id}:
+    get:
+      tags:
+      - Order
+      summary: check if Order exists
+      operationId: getIsOrderValid
+      parameters:
+      - name: Id
+        in: path
+        description: the ID of the Order 
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+      responses:
+        "201":
+          description: true if exists, else false
+          content:
+            text/plain:
+              schema:
+                type: boolean
+                description: true if exists, else false
+        "400":
+          description: failed to validate Order
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
   /summons/v1/create:
     post:
@@ -390,6 +501,37 @@ paths:
                 description: status of the summon
         "400":
           description: failed to get summon status
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+
+  /summons/v1/exists/{Id}:
+    get:
+      tags:
+      - Summons
+      summary: check if Summons exists
+      operationId: getIsSummonsValid
+      parameters:
+      - name: Id
+        in: path
+        description: the ID of the Summons 
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+      responses:
+        "201":
+          description: true if exists, else false
+          content:
+            text/plain:
+              schema:
+                type: boolean
+                description: true if exists, else false
+        "400":
+          description: failed to validate Summons
           content:
             '*/*':
               schema:
@@ -538,10 +680,10 @@ components:
               type:
                 type: string
                 description: the type of the person
-                example: complainant, respondant, lawyer, witness
+                example: complainant, respondent, lawyer, witness
               associatedWith:
                 type: string
-                description: Name of the person, this person is associted like for example lawywer of whom, witness of whow?
+                description: Name of the person, this person is associated like for example lawyer of whom, witness of whom?
               wasPresent:
                 type: boolean
                 description: their attendance status for the hearing. this will updated at the time or after the hearing
