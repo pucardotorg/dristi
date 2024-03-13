@@ -1,7 +1,7 @@
 import React,{useState,useEffect,useMemo} from "react";
 import { useTranslation } from "react-i18next";
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
-import inboxConfig from "../../configs/inboxConfig";
+import {inboxConfig} from "../../configs/SampleInboxConfig";
 import { useLocation } from 'react-router-dom';
 
 const Inbox = () => {

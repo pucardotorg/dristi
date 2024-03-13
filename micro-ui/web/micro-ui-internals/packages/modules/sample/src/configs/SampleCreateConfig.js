@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
-export const newConfig = [
+export const config = [
   {
     head: "Sample Object Creation",
     subHead: "Supporting Details",
@@ -129,24 +129,24 @@ export const newConfig = [
         populators: { name: "additionalDetails", error: "sample error message", validation: { pattern: /^[A-Za-z]+$/i } },
       },
    
-      // {
-      //   isMandatory: true,
-      //   key: "genders",
-      //   type: "radioordropdown",
-      //   label: "Enter Gender",
-      //   disable: false,
-      //   populators: {
-      //     name: "genders",
-      //     optionsKey: "name",
-      //     error: "sample required message",
-      //     required: true,
-      //     mdmsConfig: {
-      //       masterName: "GenderType",
-      //       moduleName: "common-masters",
-      //       localePrefix: "COMMON_GENDER",
-      //     },
-      //   },
-      // },
+      {
+        isMandatory: true,
+        key: "genders",
+        type: "radioordropdown",
+        label: "Enter Gender",
+        disable: false,
+        populators: {
+          name: "genders",
+          optionsKey: "name",
+          error: "sample required message",
+          required: true,
+          mdmsConfig: {
+            masterName: "GenderType",
+            moduleName: "common-masters",
+            localePrefix: "COMMON_GENDER",
+          },
+        },
+      },
       {
         isMandatory: false,
         key: "priority",
@@ -174,47 +174,13 @@ export const newConfig = [
           ],
         },
       },
-      {
-        "type": "component",
-        "component": "SampleComponent",
-        "withoutLabel": true,
-        "key": "comments"
-      },
+      // {
+      //   "type": "component",
+      //   "component": "SampleComponent",
+      //   "withoutLabel": true,
+      //   "key": "comments"
+      // },
     ],
   },
 ];
 
-const Create = () => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const { t } = useTranslation();
-  const history = useHistory();
-
-  const onSubmit = (data) => {
-    ///
-    console.log(data, "data");
-  };
-
-  /* use newConfig instead of commonFields for local development in case needed */
-
-  const configs = newConfig ? newConfig : newConfig;
-
-  return (
-    <FormComposerV2
-      heading={t("Application Heading")}
-      label={t("Submit Bar")}
-      description={"Description"}
-      text={"Sample Text if required"}
-      config={configs.map((config) => {
-        return {
-          ...config,
-          body: config.body.filter((a) => !a.hideInEmployee),
-        };
-      })}
-      defaultValues={{}}
-      onSubmit={onSubmit}
-      fieldStyle={{ marginRight: 0 }}
-    />
-  );
-};
-
-export default Create;

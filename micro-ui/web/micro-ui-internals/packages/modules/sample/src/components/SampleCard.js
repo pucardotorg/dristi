@@ -16,13 +16,28 @@ const SampleCard = () => {
    
      
       {
-        label: t("Sample Search"),
+        label: t("Individual Search"),
         link: `/${window?.contextPath}/employee/sample/search-individual`,
 
       },
       {
-        label: t("Sample Create"),
+        label: t("Individual Create"),
         link: `/${window?.contextPath}/employee/sample/create-individual`,
+
+      },
+      {
+        label: t("Sample Create"),
+        link: `/${window?.contextPath}/employee/sample/sample-create`,
+
+      },
+      {
+        label: t("Sample Search"),
+        link: `/${window?.contextPath}/employee/sample/sample-search`,
+
+      },
+      {
+        label: t("Sample View"),
+        link: `/${window?.contextPath}/employee/sample/sample-view?tenantId=ddd&estimateNumber=ssss`,
 
       },
       
