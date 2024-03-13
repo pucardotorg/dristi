@@ -1,24 +1,158 @@
-openapi: "3.0.2"
+openapi: "3.0.0"
 
 info:
   title: API specs for Application
   description:
     Application API paths and entity is defined in this file.
-  version: "1.0.0"
+  version: "1.0.1"
 
 servers:
-  - url: https://api.server.test/v1
+  - url: ""
 
 tags:
   - name: Application
     description: APIs for managing Application related to a Case
 
 paths:
-  /test:
-    get:
+  /application/v1/create:
+    post:
+      tags:
+        - Application
+      summary: create application requests.
+      requestBody:
+        description: Details for the new application + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+        required: true
       responses:
-        '200':
-          description: OK
+        "201":
+          description: success
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        "400":
+          description: application(s) creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+      x-codegen-request-body-name: applicationRequest
+
+  /application/v1/update:
+    post:
+      tags:
+        - Application
+      summary: update application requests.
+      requestBody:
+        description: Details for the update application(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+        required: true
+      responses:
+        "200":
+          description: ResponseInfo with application(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        "400":
+          description: application(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+      x-codegen-request-body-name: applicationRequest
+
+  /application/v1/search:
+    post:
+      tags:
+        - Application
+      summary: search for application(s)
+      description: |
+        Gets the list of Application(s)
+      parameters:
+        - name: id
+          in: query
+          description: Search by application ID
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          description: Search by application number
+          schema:
+            type: string
+        - name: caseId
+          in: query
+          description: Search by case ID
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId 
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: No of records return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: offset
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          description: sorted by ascending by default if this parameter is not provided
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ResponseInfo with application(s) search successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationListResponse'
+        "400":
+          description: application(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /application/v1/exists/{Id}:
+    get:
+      tags:
+        - Application
+      summary: check if application exists
+      operationId: getIsApplicationValid
+      parameters:
+        - name: Id
+          in: path
+          description: the ID of the Application
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: true if exists, else false
+          content:
+            text/plain:
+              schema:
+                type: boolean
+                description: true if exists, else false
+        "400":
+          description: failed to validate Application
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
 components:
   schemas:
@@ -38,6 +172,19 @@ components:
         application:
           $ref: '#/components/schemas/Application'
 
+    ApplicationListResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        TotalCount:
+          type: integer
+        HearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+      description: This object holds information about the hearingList response
+
     Application:
       type: object
       properties:
@@ -48,6 +195,9 @@ components:
           maxLength: 36
           description: auto generated primary for internal reference
           readOnly: true
+        tenantId:
+          type: string
+          description: This is tenantId of the case
         caseId:
           type: string
           format: uuid
