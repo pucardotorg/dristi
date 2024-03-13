@@ -1,12 +1,17 @@
 import { useIndividualView } from "./useIndividualView";
+import useEstimateDetailsScreen from "./useEstimateDetailsScreen";
+import utils from "../utils";
 const sample = {
   useIndividualView
 };
+const estimates={
+  useEstimateDetailsScreen
+}
 
 const Hooks = {
   
   sample,
-
+  estimates
 };
 
 const Utils = {
@@ -20,6 +25,5 @@ const Utils = {
 
 export const CustomisedHooks = {
   Hooks,
-  UserService,
   Utils,
 };
