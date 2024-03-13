@@ -8,8 +8,11 @@ import { useParams } from "react-router-dom";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
+
 const businessServiceMap = {
+ 
   "muster roll": "MR",
+  "estimate":"ESTIMATE"
 };
 
 const inboxModuleNameMap = {
@@ -154,13 +157,17 @@ export const UICustomizations = {
       return businessServiceMap?.contract;
     } else if (moduleCode?.includes("muster roll")) {
       return businessServiceMap?.["muster roll"];
-    } else if (moduleCode?.includes("works.purchase")) {
+    }
+    else if (moduleCode?.includes("works.purchase")) {
       return businessServiceMap?.["works.purchase"];
-    } else if (moduleCode?.includes("works.wages")) {
+    }
+    else if (moduleCode?.includes("works.wages")) {
       return businessServiceMap?.["works.wages"];
-    } else if (moduleCode?.includes("works.supervision")) {
+    }
+    else if (moduleCode?.includes("works.supervision")) {
       return businessServiceMap?.["works.supervision"];
-    } else {
+    }
+    else {
       return businessServiceMap;
     }
   },
