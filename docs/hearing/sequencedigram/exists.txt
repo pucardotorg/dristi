@@ -1,0 +1,12 @@
+#created using websequencedigrams.com
+
+title Hearing Exists
+
+UI->Hearing: Hearing Exists
+
+Hearing->Hearing: valdiate HearingId 
+alt
+Hearing->UI: Return 200: True (valid hearing Id)
+else
+Hearing->UI: Return 200: False (invalid hearing Id or not found)
+end

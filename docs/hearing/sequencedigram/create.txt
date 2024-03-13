@@ -1,0 +1,24 @@
+#created using websequencedigrams.com
+
+title Create Hearing
+
+UI->Hearing: Create Hearing
+
+alt Hearing created for Case
+Hearing->Case: Validate caseId
+Hearing->UI: Return 400 if caseId invalid
+else Hearing created for Application
+Hearing->Application: Validate applicationId
+Hearing->UI: Return 400 if applicationId invalid
+end
+
+
+Hearing->Workflow: get Workflow status
+Workflow-->Hearing: return Workflow status 'Pending"
+
+Hearing->Hearing: enrich HearingId 
+Hearing->UI: new Hearing created
+
+Hearing -> Kafka: Push Hearing payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB
