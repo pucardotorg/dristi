@@ -8,10 +8,10 @@ import "@egovernments/digit-ui-css/example/index.css";
 
 import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
-import { initCampaignComponents } from "@egovernments/digit-ui-module-campaign-manager"
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { initWorkbenchHCMComponents } from "@egovernments/digit-ui-module-hcmworkbench";
+import {initSampleComponents} from "@egovernments/digit-ui-module-sample";
 
 var Digit = window.Digit || {};
 
@@ -20,10 +20,10 @@ const enabledModules = [
   "HRMS",
   "Workbench",
   "HCMWORKBENCH",
-  "Campaign",
   //  "Engagement", "NDSS","QuickPayLinks", "Payment",
   "Utilities",
-  "Microplanning"
+  "Microplanning",
+  "Sample"
   //added to check fsm
   // "FSM"
 ];
@@ -69,7 +69,7 @@ const initDigitUI = () => {
   initUtilitiesComponents();
   initWorkbenchComponents();
   initWorkbenchHCMComponents();
-  initCampaignComponents();
+  initSampleComponents();
 
   const moduleReducers = (initData) => initData;
 
