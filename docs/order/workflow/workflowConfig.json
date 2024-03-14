@@ -70,7 +70,8 @@
               "action": "E-SIGN",
               "nextState": "PENDINGSTAMPING",
               "roles": [
-                "Judge"
+                "Judge",
+                "Benchclerk"
               ]
             },
             {
