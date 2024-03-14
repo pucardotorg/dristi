@@ -1,0 +1,161 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "pg",
+      "businessService": "case-creation",
+      "business": "Case",
+      "businessServiceSla": 432000000,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": false,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SAVE AS DRAFT",
+              "nextState": "DRAFT",
+              "roles": [
+                "CITIZEN",
+                "LEGAL_REPRESENTATIVE"
+              ]
+            },
+            {
+              "action": "SUBMIT",
+              "nextState": "UNDERSCRUTINY",
+              "roles": [
+                "CITIZEN",
+                "LEGAL_REPRESENTATIVE"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 172800000,
+          "state": "DRAFT",
+          "applicationStatus": "DRAFT",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SUBMIT",
+              "nextState": "UNDERSCRUTINY",
+              "roles": [
+                "CITIZEN",
+                "LEGAL_REPRESENTATIVE"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "UNDERSCRUTINY",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SCRUTINYPASSED",
+              "nextState": "PENDINGFORADMITTANCE",
+              "roles": [
+                "FSO"
+              ]
+            },
+            {
+              "action": "SENDBACK",
+              "nextState": "PENDINGFORCORRECTION",
+              "roles": [
+                "FSO"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "FSO"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "PENDINGFORADMITTANCE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SENDBACK",
+              "nextState": "PENDINGFORCORRECTION",
+              "roles": [
+                "CASE_APPROVER"
+              ]
+            },
+            {
+              "action": "ADMIT",
+              "nextState": "ADMITTED",
+              "roles": [
+                "CASE_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "REJECTED",
+              "roles": [
+                "CASE_APPROVER"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 86400000,
+          "state": "PENDINGFORCORRECTION",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "RE-SUBMIT",
+              "nextState": "UNDERSCRUTINY",
+              "roles": [
+                "CITIZEN",
+                "ADVOCATE"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "ADMITTED",
+          "applicationStatus": "ACTIVE",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        },
+        {
+          "sla": null,
+          "state": "REJECTED",
+          "applicationStatus": "INACTIVE",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true,
+          "isStateUpdatable": false,
+          "actions": null
+        }
+      ]
+    }
+  ]
+}

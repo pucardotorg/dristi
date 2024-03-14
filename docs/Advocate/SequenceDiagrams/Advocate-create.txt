@@ -1,0 +1,31 @@
+@startuml
+title Register Advocate
+Actor Advocate as User
+participant CourtPortal as UI
+participant Advocate as A
+participant Individual as I
+User -> UI : Fill out personal details \n and register self as advocate
+UI -> Aadhar ++: Verify if user is valid
+alt Verification failed
+  return Aadhar not verified
+  UI -> UI: Show error message and stop registration
+else Success
+  Aadhar -> UI: Aadhar verified
+end
+UI -> A ++: Submit registration
+A -> I ++: Create Individual with \n system user flag true
+return Individual created
+A -> IdGen ++: Request IDs for registration number
+return List of formatted IDs
+A -> A: Enrich payload with \n formatted registration number
+A -> Workflow ++: Trigger workflow for \n advocate approval
+return Workflow status
+A -> Kafka: Push advocate payload
+Persister -> Kafka: Read payload
+Persister -> Postgres: Persist data in DB
+Indexer -> Kafka: Read payload
+Indexer -> Elastic: Push data into index
+A -> Notification : Send notification to \n mobile number with registration number
+A -> UI: Advocate registration completed
+UI -> User: SMS notification with \n registration application number
+@enduml

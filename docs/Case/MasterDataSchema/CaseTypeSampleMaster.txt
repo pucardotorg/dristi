@@ -1,0 +1,11 @@
+{
+  "tenantId": "pg.citya",
+  "module": "Case",
+  "CaseType" : [
+  {
+    "id": "1",
+    "type": "NEW",
+    "displayName": "FRESH",
+    "isActive": true
+  }]
+  }
