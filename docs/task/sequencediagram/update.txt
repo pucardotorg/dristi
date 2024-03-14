@@ -1,0 +1,22 @@
+#created using websequencedigrams.com
+
+title Update Task
+
+UI->Task: Update Task
+
+Task->Case: caseId Exists
+Case-->Task: return true/false
+Task->UI: Return 400 : if caseId invalid
+
+Task->Task: taskId Exists
+Task->UI: Return 400 : if taskId invalid
+
+Task->Workflow: set Workflow status
+Workflow-->Task: return Workflow status
+
+Task->Task: enrich Task
+Task->UI: Return 200 : Task updated
+
+Task -> Kafka: Push Task payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB

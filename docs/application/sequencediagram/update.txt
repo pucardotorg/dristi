@@ -1,0 +1,23 @@
+#created using websequencedigrams.com
+
+title Update Application
+
+UI->Application: Update Application
+
+
+Application->Case: Validate caseId
+Case-->Application: return true/false
+Application->UI: Return 400 : if caseId invalid
+
+Application->Application: Validate ApplicationId
+Application->UI: Return 400 : if ApplicationId invalid
+
+Application->Workflow: set Workflow status
+Workflow-->Application: return Workflow status
+
+Application->Application: enrich Application
+Application->UI: Return 200 : Application udpated
+
+Application -> Kafka: Push Application payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB
