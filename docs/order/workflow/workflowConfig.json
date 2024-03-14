@@ -1,0 +1,159 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "businessService": "order",
+      "business": "order-services",
+      "businessServiceSla": 30,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "DRAFTED",
+              "roles": [
+                "Benchclerk"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "DRAFTED",
+          "applicationStatus": "DRAFTED",
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "APPROVE",
+              "nextState": "PENDINGESIGN",
+              "roles": [
+                "Judge"
+              ]
+            },
+            {
+              "action": "REWORK",
+              "nextState": "REWORK",
+              "roles": [
+                "Judge"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "Judge",
+                "System"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "PENDINGESIGN",
+          "applicationStatus": "PENDINGESIGN",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "E-SIGN",
+              "nextState": "PENDINGSTAMPING",
+              "roles": [
+                "Judge"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "Judge",
+                "System"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "PENDINGSTAMPING",
+          "applicationStatus": "PENDINGSTAMPING",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "STAMP",
+              "nextState": "PUBLISHED",
+              "roles": [
+                "System"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "Judge",
+                "System"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "PUBLISHED",
+          "applicationStatus": "PUBLISHED",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": false,
+          "actions": [
+            {
+              "action": "CLOSE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "System"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "Judge",
+                "System"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "COMPLETED",
+          "applicationStatus": "COMPLETED",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "ABATED",
+          "applicationStatus": "ABATED",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}
