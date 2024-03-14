@@ -1,10 +1,10 @@
 openapi: "3.0.0"
 
 info:
-  title: API specs for Order and Task
+  title: API specs for Order
   description:
-    Order and Task API paths and entity is defined in this file.
-  version: "1.0.1"
+    Order API paths and entity is defined in this file.
+  version: "1.0.2"
 
 servers:
   - url: ""
@@ -12,8 +12,6 @@ servers:
 tags:
   - name: Order
     description: APIs for managing Orders related to a Case
-  - name: Task
-    description: APIs required for Summons related to a Case
 
 paths:
   /order/v1/create:
@@ -70,12 +68,56 @@ paths:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
       x-codegen-request-body-name: orderRequest
 
+  /order/v1/search:
+    post:
+      tags:
+        - Order
+      summary: search for orders
+      description: |
+        search order(s) based on different parameters
+      parameters:
+        - name: id
+          in: query
+          description: id of the order being searched
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: tenantId whose order(s) are being searched
+          schema:
+            type: string
+        - name: applicationId
+          in: query
+          description: the application ID whose order(s) are being queried
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          description: the status of the order(s) being searched
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ResponseInfo with order list
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/OrderListResponse'
+        "400":
+          description: failed to find order(s)
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
   /order/v1/exists/{Id}:
     get:
       tags:
         - Order
       summary: check if Order exists
-      operationId: getIsOrderValid
+      operationId: getIfOrderExists
       parameters:
         - name: Id
           in: path
@@ -94,157 +136,12 @@ paths:
                 type: boolean
                 description: true if exists, else false
         "400":
-          description: failed to validate Order
+          description: failed to find Order
           content:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
-  /order/v1/task/create:
-    post:
-      tags:
-        - Order
-      summary: create a new Task
-      requestBody:
-        description: details for the creation of task
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/TaskRequest'
-      responses:
-        "201":
-          description: ResponseInfo with task created successfully
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/TaskResponse'
-        "400":
-          description: Task(s) update failed
-          content:
-            '*/*':
-              schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
-      x-codegen-request-body-name: taskRequest
-
-  /order/v1/task/update:
-    post:
-      tags:
-        - Order
-      summary: update a Task
-      requestBody:
-        description: details for the update of task
-        content:
-          '*/*':
-            schema:
-              $ref: '#/components/schemas/TaskRequest'
-      responses:
-        "200":
-          description: ResponseInfo with summons updated successfully
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/TaskResponse'
-        "400":
-          description: task(s) update failed
-          content:
-            '*/*':
-              schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
-      x-codegen-request-body-name: taskRequest
-
-  /order/v1/tasks/{orderId}:
-    get:
-      tags:
-        - Order
-      summary: get all tasks
-      operationId: getAllTasks
-      parameters:
-        - name: orderId
-          in: path
-          description: the order ID whose tasks are being queried
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: true if exists, else false
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/TaskListResponse'
-        "400":
-          description: failed to validate task
-          content:
-            '*/*':
-              schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
-
-  /order/v1/task/search:
-    post:
-      tags:
-        - Order
-      summary: search for specific task
-      description: |
-        get a task based on the task ID 
-      parameters:
-        - name: id
-          in: query
-          description: id of the task whose status is being updated
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: orderId whose tasks are being searched
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: the status of the tasks being searched
-          schema:
-            type: string
-      responses:
-        "200":
-          description: ResponseInfo with status update successful
-          content:
-            '*/*':
-              schema:
-                $ref: '#/components/schemas/TaskResponse'
-        "400":
-          description: status update
-          content:
-            '*/*':
-              schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
-
-  /order/v1/task/exists/{Id}:
-    get:
-      tags:
-        - Order
-      summary: check if task exists
-      operationId: getIsTaskValid
-      parameters:
-        - name: Id
-          in: path
-          description: the ID of the task
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        "200":
-          description: true if exists, else false
-          content:
-            text/plain:
-              schema:
-                type: boolean
-                description: true if exists, else false
-        "400":
-          description: failed to validate task
-          content:
-            '*/*':
-              schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 components:
   schemas:
     OrderRequest:
@@ -262,28 +159,7 @@ components:
         order:
           $ref: '#/components/schemas/Order'
 
-    TaskRequest:
-      type: object
-      properties:
-        orderId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: ID of the order, this task is associated with
-        requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-        task:
-          $ref: '#/components/schemas/Task'
-    TaskResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        task:
-          $ref: '#/components/schemas/Task'
-
-    TaskListResponse:
+    OrderListResponse:
       type: object
       properties:
         responseInfo:
@@ -296,7 +172,7 @@ components:
         list:
           type: array
           items:
-            $ref: '#/components/schemas/Task'
+            $ref: '#/components/schemas/Order'
 
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
@@ -326,14 +202,6 @@ components:
             minLength: 36
             maxLength: 36
             description: ID of the application the order is based on. Could be null if not based on any application
-        taskIds:
-          type: array
-          items:
-            type: string
-            format: uuid
-            minLength: 36
-            maxLength: 36
-            description: ID of the tasks associated with this order. Since tasks get created when creating the order, order will hold reference to all child tasks
         hearingNumber:
           type: string
           format: uuid
@@ -379,119 +247,3 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
         workflow:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
-
-    Task:
-      description: A task is created as part of an Order. It will always be linked to an order
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: auto generated primary for internal reference
-          readOnly: true
-        tenantId:
-          type: string
-          description: This is tenantId of the case
-        createdDate:
-          type: string
-          format: date
-          description: the date on which the task was created. Can be treated as the start date also
-        closureDate:
-          type: string
-          format: date
-          nullable: true
-          description: by what date the task is expected to be closed
-        taskDescription:
-          type: string
-          description: details of the specific task to be done
-        taskType:
-          type: string
-          description: there will be various types of tasks, that will define their own schema for information required. This type will help identify what schema to pick from MDMS
-          example: document submission, summons, bail, warrant
-        specialFields:
-          type: string
-          description: TODO this needs to change to be able to accommodate the specific schema based on if it is summon, bail, warrant or something else
-        dateCloseBy:
-          type: string
-          format: date
-          description: the date by which the task needs to be closed
-        amount:
-          $ref: '#/components/schemas/Amount'
-        status:
-          type: string
-          description: workflow status
-        person:
-          type: object
-          description: details of person this task is assigned to. For example in case of document upload, this could be litigant or lawyer. in case of summon task, this will be person to whom summon is issued
-          properties:
-            id:
-              type: string
-              format: uuid
-              minLength: 36
-              maxLength: 36
-              description: ID of the person if the person is in the system, in which case the name field can be left blank
-            name:
-              type: string
-              description: name of the person if not in the system 
-        documents:
-          type: array
-          items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
-        additionalDetails:
-          type: string
-          description: This field is meant to hold any extra information that we want to store.
-        auditDetails:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
-        workflow:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
-    
-    SummonTask:
-      description: this is specific type of task, dealing with summons and will have only fields that are over and above the base task
-      type: object
-      properties:
-        deliveryDate:
-          type: string
-        deliveryChannel:
-          type: string
-          description: Master data
-          example: ePost, NSTEP, iCoPs
-        deliveryEvidence:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
-
-    BailTask:
-      type: object
-      properties:
-        bailType:
-          type: string
-          description: (Master Data).
-          example: cash, surety
-
-    WarrantTask:
-      type: object
-      properties:
-        deliveryChannel:
-          type: string
-          description: Master data
-        deliveryEvidence:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
-
-    Amount:
-      type: object
-      properties:
-        createdDate:
-          type: integer
-        dueDate:
-          type: integer
-          description: This field holds information about due date of fine.
-        amount:
-          type: string
-          description: This field holds information about amount to be paid
-        type:
-          type: string
-          description: What this amount is paid for
-          example: fees, fine
-        status:
-          type: string
-          description: status of payment
