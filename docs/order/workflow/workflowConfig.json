@@ -27,7 +27,7 @@
         {
           "sla": null,
           "state": "DRAFTED",
-          "applicationStatus": "DRAFTED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": true,
           "isTerminateState": false,
@@ -60,7 +60,7 @@
         {
           "sla": 5,
           "state": "PENDINGESIGN",
-          "applicationStatus": "PENDINGESIGN",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
@@ -87,7 +87,7 @@
         {
           "sla": 10,
           "state": "PENDINGSTAMPING",
-          "applicationStatus": "PENDINGSTAMPING",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
           "isTerminateState": false,
@@ -113,7 +113,7 @@
         {
           "sla": 10,
           "state": "PUBLISHED",
-          "applicationStatus": "PUBLISHED",
+          "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
           "isTerminateState": false,
@@ -139,7 +139,7 @@
         {
           "sla": 5,
           "state": "COMPLETED",
-          "applicationStatus": "COMPLETED",
+          "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,
@@ -148,7 +148,7 @@
         {
           "sla": 5,
           "state": "ABATED",
-          "applicationStatus": "ABATED",
+          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

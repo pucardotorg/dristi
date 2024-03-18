@@ -236,6 +236,9 @@ components:
         status:
           type: string
           description: workflow status
+        isActive:
+          type: boolean
+          description: to handle soft delete
         documents:
           type: array
           items:

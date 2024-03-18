@@ -248,11 +248,14 @@ components:
               description: name of the person if not in the system 
         deliveryChannel:
           type: string
-          description: if task has a delivery channel associated with it, then this will poing to it via Master data
+          description: if task has a delivery channel associated with it, then this will point to it via Master data
           example: ePost, NSTEP, iCoPs
+        isActive:
+          type: boolean
+          description: to handle soft delete
         documents:
           type: array
-          description: docouments related to the task, for eample the summon PDF when issuing summon and also the evidence that summon was delivered
+          description: documents related to the task, for example the summon PDF when issuing summon and also the evidence that summon was delivered
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
         additionalDetails:

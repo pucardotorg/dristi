@@ -275,6 +275,9 @@ components:
           format: url
           nullable: true
           description: the link for the online vc for participating in the hearing
+        isActive:
+          type: boolean
+          description: to handle soft delete
         documents:
           type: array
           items:
