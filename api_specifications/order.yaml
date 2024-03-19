@@ -239,6 +239,8 @@ components:
         isActive:
           type: boolean
           description: to handle soft delete
+        statuteSection:
+          $ref: 'https://raw.githubusercontent.com/pucardotorg/pucardpg/api_specs/api_specifications/case-api-1.0.0.yaml#/components/schemas/StatuteSection'
         documents:
           type: array
           items:
