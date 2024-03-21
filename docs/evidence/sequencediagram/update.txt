@@ -1,0 +1,21 @@
+#created using websequencedigrams.com
+
+title Update Evidence
+
+UI->Evidence: Update Evidence
+
+Evidence->Evidence: evidenceId Exists
+Evidence->UI: Return 400 : if evidenceId invalid
+
+Evidence->Case: caseId Exists
+Evidence->UI: Return 400 : if cnrNumber invalid
+
+Evidence->Workflow: set Workflow status
+Workflow-->Evidence: return Workflow status
+
+Evidence->Evidence: enrich Evidence
+Evidence->UI: Evidence updated
+
+Evidence -> Kafka: Push Evidence payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB

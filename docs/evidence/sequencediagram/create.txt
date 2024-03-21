@@ -1,0 +1,27 @@
+#created using websequencedigrams.com
+
+title Create Evidence
+
+UI->Evidence: Create Evidence
+
+Evidence->Case: cnrNumber Exists
+Case-->Evidence: return true/false
+Evidence->UI: Return 400 : if cnrNumber invalid
+
+Evidence->Hearing: hearingId Exists
+Hearing-->Evidence: return true/false
+Evidence->UI: Return 400 : if hearingId invalid
+
+Evidence->Order: orderId Exists
+Order-->Evidence: return true/false
+Evidence->UI: Return 400 : if orderId invalid
+
+Evidence->Workflow: get Workflow status
+Workflow-->Evidence: return Workflow status "Created"
+
+Evidence->Evidence: enrich evidenceId
+Evidence->UI: Return 201 : Evidence created
+
+Evidence -> Kafka: Push Evidence payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB
