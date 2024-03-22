@@ -19,7 +19,7 @@
               "action": "TYPE DEPOSITION",
               "nextState": "PENDINGSIGNATURE",
               "roles": [
-                "Stenographer"
+                "DEPOSITION_CREATOR"
               ]
             }
           ]
@@ -37,15 +37,14 @@
               "action": "SIGN DEPOSITION",
               "nextState": "PENDINGAPPROVAL",
               "roles": [
-                "Witness"
+                "DEPOSITION_ESIGN"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -63,15 +62,14 @@
               "action": "SIGN DEPOSITION",
               "nextState": "PUBLISHED",
               "roles": [
-                "Judge"
+                "DEPOSITION_PUBLISHER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]

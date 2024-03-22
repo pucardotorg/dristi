@@ -19,7 +19,7 @@
               "action": "CREATE",
               "nextState": "DRAFTED",
               "roles": [
-                "Benchclerk"
+                "ORDER_CREATOR"
               ]
             }
           ]
@@ -37,22 +37,14 @@
               "action": "APPROVE",
               "nextState": "PENDINGESIGN",
               "roles": [
-                "Judge"
-              ]
-            },
-            {
-              "action": "REWORK",
-              "nextState": "REWORK",
-              "roles": [
-                "Judge"
+                "ORDER_APPROVER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -70,16 +62,14 @@
               "action": "E-SIGN",
               "nextState": "PENDINGSTAMPING",
               "roles": [
-                "Judge",
-                "Benchclerk"
+                "ORDER_ESIGN"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -97,15 +87,14 @@
               "action": "STAMP",
               "nextState": "PUBLISHED",
               "roles": [
-                "System"
+                "ORDER_STAMP"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -123,15 +112,14 @@
               "action": "CLOSE",
               "nextState": "COMPLETED",
               "roles": [
-                "System"
+                "ORDER_CLOSER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]

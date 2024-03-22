@@ -19,7 +19,7 @@
               "action": "CREATE",
               "nextState": "SCHEDULED",
               "roles": [
-                "CourtOfficer"
+                "HEARING_CREATOR"
               ]
             }
           ]
@@ -37,15 +37,14 @@
               "action": "NEWDATE",
               "nextState": "FINALIZEDATE",
               "roles": [
-                "Judge"
+                "HEARING_SCHEDULER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -63,22 +62,21 @@
               "action": "ACCEPT",
               "nextState": "SCHEDULEPENDING",
               "roles": [
-                "lawyer"
+                "HEARING_ACCEPTOR"
               ]
             },
             {
               "action": "NEWDATE",
               "nextState": "FINALIZEDATE",
               "roles": [
-                "lawyer"
+                "HEARING_DATE_REQUESTOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -96,15 +94,14 @@
               "action": "APPROVE",
               "nextState": "SCHEDULED",
               "roles": [
-                "Judge"
+                "HEARING_APPROVER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -122,18 +119,14 @@
               "action": "START",
               "nextState": "INPROGRESS",
               "roles": [
-                "Judge",
-                "Typist",
-                "Benchclerk",
-                "Stenographer"
+                "HEARING_START"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -161,8 +154,7 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]

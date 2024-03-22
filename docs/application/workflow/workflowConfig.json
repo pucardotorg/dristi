@@ -19,8 +19,7 @@
               "action": "CREATE",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "Litigant",
-                "Lawyer"
+                "APPLICATION_CREATOR"
               ]
             }
           ]
@@ -38,15 +37,14 @@
               "action": "REQUESTFILERESPONSE",
               "nextState": "PENDINGRESPONSEAPPROVAL",
               "roles": [
-                "Lawyer"
+                "APPLICATION_RESPONDER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -64,22 +62,21 @@
               "action": "APPROVE",
               "nextState": "PENDINGRESPONSE",
               "roles": [
-                "Judge"
+                "APPLICATION_APPROVER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "Judge"
+                "APPLICATION_REJECTOR"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -137,8 +134,7 @@
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
