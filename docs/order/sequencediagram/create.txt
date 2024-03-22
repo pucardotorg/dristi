@@ -1,0 +1,19 @@
+#created using websequencedigrams.com
+
+title Create Order
+
+UI->Order: Create Order
+
+Order->Case: Validate caseId
+Case-->Order: return true/false
+Order->UI: Return 400 : if caseId invalid
+
+Order->Workflow: get Order status
+Workflow-->Order: return Order status 'Drafted"
+
+Order->Order: enrich orderId
+Order->UI: Return 201 : new Order created
+
+Order -> Kafka: Push Order payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB

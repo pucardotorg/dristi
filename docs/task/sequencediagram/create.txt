@@ -1,0 +1,23 @@
+#created using websequencedigrams.com
+
+title Create Task
+
+UI->Task: Create Task
+
+Task->Case: caseId Exists
+Case-->Task: return true/false
+Task->UI: Return 400 : if caseId invalid
+
+Task->Application: applicationId Exists
+Application-->Task: return true/false
+Task->UI: Return 400 : if applicationId invalid
+
+Task->Workflow: get Workflow status
+Task-->Hearing: return Workflow status 'Created"
+
+Task->Hearing: enrich taskId
+Task->UI: Return 201 : Task created
+
+Task -> Kafka: Push Task payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB

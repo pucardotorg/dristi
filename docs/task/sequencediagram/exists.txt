@@ -1,0 +1,12 @@
+#created using websequencedigrams.com
+
+title Task Exists
+
+UI->Task: Task Exists
+
+Task->Task: valdiate taskId
+alt
+Task->UI: Return 200: True (valid taskId)
+else
+Task->UI: Return 200: False (invalid taskId or not found)
+end

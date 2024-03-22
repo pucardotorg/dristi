@@ -1,0 +1,17 @@
+#created using websequencedigrams.com
+
+title Update Hearing
+
+UI->Hearing: Update Hearing
+
+Hearing->Hearing: valdiate HearingId 
+
+Hearing->Workflow: set Workflow status
+Workflow-->Hearing: return Workflow status
+
+Hearing->Hearing: enrich HearingId 
+Hearing->UI: Hearing updated
+
+Hearing -> Kafka: Push Hearing payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB

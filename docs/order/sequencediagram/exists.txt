@@ -1,0 +1,12 @@
+#created using websequencedigrams.com
+
+title Order Exists
+
+UI->Order: Order Exists
+
+Order->Order: valdiate orderId
+alt
+Order->UI: Return 200: True (valid orderId)
+else
+Order->UI: Return 200: False (invalid orderId or not found)
+end
