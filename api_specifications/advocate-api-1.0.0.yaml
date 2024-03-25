@@ -1,12 +1,14 @@
 openapi: 3.0.0
 info:
-  title: Advocate registry
+  title: Advocate and advocate clerk registry
   description: |
-    This document houses API specifications for an advocate registry. For V1, we are capturing only the advocate's contact details + bar number. Eventually, this registry should integrate with a central advocate registry and sync details from there.
+    This document houses API specifications to register court system users - advocate, advocate clerk etc.. This registry sits on top of the base user/individual registries. All users will be registered in the DIGIT individual/user registries with mobile number, name and other basic fields. This registry only stores extra information as needed for dispute resolution systems. While this is a very basic registry currently, this can evolve into a very detailed registry in future versions. Verification of advocate/clerk credentials is left upto the implementation.
   version: 1.0.0
 tags:
   - name: Advocate
-    description: APIs to capture advocate or legal representative information
+    description: APIs to register advocates
+  - name: AdvocateClerk
+    description: APIs to register advocate clerks
 paths:
   /advocate/v1/_create:
     post:
@@ -14,9 +16,9 @@ paths:
         - Advocate
       summary: Register a new advocate
       description: |
-        API to register a new advocate in the system
+        API to register and verify an advocate.
       requestBody:
-        description: Details for the advocate registration + RequestInfo meta data.
+        description: Details for the user registration + RequestInfo meta data.
         content:
           '*/*':
             schema:
@@ -30,7 +32,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdvocateResponse'
         '400':
-          description: Advocate(s) registration failed
+          description: Advocate(s) registration failed. Response body to provide specifics of failure.
           content:
             '*/*':
               schema:
@@ -47,7 +49,7 @@ paths:
           '*/*':
             schema:
               $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CourtCaseRequest
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateRequest
         required: true
       responses:
         '201':
@@ -56,9 +58,125 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CourtCaseResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateResponse
         '400':
-          description: Advocate updation failed
+          description: Advocate updation failed. Response body to provide specifics of failure.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /advocate/v1/_search:
+    post:
+      tags:
+        - Advocate
+      summary: Search for registered advocates
+      requestBody:
+        description: Search criteria + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateSearchRequest
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with advocates matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateResponse
+        '400':
+          description: Advocate search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /advocate/clerk/v1/_create:
+    post:
+      tags:
+        - AdvocateClerk
+      summary: Register a new advocate clerk
+      description: |
+        API to register and verify an advocate clerk
+      requestBody:
+        description: Details for the user registration + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/AdvocateClerkRequest'
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with advocate info updated sudcessfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdvocateClerkResponse'
+        '400':
+          description: Advocate clerk registration failed. Response body to provide specifics of failure. 
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /advocate/clerk/v1/_update:
+    post:
+      tags:
+        - AdvocateClerk
+      summary: Update advocate clerk requests
+      requestBody:
+        description: Details of the registered advocate + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkRequest
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with advocate data updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkResponse
+        '400':
+          description: Advocate clerk updation failed. Response body to provide specifics of failure. 
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /advocate/clerk/v1/_search:
+    post:
+      tags:
+        - AdvocateClerk
+      summary: Search for registered advocate clerk
+      requestBody:
+        description: Search criteria + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkSearchRequest
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with advocate clerks matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkResponse
+        '400':
+          description: Advocate clerk search failed. Refer to response body for specifics.
           content:
             '*/*':
               schema:
@@ -71,7 +189,7 @@ components:
       type: object
       required: [tenantId, userId]
       properties:
-        id:
+        id: 
           type: string
           description: autogenerated id of the case. It is the primary key.
           minLength: 2
@@ -80,11 +198,15 @@ components:
         tenantId:
           type: string
           description: The tenant where this case is operational
-        barNumber:
+        barRegistrationNumber:
           type: string
-          description: Unique bar number assigned to a practicing advocate
+          description: Bar registration number of an advocate
           minLength: 2
           maxLength: 64
+        organisationID:
+          type: string
+          format: uuid
+          description: Organisation/legal firm the advocate belongs to, if any. Optional.
         userId:
           type: string
           description: >-
@@ -96,6 +218,9 @@ components:
             Field used for soft delete of records. Will be false if this entity
             is not active within the system.
           default: true
+        workflow:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         documents:
           type: array
           description: >-
@@ -111,6 +236,95 @@ components:
           description: >-
             Any extra fields that are not captured as first class fields can be
             stored here as key/value pairs. Implementation specific.
+    
+    AdvocateSearchCriteria:
+      type: object
+      properties:
+        id:
+          type: string
+        barRegistrationNumber:
+          type: string
+    
+    AdvocateClerk:
+      type: object
+      required: [tenantId, userId]
+      properties:
+        id: 
+          type: string
+          description: Autogenerated UUID of the user used to uniquely reference this record
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          readOnly: true
+        tenantId:
+          type: string
+          description: The tenant this user belongs to. Advocate clerks typically are registered at the state level.
+          example: kl
+        registrationNumber:
+          type: string
+          description: Bar registration number of an advocate
+          minLength: 2
+          maxLength: 64
+        userId:
+          type: string
+          description: >-
+            The user ID (User registry) of the advocate containing all their
+            details.
+        isActive:
+          type: boolean
+          description: >-
+            Field used for soft delete of records. Will be false if this entity
+            is not active within the system.
+          default: true
+        workflow:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
+        documents:
+          type: array
+          description: >-
+            This can be used to store any relevant documents related to the advocate's practice.
+          items:
+            $ref: >-
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+        additionalDetails:
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+    
+    AdvocateClerkSearchCriteria:
+      type: object
+      properties:
+        id:
+          type: string
+        registrationNumber:
+          type: string
+    
+    AdvocateSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvocateSearchCriteria'
+    
+    AdvocateClerkSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvocateClerkSearchCriteria'
+    
     AdvocateRequest:
       type: object
       properties:
@@ -134,4 +348,26 @@ components:
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-    
+    AdvocateClerkRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvocateClerk'
+    AdvocateClerkResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        cases:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvocateClerk'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
