@@ -1,10 +1,10 @@
-openapi: "3.0.2"
- 
+openapi: "3.0.0"
+
 info:
   title: API specs for Hearing
   description: 
     Hearing API paths and entity is defined in this file.
-  version: "1.0.2"
+  version: "1.0.3"
 
 tags:
   - name: Hearing
@@ -51,7 +51,7 @@ paths:
               $ref: '#/components/schemas/HearingRequest'
         required: true
       responses:
-        "201":
+        "200":
           description: ResponseInfo with hearing(s) updated successfully
           content:
             '*/*':
@@ -87,6 +87,12 @@ paths:
           description: Search by tenantId of case request
           schema:
             type: string
+        - name: cnrNumber
+          in: query
+          description: the cnrNumber of the case whose hearing(s) are being queried
+          required: true
+          schema:
+            type: string
         - name: fromDate
           in: query
           description: search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved
@@ -115,7 +121,7 @@ paths:
           schema:
             type: string
       responses:
-        "201":
+        "200":
           description: ResponseInfo with hearing(s) search successfully
           content:
             '*/*':
@@ -143,7 +149,7 @@ paths:
           type: string
           format: uuid
       responses:
-        "201":
+        "200":
           description: true if exists, else false
           content:
             text/plain:
@@ -189,6 +195,7 @@ components:
           items:
             $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearingList response
+
     HearingSummaryListResponse:
       type: object
       properties:
@@ -223,7 +230,10 @@ components:
           format: uuid
           minLength: 36
           maxLength: 36
-          description: the associated case 
+          description: the associated case
+        cnrNumber:
+          type: string
+          description: The CNR number of the associated case. helps in faster search
         applicationNumber:
           type: string
           description: hearing can also be associated with an application number for a case
@@ -274,6 +284,9 @@ components:
           format: url
           nullable: true
           description: the link for the online vc for participating in the hearing
+        isActive:
+          type: boolean
+          description: to handle soft delete
         documents:
           type: array
           items:

@@ -1,0 +1,12 @@
+#created using websequencedigrams.com
+
+title Application Exists
+
+UI->Hearing: Application Exists
+
+Hearing->Hearing: applicationId Exists
+alt
+Hearing->UI: Return 200: True (valid applicationId)
+else
+Hearing->UI: Return 200: False (invalid applicationId or not found)
+end
