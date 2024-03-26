@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Advocate and advocate clerk registry
   description: |
-    This document houses API specifications to register court system users - advocate, advocate clerk etc.. This registry sits on top of the base user/individual registries. All users will be registered in the DIGIT individual/user registries with mobile number, name and other basic fields. This registry only stores extra information as needed for dispute resolution systems. While this is a very basic registry currently, this can evolve into a very detailed registry in future versions. Verification of advocate/clerk credentials is left upto the implementation.
+    This document houses API specifications to register court system users - advocate, advocate clerk etc.. This registry sits on top of the base user/individual registries. All users will be registered in the DIGIT individual/user registries with mobile number, name and other basic fields. This registry only stores extra information as needed for dispute resolution systems. While this is a very basic registry currently, this can evolve into a very detailed registry in future versions. Verification of advocate/clerk credentials is left to the implementation.
   version: 1.0.0
 tags:
   - name: Advocate
@@ -26,7 +26,7 @@ paths:
         required: true
       responses:
         '201':
-          description: ReponseInfo with advocate info updated sudcessfully
+          description: ResponseInfo with advocate info updated successfully
           content:
             '*/*':
               schema:
@@ -48,19 +48,17 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateRequest
+              $ref: '#/components/schemas/AdvocateRequest'
         required: true
       responses:
         '201':
-          description: ReponseInfo with advocate data updated successfully
+          description: ResponseInfo with advocate data updated successfully
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateResponse
+                $ref: '#/components/schemas/AdvocateResponse'
         '400':
-          description: Advocate updation failed. Response body to provide specifics of failure.
+          description: Advocate update failed. Response body to provide specifics of failure.
           content:
             '*/*':
               schema:
@@ -77,17 +75,15 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateSearchRequest
+              $ref: '#/components/schemas/AdvocateSearchRequest'
         required: true
       responses:
         '201':
-          description: ReponseInfo with advocates matching search criteria
+          description: ResponseInfo with advocates matching search criteria
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateResponse
+                $ref: '#/components/schemas/AdvocateResponse'
         '400':
           description: Advocate search failed. Refer to response body for specifics.
           content:
@@ -112,7 +108,7 @@ paths:
         required: true
       responses:
         '201':
-          description: ReponseInfo with advocate info updated sudcessfully
+          description: ResponseInfo with advocate info updated successfully
           content:
             '*/*':
               schema:
@@ -135,19 +131,17 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkRequest
+              $ref: '#/components/schemas/AdvocateClerkRequest'
         required: true
       responses:
         '201':
-          description: ReponseInfo with advocate data updated successfully
+          description: ResponseInfo with advocate data updated successfully
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkResponse
+                $ref: '#/components/schemas/AdvocateClerkResponse'
         '400':
-          description: Advocate clerk updation failed. Response body to provide specifics of failure. 
+          description: Advocate clerk update failed. Response body to provide specifics of failure.
           content:
             '*/*':
               schema:
@@ -164,17 +158,15 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkSearchRequest
+              $ref: '#/components/schemas/AdvocateClerkSearchRequest'
         required: true
       responses:
         '201':
-          description: ReponseInfo with advocate clerks matching search criteria
+          description: ResponseInfo with advocate clerks matching search criteria
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AdvocateClerkResponse
+                $ref: '#/components/schemas/AdvocateClerkResponse'
         '400':
           description: Advocate clerk search failed. Refer to response body for specifics.
           content:
