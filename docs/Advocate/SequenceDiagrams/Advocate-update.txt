@@ -1,10 +1,12 @@
 @startuml
-title Update Advocate
+title Update Advocate Details
 Actor Advocate as User
 participant RegistrationScreen as UI
-participant AdvocateSvc as A
+Entity AadharServer as Aadhar
 participant IndividualSvc as I
-User -> UI : Modify details of advocate
+participant AdvocateSvc as A
+User -> UI : Modify details
+alt Aadhar not verified
 UI -> Aadhar ++: Verify if user is valid
 alt Verification failed
   return Aadhar not verified
@@ -12,16 +14,17 @@ alt Verification failed
 else Success
   Aadhar -> UI: Aadhar verified
 end
-UI -> A ++: Update details
-A -> I ++: Update Individual 
-return Individual updated
-A -> Workflow ++: Trigger workflow for \n advocate update
+end
+UI -> I ++: Update Individual details
+return Individual payload
+UI -> A ++: Update advocate details
+A -> Workflow ++: Trigger workflow for \n change approval
 return Workflow status
 A -> Kafka: Push advocate payload
 Persister -> Kafka: Read payload
 Persister -> Postgres: Persist data in DB
 Indexer -> Kafka: Read payload
-Indexer -> Elastic: Update data in index
-A -> Notification : Send notification to \n mobile number.
-A -> UI: Advocate update details completed
+Indexer -> Elastic: Push data into index
+A -> Notification : Send notification to \n mobile number with registration number
+A -> UI: Update completed
 @enduml

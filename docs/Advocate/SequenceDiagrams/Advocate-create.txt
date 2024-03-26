@@ -2,8 +2,9 @@
 title Register Advocate
 Actor Advocate as User
 participant RegistrationScreen as UI
-participant AdvocateSvc as A
+Entity AadharServer as Aadhar
 participant IndividualSvc as I
+participant AdvocateSvc as A
 User -> UI : Fill out personal details \n and register self as advocate
 UI -> Aadhar ++: Verify if user is valid
 alt Verification failed
@@ -12,9 +13,10 @@ alt Verification failed
 else Success
   Aadhar -> UI: Aadhar verified
 end
+UI -> I ++: Create Individual with system user flag true \n and isAadharVerified flag true
+return Individual payload
+UI -> UI: Add individualId to Advocate payload
 UI -> A ++: Submit registration
-A -> I ++: Create Individual with \n system user flag true
-return Individual created
 A -> Workflow ++: Trigger workflow for \n advocate approval
 return Workflow status
 A -> Kafka: Push advocate payload
