@@ -10,7 +10,7 @@ alt Aadhar not verified
 UI -> Aadhar ++: Verify if user is valid
 alt Verification failed
   return Aadhar not verified
-  UI -> UI: Show error message and stop registration
+  UI -> UI: Show error message and ask for Aadhar upload
 else Success
   Aadhar -> UI: Aadhar verified
 end
@@ -25,6 +25,5 @@ Persister -> Kafka: Read payload
 Persister -> Postgres: Persist data in DB
 Indexer -> Kafka: Read payload
 Indexer -> Elastic: Push data into index
-A -> Notification : Send notification to \n mobile number with registration number
 A -> UI: Update completed
 @enduml
