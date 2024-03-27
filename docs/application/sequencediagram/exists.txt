@@ -2,11 +2,11 @@
 
 title Application Exists
 
-UI->Hearing: Application Exists
+UI->Application: Application Exists
 
-Hearing->Hearing: applicationId Exists
+Application->Application: applicationId Exists
 alt
-Hearing->UI: Return 200: True (valid applicationId)
+Application->UI: Return 200: True (valid applicationId)
 else
-Hearing->UI: Return 200: False (invalid applicationId or not found)
+Application->UI: Return 200: False (invalid applicationId or not found)
 end

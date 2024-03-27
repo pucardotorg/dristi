@@ -4,14 +4,12 @@ title Create Application
 
 UI->Application: Create Application
 
-
 Application->Case: Validate caseId
 Case-->Application: return true/false
 Application->UI: Return 400 : if caseId invalid
 
-
 Application->Workflow: get Workflow status
-Workflow-->Application: return Workflow status 'Filed"
+Workflow-->Application: return Workflow status "Filed"
 
 Application->Application: enrich applicationId
 Application->UI: Return 201 : Application created

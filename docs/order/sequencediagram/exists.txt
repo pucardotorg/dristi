@@ -4,7 +4,7 @@ title Order Exists
 
 UI->Order: Order Exists
 
-Order->Order: valdiate orderId
+Order->Order: validate orderId
 alt
 Order->UI: Return 200: True (valid orderId)
 else

@@ -4,7 +4,7 @@ title Task Exists
 
 UI->Task: Task Exists
 
-Task->Task: valdiate taskId
+Task->Task: validate taskId
 alt
 Task->UI: Return 200: True (valid taskId)
 else
