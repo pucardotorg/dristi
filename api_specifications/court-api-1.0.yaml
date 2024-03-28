@@ -169,13 +169,13 @@ components:
           type: integer
           format: int32
           description: Court room number to which this court is assigned
-        judgeID:
+        designationID:
           type: string
           format: uuid
-          description: ID of the judge mapped to this court
+          description: ID of the designation from HRMS (ID of 'I Additional Magistrate'). A Judge mapped to this designation in HRMS
         staff:
           type: array
-          description: staff members like steno, FSO, bench clerk etc
+          description: staff members like steno, FSO, bench clerk etc. this will be employeeID from HRMS
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/User'
 

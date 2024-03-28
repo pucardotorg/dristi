@@ -237,7 +237,10 @@ components:
           description: TODO this needs to change to be able to accommodate the specific schema based on if it is summon, bail, warrant or something else
 
         amount:
-          $ref: '#/components/schemas/Amount'
+          type: array
+          description: payable amount related to the task, for example fees for summons and then distance based additional charges
+          items:
+            $ref: '#/components/schemas/Amount'
           
         status:
           type: string

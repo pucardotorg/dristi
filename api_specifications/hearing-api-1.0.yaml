@@ -212,8 +212,11 @@ components:
       description: a case can have multiple hearings. this represents one of the many hearings related to the case
       type: object
       required: [tenantId, hearingType, status]
-      oneOf:
-        - required: [filingNumber, caseNumber]
+      oneOf: 
+        - required: 
+            - caseId
+        - required: 
+            - caseNumber
       properties:
         id:
           type: string
@@ -231,14 +234,22 @@ components:
           minLength: 36
           maxLength: 36
           description: the associated case
-        cnrNumber:
+        caseNumber:
           type: string
           description: The CNR number of the associated case. helps in faster search
-        applicationNumber:
-          type: string
-          description: hearing can also be associated with an application number for a case
+        applicationNumbers:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36            
+            description: hearing can also be associated with an application number for a case
         hearingType:
           type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
           description: This field holds information about purpose of hearing. Master Data ID
           example: admission, trail, judgment, evidence, plea
         status:
@@ -278,6 +289,9 @@ components:
           type: array
           items:
             type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
             description: the hearing transcript IDs
         vcLink:
           type: string
@@ -291,7 +305,6 @@ components:
           type: array
           items:
             $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
-
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store for a hearing.
