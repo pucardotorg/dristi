@@ -1,0 +1,13 @@
+{
+  "tenantId": "pg.citya",
+  "module": "Case",
+  "CaseCategory" : [
+  {
+    "id": "1",
+    "category": "CIVIL",
+    "displayName": "CIVIL",
+    "isActive": false
+  }]
+  }
+
+

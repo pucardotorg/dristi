@@ -1,0 +1,190 @@
+openapi: "3.0.0"
+
+info:
+  title: API specs for eCourts
+  description: 
+    Court Service is defined in this file. This represents a specific judge along with associated staff
+  version: 1.0.0
+
+tags:
+  - name: Court
+
+paths:
+  /court/v1/create:
+    post:
+      tags:
+        - Court
+      summary: create court requests.
+      requestBody:
+        description: details for new court
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CourtRequest'
+        required: true
+      responses:
+        "201":
+          description: ResponseInfo with court(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CourtResponse'
+        "400":
+          description: court(s) creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+      x-codegen-request-body-name: CourtRequest
+
+  /court/v1/update:
+    post:
+      tags:
+        - Court
+      summary: update court requests.
+      requestBody:
+        description: updating court details
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CourtRequest'
+        required: true
+      responses:
+        "201":
+          description: ResponseInfo with court(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CourtResponse'
+        "400":
+          description: court(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+      x-codegen-request-body-name: CourtRequest
+
+  /court/v1/search:
+    post:
+      tags:
+        - Court
+      summary: Get court requests
+      description: |
+        Gets the list of court requests for a particular ULB based on search criteria.
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId
+          schema:
+            type: string
+        - name: establishment
+          in: query
+          description: Search by establishment
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: Search by name of the court
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: No of record return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: offset
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          description: sorted by ascending by default if this parameter is not provided
+          schema:
+            type: string
+      responses:
+        "201":
+          description: ResponseInfo with hearing(s) search successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CourtResponse'
+        "400":
+          description: hearing(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+  
+
+
+components:
+  schemas:
+    CourtRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        hearing:
+          $ref: '#/components/schemas/Court'
+      description: This object holds information about the court request
+
+    CourtResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        hearing:
+          $ref: '#/components/schemas/Court'
+      description: This object holds information about the court response
+
+    Court:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: auto generated primary for internal reference
+          readOnly: true
+        tenantId:
+          type: string
+          description: This is tenantId of the case
+        name:
+          type: string
+          description: name of the court like Court of I Additional Magistrate
+        state:
+          type: string
+          description: State code from Master data like Kerala
+        district:
+          type: string
+          description: district code from Master Data
+        establishment:
+          type: string
+          description: name of the establishment this court belongs to like Additional Magistrate Unit
+        courtRoom:
+          type: integer
+          format: int32
+          description: Court room number to which this court is assigned
+        judgeID:
+          type: string
+          format: uuid
+          description: ID of the judge mapped to this court
+        staff:
+          type: array
+          description: staff members like steno, FSO, bench clerk etc
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/User'
+
+
+        additionalDetails:
+          type: string
+          description: This field is meant to hold any extra information that we want to store for a hearing.
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+        

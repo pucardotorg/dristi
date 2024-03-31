@@ -1,0 +1,39 @@
+@startuml
+title Register Advocate
+Actor Advocate as User
+participant RegistrationScreen as UI
+Entity AadharServer as Aadhar
+participant IndividualSvc as I
+participant AdvocateSvc as A
+User -> UI: Fill out personal details \n and click on Submit
+UI -> Aadhar ++: Verify if user is valid
+alt Verification failed
+  return Aadhar not verified
+  UI -> UI: Show error message. Upload ID card instead.
+else Success
+  Aadhar -> UI: Aadhar verified
+end
+UI -> I ++: Create Individual with system user flag true \n and isAadharVerified flag true
+return Individual payload
+UI -> UI: Add individualId to Advocate payload
+UI -> A ++: Submit registration
+A -> I ++: Search for individual ID
+return Search response
+alt Search response empty
+   A -> UI: 400: Registration failed. Individual not found.
+else Individual found
+   A -> IDGen ++: Generate ID for registration number
+   return ID list
+   A -> A: Enrich input payload with ID
+   A -> Workflow ++: Trigger workflow for \n advocate approval
+   return Workflow status
+   A -> Kafka: Push advocate payload
+   Persister -> Kafka: Read payload
+   Persister -> Postgres: Persist data in DB
+   Indexer -> Kafka: Read payload
+   Indexer -> Elastic: Push data into index
+   A -> Notification : Send notification to \n mobile number with registration number
+   A -> UI: Advocate registration completed
+   UI -> User: SMS notification with \n registration application number
+End
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+title File a Case
+participant UI as UI
+participant Case as CMS
+UI -> CMS : File a case
+CMS -> MDMS ++: Retrieve all MDMS data for service \n in one go.
+return MDMS data for Case
+CMS -> CMS: Validate MDMS data
+CMS -> UI: Return 400 if data invalid
+CMS -> Advocate ++: Fetch advocate Ids
+return Advocate info
+CMS -> CMS: Validate advocate information
+CMS -> HRMS ++: Fetch Judge info from HRMS
+return employee details
+CMS -> CMS: Validate Judge ID
+CMS -> IDGen ++: Request formatted filing number
+return formatted IDs
+CMS -> CMS: Enrich filing number in payload
+CMS -> Workflow ++ : Transition to Case under scrutiny
+return Workflow status
+CMS -> UI : Court case created
+@enduml

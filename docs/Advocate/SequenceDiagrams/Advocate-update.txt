@@ -1,0 +1,29 @@
+@startuml
+title Update Advocate Details
+Actor Advocate as User
+participant RegistrationScreen as UI
+Entity AadharServer as Aadhar
+participant IndividualSvc as I
+participant AdvocateSvc as A
+User -> UI : Modify details
+alt Aadhar not verified
+UI -> Aadhar ++: Verify if user is valid
+alt Verification failed
+  return Aadhar not verified
+  UI -> UI: Show error message and ask for Aadhar upload
+else Success
+  Aadhar -> UI: Aadhar verified
+end
+end
+UI -> I ++: Update Individual details
+return Individual payload
+UI -> A ++: Update advocate details
+A -> Workflow ++: Trigger workflow for \n change approval
+return Workflow status
+A -> Kafka: Push advocate payload
+Persister -> Kafka: Read payload
+Persister -> Postgres: Persist data in DB
+Indexer -> Kafka: Read payload
+Indexer -> Elastic: Push data into index
+A -> UI: Update completed
+@enduml

@@ -1,0 +1,21 @@
+#created using websequencedigrams.com
+
+title Update Hearing
+
+UI->Hearing: Update Hearing
+
+Hearing->Hearing: HearingId Exists
+Hearing->UI: Return 400 : if HearingId invalid
+
+Hearing->Case: caseId Exists
+Hearing->UI: Return 400 : if caseId invalid
+
+Hearing->Workflow: set Workflow status
+Workflow-->Hearing: return Workflow status
+
+Hearing->Hearing: enrich Hearing
+Hearing->UI: Hearing updated
+
+Hearing -> Kafka: Push Hearing payload to topic
+Persister -> Kafka: Read payload
+Persister -> Postgres: Create records in DB

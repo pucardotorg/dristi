@@ -1,0 +1,19 @@
+@startuml
+title Register Litigant
+Actor Litigant as User
+participant RegistrationScreen as UI
+Entity AadharServer as Aadhar
+participant IndividualSvc as I
+User -> UI : Fill and submit registration details
+UI -> Aadhar ++: Verify if user is valid
+alt Verification failed
+  return Aadhar not verified
+  UI -> UI: Show error message and ask for other ID upload
+else Success
+  Aadhar -> UI: Aadhar verified
+  UI -> UI: Set isAadharVerified flag true
+end
+UI -> I ++: Create individual with isSystemUser flag true
+return Individual payload
+UI -> UI: Registration completed
+@enduml

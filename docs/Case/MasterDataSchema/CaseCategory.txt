@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Generated schema for Root",
+  "type": "object",
+  "properties": {
+    "tenantId": {
+      "type": "string"
+    },
+    "module": {
+      "type": "string"
+    },
+    "CaseCategory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "displayName",
+          "isActive"
+        ]
+      }
+    }
+  },
+  "required": [
+    "tenantId",
+    "module",
+    "CaseCategory"
+  ]
+}

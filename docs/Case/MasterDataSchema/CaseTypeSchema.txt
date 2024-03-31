@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": “CaseType master schema”,
+  "type": "object",
+  "properties": {
+    "tenantId": {
+      "type": "string"
+    },
+    "module": {
+      "type": "string"
+    },
+    "CaseType": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "displayName",
+          "isActive"
+        ]
+      }
+    }
+  },
+  "required": [
+    "tenantId",
+    "module",
+    "CaseType"
+  ]
+}
