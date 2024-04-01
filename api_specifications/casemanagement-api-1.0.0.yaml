@@ -54,7 +54,7 @@ paths:
           '*/*':
             schema:
               $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CourtCaseRequest
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseManagementRequest
         required: true
       responses:
         '201':
@@ -63,7 +63,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CourtCaseResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseManagementResponse
         '400':
           description: Case(s) updation failed
           content:
@@ -73,7 +73,7 @@ paths:
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
       x-codegen-request-body-name: caseRequest
   /casemanagement/v1/_exists:
-    get:
+    post:
       tags:
         - CaseManagementService
       summary: check if a specific case exists by using case number
@@ -83,7 +83,7 @@ paths:
           '*/*':
             schema:
               $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsRequest
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseSearchRequest
         required: true
       responses:
         '201':
@@ -100,7 +100,33 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorResponse
-  /casemanagement/witness/v1/_create:
+  /casemanagement/v1/_search:
+    post:
+      tags:
+        - CaseManagement
+      summary: Search for cases
+      requestBody:
+        description: Search criteria + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseSearchRequest'
+        required: true
+      responses:
+        '201':
+          description: ResponseInfo with cases matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseManagementResponse'
+        '400':
+          description: Case search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/witness/v1/_create:
     post:
       tags:
         - Witness
@@ -127,7 +153,7 @@ paths:
             '*/*':
               schema:
                 $ref: https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes  
-  /casemanagement/witness/v1/_delete:
+  /case/witness/v1/_delete:
     post:
       tags:
         - Witness
@@ -157,7 +183,7 @@ paths:
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 components:
   schemas:
-    CourtCase:
+    CaseManager:
       type: object
       required: [tenantId]
       properties:
@@ -173,6 +199,10 @@ components:
           description: This is tenantId of the case based on the state.
           minLength: 2
           maxLength: 64
+        case:
+          type: object
+          description: The case object containing all the case registry details
+          $ref: './components/schemas/Case'
         workflow:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
@@ -205,7 +235,7 @@ components:
           type: string
           description: >-
             Case UUID from the case registry.
-        userID:
+        individualID:
           type: string
           description: Individual/user who is appearing as witness in the case.
         remarks:
@@ -252,7 +282,7 @@ components:
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
-    CourtCaseRequest:
+    CaseManagementRequest:
       type: object
       properties:
         requestInfo:
@@ -262,7 +292,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtCase'
-    CourtCaseResponse:
+    CaseManagementResponse:
       type: object
       properties:
         responseInfo:
@@ -276,7 +306,7 @@ components:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
     
-    CaseExistsRequest:
+    CaseSearchRequest:
       type: object
       properties:
         requestInfo:
