@@ -1,13 +1,12 @@
 package org.pucar.web.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
-import org.pucar.web.models.AdvocateClerkRequest;
-import org.pucar.web.models.AdvocateClerkResponse;
-import org.pucar.web.models.AdvocateClerkSearchRequest;
-import org.pucar.web.models.AdvocateRequest;
-import org.pucar.web.models.AdvocateResponse;
-import org.pucar.web.models.AdvocateSearchRequest;
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.service.AdvocateRegistrationService;
+import org.pucar.util.ResponseInfoFactory;
+import org.pucar.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +31,12 @@ public class AdvocateApiController {
 	private final ObjectMapper objectMapper;
 
 	private final HttpServletRequest request;
+
+	@Autowired
+	private AdvocateRegistrationService advocateRegistrationService;
+
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
 	public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -95,16 +100,16 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<AdvocateResponse>(objectMapper.readValue(
-						"{  \"cases\" : [ {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  }, {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  } ],  \"pagination\" : {    \"offSet\" : 5.637376656633329,    \"limit\" : 59.621339166831824,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 2.3021358869347655,    \"order\" : \"\"  },  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
-						AdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
+            List<Advocate> advocateList = advocateRegistrationService.registerAdvocateRequest(body);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+            AdvocateResponse advocateResponse = AdvocateResponse.builder().cases(advocateList).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+//				return new ResponseEntity<AdvocateResponse>(objectMapper.readValue(
+//						"{  \"cases\" : [ {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  }, {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  } ],  \"pagination\" : {    \"offSet\" : 5.637376656633329,    \"limit\" : 59.621339166831824,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 2.3021358869347655,    \"order\" : \"\"  },  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
+//						AdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);
+        }
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)

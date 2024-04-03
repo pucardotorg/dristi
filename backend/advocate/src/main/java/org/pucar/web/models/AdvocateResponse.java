@@ -3,6 +3,7 @@ package org.pucar.web.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,8 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AdvocateResponse {
-	@JsonProperty("responseInfo")
 
+	@JsonProperty("responseInfo")
 	@Valid
 	private ResponseInfo responseInfo = null;
 
@@ -33,7 +34,6 @@ public class AdvocateResponse {
 	private List<Advocate> cases = null;
 
 	@JsonProperty("pagination")
-
 	@Valid
 	private Pagination pagination = null;
 

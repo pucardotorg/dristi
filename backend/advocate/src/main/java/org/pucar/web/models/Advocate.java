@@ -29,42 +29,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Advocate {
-	@JsonProperty("id")
 
+	@JsonProperty("id")
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	@Size(min = 2, max = 128)
 	private String tenantId = null;
 
 	@JsonProperty("applicationNumber")
-
 	@Size(min = 2, max = 64)
 	private String applicationNumber = null;
 
 	@JsonProperty("barRegistrationNumber")
-
 	@Size(min = 2, max = 64)
 	private String barRegistrationNumber = null;
 
 	@JsonProperty("organisationID")
-
 	@Valid
 	private UUID organisationID = null;
 
 	@JsonProperty("individualId")
-
 	private String individualId = null;
 
 	@JsonProperty("isActive")
-
 	private Boolean isActive = true;
 
 	@JsonProperty("workflow")
-
 	@Valid
 	private Workflow workflow = null;
 
@@ -73,12 +66,10 @@ public class Advocate {
 	private List<Document> documents = null;
 
 	@JsonProperty("auditDetails")
-
 	@Valid
 	private AuditDetails auditDetails = null;
 
 	@JsonProperty("additionalDetails")
-
 	private Object additionalDetails = null;
 
 	public Advocate addDocumentsItem(Document documentsItem) {
