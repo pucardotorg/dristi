@@ -51,8 +51,8 @@ paths:
               $ref: '#/components/schemas/CaseRequest'
         required: true
       responses:
-        '201':
-          description: ReponseInfo with court case details updated successfully
+        '200':
+          description: ReponseInfo with case details updated successfully
           content:
             '*/*':
               schema:
@@ -77,7 +77,7 @@ paths:
               $ref: '#/components/schemas/CaseSearchRequest'
         required: true
       responses:
-        '201':
+        '200':
           description: ResponseInfo with cases matching search criteria
           content:
             '*/*':
@@ -101,10 +101,10 @@ paths:
           '*/*':
             schema:
               $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsRequest
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseSearchRequest
         required: true
       responses:
-        '201':
+        '200':
           description: ReponseInfo with case(s) search successfully
           content:
             '*/*':
@@ -163,7 +163,7 @@ components:
           type: string
           description: Description/summary/prayer for relief
           minLength: 2
-          maxLength: 2500
+          maxLength: 10000
         filingNumber:
           type: string
           description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
@@ -175,9 +175,10 @@ components:
             This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
           minLength: 2
           maxLength: 32
+          example: PBJL01-123556-2024
         accessCode:
           type: string
-          description: Case access code string to enable anyone to join & access the case details. Should be system generated as per a specified format.
+          description: Case access code string to enable anyone to join & access the case details. Should be system generated as per a specified format and stored in an encrypted fashion.
           readOnly: true
         courtId:
           type: string
@@ -207,6 +208,9 @@ components:
             Date of case filing in epoch time. This is the date when the case
             entered the judicial system.
           example: 1709542147
+        registrationDate:
+          type: string
+          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
         caseDetails:
           type: object
           description: Field to store all case type specific details. These can vary depending on case type.
@@ -251,6 +255,9 @@ components:
         remarks:
           type: string
           description: This field can hold any other additional remarks about the case
+        workflow:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
           type: object
           description: >-
@@ -279,7 +286,7 @@ components:
           description: This is tenantId of the case.
           minLength: 2
           maxLength: 64
-        statutes:
+        statute:
           type: string
           description: >-
             The statute ID from master data. 
@@ -312,10 +319,12 @@ components:
         relationshipType:
           type: string
           example: PARENT, CHILD, PRIOR_APPEAL
-        caseNumbers:
-          type: array
-          items:
-            type: string
+        caseNumber:
+          type: string
+          description: Unique case number
+        referenceUri:
+          type: string
+          description: A URI reference to find the case, if available
         isActive:
           type: boolean
           description: Field to indicate soft delete of record
@@ -394,7 +403,7 @@ components:
         tenantId:
           type: string
           description: The tenant where this case is operational
-        referenceId:
+        caseId:
           type: string
           description: Refers to the case ID
         partyCategory:
