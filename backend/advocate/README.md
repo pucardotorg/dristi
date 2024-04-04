@@ -16,3 +16,4 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+# Example: server.port=8081
