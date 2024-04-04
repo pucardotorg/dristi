@@ -195,21 +195,24 @@ components:
           maxLength: 128
         applicationNumber:
           type: string
-          description: Formatted ID to track the advocate's registration application. This will be shown in notifications and UI
+          description: Formatted ID to track the advocate's registration application. This will be shown in notifications and UI. 
           minLength: 2
           maxLength: 64
         barRegistrationNumber:
           type: string
-          description: Bar registration number of an advocate
+          description: Bar registration number of an advocate issued by the bar council. This is to be validated.
           minLength: 2
           maxLength: 64
         advocateType:
           type: string
-          description: Type of advocate
+          description: Type of advocate to be derived from master data
+          example: PROSECUTOR, PUBLIC DEFENDER 
+          minLength: 2
+          maxLength: 64
         organisationID:
           type: string
           format: uuid
-          description: Organisation/legal firm the advocate belongs to, if any. Optional.
+          description: Organisation/legal firm the advocate belongs to, if any. Organisation to be created in the organisation registry and ID linked here. Optional.
         individualId:
           type: string
           description: >-
@@ -247,6 +250,8 @@ components:
           type: string
         barRegistrationNumber:
           type: string
+        applicationNumber:
+          type: string
     
     AdvocateClerk:
       type: object
@@ -268,6 +273,11 @@ components:
         applicationNumber:
           type: string
           description: Formatted application number for registration as advocate clerk.
+          minLength: 2
+          maxLength: 64
+        stateRegnNumber:
+          type: string
+          description: Registration number of the advocate clerk at the state level. 
           minLength: 2
           maxLength: 64
         individualId:
@@ -305,7 +315,9 @@ components:
       properties:
         id:
           type: string
-        registrationNumber:
+        applicationNumber:
+          type: string
+        stateRegnNumber:
           type: string
     
     AdvocateSearchRequest:
@@ -336,7 +348,7 @@ components:
         requestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        cases:
+        advocates:
           type: array
           items:
             $ref: '#/components/schemas/Advocate'
@@ -346,7 +358,7 @@ components:
         responseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        cases:
+        advocates:
           type: array
           items:
             $ref: '#/components/schemas/Advocate'
@@ -359,7 +371,7 @@ components:
         requestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        cases:
+        clerks:
           type: array
           items:
             $ref: '#/components/schemas/AdvocateClerk'
@@ -369,7 +381,7 @@ components:
         responseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        cases:
+        clerks:
           type: array
           items:
             $ref: '#/components/schemas/AdvocateClerk'
