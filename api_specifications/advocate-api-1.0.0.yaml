@@ -92,7 +92,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   
-  /advocate/clerk/v1/_create:
+  /clerk/v1/_create:
     post:
       tags:
         - AdvocateClerk
@@ -121,7 +121,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   
-  /advocate/clerk/v1/_update:
+  /clerk/v1/_update:
     post:
       tags:
         - AdvocateClerk
@@ -148,7 +148,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   
-  /advocate/clerk/v1/_search:
+  /clerk/v1/_search:
     post:
       tags:
         - AdvocateClerk
@@ -203,6 +203,9 @@ components:
           description: Bar registration number of an advocate
           minLength: 2
           maxLength: 64
+        advocateType:
+          type: string
+          description: Type of advocate
         organisationID:
           type: string
           format: uuid

@@ -51,8 +51,8 @@ paths:
               $ref: '#/components/schemas/CaseRequest'
         required: true
       responses:
-        '201':
-          description: ReponseInfo with court case details updated successfully
+        '200':
+          description: ReponseInfo with case details updated successfully
           content:
             '*/*':
               schema:
@@ -64,6 +64,60 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/v1/_search:
+    post:
+      tags:
+        - Case
+      summary: Search for cases
+      requestBody:
+        description: Search criteria + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with cases matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseResponse'
+        '400':
+          description: Case search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/v1/_exists:
+    post:
+      tags:
+        - CaseManagementService
+      summary: check if a specific case exists by using case number
+      requestBody:
+        description: Details for the case(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: >-
+                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseSearchRequest
+        required: true
+      responses:
+        '200':
+          description: ReponseInfo with case(s) search successfully
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsResponse
+        '400':
+          description: Search failed
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorResponse
 components:
   schemas:
     Case:
@@ -104,11 +158,12 @@ components:
           description: A simple one-liner summary title used to refer to the case.
           minLength: 2
           maxLength: 512
+          readOnly: true
         caseDescription:
           type: string
           description: Description/summary/prayer for relief
           minLength: 2
-          maxLength: 2500
+          maxLength: 10000
         filingNumber:
           type: string
           description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
@@ -119,12 +174,17 @@ components:
           description: >-
             This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
           minLength: 2
-          maxLength: 64
+          maxLength: 32
+          example: PBJL01-123556-2024
+        accessCode:
+          type: string
+          description: Case access code string to enable anyone to join & access the case details. Should be system generated as per a specified format and stored in an encrypted fashion.
+          readOnly: true
         courtId:
           type: string
           description: >-
-            The court or other ADR entity ID that will be trying/hearing the
-            case. In the case of e-courts, it will be courtId.
+            The courtroom or other ADR entity ID that will be trying/hearing the
+            case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms. 
           minLength: 2
           maxLength: 64
         benchId:
@@ -136,14 +196,9 @@ components:
             ID for a bench is stored here. 
           minLength: 2
           maxLength: 64
-        judgeId:
-          type: string
-          description: >-
-            Employee ID of the individual Judge assigned to the case. Bench or
-            judge is assigned depending on the court/case type. 
         linkedCases:
           type: array
-          description: Case numbers of related cases - child cases, appealed case etc
+          description: Case numbers of related cases - child cases, appealed case etc. 
           items:
             $ref: '#/components/schemas/LinkedCase'
         filingDate:
@@ -153,16 +208,22 @@ components:
             Date of case filing in epoch time. This is the date when the case
             entered the judicial system.
           example: 1709542147
+        registrationDate:
+          type: string
+          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
+        caseDetails:
+          type: object
+          description: Field to store all case type specific details. These can vary depending on case type.
         caseCategory:
           type: string
           description: Case category from master data
           example: CIVIL, CRIMINAL
           minLength: 2
           maxLength: 64
-        caseType:
+        natureOfPleading:
           type: string
           description: isFresh or appeal or any other case type as required
-          example: FRESH, APPELLATE etc..
+          example: Original Suit,Complaint,Interim Application,First Appeal,Second Appeal,Review,Revision,Reference
           minLength: 2
           maxLength: 64
         statutesAndSections:
@@ -176,7 +237,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Party'
-          minItems: 1
+          minItems: 2
         representatives:
           type: array
           items:
@@ -194,6 +255,9 @@ components:
         remarks:
           type: string
           description: This field can hold any other additional remarks about the case
+        workflow:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
           type: object
           description: >-
@@ -222,7 +286,7 @@ components:
           description: This is tenantId of the case.
           minLength: 2
           maxLength: 64
-        statutes:
+        statute:
           type: string
           description: >-
             The statute ID from master data. 
@@ -255,10 +319,12 @@ components:
         relationshipType:
           type: string
           example: PARENT, CHILD, PRIOR_APPEAL
-        caseNumbers:
-          type: array
-          items:
-            type: string
+        caseNumber:
+          type: string
+          description: Unique case number
+        referenceUri:
+          type: string
+          description: A URI reference to find the case, if available
         isActive:
           type: boolean
           description: Field to indicate soft delete of record
@@ -294,10 +360,10 @@ components:
           description: The tenant where this case is operational currently
         advocateId:
           type: string
-          description: The advocate ID associated with the case
+          description: The advocate ID associated with the case.
         caseId:
           type: string
-          description: The CNR number of the case available post admission in case the advocate is involved only post admission.
+          description: The caseId -- UUID -- that this mapping is for.
         representing:
           type: array
           items:
@@ -337,7 +403,7 @@ components:
         tenantId:
           type: string
           description: The tenant where this case is operational
-        referenceId:
+        caseId:
           type: string
           description: Refers to the case ID
         partyCategory:
@@ -349,12 +415,12 @@ components:
         organisationID:
           type: string
           description: >-
-            If the party is an organiation, refers to the org ID which will
+            If the party is an organisation, refers to the org ID which will
             contain details of the org
-        userId:
+        individualId:
           type: string
           description: >-
-            The user ID of the complainant. In case party is of type org, this
+            The individual ID of the complainant. In case party is of type org, this
             is the person representing the company in the case. This entity
             holds all the details of the user including their name, address,
             contact etc..
@@ -420,7 +486,7 @@ components:
           items:
             $ref: '#/components/schemas/Case'
     
-    CaseExistsRequest:
+    CaseSearchRequest:
       type: object
       properties:
         requestInfo:
@@ -445,6 +511,8 @@ components:
     CaseCriteria:
       type: object
       properties:
+        caseId:
+          type: string
         cnrNumber:
           type: string
         filingNumber:
