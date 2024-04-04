@@ -37,8 +37,7 @@ public class AdvocateRegistrationRepository {
             log.info("Final query: {}", query);
             try {
                 List<Advocate> advocates = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-                assert advocates != null;
-                if(!advocates.isEmpty()){
+                if(advocates != null){
                     advocateList.addAll(advocates);
                 }
             } catch (DataAccessException e) {
