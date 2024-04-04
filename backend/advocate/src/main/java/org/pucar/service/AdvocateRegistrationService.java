@@ -2,15 +2,19 @@ package org.pucar.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
 import org.pucar.repository.AdvocateRegistrationRepository;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
+import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -54,4 +58,22 @@ public class AdvocateRegistrationService {
         // Return the response back to user
         return body.getAdvocates();
     }
+
+public List<Advocate> searchAdvocateApplications(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria) {
+    // Fetch applications from database according to the given search criteria
+    List<Advocate> applications = advocateRegistrationRepository.getApplications(advocateSearchCriteria);
+
+    // If no applications are found matching the given criteria, return an empty list
+    if(CollectionUtils.isEmpty(applications))
+        return new ArrayList<>();
+
+    // Enrich
+
+//
+//    //WORKFLOW INTEGRATION
+
+
+    // Otherwise, return the found applications
+    return applications;
+}
 }
