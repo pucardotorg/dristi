@@ -12,13 +12,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AdvocateRegistrationRepository {
 
-    @Autowired
-    private AdvocateRegistrationQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private AdvocateRegistrationRowMapper rowMapper;
-
 }

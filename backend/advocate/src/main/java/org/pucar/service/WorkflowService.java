@@ -75,7 +75,7 @@ public class WorkflowService {
             }
             return processInstance;
         } catch (Exception e) {
-            log.error("Error getting process instance for BTR: {}", e.getMessage());
+            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
             throw new CustomException();
         }
     }

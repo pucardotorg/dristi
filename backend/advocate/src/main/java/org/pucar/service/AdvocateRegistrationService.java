@@ -42,7 +42,7 @@ public class AdvocateRegistrationService {
         // Enrich applications
         enrichmentUtil.enrichAdvocateRegistration(body);
 
-        // Enrich/Upsert user in upon registration
+        //Enrich/Upsert user in upon registration
         //userService.callUserService(body);
 
         // Initiate workflow for the new application-

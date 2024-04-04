@@ -16,11 +16,7 @@ public class AdvocateRegistrationValidator {
     public void validateAdvocateRegistration(AdvocateRequest advocateRequest) throws CustomException{
         advocateRequest.getAdvocates().forEach(cases -> {
             if(ObjectUtils.isEmpty(cases.getTenantId()))
-                throw new CustomException("EG_BT_APP_ERR", "tenantId is mandatory for creating advocate");
+                throw new CustomException("EG_ADV_APP_ERR", "tenantId is mandatory for creating advocate");
         });
     }
-
-//    public BirthRegistrationApplication validateApplicationExistence(BirthRegistrationApplication birthRegistrationApplication) {
-//        return repository.getApplications(BirthApplicationSearchCriteria.builder().applicationNumber(birthRegistrationApplication.getApplicationNumber()).build()).get(0);
-//    }
 }
