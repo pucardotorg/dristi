@@ -4,7 +4,7 @@ info:
   title: API specs for Application
   description:
     Application API paths and entity is defined in this file.
-  version: "1.0.1"
+  version: "1.0.0"
 
 servers:
   - url: ""
@@ -194,6 +194,7 @@ components:
 
     Application:
       type: object
+      required: [tenantId, createdDate, appicationType, applicationType, isActive]
       properties:
         id:
           type: string
@@ -244,7 +245,7 @@ components:
           type: boolean
           description: to handle soft delete
         statuteSection:
-          $ref: 'https://raw.githubusercontent.com/pucardotorg/pucardpg/api_specs/api_specifications/case-api-1.0.0.yaml#/components/schemas/StatuteSection'
+          $ref: './case-api-1.0.0.yaml#/components/schemas/StatuteSection'
         documents:
           type: array
           items:

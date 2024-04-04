@@ -232,9 +232,9 @@ components:
           type: string
           description: there will be various types of tasks, that will define their own schema for information required. This type will help identify what schema to pick from MDMS
           example: document submission, summons, bail.cash, bail.surety warrant
-        specialFields:
-          type: string
-          description: TODO this needs to change to be able to accommodate the specific schema based on if it is summon, bail, warrant or something else
+        taskDetails:
+          type: object
+          description: fields specific to task type like summons, bail, warrant, based on schema defined in MDMS. It will also have details for things like delivery channel like ePost, NSTEP, iCoPs, etc
 
         amount:
           $ref: '#/components/schemas/Amount'
@@ -254,11 +254,7 @@ components:
               description: ID of the person if the person is in the system, in which case the name field can be left blank
             name:
               type: string
-              description: name of the person if not in the system 
-        deliveryChannel:
-          type: string
-          description: if task has a delivery channel associated with it, then this will point to it via Master data
-          example: ePost, NSTEP, iCoPs
+              description: name of the person if not in the system
         isActive:
           type: boolean
           description: to handle soft delete

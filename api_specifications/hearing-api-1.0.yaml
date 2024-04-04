@@ -4,7 +4,7 @@ info:
   title: API specs for Hearing
   description: 
     Hearing API paths and entity is defined in this file.
-  version: "1.0.3"
+  version: "1.0.0"
 
 tags:
   - name: Hearing
@@ -259,21 +259,7 @@ components:
           type: array
           description: this field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
           items:
-            type: object
-            properties:
-              name:
-                type: string
-                description: name of the person
-              type:
-                type: string
-                description: the type of the person
-                example: complainant, respondent, lawyer, witness
-              associatedWith:
-                type: string
-                description: Name of the person, this person is associated like for example lawyer of whom, witness of whom?
-              wasPresent:
-                type: boolean
-                description: their attendance status for the hearing. this will updated at the time or after the hearing
+            $ref: '#/components/schemas/People'
         transcript:
           type: array
           items:
@@ -331,5 +317,24 @@ components:
           type: string
           description: refers to Hearing.notes
 
+    People:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          description: name of the person
+        type:
+          type: string
+          description: the type of the person
+          example: complainant, respondent, lawyer, witness
+        associatedWith:
+          type: string
+          description: Name of the person, this person is associated like for example lawyer of whom, witness of whom?
+        wasPresent:
+          type: boolean
+          description: their attendance status for the hearing. this will updated at the time or after the hearing
+        
 
 x-original-swagger-version: "2.0"
