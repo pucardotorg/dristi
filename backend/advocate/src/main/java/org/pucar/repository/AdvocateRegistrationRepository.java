@@ -29,6 +29,7 @@ public class AdvocateRegistrationRepository {
     private AdvocateRegistrationRowMapper rowMapper;
 
     public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria) {
+        //test
         List<Advocate> advocateList = null;
         for (AdvocateSearchCriteria advocateSearchCriteria : searchCriteria
         ) {
