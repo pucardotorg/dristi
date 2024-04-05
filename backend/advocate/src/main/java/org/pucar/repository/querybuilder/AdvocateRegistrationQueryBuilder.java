@@ -19,7 +19,12 @@ public class AdvocateRegistrationQueryBuilder {
         try {
             if (!ObjectUtils.isEmpty(criteria.getApplicationNumber())) {
                 addClauseIfRequired(query, preparedStmtList);
-                query.append(" adv.applicationnumber = ? ");
+                query.append(" adv.id = ? ");
+                preparedStmtList.add(criteria.getId());
+            }
+            if (!ObjectUtils.isEmpty(criteria.getApplicationNumber())) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" adv.applicationNumber = ? ");
                 preparedStmtList.add(criteria.getApplicationNumber());
             }
             if (!ObjectUtils.isEmpty(criteria.getBarRegistrationNumber())) {
