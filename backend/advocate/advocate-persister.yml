@@ -3,7 +3,7 @@ serviceMaps:
   mappings:
     - version: 1.0
       description: Persists advocate details in tables
-      fromTopic: save-adv-application
+      fromTopic: save-advocate-application
       isTransaction: true	
       queryMaps:
 

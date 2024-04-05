@@ -1,4 +1,4 @@
-CREATE TABLE eg_advocate (
+CREATE TABLE dristi_advocate (
                              id varchar(64) NOT NULL PRIMARY KEY,
                              tenantId varchar(1000) NOT NULL,
                              applicationNumber varchar(64) NULL,
@@ -11,4 +11,9 @@ CREATE TABLE eg_advocate (
                              lastModifiedBy varchar(64) NULL,
                              createdTime int8 NULL,
                              lastModifiedTime int8 NULL,
+);
+CREATE TABLE dristi_document (
+                             id varchar(64) NOT NULL PRIMARY KEY,
+                             fileStore varchar(64) NULL,
+                             advocateId varchar(64) NOT NULL,
 );
