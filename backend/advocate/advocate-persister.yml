@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true	
       queryMaps:
 
-        - query: INSERT INTO eg_advocate(id,tenantId,applicationNumber,barRegistrationNumber,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,barRegistrationNumber,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: Advocate.*
           jsonMaps:
             - jsonPath: $.Advocate.*.id

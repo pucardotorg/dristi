@@ -67,13 +67,6 @@ public List<Advocate> searchAdvocateApplications(RequestInfo requestInfo, List<A
     if(CollectionUtils.isEmpty(applications))
         return new ArrayList<>();
 
-    // Enrich
-
-//
-//    //WORKFLOW INTEGRATION
-
-
-    // Otherwise, return the found applications
     return applications;
 }
 }

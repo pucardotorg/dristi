@@ -1,5 +1,6 @@
 package org.pucar.service;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,9 @@ import org.pucar.repository.AdvocateRegistrationRepository;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
+import org.pucar.web.models.AdvocateSearchCriteria;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -69,5 +72,20 @@ public class AdvocateRegistrationServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("tenant1", result.get(0).getTenantId());
+    }
+
+    @Test
+    public void testSearchAdvocateApplications() {
+        // Setup
+        RequestInfo requestInfo = new RequestInfo();
+        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
+        when(advocateRegistrationRepository.getApplications(any())).thenReturn(Collections.emptyList());
+
+        // Invoke
+        List<Advocate> result = service.searchAdvocateApplications(requestInfo, searchCriteria);
+
+        // Verify
+        assertEquals(0, result.size());
+        verify(advocateRegistrationRepository, times(1)).getApplications(searchCriteria);
     }
 }
