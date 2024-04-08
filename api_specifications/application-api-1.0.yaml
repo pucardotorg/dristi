@@ -195,7 +195,6 @@ components:
     Application:
       required: [tenantId, createdDate, applicationType, status, isActive]
       type: object
-
       properties:
         id:
           type: string
