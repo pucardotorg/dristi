@@ -193,8 +193,9 @@ components:
       description: This object holds information about the hearingList response
 
     Application:
+      required: [tenantId, createdDate, applicationType, status, isActive]
       type: object
-      required: [tenantId, createdDate, appicationType, applicationType, isActive]
+
       properties:
         id:
           type: string
