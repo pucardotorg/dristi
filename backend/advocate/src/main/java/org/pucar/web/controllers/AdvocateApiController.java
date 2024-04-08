@@ -1,6 +1,7 @@
 package org.pucar.web.controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.service.AdvocateRegistrationService;
@@ -51,13 +52,13 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.createAdvocate(body);
-				return new ResponseEntity<>(response, HttpStatus.OK);
-			} catch (IOException e) {
-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+//			try {
+//				// Example after implementing a service layer
+//				AdvocateResponse response = advocateService.createAdvocate(body);
+//				return new ResponseEntity<>(response, HttpStatus.OK);
+//			} catch (IOException e) {
+//				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
 		}
 
 		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -68,13 +69,6 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-//            try {
-//                // Example after implementing a service layer
-//                AdvocateResponse response = advocateService.searchAdvocates(body);
-//                return new ResponseEntity<>(response, HttpStatus.OK);
-//            } catch (IOException e) {
-//                return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
             try {
 				List<Advocate> advocateList = advocateRegistrationService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria() );
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -93,13 +87,13 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.updateAdvocate(body);
-				return new ResponseEntity<>(response, HttpStatus.OK);
-			} catch (IOException e) {
-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+//			try {
+//				// Example after implementing a service layer
+//				AdvocateResponse response = advocateService.updateAdvocate(body);
+//				return new ResponseEntity<>(response, HttpStatus.OK);
+//			} catch (IOException e) {
+//				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
 		}
 
 		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);

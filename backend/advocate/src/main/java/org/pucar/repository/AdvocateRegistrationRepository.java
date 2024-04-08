@@ -29,12 +29,9 @@ public class AdvocateRegistrationRepository {
     private AdvocateRegistrationRowMapper rowMapper;
 
     public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria) {
-        //test
-        List<Advocate> advocateList = null;
-        for (AdvocateSearchCriteria advocateSearchCriteria : searchCriteria
-        ) {
+        List<Advocate> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
-            String query = queryBuilder.getAdvocateSearchQuery(advocateSearchCriteria, preparedStmtList);
+            String query = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList);
             log.info("Final query: {}", query);
             try {
                 List<Advocate> advocates = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
@@ -45,7 +42,6 @@ public class AdvocateRegistrationRepository {
                 log.error("Error occurred while executing database query: {}", e.getMessage());
                 throw e;
             }
-        }
         return advocateList;
     }
 

@@ -1,41 +1,48 @@
 package org.pucar.repository.querybuilder;
 
-import org.junit.jupiter.api.Assertions;
-        import org.junit.jupiter.api.BeforeEach;
-        import org.junit.jupiter.api.Test;
-        import org.mockito.Mockito;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.pucar.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
-        import java.util.List;
+import java.util.List;
 
-public class AdvocateRegistrationQueryBuilderTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+@Slf4j
+class AdvocateRegistrationQueryBuilderTest {
 
-    private AdvocateRegistrationQueryBuilder advocateRegistrationQueryBuilder;
-    private List<Object> preparedStmtList;
+    @Mock
+    private List<Object> mockPreparedStmtList;
+
+    private AdvocateRegistrationQueryBuilder queryBuilder;
 
     @BeforeEach
-    public void setUp() {
-        advocateRegistrationQueryBuilder = new AdvocateRegistrationQueryBuilder();
-        preparedStmtList = new ArrayList<>();
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        queryBuilder = new AdvocateRegistrationQueryBuilder();
     }
 
     @Test
-    public void testAdvocateSearchQuery() {
-        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
-        criteria.setId("1");
-        criteria.setApplicationNumber("APP123");
-        criteria.setBarRegistrationNumber("BAR456");
+    void testGetAdvocateSearchQuery() {
+        List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
+        criteriaList.add(new AdvocateSearchCriteria("1", null, "APP1"));
+        criteriaList.add(new AdvocateSearchCriteria(null, "REG2","APP2" ));
 
-        String expectedQuery = " SELECT adv.id as aid, adv.tenantId as atenantId, adv.applicationNumber as aapplicationNumber, adv.barRegistrationNumber as abarRegistrationNumber, adv.organisationID as aorganisationID, adv.individualId as aindividualId, adv.isActive as aisActive, adv.additionalDetails as aadditionalDetails, adv.createdBy as acreatedBy, adv.lastmodifiedby as alastmodifiedby, adv.createdtime as acreatedtime, adv.lastmodifiedtime as alastmodifiedtime  FROM dristi_advocate adv WHERE  adv.id = ?  AND  adv.applicationNumber = ?  AND  adv.barRegistrationNumber = ? ";
-        String actualQuery = advocateRegistrationQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList);
+        // Execute the method under test
+        String query = queryBuilder.getAdvocateSearchQuery(criteriaList, mockPreparedStmtList);
 
-        Assertions.assertEquals(expectedQuery, actualQuery);
-        Assertions.assertEquals(3, preparedStmtList.size());
-        Assertions.assertEquals(1, preparedStmtList.get(0));
-        Assertions.assertEquals("APP123", preparedStmtList.get(1));
-        Assertions.assertEquals("BAR456", preparedStmtList.get(2));
+        // Verify the generated query
+        String expectedQuery = " SELECT adv.id as aid, adv.tenantId as atenantId, adv.applicationNumber as aapplicationNumber, adv.barRegistrationNumber as abarRegistrationNumber, adv.organisationID as aorganisationID, adv.individualId as aindividualId, adv.isActive as aisActive, adv.additionalDetails as aadditionalDetails, adv.createdBy as acreatedBy, adv.lastmodifiedby as alastmodifiedby, adv.createdtime as acreatedtime, adv.lastmodifiedtime as alastmodifiedtime FROM dristi_advocate adv WHERE adv.id IN (?) AND adv.barRegistrationNumber IN (?) AND adv.applicationNumber IN (?,?)";
+        log.info("BOOOl",query.contains(expectedQuery));
+        assertEquals(expectedQuery, query);
+
+// Verify that preparedStmtList is populated correctly
+        verify(mockPreparedStmtList).addAll(List.of("1"));
+        verify(mockPreparedStmtList).addAll(List.of("REG2"));
+        verify(mockPreparedStmtList).addAll(List.of("APP1", "APP2"));
     }
-
 }
-
