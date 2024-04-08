@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
-public class AdvocateRegistrationQueryBuilder {
+public class AdvocateQueryBuilder {
     private static final String ADV_QUERY = " SELECT adv.id as aid, adv.tenantId as atenantId, adv.applicationNumber as aapplicationNumber, adv.barRegistrationNumber as abarRegistrationNumber, adv.organisationID as aorganisationID, adv.individualId as aindividualId, adv.isActive as aisActive, adv.additionalDetails as aadditionalDetails, adv.createdBy as acreatedBy, adv.lastmodifiedby as alastmodifiedby, adv.createdtime as acreatedtime, adv.lastmodifiedtime as alastmodifiedtime";
     private static final String FROM_TABLES = " FROM dristi_advocate adv";
 
@@ -61,8 +61,6 @@ public class AdvocateRegistrationQueryBuilder {
                         .append(")");
                 preparedStmtList.addAll(applicationNumbers);
             }
-
-
 
             return query.toString();
         } catch (Exception e) {

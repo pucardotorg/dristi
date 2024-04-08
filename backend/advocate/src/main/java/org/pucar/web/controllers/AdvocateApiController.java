@@ -1,10 +1,9 @@
 package org.pucar.web.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.pucar.service.AdvocateRegistrationService;
+import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -36,7 +35,7 @@ public class AdvocateApiController {
 	private final HttpServletRequest request;
 
 	@Autowired
-	private AdvocateRegistrationService advocateRegistrationService;
+	private AdvocateService advocateService;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -70,7 +69,7 @@ public class AdvocateApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
             try {
-				List<Advocate> advocateList = advocateRegistrationService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria() );
+				List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria() );
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);

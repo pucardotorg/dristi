@@ -12,7 +12,7 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class AdvocateRegistrationRowMapper implements ResultSetExtractor<List<Advocate>> {
+public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
     public List<Advocate> extractData(ResultSet rs) {
         Map<String, Advocate> advocateMap = new LinkedHashMap<>();
 

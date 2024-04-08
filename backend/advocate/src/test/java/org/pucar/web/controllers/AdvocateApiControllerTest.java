@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
-import org.pucar.service.AdvocateRegistrationService;
+import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -40,7 +40,7 @@ public class AdvocateApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private AdvocateRegistrationService advocateRegistrationService;
+    private AdvocateService advocateService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -79,7 +79,7 @@ public class AdvocateApiControllerTest {
     @Test
     public void advocateV1CreatePostSuccess() throws Exception {
         // Mock the behavior of your service layer
-        given(advocateRegistrationService.registerAdvocateRequest(any(AdvocateRequest.class))).willReturn(advocateResponse.getAdvocates());
+        given(advocateService.registerAdvocateRequest(any(AdvocateRequest.class))).willReturn(advocateResponse.getAdvocates());
         given(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).willReturn(advocateResponse.getResponseInfo());
 
         // Perform the request with the required Accept header
@@ -94,7 +94,7 @@ public class AdvocateApiControllerTest {
     @Test
     public void advocateV1CreatePostFailure() throws Exception {
         // Mock the behavior of your service layer
-        given(advocateRegistrationService.registerAdvocateRequest(any(AdvocateRequest.class))).willReturn(advocateResponse.getAdvocates());
+        given(advocateService.registerAdvocateRequest(any(AdvocateRequest.class))).willReturn(advocateResponse.getAdvocates());
         given(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).willReturn(advocateResponse.getResponseInfo());
 
         // Perform the request with the required Accept header

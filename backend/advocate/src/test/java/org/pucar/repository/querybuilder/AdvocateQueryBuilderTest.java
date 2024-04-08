@@ -13,17 +13,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 @Slf4j
-class AdvocateRegistrationQueryBuilderTest {
+class AdvocateQueryBuilderTest {
 
     @Mock
     private List<Object> mockPreparedStmtList;
 
-    private AdvocateRegistrationQueryBuilder queryBuilder;
+    private AdvocateQueryBuilder queryBuilder;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        queryBuilder = new AdvocateRegistrationQueryBuilder();
+        queryBuilder = new AdvocateQueryBuilder();
     }
 
     @Test

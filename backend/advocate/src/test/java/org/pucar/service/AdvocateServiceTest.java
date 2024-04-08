@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
-import org.pucar.repository.AdvocateRegistrationRepository;
+import org.pucar.repository.AdvocateRepository;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class AdvocateRegistrationServiceTest {
+public class AdvocateServiceTest {
 
     @Mock
     private AdvocateRegistrationValidator validator;
@@ -39,13 +39,13 @@ public class AdvocateRegistrationServiceTest {
     private WorkflowService workflowService;
 
     @Mock
-    private AdvocateRegistrationRepository advocateRegistrationRepository;
+    private AdvocateRepository advocateRepository;
 
     @Mock
     private Producer producer;
 
     @InjectMocks
-    private AdvocateRegistrationService service;
+    private AdvocateService service;
 
     @BeforeEach
     void setUp() {
@@ -79,13 +79,13 @@ public class AdvocateRegistrationServiceTest {
         // Setup
         RequestInfo requestInfo = new RequestInfo();
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-        when(advocateRegistrationRepository.getApplications(any())).thenReturn(Collections.emptyList());
+        when(advocateRepository.getApplications(any())).thenReturn(Collections.emptyList());
 
         // Invoke
-        List<Advocate> result = service.searchAdvocateApplications(requestInfo, searchCriteria);
+        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria);
 
         // Verify
         assertEquals(0, result.size());
-        verify(advocateRegistrationRepository, times(1)).getApplications(searchCriteria);
+        verify(advocateRepository, times(1)).getApplications(searchCriteria);
     }
 }

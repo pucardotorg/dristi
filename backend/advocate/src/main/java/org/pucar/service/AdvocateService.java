@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
-import org.pucar.repository.AdvocateRegistrationRepository;
+import org.pucar.repository.AdvocateRepository;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class AdvocateRegistrationService {
+public class AdvocateService {
 
     @Autowired
     private AdvocateRegistrationValidator validator;
@@ -34,7 +34,7 @@ public class AdvocateRegistrationService {
     private WorkflowService workflowService;
 
     @Autowired
-    private AdvocateRegistrationRepository advocateRegistrationRepository;
+    private AdvocateRepository advocateRepository;
 
     @Autowired
     private Producer producer;
@@ -59,9 +59,9 @@ public class AdvocateRegistrationService {
         return body.getAdvocates();
     }
 
-public List<Advocate> searchAdvocateApplications(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria) {
+public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria) {
     // Fetch applications from database according to the given search criteria
-    List<Advocate> applications = advocateRegistrationRepository.getApplications(advocateSearchCriteria);
+    List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria);
 
     // If no applications are found matching the given criteria, return an empty list
     if(CollectionUtils.isEmpty(applications))

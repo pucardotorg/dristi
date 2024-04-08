@@ -1,11 +1,10 @@
 package org.pucar.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.pucar.repository.querybuilder.AdvocateRegistrationQueryBuilder;
-import org.pucar.repository.rowmapper.AdvocateRegistrationRowMapper;
+import org.pucar.repository.querybuilder.AdvocateQueryBuilder;
+import org.pucar.repository.rowmapper.AdvocateRowMapper;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateSearchCriteria;
-import org.pucar.web.models.AdvocateSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,16 +16,16 @@ import java.util.List;
 
 @Slf4j
 @Repository
-public class AdvocateRegistrationRepository {
+public class AdvocateRepository {
 
     @Autowired
-    private AdvocateRegistrationQueryBuilder queryBuilder;
+    private AdvocateQueryBuilder queryBuilder;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private AdvocateRegistrationRowMapper rowMapper;
+    private AdvocateRowMapper rowMapper;
 
     public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria) {
         List<Advocate> advocateList = new ArrayList<>();
