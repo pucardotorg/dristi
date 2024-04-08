@@ -52,6 +52,7 @@ public class StatuteSection   {
 
                 private List<String> subsections = new ArrayList<>();
 
+
         @JsonProperty("additionalDetails")
 
                 private String additionalDetails = null;
@@ -63,12 +64,16 @@ public class StatuteSection   {
 
 
         public StatuteSection addSectionsItem(String sectionsItem) {
+
                 this.sections.add(sectionsItem);
+
         return this;
         }
 
         public StatuteSection addSubsectionsItem(String subsectionsItem) {
+
                 this.subsections.add(subsectionsItem);
+
         return this;
         }
 

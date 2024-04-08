@@ -31,7 +31,9 @@ public class CaseExistsResponse   {
 
         @JsonProperty("criteria")
           @Valid
+
                 private List<CaseExists> criteria = new ArrayList<>();
+
 
         @JsonProperty("pagination")
 
@@ -40,7 +42,9 @@ public class CaseExistsResponse   {
 
 
         public CaseExistsResponse addCriteriaItem(CaseExists criteriaItem) {
+
                 this.criteria.add(criteriaItem);
+
         return this;
         }
 

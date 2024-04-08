@@ -31,7 +31,9 @@ public class CaseResponse   {
 
         @JsonProperty("cases")
           @Valid
+
                 private List<CourtCase> cases = new ArrayList<>();
+
 
         @JsonProperty("pagination")
 
