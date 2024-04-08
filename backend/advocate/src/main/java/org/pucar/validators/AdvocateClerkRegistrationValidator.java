@@ -21,8 +21,4 @@ public class AdvocateClerkRegistrationValidator {
                 throw new CustomException("EG_BT_APP_ERR", "tenantId is mandatory for creating advocate");
         });
     }
-
-//    public BirthRegistrationApplication validateApplicationExistence(BirthRegistrationApplication birthRegistrationApplication) {
-//        return repository.getApplications(BirthApplicationSearchCriteria.builder().applicationNumber(birthRegistrationApplication.getApplicationNumber()).build()).get(0);
-//    }
 }

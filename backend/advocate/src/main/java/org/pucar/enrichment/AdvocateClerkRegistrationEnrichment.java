@@ -28,19 +28,15 @@ public class AdvocateClerkRegistrationEnrichment {
             List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getClerks().get(0).getTenantId(), "product.id", "P-[cy:yyyy-MM-dd]-[SEQ_PRODUCT_P]", advocateClerkRequest.getClerks().size());
             Integer index = 0;
             for(AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()){
-                // Enrich audit details
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                 advocateClerk.setAuditDetails(auditDetails);
 
-                // Enrich UUID
                 advocateClerk.setId(UUID.randomUUID());
 
-                //Enrich application number from IDgen
                 advocateClerk.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
             }
         } catch (Exception e) {
             log.error("Error enriching birth application: {}", e.getMessage());
-            // Handle the exception or throw a custom exception
         }
     }
 }

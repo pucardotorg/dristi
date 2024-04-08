@@ -24,7 +24,7 @@ public class AdvocateClerkRegistrationService {
     private AdvocateClerkRegistrationEnrichment enrichmentUtil;
 
     @Autowired
-    private UserService userService;
+    private IndividualService individualService;
 
     @Autowired
     private WorkflowService workflowService;
@@ -36,22 +36,14 @@ public class AdvocateClerkRegistrationService {
     private Producer producer;
 
     public List<AdvocateClerk> registerAdvocateRequest(AdvocateClerkRequest body) {
-        // Validate applications
         validator.validateAdvocateClerkRegistration(body);
 
-        // Enrich applications
         enrichmentUtil.enrichAdvocateClerkRegistration(body);
 
-        // Enrich/Upsert user in upon registration
-        //userService.callUserService(body);
-
-        // Initiate workflow for the new application-
         workflowService.updateWorkflowStatus(body);
 
-        // Push the application to the topic for persister to listen and persist
         producer.push("save-adv-application", body);
 
-        // Return the response back to user
         return body.getClerks();
     }
 }
