@@ -90,7 +90,7 @@ public class WorkflowService {
             throw new CustomException();
         }
     }
-    }
+
     private BusinessService getBusinessService(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
         try {
             String tenantId = advocateClerk.getTenantId();

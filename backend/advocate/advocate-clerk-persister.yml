@@ -1,0 +1,22 @@
+serviceMaps:
+  serviceName: advocate-clerk-services
+  mappings:
+    - version: 1.0
+      description: Persists advocate clerk details in tables
+      fromTopic: save-advocate-clerk
+      isTransaction: true	
+      queryMaps:
+        - query: INSERT INTO advocate_clerk(id, tenantId, applicationNumber, individualId, isActive, workflow, documents, auditDetails, additionalDetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases.*
+          jsonMaps:
+            - jsonPath: $.cases.*.id
+            - jsonPath: $.cases.*.tenantId
+            - jsonPath: $.cases.*.applicationNumber
+            - jsonPath: $.cases.*.individualId
+            - jsonPath: $.cases.*.isActive
+            - jsonPath: $.cases.*.auditDetails.createdBy
+            - jsonPath: $.cases.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.*.auditDetails.createdTime
+            - jsonPath: $.cases.*.auditDetails.lastModifiedTime
+            - jsonPath: $.cases.*.additionalDetails
+

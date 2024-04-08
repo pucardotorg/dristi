@@ -45,6 +45,13 @@ public class Configuration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
+	// Individual Config
+	@Value("${egov.individual.host}")
+	private String individualHost;
+
+	@Value("${egov.individual.path}")
+	private String individualPath;
+
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;

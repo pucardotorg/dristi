@@ -16,20 +16,4 @@ import java.util.List;
 @Repository
 public class AdvocateClerkRegistrationRepository {
 
-    @Autowired
-    private AdvocateClerkRegistrationQueryBuilder queryBuilder;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private AdvocateClerkRegistrationRowMapper rowMapper;
-
-//    public List<Advocate> getApplications(BirthApplicationSearchCriteria searchCriteria){
-//        List<Object> preparedStmtList = new ArrayList<>();
-//        String query = queryBuilder.getBirthApplicationSearchQuery(searchCriteria, preparedStmtList);
-//        log.info("Final query: " + query);
-//        List<BirthRegistrationApplication> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-//        return list;
-//    }
 }
