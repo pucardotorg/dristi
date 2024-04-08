@@ -46,11 +46,12 @@ public class StatuteSection   {
 
         @JsonProperty("sections")
 
-                private List<String> sections = null;
+                private List<String> sections = new ArrayList<>();
 
         @JsonProperty("subsections")
 
-                private List<String> subsections = null;
+                private List<String> subsections = new ArrayList<>();
+
 
         @JsonProperty("additionalDetails")
 
@@ -63,18 +64,16 @@ public class StatuteSection   {
 
 
         public StatuteSection addSectionsItem(String sectionsItem) {
-            if (this.sections == null) {
-            this.sections = new ArrayList<>();
-            }
-        this.sections.add(sectionsItem);
+
+                this.sections.add(sectionsItem);
+
         return this;
         }
 
         public StatuteSection addSubsectionsItem(String subsectionsItem) {
-            if (this.subsections == null) {
-            this.subsections = new ArrayList<>();
-            }
-        this.subsections.add(subsectionsItem);
+
+                this.subsections.add(subsectionsItem);
+
         return this;
         }
 
