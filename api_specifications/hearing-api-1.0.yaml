@@ -196,18 +196,6 @@ components:
             $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearingList response
 
-    HearingSummaryListResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        TotalCount:
-          type: integer
-        list:
-          type: array
-          items:
-            $ref: '#/components/schemas/HearingSummary'
-
     Hearing:
       description: a case can have multiple hearings. this represents one of the many hearings related to the case
       type: object
@@ -311,34 +299,5 @@ components:
         notes:
           type: string
           description: summary notes of the hearing
-
-    HearingSummary:
-      type: object
-      required: [tenantId, status, notes]
-      oneOf:
-        - required: [filingNumber, caseNumber]
-      properties:
-        id:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: refers to Hearing.id
-        tenantId:
-          type: string
-          description: refers to Hearing.tenantId
-        caseId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: the associated case
-        status:
-          type: string
-          description: refers to Hearing.status
-        notes:
-          type: string
-          description: refers to Hearing.notes
-
 
 x-original-swagger-version: "2.0"
