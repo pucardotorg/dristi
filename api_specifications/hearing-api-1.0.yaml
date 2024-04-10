@@ -225,18 +225,24 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
-        caseId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: the associated case
-        cnrNumber:
-          type: string
-          description: The CNR number of the associated case. helps in faster search
-        applicationNumber:
-          type: string
-          description: hearing can also be associated with an application number for a case
+        caseIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+          description: Array of cases for which this hearing is scheduled.
+        cnrNumbers:
+          type: array
+          items:
+            type: string
+          description: The CNR numbers of the associated cases if they exist. If CNR doesn't exist -- as in the case of application hearings -- the caseIds and applicationNumbers will be used to reference the entity.
+        applicationNumbers:
+          type: array
+          items:
+            type: string
+          description: A single hearing can be scheduled for multiple applications. All the application numbers should belong to the same case or case group.
         hearingType:
           type: string
           description: This field holds information about purpose of hearing. Master Data ID
@@ -247,23 +253,26 @@ components:
           example: scheduled, in progress, in transcription, closed
         startTime:
           type: string
-          format: datetime
+          format: date
           nullable: true
-          description: This field holds information about start date time of hearing
+          description: This field holds information about start date time of hearing in epoch time.
         endTime:
           type: string
-          format: datetime
+          format: date
           nullable: true
-          description: This field holds information about end date time of hearing. we may not use this field always
-        people:
+          description: This field holds information about end date time of hearing in epoch time. Optional field. 
+        attendees:
           type: array
-          description: this field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
+          description: This field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
           items:
             type: object
             properties:
               name:
                 type: string
                 description: name of the person
+              individualId:
+                type: string
+                description: The individual ID of the attendee if available
               type:
                 type: string
                 description: the type of the person
