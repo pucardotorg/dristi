@@ -16,12 +16,14 @@ import FAQsSection from "./FAQs/FAQs";
 import HowItWorks from "./HowItWorks/howItWorks";
 import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
 import Search from "./SearchApp";
+import LandingPage from "./Home/LandingPage";
 const sidebarHiddenFor = [
   "digit-ui/citizen/register/name",
   "/digit-ui/citizen/select-language",
   "/digit-ui/citizen/select-location",
   "/digit-ui/citizen/login",
   "/digit-ui/citizen/register/otp",
+  "/digit-ui/citizen/landing-page",
 ];
 
 const getTenants = (codes, tenants) => {
@@ -122,7 +124,7 @@ const Home = ({
               )}
               {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
             </div>
-            <StaticDynamicCard moduleCode={code?.toUpperCase()}/>
+            <StaticDynamicCard moduleCode={code?.toUpperCase()} />
           </div>
         </Route>
         <Route key={"faq" + index} path={`${path}/${code.toLowerCase()}-faq`}>
@@ -163,6 +165,10 @@ const Home = ({
             <CitizenHome />
           </Route>
 
+          <Route exact path={`${path}/landing-page`}>
+            <LandingPage />
+          </Route>
+
           <Route exact path={`${path}/select-language`}>
             <LanguageSelection />
           </Route>
@@ -201,7 +207,7 @@ const Home = ({
           </Route>
 
           <Route path={`${path}/Audit`}>
-            <Search/>
+            <Search />
           </Route>
           <ErrorBoundary initData={initData}>
             {appRoutes}

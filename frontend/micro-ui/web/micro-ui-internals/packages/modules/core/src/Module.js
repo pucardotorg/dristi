@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -13,6 +13,34 @@ import { useState } from "react";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
+
+  const moduleData = useMemo(() => {
+    if (!initData?.modules) {
+      return [];
+    }
+    if (
+      initData?.modules?.some((item) => {
+        return item && item.code === "Dristi";
+      })
+    ) {
+      return initData?.modules;
+    }
+    return [
+      ...initData?.modules,
+      {
+        module: "Dristi",
+        code: "Dristi",
+        active: true,
+        order: 6,
+        tenants: [
+          {
+            code: `${stateCode}`,
+          },
+        ],
+      },
+    ];
+  }, [initData?.modules, stateCode]);
+
   if (isLoading) {
     return <Loader page={true} />;
   }
@@ -25,7 +53,8 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
           <DigitApp
             initData={initData}
             stateCode={stateCode}
-            modules={initData?.modules}
+            // modules={initData?.modules}
+            modules={moduleData}
             appTenants={initData.tenants}
             logoUrl={initData?.stateInfo?.logoUrl}
           />

@@ -9,12 +9,13 @@ import "@egovernments/digit-ui-css/example/index.css";
 // import * as comps from "@egovernments/digit-ui-react-components";
 
 // import { subFormRegistry } from "@egovernments/digit-ui-libraries";
+import { initDristiComponents } from "@egovernments/digit-ui-module-dristi";
 
 import { pgrCustomizations, pgrComponents } from "./pgr";
 
 var Digit = window.Digit || {};
 
-const enabledModules = ["DRISTI"];
+const enabledModules = ["Dristi"];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
@@ -51,7 +52,7 @@ const initDigitUI = () => {
   });
 
   // initCustomisationComponents();
-
+  initDristiComponents();
   const moduleReducers = (initData) => ({
     // pgr: PGRReducers(initData),
   });
@@ -65,7 +66,7 @@ const initDigitUI = () => {
     },
   };
 
-  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
+  const stateCode = "br"|| window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
   // const registry = window?.Digit.ComponentRegistryService.getRegistry();

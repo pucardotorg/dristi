@@ -1,5 +1,5 @@
 //HAVE TO CHANGE THI
-import { stringReplaceAll } from "@egovernments/digit-ui-module-pt/src/utils";
+
 import { ApiCacheService } from "../atoms/ApiCacheService";
 import Urls from "../atoms/urls";
 import { Request, ServiceRequest } from "../atoms/Utils/Request";
@@ -143,9 +143,9 @@ const getBillsGenieKey = (tenantId, moduleCode) => ({
         masterDetails: [{ name: "tenants" }, { name: "citymodule" }],
       },
       {
-      moduleName: "common-masters",
-      masterDetails: [{name: "uiCommonPay"}]
-      }
+        moduleName: "common-masters",
+        masterDetails: [{ name: "uiCommonPay" }],
+      },
     ],
   },
 });
@@ -639,32 +639,31 @@ const getGenderTypeList = (tenantId, moduleCode, type) => ({
 });
 
 const getMeterStatusTypeList = (tenantId) => ({
-    moduleDetails: [
-      {
-        moduleName: "ws-services-calculation",
-        masterDetails: [
-          {
-            name: "MeterStatus",
-            filter: `$.*.name`
-          },
-        ],
-      },
-    ],
-
+  moduleDetails: [
+    {
+      moduleName: "ws-services-calculation",
+      masterDetails: [
+        {
+          name: "MeterStatus",
+          filter: `$.*.name`,
+        },
+      ],
+    },
+  ],
 });
 
 const getBillingPeriodValidation = (tenantId) => ({
-    moduleDetails: [
-      {
-        moduleName: "ws-services-masters",
-        masterDetails: [
-          {
-            name: "billingPeriod",
-            filter: "*"
-          },
-        ],
-      },
-    ],
+  moduleDetails: [
+    {
+      moduleName: "ws-services-masters",
+      masterDetails: [
+        {
+          name: "billingPeriod",
+          filter: "*",
+        },
+      ],
+    },
+  ],
 });
 
 const getDssDashboardCriteria = (tenantId, moduleCode) => ({
@@ -916,53 +915,53 @@ const getWSTaxHeadMasterCritera = (tenantId, moduleCode, type) => ({
 });
 
 const getHowItWorksJSON = (tenantId) => ({
-      moduleDetails: [
-      {
-        moduleName: "common-masters",
-        masterDetails: [
-          {
-            name: "howItWorks",
-          },
-        ],
-      },
-    ],
+  moduleDetails: [
+    {
+      moduleName: "common-masters",
+      masterDetails: [
+        {
+          name: "howItWorks",
+        },
+      ],
+    },
+  ],
 });
 
 const getFAQsJSON = (tenantId) => ({
   moduleDetails: [
-  {
-    moduleName: "common-masters",
-    masterDetails: [
-      {
-        name: "faqs",
-      },
-    ],
-  },
-],
+    {
+      moduleName: "common-masters",
+      masterDetails: [
+        {
+          name: "faqs",
+        },
+      ],
+    },
+  ],
 });
 const getDSSFAQsJSON = (tenantId) => ({
   moduleDetails: [
-  {
-    moduleName: "dss-dashboard",
-    masterDetails: [
-      {
-        name: "FAQs",
-      },
-    ],
-  },
-],
+    {
+      moduleName: "dss-dashboard",
+      masterDetails: [
+        {
+          name: "FAQs",
+        },
+      ],
+    },
+  ],
 });
 const getDSSAboutJSON = (tenantId) => ({
   moduleDetails: [
-  {
-    moduleName: "dss-dashboard",
-    masterDetails: [
-      {
-        name: "About",
-      },
-    ],
-  },
-],
+    {
+      moduleName: "dss-dashboard",
+      masterDetails: [
+        {
+          name: "About",
+        },
+      ],
+    },
+  ],
 });
 
 const getStaticData = () => ({
@@ -1023,12 +1022,11 @@ const GetVehicleType = (MdmsRes) =>
     });
 
 const GetVehicleMakeModel = (MdmsRes) =>
-  MdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active)
-    .map((vehicleDetails) => {
-      return {
-        ...vehicleDetails,
-        i18nKey: `COMMON_MASTER_VEHICLE_${vehicleDetails.code}`,
-      };
+  MdmsRes["Vehicle"].VehicleMakeModel.filter((vehicle) => vehicle.active).map((vehicleDetails) => {
+    return {
+      ...vehicleDetails,
+      i18nKey: `COMMON_MASTER_VEHICLE_${vehicleDetails.code}`,
+    };
   });
 
 const GetSlumLocalityMapping = (MdmsRes, tenantId) =>
@@ -1124,37 +1122,6 @@ const getUsageCategory = (MdmsRes) =>
     };
   });
 
-const getPTPropertyType = (MdmsRes) =>
-  MdmsRes["PropertyTax"].UsageCategory.filter((PropertyType) => PropertyType.active).map((PTPropertyTypelist) => {
-    return {
-      ...UsageCategorylist,
-      i18nKey: `COMMON_PROPTYPE_${stringReplaceAll(PTPropertyTypelist.code, ".", "_")}`,
-    };
-  });
-
-const getTLStructureType = (MdmsRes) =>
-  MdmsRes["common-masters"].StructureType.filter((StructureType) => StructureType.active).map((TLStructureTypeList) => {
-    return {
-      ...TLStructureTypeList,
-      i18nKey: `COMMON_MASTERS_STRUCTURETYPE_${stringReplaceAll(TLStructureTypeList.code, ".", "_")}`,
-    };
-  });
-
-const getTLAccessoriesType = (MdmsRes) =>
-  MdmsRes["TradeLicense"].AccessoriesCategory.filter((AccessoriesCategory) => AccessoriesCategory.active).map((TLAccessoryTypeList) => {
-    return {
-      ...TLAccessoryTypeList,
-      i18nKey: `TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(TLAccessoryTypeList.code, ".", "_")}`,
-    };
-  });
-
-const getTLFinancialYear = (MdmsRes) =>
-  MdmsRes["egf-master"].FinancialYear.filter((FinancialYear) => FinancialYear.active && FinancialYear.module === "TL").map((FinancialYearList) => {
-    return {
-      ...FinancialYearList,
-      //i18nKey: `TRADELICENSE_ACCESSORIESCATEGORY_${stringReplaceAll(TLAccessoryTypeList.code, ".", "_")}`,
-    };
-  });
 const getFloorList = (MdmsRes) =>
   MdmsRes["PropertyTax"].Floor.filter((PTFloor) => PTFloor.active).map((PTFloorlist) => {
     return {
@@ -1347,14 +1314,6 @@ const transformResponse = (type, MdmsRes, moduleCode, tenantId) => {
       return getMapConfig(MdmsRes);
     case "UsageCategory":
       return getUsageCategory(MdmsRes);
-    case "PTPropertyType":
-      return getPTPropertyType(MdmsRes);
-    case "StructureType":
-      return getTLStructureType(MdmsRes);
-    case "AccessoryCategory":
-      return getTLAccessoriesType(MdmsRes);
-    case "FinancialYear":
-      return getTLFinancialYear(MdmsRes);
     case "Floor":
       return getFloorList(MdmsRes);
     case "Reason":
@@ -1721,11 +1680,11 @@ export const MdmsService = {
   getDSSFAQsJSONData: (tenantId) => {
     return MdmsService.call(tenantId, getDSSFAQsJSON(tenantId));
   },
-  
+
   getDSSAboutJSONData: (tenantId) => {
     return MdmsService.call(tenantId, getDSSAboutJSON(tenantId));
   },
   getStaticDataJSON: (tenantId) => {
     return MdmsService.call(tenantId, getStaticData());
-  }
+  },
 };
