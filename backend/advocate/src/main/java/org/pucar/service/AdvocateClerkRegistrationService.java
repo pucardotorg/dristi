@@ -18,12 +18,6 @@ import java.util.List;
 public class AdvocateClerkRegistrationService {
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
     private AdvocateClerkRepository advocateClerkRepository;
 
     public List<AdvocateClerk> searchAdvocateApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria) {

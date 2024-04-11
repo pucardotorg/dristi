@@ -12,8 +12,8 @@ public class AdvocateClerkQueryBuilder {
 
     private static final String BASE_ATR_QUERY = " SELECT advc.id as aid, advc.tenantid as atenantid, advc.applicationnumber as aapplicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as aindividualid, advc.isactive as aisactive, advc.additionaldetails as aadditionaldetails, advc.createdby as acreatedby, advc.lastmodifiedby as alastmodifiedby, advc.createdtime as acreatedtime, advc.lastmodifiedtime as alastmodifiedtime, ";
 
-    private static final String DOCUMENT_SELECT_QUERY = " doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails ";
-    private static final String FROM_TABLES = " FROM dristi_advocate advc LEFT JOIN distri_document doc ON advc.id = doc.registrationid";
+    private static final String DOCUMENT_SELECT_QUERY = " doc.id as aaid, doc.documenttype as adocumenttype, doc.filestore as afilestore, doc.documentuid as adocumentuid, doc.additionaldetails as aadditionaldetails ";
+    private static final String FROM_TABLES = " FROM dristi_advocate_clerk advc LEFT JOIN distri_documents doc ON advc.id = doc.advocateclerkid";
     private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
     public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList){

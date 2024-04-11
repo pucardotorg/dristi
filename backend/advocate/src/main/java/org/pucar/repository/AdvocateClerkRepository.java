@@ -27,7 +27,7 @@ public class AdvocateClerkRepository {
     private AdvocateClerkRowMapper rowMapper;
 
     public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria){
-        List<AdvocateClerk> advocateList = null;
+        List<AdvocateClerk> advocateList = new ArrayList<>();
         for (AdvocateClerkSearchCriteria advocateClerkSearchCriteria : searchCriteria
         ) {
             List<Object> preparedStmtList = new ArrayList<>();

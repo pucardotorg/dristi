@@ -59,16 +59,27 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
 
     private void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) throws SQLException {
         List<Document> listDocument = new ArrayList<>();
-        Document document = Document.builder()
-                .id(rs.getString("aid"))
-                .documentType(rs.getString("documentyype"))
-                .fileStore(rs.getString("filestore"))
-                .documentUid(rs.getString("documentuid"))
-                .additionalDetails(rs.getDouble("additionaldetails"))
-                .build();
-        listDocument.add(document);
+        try {
+            Document document = Document.builder()
+                .id(rs.getString(11))
+                .documentType(rs.getString(12))
+                .fileStore(rs.getString(13))
+                .documentUid(rs.getString(14))
+                .additionalDetails(rs.getObject(15))
+                    .build();
+            listDocument.add(document);
 
-        advocateClerkApplication.setDocuments(listDocument);
+            advocateClerkApplication.setDocuments(listDocument);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+//        String test = rs.getString("aaid");
+//        String test1 = rs.getString("adocumentyype");
+//        String test2 = rs.getString("afilestore");
+//        String test3 = rs.getString("documentuid");
+//        System.out.println(test);
+
 
     }
 
