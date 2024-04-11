@@ -66,7 +66,7 @@ const initDigitUI = () => {
     },
   };
 
-  const stateCode = "br"|| window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
   // const registry = window?.Digit.ComponentRegistryService.getRegistry();
