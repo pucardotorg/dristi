@@ -74,13 +74,6 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
         catch (Exception e){
             e.printStackTrace();
         }
-//        String test = rs.getString("aaid");
-//        String test1 = rs.getString("adocumentyype");
-//        String test2 = rs.getString("afilestore");
-//        String test3 = rs.getString("documentuid");
-//        System.out.println(test);
-
-
     }
 
 }

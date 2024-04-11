@@ -6,6 +6,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 public class AdvocateClerkQueryBuilder {
@@ -16,25 +18,42 @@ public class AdvocateClerkQueryBuilder {
     private static final String FROM_TABLES = " FROM dristi_advocate_clerk advc LEFT JOIN distri_documents doc ON advc.id = doc.advocateclerkid";
     private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
-    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList){
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteria, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
         query.append(DOCUMENT_SELECT_QUERY);
         query.append(FROM_TABLES);
 
-        if(!ObjectUtils.isEmpty(criteria.getId())){
+        List<String> ids = criteria.stream()
+                .map(AdvocateClerkSearchCriteria::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        List<String> applicationNumbers = criteria.stream()
+                .map(AdvocateClerkSearchCriteria::getApplicationNumber)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        List<String> stateRegnNumber = criteria.stream()
+                .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.id = ? ");
-            preparedStmtList.add(criteria.getId());
+            query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
+            addToPreparedStatement(preparedStmtList, ids);
         }
-        if(!ObjectUtils.isEmpty(criteria.getStateRegnNumber())){
+
+        if (!CollectionUtils.isEmpty(stateRegnNumber)) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.stateregnnumber = ? ");
-            preparedStmtList.add(criteria.getStateRegnNumber());
+            query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
+            addToPreparedStatement(preparedStmtList, stateRegnNumber);
         }
-        if(!ObjectUtils.isEmpty(criteria.getApplicationNumber())){
+
+        if (!CollectionUtils.isEmpty(applicationNumbers)) {
             addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.applicationnumber = ? ");
-            preparedStmtList.add(criteria.getApplicationNumber());
+            query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
+            addToPreparedStatement(preparedStmtList, applicationNumbers);
         }
 
         query.append(ORDERBY_CREATEDTIME);
@@ -50,9 +69,18 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> ids) {
-        ids.forEach(id -> {
-            preparedStmtList.add(id);
-        });
+    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> list) {
+        preparedStmtList.addAll(list);
+    }
+
+    private String createQuery(List<String> ids) {
+        StringBuilder builder = new StringBuilder();
+        int length = ids.size();
+        for (int i = 0; i < length; i++) {
+            builder.append(" ?");
+            if (i != length - 1)
+                builder.append(",");
+        }
+        return builder.toString();
     }
 }

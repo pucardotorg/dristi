@@ -28,15 +28,18 @@ public class AdvocateClerkRepository {
 
     public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria){
         List<AdvocateClerk> advocateList = new ArrayList<>();
-        for (AdvocateClerkSearchCriteria advocateClerkSearchCriteria : searchCriteria
-        ) {
-            List<Object> preparedStmtList = new ArrayList<>();
-            String query = queryBuilder.getAdvocateClerkSearchQuery(advocateClerkSearchCriteria, preparedStmtList);
-            log.info("Final query: " + query);
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList);
+        log.info("Final query: " + query);
+        try {
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+            System.out.println(list);
             if(list != null){
                 advocateList.addAll(list);
             }
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
 
         return advocateList;

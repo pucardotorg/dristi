@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.pucar.service.AdvocateClerkRegistrationService;
+import org.pucar.service.AdvocateClerkService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
@@ -36,7 +36,7 @@ public class ClerkApiController {
 	private final HttpServletRequest request;
 
 	@Autowired
-	private AdvocateClerkRegistrationService advocateClerkRegistrationService;
+	private AdvocateClerkService advocateClerkRegistrationService;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
