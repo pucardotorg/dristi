@@ -1,0 +1,67 @@
+import React, { useMemo } from "react";
+import { Loader, ButtonSelector, Card, NotificationBell } from "@egovernments/digit-ui-react-components";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
+
+const LandingPage = () => {
+  const { t } = useTranslation();
+  const history = useHistory();
+
+  const { data: { languages, stateInfo } = {}, isLoading } = Digit.Hooks.useStore.getInitData();
+  const selectedLanguage = Digit.StoreData.getCurrentLanguage();
+
+  const texts = useMemo(
+    () => ({
+      header: t("CS_LANDING_PAGE"),
+      submitBarLabel: t("CORE_COMMON_CONTINUE"),
+    }),
+    [t]
+  );
+
+  const RadioButtonProps = useMemo(
+    () => ({
+      options: languages,
+      optionsKey: "label",
+      additionalWrapperClass: "reverse-radio-selection-wrapper",
+      onSelect: (language) => Digit.LocalizationService.changeLanguage(language.value, stateInfo.code),
+      selectedOption: languages?.filter((i) => i.value === selectedLanguage)[0],
+    }),
+    [selectedLanguage, languages]
+  );
+
+  function onSubmit() {
+    history.push(`/digit-ui/citizen/select-location`);
+  }
+
+  return isLoading ? (
+    <Loader />
+  ) : (
+    <div className="selection-card-wrapper" style={{ marginTop: "80px" }}>
+      <Card style={{ height: "75vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "40px" }}>
+        <ButtonSelector
+          label={
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "15px", color: "#FFF" }}>
+              Register
+              <NotificationBell />
+            </span>
+          }
+          style={{
+            flex: 1,
+            maxHeight: "7vh",
+            width: "63vh",
+          }}
+        />
+        <ButtonSelector
+          label={"Login"}
+          style={{
+            flex: 1,
+            maxHeight: "7vh",
+            width: "63vh",
+          }}
+        />
+      </Card>
+    </div>
+  );
+};
+
+export default LandingPage;
