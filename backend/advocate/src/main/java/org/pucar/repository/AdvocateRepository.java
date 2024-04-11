@@ -32,15 +32,16 @@ public class AdvocateRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             String query = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList);
             log.info("Final query: {}", query);
+        List<Advocate> advocates = new ArrayList<>();
             try {
-                List<Advocate> advocates = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-                if(advocates != null){
-                    advocateList.addAll(advocates);
-                }
+                advocates = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
             } catch (DataAccessException e) {
                 log.error("Error occurred while executing database query: {}", e.getMessage());
                 throw e;
             }
+        if(advocates != null){
+            advocateList.addAll(advocates);
+        }
         return advocateList;
     }
 
