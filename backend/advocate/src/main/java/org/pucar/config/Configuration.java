@@ -38,6 +38,14 @@ public class Configuration {
 	@Value("${egov.user.update.path}")
 	private String userUpdateEndpoint;
 
+	@Value("${egov.individual.create.path}")
+	private String individualCreateEndpoint;
+
+	@Value("${egov.individual.search.path}")
+	private String individualSearchEndpoint;
+
+	@Value("${egov.individual.update.path}")
+	private String individualUpdateEndpoint;
 	// Idgen Config
 	@Value("${egov.idgen.host}")
 	private String idGenHost;
@@ -89,4 +97,8 @@ public class Configuration {
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
+
+	//AvdClerk Var
+	@Value("${advClerk.kafka.create.topic}")
+	private String createTopic;
 }

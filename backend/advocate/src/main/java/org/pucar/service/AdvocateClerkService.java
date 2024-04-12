@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class AdvocateClerkRegistrationService {
+public class AdvocateClerkService {
 
     @Autowired
     private AdvocateClerkRegistrationValidator validator;
@@ -42,7 +42,8 @@ public class AdvocateClerkRegistrationService {
 
         workflowService.updateWorkflowStatus(body);
 
-        producer.push("save-adv-application", body);
+//        individualService.searchIndividual(body);
+        producer.push("save-advocate-clerk", body);
 
         return body.getClerks();
     }

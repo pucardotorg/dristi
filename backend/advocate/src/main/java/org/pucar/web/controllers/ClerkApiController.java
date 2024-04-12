@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.pucar.service.AdvocateClerkRegistrationService;
+import org.pucar.service.AdvocateClerkService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
@@ -35,7 +35,7 @@ public class ClerkApiController {
 
 	private final HttpServletRequest request;
 	@Autowired
-	private AdvocateClerkRegistrationService advocateClerkRegistrationService;
+	private AdvocateClerkService advocateClerkService;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -50,7 +50,7 @@ public class ClerkApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-				List<AdvocateClerk> advocateList = advocateClerkRegistrationService.registerAdvocateRequest(body);
+				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateRequest(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);

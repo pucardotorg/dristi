@@ -25,18 +25,20 @@ public class AdvocateClerkRegistrationEnrichment {
 
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
-            List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getClerks().get(0).getTenantId(), "product.id", "P-[cy:yyyy-MM-dd]-[SEQ_PRODUCT_P]", advocateClerkRequest.getClerks().size());
-            Integer index = 0;
-            for(AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()){
-                AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-                advocateClerk.setAuditDetails(auditDetails);
+            if(advocateClerkRequest.getRequestInfo().getUserInfo() != null) {
+                List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getClerks().get(0).getTenantId(), "billnumberid", "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]", advocateClerkRequest.getClerks().size());
+                Integer index = 0;
+                for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
+                    AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+                    advocateClerk.setAuditDetails(auditDetails);
 
-                advocateClerk.setId(UUID.randomUUID());
+                    advocateClerk.setId(UUID.randomUUID());
 
-                advocateClerk.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
+                    advocateClerk.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
+                }
             }
         } catch (Exception e) {
-            log.error("Error enriching birth application: {}", e.getMessage());
+            log.error("Error enriching advocate application: {}", e.getMessage());
         }
     }
 }

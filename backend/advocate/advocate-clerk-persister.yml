@@ -6,17 +6,18 @@ serviceMaps:
       fromTopic: save-advocate-clerk
       isTransaction: true	
       queryMaps:
-        - query: INSERT INTO advocate_clerk(id, tenantId, applicationNumber, individualId, isActive, workflow, documents, auditDetails, additionalDetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: cases.*
+        - query: INSERT INTO dristi_advocate_clerk(id, tenantId, applicationNumber, individualId, isActive , createdBy, lastModifiedBy, createdTime, lastModifiedTime,additionalDetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?);
+          basePath: clerks.*
           jsonMaps:
-            - jsonPath: $.cases.*.id
-            - jsonPath: $.cases.*.tenantId
-            - jsonPath: $.cases.*.applicationNumber
-            - jsonPath: $.cases.*.individualId
-            - jsonPath: $.cases.*.isActive
-            - jsonPath: $.cases.*.auditDetails.createdBy
-            - jsonPath: $.cases.*.auditDetails.lastModifiedBy
-            - jsonPath: $.cases.*.auditDetails.createdTime
-            - jsonPath: $.cases.*.auditDetails.lastModifiedTime
-            - jsonPath: $.cases.*.additionalDetails
+            - jsonPath: $.clerks.*.id
+            - jsonPath: $.clerks.*.tenantId
+            - jsonPath: $.clerks.*.applicationNumber
+            - jsonPath: $.clerks.*.individualId
+            - jsonPath: $.clerks.*.isActive
+            - jsonPath: $.clerks.*.auditDetails.createdBy
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
+            - jsonPath: $.clerks.*.auditDetails.createdTime
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
+            - jsonPath: $.clerks.*.additionalDetails
+            
 

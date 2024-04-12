@@ -11,7 +11,7 @@ import org.pucar.repository.AdvocateClerkRegistrationRepository;
 import org.pucar.validators.AdvocateClerkRegistrationValidator;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +38,7 @@ class AdvocateClerkRegistrationServiceTest {
     private Producer producer;
 
     @InjectMocks
-    private AdvocateClerkRegistrationService service;
+    private AdvocateClerkService service;
 
     @BeforeEach
     void setUp() {
