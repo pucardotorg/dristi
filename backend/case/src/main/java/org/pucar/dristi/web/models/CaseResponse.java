@@ -31,7 +31,9 @@ public class CaseResponse   {
 
         @JsonProperty("cases")
           @Valid
-                private List<CourtCase> cases = null;
+
+                private List<CourtCase> cases = new ArrayList<>();
+
 
         @JsonProperty("pagination")
 
@@ -40,10 +42,7 @@ public class CaseResponse   {
 
 
         public CaseResponse addCasesItem(CourtCase casesItem) {
-            if (this.cases == null) {
-            this.cases = new ArrayList<>();
-            }
-        this.cases.add(casesItem);
+                this.cases.add(casesItem);
         return this;
         }
 
