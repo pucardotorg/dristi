@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Setup Docker
       uses: docker/setup-buildx-action@v1
-    - name: Build Docker image for advocate
-      run: docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
+    # - name: Build Docker image for advocate
+    #   run: docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
     - name: Build Docker image for case
       run: docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
