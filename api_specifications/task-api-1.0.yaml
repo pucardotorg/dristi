@@ -231,7 +231,7 @@ components:
         taskType:
           type: string
           description: there will be various types of tasks, that will define their own schema for information required. This type will help identify what schema to pick from MDMS
-          example: document submission, summons, bail.cash, bail.surety warrant
+          example: document submission, summons, bail.cash, bail.surety_warrant, penalty.fine, penalty.refund
         specialFields:
           type: string
           description: TODO this needs to change to be able to accommodate the specific schema based on if it is summon, bail, warrant or something else
@@ -242,11 +242,11 @@ components:
         status:
           type: string
           description: workflow status
-        person:
+        assignedTo:
           type: object
           description: details of person this task is assigned to. For example in case of document upload, this could be litigant or lawyer. in case of summon task, this will be person to whom summon is issued
           properties:
-            id:
+            individualId:
               type: string
               format: uuid
               minLength: 36
