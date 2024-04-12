@@ -120,22 +120,24 @@ components:
           example: AFFIDAVIT, DEPOSITION, SWORN_STATEMENT, OTHER etc.. 
         sourceID:
           type: string
-          description: The user ID who provided this artifact.
-        sourceType:
+          description: The individual ID of the person who provided this artifact. In case of Person A providing an affidavit, this will be the individual ID of Person A.
+        sourceName:
           type: string
-          example: COMPLAINANT, RESPONDENT, WITNESS, OTHER
+          description: Users who may not be part of the system who've given evidence. 
+          example: Mr. Sundar, Assistant DGP
+        applicableTo:
+          type: array
+          description: An array of individualIds of the litigants for whom this evidence has been provided. 
+          items:
+            type: string
         createdDate:
           type: integer
           format: date
-          description: Date this artifact was uploaded
-        onBehalfOf:
-          type: array
-          description: An array of individualIds of the litigants on behalf of whom this artifact has been uploaded
-          items:
-            type: string
+          description: Date this artifact was created. This may be different from the upload time which will be captured in the audit details.
         isActive:
           type: boolean
-          description: Field to indicate soft delete of records
+          description: Field to indicate soft delete of records. True if record is active, false if not.
+          default: true
         status:
           type: string
           description: >-
@@ -144,9 +146,12 @@ components:
         file:
           $ref: >-
               https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
-        remarks:
+        description:
           type: string
-          description: Field to hold extra info about the artifact
+          description: Field that describes the artifact and its relevance to the case.
+        artifactDetails:
+          type: object
+          description: Each evidence type may have specific fields depending on case type. 
         comments:
           type: array
           items:
