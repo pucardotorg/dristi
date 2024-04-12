@@ -29,23 +29,28 @@ export const loginSteps = [
     },
   },
   {
+    head: "Id-Verification",
+    body: [
+      { label: "CS_ID_TYPE", type: "dropdown", key: "ID", isMandatory: true, populators: { name: "ID", options: ["Aadhar", "PAN"] } },
+      { label: "Upload ID Proof", type: "documentUpload", key: "ID_Proof", populators: { name: "ID_Proof" } },
+      { label: "Aadhar ID", type: "text", key: "Aadhar_ID", isMandatory: true, populators: { name: "Aadhar_ID" } },
+    ],
+  },
+  {
     texts: {
-      header: "CS_LOGIN_PROVIDE_NAME",
-      cardText: "CS_LOGIN_NAME_TEXT",
+      header: "CS_LOGIN_OTP",
+      cardText: "CS_LOGIN_OTP_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
     },
-    inputs: [
+  },
+  {
+    head: "Terms and Conditions",
+    body: [
       {
-        label: "CORE_COMMON_NAME",
-        type: "text",
-        name: "name",
-        error: "CORE_COMMON_NAME_VALIDMSG",
-        validation: {
-          required: true,
-          minLength: 1,
-          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-        },
+        type: "checkbox",
+        key: "Terms_Conditions",
+        populators: { title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit", name: "Terms_Conditions" },
       },
     ],
   },

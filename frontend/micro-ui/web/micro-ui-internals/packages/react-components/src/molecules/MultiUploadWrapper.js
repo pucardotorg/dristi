@@ -98,9 +98,10 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
         
         if (!error) {
             try {
-                const { data: { files: fileStoreIds } = {} } = await Digit.UploadServices.MultipleFilesStorage(module, e.target.files, tenantId)
+                // API call commented for now
+                // const { data: { files: fileStoreIds } = {} } = await Digit.UploadServices.MultipleFilesStorage(module, e.target.files, tenantId)
                 setEnableButton(true)
-                return dispatch({ type: FILES_UPLOADED, payload: { files: e.target.files, fileStoreIds } })
+                return dispatch({ type: FILES_UPLOADED, payload: { files: e.target.files, fileStoreIds: [1] } })
             } catch (err) {
                 setEnableButton(true)
             }
@@ -132,6 +133,7 @@ const MultiUploadWrapper = ({ t, module = "PGR", tenantId = Digit.ULBService.get
                 accept={acceptFiles}
                 customClass={customClass}
                 enableButton={enableButton}
+                disabled = {!enableButton}
             />
             <span className="error-msg" style={{ display: 'flex' }}>
                 {fileErrors.length ? fileErrors.map(({ valid, name, type, size, error }) => (

@@ -6,6 +6,7 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectName from "./SelectName";
 import SelectOtp from "./SelectOtp";
+import SelectId from "./SelectId";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -277,9 +278,22 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               t={t}
             />
           </Route>
-          <Route path={`${path}/name`}>
-            <SelectName config={stepItems[2]} onSelect={selectName} t={t} isDisabled={canSubmitName} />
+          <Route path={`${path}/id-verification`}>
+            <SelectId t={t} config={[stepItems[2]]} />
           </Route>
+          <Route path={`${path}/aadhar-otp`}>
+            <SelectOtp
+              config={{ ...stepItems[3], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+              onOtpChange={handleOtpChange}
+              onResend={resendOtp}
+              onSelect={selectOtp}
+              otp={params.otp}
+              error={isOtpValid}
+              canSubmit={canSubmitOtp}
+              t={t}
+            />
+          </Route>
+          <Route path={`${path}/terms-conditions`}></Route>
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </AppContainer>
       </Switch>

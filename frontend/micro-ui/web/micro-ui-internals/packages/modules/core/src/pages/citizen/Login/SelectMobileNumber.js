@@ -23,7 +23,13 @@ const SelectMobileNumber = ({
       value={mobileNumber}
       cardStyle={{ minWidth: "100%" }}
     >
-      <CheckBox onChange={handleRememberMeChange} checked={isRememberMe} label={"Remember me"} name={"Checkbox"} />
+      <CheckBox
+        onChange={handleRememberMeChange}
+        checked={isRememberMe}
+        label={"Remember me"}
+        name={"Checkbox"}
+        styles={{ alignItems: "center", textAlign: "center" }}
+      />
     </FormStep>
   );
 };

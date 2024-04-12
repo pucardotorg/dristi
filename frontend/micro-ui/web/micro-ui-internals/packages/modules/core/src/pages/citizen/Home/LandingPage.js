@@ -29,10 +29,6 @@ const LandingPage = () => {
     [selectedLanguage, languages]
   );
 
-  function onSubmit() {
-    history.push(`/digit-ui/citizen/select-location`);
-  }
-
   return isLoading ? (
     <Loader />
   ) : (
