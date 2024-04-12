@@ -10,6 +10,7 @@ import LanguageSelection from "./LanguageSelection";
 import EmployeeLogin from "./Login";
 import UserProfile from "../citizen/Home/UserProfile";
 import ErrorComponent from "../../components/ErrorComponent";
+import { PrivateRoute } from "@egovernments/digit-ui-react-components";
 
 const userScreensExempted = ["user/profile", "user/error"];
 
@@ -38,6 +39,8 @@ const EmployeeApp = ({
   useEffect(() => {
     Digit.UserService.setType("employee");
   }, []);
+
+  const additionalComponent = initData?.modules?.filter((i) => i?.additionalComponent)?.map((i) => i?.additionalComponent);
 
   return (
     <div className="employee">
@@ -75,14 +78,14 @@ const EmployeeApp = ({
               <Route path={`${path}/user/change-password`}>
                 <ChangePassword />
               </Route>
-              <Route path={`${path}/user/profile`}>
+              <PrivateRoute path={`${path}/user/profile`}>
                 <UserProfile stateCode={stateCode} userType={"employee"} cityDetails={cityDetails} />
-              </Route>
+              </PrivateRoute>
               <Route path={`${path}/user/error`}>
                 <ErrorComponent
                   initData={initData}
                   goToHome={() => {
-                    history.push("/digit-ui/employee");
+                    history.push(`/${window?.contextPath}/${Digit?.UserService?.getType?.()}`);
                   }}
                 />
               </Route>
@@ -110,7 +113,7 @@ const EmployeeApp = ({
           <div className={`main ${DSO ? "m-auto" : ""}`}>
             <div className="employee-app-wrapper">
               <ErrorBoundary initData={initData}>
-                <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} />
+                <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} additionalComponent={additionalComponent} />
               </ErrorBoundary>
             </div>
             <div className="employee-home-footer">

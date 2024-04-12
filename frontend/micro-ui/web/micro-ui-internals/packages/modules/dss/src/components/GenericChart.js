@@ -29,6 +29,7 @@ const GenericChart = ({
   chip = [],
   updateChip,
   value = {},
+  iconName=""
 }) => {
   const { t } = useTranslation();
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -40,7 +41,7 @@ const GenericChart = ({
     {
       code: "image",
       i18nKey: t("ES_COMMON_DOWNLOAD_IMAGE"),
-      icon: <DownloadIcon />,
+      icon: <DownloadIcon fill="#f18f5e" />,
     },
     {
       code: "shareImage",
@@ -77,12 +78,14 @@ const GenericChart = ({
     return Digit.Download.Excel(chartData, t(header));
   };
   let headerName = t(Digit.Utils.locale.getTransformedLocale(header));
+  var IconComp = require("@egovernments/digit-ui-react-components")?.[iconName];
   return (
     <Card className={`chart-item ${className}`} ReactRef={chart}>
       <div className={`chartHeader ${showSearch && "column-direction"}`}>
         <div>
           {showHeader && (
-            <CardLabel className={"dss-header-label"}>
+            <CardLabel className={"dss-header-label dss-header-label-secondary"} style={{display:"flex",alignItems:"center"}}>
+              {iconName&&IconComp&&<span><IconComp  className={"dss-primary"} /></span>}
               <span className={`tooltip ${headerName?.length < (isMobile ? 20 : 30) ? "dss-white-pre" : "dss-white-pre-line"}`}>
                 {headerName}
                 {chartDenomination?.toLowerCase() === "amount" && (
@@ -110,7 +113,7 @@ const GenericChart = ({
             {showSearch && (
               <TextInput className="searchInput" placeholder="Search" signature={true} signatureImg={<SearchImg />} onChange={onChange} />
             )}
-            {showDownload && <DownloadIcon className="mrlg cursorPointer" onClick={handleExcelDownload} />}
+            {showDownload && <DownloadIcon className="mrlg cursorPointer" fill="#f18f5e" onClick={handleExcelDownload} />}
           </span>
           {!showDownload && <EllipsisMenu menuItems={menuItems} displayKey="i18nKey" onSelect={(data) => download(data)} />}
         </div>

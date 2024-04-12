@@ -6,7 +6,7 @@ import Routes from "./routes";
 
 export const MyBills = ({ stateCode }) => {
   const { businessService } = useParams();
-  const { tenantId: _tenantId } = Digit.Hooks.useQueryParams();
+  const { tenantId: _tenantId, isDisoconnectFlow } = Digit.Hooks.useQueryParams();
 
   const { isLoading: storeLoading, data: store } = Digit.Services.useStore({
     stateCode,
@@ -21,7 +21,7 @@ export const MyBills = ({ stateCode }) => {
   const { tenantId } = Digit.UserService.getUser()?.info || location?.state || { tenantId: _tenantId } || {};
 
   if (!tenantId && !location?.state?.fromSearchResults) {
-    history.replace(`/digit-ui/citizen/login`, { from: url });
+    history.replace(`/${window?.contextPath}/citizen/login`, { from: url });
   }
 
   const { isLoading, data } = Digit.Hooks.useFetchCitizenBillsForBuissnessService(
@@ -34,7 +34,8 @@ export const MyBills = ({ stateCode }) => {
 
   const getPaymentRestrictionDetails = () => {
     const payRestrictiondetails = mdmsBillingData?.MdmsRes?.BillingService?.BusinessService;
-    if (payRestrictiondetails?.length) return payRestrictiondetails.filter((e) => e.code == businessService)?.[0]||{
+    let updatedBussinessService = ((businessService === "WS" || businessService === "SW") && isDisoconnectFlow === "true") ? "DISCONNECT" : businessService;
+    if (payRestrictiondetails?.length) return payRestrictiondetails.filter((e) => e.code == updatedBussinessService)?.[0]||{
       isAdvanceAllowed: false,
       isVoucherCreationEnabled: true,
       minAmountPayable: 100,

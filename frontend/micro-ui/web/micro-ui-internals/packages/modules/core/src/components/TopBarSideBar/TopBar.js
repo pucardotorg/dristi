@@ -69,14 +69,15 @@ const TopBar = ({
   };
 
   function onNotificationIconClick() {
-    history.push("/digit-ui/citizen/engagement/notifications");
+    history.push(`/${window?.contextPath}/citizen/engagement/notifications`);
   }
-
+  
   const urlsToDisableNotificationIcon = (pathname) =>
     !!Digit.UserService?.getUser()?.access_token
       ? false
-      : ["/digit-ui/citizen/select-language", "/digit-ui/citizen/select-location"].includes(pathname);
+      : [`/${window?.contextPath}/citizen/select-language`, `/${window?.contextPath}/citizen/select-location`].includes(pathname);
 
+ 
   if (CITIZEN) {
     return (
       <div>
@@ -98,6 +99,26 @@ const TopBar = ({
     );
   }
   const loggedin = userDetails?.access_token ? true : false;
+
+  //checking for custom topbar components
+  const CustomEmployeeTopBar = Digit.ComponentRegistryService?.getComponent("CustomEmployeeTopBar")
+
+  if(CustomEmployeeTopBar) {
+    return <CustomEmployeeTopBar {...{t,
+      stateInfo,
+      toggleSidebar,
+      isSidebarOpen,
+      handleLogout,
+      userDetails,
+      CITIZEN,
+      cityDetails,
+      mobileView,
+      userOptions,
+      handleUserDropdownSelection,
+      logoUrl,
+      showLanguageChange,
+      loggedin}} />
+  }
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
@@ -134,7 +155,8 @@ const TopBar = ({
                   showArrow={true}
                   freeze={true}
                   style={mobileView ? { right: 0 } : {}}
-                  optionCardStyles={{ overflow: "revert" }}
+                  optionCardStyles={{ overflow: "revert",display:"table" }}
+                  topbarOptionsClassName={"topbarOptionsClassName"}
                   customSelector={
                     profilePic == null ? (
                       <TextToImg name={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"} />

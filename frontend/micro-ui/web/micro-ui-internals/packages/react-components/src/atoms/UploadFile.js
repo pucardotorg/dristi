@@ -85,13 +85,13 @@ const getCitizenStyles = (value) => {
       },
       tagStyles: {
         height: "auto", 
-        padding: "5px", 
+        padding: "8px", 
         margin: 0,
         width: "100%",
         margin: "5px"
       },
       textStyles: {
-        wordBreak: "break-all",
+        wordBreak: "break-word",
         height: "auto",
         lineHeight: "16px",
         overflow: "hidden",
@@ -134,6 +134,9 @@ const getCitizenStyles = (value) => {
 };
 
 const UploadFile = (props) => {
+  if(props.enableButton){
+    props.disabled = !props.enableButton
+  }
   const { t } = useTranslation();
   const inpRef = useRef();
   const [hasFile, setHasFile] = useState(false);
@@ -209,6 +212,7 @@ const UploadFile = (props) => {
                 <RemoveableTag extraStyles={extraStyles} key={index} text={file[0]} onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)} />
               </div>
             })}
+            {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props?.message}</h2>}
           {!hasFile || props.error ? (
             <h2 className="file-upload-status">{props.message}</h2>
           ) : (
@@ -236,6 +240,10 @@ const UploadFile = (props) => {
           disabled={props.disabled}
           onChange={(e) => props.onUpload(e)}
           onClick ={ event => {
+            if (props?.disabled) {
+              event.preventDefault()
+              return
+            }
             const { target = {} } = event || {};
             target.value = "";
           }}

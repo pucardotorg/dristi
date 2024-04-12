@@ -1,16 +1,16 @@
+import { AppContainer, BreadCrumb, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, BackButton, Toast } from "@egovernments/digit-ui-react-components";
-import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
+import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
-import SelectOtp from "./SelectOtp";
 import SelectName from "./SelectName";
+import SelectOtp from "./SelectOtp";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen`;
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -72,7 +72,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      history.replace("/digit-ui/citizen/select-location", {
+      history.replace(`/${window?.contextPath}/citizen/select-location`, {
         redirectBackTo: redirectPath,
       });
     } else {
@@ -121,7 +121,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       } else {
         setCanSubmitNo(true);
         if (!(location.state && location.state.role === "FSM_DSO")) {
-          history.push(`/digit-ui/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
+          history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
         }
       }
       if (location.state?.role) {
@@ -229,11 +229,29 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   };
 
+  const handleRememberMeChange = () => {
+    setParmas({ ...params, isRememberMe: !params.isRememberMe });
+  };
+
   return (
     <div className="citizen-form-wrapper">
       <Switch>
         <AppContainer>
-          <BackButton />
+          <BreadCrumb
+            style={{ marginTop: "40px" }}
+            crumbs={[
+              {
+                path: "/digit-ui/citizen/landing-page",
+                content: t("ES_LANDING_PAGE"),
+                show: true,
+              },
+              {
+                path: "/digit-ui/citizen/login",
+                content: t("ES_REGISTER"),
+                show: true,
+              },
+            ]}
+          ></BreadCrumb>
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}
@@ -243,6 +261,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               canSubmit={canSubmitNo}
               showRegisterLink={isUserRegistered && !location.state?.role}
               t={t}
+              isRememberMe={params?.isRememberMe || false}
+              handleRememberMeChange={handleRememberMeChange}
             />
           </Route>
           <Route path={`${path}/otp`}>

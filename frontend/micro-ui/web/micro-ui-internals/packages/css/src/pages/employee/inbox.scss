@@ -28,6 +28,10 @@
     .link {
       @apply p-sm text-primary-main items-center;
       display: flex !important;
+      a{
+        color: inherit;
+        text-decoration: inherit
+      }
     }
 
     .inbox-total {
@@ -65,7 +69,7 @@
 
 .employeeCard-info-box {
   @apply flex justify-end ml-md;
-  background-color: #fafafa;
+  background-color: theme(colors.grey.light);
   div {
     margin-right: 32px;
     span:nth-child(2) {
@@ -97,7 +101,7 @@
       @apply font-bold text-heading-l flex gap-3;
       padding-bottom: 6px;
       svg {
-        fill: #0b0c0c;
+        fill: theme(colors.text.primary);
       }
     }
     .sub-filter-label {
@@ -133,7 +137,7 @@
           @apply text-heading-m block flex gap-3 items-center;
           padding-bottom: 6px;
           svg {
-            fill: #0b0c0c;
+            fill: theme(colors.text.primary);
           }
         }
 
@@ -156,7 +160,7 @@
             @apply text-focus;
             display: none;
             &:hover {
-              color: #003078;
+              color: theme(colors.link.hover);
               cursor: pointer;
             }
           }
@@ -229,7 +233,7 @@
         @apply bg-white;
         svg {
           path {
-            fill: #f47738;
+            fill: theme(colors.primary.main);
           }
         }
       }
@@ -359,7 +363,7 @@
               @apply block;
               cursor: pointer;
               &:hover {
-                color: #003078;
+                color: theme(colors.link.hover);
                 cursor: pointer;
               }
             }
@@ -397,18 +401,18 @@
 }
 
 .cell-text {
-  color: #505a5f;
+  color: theme(colors.text.secondary);
 }
 
 .sla-cell-error {
-  color: #d4351c;
+  color: theme(colors.error);
   background-color: rgba(212, 53, 28, 0.12);
   padding: 0 24px;
   border-radius: 11px;
 }
 
 .sla-cell-success {
-  color: #00703c;
+  color: theme(colors.success);
   background-color: rgba(0, 112, 60, 0.12);
   padding: 0 24px;
   border-radius: 11px;
@@ -416,7 +420,7 @@
 
 .complain-no-cell-text {
   margin-top: "4px";
-  color: "#505A5F";
+  color: "theme(colors.text.secondary)";
 }
 
 .search-error-label {
@@ -439,13 +443,14 @@
 }
 @screen dt {
   .customEmployeeCard {
-    width: 230px !important;
+    width: 263px !important;
     height: 263px !important;
   }
 }
 .employeeTotalLink {
-  color: #505a5f;
+  color: theme(colors.text.secondary);
   font-size: 16px;
+  text-decoration: none;
 }
 
 @screen dt {
@@ -460,7 +465,7 @@
           margin-right: 1rem;
           svg {
             path {
-              fill: #f47738;
+              fill: theme(colors.primary.main);
             }
           }
         }
@@ -468,7 +473,7 @@
           font-size: 24px;
           line-height: 28px;
           font-weight: 400;
-          color: #f47738;
+          color: theme(colors.primary.main);
         }
       }
     }
@@ -500,10 +505,6 @@
   }
 }
 
-.inboxLinksFSM {
-  margin: 0 !important;
-}
-
 .plumber-details-new-value-wrapper {
   flex: 2 1 auto;
 }
@@ -529,20 +530,28 @@
 }
 
 .search-tabs-container {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-  margin-bottom: 35px;
   display: flex;
   justify-content: space-between;
+  background-color: #eee;
 
   .search-tab-head {
     padding: 10px 35px;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 1px solid #d6d5d4;
+    border-radius: 0.5rem 0.5rem 0 0;
   }
 
   .search-tab-head-selected {
     padding: 10px 35px;
     color: rgb(244, 119, 56);
+    background-color: #fff;
+    border: 1px solid #f47738;
+    border-radius: 0.5rem 0.5rem 0 0;
     border-bottom: 4px solid rgb(244, 119, 56);
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: -1rem;
   }
 
   .search-tab-head-selected:focus {

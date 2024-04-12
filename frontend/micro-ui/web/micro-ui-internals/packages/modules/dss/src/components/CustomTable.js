@@ -10,7 +10,10 @@ import ReactTooltip from "react-tooltip";
 
 const rowNamesToBeLocalised = ["Department", "", "Usage Type", "Ward", "Wards", "City Name"];
 
-const InsightView = ({ rowValue, insight, t }) => {
+const InsightView = ({ rowValue, insight, t ,disableInsights=false}) => {
+  if(disableInsights){
+    return <span>{rowValue}</span>
+  }
   return (
     <span>
       {rowValue}
@@ -28,7 +31,7 @@ const calculateFSTPCapacityUtilization = (value, totalCapacity, numberOfDays = 1
 };
 
 const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination }) => {
-  const { id } = data;
+  const { id,disableInsights=false } = data;
   const [chartKey, setChartKey] = useState(id);
   const [filterStack, setFilterStack] = useState([{ id: chartKey }]);
   const { t } = useTranslation();
@@ -277,14 +280,15 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination }
 
   const tableColumns = useMemo(() => {
     const columns = response?.responseData?.data?.find((row) => !!row);
+    const chartId = response?.responseData?.visualizationCode;
     return columns?.plots
       ?.filter((plot) => plot?.name !== "TankCapacity")
       .map((plot, index) => ({
         Header: (
-          <span className="tooltip" data-tip="React-tooltip" data-for={`jk-table-${index}`}>
+          <span className="tooltip" data-tip="React-tooltip" data-for={`jk-table-${chartId}-${index}`}>
             {renderHeader(plot)}
 
-            <ReactTooltip textColor="#fff" backgroundColor="#555" place="bottom" type="info" effect="solid" id={`jk-table-${index}`}>
+            <ReactTooltip textColor="#fff" backgroundColor="#555" place="bottom" type="info" effect="solid" id={`jk-table-${chartId}-${index}`}>
               {t(`TIP_DSS_HEADER_${Digit.Utils.locale.getTransformedLocale(plot?.name)}`)}
             </ReactTooltip>
             {/* <span
@@ -314,7 +318,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination }
         Cell: (args) => {
           const { value: cellValue, column, row } = args;
           if (typeof cellValue === "object") {
-            return <InsightView insight={cellValue?.insight} rowValue={cellValue?.value} t={t} />;
+            return <InsightView insight={cellValue?.insight} rowValue={cellValue?.value} disableInsights={disableInsights} t={t} />;
           }
           const filter = response?.responseData?.filter?.find((elem) => elem?.column === column?.id);
           if (response?.responseData?.drillDownChartId !== "none" && filter !== undefined) {
@@ -402,6 +406,7 @@ const CustomTable = ({ data = {}, onSearch, setChartData, setChartDenomination }
           disableSort={false}
           autoSort={true}
           manualPagination={false}
+          isPaginationRequired={tableData?.length > 5 ? true : false}
           globalSearch={filterValue}
           initSortId="S N "
           onSearch={onSearch}

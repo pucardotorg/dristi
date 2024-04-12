@@ -33,7 +33,7 @@ const TopBarSideBar = ({
     setShowDialog(false);
   }
   const userProfile = () => {
-    history.push("/digit-ui/employee/user/profile");
+    history.push(`/${window?.contextPath}/employee/user/profile`);
   };
   const userOptions = [
     { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },

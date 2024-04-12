@@ -1,8 +1,9 @@
-import React from "react";
+import React,{Fragment} from "react";
 import { CheckSvg } from "./svgindex";
 import PropTypes from "prop-types";
-
-const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pageType, style, index, isLabelFirst,  ...props }) => {
+import { useTranslation } from "react-i18next";
+const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pageType, style, index, isLabelFirst,customLabelMarkup,  ...props }) => {
+  const { t } = useTranslation()
   const userType = pageType || Digit.SessionStorage.get("userType");
   let wrkflwStyle = props.styles;
   if (isLabelFirst) {
@@ -46,13 +47,20 @@ const CheckBox = ({ onChange, label, value, disable, ref, checked, inputRef, pag
             // {(checked ? (checked = { checked }) : null)}
             checked={checked}
           />
-          <p className={userType === "employee" ? "custom-checkbox-emp" : "custom-checkbox"} style={disable ? { opacity: 0.5 } : null}>
+          <p className={userType === "employee" ? "custom-checkbox-emp" : "custom-checkbox"} style={disable ? { opacity: 0.5 } : (props?.checkboxWidth ? {...props?.checkboxWidth} : null)}>
             {/* <img src={check} alt="" /> */}
             <CheckSvg />
           </p>
         </div>
         <p className="label" style={style ? style : null}>
-          {label}
+        {customLabelMarkup ? 
+          <>
+            <p>{t("COMMON_CERTIFY_ONE")}</p>
+            <br />
+            <p>
+            <b> {t("ES_COMMON_NOTE")}</b>{t("COMMON_CERTIFY_TWO")}
+            </p>
+            </> : label}
         </p>
       </div>
     );

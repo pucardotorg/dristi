@@ -31,7 +31,6 @@ const ResponseComposer = ({ data, template, actionButtonLabel, onSubmit }) => {
                 onSubmit={() => {
                   onSubmit(result);
                 }}
-                disabled={result?.AmountDue === "0"? true : false}
               />
             )}
             {result.status === "INACTIVE" && (

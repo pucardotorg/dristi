@@ -1,16 +1,15 @@
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
-import { ArrowDown } from "./svgindex";
+import { ArrowDown, SearchIcon } from "./svgindex";
 
 const TextField = (props) => {
   const [value, setValue] = useState(props.selectedVal ? props.selectedVal : "");
 
   useEffect(() => {
     if (!props.keepNull)
-      if( props.selectedVal)
+      if (props.selectedVal)
         setValue(props.selectedVal)
-      else
-      { setValue(""); props.setFilter("") } 
+      else { setValue(""); props.setFilter("") }
     else setValue("");
   }, [props.selectedVal, props.forceSet]);
 
@@ -51,6 +50,7 @@ const TextField = (props) => {
       e.preventDefault();
     } else if (e.key == "Enter") {
       props.addProps.selectOption(props.addProps.currentIndex);
+      e.preventDefault();
     }
   };
 
@@ -148,10 +148,9 @@ const Dropdown = (props) => {
     onSelect(filteredOption[ind]);
   }
 
-  if(props.isBPAREG && selectedOption)
-  {
+  if (props.isBPAREG && selectedOption) {
     let isSelectedSameAsOptions = props.option?.filter((ob) => ob?.code === selectedOption?.code)?.length > 0;
-    if(!isSelectedSameAsOptions) setSelectedOption(null)
+    if (!isSelectedSameAsOptions) setSelectedOption(null)
   }
 
   return (
@@ -168,7 +167,7 @@ const Dropdown = (props) => {
       {!hasCustomSelector && (
         <div
           className={`${dropdownStatus ? "select-active" : "select"} ${props.disable && "disabled"}`}
-          style={props.errorStyle ? { border: "1px solid red" } : {}}
+          style={props.errorStyle ? { border: "1px solid red", ...(props.noBorder ? { "border": "none" } : {}) } : { ...(props.noBorder ? { "border": "none" } : {}) }}
         >
           <TextField
             autoComplete={props.autoComplete}
@@ -184,8 +183,8 @@ const Dropdown = (props) => {
                     ? `${selectedOption} ${t("BPA_SELECTED_TEXT")}`
                     : props.t(props.optionKey ? selectedOption[props.optionKey] : selectedOption)
                   : props.optionKey
-                  ? selectedOption[props.optionKey]
-                  : selectedOption
+                    ? selectedOption[props.optionKey]
+                    : selectedOption
                 : null
             }
             filterVal={filterVal}
@@ -199,14 +198,15 @@ const Dropdown = (props) => {
             onBlur={props?.onBlur}
             inputRef={props.ref}
           />
-          <ArrowDown onClick={dropdownSwitch} className="cp" disable={props.disable} />
+          {props.showSearchIcon ? null : <ArrowDown onClick={dropdownSwitch} className="cp" disable={props.disable} />}
+          {props.showSearchIcon ? <SearchIcon onClick={dropdownSwitch} className="cp" disable={props.disable} /> : null}
         </div>
       )}
       {dropdownStatus ? (
         props.optionKey ? (
           <div
             id="jk-dropdown-unique"
-            className={`${hasCustomSelector ? "margin-top-10 display: table" : ""} options-card`}
+            className={`${hasCustomSelector ? "margin-top-10 display: table" : ""} options-card ${props?.topbarOptionsClassName ? props?.topbarOptionsClassName : ""}`}
             style={{ ...props.optionCardStyles }}
             ref={optionRef}
           >
@@ -218,23 +218,23 @@ const Dropdown = (props) => {
                     style={
                       index === optionIndex
                         ? {
-                            opacity: 1,
-                            backgroundColor: "rgba(238, 238, 238, var(--bg-opacity))",
-                          }
+                          opacity: 1,
+                          backgroundColor: "rgba(238, 238, 238, var(--bg-opacity))",
+                        }
                         : {}
                     }
                     key={index}
                     onClick={() => onSelect(option)}
                   >
                     {option.icon && <span className="icon"> {option.icon} </span>}
-                    {props.isPropertyAssess? <div>{props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</div>:
-                    <span> {props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</span>} 
+                    {props.isPropertyAssess ? <div>{props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</div> :
+                      <span> {props.t ? props.t(option[props.optionKey]) : option[props.optionKey]}</span>}
                   </div>
                 );
               })}
             {filteredOption && filteredOption.length === 0 && (
-              <div className={`cp profile-dropdown--item display: flex `} key={"-1"} onClick={()=>{
-                
+              <div className={`cp profile-dropdown--item display: flex `} key={"-1"} onClick={() => {
+
               }}>
                 {<span> {props.t ? props.t("CMN_NOOPTION") : "CMN_NOOPTION"}</span>}
               </div>
@@ -248,7 +248,7 @@ const Dropdown = (props) => {
             ref={optionRef}
           >
             {props.option
-              .filter((option) => option?.toUpperCase().indexOf(filterVal?.toUpperCase()) > -1)
+              ?.filter((option) => option?.toUpperCase().indexOf(filterVal?.toUpperCase()) > -1)
               .map((option, index) => {
                 return (
                   <p
@@ -256,9 +256,9 @@ const Dropdown = (props) => {
                     style={
                       index === optionIndex
                         ? {
-                            opacity: 1,
-                            backgroundColor: "rgba(238, 238, 238, var(--bg-opacity))",
-                          }
+                          opacity: 1,
+                          backgroundColor: "rgba(238, 238, 238, var(--bg-opacity))",
+                        }
                         : {}
                     }
                     onClick={() => onSelect(option)}

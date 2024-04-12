@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Loader, ButtonSelector, Card, NotificationBell } from "@egovernments/digit-ui-react-components";
+import { Loader, ButtonSelector, Card, RegisterIcon, LoginIcon, Button } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
@@ -37,28 +37,40 @@ const LandingPage = () => {
     <Loader />
   ) : (
     <div className="selection-card-wrapper" style={{ marginTop: "80px" }}>
-      <Card style={{ height: "75vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "40px" }}>
-        <ButtonSelector
-          label={
-            <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "15px", color: "#FFF" }}>
-              Register
-              <NotificationBell />
-            </span>
-          }
+      <Card
+        style={{
+          height: "75vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "40px",
+          minWidth: "100%",
+        }}
+      >
+        <Button
+          onButtonClick={() => {
+            history.push(`/digit-ui/citizen/login`);
+          }}
+          label={t("CS_COMMON_REGISTER")}
           style={{
             flex: 1,
             maxHeight: "7vh",
-            width: "63vh",
+            width: "40vw",
           }}
-        />
-        <ButtonSelector
-          label={"Login"}
+        >
+          <RegisterIcon />
+        </Button>
+        <Button
+          label={t("CS_COMMON_LOGIN")}
           style={{
             flex: 1,
             maxHeight: "7vh",
-            width: "63vh",
+            width: "40vw",
           }}
-        />
+        >
+          <LoginIcon />
+        </Button>
       </Card>
     </div>
   );

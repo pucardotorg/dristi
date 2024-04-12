@@ -53,7 +53,7 @@
       margin-top: 12px;
 
       .user-img-txt {
-        background: #f47738;
+        background: theme(colors.primary.main);
         padding: 10px 15px;
         border-radius: 50%;
         color: white;
@@ -75,7 +75,7 @@
   }
 
   .react-time-picker__wrapper {
-    border: 1px solid #464646;
+    border: 1px solid theme(colors.inputBorder);
   }
 
   .react-time-picker__clock {
@@ -111,11 +111,11 @@
   .sidebar {
     position: fixed;
     left: 0;
-    background: #22394d;
+    background: #0B4B66;
     height: 100%;
-    color: #ffffff;
-    margin-top: 80px;
-    z-index: 10;
+    color: theme(colors.white);
+    margin-top: 83px;
+    z-index: 10000;
     transition: 0.3s ease all;
     white-space: nowrap;
     height: calc(100vh - 36px);
@@ -128,29 +128,39 @@
       .tooltip {
         margin-left: 16px;
       }
+      margin-bottom: 0px;
     }
 
     svg {
       width: 24px;
       height: 24px;
-      fill: #ffffff;
+      fill: theme(colors.white);
     }
     a {
       display: flex;
     }
     .sidebar-link {
       display: flex;
-      color: #ffffff;
+      color: theme(colors.white);
       justify-content: space-between;
       align-items: center;
       padding: 20px;
       font-size: 14px;
-      &.active {
-        color: #f47738 !important;
+      
+      &.level-0 {
+        margin:0 0.3rem 0 0.3rem;
+        &.select-level{
+          border-top: 1px solid;
+          border-bottom: 1px solid;
+        }
+      }
 
-        border-right: 4px solid #f47738;
+      &.active {
+        color: theme(colors.primary.main) !important;
+
+        border-right: none;
         svg {
-          fill: #f47738 !important;
+          fill: theme(colors.primary.main) !important;
         }
       }
       .employee-search-input {
@@ -170,27 +180,28 @@
       }
 
       svg {
-        fill: #ffffff !important;
+        fill: theme(colors.white) !important;
         width: 21px;
         height: 21px;
       }
 
       &:hover {
-        color: #f47738 !important;
-        background-color: #486480;
+        
+        background-color: #0B4B66;
 
         cursor: pointer;
-        svg {
-          fill: #f47738 !important;
-        }
+        
       }
       .search-icon-wrapper {
+        border: 2px solid theme(colors.white);
+        border-radius: 4px;
+        padding: 5px;
         svg {
-          fill: #ffffff !important;
+          fill: theme(colors.white) !important;
           width: 21px;
           height: 21px;
           path {
-            fill: #ffffff !important;
+            fill: theme(colors.white) !important;
           }
         }
       }
@@ -201,7 +212,7 @@
       margin-left: 40px;
       align-items: center;
       text-decoration: none;
-      color: #ffffff;
+      color: theme(colors.white);
       font-size: 14px;
       .actions {
         .tooltiptext {
@@ -212,22 +223,37 @@
       svg {
         width: 20px;
         height: 20px;
-        fill: #ffffff;
+        fill: theme(colors.white);
       }
       &:hover {
-        color: #fe7a51 !important;
-        background-color: #486480;
+        background-color: #6A8E9D;
+        opacity: 0.8;
         cursor: pointer;
         svg {
           fill: #fe7a51 !important;
         }
       }
-      &.active {
-        color: #f47738 !important;
 
-        border-right: 4px solid #f47738;
+
+      &.active {
+        border-left: 4px solid theme(colors.primary.main);
+        &.level-0 {
+        
+        }
+        &.level-1 {
+          border-left: 8.5px solid theme(colors.primary.main);
+        }
+        &.level-2 {
+          border-left: 4px solid theme(colors.primary.main);
+        }
+
+        &.level-3{
+
+        }
+        color: theme(colors.primary.main) !important;
+        border-right: none;
         svg {
-          fill: #f47738 !important;
+          fill: theme(colors.primary.main) !important;
         }
       }
     }
@@ -245,7 +271,7 @@
     padding-top: 10px;
 
     .containerStyles {
-      border: 1px solid #505a5f;
+      border: 1px solid theme(colors.text.secondary);
       padding: 16px;
       margin-bottom: 20px;
     }
@@ -260,7 +286,7 @@
   }
 
   .tableContainerStyles {
-    border: 1px solid #505a5f;
+    border: 1px solid theme(colors.text.secondary);
     padding: 16px;
     margin-bottom: 20px;
   }
@@ -365,7 +391,7 @@
   .select-wrap {
     margin-bottom: unset;
     svg {
-      fill: #ffffff;
+      fill: theme(colors.white);
     }
   }
 }
@@ -373,7 +399,7 @@
 @media (min-width: 640px) {
   .employee {
     .ground-container {
-      @apply block ml-md;
+      @apply block;
     }
     .breadcrumb {
       @apply mb-lg;
@@ -465,10 +491,10 @@
 
   .top-back-btn {
     margin-bottom: 0px;
-    color: #ffffff;
+    color: theme(colors.white);
     margin-right: 1em;
     & svg {
-      fill: #ffffff;
+      fill: theme(colors.white);
     }
   }
   .hambuger-back-wrapper {
@@ -495,3 +521,58 @@
     margin-right: 16px;
   }
 }
+
+.link {
+  a{
+    color: inherit;
+    text-decoration: inherit
+    }
+}
+
+.breadcrumb {
+  a{
+    color: inherit;
+    text-decoration: inherit
+    }
+}
+
+.sidebar-link.active{
+.custom-link{
+  text-decoration: none;
+  div{
+    span{
+      color: theme(colors.primary.main) !important;
+      text-decoration: none;
+    }
+  }
+}
+}
+.bread-crumb {
+  a{
+    color: inherit;
+    text-decoration: inherit
+    }
+}
+
+.sidebar-link{
+  .custom-link{
+    text-decoration: none;
+    div{
+      span{
+        color: theme(colors.white);
+        text-decoration: none;
+      }
+    }
+  }
+  }
+  .mandatory-span {
+    margin-left: 0.5rem;
+    color: red !important;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+/* TODO fix required NABEEL/ANIL for home screen card */
+  .customEmployeeCard {
+    @apply m-sm !important;
+  }

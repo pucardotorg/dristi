@@ -1,25 +1,33 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
+import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
-import { DigitUI } from "@egovernments/digit-ui-module-core";
+// import { paymentConfigs, PaymentLinks, PaymentModule } from "@egovernments/digit-ui-module-common";
+import { DigitUI, initCoreComponents } from "@egovernments/digit-ui-module-core";
+import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
+import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
+import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
+import { initUtilitiesComponents } from  "@egovernments/digit-ui-module-utilities";
+import {initWorkbenchComponents} from "@egovernments/digit-ui-module-workbench";
+import {initPGRComponents} from "@egovernments/digit-ui-module-pgr";
 
 import "@egovernments/digit-ui-css/example/index.css";
 
-// import * as comps from "@egovernments/digit-ui-react-components";
-
-// import { subFormRegistry } from "@egovernments/digit-ui-libraries";
-import { initDristiComponents } from "@egovernments/digit-ui-module-dristi";
-
-import { pgrCustomizations, pgrComponents } from "./pgr";
+import { pgrCustomizations,pgrComponents } from "./pgr";
+import { UICustomizations } from "./UICustomizations";
 
 var Digit = window.Digit || {};
 
-const enabledModules = ["Dristi"];
+const enabledModules = [ "DSS", "HRMS",
+"Workbench",
+//  "Engagement", "NDSS","QuickPayLinks", "Payment",
+  "Utilities","PGR"
+//added to check fsm
+// "FSM"
+];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
-
   const token = window.localStorage.getItem("token") || process.env[`REACT_APP_${userType}_TOKEN`];
 
   const citizenInfo = window.localStorage.getItem("Citizen.user-info");
@@ -45,32 +53,35 @@ const initTokens = (stateCode) => {
 };
 
 const initDigitUI = () => {
-  window?.Digit.ComponentRegistryService.setupRegistry({
-    pgrComponents,
-    // TLModule,
-    // TLLinks,
-  });
-
-  // initCustomisationComponents();
-  initDristiComponents();
-  const moduleReducers = (initData) => ({
-    // pgr: PGRReducers(initData),
-  });
-
+  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
   window.Digit.Customizations = {
     PGR: pgrCustomizations,
-    TL: {
-      customiseCreateFormData: (formData, licenceObject) => licenceObject,
-      customiseRenewalCreateFormData: (formData, licenceObject) => licenceObject,
-      customiseSendbackFormData: (formData, licenceObject) => licenceObject,
-    },
+    commonUiConfig: UICustomizations
   };
+  window?.Digit.ComponentRegistryService.setupRegistry({
+    ...pgrComponents,
+    // PaymentModule,
+    // ...paymentConfigs,
+    // PaymentLinks,
+  });
+  initCoreComponents();
+  initDSSComponents();
+  initHRMSComponents();
+  initEngagementComponents();
+  initUtilitiesComponents();
+  initWorkbenchComponents();
+  initPGRComponents();
 
-  const stateCode = "br"|| window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
+  const moduleReducers = (initData) =>  ({
+    pgr: PGRReducers(initData),
+  });
+
+  
+
+  const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
 
-  // const registry = window?.Digit.ComponentRegistryService.getRegistry();
-  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />, document.getElementById("root"));
+  ReactDOM.render(<DigitUI stateCode={stateCode} enabledModules={enabledModules}       defaultLanding="employee"  moduleReducers={moduleReducers} />, document.getElementById("root"));
 };
 
 initLibraries().then(() => {

@@ -16,6 +16,7 @@ import { useParams } from "react-router-dom";
 import { checkCurrentScreen } from "../components/DSSCard";
 import FilterContext from "../components/FilterContext";
 import Filters from "../components/Filters";
+import CustomFilter from "../components/CustomFilter";
 import FiltersNational from "../components/FiltersNational";
 import Layout from "../components/Layout";
 
@@ -270,15 +271,16 @@ const DashBoard = ({ stateCode }) => {
             {t(dashboardConfig?.[0]?.name)}
           </Header>
           {mobileView ? null : (
-            <div className="divToBeHidden">
-              <div className="mrlg divToBeHidden">
+            <div className="divToBeHidden" style={{marginRight:"1.5rem"}}>
+              <div className="mrlg divToBeHidden" >
                 <MultiLink
                   className="multilink-block-wrapper divToBeHidden"
                   label={t(`ES_DSS_SHARE`)}
-                  icon={<ShareIcon className="mrsm" />}
+                  icon={<ShareIcon className="mrsm" fill="#f18f5e"/>}
                   // showOptions={(e) => {
                   // setShowOptions(e)}
                   // }
+                  setShowOptions={setShowOptions}
                   onHeadClick={(e) => {
                     setShowOptions(!showOptions);
                   }}
@@ -286,9 +288,9 @@ const DashBoard = ({ stateCode }) => {
                   options={shareOptions}
                 />
               </div>
-              <div className="mrsm divToBeHidden" onClick={handlePrint}>
-                <DownloadIcon className="mrsm divToBeHidden" />
-                {t(`ES_DSS_DOWNLOAD`)}
+              <div className="mrsm divToBeHidden icon-label-download" onClick={handlePrint} >
+                <DownloadIcon fill="#f18f5e" className="mrsm divToBeHidden" />
+                <p>{t(`ES_DSS_DOWNLOAD`)}</p>
               </div>
             </div>
           )}
@@ -301,7 +303,13 @@ const DashBoard = ({ stateCode }) => {
             closeFilters={() => setIsFilterModalOpen(false)}
             isNational={isNational}
           />
-        ) : (
+        ) : dashboardConfig[0]?.filter == 'CustomFilter' && dashboardConfig[0]?.filterConfig ? (
+        <CustomFilter
+          t={t}
+          filterConfig={dashboardConfig[0]?.filterConfig}
+          isOpen={isFilterModalOpen}
+          closeFilters={() => setIsFilterModalOpen(false)}
+        />) : (
           <Filters
             t={t}
             showModuleFilter={!isNational && dashboardConfig?.[0]?.name.includes("OVERVIEW") ? true : false}
@@ -443,7 +451,7 @@ const DashBoard = ({ stateCode }) => {
               <MultiLink
                 className="multilink-block-wrapper"
                 label={t(`ES_DSS_SHARE`)}
-                icon={<ShareIcon className="mrsm" />}
+                icon={<ShareIcon className="mrsm" fill="#f18f5e"/>}
                 onHeadClick={(e) => {
                   setShowOptions(!showOptions);
                 }}
@@ -451,8 +459,8 @@ const DashBoard = ({ stateCode }) => {
                 options={shareOptions}
               />
             </div>
-            <div onClick={handlePrint} className="divToBeHidden">
-              <DownloadIcon />
+            <div onClick={handlePrint} className="divToBeHidden icon-label-download" >
+              <DownloadIcon fill="#f18f5e"/>
               {t(`ES_DSS_DOWNLOAD`)}
             </div>
           </div>

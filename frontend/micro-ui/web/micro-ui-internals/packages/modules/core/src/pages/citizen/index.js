@@ -1,30 +1,22 @@
-import { BackButton, WhatsappIcon, Card, CitizenHomeCard, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import { BackButton, CitizenHomeCard, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
+import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch, useHistory, Link } from "react-router-dom";
+import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
+import ErrorComponent from "../../components/ErrorComponent";
 import { AppHome, processLinkData } from "../../components/Home";
 import TopBarSideBar from "../../components/TopBarSideBar";
 import StaticCitizenSideBar from "../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
+import FAQsSection from "./FAQs/FAQs";
 import CitizenHome from "./Home";
 import LanguageSelection from "./Home/LanguageSelection";
 import LocationSelection from "./Home/LocationSelection";
-import Login from "./Login";
 import UserProfile from "./Home/UserProfile";
-import ErrorComponent from "../../components/ErrorComponent";
-import FAQsSection from "./FAQs/FAQs";
 import HowItWorks from "./HowItWorks/howItWorks";
-import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
+import Login from "./Login";
 import Search from "./SearchApp";
+import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
 import LandingPage from "./Home/LandingPage";
-const sidebarHiddenFor = [
-  "digit-ui/citizen/register/name",
-  "/digit-ui/citizen/select-language",
-  "/digit-ui/citizen/select-location",
-  "/digit-ui/citizen/login",
-  "/digit-ui/citizen/register/otp",
-  "/digit-ui/citizen/landing-page",
-];
 
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
@@ -52,7 +44,7 @@ const Home = ({
     [
       {
         name: "actions-test",
-        filter: "[?(@.url == 'digit-ui-card')]",
+        filter: `[?(@.url == '${window.contextPath}-card')]`,
       },
     ],
     {
@@ -67,8 +59,20 @@ const Home = ({
       },
     }
   );
+  const sidebarHiddenFor = useMemo(() => {
+    const contextPath = window?.contextPath;
+    return [
+      `${contextPath}/citizen/register/name`,
+      `/${contextPath}/citizen/select-language`,
+      `/${contextPath}/citizen/select-location`,
+      `/${contextPath}/citizen/login`,
+      `/${contextPath}/citizen/register/otp`,
+      `/${contextPath}/citizen/landing-page`,
+      `/${contextPath}/citizen/login/id-verification`,
+    ];
+  }, []);
 
-  const classname = Digit.Hooks.fsm.useRouteSubscription(pathname);
+  const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
   const { path } = useRouteMatch();
   const history = useHistory();
@@ -180,7 +184,7 @@ const Home = ({
             <ErrorComponent
               initData={initData}
               goToHome={() => {
-                history.push("/digit-ui/citizen");
+                history.push(`/${window?.contextPath}/${Digit?.UserService?.getType?.()}`);
               }}
             />
           </Route>

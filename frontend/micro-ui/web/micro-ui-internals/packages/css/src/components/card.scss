@@ -53,7 +53,7 @@
 }
 
 .docsDescription {
-  color: #0b0c0c !important;
+  color: theme(colors.text.primary) !important;
 }
 
 .field-container {
@@ -126,10 +126,6 @@
     padding-left: 25px;
   }
 }
-.employeeCard.fsm {
-  margin-bottom: 16px !important;
-  margin-left: 0px !important;
-  margin-right: 16px !important; }
 
 .header-wrap {
   @apply flex mb-md;
@@ -139,6 +135,7 @@
   }
 
   .header-content {
+    margin-top: 0.2rem;
   }
 
   .header-end {
@@ -156,8 +153,8 @@
 
 .submit-bar {
   @apply h-10 bg-primary-main text-center w-full outline-none;
-  box-shadow: inset 0px -2px 0px #0b0c0c;
-
+  box-shadow: inset 0px -2px 0px theme(colors.text.primary);
+  cursor: pointer;
   &:focus {
     @apply outline-none;
   }
@@ -212,8 +209,10 @@
   }
 
   .employeeCard {
-    @apply mb-md mx-md !important;
-
+  /*  TODO need to revisit that we need mx-md NABEEL/ANIL
+     @apply mb-md mx-md !important;
+    */
+    @apply mb-md !important;
     &.filter {
       margin-left: auto;
       margin-right: auto;

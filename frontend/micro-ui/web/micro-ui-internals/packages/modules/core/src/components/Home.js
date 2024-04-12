@@ -12,7 +12,7 @@ import {
   TLIcon,
   WSICon,
 } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { Fragment } from "react";
 import { useTranslation } from "react-i18next";
 
 /* 
@@ -34,7 +34,7 @@ export const processLinkData = (newData, code, t) => {
     const roleBasedLoginRoutes = [
       {
         role: "FSM_DSO",
-        from: "/digit-ui/citizen/fsm/dso-dashboard",
+        from: `/${window?.contextPath}/citizen/fsm/dso-dashboard`,
         dashoardLink: "CS_LINK_DSO_DASHBOARD",
         loginLink: "CS_LINK_LOGIN_DSO",
       },
@@ -48,7 +48,7 @@ export const processLinkData = (newData, code, t) => {
         });
       else
         newObj?.links?.push({
-          link: `/digit-ui/citizen/login`,
+          link: `/${window?.contextPath}/citizen/login`,
           state: { role: "FSM_DSO", from },
           i18nKey: t(loginLink),
         });
@@ -91,7 +91,7 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
   return (
     <React.Fragment>
       <div className="citizen-all-services-wrapper">
-        <BackButton />
+        {location.pathname.includes("sanitation-ui/citizen/all-services") ? null : <BackButton />}
         <div className="citizenAllServiceGrid">
           {moduleArray
             .filter((mod) => mod)
@@ -126,22 +126,35 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
   );
 };
 
-const EmployeeHome = ({ modules }) => {
+const EmployeeHome = ({ modules, additionalComponent }) => {
   return (
-    <div className="employee-app-container">
-      <div className="ground-container moduleCardWrapper gridModuleWrapper">
-        {modules.map(({ code }, index) => {
-          const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
-          return <Card key={index} />;
-        })}
+    <>
+      <div className="employee-app-container">
+        <div className="ground-container moduleCardWrapper gridModuleWrapper">
+          {modules.map(({ code }, index) => {
+            const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
+            return <Card key={index} />;
+          })}
+        </div>
       </div>
-    </div>
+
+      {additionalComponent &&
+        additionalComponent?.length > 0 &&
+        additionalComponent.map((i) => {
+          const Component = typeof i === "string" ? Digit.ComponentRegistryService.getComponent(i) : null;
+          return Component ? (
+            <div className="additional-component-wrapper">
+              <Component />
+            </div>
+          ) : null;
+        })}
+    </>
   );
 };
 
-export const AppHome = ({ userType, modules, getCitizenMenu, fetchedCitizen, isLoading }) => {
+export const AppHome = ({ userType, modules, getCitizenMenu, fetchedCitizen, isLoading, additionalComponent }) => {
   if (userType === "citizen") {
     return <CitizenHome modules={modules} getCitizenMenu={getCitizenMenu} fetchedCitizen={fetchedCitizen} isLoading={isLoading} />;
   }
-  return <EmployeeHome modules={modules} />;
+  return <EmployeeHome modules={modules} additionalComponent={additionalComponent} />;
 };

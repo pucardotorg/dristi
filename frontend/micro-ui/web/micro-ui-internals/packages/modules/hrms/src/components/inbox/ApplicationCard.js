@@ -83,7 +83,7 @@ export const ApplicationCard = ({
       <DetailsCard
         data={data}
         serviceRequestIdKey={serviceRequestIdKey}
-        linkPrefix={linkPrefix ? linkPrefix : DSO ? "/digit-ui/employee/fsm/application-details/" : "/digit-ui/employee/fsm/"}
+        linkPrefix={linkPrefix ? linkPrefix : DSO ?  `/${window?.contextPath}/employee/fsm/application-details/` : `/${window?.contextPath}/employee/fsm/`}
       />
     );
   }

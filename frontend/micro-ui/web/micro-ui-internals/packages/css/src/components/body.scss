@@ -47,9 +47,11 @@ body {
 
 .bread-crumb {
   font-size: 14px;
-  color: #505a5f;
+  color: theme(colors.text.secondary);
   display: flex;
   margin-bottom: 10px;
+  list-style: none;
+  padding: 0;
 }
 .bread-crumb--item {
   margin-left: 5px;
@@ -63,7 +65,7 @@ body {
   }
 
   .last {
-    color: #0b0c0c;
+    color: theme(colors.text.primary);
   }
 }
 
@@ -132,4 +134,11 @@ body {
 
 .body-container::-webkit-scrollbar {
   display: none;
+}
+.audit-card {
+  width: 80%;
+  margin-left: -21%;
+  margin-right: -27%;
+  max-height: 120px;
+  margin-top: 90px;
 }

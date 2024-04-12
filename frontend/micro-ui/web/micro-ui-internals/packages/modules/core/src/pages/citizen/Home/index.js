@@ -1,23 +1,9 @@
-import React, { useEffect } from "react";
 import {
-  StandaloneSearchBar,
-  Loader,
-  CardBasedOptions,
-  ComplaintIcon,
-  PTIcon,
-  CaseIcon,
-  DropIcon,
-  HomeIcon,
-  Calender,
-  DocumentIcon,
-  HelpIcon,
-  WhatsNewCard,
-  OBPSIcon,
+  Calender, CardBasedOptions, CaseIcon, ComplaintIcon, DocumentIcon, HomeIcon, Loader, OBPSIcon, PTIcon, WhatsNewCard
 } from "@egovernments/digit-ui-react-components";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { CitizenSideBar } from "../../../components/TopBarSideBar/SideBar/CitizenSideBar";
-import StaticCitizenSideBar from "../../../components/TopBarSideBar/SideBar/StaticCitizenSideBar";
 
 const Home = () => {
   const { t } = useTranslation();
@@ -41,7 +27,7 @@ const Home = () => {
   });
 
   if (!tenantId) {
-    history.push(`/digit-ui/citizen/select-language`);
+    history.push(`/${window?.contextPath}/citizen/select-language`);
   }
 
   const appBannerWebObj = uiHomePage?.appBannerDesktop;
@@ -51,6 +37,15 @@ const Home = () => {
   const whatsAppBannerWebObj = uiHomePage?.whatsAppBannerDesktop;
   const whatsAppBannerMobObj = uiHomePage?.whatsAppBannerMobile;
   const whatsNewSectionObj = uiHomePage?.whatsNewSection;
+  const redirectURL = uiHomePage?.redirectURL;
+  /* configure redirect URL only if it is required to overide the default citizen home screen */
+  if (redirectURL) {
+    history.push(`/${window?.contextPath}/citizen/${redirectURL}`);
+  }
+  /* fix for sanitation ui */
+  if (window?.location?.href?.includes?.("sanitation-ui")) {
+    history.push(`/${window?.contextPath}/citizen/all-services`);
+  }
 
   const handleClickOnWhatsAppBanner = (obj) => {
     window.open(obj?.navigationUrl);
@@ -81,7 +76,7 @@ const Home = () => {
       // {
       //     name: t("ACTION_TEST_WATER_AND_SEWERAGE"),
       //     Icon: <DropIcon/>,
-      //     onClick: () => history.push("/digit-ui/citizen")
+      //     onClick: () => history.push(`/${window?.contextPath}/citizen`)
       // },
       {
         name: t(citizenServicesObj?.props?.[3]?.label),
@@ -134,17 +129,18 @@ const Home = () => {
         <StaticCitizenSideBar />
       </div> */}
       <div className="HomePageWrapper">
-        {<div className="BannerWithSearch">
-          {isMobile ? <img src={appBannerMobObj?.bannerUrl} /> : <img src={appBannerWebObj?.bannerUrl} />}
-          {/* <div className="Search">
+        {
+          <div className="BannerWithSearch">
+            {isMobile ? <img src={appBannerMobObj?.bannerUrl} /> : <img src={appBannerWebObj?.bannerUrl} />}
+            {/* <div className="Search">
             <StandaloneSearchBar placeholder={t("CS_COMMON_SEARCH_PLACEHOLDER")} />
           </div> */}
-          <div className="ServicesSection">
-          <CardBasedOptions style={{marginTop:"-30px"}} {...allCitizenServicesProps} />
-          <CardBasedOptions style={isMobile ? {} : {marginTop:"-30px"}} {...allInfoAndUpdatesProps} />
-        </div>
-        </div>}
-
+            <div className="ServicesSection">
+              <CardBasedOptions style={{ marginTop: "-30px" }} {...allCitizenServicesProps} />
+              <CardBasedOptions style={isMobile ? {} : { marginTop: "-30px" }} {...allInfoAndUpdatesProps} />
+            </div>
+          </div>
+        }
 
         {(whatsAppBannerMobObj || whatsAppBannerWebObj) && (
           <div className="WhatsAppBanner">

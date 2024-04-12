@@ -1,8 +1,9 @@
-import { FormComposer, Toast ,Loader} from "@egovernments/digit-ui-react-components";
+import { FormComposer, Toast ,Loader, Header} from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { newConfig } from "../components/config/config";
+import _ from "lodash";
 
 const CreateEmployee = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -13,6 +14,7 @@ const CreateEmployee = () => {
   const [checkfield, setcheck] = useState(false)
   const { t } = useTranslation();
   const history = useHistory();
+  const isMobile = window.Digit.Utils.browser.isMobile();
 
  const { data: mdmsData,isLoading } = Digit.Hooks.useCommonMDMS(Digit.ULBService.getStateId(), "egov-hrms", ["CommonFieldsConfig"], {
     select: (data) => {
@@ -72,8 +74,15 @@ const CreateEmployee = () => {
       }]
   }
 
+  const employeeCreateSession = Digit.Hooks.useSessionStorage("NEW_EMPLOYEE_CREATE", {});
+  const [sessionFormData,setSessionFormData, clearSessionFormData] = employeeCreateSession;
 
   const onFormValueChange = (setValue = true, formData) => {
+
+    if (!_.isEqual(sessionFormData, formData)) {
+        setSessionFormData({...sessionFormData,...formData});
+    }
+
     if (formData?.SelectEmployeePhoneNumber?.mobileNumber) {
       setMobileNumber(formData?.SelectEmployeePhoneNumber?.mobileNumber);
     } else {
@@ -123,8 +132,10 @@ const CreateEmployee = () => {
   };
 
   const navigateToAcknowledgement = (Employees) => {
-    history.replace("/digit-ui/employee/hrms/response", { Employees, key: "CREATE", action: "CREATE" });
+    history.replace(`/${window?.contextPath}/employee/hrms/response`, { Employees, key: "CREATE", action: "CREATE" });
   }
+
+  
 
 
   const onSubmit = (data) => {
@@ -195,9 +206,13 @@ const CreateEmployee = () => {
   const config =mdmsData?.config?mdmsData.config: newConfig;
   return (
     <div>
+      <div style={isMobile ? {marginLeft: "-12px", fontFamily: "calibri", color: "#FF0000"} :{ marginLeft: "15px", fontFamily: "calibri", color: "#FF0000" }}>
+        <Header>{t("HR_COMMON_CREATE_EMPLOYEE_HEADER")}</Header>
+      </div>
       <FormComposer
-        defaultValues={defaultValues}
-        heading={t("HR_COMMON_CREATE_EMPLOYEE_HEADER")}
+        // defaultValues={defaultValues}
+        defaultValues = {sessionFormData}
+        heading={t("")}
         config={config}
         onSubmit={onSubmit}
         onFormValueChange={onFormValueChange}
