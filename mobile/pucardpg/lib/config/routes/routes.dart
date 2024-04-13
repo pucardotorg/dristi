@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:pucardpg/app/presentation/features/id-otp-screen/id_otp_screen.dart';
+import 'package:pucardpg/app/presentation/features/id-verification-screen/id_verification_screen.dart';
 import 'package:pucardpg/app/presentation/features/mobile-number-screen/mobile_number_screen.dart';
+import 'package:pucardpg/app/presentation/features/name-details-screen/name_details_screen.dart';
 import 'package:pucardpg/app/presentation/features/otp-screen/otp_screen.dart';
 
 
@@ -10,8 +13,17 @@ class AppRoutes {
       case '/':
         return _materialRoute(const MobileNumberScreen());
 
-      case '/Otp':
+      case '/MobileOtpScreen':
         return _materialRoute(OtpScreen(mobile: settings.arguments as String,));
+
+      case '/IdVerificationScreen':
+        return _materialRoute(IdVerificationScreen(mobile: settings.arguments as String,));
+
+      case '/IdOtpScreen':
+        return _materialRoute(IdOtpScreen(mobile: settings.arguments as String,));
+
+      case '/NameDetailsScreen':
+        return _materialRoute(NameDetailsScreen(mobile: settings.arguments as String,));
 
       default:
         return _materialRoute(const MobileNumberScreen());

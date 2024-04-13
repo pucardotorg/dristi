@@ -72,7 +72,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                     ),
                     DigitElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/Otp', arguments: mobile);
+                          Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
                         },
                         child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                     ),
