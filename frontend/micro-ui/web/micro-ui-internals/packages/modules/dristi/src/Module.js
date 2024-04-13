@@ -5,6 +5,9 @@ import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import SearchLocationAddress from "./components/SearchLocationAddress";
 import Registration from "./pages/citizen/registration";
+import EmployeeApp from "./pages/employee";
+import DristiCard from "./components/DristiCard";
+import Inbox from "./pages/employee/Inbox";
 
 export const DristiModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
@@ -21,7 +24,7 @@ export const DristiModule = ({ stateCode, userType, tenants }) => {
   if (userType === "citizen") {
     return <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
   }
-  return <React.Fragment></React.Fragment>;
+  return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants}></EmployeeApp>;
 };
 
 export const DristiLinks = ({ matchPath, userType }) => {
@@ -42,6 +45,8 @@ const componentsToRegister = {
   DristiLinks,
   DristiModule,
   DristiRegistration: Registration,
+  DristiCard,
+  Inbox,
 };
 
 export const initDristiComponents = () => {

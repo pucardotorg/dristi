@@ -186,7 +186,6 @@ import {
   LocateIcon,
 
   /* Works Management  */
-
   NoResultsFoundIcon,
   WorksMgmtIcon,
   BioMetricIcon,
@@ -213,7 +212,9 @@ import {
   InputIcon,
   TreatmentQualityIcon,
   RegisterIcon,
-  LoginIcon
+  LoginIcon,
+  RegistrationRequestIcon,
+  CasesIcon,
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -235,7 +236,7 @@ import { FormComposer } from "./hoc/FormComposer";
 import { FormComposer as FormComposerV2 } from "./hoc/FormComposerV2";
 import RenderFormFields from "./molecules/RenderFormFields";
 import Modal from "./hoc/Modal";
-import FileUploadModal from "./hoc/FileUploadModal"
+import FileUploadModal from "./hoc/FileUploadModal";
 import ResponseComposer from "./hoc/ResponseComposer";
 import InboxComposer from "./hoc/InboxComposer";
 
@@ -287,11 +288,11 @@ import CitizenConsentForm from "./atoms/CitizenConsentForm";
 import CloseButton from "./atoms/CloseButton";
 import LoaderWithGap from "./atoms/LoaderWithGap";
 // Importing From SVG Library
-import {SVG} from "./atoms/SVG";
+import { SVG } from "./atoms/SVG";
 
 //Tutorial
 import Tutorial from "./hoc/Tutorial/Tutorial";
-import { useTourState,TourProvider } from "./hoc/Tutorial/TourProvider";
+import { useTourState, TourProvider } from "./hoc/Tutorial/TourProvider";
 import Help from "./hoc/Tutorial/Help";
 
 //View Composer
@@ -575,7 +576,6 @@ export {
   FileIcon,
   DeleteIconv2,
   InfoIconOutline,
-
   /* Works Management  */
 
   NoResultsFoundIcon,
@@ -598,7 +598,8 @@ export {
   AttentionListIcon,
   RegisterIcon,
   LoginIcon,
-
+  RegistrationRequestIcon,
+  CasesIcon,
   // Exported all svgs from svg-component library
-  SVG
+  SVG,
 };

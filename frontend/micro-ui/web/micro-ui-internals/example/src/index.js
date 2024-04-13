@@ -20,15 +20,7 @@ import { UICustomizations } from "./UICustomizations";
 var Digit = window.Digit || {};
 
 const enabledModules = [
-  "DSS",
-  "HRMS",
-  "Workbench",
-  //  "Engagement", "NDSS","QuickPayLinks", "Payment",
-  "Utilities",
-  "PGR",
   "Dristi",
-  //added to check fsm
-  // "FSM"
 ];
 
 const initTokens = (stateCode) => {
