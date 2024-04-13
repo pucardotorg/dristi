@@ -5,6 +5,7 @@ import 'package:pucardpg/app/presentation/features/id-verification-screen/id_ver
 import 'package:pucardpg/app/presentation/features/mobile-number-screen/mobile_number_screen.dart';
 import 'package:pucardpg/app/presentation/features/name-details-screen/name_details_screen.dart';
 import 'package:pucardpg/app/presentation/features/otp-screen/otp_screen.dart';
+import 'package:pucardpg/app/presentation/features/success-screen/success_screen.dart';
 import 'package:pucardpg/app/presentation/features/t&c-screen/terms_and_conditions_screen.dart';
 import 'package:pucardpg/app/presentation/features/user-type-screen/user_type_screen.dart';
 
@@ -36,6 +37,9 @@ class AppRoutes {
 
       case '/AdvocateRegistrationScreen':
         return _materialRoute(const AdvocateRegistrationScreen());
+
+      case '/SuccessScreen':
+        return _materialRoute(const SuccessScreen());
 
       default:
         return _materialRoute(const MobileNumberScreen());

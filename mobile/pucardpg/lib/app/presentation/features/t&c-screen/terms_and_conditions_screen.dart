@@ -79,7 +79,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/IdOtpScreen');
+                  Navigator.pushNamed(context, '/SuccessScreen');
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
             ),
