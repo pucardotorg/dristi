@@ -3,7 +3,7 @@ info:
   title: Advocate and advocate clerk registry
   description: |
     This document houses API specifications to register court system users - advocate, advocate clerk etc.. This registry sits on top of the base user/individual registries. All users will be registered in the DIGIT individual/user registries with mobile number, name and other basic fields. This registry only stores extra information as needed for dispute resolution systems. While this is a very basic registry currently, this can evolve into a very detailed registry in future versions. Verification of advocate/clerk credentials is left to the implementation.
-  version: 1.0.0
+  version: 0.1.0
 tags:
   - name: Advocate
     description: APIs to register advocates

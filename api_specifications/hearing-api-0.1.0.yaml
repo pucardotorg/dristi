@@ -4,7 +4,7 @@ info:
   title: API specs for Hearing
   description:
     Hearing API paths and entity is defined in this file.
-  version: "1.0.3"
+  version: "0.1.0"
 
 tags:
   - name: Hearing
