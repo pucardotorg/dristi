@@ -1,4 +1,3 @@
-
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,21 +7,19 @@ import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
-class NameDetailsScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
+class AdvocateRegistrationScreen extends StatefulWidget with AppMixin{
 
-  const NameDetailsScreen({super.key, required this.mobile});
+  const AdvocateRegistrationScreen({super.key, });
 
   @override
-  NameDetailsScreenState createState() => NameDetailsScreenState();
+  AdvocateRegistrationScreenState createState() => AdvocateRegistrationScreenState();
 
 }
 
-class NameDetailsScreenState extends State<NameDetailsScreen> {
+class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> {
 
-  late String mobile;
-  TextEditingController searchController = TextEditingController();
+  bool firstChecked = false;
 
   @override
   void initState() {
@@ -42,17 +39,6 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 10,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DigitBackButton(
-                          onPressed: (){
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        DigitHelpButton()
-                      ],
-                    ),
                     DigitCard(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -60,23 +46,41 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                         children: [
                           Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
                           const SizedBox(height: 20,),
-                          Text("Enter Your Name", style: widget.theme.text32W700RobCon()?.apply(),),
+                          Text("Provide details for the following", style: widget.theme.text32W700RobCon()?.apply(),),
                           const SizedBox(height: 20,),
                           DigitTextField(
-                            label: 'First name',
+                            label: 'State of registration',
                             isRequired: true,
                             onChange: (val) { },
                           ),
                           const SizedBox(height: 20,),
                           DigitTextField(
-                            label: 'Middle name',
+                            label: 'BAR registration number',
+                            isRequired: true,
                             onChange: (val) { },
                           ),
                           const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'Last name',
-                            isRequired: true,
-                            onChange: (val) { },
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: DigitTextField(
+                                  label: 'Upload BAR council ID',
+                                  isRequired: true,
+                                  readOnly: true,
+                                  onChange: (val) { },
+                                ),
+                              ),
+                              const SizedBox(width: 10,),
+                              SizedBox(
+                                height: 44,
+                                width: 120,
+                                child: DigitOutLineButton(
+                                  label: 'Upload',
+                                  onPressed: (){},
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -88,7 +92,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.mobile);
+                  Navigator.pushNamed(context, '/TermsAndConditionsScreen',);
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
             ),

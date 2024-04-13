@@ -8,21 +8,18 @@ import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
-class NameDetailsScreen extends StatefulWidget with AppMixin{
+class TermsAndConditionsScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
-
-  const NameDetailsScreen({super.key, required this.mobile});
+  const TermsAndConditionsScreen({super.key, });
 
   @override
-  NameDetailsScreenState createState() => NameDetailsScreenState();
+  TermsAndConditionsScreenState createState() => TermsAndConditionsScreenState();
 
 }
 
-class NameDetailsScreenState extends State<NameDetailsScreen> {
+class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
 
-  late String mobile;
-  TextEditingController searchController = TextEditingController();
+  bool firstChecked = false;
 
   @override
   void initState() {
@@ -60,24 +57,18 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                         children: [
                           Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
                           const SizedBox(height: 20,),
-                          Text("Enter Your Name", style: widget.theme.text32W700RobCon()?.apply(),),
+                          Text("Terms and Conditions", style: widget.theme.text32W700RobCon()?.apply(),),
                           const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'First name',
-                            isRequired: true,
-                            onChange: (val) { },
+                          DigitCheckboxTile(
+                            value: firstChecked,
+                            label: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                            onChanged: (val){
+                              setState(() {
+                                firstChecked = !firstChecked;
+                              });
+                            },
                           ),
-                          const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'Middle name',
-                            onChange: (val) { },
-                          ),
-                          const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'Last name',
-                            isRequired: true,
-                            onChange: (val) { },
-                          ),
+                          // const SizedBox(height: 20,),
                         ],
                       ),
                     ),
@@ -88,7 +79,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.mobile);
+                  Navigator.pushNamed(context, '/IdOtpScreen');
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
             ),

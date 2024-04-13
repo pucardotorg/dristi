@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_table_item.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
