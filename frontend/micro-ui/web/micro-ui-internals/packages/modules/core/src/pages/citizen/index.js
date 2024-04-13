@@ -127,7 +127,7 @@ const Home = ({
                   isInfo={code === "OBPS" ? true : false}
                 />
               )}
-              {/* <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} /> */}
+              <Links key={index} matchPath={`/digit-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} />
             </div>
             <StaticDynamicCard moduleCode={code?.toUpperCase()} />
           </div>

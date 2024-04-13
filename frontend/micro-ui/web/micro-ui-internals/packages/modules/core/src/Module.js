@@ -1,5 +1,5 @@
 import { Body, Loader } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { getI18n } from "react-i18next";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Provider } from "react-redux";
@@ -12,8 +12,36 @@ import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundaries";
 import getStore from "./redux/store";
 
-const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers,defaultLanding }) => {
+const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers, defaultLanding }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
+
+  const moduleData = useMemo(() => {
+    if (!initData?.modules) {
+      return [];
+    }
+    if (
+      initData?.modules?.some((item) => {
+        return item && item.code === "Dristi";
+      })
+    ) {
+      return initData?.modules;
+    }
+    return [
+      ...initData?.modules,
+      {
+        module: "Dristi",
+        code: "Dristi",
+        active: true,
+        order: 11,
+        tenants: [
+          {
+            code: `${stateCode}`,
+          },
+        ],
+      },
+    ];
+  }, [initData?.modules, stateCode]);
+
   if (isLoading) {
     return <Loader page={true} />;
   }
@@ -26,7 +54,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers,defaultLandi
           <DigitApp
             initData={initData}
             stateCode={stateCode}
-            modules={initData?.modules}
+            modules={moduleData}
             appTenants={initData.tenants}
             logoUrl={initData?.stateInfo?.logoUrl}
             defaultLanding={defaultLanding}
@@ -37,7 +65,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers,defaultLandi
   );
 };
 
-export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers ,defaultLanding}) => {
+export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers, defaultLanding }) => {
   const [privacy, setPrivacy] = useState(Digit.Utils.getPrivacyObject() || {});
   const userType = Digit.UserService.getType();
   const queryClient = new QueryClient({
@@ -99,7 +127,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers ,d
                 },
               }}
             >
-              <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding={defaultLanding}/>
+              <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} defaultLanding={defaultLanding} />
             </PrivacyProvider.Provider>
           </ComponentProvider.Provider>
         </QueryClientProvider>
@@ -111,7 +139,7 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers ,d
 const componentsToRegister = {
   SelectOtp,
   ChangeCity,
-  ChangeLanguage
+  ChangeLanguage,
 };
 
 export const initCoreComponents = () => {
