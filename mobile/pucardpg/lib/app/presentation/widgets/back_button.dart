@@ -4,14 +4,14 @@ import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class DigitBackButton extends StatelessWidget with AppMixin{
 
-  const DigitBackButton({super.key});
+  final VoidCallback? onPressed;
+
+  const DigitBackButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: (){
-        Navigator.of(context).pop();
-      },
+      onPressed: onPressed,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

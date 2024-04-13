@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
@@ -68,10 +69,14 @@ class OtpScreenState extends State<OtpScreen> {
         body: Column(
           children: [
             const SizedBox(height: 10,),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DigitBackButton(),
+                DigitBackButton(
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                ),
                 DigitHelpButton()
               ],
             ),
@@ -135,7 +140,9 @@ class OtpScreenState extends State<OtpScreen> {
                           _otpControllers.forEach((controller) {
                             otp += controller.text;
                           });
-                          print('Entered OTP: $otp');
+                          if (kDebugMode) {
+                            print('Entered OTP: $otp');
+                          }
                       },
                       child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                   ),

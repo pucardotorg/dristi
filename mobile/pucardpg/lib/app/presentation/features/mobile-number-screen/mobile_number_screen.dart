@@ -36,10 +36,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
         body: Column(
           children: [
             const SizedBox(height: 10,),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DigitBackButton(),
+                DigitBackButton(
+                  onPressed: (){},
+                ),
                 DigitHelpButton()
               ],
             ),
@@ -59,7 +61,15 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                       onChange: (val) { mobile = val; },
                     ),
                     const SizedBox(height: 20,),
-                    DigitCheckboxTile( value: rememberMe, label: "Remember me", onChanged: (val){rememberMe = !rememberMe;},),
+                    DigitCheckboxTile(
+                      value: rememberMe,
+                      label: "Remember me",
+                      onChanged: (val){
+                        setState(() {
+                          rememberMe = !rememberMe;
+                        });
+                      },
+                    ),
                     DigitElevatedButton(
                         onPressed: () {
                           Navigator.pushNamed(context, '/Otp', arguments: mobile);
