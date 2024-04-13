@@ -209,9 +209,6 @@ components:
           example: PROSECUTOR, PUBLIC DEFENDER 
           minLength: 2
           maxLength: 64
-        advocateType:
-          type: string
-          description: Type of advocate
         organisationID:
           type: string
           format: uuid
