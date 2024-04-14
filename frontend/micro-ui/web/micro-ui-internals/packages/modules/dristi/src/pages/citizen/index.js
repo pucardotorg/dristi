@@ -16,7 +16,7 @@ const App = () => {
       <Switch>
         <AppContainer>
           <BackButton>Back</BackButton>
-          <PrivateRoute path={`${path}/user-registration`} component={Registration} />
+          <PrivateRoute path={`${path}/home/user-registration`} component={Registration} />
           <PrivateRoute path={`${path}/response`} component={Response} />
         </AppContainer>
       </Switch>

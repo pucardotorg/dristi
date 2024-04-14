@@ -214,7 +214,7 @@ const mapStyles = [
   },
 ];
 
-const setLocationText = (location, onChange, isPlaceRequired=false) => {
+const setLocationText = (location, onChange, isPlaceRequired = false) => {
   const geocoder = new google.maps.Geocoder();
   geocoder.geocode(
     {
@@ -227,10 +227,8 @@ const setLocationText = (location, onChange, isPlaceRequired=false) => {
           const infoWindowContent = document.getElementById("pac-input");
           infoWindowContent.value = getName(results[0]);
           if (onChange) {
-            if(isPlaceRequired)
-            onChange(pincode, { longitude: location.lng, latitude: location.lat }, infoWindowContent.value);
-            else
-            onChange(pincode, { longitude: location.lng, latitude: location.lat });
+            if (isPlaceRequired) onChange(pincode, { longitude: location.lng, latitude: location.lat }, infoWindowContent.value);
+            else onChange(pincode, { longitude: location.lng, latitude: location.lat });
           }
         }
       }
@@ -247,13 +245,11 @@ const onMarkerDragged = (marker, onChange, isPlaceRequired = false) => {
     lat: currLat,
     lng: currLang,
   };
-  if(isPlaceRequired)
-  setLocationText(location, onChange, true);
-  else
-  setLocationText(location, onChange);
+  if (isPlaceRequired) setLocationText(location, onChange, true);
+  else setLocationText(location, onChange);
 };
 
-const initAutocomplete = (onChange, position, isPlaceRequired=false) => {
+const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
   const map = new window.google.maps.Map(document.getElementById("map"), {
     center: position,
     zoom: 15,
@@ -288,10 +284,8 @@ const initAutocomplete = (onChange, position, isPlaceRequired=false) => {
     }),
   ];
 
-  if(isPlaceRequired)
-  setLocationText(position, onChange,true);
-  else
-  setLocationText(position, onChange);
+  if (isPlaceRequired) setLocationText(position, onChange, true);
+  else setLocationText(position, onChange);
 
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
@@ -309,10 +303,8 @@ const initAutocomplete = (onChange, position, isPlaceRequired=false) => {
         latitude: geometry.location.lat(),
         longitude: geometry.location.lng(),
       };
-      if(isPlaceRequired)
-      onChange(pincode, geoLocation, place.name);
-      else
-      onChange(pincode, geoLocation);
+      if (isPlaceRequired) onChange(pincode, geoLocation, place.name);
+      else onChange(pincode, geoLocation);
     }
     markers.forEach((marker) => {
       marker.setMap(null);
@@ -380,7 +372,7 @@ const LocationSearch = (props) => {
   }, []);
 
   return (
-    <div className="map-wrap">
+    <div className="map-wrap" style={props?.locationStyle}>
       <div className="map-search-bar-wrap">
         {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
         <SearchIconSvg className="map-search-bar-icon" />

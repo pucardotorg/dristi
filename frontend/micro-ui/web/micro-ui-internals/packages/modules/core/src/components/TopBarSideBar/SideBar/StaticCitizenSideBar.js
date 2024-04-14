@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   HomeIcon,
   EditPencilIcon,
@@ -26,7 +26,6 @@ import { useHistory } from "react-router-dom";
 import LogoutDialog from "../../Dialog/LogoutDialog";
 import ChangeCity from "../../ChangeCity";
 import { defaultImage } from "../../utils";
-
 
 /* 
 Feature :: Citizen Webview sidebar
@@ -66,17 +65,17 @@ const IconsObject = {
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
   FirenocIcon: <FirenocIcon className="icon" />,
-  HomeIcon: <HomeIcon className="icon" />,
+  HomeIcon: <HomeIcon className="icon" style={{ fill: "#fff" }} />,
   EditPencilIcon: <EditPencilIcon className="icon" />,
-  LogoutIcon: <LogoutIcon className="icon" />,
-  Phone: <Phone className="icon" />,
+  LogoutIcon: <LogoutIcon className="icon" styles={{ fill: "#fff" }} />,
+  Phone: <Phone className="icon" style={{ fill: "#fff" }} />,
 };
 const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const { t } = useTranslation();
   const history = useHistory();
   const location = useLocation();
   const { pathname } = location;
-  const { data: storeData, isFetched } = Digit.Hooks.useStore.getInitData();
+  const { data: storeData, isFetched, isLoading } = Digit.Hooks.useStore.getInitData();
   const { stateInfo } = storeData || {};
   const user = Digit.UserService.getUser();
   let isMobile = window.Digit.Utils.browser.isMobile();
@@ -84,6 +83,28 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const [isEmployee, setisEmployee] = useState(false);
   const [isSidebarOpen, toggleSidebar] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
+
+  const sidebarRef = useRef(null);
+  const [subNav, setSubNav] = useState(false);
+
+  useEffect(() => {
+    if (isLoading) {
+      return <Loader />;
+    }
+    sidebarRef.current.style.cursor = "pointer";
+    collapseNav();
+  }, [isLoading]);
+
+  const expandNav = () => {
+    sidebarRef.current.style.width = "260px";
+    // sidebarRef.current.style.overflow = "auto";
+    setSubNav(true);
+  };
+  const collapseNav = () => {
+    sidebarRef.current.style.width = "60px";
+    sidebarRef.current.style.overflow = "hidden";
+    setSubNav(false);
+  };
 
   const handleLogout = () => {
     toggleSidebar(false);
@@ -125,21 +146,26 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       itemComponent = item.text;
     }
     const Item = () => (
-      <span className="menu-item" {...item.populators}>
+      <span className="menu-item" {...item.populators} style={{ marginLeft: 0 }}>
         {leftIcon}
-        <div className="menu-label">{itemComponent}</div>
+        <div
+          className="menu-label"
+          style={{ color: !(pathname === item?.link || pathname === item?.sidebarURL || pathname.includes(item?.link)) && "#fff" }}
+        >
+          {itemComponent}
+        </div>
       </span>
     );
     if (item.type === "external-link") {
       return (
-        <a href={item.link}>
+        <a href={item.link} style={{ textDecoration: "none" }}>
           <Item />
         </a>
       );
     }
     if (item.type === "link") {
       return (
-        <Link to={item?.link}>
+        <Link to={item?.link} style={{ textDecoration: "none", marginLeft: 0 }}>
           <Item />
         </Link>
       );
@@ -147,21 +173,21 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
     return <Item />;
   };
-  let profileItem;
+  // let profileItem;
 
   if (isFetched && user && user.access_token) {
-    profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;
+    // profileItem = <Profile info={user?.info} stateName={stateInfo?.name} t={t} />;
     menuItems = menuItems.filter((item) => item?.id !== "login-btn");
     menuItems = [
       ...menuItems,
-      {
-        text: t("EDIT_PROFILE"),
-        element: "PROFILE",
-        icon: "EditPencilIcon",
-        populators: {
-          onClick: showProfilePage,
-        },
-      },
+      // {
+      //   text: t("EDIT_PROFILE"),
+      //   element: "PROFILE",
+      //   icon: "EditPencilIcon",
+      //   populators: {
+      //     onClick: showProfilePage,
+      //   },
+      // },
       {
         text: t("CORE_COMMON_LOGOUT"),
         element: "LOGOUT",
@@ -199,7 +225,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
     ?.sort((x, y) => y.localeCompare(x))
     ?.map((key) => {
       if (linkData[key][0]?.sidebar === `${window.contextPath}-links`) {
-        menuItems.splice(1, 0, {
+        menuItems.splice(0, 0, {
           type: linkData[key][0]?.sidebarURL?.includes(window?.contextPath) ? "link" : "external-link",
           text: t(`ACTION_TEST_${Digit.Utils.locale.getTransformedLocale(key)}`),
           links: linkData[key],
@@ -211,28 +237,17 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   return (
     <React.Fragment>
-      <div>
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-            top: "0px",
-            backgroundColor: "rgba(0, 0, 0, 0.54)",
-            pointerzevents: "auto",
-          }}
-        ></div>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: isMobile ? "calc(100vh - 56px)" : "auto",
-            zIndex: "99",
-          }}
-        >
-          {profileItem}
+      <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{ margin: 0, minWidth: 60 }}>
+        <div className="new-sidebar show">
+          {/* {profileItem} */}
           <div className="drawer-desktop">
             {menuItems?.map((item, index) => (
-              <div className={`sidebar-list ${pathname === item?.link || pathname === item?.sidebarURL ? "active" : ""}`} key={index}>
+              <div
+                className={`sidebar-list ${
+                  pathname === item?.link || pathname === item?.sidebarURL || pathname.includes(item?.link) ? "active" : ""
+                }`}
+                key={index}
+              >
                 <MenuItem item={item} />
               </div>
             ))}

@@ -17,19 +17,19 @@ Axios.interceptors.response.use(
           localStorage.clear();
           sessionStorage.clear();
           window.location.href =
-          (isEmployee ? `/${window?.contextPath}/employee/user/login` : `/${window?.contextPath}/citizen/login`) +
+            (isEmployee ? `/${window?.contextPath}/employee/user/login` : `/${window?.contextPath}/citizen/select-language`) +
             `?from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (
           error?.message?.toLowerCase()?.includes("internal server error") ||
           error?.message?.toLowerCase()?.includes("some error occured")
         ) {
           window.location.href =
-          (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
-                      `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
+            `?type=maintenance&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         } else if (error.message.includes("ZuulRuntimeException")) {
           window.location.href =
-          (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
-                      `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            (isEmployee ? `/${window?.contextPath}/employee/user/error` : `/${window?.contextPath}/citizen/error`) +
+            `?type=notfound&from=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         }
       }
     }
@@ -70,7 +70,6 @@ export const Request = async ({
 }) => {
   const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {
-   
     data.RequestInfo = {
       apiId: "Rainmaker",
     };
@@ -83,7 +82,7 @@ export const Request = async ({
     if (locale) {
       data.RequestInfo = { ...data.RequestInfo, msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}` };
     }
-    
+
     if (noRequestInfo) {
       delete data.RequestInfo;
     }
@@ -95,8 +94,8 @@ export const Request = async ({
     */
     const privacy = Digit.Utils.getPrivacyObject();
     if (privacy && !url.includes("/edcr/rest/dcr/")) {
-      if(!noRequestInfo){
-      data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
+      if (!noRequestInfo) {
+        data.RequestInfo = { ...data.RequestInfo, plainAccessRequest: { ...privacy } };
       }
     }
   }
@@ -202,7 +201,7 @@ export const ServiceRequest = async ({
     reqParams = preHookRes.params;
     reqData = preHookRes.data;
   }
-  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService,reqTimestamp });
+  const resData = await Request({ method, url, data: reqData, headers, useCache, params: reqParams, auth, userService, reqTimestamp });
 
   if (window[postHookName] && typeof window[postHookName] === "function") {
     return await window[postHookName](resData);

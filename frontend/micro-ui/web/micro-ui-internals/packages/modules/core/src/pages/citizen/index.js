@@ -38,7 +38,7 @@ const Home = ({
   pathname,
   initData,
 }) => {
-  const { isLoading: islinkDataLoading, data: linkData, isFetched: isLinkDataFetched } = Digit.Hooks.useCustomMDMS(
+  const { isLoading: islinkDataLoading, isFetched: isLinkDataFetched } = Digit.Hooks.useCustomMDMS(
     Digit.ULBService.getStateId(),
     "ACCESSCONTROL-ACTIONS-TEST",
     [
@@ -59,18 +59,45 @@ const Home = ({
       },
     }
   );
+
   const sidebarHiddenFor = useMemo(() => {
     const contextPath = window?.contextPath;
     return [
-      `${contextPath}/citizen/register/name`,
       `/${contextPath}/citizen/select-language`,
+      `/${contextPath}/citizen/landing-page`,
+      `${contextPath}/citizen/register/name`,
       `/${contextPath}/citizen/select-location`,
       `/${contextPath}/citizen/login`,
       `/${contextPath}/citizen/register/otp`,
-      `/${contextPath}/citizen/landing-page`,
       `/${contextPath}/citizen/login/id-verification`,
     ];
   }, []);
+
+  const linkData = useMemo(
+    () => ({
+      Dristi: [
+        {
+          id: 2446,
+          name: "CS_DRISTI_HOME",
+          url: "digit-ui-card",
+          displayName: "CS_DRISTI_HOME",
+          orderNumber: 1,
+          parentModule: "Dristi",
+          enabled: true,
+          serviceCode: "",
+          code: "Dristi",
+          path: "",
+          navigationURL: "/digit-ui/citizen/dristi/home",
+          leftIcon: "HomeIcon",
+          rightIcon: "",
+          queryParams: "",
+          sidebar: "digit-ui-links",
+          sidebarURL: "/digit-ui/citizen/dristi/home",
+        },
+      ],
+    }),
+    []
+  );
 
   const classname = Digit.Hooks.useRouteSubscription(pathname);
   const { t } = useTranslation();
@@ -159,7 +186,7 @@ const Home = ({
 
       <div className={`main center-container citizen-home-container mb-25`}>
         {hideSidebar ? null : (
-          <div className="SideBarStatic">
+          <div>
             <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
           </div>
         )}

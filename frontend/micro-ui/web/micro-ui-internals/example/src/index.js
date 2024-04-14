@@ -19,9 +19,7 @@ import { UICustomizations } from "./UICustomizations";
 
 var Digit = window.Digit || {};
 
-const enabledModules = [
-  "Dristi",
-];
+const enabledModules = ["Dristi"];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
@@ -62,9 +60,7 @@ const initDigitUI = () => {
     // PaymentLinks,
   });
   initCoreComponents();
-  initDSSComponents();
   initHRMSComponents();
-  initEngagementComponents();
   initUtilitiesComponents();
   initWorkbenchComponents();
   initPGRComponents();

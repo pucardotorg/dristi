@@ -22,7 +22,7 @@ export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
   const userInfo = Digit.UserService.getUser();
   const [showToast, setShowToast] = useState(null);
-  const { tenantId: __tenantId, authorization, workflow: wrkflow , consumerCode : connectionNo } = Digit.Hooks.useQueryParams();
+  const { tenantId: __tenantId, authorization, workflow: wrkflow, consumerCode: connectionNo } = Digit.Hooks.useQueryParams();
   const paymentAmount = state?.paymentAmount;
   const { t } = useTranslation();
   const history = useHistory();
@@ -39,7 +39,7 @@ export const SelectPaymentType = (props) => {
     {}
   );
   if (window.location.href.includes("ISWSCON") || wrkflow === "WNS") consumerCode = decodeURIComponent(consumerCode);
-  if( wrkflow === "WNS") consumerCode = stringReplaceAll(consumerCode,"+","/")
+  if (wrkflow === "WNS") consumerCode = stringReplaceAll(consumerCode, "+", "/");
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
@@ -74,9 +74,14 @@ export const SelectPaymentType = (props) => {
           tenantId: billDetails?.tenantId,
         },
         // success
-        callbackUrl: window.location.href.includes("mcollect") || wrkflow === "WNS"
-          ? `${window.location.protocol}//${window.location.host}/${window?.contextPath}/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?workflow=${wrkflow === "WNS"? wrkflow : "mcollect"}`
-          : `${window.location.protocol}//${window.location.host}/${window?.contextPath}/citizen/payment/success/${businessService}/${wrkflow === "WNS"? encodeURIComponent(consumerCode):consumerCode}/${tenantId}?propertyId=${propertyId}`,
+        callbackUrl:
+          window.location.href.includes("mcollect") || wrkflow === "WNS"
+            ? `${window.location.protocol}//${window.location.host}/${window?.contextPath}/citizen/payment/success/${businessService}/${
+                wrkflow === "WNS" ? encodeURIComponent(consumerCode) : consumerCode
+              }/${tenantId}?workflow=${wrkflow === "WNS" ? wrkflow : "mcollect"}`
+            : `${window.location.protocol}//${window.location.host}/${window?.contextPath}/citizen/payment/success/${businessService}/${
+                wrkflow === "WNS" ? encodeURIComponent(consumerCode) : consumerCode
+              }/${tenantId}?propertyId=${propertyId}`,
         additionalDetails: {
           isWhatsapp: false,
         },
@@ -115,7 +120,10 @@ export const SelectPaymentType = (props) => {
         <Card>
           <div className="payment-amount-info" style={{ marginBottom: "26px" }}>
             <CardLabel className="dark">{t("PAYMENT_CS_TOTAL_AMOUNT_DUE")}</CardLabel>
-            <CardSectionHeader> ₹ { paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}</CardSectionHeader>
+            <CardSectionHeader>
+              {" "}
+              ₹ {paymentAmount !== undefined ? Number(paymentAmount).toFixed(2) : Number(billDetails?.totalAmount).toFixed(2)}
+            </CardSectionHeader>
           </div>
           <CardLabel>{t("PAYMENT_CS_SELECT_METHOD")}</CardLabel>
           {menu?.length && (

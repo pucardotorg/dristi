@@ -1,6 +1,4 @@
-import {
-  Loader, NavBar
-} from "@egovernments/digit-ui-react-components";
+import { Loader, NavBar } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
@@ -8,7 +6,6 @@ import SideBarMenu from "../../../config/sidebar-menu";
 import ChangeCity from "../../ChangeCity";
 import { defaultImage } from "../../utils";
 import StaticCitizenSideBar from "./StaticCitizenSideBar";
-
 
 const Profile = ({ info, stateName, t }) => {
   const [profilePic, setProfilePic] = React.useState(null);
@@ -26,7 +23,7 @@ const Profile = ({ info, stateName, t }) => {
     }
   }, [profilePic !== null]);
 
-  const CustomEmployeeTopBar = Digit.ComponentRegistryService?.getComponent("CustomEmployeeTopBar")
+  const CustomEmployeeTopBar = Digit.ComponentRegistryService?.getComponent("CustomEmployeeTopBar");
 
   return (
     <div className="profile-section">
@@ -51,7 +48,8 @@ const Profile = ({ info, stateName, t }) => {
       <div className="profile-divider"></div>
       {window.location.href.includes("/employee") &&
         !window.location.href.includes("/employee/user/login") &&
-        !window.location.href.includes("employee/user/language-selection") && !CustomEmployeeTopBar && <ChangeCity t={t} mobileView={true} />}
+        !window.location.href.includes("employee/user/language-selection") &&
+        !CustomEmployeeTopBar && <ChangeCity t={t} mobileView={true} />}
     </div>
   );
 };
@@ -94,7 +92,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`/${window?.contextPath}/citizen/login`);
+    history.push(`/${window?.contextPath}/citizen/landing-page`);
     closeSidebar();
   };
   if (islinkDataLoading || isLoading) {
@@ -211,22 +209,24 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
         menuItems.splice(1, 0, {
           type: "dynamic",
           moduleName: t(`ACTION_TEST_${getParentDisplayName}`),
-          links: configEmployeeSideBar[keys[i]]?.map((ob) => {return {...ob, displayName: t(`ACTION_TEST_${ob?.displayName?.toUpperCase()?.replace(/[ -]/g, "_")}`)}}),
+          links: configEmployeeSideBar[keys[i]]?.map((ob) => {
+            return { ...ob, displayName: t(`ACTION_TEST_${ob?.displayName?.toUpperCase()?.replace(/[ -]/g, "_")}`) };
+          }),
           icon: configEmployeeSideBar[keys[i]][1]?.leftIcon,
         });
       }
     }
-     const indx = menuItems.findIndex(a => a.element === "HOME");
-     const home = menuItems.splice(indx,1);
-     const comp = menuItems.findIndex(a => a.element === "LANGUAGE");
-     const part = menuItems.splice(comp,menuItems?.length-comp);
-     menuItems.sort((a,b) => {
+    const indx = menuItems.findIndex((a) => a.element === "HOME");
+    const home = menuItems.splice(indx, 1);
+    const comp = menuItems.findIndex((a) => a.element === "LANGUAGE");
+    const part = menuItems.splice(comp, menuItems?.length - comp);
+    menuItems.sort((a, b) => {
       let c1 = a?.type === "dynamic" ? a?.moduleName : a?.text;
       let c2 = b?.type === "dynamic" ? b?.moduleName : b?.text;
-      return c1.localeCompare(c2)
-     } );
-     home?.[0] && menuItems.splice(0,0,home[0]);
-     menuItems =  part?.length > 0 ? menuItems.concat(part) : menuItems;
+      return c1.localeCompare(c2);
+    });
+    home?.[0] && menuItems.splice(0, 0, home[0]);
+    menuItems = part?.length > 0 ? menuItems.concat(part) : menuItems;
   }
 
   /*  URL with openlink wont have sidebar and actions    */

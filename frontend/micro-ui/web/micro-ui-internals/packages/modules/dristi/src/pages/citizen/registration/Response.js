@@ -14,7 +14,7 @@ const Response = (props) => {
       </CardText>
       <Banner successful={props?.location?.state === "success"}></Banner>
       <ActionBar>
-        <Link to={`${path}/citizen/user-registration`}>
+        <Link to={`${path}/citizen/home`}>
           <SubmitBar label={t("GO TO HOME")} />
         </Link>
       </ActionBar>

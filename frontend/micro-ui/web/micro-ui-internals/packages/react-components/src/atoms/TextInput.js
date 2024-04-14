@@ -4,7 +4,7 @@ import { LocateIcon } from "./svgindex";
 
 const TextInput = (props) => {
   const user_type = Digit.SessionStorage.get("userType");
-  const [date, setDate] = useState(props?.type==="date"&&props?.value);
+  const [date, setDate] = useState(props?.type === "date" && props?.value);
   const data = props?.watch
     ? {
         fromDate: props?.watch("fromDate"),
@@ -19,18 +19,21 @@ const TextInput = (props) => {
 
   return (
     <React.Fragment>
-      <div className={`text-input ${user_type === "employee" ? "" :"text-input-width"} ${props.className}`} style={props?.textInputStyle ? { ...props.textInputStyle} : {}}>
+      <div
+        className={`text-input ${user_type === "employee" ? "" : "text-input-width"} ${props.className}`}
+        style={props?.textInputStyle ? { ...props.textInputStyle } : {}}
+      >
         {props.isMandatory ? (
           <input
-            type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
+            type={props?.validation && props.ValidationRequired ? props?.validation?.type : props.type || "text"}
             name={props.name}
             id={props.id}
             className={`${user_type ? "employee-card-input-error" : "card-input-error"} ${props.disable && "disabled"} ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
-              if(props?.type === "number" && props?.maxlength) {
-                if(event.target.value.length > props?.maxlength) {
-                  event.target.value = event.target.value.slice(0,-1);
+              if (props?.type === "number" && props?.maxlength) {
+                if (event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0, -1);
                 }
               }
               if (props?.onChange) {
@@ -50,7 +53,7 @@ const TextInput = (props) => {
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
             min={props.min}
             readOnly={props.disable}
-            title={props?.validation && props.ValidationRequired ? props?.validation?.title :props.title}
+            title={props?.validation && props.ValidationRequired ? props?.validation?.title : props.title}
             step={props.step}
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}
@@ -59,15 +62,17 @@ const TextInput = (props) => {
           />
         ) : (
           <input
-            type={props?.validation && props.ValidationRequired ? props?.validation?.type : (props.type || "text")}
+            type={props?.validation && props.ValidationRequired ? props?.validation?.type : props.type || "text"}
             name={props.name}
             id={props.id}
-            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${props.errorStyle && "employee-card-input-error"} ${props.customClass}`}
+            className={`${user_type ? "employee-card-input" : "citizen-card-input"} ${props.disable && "disabled"} focus-visible ${
+              props.errorStyle && "employee-card-input-error"
+            } ${props.customClass}`}
             placeholder={props.placeholder}
             onChange={(event) => {
-              if(props?.type === "number" && props?.maxlength) {
-                if(event.target.value.length > props?.maxlength) {
-                  event.target.value = event.target.value.slice(0,-1);
+              if (props?.type === "number" && props?.maxlength) {
+                if (event.target.value.length > props?.maxlength) {
+                  event.target.value = event.target.value.slice(0, -1);
                 }
               }
               if (props?.onChange) {
@@ -84,11 +89,15 @@ const TextInput = (props) => {
             minLength={props.minlength}
             maxLength={props.maxlength}
             max={props.max}
-            required={props?.validation && props.ValidationRequired ? props?.validation?.isRequired :props.isRequired || (props.type === "date" && (props.name === "fromDate" ? data.toDate : data.fromDate))}
+            required={
+              props?.validation && props.ValidationRequired
+                ? props?.validation?.isRequired
+                : props.isRequired || (props.type === "date" && (props.name === "fromDate" ? data.toDate : data.fromDate))
+            }
             pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
             min={props.min}
             readOnly={props.disable}
-            title={props?.validation && props.ValidationRequired ? props?.validation?.title :props.title}
+            title={props?.validation && props.ValidationRequired ? props?.validation?.title : props.title}
             step={props.step}
             autoFocus={props.autoFocus}
             onBlur={props.onBlur}
@@ -99,7 +108,13 @@ const TextInput = (props) => {
         )}
         {/* {props.type === "date" && <DatePicker {...props} date={date} setDate={setDate} data={data} />} */}
         {props.signature ? props.signatureImg : null}
-        {props.customIcon ? props.customIcon === "geolocation" ? <span className="cursor-pointer" onClick={props?.onIconSelection} ><LocateIcon className="text-input-customIcon" /></span> : null : null}
+        {props.customIcon ? (
+          props.customIcon === "geolocation" ? (
+            <span className="cursor-pointer" onClick={props?.onIconSelection}>
+              <LocateIcon className="text-input-customIcon" />
+            </span>
+          ) : null
+        ) : null}
       </div>
     </React.Fragment>
   );

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { newConfig } from "./config";
 import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
 const Registration = () => {
   const { t } = useTranslation();
+  const customConfig = useMemo(() => []);
   return (
     <div className="employee-card-wrapper">
       <div className="header-content">
@@ -21,6 +22,7 @@ const Registration = () => {
         onSubmit={(props) => {
           console.debug(props);
         }}
+        cardStyle={{ minWidth: "100%" }}
       />
     </div>
   );

@@ -3,7 +3,8 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
-import SearchLocationAddress from "./components/SearchLocationAddress";
+import SelectComponents from "./components/SelectComponents";
+import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
 import Registration from "./pages/citizen/registration";
 import EmployeeApp from "./pages/employee";
 import DristiCard from "./components/DristiCard";
@@ -32,7 +33,7 @@ export const DristiLinks = ({ matchPath, userType }) => {
 
   const links = [
     {
-      link: `${matchPath}/user-registration`,
+      link: `${matchPath}/home/user-registration`,
       i18nKey: t("CS_COMMON_USER_REGISTRATION"),
     },
   ];
@@ -41,7 +42,8 @@ export const DristiLinks = ({ matchPath, userType }) => {
 };
 
 const componentsToRegister = {
-  SearchLocationAddress,
+  SelectComponents,
+  SelectUserTypeComponent,
   DristiLinks,
   DristiModule,
   DristiRegistration: Registration,

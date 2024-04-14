@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, LocationSearch } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
-const SearchLocationAddress = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
+const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = useMemo(
     () =>
@@ -20,9 +20,6 @@ const SearchLocationAddress = ({ t, config, onSelect, formData = {}, userType, r
     onSelect(config.key, { ...formData[config.key], [input]: value });
   }
 
-  function validate(value, input) {
-    setError(!input.populators.validation.pattern.test(value));
-  }
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -30,17 +27,17 @@ const SearchLocationAddress = ({ t, config, onSelect, formData = {}, userType, r
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-            <LabelFieldPair>
+            <LabelFieldPair style={{ width: "100%", display: "flex" }}>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
-                {input.isMandatory ? " * " : null}
+                {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
               </CardLabel>
-              <div className="field">
+              <div className="field" style={{ width: "50%" }}>
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
+                    locationStyle={{ maxWidth: "540px" }}
                     onChange={(props) => {
-                      console.log(props);
-                      setValue(props);
+                      setValue(props, input.name);
                     }}
                   />
                 ) : (
@@ -49,19 +46,21 @@ const SearchLocationAddress = ({ t, config, onSelect, formData = {}, userType, r
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
-                      setValue(e.target.value, input.name, validate(e.target.value, input));
+                      setValue(e.target.value, input.name);
                     }}
                     disable={false}
                     defaultValue={undefined}
-                    onBlur={(e) => validate(e.target.value, input)}
                     {...input.validation}
                   />
                 )}
-                {currentValue && currentValue.length > 0 && !currentValue.match(Digit.Utils.getPattern("Address")) && (
-                  <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                    {t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}
-                  </CardLabelError>
-                )}
+                {currentValue &&
+                  currentValue.length > 0 &&
+                  input.validation &&
+                  !currentValue.match(Digit.Utils.getPattern(input.validation.patternType)) && (
+                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
+                      {t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}
+                    </CardLabelError>
+                  )}
               </div>
             </LabelFieldPair>
           </React.Fragment>
@@ -71,4 +70,4 @@ const SearchLocationAddress = ({ t, config, onSelect, formData = {}, userType, r
   );
 };
 
-export default SearchLocationAddress;
+export default SelectComponents;
