@@ -180,7 +180,7 @@ public class CourtCase {
 
 	public CourtCase addDocumentsItem(Document documentsItem) {
 		if (this.documents == null) {
-			this.documents = new ArrayList<>();
+			private List<Document> documents = new ArrayList<>();
 		}
 		this.documents.add(documentsItem);
 		return this;
