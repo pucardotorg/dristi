@@ -15,17 +15,22 @@ jobs:
       uses: actions/checkout@v2
     - name: Setup Docker
       uses: docker/setup-buildx-action@v1
-    # - name: Build Docker image for advocate
-    #   run: docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
-    - name: Build Docker image for case
-      run: docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
-    - name: Tag Docker image with ACR URL
-      run: docker tag pucar_case:latest pucardev.azurecr.io/pucar_case:latest
-
     # Login to Azure Container Registry
     - name: Login to Azure Container Registry
       run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
-
-    # Push Docker image to Azure Container Registry
-    - name: Push Docker image to Azure Container Registry
-      run: docker push pucardev.azurecr.io/pucar_case:latest
+      
+    - name: Build and Push Docker image for advocate
+      run: docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
+           docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:latest
+           docker push pucardev.azurecr.io/pucar_advocate:latest
+           
+    - name: Build and Push Docker image for case
+      run: docker build --build-arg WORK_DIR="backend/artifacts" -t pucar_artifacts:latest -f build/maven/Dockerfile .
+           docker tag pucar_artifacts:latest pucardev.azurecr.io/pucar_artifacts:latest
+           docker push pucardev.azurecr.io/pucar_artifacts:latest
+           
+    - name: Build and Push Docker image for case
+      run: docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
+           docker tag pucar_case:latest pucardev.azurecr.io/pucar_case:latest
+           docker push pucardev.azurecr.io/pucar_case:latest
+    
