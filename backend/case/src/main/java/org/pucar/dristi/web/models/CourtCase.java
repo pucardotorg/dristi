@@ -84,7 +84,7 @@ public class CourtCase {
 
 	@JsonProperty("linkedCases")
 	@Valid
-	private List<LinkedCase> linkedCases = null;
+	private List<LinkedCase> linkedCases = new ArrayList<>();
 
 	@JsonProperty("filingDate")
 	@NotNull
