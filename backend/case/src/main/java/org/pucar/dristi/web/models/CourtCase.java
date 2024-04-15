@@ -124,7 +124,7 @@ public class CourtCase {
 
 	@JsonProperty("representatives")
 	@Valid
-	private List<AdvocateMapping> representatives = null;
+	private List<AdvocateMapping> representatives = new ArrayList<>();
 
 	@JsonProperty("status")
 
