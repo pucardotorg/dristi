@@ -75,7 +75,11 @@ dependencies:
   freezed_annotation: ^2.4.1
   json_serializable: ^6.3.1
   watcher: ^1.1.0
-
+  google_places_flutter: ^2.0.6
+  google_maps_flutter: ^2.2.0
+  geolocator: ^9.0.1
+  country_state_city: ^0.1.6
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

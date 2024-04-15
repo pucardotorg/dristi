@@ -88,7 +88,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.mobile);
+                  Navigator.pushNamed(context, '/AddressScreen', arguments: widget.mobile);
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
             ),
