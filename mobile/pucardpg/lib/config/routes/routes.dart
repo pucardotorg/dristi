@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pucardpg/app/presentation/features/address_screen/address_screen.dart';
 import 'package:pucardpg/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-otp-screen/id_otp_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-verification-screen/id_verification_screen.dart';
@@ -28,6 +29,9 @@ class AppRoutes {
 
       case '/NameDetailsScreen':
         return _materialRoute(NameDetailsScreen(mobile: settings.arguments as String,));
+
+      case '/AddressScreen':
+        return _materialRoute(AddressScreen(mobile: settings.arguments as String,));
 
       case '/UserTypeScreen':
         return _materialRoute(UserTypeScreen(mobile: settings.arguments as String,));

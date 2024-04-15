@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
 class NameDetailsScreen extends StatefulWidget with AppMixin{
 
@@ -22,6 +23,9 @@ class NameDetailsScreen extends StatefulWidget with AppMixin{
 class NameDetailsScreenState extends State<NameDetailsScreen> {
 
   late String mobile;
+  String firstNameKey = 'firstName';
+  String middleNameKey = 'middleName';
+  String lastNameKey = 'lastName';
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -35,67 +39,113 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
         appBar: AppBar(
           title: const Text("Birth registration list"),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DigitBackButton(
-                          onPressed: (){
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        DigitHelpButton()
-                      ],
-                    ),
-                    DigitCard(
-                      padding: const EdgeInsets.all(20),
+        body: ReactiveFormBuilder(
+            form: buildForm,
+            builder: (context, form, child) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
-                          const SizedBox(height: 20,),
-                          Text("Enter Your Name", style: widget.theme.text32W700RobCon()?.apply(),),
-                          const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'First name',
-                            isRequired: true,
-                            onChange: (val) { },
+                          const SizedBox(height: 10,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              DigitBackButton(
+                                onPressed: (){
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              DigitHelpButton()
+                            ],
                           ),
-                          const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'Middle name',
-                            onChange: (val) { },
+                          DigitCard(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
+                                const SizedBox(height: 20,),
+                                Text("Enter Your Name", style: widget.theme.text32W700RobCon()?.apply(),),
+                                const SizedBox(height: 20,),
+                                DigitTextFormField(
+                                  label: 'First name',
+                                  formControlName: firstNameKey,
+                                  isRequired: true,
+                                  validationMessages: {
+                                    'required': (_) => 'First name is required',
+                                    'minLength': (_) =>
+                                    'First name should be minimum of 2 characters',
+                                    'maxLength': (_) =>
+                                    'First name should be maximum of 2 characters',
+                                  },
+                                ),
+                                const SizedBox(height: 20,),
+                                DigitTextFormField(
+                                  label: 'Middle name',
+                                  formControlName: middleNameKey,
+                                  isRequired: false,
+                                ),
+                                const SizedBox(height: 20,),
+                                DigitTextFormField(
+                                  label: 'Last name',
+                                  formControlName: lastNameKey,
+                                  isRequired: true,
+                                  validationMessages: {
+                                    'required': (_) => 'Last name is required',
+                                    'minLength': (_) =>
+                                    'Last name should be minimum of 2 characters',
+                                    'maxLength': (_) =>
+                                    'Last name should be maximum of 2 characters',
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'Last name',
-                            isRequired: true,
-                            onChange: (val) { },
-                          ),
+                          // Expanded(child: Container(),),
                         ],
                       ),
                     ),
-                    // Expanded(child: Container(),),
-                  ],
-                ),
-              ),
-            ),
-            DigitElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.mobile);
-                },
-                child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-            ),
-          ],
+                  ),
+                  DigitElevatedButton(
+                      onPressed: () {
+                        form.markAllAsTouched();
+                        if (!form.valid) return;
+                        Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.mobile);
+                      },
+                      child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                  ),
+                ],
+              );
+            }
         )
     );
 
   }
+
+
+  FormGroup buildForm() => fb.group(<String, Object>{
+    firstNameKey : FormControl<String>(
+        value: '',
+        validators: [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(128)
+        ]
+    ),
+    middleNameKey : FormControl<String>(
+        value: '',
+        validators: []
+    ),
+    lastNameKey : FormControl<String>(
+        value: '',
+        validators: [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(128)
+        ]
+    ),
+  });
 
 }

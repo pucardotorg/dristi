@@ -1,5 +1,6 @@
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +23,7 @@ class IdVerificationScreen extends StatefulWidget with AppMixin{
 class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   late String mobile;
+  String adhaarNumber = "", typeOfId = "", nameOfDocument = "";
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -55,24 +57,23 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                           const SizedBox(height: 20,),
                           DigitTextField(
                             label: 'Enter aadhar number',
-                            onChange: (val) { mobile = val; },
+                            onChange: (val) { adhaarNumber = val; },
                           ),
                           const SizedBox(height: 20,),
                           Center(child: Text("(or)", style: widget.theme.text20W400Rob(),)),
                           const SizedBox(height: 20,),
                           DigitTextField(
                             label: 'Enter Type of ID',
-                            onChange: (val) { mobile = val; },
+                            onChange: (val) { typeOfId = val; },
                           ),
                           const SizedBox(height: 20,),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Expanded(
+                              const Expanded(
                                 child: DigitTextField(
                                   label: 'Upload ID proof',
                                   readOnly: true,
-                                  onChange: (val) { mobile = val; },
                                 ),
                               ),
                               const SizedBox(width: 10,),
@@ -97,6 +98,26 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
+                  if(adhaarNumber.isEmpty && typeOfId.isEmpty){
+                    DigitToast.show(context,
+                      options: DigitToastOptions(
+                        "Either adhaar number or ID proof is mandatory.",
+                        true,
+                        widget.theme.theme(),
+                      ),
+                    );
+                    return;
+                  }
+                  if(typeOfId.isNotEmpty && nameOfDocument.isEmpty) {
+                    DigitToast.show(context,
+                      options: DigitToastOptions(
+                        "Please upload ID proof",
+                        true,
+                        widget.theme.theme(),
+                      ),
+                    );
+                    return;
+                  }
                   Navigator.pushNamed(context, '/IdOtpScreen', arguments: widget.mobile);
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)

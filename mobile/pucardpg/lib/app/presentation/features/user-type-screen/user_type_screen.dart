@@ -1,5 +1,6 @@
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,14 @@ class UserTypeScreenState extends State<UserTypeScreen> {
             DigitElevatedButton(
                 onPressed: () {
                   if(selectedOption == null){
-
+                    DigitToast.show(context,
+                      options: DigitToastOptions(
+                        "Please select a user type.",
+                        true,
+                        widget.theme.theme(),
+                      ),
+                    );
+                    return;
                   }
                   else if(selectedOption == 'Litigant'){
                     Navigator.pushNamed(context, '/TermsAndConditionsScreen');

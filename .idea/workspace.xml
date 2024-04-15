@@ -4,11 +4,33 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c247cf93-5fde-406e-9c96-c92233d3c074" name="Changes" comment="advocate registration screen t&amp;c screen added">
+    <list default="true" id="c247cf93-5fde-406e-9c96-c92233d3c074" name="Changes" comment="success screen added">
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/data_sources/api_service.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/auth-model/auth_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/litigant-registration-model/litigant_registration_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/otp-models/otp_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/registration-model/registration_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/state_model/state_model.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/state_model/state_model.freezed.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/repository/registration_login_repository_impl.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/repository/registration_login_repository.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/address_screen/address_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/success-screen/success_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/success-screen/success_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/t&amp;c-screen/terms_and_conditions_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/t&amp;c-screen/terms_and_conditions_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/android/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/android/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-verification-screen/id_verification_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-verification-screen/id_verification_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/mobile-number-screen/mobile_number_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/mobile-number-screen/mobile_number_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/name-details-screen/name_details_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/name-details-screen/name_details_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/user-type-screen/user_type_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/user-type-screen/user_type_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/config/routes/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/config/routes/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/config/theme/app_themes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/config/theme/app_themes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/core/constant/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/core/constant/constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/pubspec.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/windows/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/windows/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/windows/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/windows/flutter/generated_plugins.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +69,7 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;H:/Flutter Project/dristi/mobile/pucardpg/lib/core&quot;,
+    &quot;last_opened_file_path&quot;: &quot;H:/Flutter Project/dristi&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
@@ -57,6 +79,8 @@
       <recent name="H:\Flutter Project\dristi\mobile\pucardpg\lib\config" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="H:\Flutter Project\dristi\mobile\pucardpg\lib\app\domain\repository" />
+      <recent name="H:\Flutter Project\dristi\mobile\pucardpg\lib\app\data\models\state_model" />
       <recent name="H:\Flutter Project\dristi\mobile\pucardpg\lib\app\presentation\features" />
       <recent name="H:\Flutter Project\dristi\mobile\pucardpg\lib\config\theme" />
     </key>
@@ -118,7 +142,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713028247429</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="success screen added">
+      <created>1713028848668</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1713028848668</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -139,7 +170,8 @@
     <MESSAGE value="onpressed call back added" />
     <MESSAGE value="Id verification screen name screen added" />
     <MESSAGE value="advocate registration screen t&amp;c screen added" />
-    <option name="LAST_COMMIT_MESSAGE" value="advocate registration screen t&amp;c screen added" />
+    <MESSAGE value="success screen added" />
+    <option name="LAST_COMMIT_MESSAGE" value="success screen added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -148,6 +180,11 @@
           <url>file://$PROJECT_DIR$/mobile/pucardpg/lib/config/mixin/app_mixin.dart</url>
           <line>1</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="Dart">
+          <url>file://$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-verification-screen/id_verification_screen.dart</url>
+          <line>91</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
