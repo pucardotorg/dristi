@@ -13,25 +13,35 @@ import lombok.Data;
 import lombok.Builder;
 
 /**
- * CaseCriteria
+ * Pagination details
  */
+@Schema(description = "Pagination details")
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:22:31.436679+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseCriteria {
-	@JsonProperty("caseId")
+public class Pagination {
+	@JsonProperty("limit")
 
-	private String caseId = null;
+	@DecimalMax("100")
+	private Double limit = 10d;
 
-	@JsonProperty("cnrNumber")
+	@JsonProperty("offSet")
 
-	private String cnrNumber = null;
+	private Double offSet = 0d;
 
-	@JsonProperty("filingNumber")
+	@JsonProperty("totalCount")
 
-	private String filingNumber = null;
+	private Double totalCount = null;
+
+	@JsonProperty("sortBy")
+
+	private String sortBy = null;
+
+	@JsonProperty("order")
+
+	private Order order = null;
 
 }

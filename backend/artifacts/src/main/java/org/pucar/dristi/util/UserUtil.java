@@ -1,20 +1,37 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.pucar.dristi.config.Configuration;
-import static org.pucar.dristi.config.ServiceConstants.*;
-import org.egov.common.contract.request.Role;
-import org.egov.common.contract.request.User;
-import org.egov.common.contract.user.UserDetailResponse;
-import org.egov.common.contract.user.enums.UserType;
-import org.pucar.dristi.repository.ServiceRequestRepository;
-import org.egov.tracer.model.CustomException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import static org.pucar.dristi.config.ServiceConstants.CITIZEN_LOWER;
+import static org.pucar.dristi.config.ServiceConstants.CITIZEN_UPPER;
+import static org.pucar.dristi.config.ServiceConstants.CREATED_DATE;
+import static org.pucar.dristi.config.ServiceConstants.DOB;
+import static org.pucar.dristi.config.ServiceConstants.DOB_FORMAT_D_M_Y;
+import static org.pucar.dristi.config.ServiceConstants.DOB_FORMAT_D_M_Y_H_M_S;
+import static org.pucar.dristi.config.ServiceConstants.DOB_FORMAT_Y_M_D;
+import static org.pucar.dristi.config.ServiceConstants.ILLEGAL_ARGUMENT_EXCEPTION_CODE;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_DATE_FORMAT_CODE;
+import static org.pucar.dristi.config.ServiceConstants.INVALID_DATE_FORMAT_MESSAGE;
+import static org.pucar.dristi.config.ServiceConstants.LAST_MODIFIED_DATE;
+import static org.pucar.dristi.config.ServiceConstants.OBJECTMAPPER_UNABLE_TO_CONVERT;
+import static org.pucar.dristi.config.ServiceConstants.PWD_EXPIRY_DATE;
+import static org.pucar.dristi.config.ServiceConstants.USER;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+
+import org.egov.common.contract.request.Role;
+import org.egov.common.contract.request.User;
+import org.egov.common.contract.user.UserDetailResponse;
+import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class UserUtil {
@@ -113,7 +130,7 @@ public class UserUtil {
 		userInfo.setType(userType);
 		userInfo.setUserName(mobileNumber);
 		userInfo.setTenantId(getStateLevelTenant(tenantId));
-
+		// userInfo.setActive(true);
 	}
 
 	/**

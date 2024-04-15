@@ -15,29 +15,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * CaseRequest
+ * EvidenceRequest
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:22:31.436679+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseRequest {
+public class EvidenceRequest {
 	@JsonProperty("requestInfo")
 
 	@Valid
 	private RequestInfo requestInfo = null;
 
-	@JsonProperty("cases")
+	@JsonProperty("artifacts")
 	@Valid
-	private List<CourtCase> cases = null;
+	private List<Artifact> artifacts = null;
 
-	public CaseRequest addCasesItem(CourtCase casesItem) {
-		if (this.cases == null) {
-			this.cases = new ArrayList<>();
+	public EvidenceRequest addArtifactsItem(Artifact artifactsItem) {
+		if (this.artifacts == null) {
+			this.artifacts = new ArrayList<>();
 		}
-		this.cases.add(casesItem);
+		this.artifacts.add(artifactsItem);
 		return this;
 	}
 

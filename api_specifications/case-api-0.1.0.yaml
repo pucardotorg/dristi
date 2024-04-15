@@ -102,8 +102,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseSearchRequest
+              $ref: '#/components/schemas/CaseSearchRequest'
         required: true
       responses:
         '200':
@@ -111,15 +110,14 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsResponse
+                $ref: '#/components/schemas/CaseExistsResponse'
         '400':
           description: Search failed
           content:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/witness/v1/_create:
     post:
       tags:
@@ -208,7 +206,7 @@ paths:
 
 components:
   schemas:
-    Case:
+    CourtCase:
       description: Case registry
       required:
         - tenantId
@@ -600,7 +598,7 @@ components:
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/Case'
+            $ref: '#/components/schemas/CourtCase'
     
     CaseResponse:
       type: object
@@ -611,7 +609,7 @@ components:
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/Case'
+            $ref: '#/components/schemas/CourtCase'
     
     CaseSearchRequest:
       type: object
