@@ -7,6 +7,7 @@ import {
   CustomDropdown,
   UploadFileComposer,
   MultiUploadWrapper,
+  CitizenInfoLabel,
 } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
@@ -47,16 +48,18 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
 
             {showDependentFields && (
               <LabelFieldPair style={{ width: "100%", display: "flex" }}>
-                <CardLabel className="card-label-smaller">
-                  {t(input.label)}
-                  {input.isMandatory ? " * " : null}
-                </CardLabel>
+                {input?.type !== "infoBox" && (
+                  <CardLabel className="card-label-smaller">
+                    {t(input.label)}
+                    {input.isMandatory ? " * " : null}
+                  </CardLabel>
+                )}
                 <div className="field" style={{ width: "50%" }}>
-                  {input?.type === "radioButton" ? (
+                  {["radioButton", "dropdown"].includes(input?.type) && (
                     <CustomDropdown
                       t={t}
                       label={input?.label}
-                      type={"radio"}
+                      type={input?.type === "radioButton" && "radio"}
                       value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                       onChange={(e) => {
                         console.log(e, "dropdown");
@@ -65,7 +68,8 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
                       config={input}
                       errorStyle={errors?.[input.name]}
                     />
-                  ) : input?.type === "documentUpload" ? (
+                  )}
+                  {input?.type === "documentUpload" && (
                     <Controller
                       name={`${input.name}`}
                       control={control}
@@ -105,7 +109,8 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
                         );
                       }}
                     />
-                  ) : (
+                  )}
+                  {input?.type === "text" && (
                     <TextInput
                       className="field desktop-w-full"
                       key={input.name}
@@ -118,6 +123,8 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
                       {...input.validation}
                     />
                   )}
+
+                  {input.hasBreakPoint && <div style={{ margin: 20, textAlign: "center", width: "100%", maxWidth: 540 }}>{"( Or )"}</div>}
                   {currentValue &&
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
@@ -128,6 +135,16 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
                     )}
                 </div>
               </LabelFieldPair>
+            )}
+            {input?.type === "infoBox" && (
+              <CitizenInfoLabel
+                style={{ maxWidth: "100%", height: "90px", padding: "0 8px" }}
+                textStyle={{ margin: 8 }}
+                iconStyle={{ margin: 0 }}
+                info={t("ES_COMMON_INFO")}
+                text={t(input?.bannerLabel)}
+                className="doc-banner"
+              ></CitizenInfoLabel>
             )}
           </React.Fragment>
         );

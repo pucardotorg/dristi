@@ -11,7 +11,6 @@ import SelectId from "./SelectId";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/landing-page`;
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -26,6 +25,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
   localStorage.setItem("user-info", JSON.stringify(userObject));
   localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
 };
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
 
 const getFromLocation = (state, searchParams) => {
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
@@ -73,7 +73,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      history.replace(`/${window?.contextPath}/citizen/select-location`, {
+      history.replace(`/${window?.contextPath}/citizen/dristi/home/login/id-verification`, {
         redirectBackTo: redirectPath,
       });
     } else {
@@ -113,6 +113,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       tenantId: stateCode,
       userType: getUserType(),
     };
+    debugger;
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
       if (!err) {

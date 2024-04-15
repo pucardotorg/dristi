@@ -4,10 +4,9 @@ import { Switch, useRouteMatch } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
 import { Route, useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import Login from "./Login";
 import CitizenHome from "./Home";
 
-const App = () => {
+const App = ({ stateCode }) => {
   const { path } = useRouteMatch();
   const location = useLocation();
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
@@ -15,6 +14,7 @@ const App = () => {
 
   const Registration = Digit?.ComponentRegistryService?.getComponent("DRISTIRegistration");
   const Response = Digit?.ComponentRegistryService?.getComponent("Response");
+  const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
 
   const dristiCrumbs = [
     {
@@ -49,11 +49,11 @@ const App = () => {
           </PrivateRoute>
           <PrivateRoute exact path={`${path}/home/user-registration`} component={Registration} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
-          <Route exact path={`${path}/home/login`}>
-            <Login />
+          <Route path={`${path}/home/login`}>
+            <Login stateCode={stateCode} />
           </Route>
-          <Route exact path={`${path}/home/register`}>
-            <Login isUserRegistered={false} />
+          <Route path={`${path}/home/register`}>
+            <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
         </AppContainer>
       </Switch>

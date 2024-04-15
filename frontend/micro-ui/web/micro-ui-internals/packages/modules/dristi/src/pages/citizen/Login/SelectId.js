@@ -33,7 +33,9 @@ function SelectId({ config, t }) {
     <FormComposerV2
       config={config}
       t={t}
-      onSubmit={() => {}}
+      onSubmit={(props) => {
+        console.log(props);
+      }}
       noBoxShadow
       inline
       submitInForm
@@ -41,8 +43,7 @@ function SelectId({ config, t }) {
       onSecondayActionClick={() => {}}
       description={"Description"}
       headingStyle={{ textAlign: "center" }}
-      cardStyle={{ minWidth: "100%" }}
-      className="employeeForgotPassword"
+      cardStyle={{ minWidth: "100%", padding: 20, display: "flex" }}
     ></FormComposerV2>
   );
 }

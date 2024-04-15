@@ -28,6 +28,7 @@ const UploadFileComposer = ({ module, config, Controller, control, register, for
         name: "sample 1",
         code: "code",
         active: true,
+        allowedFileTypes: ["pdf"],
       },
     ],
   };

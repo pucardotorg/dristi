@@ -9,6 +9,7 @@ import Registration from "./pages/citizen/registration";
 import EmployeeApp from "./pages/employee";
 import DRISTICard from "./components/DRISTICard";
 import Inbox from "./pages/employee/Inbox";
+import Login from "./pages/citizen/Login";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
@@ -16,7 +17,6 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "DRISTI";
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
-
   if (isLoading) {
     return <Loader />;
   }
@@ -35,6 +35,7 @@ const componentsToRegister = {
   DRISTIRegistration: Registration,
   DRISTICard,
   Inbox,
+  DRISTILogin: Login,
 };
 
 export const initDRISTIComponents = () => {

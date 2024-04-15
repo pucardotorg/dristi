@@ -227,8 +227,8 @@ const setLocationText = (location, onChange, isPlaceRequired = false) => {
           const infoWindowContent = document.getElementById("pac-input");
           infoWindowContent.value = getName(results[0]);
           if (onChange) {
-            if (isPlaceRequired) onChange(pincode, { longitude: location.lng, latitude: location.lat }, infoWindowContent.value);
-            else onChange(pincode, { longitude: location.lng, latitude: location.lat });
+            if (isPlaceRequired) onChange(pincode, results[0], { longitude: location.lng, latitude: location.lat }, infoWindowContent.value);
+            else onChange(pincode, results[0], { longitude: location.lng, latitude: location.lat });
           }
         }
       }
@@ -303,8 +303,8 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
         latitude: geometry.location.lat(),
         longitude: geometry.location.lng(),
       };
-      if (isPlaceRequired) onChange(pincode, geoLocation, place.name);
-      else onChange(pincode, geoLocation);
+      if (isPlaceRequired) onChange(pincode, place, geoLocation, place.name);
+      else onChange(pincode, place, geoLocation);
     }
     markers.forEach((marker) => {
       marker.setMap(null);

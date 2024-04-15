@@ -2,6 +2,13 @@ import React, { useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, LocationSearch } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
+const getLocation = (places, code) => {
+  let location = null;
+  location = places?.address_components?.find((place) => {
+    return place.types.includes(code);
+  })?.long_name;
+  return location ? location : null;
+};
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
   const { pathname: url } = useLocation();
   const inputs = useMemo(
@@ -10,14 +17,23 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
         {
           label: "CS_PIN_LOCATION",
           type: "LocationSearch",
-          name: "correspondenceCity",
+          name: [],
         },
       ],
     []
   );
 
   function setValue(value, input) {
-    onSelect(config.key, { ...formData[config.key], [input]: value });
+    console.log(value, "value");
+    if (Array.isArray(input)) {
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      });
+    } else onSelect(config.key, { ...formData[config.key], [input]: value });
   }
 
   return (
@@ -36,8 +52,17 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
                     locationStyle={{ maxWidth: "540px" }}
-                    onChange={(props) => {
-                      setValue(props, input.name);
+                    onChange={(pincode, location) => {
+                      console.log(location);
+                      setValue(
+                        {
+                          pincode,
+                          state: getLocation(location, "administrative_area_level_1"),
+                          district: getLocation(location, "administrative_area_level_3"),
+                          city: getLocation(location, "locality"),
+                        },
+                        input.name
+                      );
                     }}
                   />
                 ) : (
@@ -48,7 +73,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                     onChange={(e) => {
                       setValue(e.target.value, input.name);
                     }}
-                    disable={false}
+                    disable={input.isDisabled}
                     defaultValue={undefined}
                     {...input.validation}
                   />
