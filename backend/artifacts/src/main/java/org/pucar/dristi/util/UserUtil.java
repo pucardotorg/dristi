@@ -106,10 +106,10 @@ public class UserUtil {
 	 * @return Long value of date
 	 */
 	private Long dateTolong(String date, String format) {
-		SimpleDateFormat f = new SimpleDateFormat(format);
+		DateTimeFormatter f = DateTimeFormatter.ofPattern(format);
 		Date d = null;
 		try {
-			d = f.parse(date);
+			d = LocalDate.parse(date, f);
 		} catch (ParseException e) {
 			throw new CustomException(INVALID_DATE_FORMAT_CODE, INVALID_DATE_FORMAT_MESSAGE);
 		}
