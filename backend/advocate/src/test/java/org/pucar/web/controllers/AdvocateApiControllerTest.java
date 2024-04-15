@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.Advocate;
@@ -29,11 +31,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 /**
-* API tests for AdvocateApiController
-*/
+ * API tests for AdvocateApiController
+ */
 @WebMvcTest(AdvocateApiController.class)
 @Import(TestConfiguration.class)
+@ExtendWith(MockitoExtension.class)
 public class AdvocateApiControllerTest {
 
     @Autowired
