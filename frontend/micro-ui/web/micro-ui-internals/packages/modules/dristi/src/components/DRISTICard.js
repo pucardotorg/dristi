@@ -3,7 +3,7 @@ import React from "react";
 import CustomCard from "./CustomCard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const DristiCard = () => {
+const DRISTICard = () => {
   const history = useHistory();
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer" }}>
@@ -29,4 +29,4 @@ const DristiCard = () => {
   );
 };
 
-export default DristiCard;
+export default DRISTICard;

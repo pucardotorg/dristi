@@ -5,7 +5,7 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { paymentConfigs, PaymentLinks, PaymentModule } from "@egovernments/digit-ui-module-common";
 import { DigitUI, initCoreComponents } from "@egovernments/digit-ui-module-core";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
-import { initDristiComponents } from "@egovernments/digit-ui-module-dristi";
+import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
@@ -19,7 +19,7 @@ import { UICustomizations } from "./UICustomizations";
 
 var Digit = window.Digit || {};
 
-const enabledModules = ["Dristi"];
+const enabledModules = ["DRISTI"];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
@@ -64,7 +64,7 @@ const initDigitUI = () => {
   initUtilitiesComponents();
   initWorkbenchComponents();
   initPGRComponents();
-  initDristiComponents();
+  initDRISTIComponents();
   const moduleReducers = (initData) => ({
     pgr: PGRReducers(initData),
   });

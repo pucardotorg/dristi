@@ -21,7 +21,7 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers, defaultLand
     }
     if (
       initData?.modules?.some((item) => {
-        return item && item.code === "Dristi";
+        return item && item.code === "DRISTI";
       })
     ) {
       return initData?.modules;
@@ -29,8 +29,8 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers, defaultLand
     return [
       ...initData?.modules,
       {
-        module: "Dristi",
-        code: "Dristi",
+        module: "DRISTI",
+        code: "DRISTI",
         active: true,
         order: 11,
         tenants: [

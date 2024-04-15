@@ -215,6 +215,12 @@ import {
   LoginIcon,
   RegistrationRequestIcon,
   CasesIcon,
+  FileCaseIcon,
+  CaseInProgressIcon,
+  MyHearingsIcon,
+  JoinCaseIcon,
+  ClosedCasesIcon,
+  PendingActionsIcon,
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -600,6 +606,12 @@ export {
   LoginIcon,
   RegistrationRequestIcon,
   CasesIcon,
+  FileCaseIcon,
+  CaseInProgressIcon,
+  MyHearingsIcon,
+  JoinCaseIcon,
+  ClosedCasesIcon,
+  PendingActionsIcon,
   // Exported all svgs from svg-component library
   SVG,
 };

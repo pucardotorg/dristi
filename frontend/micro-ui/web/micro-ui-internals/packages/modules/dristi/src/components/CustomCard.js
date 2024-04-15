@@ -9,7 +9,7 @@ const CustomCard = ({ Icon, showNumber, label, style = { width: "400px", height:
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "space-evenly",
         ...style,
       }}
       onClick={onClick}

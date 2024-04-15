@@ -238,21 +238,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     <div className="citizen-form-wrapper">
       <Switch>
         <AppContainer>
-          <BreadCrumb
-            style={{ marginTop: "40px" }}
-            crumbs={[
-              {
-                path: "/digit-ui/citizen/landing-page",
-                content: t("ES_LANDING_PAGE"),
-                show: true,
-              },
-              {
-                path: "/digit-ui/citizen/login",
-                content: t("ES_REGISTER"),
-                show: true,
-              },
-            ]}
-          ></BreadCrumb>
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}

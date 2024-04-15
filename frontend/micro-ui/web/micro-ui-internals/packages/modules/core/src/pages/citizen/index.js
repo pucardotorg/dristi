@@ -75,17 +75,17 @@ const Home = ({
 
   const linkData = useMemo(
     () => ({
-      Dristi: [
+      DRISTI: [
         {
           id: 2446,
           name: "CS_DRISTI_HOME",
           url: "digit-ui-card",
           displayName: "CS_DRISTI_HOME",
           orderNumber: 1,
-          parentModule: "Dristi",
+          parentModule: "DRISTI",
           enabled: true,
           serviceCode: "",
-          code: "Dristi",
+          code: "DRISTI",
           path: "",
           navigationURL: "/digit-ui/citizen/dristi/home",
           leftIcon: "HomeIcon",

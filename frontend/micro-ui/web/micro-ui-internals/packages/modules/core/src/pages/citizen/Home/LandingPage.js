@@ -46,7 +46,7 @@ const LandingPage = () => {
       >
         <Button
           onButtonClick={() => {
-            history.push(`/digit-ui/citizen/register`);
+            history.push(`/digit-ui/citizen/dristi/home/register`);
           }}
           label={t("CS_COMMON_REGISTER")}
           style={{
@@ -59,7 +59,7 @@ const LandingPage = () => {
         </Button>
         <Button
           onButtonClick={() => {
-            history.push(`/digit-ui/citizen/login`);
+            history.push(`/digit-ui/citizen/dristi/home/login`);
           }}
           label={t("CS_COMMON_LOGIN")}
           style={{
