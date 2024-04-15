@@ -2,8 +2,11 @@ name: dristi workflow
 on:
   push:
     branches:
-      - Dev-1
-  workflow_dispatch:
+      - main 
+  pull_request:
+    branches:
+      - main     
+  workflow_dispatch:    
 jobs:
   docker_image-build:
     runs-on: ubuntu-latest
