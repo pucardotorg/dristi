@@ -11,7 +11,7 @@ import SelectId from "./SelectId";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen`;
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/landing-page`;
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -187,7 +187,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setUser({ info, ...tokens });
       } else if (!isUserRegistered) {
         const requestData = {
-          name,
+          name: name || DEFAULT_USER,
           username: mobileNumber,
           otpReference: otp,
           tenantId: stateCode,
