@@ -1,4 +1,4 @@
-package org.pucar.web.controllers.repository;
+package org.pucar.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
