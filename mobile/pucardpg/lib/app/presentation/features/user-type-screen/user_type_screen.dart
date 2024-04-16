@@ -33,7 +33,15 @@ class UserTypeScreenState extends State<UserTypeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Birth registration list"),
+          title: const Text(""),
+          centerTitle: true,
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+          ],
+          leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.menu),
+          ),
         ),
         body: Column(
           children: [

@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
       theme: DigitTheme.instance.mobileTheme,
       onGenerateRoute: AppRoutes.onGenerateRoutes,
       home: const MobileNumberScreen()
