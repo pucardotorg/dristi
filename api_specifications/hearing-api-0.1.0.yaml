@@ -190,6 +190,8 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
+          format: int32
+          minimum: 0
         HearingList:
           type: array
           items:
@@ -250,8 +252,20 @@ components:
           nullable: true
           description: This field holds information about end date time of hearing in epoch time. Optional field.
         presidedBy:
-          type: string
           description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
+          type: object
+          properties:
+            benchID:
+              type: string
+            judgeID:
+              type: array
+              items:
+                type: string
+                format: uuid
+                minLength: 36
+                maxLength: 36
+            courtID:
+              type: string
         attendees:
           type: array
           description: This field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
