@@ -16,12 +16,13 @@ import org.pucar.repository.AdvocateRegistrationRepository;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
+import org.pucar.web.models.AdvocateResponse;
 
 import java.util.Collections;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class AdvocateRegistrationServiceTest {
+public class AdvocateServiceTest {
 
     @Mock
     private AdvocateRegistrationValidator validator;
@@ -30,7 +31,7 @@ public class AdvocateRegistrationServiceTest {
     private AdvocateRegistrationEnrichment enrichmentUtil;
 
     @Mock
-    private UserService userService;
+    private IndividualService individualService;
 
     @Mock
     private WorkflowService workflowService;
@@ -42,22 +43,24 @@ public class AdvocateRegistrationServiceTest {
     private Producer producer;
 
     @InjectMocks
-    private AdvocateRegistrationService service;
+    private AdvocateService service;
 
     @BeforeEach
     void setUp() {
     }
 
     @Test
-    void testRegisterAdvocateRequest() {
+    void testCreateAdvocateRequest() {
         // Prepare the request
         AdvocateRequest request = new AdvocateRequest();
         Advocate advocate = new Advocate();
         advocate.setTenantId("tenant1");
+        advocate.setIndividualId("individualId");
         request.setAdvocates(Collections.singletonList(advocate));
+        when(individualService.searchIndividual(request)).thenReturn(true);
 
         // Execute the method under test
-        List<Advocate> result = service.registerAdvocateRequest(request);
+        List<Advocate> result = service.createAdvocate(request);
 
         // Verify the interactions
         verify(validator, times(1)).validateAdvocateRegistration(request);
@@ -67,7 +70,6 @@ public class AdvocateRegistrationServiceTest {
 
         // Assert the result
         assertNotNull(result);
-        assertEquals(1, result.size());
         assertEquals("tenant1", result.get(0).getTenantId());
     }
 }

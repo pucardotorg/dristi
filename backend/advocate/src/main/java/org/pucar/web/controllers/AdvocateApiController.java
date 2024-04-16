@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
-import org.pucar.service.AdvocateRegistrationService;
+import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -36,10 +36,11 @@ public class AdvocateApiController {
 	private final HttpServletRequest request;
 
 	@Autowired
-	private AdvocateRegistrationService advocateRegistrationService;
+	private AdvocateService advocateService;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
+
 
 	@Autowired
 	public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -47,13 +48,23 @@ public class AdvocateApiController {
 		this.request = request;
 	}
 
+
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
-			List<Advocate> advocateList = advocateRegistrationService.registerAdvocateRequest(body);
-			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-			AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
-			return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("*/*")) {
+			try {
+				List<Advocate> response = advocateService.createAdvocate(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+			} catch (Exception e) {
+				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
@@ -62,10 +73,10 @@ public class AdvocateApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<AdvocateResponse>(objectMapper.readValue(
-						"{  \"pagination\" : {    \"offSet\" : 5.637376656633329,    \"limit\" : 59.621339166831824,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 2.3021358869347655,    \"order\" : \"\"  },  \"advocates\" : [ {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  }, {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  } ],  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
-						AdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
+				// Example after implementing a service layer
+				AdvocateResponse response = advocateService.searchAdvocates(body);
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -79,10 +90,10 @@ public class AdvocateApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<AdvocateResponse>(objectMapper.readValue(
-						"{  \"pagination\" : {    \"offSet\" : 5.637376656633329,    \"limit\" : 59.621339166831824,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 2.3021358869347655,    \"order\" : \"\"  },  \"advocates\" : [ {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  }, {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  } ],  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
-						AdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
+				// Example after implementing a service layer
+				AdvocateResponse response = advocateService.updateAdvocate(body);
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
