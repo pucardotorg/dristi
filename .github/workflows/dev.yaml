@@ -22,15 +22,15 @@ jobs:
            docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:latest
            docker push pucardev.azurecr.io/pucar_advocate:latest
            
-    - name: Build and Push Docker image for case
-      run: |
-           docker build --build-arg WORK_DIR="backend/artifacts" -t pucar_artifacts:latest -f build/maven/Dockerfile .
-           docker tag pucar_artifacts:latest pucardev.azurecr.io/pucar_artifacts:latest
-           docker push pucardev.azurecr.io/pucar_artifacts:latest
+    # - name: Build and Push Docker image for artifact
+    #   run: |
+    #        docker build --build-arg WORK_DIR="backend/artifacts" -t pucar_artifacts:latest -f build/maven/Dockerfile .
+    #        docker tag pucar_artifacts:latest pucardev.azurecr.io/pucar_artifacts:latest
+    #        docker push pucardev.azurecr.io/pucar_artifacts:latest
            
-    - name: Build and Push Docker image for case
-      run: |
-           docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
-           docker tag pucar_case:latest pucardev.azurecr.io/pucar_case:latest
-           docker push pucardev.azurecr.io/pucar_case:latest
+    # - name: Build and Push Docker image for case
+    #   run: |
+    #        docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
+    #        docker tag pucar_case:latest pucardev.azurecr.io/pucar_case:latest
+    #        docker push pucardev.azurecr.io/pucar_case:latest
     
