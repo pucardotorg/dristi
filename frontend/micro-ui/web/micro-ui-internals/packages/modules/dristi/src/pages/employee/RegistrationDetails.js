@@ -14,6 +14,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
+import DocumentDetailCard from "../../components/DocumentDetailCard";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -72,40 +73,44 @@ const RegisterDetails = ({ location, match }) => {
     };
     history.push(`/digit-ui/employee`);
   };
-
+  const aadharData = [
+    { title: "Mobile Number", content: "+91 9876543210" },
+    { title: "ID Type", content: "Aadhar" },
+    { title: "Aadhar Number", content: "4321 1234 4312" },
+  ];
+  const personalData = [
+    { title: "Name", content: "Nawal Kishor Tiwari" },
+    { title: "Location", content: "View on map" },
+    { title: "Address", content: "12, 5th street" },
+  ];
+  const barDetails = [
+    { title: "State of Registration", content: "Kerala" },
+    { title: "Bar Registration Number", content: 1233123 },
+    { title: "Bar Council ID" },
+  ];
   return (
     <div>
       <Header>{t(`Application Number ${applicationNo}`)}</Header>
-      <div className="notice_and_circular_main gap-ten">
-        <div className="documentDetails_wrapper">
-          <div className="documentDetails_row_items">
-            <p className="documentDetails_title">{`${t("Baby First Name")}:`}</p>{" "}
-            <p>{data?.BirthRegistrationApplications?.filter((na) => na.id === id)?.[0].babyFirstName}</p>{" "}
-          </div>
-          <div className="documentDetails_row_items">
-            <p className="documentDetails_title">{`${t("Baby Last Name")}:`}</p>{" "}
-            <p>{t(data?.BirthRegistrationApplications?.filter((na) => na.id === id)?.[0].babyLastName)}</p>{" "}
-          </div>
-
-          <div className="documentDetails_row_items">
-            <p className="documentDetails_title">{`${t("Doctor Name")}:`}</p>{" "}
-            <p>{t(data?.BirthRegistrationApplications?.filter((na) => na.id === id)?.[0].doctorName)}</p>{" "}
-          </div>
-          <div className="documentDetails_row_items">
-            <p className="documentDetails_title">{`${t("Hospital Name")}:`}</p>{" "}
-            <p>{t(data?.BirthRegistrationApplications?.filter((na) => na.id === id)?.[0].hospitalName)}</p>{" "}
-          </div>
-
-          <div className="documentDetails_row_items">
-            <p className="documentDetails_title">{`${t("Place Of Birth")}:`}</p>{" "}
-            <p>{t(data?.BirthRegistrationApplications?.filter((na) => na.id === id)?.[0].placeOfBirth)}</p>{" "}
-          </div>
-        </div>
-      </div>
+      <DocumentDetailCard cardData={aadharData} />
+      <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
+      <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />
       <ActionBar>
-        {displayMenu ? <Menu localeKeyPrefix={"BR"} options={["Approve", "Reject"]} t={t} onSelect={onActionSelect} /> : null}
+        {displayMenu ? (
+          <Menu
+            menuItemStyle={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+            localeKeyPrefix={"BR"}
+            options={["Approve", "Reject"]}
+            t={t}
+            onSelect={onActionSelect}
+          />
+        ) : null}
         <SubmitBar
-          label={isAction ? t("Take Action") : t("Go Back to Home")}
+          label={isAction ? t("Take_Action") : t("Go_Back_Home")}
           onSubmit={() => {
             if (isAction) {
               setDisplayMenu(!displayMenu);

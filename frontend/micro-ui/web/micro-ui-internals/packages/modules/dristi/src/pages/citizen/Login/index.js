@@ -25,7 +25,21 @@ const setCitizenDetail = (userObject, token, tenantId) => {
   localStorage.setItem("user-info", JSON.stringify(userObject));
   localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
 };
-const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+
+function getRedirectionUrl(status) {
+  switch (status) {
+    case "isNotRegistered":
+      return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+    case "isNotApproved":
+      return `/${window?.contextPath}/citizen/dristi/home/isNotApproved`;
+    case "isApproved":
+      return `/${window?.contextPath}/citizen/dristi/home`;
+    default:
+      return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+  }
+}
+
+const DEFAULT_REDIRECT_URL = getRedirectionUrl("isNotRegistered");
 
 const getFromLocation = (state, searchParams) => {
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;

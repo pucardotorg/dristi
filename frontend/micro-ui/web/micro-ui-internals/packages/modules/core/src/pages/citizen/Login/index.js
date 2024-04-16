@@ -4,9 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
-import SelectName from "./SelectName";
+
 import SelectOtp from "./SelectOtp";
-import SelectId from "./SelectId";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -277,9 +276,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               canSubmit={canSubmitOtp}
               t={t}
             />
-          </Route>
-          <Route path={`${path}/id-verification`}>
-            <SelectId t={t} config={[stepItems[2]]} />
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp

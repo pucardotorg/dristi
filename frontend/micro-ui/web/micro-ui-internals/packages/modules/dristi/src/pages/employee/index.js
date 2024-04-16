@@ -13,8 +13,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <PrivateRoute path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
-          <PrivateRoute path={`${path}/registration/details/:applicationNo`} component={(props) => <RegisterDetails {...props} />} />
+          <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
+          <PrivateRoute exact path={`${path}/registration-requests/details/:applicationNo`} component={(props) => <RegisterDetails {...props} />} />
         </div>
       </React.Fragment>
     </Switch>

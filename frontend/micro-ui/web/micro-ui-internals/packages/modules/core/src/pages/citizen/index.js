@@ -67,9 +67,6 @@ const Home = ({
       `/${contextPath}/citizen/landing-page`,
       `${contextPath}/citizen/register/name`,
       `/${contextPath}/citizen/select-location`,
-      `/${contextPath}/citizen/login`,
-      `/${contextPath}/citizen/register/otp`,
-      `/${contextPath}/citizen/login/id-verification`,
     ];
   }, []);
 

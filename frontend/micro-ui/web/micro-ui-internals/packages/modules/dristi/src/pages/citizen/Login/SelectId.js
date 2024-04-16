@@ -38,7 +38,6 @@ function SelectId({ config, t }) {
       }}
       noBoxShadow
       inline
-      submitInForm
       label={"Next"}
       onSecondayActionClick={() => {}}
       description={"Description"}

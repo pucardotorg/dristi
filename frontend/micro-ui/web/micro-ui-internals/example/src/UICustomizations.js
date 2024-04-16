@@ -639,7 +639,7 @@ export const UICustomizations = {
         case "Application No":
           return (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/registration/details/${value}`}>
+              <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -656,7 +656,7 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration/details/${value}?isAction=true`}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${value}?isAction=true`}
             >
               {" "}
               {t("Verify")}
