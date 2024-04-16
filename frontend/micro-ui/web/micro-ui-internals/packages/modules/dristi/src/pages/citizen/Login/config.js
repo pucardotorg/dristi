@@ -55,8 +55,10 @@ export const loginSteps = [
               name: "selectIdTypeType",
               optionsKey: "name",
               error: "sample required message",
-              required: false,
+              validation: {},
               clearFields: ["aadharNumber"],
+              isMandatory: true,
+              disableFormValidation: false,
               options: [
                 {
                   code: "Aadhar",
@@ -72,14 +74,11 @@ export const loginSteps = [
               label: "Upload ID Proof",
               type: "documentUpload",
               name: "ID_Proof",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                isRequired: true,
-              },
+              validation: {},
               clearFields: ["aadharNumber"],
+              allowedFileTypes: /(.*?)(pdf)$/i,
               isMandatory: true,
+              disableFormValidation: false,
               hasBreakPoint: true,
             },
             {
@@ -89,7 +88,7 @@ export const loginSteps = [
               validation: {
                 minlength: 12,
                 maxlength: 12,
-                patternType: "Pincode",
+                patternType: "AadharNo",
                 pattern: "[0-9]+",
                 title: "AADHAR_NUMBER_INVALID",
                 isRequired: true,

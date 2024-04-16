@@ -14,7 +14,7 @@ const SelectMobileNumber = ({
 }) => {
   return (
     <FormStep
-      isDisabled={!(mobileNumber.length === 10 && canSubmit)}
+      isDisabled={!(mobileNumber.length === 10 && mobileNumber.match(Digit.Utils.getPattern("MobileNo")) && canSubmit)}
       onSelect={onSelect}
       config={config}
       t={t}

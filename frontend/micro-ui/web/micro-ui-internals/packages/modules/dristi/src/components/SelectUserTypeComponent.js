@@ -1,21 +1,19 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   LabelFieldPair,
   CardLabel,
   TextInput,
   CardLabelError,
   CustomDropdown,
-  UploadFileComposer,
   MultiUploadWrapper,
   CitizenInfoLabel,
+  Toast,
 } from "@egovernments/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import { Controller, useForm } from "react-hook-form";
+import { Controller } from "react-hook-form";
 
-const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors }) => {
-  const newConfig = useMemo(() => {}, [formData]);
+const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control }) => {
   const { pathname: url } = useLocation();
-  const { register, control } = useForm();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -31,7 +29,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
   function setValue(value, input) {
     onSelect(config.key, { ...formData[config.key], [input]: value });
   }
-
+  console.log(errors, formState?.errors, formState?.submitCount);
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -56,17 +54,24 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
                 )}
                 <div className="field" style={{ width: "50%" }}>
                   {["radioButton", "dropdown"].includes(input?.type) && (
-                    <CustomDropdown
-                      t={t}
-                      label={input?.label}
-                      type={input?.type === "radioButton" && "radio"}
-                      value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
-                      onChange={(e) => {
-                        console.log(e, "dropdown");
-                        setValue(e, input.name);
-                      }}
-                      config={input}
-                      errorStyle={errors?.[input.name]}
+                    <Controller
+                      render={() => (
+                        <CustomDropdown
+                          t={t}
+                          label={input?.label}
+                          type={input?.type === "radioButton" && "radio"}
+                          value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
+                          onChange={(e) => {
+                            setValue(e, input.name);
+                          }}
+                          config={input}
+                          errorStyle={errors?.[input.name]}
+                        />
+                      )}
+                      rules={!input.disableFormValidation ? {} : { required: input?.isMandatory, ...input?.validation }}
+                      defaultValue={formData?.[config.key]?.[input.name]}
+                      name={input.name}
+                      control={control}
                     />
                   )}
                   {input?.type === "documentUpload" && (
@@ -128,6 +133,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors })
                   {currentValue &&
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
+                    input.validation &&
                     !currentValue.match(Digit.Utils.getPattern(input.validation.patternType)) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
                         {t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}

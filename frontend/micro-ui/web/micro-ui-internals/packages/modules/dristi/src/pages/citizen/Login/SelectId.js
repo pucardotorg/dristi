@@ -43,7 +43,7 @@ function SelectId({ config, t }) {
       onSecondayActionClick={() => {}}
       description={"Description"}
       headingStyle={{ textAlign: "center" }}
-      cardStyle={{ minWidth: "100%", padding: 20, display: "flex" }}
+      cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
     ></FormComposerV2>
   );
 }

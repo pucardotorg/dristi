@@ -89,9 +89,10 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   useEffect(() => {
     if (isLoading) {
-      return <Loader />;
+      return <React.Fragment></React.Fragment>;
     }
-    sidebarRef.current.style.cursor = "pointer";
+
+    if ("style" in sidebarRef.current) sidebarRef.current.style.cursor = "pointer";
     collapseNav();
   }, [isLoading]);
 
