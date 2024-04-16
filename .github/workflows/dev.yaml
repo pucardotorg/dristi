@@ -2,10 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - main 
-  pull_request:
-    branches:
-      - main     
+      - user-registration-worflow     
   workflow_dispatch:    
 jobs:
   docker_image-build:
