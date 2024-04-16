@@ -29,14 +29,15 @@ public class IndividualService {
 //        this.individualUtils = individualUtils;
         this.config = config;
     }
-    public IndividualResponse searchIndividual(AdvocateClerkRequest advocateClerkRequest){
+    public Boolean searchIndividual(AdvocateClerkRequest advocateClerkRequest){
         IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
         individualSearchRequest.setRequestInfo(advocateClerkRequest.getRequestInfo());
-        IndividualSearch individual = new IndividualSearch();
-        individual.setIndividualId(advocateClerkRequest.getClerks().get(0).getIndividualId());
-        individualSearchRequest.setIndividual(individual);
+        IndividualSearch Individual = new IndividualSearch();
+        Individual.setIndividualId(advocateClerkRequest.getClerks().get(0).getIndividualId());
+        individualSearchRequest.setIndividual(Individual);
         StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
-        IndividualResponse individualResponse = individualUtils.individualCall(individualSearchRequest, uri);
+        uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(advocateClerkRequest.getClerks().get(0).getTenantId()).append("&includeDeleted=true");
+        Boolean individualResponse = individualUtils.individualCall(individualSearchRequest, uri);
 
         return individualResponse;
     }

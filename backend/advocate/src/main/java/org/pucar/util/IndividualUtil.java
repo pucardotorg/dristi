@@ -1,6 +1,8 @@
 package org.pucar.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.*;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.idgen.IdGenerationRequest;
 import org.egov.common.contract.idgen.IdGenerationResponse;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,20 +44,20 @@ public class IndividualUtil {
         this.serviceRequestRepository = serviceRequestRepository;
     }
 
-    public IndividualResponse individualCall(IndividualSearchRequest individualRequest, StringBuilder uri) {
-        String dobFormat = null;
-        if(uri.toString().contains(configs.getIndividualSearchEndpoint())  || uri.toString().contains(configs.getIndividualUpdateEndpoint()))
-            dobFormat="yyyy-MM-dd";
-        else if(uri.toString().contains(configs.getIndividualUpdateEndpoint()))
-            dobFormat = "dd/MM/yyyy";
+    public Boolean individualCall(IndividualSearchRequest individualRequest, StringBuilder uri) {
         try{
-            LinkedHashMap responseMap = (LinkedHashMap)serviceRequestRepository.fetchResult(uri, individualRequest);
-            IndividualResponse individualDetailResponse = mapper.convertValue(responseMap,IndividualResponse.class);
-            return individualDetailResponse;
+            Object responseMap = serviceRequestRepository.fetchResult(uri, individualRequest);
+            if(responseMap!=null){
+                Gson gson= new Gson();
+                String jsonString=gson.toJson(responseMap);
+                JsonObject response = JsonParser.parseString(jsonString).getAsJsonObject();
+                JsonArray individualObject=response.getAsJsonArray("Individual");
+                return !individualObject.isEmpty() && individualObject.get(0).getAsJsonObject().get("individualId") != null;
+            }
+            return false;
+        }catch (Exception e){
+            return false;
         }
-        catch(IllegalArgumentException  e)
-        {
-            throw new CustomException("IllegalArgumentException","ObjectMapper not able to convertValue in userCall");
-        }
+
     }
 }

@@ -37,14 +37,14 @@ public class AdvocateClerkService {
 
     public List<AdvocateClerk> registerAdvocateRequest(AdvocateClerkRequest body) {
         validator.validateAdvocateClerkRegistration(body);
-
         enrichmentUtil.enrichAdvocateClerkRegistration(body);
-
         workflowService.updateWorkflowStatus(body);
 
-//        individualService.searchIndividual(body);
-        producer.push("save-advocate-clerk", body);
+        if (!individualService.searchIndividual(body)) {
+            throw new IllegalArgumentException("Individual not found");
+        }
 
+        producer.push("save-advocate-clerk", body);
         return body.getClerks();
     }
 }
