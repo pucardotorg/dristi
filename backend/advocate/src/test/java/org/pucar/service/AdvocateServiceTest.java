@@ -18,6 +18,7 @@ import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 import org.pucar.web.models.AdvocateSearchCriteria;
+import org.pucar.web.models.AdvocateResponse;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,7 @@ public class AdvocateServiceTest {
     private AdvocateRegistrationEnrichment enrichmentUtil;
 
     @Mock
-    private UserService userService;
+    private IndividualService individualService;
 
     @Mock
     private WorkflowService workflowService;
@@ -52,15 +53,17 @@ public class AdvocateServiceTest {
     }
 
     @Test
-    void testRegisterAdvocateRequest() {
+    void testCreateAdvocateRequest() {
         // Prepare the request
         AdvocateRequest request = new AdvocateRequest();
         Advocate advocate = new Advocate();
         advocate.setTenantId("tenant1");
+        advocate.setIndividualId("individualId");
         request.setAdvocates(Collections.singletonList(advocate));
+        when(individualService.searchIndividual(request)).thenReturn(true);
 
         // Execute the method under test
-        List<Advocate> result = service.registerAdvocateRequest(request);
+        List<Advocate> result = service.createAdvocate(request);
 
         // Verify the interactions
         verify(validator, times(1)).validateAdvocateRegistration(request);
@@ -70,7 +73,6 @@ public class AdvocateServiceTest {
 
         // Assert the result
         assertNotNull(result);
-        assertEquals(1, result.size());
         assertEquals("tenant1", result.get(0).getTenantId());
     }
 

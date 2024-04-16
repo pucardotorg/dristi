@@ -1,5 +1,6 @@
 package org.pucar.web.controllers;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -40,24 +41,27 @@ public class AdvocateApiController {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
+
 	@Autowired
 	public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
 		this.request = request;
 	}
 
+
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-//			try {
-//				// Example after implementing a service layer
-//				AdvocateResponse response = advocateService.createAdvocate(body);
-//				return new ResponseEntity<>(response, HttpStatus.OK);
-//			} catch (IOException e) {
-//				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
+		if (accept != null && accept.contains("*/*")) {
+			try {
+				List<Advocate> response = advocateService.createAdvocate(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+			} catch (Exception e) {
+				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 
 		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -86,13 +90,13 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-//			try {
-//				// Example after implementing a service layer
-//				AdvocateResponse response = advocateService.updateAdvocate(body);
-//				return new ResponseEntity<>(response, HttpStatus.OK);
-//			} catch (IOException e) {
-//				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-//			}
+			try {
+				// Example after implementing a service layer
+				AdvocateResponse response = advocateService.updateAdvocate(body);
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} catch (Exception e) {
+				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 		}
 
 		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);

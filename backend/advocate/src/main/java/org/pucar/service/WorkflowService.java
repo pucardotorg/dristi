@@ -24,12 +24,17 @@ import java.util.List;
 @Component
 @Slf4j
 public class WorkflowService {
+
     @Autowired
     private ObjectMapper mapper;
+
     @Autowired
     private ServiceRequestRepository repository;
+
     @Autowired
     private Configuration config;
+
+
     public void updateWorkflowStatus(AdvocateRequest advocateRequest) {
         advocateRequest.getAdvocates().forEach(advocate -> {
             try {
@@ -61,7 +66,7 @@ public class WorkflowService {
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName("advocate-services");
             processInstance.setTenantId(advocate.getTenantId());
-            processInstance.setBusinessService("ADV");
+            processInstance.setBusinessService("ADVOCATERGT");
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {

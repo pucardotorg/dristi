@@ -3,13 +3,18 @@ package org.pucar.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
 import org.pucar.repository.AdvocateRepository;
+import org.pucar.repository.AdvocateRegistrationRepository;
+import org.pucar.util.ResponseInfoFactory;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 import org.pucar.web.models.AdvocateSearchCriteria;
+import org.pucar.web.models.AdvocateResponse;
+import org.pucar.web.models.AdvocateSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -28,10 +33,10 @@ public class AdvocateService {
     private AdvocateRegistrationEnrichment enrichmentUtil;
 
     @Autowired
-    private UserService userService;
+    private WorkflowService workflowService;
 
     @Autowired
-    private WorkflowService workflowService;
+    private IndividualService individualService;
 
     @Autowired
     private AdvocateRepository advocateRepository;
@@ -39,23 +44,24 @@ public class AdvocateService {
     @Autowired
     private Producer producer;
 
-    public List<Advocate> registerAdvocateRequest(AdvocateRequest body) {
+    public List<Advocate> createAdvocate(AdvocateRequest body) {
         // Validate applications
         validator.validateAdvocateRegistration(body);
 
         // Enrich applications
-        enrichmentUtil.enrichAdvocateRegistration(body);
-
-        //Enrich/Upsert user in upon registration
-        //userService.callUserService(body);
+       enrichmentUtil.enrichAdvocateRegistration(body);
 
         // Initiate workflow for the new application-
-        workflowService.updateWorkflowStatus(body);
+       workflowService.updateWorkflowStatus(body);
+
+        //Individual search
+        Boolean isIndividualExist = individualService.searchIndividual(body);
+        if(!isIndividualExist)
+            throw new IllegalArgumentException("Individual Id doesn't exist");
 
         // Push the application to the topic for persister to listen and persist
         producer.push("save-advocate-application", body);
 
-        // Return the response back to user
         return body.getAdvocates();
     }
 
@@ -69,4 +75,12 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
 
     return applications;
 }
+
+    public AdvocateResponse searchAdvocates(AdvocateSearchRequest body) {
+        return null;
+    }
+
+    public AdvocateResponse updateAdvocate(AdvocateRequest body) {
+        return null;
+    }
 }

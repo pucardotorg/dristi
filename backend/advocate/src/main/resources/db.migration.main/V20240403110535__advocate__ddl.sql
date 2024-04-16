@@ -10,10 +10,10 @@ CREATE TABLE dristi_advocate (
                              createdBy varchar(64) NULL,
                              lastModifiedBy varchar(64) NULL,
                              createdTime int8 NULL,
-                             lastModifiedTime int8 NULL,
+                             lastModifiedTime int8 NULL
 );
 CREATE TABLE dristi_document (
                              id varchar(64) NOT NULL PRIMARY KEY,
                              fileStore varchar(64) NULL,
-                             advocateId varchar(64) NOT NULL,
+                             advocateId varchar(64) NOT NULL
 );

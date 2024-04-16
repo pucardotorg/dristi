@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.Advocate;
@@ -31,20 +29,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 /**
- * API tests for AdvocateApiController
- */
+* API tests for AdvocateApiController
+*/
 @WebMvcTest(AdvocateApiController.class)
 @Import(TestConfiguration.class)
-@ExtendWith(MockitoExtension.class)
 public class AdvocateApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private AdvocateService advocateService;
+    private AdvocateService advocateRegistrationService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -83,7 +79,7 @@ public class AdvocateApiControllerTest {
     @Test
     public void advocateV1CreatePostSuccess() throws Exception {
         // Mock the behavior of your service layer
-        given(advocateService.registerAdvocateRequest(any(AdvocateRequest.class))).willReturn(advocateResponse.getAdvocates());
+        given(advocateRegistrationService.createAdvocate(any(AdvocateRequest.class))).willReturn(advocateRequest.getAdvocates());
         given(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).willReturn(advocateResponse.getResponseInfo());
 
         // Perform the request with the required Accept header
@@ -98,7 +94,7 @@ public class AdvocateApiControllerTest {
     @Test
     public void advocateV1CreatePostFailure() throws Exception {
         // Mock the behavior of your service layer
-        given(advocateService.registerAdvocateRequest(any(AdvocateRequest.class))).willReturn(advocateResponse.getAdvocates());
+        given(advocateRegistrationService.createAdvocate(any(AdvocateRequest.class))).willReturn(advocateRequest.getAdvocates());
         given(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).willReturn(advocateResponse.getResponseInfo());
 
         // Perform the request with the required Accept header
