@@ -1,5 +1,6 @@
-import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const newConfig = [
   {
@@ -28,22 +29,74 @@ const newConfig = [
   },
 ];
 
-function SelectId({ config, t }) {
+function SelectId({ config, t, onAadharChange }) {
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const history = useHistory();
+  const validateFormData = (data) => {
+    let isValid = true;
+    config.forEach((curr) => {
+      if (!isValid) return;
+      if (!(curr.body[0].key in data) || !data[curr.body[0].key]) {
+        isValid = false;
+      }
+      curr.body[0].populators.inputs.forEach((input) => {
+        if (!isValid) return;
+        if (Array.isArray(input.name)) return;
+        if (input.disableMandatoryFieldFor) {
+          if (input.disableMandatoryFieldFor.some((field) => !data[curr.body[0].key][field]) && data[curr.body[0].key][input.name]) {
+            if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
+              isValid = false;
+            }
+            return;
+          } else {
+            if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
+              isValid = false;
+            }
+          }
+          return;
+        }
+        if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
+          isValid = false;
+        }
+        if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
+          isValid = false;
+        }
+      });
+    });
+    return isValid;
+  };
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+  };
+
   return (
-    <FormComposerV2
-      config={config}
-      t={t}
-      onSubmit={(props) => {
-        console.log(props);
-      }}
-      noBoxShadow
-      inline
-      label={"Next"}
-      onSecondayActionClick={() => {}}
-      description={"Description"}
-      headingStyle={{ textAlign: "center" }}
-      cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
-    ></FormComposerV2>
+    <React.Fragment>
+      <FormComposerV2
+        config={config}
+        t={t}
+        onSubmit={(data) => {
+          console.log(data);
+          if (!validateFormData(data)) {
+            setShowErrorToast(!validateFormData(data));
+            return;
+          }
+          if (data?.SelectUserTypeComponent?.aadharNumber) {
+            Digit.SessionStorage.set("aadharNumber", data?.SelectUserTypeComponent?.aadharNumber);
+            onAadharChange();
+            return;
+          }
+        }}
+        noBoxShadow
+        inline
+        label={"Next"}
+        onSecondayActionClick={() => {}}
+        description={"Description"}
+        headingStyle={{ textAlign: "center" }}
+        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
+      ></FormComposerV2>
+      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+    </React.Fragment>
   );
 }
 

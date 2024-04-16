@@ -58,15 +58,7 @@ export const newConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            {
-              label: "CS_PIN_LOCATION",
-              type: "LocationSearch",
-              name: ["pincode", "state", "district", "city"],
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
-            },
+            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city"] },
             {
               label: "PINCODE",
               type: "text",
@@ -87,12 +79,12 @@ export const newConfig = [
               label: "STATE",
               type: "text",
               name: "state",
-              // validation: {
-              //   pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-              //   title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              //   patternType: "Name",
-              //   isRequired: true,
-              // },
+              validation: {
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
+                isRequired: true,
+              },
               isMandatory: true,
               isDisabled: true,
             },
@@ -100,12 +92,12 @@ export const newConfig = [
               label: "DISTRICT",
               type: "text",
               name: "district",
-              // validation: {
-              //   pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-              //   title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              //   patternType: "Name",
-              //   isRequired: true,
-              // },
+              validation: {
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
+                isRequired: true,
+              },
               isMandatory: true,
               isDisabled: true,
             },
@@ -114,9 +106,9 @@ export const newConfig = [
               type: "text",
               name: "city",
               validation: {
-                //   pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                //   title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                //   patternType: "Name",
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,
@@ -162,6 +154,8 @@ export const newConfig = [
               optionsKey: "name",
               error: "sample required message",
               required: false,
+              isMandatory: true,
+              clearFields: { stateOfRegistration: "", registrationNo: "", barCouncilId: [] },
               options: [
                 {
                   code: "LITIGANT",
@@ -223,7 +217,6 @@ export const newConfig = [
               dependentKey: "showBarDetails",
             },
           ],
-          validation: {},
         },
       },
     ],

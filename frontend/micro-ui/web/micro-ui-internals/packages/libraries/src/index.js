@@ -26,7 +26,6 @@ import HrmsService from "./services/elements/HRMS";
 import { InboxGeneral } from "./services/elements/InboxService";
 import EventsServices from "./services/elements/Events";
 
-
 import ShareFiles from "./services/molecules/ShareFiles";
 import { GetServiceDefinitions } from "./services/molecules/ServiceDefinitions";
 import { ULBService } from "./services/molecules/Ulb";
@@ -38,6 +37,7 @@ import Hooks from "./hooks";
 import Utils from "./utils";
 import { subFormRegistry } from "./subFormRegistry";
 import AccessControlService from "./services/elements/Access";
+import { DRISTIService } from "./services/elements/DRISTI";
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -55,7 +55,7 @@ const initLibraries = () => {
   setupLibraries("Services", { useStore });
   setupLibraries("Enums", Enums);
   setupLibraries("LocationService", LocationService);
-  setupLibraries("CustomService",CustomService)
+  setupLibraries("CustomService", CustomService);
   setupLibraries("LocalityService", LocalityService);
   setupLibraries("LoginService", LoginService);
   setupLibraries("LocalizationService", LocalizationService);
@@ -65,6 +65,7 @@ const initLibraries = () => {
   setupLibraries("DateUtils", dateUtils);
   setupLibraries("WorkflowService", WorkflowService);
   setupLibraries("MDMSService", MdmsService);
+  setupLibraries("DRISTIService", DRISTIService);
   setupLibraries("UploadServices", UploadServices);
   setupLibraries("JsDictionary", JsDictionary);
   setupLibraries("GetServiceDefinitions", GetServiceDefinitions);
@@ -88,4 +89,4 @@ const initLibraries = () => {
   });
 };
 
-export { initLibraries, Enums, Hooks, subFormRegistry ,Request};
+export { initLibraries, Enums, Hooks, subFormRegistry, Request };

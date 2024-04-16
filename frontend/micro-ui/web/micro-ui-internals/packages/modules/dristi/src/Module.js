@@ -10,6 +10,7 @@ import EmployeeApp from "./pages/employee";
 import DRISTICard from "./components/DRISTICard";
 import Inbox from "./pages/employee/Inbox";
 import Login from "./pages/citizen/Login";
+import CitizenResponse from "./pages/citizen/registration/Response";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
@@ -36,6 +37,7 @@ const componentsToRegister = {
   DRISTICard,
   Inbox,
   DRISTILogin: Login,
+  DRISTICitizenResponse: CitizenResponse,
 };
 
 export const initDRISTIComponents = () => {

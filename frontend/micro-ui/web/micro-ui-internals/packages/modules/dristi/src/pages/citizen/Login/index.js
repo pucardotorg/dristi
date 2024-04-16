@@ -34,6 +34,8 @@ function getRedirectionUrl(status) {
       return `/${window?.contextPath}/citizen/dristi/home/isNotApproved`;
     case "isApproved":
       return `/${window?.contextPath}/citizen/dristi/home`;
+    case "isLoggedIn":
+      return `/${window?.contextPath}/citizen/landing-page`;
     default:
       return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
   }
@@ -59,6 +61,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const searchParams = Digit.Hooks.useQueryParams();
   const [canSubmitName, setCanSubmitName] = useState(false);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
+  const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
 
   useEffect(() => {
@@ -113,6 +116,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const handleOtpChange = (otp) => {
     setParmas({ ...params, otp });
   };
+  const handleAadharOtpChange = (aadharOtp) => {
+    setParmas({ ...params, aadharOtp });
+  };
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
@@ -127,7 +133,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       tenantId: stateCode,
       userType: getUserType(),
     };
-    debugger;
     if (isUserRegistered) {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
       if (!err) {
@@ -136,13 +141,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         return;
       } else {
         setCanSubmitNo(true);
-        if (!(location.state && location.state.role === "FSM_DSO")) {
-          history.push(`/${window?.contextPath}/citizen/register/name`, { from: getFromLocation(location.state, searchParams), data: data });
-        }
-      }
-      if (location.state?.role) {
-        setCanSubmitNo(true);
-        setError(location.state?.role === "FSM_DSO" ? t("ES_ERROR_DSO_LOGIN") : "User not registered.");
+        setError("MOBILE_NUMBER_NOT_REGISTERED");
+        setTimeout(() => history.replace(getRedirectionUrl("isLoggedIn")), 3000);
       }
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
@@ -249,6 +249,16 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setParmas({ ...params, isRememberMe: !params.isRememberMe });
   };
 
+  const onAadharChange = () => {
+    history.push(`${path}/aadhar-otp`);
+  };
+
+  const onAadharOtpSelect = () => {
+    setCanSubmitAadharOtp(false);
+    history.replace(`/${window?.contextPath}/citizen/dristi/home/user-registration`);
+    setCanSubmitAadharOtp(true);
+  };
+
   return (
     <div className="citizen-form-wrapper">
       <Switch>
@@ -279,17 +289,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             />
           </Route>
           <Route path={`${path}/id-verification`}>
-            <SelectId t={t} config={[stepItems[2]]} />
+            <SelectId t={t} config={[stepItems[2]]} onAadharChange={onAadharChange} />
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp
               config={{ ...stepItems[3], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
-              onOtpChange={handleOtpChange}
+              onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}
-              onSelect={selectOtp}
-              otp={params.otp}
+              onSelect={onAadharOtpSelect}
+              otp={params.aadharOtp}
               error={isOtpValid}
-              canSubmit={canSubmitOtp}
+              canSubmit={canSubmitAadharOtp}
               t={t}
             />
           </Route>

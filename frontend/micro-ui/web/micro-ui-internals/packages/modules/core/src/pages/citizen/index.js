@@ -1,5 +1,5 @@
 import { BackButton, CitizenHomeCard, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import ErrorBoundary from "../../components/ErrorBoundaries";
@@ -59,6 +59,10 @@ const Home = ({
       },
     }
   );
+
+  useEffect(() => {
+    Digit.UserService.setType("citizen");
+  }, []);
 
   const sidebarHiddenFor = useMemo(() => {
     const contextPath = window?.contextPath;

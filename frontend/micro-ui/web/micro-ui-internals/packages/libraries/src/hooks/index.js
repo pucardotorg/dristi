@@ -2,7 +2,15 @@ import { useClearNotifications, useEvents, useNotificationCount } from "./events
 import useCreateEvent from "./events/useCreateEvent";
 import useUpdateEvent from "./events/useUpdateEvent";
 import {
-  useBulkPdfDetails, useDemandSearch, useFetchBillsForBuissnessService, useFetchCitizenBillsForBuissnessService, useFetchPayment, useGetPaymentRulesForBusinessServices, usePaymentSearch, usePaymentUpdate, useRecieptSearch
+  useBulkPdfDetails,
+  useDemandSearch,
+  useFetchBillsForBuissnessService,
+  useFetchCitizenBillsForBuissnessService,
+  useFetchPayment,
+  useGetPaymentRulesForBusinessServices,
+  usePaymentSearch,
+  usePaymentUpdate,
+  useRecieptSearch,
 } from "./payment";
 import { useInitStore } from "./store";
 import useAccessControl from "./useAccessControl";
@@ -31,7 +39,6 @@ import useCustomAPIHook from "./useCustomAPIHook";
 import useCustomAPIMutationHook from "./useCustomAPIMutationHook";
 import useUpdateCustom from "./useUpdateCustom";
 
-
 import useComplaintDetails from "./pgr/useComplaintDetails";
 import { useComplaintsList, useComplaintsListByMobile } from "./pgr/useComplaintList";
 import useComplaintStatus from "./pgr/useComplaintStatus";
@@ -53,8 +60,7 @@ import useDSSDashboard from "./dss/useDSSDashboard";
 import useGetChart from "./dss/useGetChart";
 import useDssMdms from "./dss/useMDMS";
 import useGetCustomFilterValues from "./dss/useGetCustomFilterValues";
-import useGetCustomFilterRequestValues from './dss/useGetCustomFilterRequestValues';
-
+import useGetCustomFilterRequestValues from "./dss/useGetCustomFilterRequestValues";
 
 import useHRMSCount from "./hrms/useHRMSCount";
 import useHRMSCreate from "./hrms/useHRMScreate";
@@ -62,8 +68,6 @@ import useHRMSGenderMDMS from "./hrms/useHRMSGender";
 import useHrmsMDMS from "./hrms/useHRMSMDMS";
 import useHRMSSearch from "./hrms/useHRMSsearch";
 import useHRMSUpdate from "./hrms/useHRMSUpdate";
-
-
 
 import useDocCreate from "./engagement/useCreate";
 import useDocDelete from "./engagement/useDelete";
@@ -81,16 +85,13 @@ import useSurveySubmitResponse from "./surveys/useSubmitResponse";
 import useSurveyInbox from "./surveys/useSurveyInbox";
 import useSurveyUpdate from "./surveys/useUpdate";
 
-
-
 import useGetDSSAboutJSON from "./useGetDSSAboutJSON";
 import useGetDSSFAQsJSON from "./useGetDSSFAQsJSON";
 import useGetFAQsJSON from "./useGetFAQsJSON";
 import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import { usePrivacyContext } from "./usePrivacyContext";
 import useStaticData from "./useStaticData";
-
-
+import useIndividualService from "./dristi/useIndividualService";
 
 const pgr = {
   useComplaintDetails,
@@ -108,16 +109,18 @@ const pgr = {
   useComplaintStatusCount,
 };
 
-
 const dss = {
   useMDMS: useDssMdms,
   useDashboardConfig,
   useDSSDashboard,
   useGetChart,
   useGetCustomFilterValues,
-  useGetCustomFilterRequestValues
+  useGetCustomFilterRequestValues,
 };
 
+const dristi = {
+  useIndividualService,
+};
 
 const hrms = {
   useHRMSSearch,
@@ -127,9 +130,6 @@ const hrms = {
   useHRMSCount,
   useHRMSGenderMDMS,
 };
-
-
-
 
 const events = {
   useInbox: useEventInbox,
@@ -188,11 +188,11 @@ const Hooks = {
   useAccessControl,
   usePrivacyContext,
   pgr,
- 
+
   dss,
-  
+
   hrms,
- 
+
   events,
   engagement,
   survey,
@@ -210,7 +210,8 @@ const Hooks = {
   useStaticData,
   useDynamicData,
   useBulkPdfDetails,
-  useLocation
+  useLocation,
+  dristi,
 };
 
 export default Hooks;

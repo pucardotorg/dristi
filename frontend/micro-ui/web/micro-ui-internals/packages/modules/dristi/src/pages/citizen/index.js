@@ -13,7 +13,7 @@ const App = ({ stateCode }) => {
   const { t } = useTranslation();
 
   const Registration = Digit?.ComponentRegistryService?.getComponent("DRISTIRegistration");
-  const Response = Digit?.ComponentRegistryService?.getComponent("Response");
+  const Response = Digit?.ComponentRegistryService?.getComponent("DRISTICitizenResponse");
   const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
 
   const dristiCrumbs = [
@@ -54,6 +54,9 @@ const App = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/home/register`}>
             <Login stateCode={stateCode} isUserRegistered={false} />
+          </Route>
+          <Route path={`${path}/home/response`}>
+            <Response />
           </Route>
         </AppContainer>
       </Switch>

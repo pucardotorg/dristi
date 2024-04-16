@@ -26,10 +26,25 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     []
   );
 
-  function setValue(value, input) {
-    onSelect(config.key, { ...formData[config.key], [input]: value });
+  function setValue(value, name, input) {
+    if (input && input?.clearFields && value) {
+      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
+    } else onSelect(config.key, { ...formData[config.key], [name]: value });
   }
-  console.log(errors, formState?.errors, formState?.submitCount);
+  function getFileStoreData(filesData, input) {
+    const numberOfFiles = filesData.length;
+    let finalDocumentData = [];
+    if (numberOfFiles > 0) {
+      filesData.forEach((value) => {
+        finalDocumentData.push({
+          fileName: value?.[0],
+          fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
+          documentType: value?.[1]?.file?.type,
+        });
+      });
+    }
+    setValue(numberOfFiles > 0 ? filesData : [], input.name);
+  }
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -49,70 +64,39 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                 {input?.type !== "infoBox" && (
                   <CardLabel className="card-label-smaller">
                     {t(input.label)}
-                    {input.isMandatory ? " * " : null}
+                    {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
                   </CardLabel>
                 )}
                 <div className="field" style={{ width: "50%" }}>
                   {["radioButton", "dropdown"].includes(input?.type) && (
-                    <Controller
-                      render={() => (
-                        <CustomDropdown
-                          t={t}
-                          label={input?.label}
-                          type={input?.type === "radioButton" && "radio"}
-                          value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
-                          onChange={(e) => {
-                            setValue(e, input.name);
-                          }}
-                          config={input}
-                          errorStyle={errors?.[input.name]}
-                        />
-                      )}
-                      rules={!input.disableFormValidation ? {} : { required: input?.isMandatory, ...input?.validation }}
-                      defaultValue={formData?.[config.key]?.[input.name]}
-                      name={input.name}
-                      control={control}
+                    <CustomDropdown
+                      t={t}
+                      label={input?.label}
+                      type={input?.type === "radioButton" && "radio"}
+                      value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
+                      onChange={(e) => {
+                        setValue(e, input.name, input);
+                      }}
+                      config={input}
+                      errorStyle={errors?.[input.name]}
                     />
                   )}
                   {input?.type === "documentUpload" && (
-                    <Controller
-                      name={`${input.name}`}
-                      control={control}
-                      render={({ onChange, ref, value = [] }) => {
-                        function getFileStoreData(filesData) {
-                          const numberOfFiles = filesData.length;
-                          let finalDocumentData = [];
-                          if (numberOfFiles > 0) {
-                            filesData.forEach((value) => {
-                              finalDocumentData.push({
-                                fileName: value?.[0],
-                                fileStoreId: value?.[1]?.fileStoreId?.fileStoreId,
-                                documentType: value?.[1]?.file?.type,
-                              });
-                            });
-                          }
-                          onChange(numberOfFiles > 0 ? filesData : []);
-                          setValue(numberOfFiles > 0 ? filesData : [], input.name);
-                        }
-                        return (
-                          <MultiUploadWrapper
-                            t={t}
-                            module="works"
-                            tenantId={Digit.ULBService.getCurrentTenantId()}
-                            getFormState={getFileStoreData}
-                            showHintBelow={input?.showHintBelow ? true : false}
-                            setuploadedstate={value || []}
-                            allowedFileTypesRegex={input.allowedFileTypes}
-                            allowedMaxSizeInMB={input.allowedMaxSizeInMB || "5"}
-                            hintText={input.hintText}
-                            maxFilesAllowed={input.maxFilesAllowed || "1"}
-                            extraStyleName={{ padding: "0.5rem" }}
-                            customClass={input?.customClass}
-                            customErrorMsg={input?.errorMessage}
-                            containerStyles={{ ...input?.containerStyles }}
-                          />
-                        );
-                      }}
+                    <MultiUploadWrapper
+                      t={t}
+                      module="works"
+                      tenantId={Digit.ULBService.getCurrentTenantId()}
+                      getFormState={(fileData) => getFileStoreData(fileData, input)}
+                      showHintBelow={input?.showHintBelow ? true : false}
+                      setuploadedstate={[]}
+                      allowedFileTypesRegex={input.allowedFileTypes}
+                      allowedMaxSizeInMB={input.allowedMaxSizeInMB || "5"}
+                      hintText={input.hintText}
+                      maxFilesAllowed={input.maxFilesAllowed || "1"}
+                      extraStyleName={{ padding: "0.5rem" }}
+                      customClass={input?.customClass}
+                      customErrorMsg={input?.errorMessage}
+                      containerStyles={{ ...input?.containerStyles }}
                     />
                   )}
                   {input?.type === "text" && (
@@ -121,9 +105,9 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       key={input.name}
                       value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                       onChange={(e) => {
-                        setValue(e.target.value, input.name);
+                        setValue(e.target.value, input.name, input);
                       }}
-                      disable={false}
+                      disable={input.isDisabled}
                       defaultValue={undefined}
                       {...input.validation}
                     />
