@@ -26,7 +26,7 @@ public class AdvocateClerkRegistrationEnrichment {
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
             if(advocateClerkRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getClerks().get(0).getTenantId(), "billnumberid", "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]", advocateClerkRequest.getClerks().size());
+                List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getClerks().get(0).getTenantId(), "clerk.id", null, advocateClerkRequest.getClerks().size());
                 Integer index = 0;
                 for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
