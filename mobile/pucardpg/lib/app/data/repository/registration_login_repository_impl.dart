@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:pucardpg/app/data/data_sources/api_service.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
+import 'package:pucardpg/core/constant/constants.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
 
 class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
@@ -19,7 +20,7 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   Future<DataState<String>> requestOtp(OtpRequest otpRequest) async {
     // TODO: implement requestOtp
     try {
-      final httpResponse = await _apiService.requestOtp(otpRequest);
+      final httpResponse = await _apiService.requestOtp(tenantId, timeStamp, otpRequest);
 
       if (httpResponse.response.statusCode == HttpStatus.ok) {
         return DataSuccess(httpResponse.data);
