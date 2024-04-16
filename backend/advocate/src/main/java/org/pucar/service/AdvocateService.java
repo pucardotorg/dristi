@@ -3,18 +3,14 @@ package org.pucar.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
 import org.pucar.repository.AdvocateRepository;
-import org.pucar.repository.AdvocateRegistrationRepository;
-import org.pucar.util.ResponseInfoFactory;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 import org.pucar.web.models.AdvocateSearchCriteria;
 import org.pucar.web.models.AdvocateResponse;
-import org.pucar.web.models.AdvocateSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -75,10 +71,6 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
 
     return applications;
 }
-
-    public AdvocateResponse searchAdvocates(AdvocateSearchRequest body) {
-        return null;
-    }
 
     public AdvocateResponse updateAdvocate(AdvocateRequest body) {
         return null;

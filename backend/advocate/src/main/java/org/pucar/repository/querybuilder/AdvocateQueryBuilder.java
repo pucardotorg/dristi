@@ -25,15 +25,17 @@ public class AdvocateQueryBuilder {
                     .filter(Objects::nonNull)
                     .toList();
 
-            List<String> applicationNumbers = criteriaList.stream()
-                    .map(AdvocateSearchCriteria::getApplicationNumber)
-                    .filter(Objects::nonNull)
-                    .toList();
-
             List<String> barRegistrationNumbers = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null)
                     .map(AdvocateSearchCriteria::getBarRegistrationNumber)
                     .filter(Objects::nonNull)
-                    .toList();
+                    .collect(Collectors.toList());
+
+            List<String> applicationNumbers = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null)
+                    .map(AdvocateSearchCriteria::getApplicationNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
             if (!ids.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
@@ -72,7 +74,7 @@ public class AdvocateQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
-            query.append(" AND ");
+            query.append(" OR ");
         }
     }
 }
