@@ -1,12 +1,14 @@
 openapi: 3.0.0
 info:
-  title: Case registry
+  title: Case and Witness registry
   description: |
-    This API specification defines a Case registry.
-  version: 1.0.0
+    This draft API specification defines the Case and Witness registries.
+  version: 0.1.0
 tags:
   - name: Case
-    description: APIs related to the case registry
+    description: APIs to create, update and search for a case.
+  - name: Witness
+    description: APIs related to creating, updating and searching for witnesses to a case.
 paths:
   /case/v1/_create:
     post:
@@ -39,12 +41,12 @@ paths:
   /case/v1/_update:
     post:
       tags:
-        - CourtCase
+        - Case
       summary: Update a court case
       description: |
-        API to update a case registry 
+        API to update the case. Updates can include workflow, attributes of the case and/or soft deletion.
       requestBody:
-        description: Details for updating all updatable fields in the court case + RequestInfo meta data.
+        description: Details for updating all editable fields in the court case + RequestInfo meta data.
         content:
           '*/*':
             schema:
@@ -96,31 +98,115 @@ paths:
         - CaseManagementService
       summary: check if a specific case exists by using case number
       requestBody:
-        description: Details for the case(s) + RequestInfo meta data.
+        description: Case search criteria + RequestInfo meta data.
         content:
           '*/*':
             schema:
-              $ref: >-
-                https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseSearchRequest
+              $ref: '#/components/schemas/CaseSearchRequest'
         required: true
       responses:
         '200':
-          description: ReponseInfo with case(s) search successfully
+          description: ReponseInfo with cases matching the search criteria. Empty array is returned in case no cases match the search criteria. 
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/CaseExistsResponse
+                $ref: '#/components/schemas/CaseExistsResponse'
         '400':
           description: Search failed
           content:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/witness/v1/_create:
+    post:
+      tags:
+        - Witness
+      summary: API to add a witness to a case
+      description: |
+        API to add a witness to a case
+      requestBody:
+        description: Details for the witness + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/WitnessRequest'
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with witness mapping created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WitnessResponse'
+        '400':
+          description: Witness mapping to case failed
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/witness/v1/_update:
+     post:
+      tags:
+        - Witness
+      summary: API to update or remove a witness to a case. Update is accomplished through the isActive flag.
+      description: |
+        API to update or remove a witness to a case
+      requestBody:
+        description: Details for the witness + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/WitnessRequest'
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with witness update successfully executed
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WitnessResponse'
+        '400':
+          description: Witness update failed
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  
+  /case/witness/v1/_search:
+     post:
+      tags:
+        - Witness
+      summary: API to search for a witness in a case.
+      description: |
+        API to search for a witness in a case
+      requestBody:
+        description: Details for the witness + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/WitnessSearchRequest'
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with witness search results, if any. Empty array if no witnesses matching the search criteria are found.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/WitnessResponse'
+        '400':
+          description: Witness search failed due to invalid data.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
 components:
   schemas:
-    Case:
+    CourtCase:
       description: Case registry
       required:
         - tenantId
@@ -464,7 +550,45 @@ components:
         - required:
             - userId
             - organisationID
-   
+    
+    Witness:
+      type: object
+      required: [caseId, individualId]
+      properties:
+        id:
+          type: string
+          description: Autogenerated id of the witness. It is the primary key.
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          readOnly: true
+        caseId:
+          type: string
+          description: The case UUID for which this individual is a witness.
+        witnessIdentifier:
+          type: string
+          description: A field to store a formatted or court assigned number to a witness in a case. Optional field. 
+        individualId:
+          type: string
+          description: The individual identifier of the citizen who's a witness in the case
+        remarks:
+          type: string
+          description: Field to describe relevance of witness to the case and other info.
+          minLength: 10
+          maxLength: 5000
+        isActive:
+          type: boolean
+          description: Field to soft delete. False indicates the record is not active. True indicates it is active. Search implementation should ensure inactive fields are not returned. 
+          default: true
+        auditDetails:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
+        additionalDetails:
+          type: object
+          description: >-
+            Any extra fields that are not captured as first class fields can be
+            stored here as key/value pairs. Implementation specific.
+    
     CaseRequest:
       type: object
       properties:
@@ -474,17 +598,18 @@ components:
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/Case'
+            $ref: '#/components/schemas/CourtCase'
+    
     CaseResponse:
       type: object
       properties:
         requestInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         cases:
           type: array
           items:
-            $ref: '#/components/schemas/Case'
+            $ref: '#/components/schemas/CourtCase'
     
     CaseSearchRequest:
       type: object
@@ -502,7 +627,7 @@ components:
       properties:
         requestInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         criteria:
           type: array
           items:
@@ -527,4 +652,48 @@ components:
           type: string
         exists:
           type: boolean
+    
+    WitnessSearchCriteria:
+      type: object
+      properties:
+        caseId:
+          type: string
+        individualId:
+          type: string
+        includeInactive:
+          type: boolean
+          default: false
+    
+    WitnessRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        witnesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Witness'
+    
+    WitnessResponse:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        witnesses:
+          type: array
+          items:
+            $ref: '#/components/schemas/Witness'
+
+    WitnessSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        searchCriteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/WitnessSearchCriteria'
 

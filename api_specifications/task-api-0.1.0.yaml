@@ -4,7 +4,7 @@ info:
   title: API specs for Task
   description:
     Task API paths and entity is defined in this file.
-  version: "1.0.2"
+  version: "0.1.0"
 
 servers:
   - url: ""
@@ -185,6 +185,7 @@ components:
 
     Task:
       description: A task is created as part of an Order. It will always be linked to an order
+      required: [tenantId, orderId, taskType, createdDate, status]
       type: object
       properties:
         id:
@@ -232,9 +233,9 @@ components:
           type: string
           description: there will be various types of tasks, that will define their own schema for information required. This type will help identify what schema to pick from MDMS
           example: document submission, summons, bail.cash, bail.surety warrant
-        specialFields:
-          type: string
-          description: TODO this needs to change to be able to accommodate the specific schema based on if it is summon, bail, warrant or something else
+        taskDetails:
+          type: object
+          description: fields specific to task type like summons, bail, warrant, based on schema defined in MDMS. It will also have details for things like delivery channel like ePost, NSTEP, iCoPs, etc
 
         amount:
           $ref: '#/components/schemas/Amount'
@@ -242,11 +243,11 @@ components:
         status:
           type: string
           description: workflow status
-        person:
+        assignedTo:
           type: object
           description: details of person this task is assigned to. For example in case of document upload, this could be litigant or lawyer. in case of summon task, this will be person to whom summon is issued
           properties:
-            id:
+            individualId:
               type: string
               format: uuid
               minLength: 36
@@ -254,11 +255,7 @@ components:
               description: ID of the person if the person is in the system, in which case the name field can be left blank
             name:
               type: string
-              description: name of the person if not in the system 
-        deliveryChannel:
-          type: string
-          description: if task has a delivery channel associated with it, then this will point to it via Master data
-          example: ePost, NSTEP, iCoPs
+              description: name of the person if not in the system
         isActive:
           type: boolean
           description: to handle soft delete
@@ -277,17 +274,14 @@ components:
 
     Amount:
       type: object
+      required: [amount, type, status]
       description: amount in form of fees or penalty
       properties:
-        createdDate:
-          type: integer
-        dueDate:
-          type: integer
-          description: This field holds information about due date of fine.
-        closedDate:
+        id:
           type: string
-          format: date
-          description: the date when the amount was finally paid or refunded
+          format: uuid
+          minLength: 36
+          maxLength: 36
         amount:
           type: string
           description: This field holds information about amount to be paid

@@ -17,27 +17,27 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  * Sorting order
  */
 public enum Order {
-      ASC("asc"),      DESC("desc");
+	ASC("asc"), DESC("desc");
 
-  private String value;
+	private String value;
 
-  Order(String value) {
-    this.value = value;
-  }
+	Order(String value) {
+		this.value = value;
+	}
 
-  @Override
-  @JsonValue
-  public String toString() {
-    return String.valueOf(value);
-  }
+	@Override
+	@JsonValue
+	public String toString() {
+		return String.valueOf(value);
+	}
 
-  @JsonCreator
-  public static Order fromValue(String text) {
-    for (Order b : Order.values()) {
-      if (String.valueOf(b.value).equals(text)) {
-        return b;
-      }
-    }
-    return null;
-  }
+	@JsonCreator
+	public static Order fromValue(String text) {
+		for (Order b : Order.values()) {
+			if (String.valueOf(b.value).equals(text)) {
+				return b;
+			}
+		}
+		return null;
+	}
 }

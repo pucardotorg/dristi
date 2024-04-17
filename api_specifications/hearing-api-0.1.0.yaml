@@ -4,7 +4,7 @@ info:
   title: API specs for Hearing
   description: 
     Hearing API paths and entity is defined in this file.
-  version: "1.0.3"
+  version: "0.1.0"
 
 tags:
   - name: Hearing
@@ -196,18 +196,6 @@ components:
             $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearingList response
 
-    HearingSummaryListResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        TotalCount:
-          type: integer
-        list:
-          type: array
-          items:
-            $ref: '#/components/schemas/HearingSummary'
-
     Hearing:
       description: a case can have multiple hearings. this represents one of the many hearings related to the case
       type: object
@@ -225,18 +213,24 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
-        caseId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: the associated case
-        cnrNumber:
-          type: string
-          description: The CNR number of the associated case. helps in faster search
-        applicationNumber:
-          type: string
-          description: hearing can also be associated with an application number for a case
+        caseIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+          description: Array of cases for which this hearing is scheduled.
+        cnrNumbers:
+          type: array
+          items:
+            type: string
+          description: The CNR numbers of the associated cases if they exist. If CNR doesn't exist -- as in the case of application hearings -- the caseIds and applicationNumbers will be used to reference the entity.
+        applicationNumbers:
+          type: array
+          items:
+            type: string
+          description: A single hearing can be scheduled for multiple applications. All the application numbers should belong to the same case or case group.
         hearingType:
           type: string
           description: This field holds information about purpose of hearing. Master Data ID
@@ -247,23 +241,26 @@ components:
           example: scheduled, in progress, in transcription, closed
         startTime:
           type: string
-          format: datetime
+          format: date
           nullable: true
-          description: This field holds information about start date time of hearing
+          description: This field holds information about start date time of hearing in epoch time.
         endTime:
           type: string
-          format: datetime
+          format: date
           nullable: true
-          description: This field holds information about end date time of hearing. we may not use this field always
-        people:
+          description: This field holds information about end date time of hearing in epoch time. Optional field. 
+        attendees:
           type: array
-          description: this field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
+          description: This field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
           items:
             type: object
             properties:
               name:
                 type: string
                 description: name of the person
+              individualId:
+                type: string
+                description: The individual ID of the attendee if available
               type:
                 type: string
                 description: the type of the person
@@ -302,34 +299,5 @@ components:
         notes:
           type: string
           description: summary notes of the hearing
-
-    HearingSummary:
-      type: object
-      required: [tenantId, status, notes]
-      oneOf:
-        - required: [filingNumber, caseNumber]
-      properties:
-        id:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: refers to Hearing.id
-        tenantId:
-          type: string
-          description: refers to Hearing.tenantId
-        caseId:
-          type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
-          description: the associated case
-        status:
-          type: string
-          description: refers to Hearing.status
-        notes:
-          type: string
-          description: refers to Hearing.notes
-
 
 x-original-swagger-version: "2.0"
