@@ -1,0 +1,23 @@
+name: dristi workflow
+on:
+  push:
+    branches:
+      - Dev-0    
+  workflow_dispatch:    
+jobs:
+  docker_image-build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Setup Docker
+      uses: docker/setup-buildx-action@v1
+    # Login to Azure Container Registry
+    - name: Login to Azure Container Registry
+      run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+      
+    - name: Build and Push Docker image for advocate
+      run: |
+           docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
+           docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:latest
+           docker push pucardev.azurecr.io/pucar_advocate:latest
