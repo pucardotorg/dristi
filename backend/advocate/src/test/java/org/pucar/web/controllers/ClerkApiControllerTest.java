@@ -25,10 +25,10 @@
 //import static org.mockito.Mockito.when;
 //import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-///**
-//* API tests for ClerkApiController
-//*/
+
+/**
+* API tests for ClerkApiController
+*/
 //@Ignore
 //@RunWith(SpringRunner.class)
 //@WebMvcTest(ClerkApiController.class)
@@ -37,7 +37,7 @@
 //
 //    @Autowired
 //    private MockMvc mockMvc;
-//
+
 //    @Test
 //    public void clerkV1CreatePostSuccess() throws Exception {
 //        mockMvc.perform(post("/clerk/v1/_create").contentType(MediaType
@@ -51,21 +51,21 @@
 //        .APPLICATION_JSON_UTF8))
 //        .andExpect(status().isBadRequest());
 //    }
-//
+
 //    @Test
 //    public void clerkV1SearchPostSuccess() throws Exception {
 //        mockMvc.perform(post("/clerk/v1/_search").contentType(MediaType
 //        .APPLICATION_JSON_UTF8))
 //        .andExpect(status().isOk());
 //    }
-//
+
 //    @Test
 //    public void clerkV1SearchPostFailure() throws Exception {
 //        mockMvc.perform(post("/clerk/v1/_search").contentType(MediaType
 //        .APPLICATION_JSON_UTF8))
 //        .andExpect(status().isBadRequest());
 //    }
-//
+
 //    @Test
 //    public void clerkV1UpdatePostSuccess() throws Exception {
 //        mockMvc.perform(post("/clerk/v1/_update").contentType(MediaType
@@ -79,5 +79,5 @@
 //        .APPLICATION_JSON_UTF8))
 //        .andExpect(status().isBadRequest());
 //    }
-//
+
 //}
