@@ -2,27 +2,27 @@ import { Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { ReactComponent as WaitImage }  from './ImageUpload/image/AppAwait.svg';
+import { ReactComponent as RegisterImage }  from './ImageUpload/image/register.svg';
 import { ReactComponent as RightArrow }  from './ImageUpload/image/arrow_forward.svg';
 
 
-function ApplicationAwaitingPage() {
+function TakeUserToRegistration() {
   const { t } = useTranslation();
   const history = useHistory();
   return (
     <div style={{ "display": "flex", "flexDirection": "column", "width": "90vw", "height": "52vh", "background": "white", "alignItems": "center"}}>
-      <div style={{"maxHeight":'40vh'}}>
-        <WaitImage></WaitImage>
+      <div style={{"maxHeight":'40vh'}}> 
+        <RegisterImage></RegisterImage>
       </div>
       <div style={{"text-align": "center"}}>
-      <h2> your application is awaiting approval.....!</h2>
+      <h2 > You are yet to register yourself! </h2>
       </div>
       <div>
       <Button
       onButtonClick={() => {
-        history.push(`/digit-ui/citizen/dristi/home/applicationPage`);
+        history.push(`/digit-ui/citizen/dristi/home/login/id-verification`);
       }}
-      label={t("View My Application")}
+      label={t("Register")}
       style={{
         flex: 1,
         maxHeight: "7vh",
@@ -34,9 +34,9 @@ function ApplicationAwaitingPage() {
       >
         <RightArrow />
        </Button>
-       </div>
+      </div>
       </div> 
       );
 }
 
-export default ApplicationAwaitingPage;
+export default TakeUserToRegistration;

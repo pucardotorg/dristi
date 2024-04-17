@@ -2,9 +2,13 @@ import React from "react";
 import CustomCard from "../../../components/CustomCard";
 import { CaseInProgressIcon, ClosedCasesIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
+import TakeUserToRegistration from "./TakeUserToRegistration";
 
 function CitizenHome() {
   const history = useHistory();
+  const isApplicationAwaiting = false;
+  const isUserNotRegistered = false;
   const cardIcons = [
     { Icon: <MyHearingsIcon />, label: "File a Case", path: "/digit-ui/employee/citizen/dristi/my-hearings" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -16,7 +20,7 @@ function CitizenHome() {
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
-      {cardIcons.map((card) => {
+      {!isApplicationAwaiting && !isUserNotRegistered && cardIcons.map((card) => {
         return (
           <CustomCard
             label={card.label}
@@ -28,6 +32,9 @@ function CitizenHome() {
           ></CustomCard>
         );
       })}
+      {isApplicationAwaiting && !isUserNotRegistered && <ApplicationAwaitingPage /> }
+      {!isApplicationAwaiting && isUserNotRegistered && <TakeUserToRegistration /> }
+
     </div>
   );
 }
