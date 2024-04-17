@@ -31,12 +31,9 @@ public class CaseSearchRequest {
 
 	@JsonProperty("criteria")
 	@Valid
-	private List<CaseCriteria> criteria = null;
+	private List<CaseCriteria> criteria = new ArrayList<>();
 
 	public CaseSearchRequest addCriteriaItem(CaseCriteria criteriaItem) {
-		if (this.criteria == null) {
-			this.criteria = new ArrayList<>();
-		}
 		this.criteria.add(criteriaItem);
 		return this;
 	}

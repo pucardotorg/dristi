@@ -132,7 +132,7 @@ public class CourtCase {
 
 	@JsonProperty("documents")
 	@Valid
-	private List<Document> documents = null;
+	private List<Document> documents = new ArrayList<>();
 
 	@JsonProperty("remarks")
 
@@ -153,9 +153,6 @@ public class CourtCase {
 	private AuditDetails auditdetails = null;
 
 	public CourtCase addLinkedCasesItem(LinkedCase linkedCasesItem) {
-		if (this.linkedCases == null) {
-			this.linkedCases = new ArrayList<>();
-		}
 		this.linkedCases.add(linkedCasesItem);
 		return this;
 	}
@@ -171,17 +168,11 @@ public class CourtCase {
 	}
 
 	public CourtCase addRepresentativesItem(AdvocateMapping representativesItem) {
-		if (this.representatives == null) {
-			this.representatives = new ArrayList<>();
-		}
 		this.representatives.add(representativesItem);
 		return this;
 	}
 
 	public CourtCase addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			private List<Document> documents = new ArrayList<>();
-		}
 		this.documents.add(documentsItem);
 		return this;
 	}

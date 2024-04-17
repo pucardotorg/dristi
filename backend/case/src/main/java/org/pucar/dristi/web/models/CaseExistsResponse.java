@@ -31,12 +31,9 @@ public class CaseExistsResponse {
 
 	@JsonProperty("criteria")
 	@Valid
-	private List<CaseExists> criteria = null;
+	private List<CaseExists> criteria = new ArrayList<>();
 
 	public CaseExistsResponse addCriteriaItem(CaseExists criteriaItem) {
-		if (this.criteria == null) {
-			this.criteria = new ArrayList<>();
-		}
 		this.criteria.add(criteriaItem);
 		return this;
 	}

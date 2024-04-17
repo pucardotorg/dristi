@@ -144,10 +144,7 @@
               "action": "CLOSE",
               "nextState": "COMPLETED",
               "roles": [
-                "Judge",
-                "Typist",
-                "Benchclerk",
-                "Stenographer"
+                "HEARING_CLOSER"
               ]
             },
             {
