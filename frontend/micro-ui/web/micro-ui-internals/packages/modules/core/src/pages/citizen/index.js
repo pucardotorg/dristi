@@ -66,12 +66,7 @@ const Home = ({
 
   const sidebarHiddenFor = useMemo(() => {
     const contextPath = window?.contextPath;
-    return [
-      `/${contextPath}/citizen/select-language`,
-      `/${contextPath}/citizen/landing-page`,
-      `${contextPath}/citizen/register/name`,
-      `/${contextPath}/citizen/select-location`,
-    ];
+    return [`/${contextPath}/citizen/select-language`, `${contextPath}/citizen/register/name`, `/${contextPath}/citizen/select-location`];
   }, []);
 
   const linkData = useMemo(
@@ -195,10 +190,6 @@ const Home = ({
         <Switch>
           <Route exact path={path}>
             <CitizenHome />
-          </Route>
-
-          <Route exact path={`${path}/landing-page`}>
-            <LandingPage />
           </Route>
 
           <Route exact path={`${path}/select-language`}>

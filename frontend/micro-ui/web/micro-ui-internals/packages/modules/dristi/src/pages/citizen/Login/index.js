@@ -35,7 +35,7 @@ function getRedirectionUrl(status) {
     case "isApproved":
       return `/${window?.contextPath}/citizen/dristi/home`;
     case "isNotLoggedIn":
-      return `/${window?.contextPath}/citizen/landing-page`;
+      return `/${window?.contextPath}/citizen/dristi/landing-page`;
     default:
       return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
   }

@@ -30,7 +30,7 @@ const LanguageSelection = () => {
   );
 
   function onSubmit() {
-    history.push(`/${window?.contextPath}/citizen/landing-page`);
+    history.push(`/${window?.contextPath}/citizen/dristi/landing-page`);
   }
 
   return isLoading ? (

@@ -3,24 +3,26 @@ import React, { useState } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
-import { Route, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import CitizenHome from "./Home";
+import LandingPage from "./Home/LandingPage";
 
 const App = ({ stateCode }) => {
   const { path } = useRouteMatch();
   const location = useLocation();
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(true);
   const { t } = useTranslation();
-
+  const history = useHistory();
   const Registration = Digit?.ComponentRegistryService?.getComponent("DRISTIRegistration");
   const Response = Digit?.ComponentRegistryService?.getComponent("DRISTICitizenResponse");
   const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
 
+  const hideHomeCrumb = [`/digit-ui/citizen/dristi/home`, `/digit-ui/citizen/dristi/landing-page`];
   const dristiCrumbs = [
     {
       path: isUserLoggedIn ? `/digit-ui/citizen/dristi/home` : "",
       content: t("ES_COMMON_HOME"),
-      show: location.pathname !== `/digit-ui/citizen/dristi/home`,
+      show: !hideHomeCrumb.includes(location.pathname),
     },
     {
       path: isUserLoggedIn ? `${path}/home/login` : "",
@@ -38,7 +40,16 @@ const App = ({ stateCode }) => {
       show: location.pathname.includes("/home/user-registration"),
     },
   ];
+  const whiteListedRoutes = [
+    "/digit-ui/citizen/dristi/landing-page",
+    "/digit-ui/citizen/dristi/home/login",
+    "/digit-ui/citizen/dristi/home/response",
+    "/digit-ui/citizen/dristi/home/register",
+  ];
 
+  if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
+    history.push("/digit-ui/citizen/dristi/landing-page");
+  }
   return (
     <span className={"pt-citizen"}>
       <Switch>
@@ -57,6 +68,9 @@ const App = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/home/response`}>
             <Response />
+          </Route>
+          <Route path={`${path}/landing-page`}>
+            <LandingPage />
           </Route>
         </AppContainer>
       </Switch>

@@ -12,7 +12,7 @@ export const PrivateRoute = ({ component: Component, roles, ...rest }) => {
           if (userType === "employee") {
             return `/${window?.contextPath}/employee/user/language-selection`;
           } else {
-            return `/${window?.contextPath}/citizen/landing-page`;
+            return `/${window?.contextPath}/citizen/dristi/landing-page`;
           }
         }
         if (!user || !user.access_token) {

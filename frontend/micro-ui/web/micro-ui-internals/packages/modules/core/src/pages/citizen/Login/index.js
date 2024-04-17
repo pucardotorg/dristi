@@ -10,7 +10,7 @@ import SelectOtp from "./SelectOtp";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/landing-page`;
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/dristi/landing-page`;
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -237,21 +237,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     <div className="citizen-form-wrapper">
       <Switch>
         <AppContainer>
-          <BreadCrumb
-            style={{ marginTop: "40px" }}
-            crumbs={[
-              {
-                path: "/digit-ui/citizen/landing-page",
-                content: t("ES_LANDING_PAGE"),
-                show: true,
-              },
-              {
-                path: "/digit-ui/citizen/login",
-                content: t("ES_REGISTER"),
-                show: true,
-              },
-            ]}
-          ></BreadCrumb>
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}

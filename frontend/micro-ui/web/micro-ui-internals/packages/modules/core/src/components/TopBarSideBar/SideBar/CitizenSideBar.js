@@ -92,7 +92,7 @@ export const CitizenSideBar = ({ isOpen, isMobile = false, toggleSidebar, onLogo
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`/${window?.contextPath}/citizen/landing-page`);
+    history.push(`/${window?.contextPath}/citizen/dristi/landing-page`);
     closeSidebar();
   };
   if (islinkDataLoading || isLoading) {
