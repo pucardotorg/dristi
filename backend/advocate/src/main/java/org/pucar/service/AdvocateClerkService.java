@@ -41,7 +41,6 @@ public class AdvocateClerkService {
         // Otherwise return the found applications
         return applications;
     }
-}
 
     private AdvocateClerkRegistrationValidator validator;
 

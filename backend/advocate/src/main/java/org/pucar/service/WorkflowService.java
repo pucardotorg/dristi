@@ -9,9 +9,7 @@ import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.config.Configuration;
 import org.pucar.repository.ServiceRequestRepository;
-import org.pucar.web.models.Advocate;
-import org.pucar.web.models.AdvocateRequest;
-import org.pucar.web.models.RequestInfoWrapper;
+import org.pucar.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -55,6 +53,44 @@ public class WorkflowService {
             return response.getProcessInstances().get(0).getState();
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.getMessage());
+            throw new CustomException();
+        }
+    }
+    public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
+        advocateClerkRequest.getClerks().forEach(advocateClerk -> {
+            try {
+                ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
+                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
+                callWorkFlow(workflowRequest);
+            } catch (Exception e) {
+                log.error("Error updating workflow status: {}", e.getMessage());
+                throw new CustomException();
+            }
+        });
+    }
+    private ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
+        try {
+            Workflow workflow = advocateClerk.getWorkflow();
+            ProcessInstance processInstance = new ProcessInstance();
+            processInstance.setBusinessId(advocateClerk.getApplicationNumber());
+            processInstance.setAction(workflow.getAction());
+            processInstance.setModuleName("advocate-clerk-services");
+            processInstance.setTenantId(advocateClerk.getTenantId());
+            processInstance.setBusinessService("ADVClerk");
+            processInstance.setDocuments(workflow.getDocuments());
+            processInstance.setComment(workflow.getComments());
+            if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
+                List<User> users = new ArrayList<>();
+                workflow.getAssignes().forEach(uuid -> {
+                    User user = new User();
+                    user.setUuid(uuid);
+                    users.add(user);
+                });
+                processInstance.setAssignes(users);
+            }
+            return processInstance;
+        } catch (Exception e) {
+            log.error("Error getting process instance for BTR: {}", e.getMessage());
             throw new CustomException();
         }
     }
