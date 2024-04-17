@@ -2,7 +2,7 @@ import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-function SelectId({ config, t, onAadharChange }) {
+function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const history = useHistory();
   const validateFormData = (data) => {
@@ -49,16 +49,15 @@ function SelectId({ config, t, onAadharChange }) {
         config={config}
         t={t}
         onSubmit={(data) => {
-          console.log(data);
+          console.debug(data);
           if (!validateFormData(data)) {
             setShowErrorToast(!validateFormData(data));
-            return;
+          } else if (data?.SelectUserTypeComponent?.aadharNumber) {
+            onAadharChange(data?.SelectUserTypeComponent?.aadharNumber);
+          } else {
+            onDocumentUpload(data?.SelectUserTypeComponent?.ID_Proof[0][1]?.file, data?.SelectUserTypeComponent?.selectIdTypeType, "DRISTI");
           }
-          if (data?.SelectUserTypeComponent?.aadharNumber) {
-            Digit.SessionStorage.set("aadharNumber", data?.SelectUserTypeComponent?.aadharNumber);
-            onAadharChange();
-            return;
-          }
+          return;
         }}
         noBoxShadow
         inline

@@ -7,7 +7,7 @@ import CardText from "../atoms/CardText";
 import SubmitBar from "../atoms/SubmitBar";
 import LinkButton from "../atoms/LinkButton";
 import CardCaption from "../atoms/CardCaption";
-import TextInput from "../atoms/TextInput";
+import ActionBar from "../atoms/ActionBar";
 
 const InputCard = ({
   t,
@@ -31,7 +31,14 @@ const InputCard = ({
       {texts?.header && <CardHeader>{t(texts.header)}</CardHeader>}
       {texts?.cardText && <CardText>{t(texts.cardText)}</CardText>}
       {children}
-      {texts.submitBarLabel ? <SubmitBar disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onSubmit={onNext} /> : null}
+      {texts.submitBarLabel && texts.submitInForm ? (
+        <SubmitBar disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onSubmit={onNext} />
+      ) : null}
+      {texts.submitBarLabel && !texts.submitInForm ? (
+        <ActionBar>
+          <SubmitBar disabled={isDisable} submit={submit} label={t(texts.submitBarLabel)} onSubmit={onNext} />
+        </ActionBar>
+      ) : null}
       {texts.skipLabel ? <CardText style={{ marginTop: "10px", textAlign: isMobile ? "center" : "left" }}> {t(texts.skipLabel)} </CardText> : null}
       {texts.skipText ? <LinkButton label={t(texts.skipText)} onClick={onSkip} /> : null}
       {isMultipleAllow && texts.addMultipleText ? <LinkButton label={t(texts.addMultipleText)} onClick={onAdd} /> : null}

@@ -9,7 +9,6 @@ function TermsConditions({ config, t }) {
       onSubmit={() => {}}
       noBoxShadow
       inline
-      submitInForm
       label={"Next"}
       onSecondayActionClick={() => {}}
       description={"Description"}

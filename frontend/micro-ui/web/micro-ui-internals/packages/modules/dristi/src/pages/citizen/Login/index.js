@@ -1,12 +1,12 @@
-import { AppContainer, BreadCrumb, Toast } from "@egovernments/digit-ui-react-components";
+import { AppContainer, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
-import SelectName from "./SelectName";
 import SelectOtp from "./SelectOtp";
 import SelectId from "./SelectId";
+import { UploadServices } from "../../../../../../libraries/src/services/atoms/UploadServices";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -34,7 +34,7 @@ function getRedirectionUrl(status) {
       return `/${window?.contextPath}/citizen/dristi/home/isNotApproved`;
     case "isApproved":
       return `/${window?.contextPath}/citizen/dristi/home`;
-    case "isLoggedIn":
+    case "isNotLoggedIn":
       return `/${window?.contextPath}/citizen/landing-page`;
     default:
       return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
@@ -142,7 +142,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       } else {
         setCanSubmitNo(true);
         setError("MOBILE_NUMBER_NOT_REGISTERED");
-        setTimeout(() => history.replace(getRedirectionUrl("isLoggedIn")), 3000);
+        setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
       }
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
@@ -249,10 +249,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setParmas({ ...params, isRememberMe: !params.isRememberMe });
   };
 
-  const onAadharChange = () => {
+  const onAadharChange = (aadharNumber) => {
+    Digit.SessionStorage.set("aadharNumber", aadharNumber);
+    Digit.SessionStorage.del("UploadedDocument");
     history.push(`${path}/aadhar-otp`);
   };
-
+  const onDocumentUpload = async (filedata, IdType, tenantId) => {
+    const fileUploadRes = await UploadServices.Filestorage("DRISTI", filedata, tenantId);
+    Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType });
+    Digit.SessionStorage.del("aadharNumber");
+    history.push(`/digit-ui/citizen/dristi/home/user-registration`);
+  };
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
     history.replace(`/${window?.contextPath}/citizen/dristi/home/user-registration`);
@@ -289,7 +296,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             />
           </Route>
           <Route path={`${path}/id-verification`}>
-            <SelectId t={t} config={[stepItems[2]]} onAadharChange={onAadharChange} />
+            <SelectId t={t} config={[stepItems[2]]} onAadharChange={onAadharChange} onDocumentUpload={onDocumentUpload} />
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp

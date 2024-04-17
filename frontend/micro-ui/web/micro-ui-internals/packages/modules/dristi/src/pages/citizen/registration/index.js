@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { newConfig } from "./config";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
@@ -25,7 +25,6 @@ const Registration = () => {
           data[curr.body[0].key][input.isDependentOn] &&
           !Boolean(data[curr.body[0].key][input.isDependentOn][input.dependentKey])
         ) {
-          debugger;
           return;
         }
         if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {

@@ -30,17 +30,6 @@ export const loginSteps = [
   },
   {
     head: "Id-Verification",
-    // body: [
-    //   { label: "CS_ID_TYPE", type: "dropdown", key: "ID", isMandatory: true, populators: { name: "ID", options: ["Aadhar", "PAN"] } },
-    //   { label: "Upload ID Proof", type: "documentUpload", key: "ID_Proof", populators: { name: "ID_Proof" }, localePrefix: "Enter_Aadhar" },
-    //   {
-    //     label: "Aadhar ID",
-    //     type: "text",
-    //     key: "Aadhar_ID",
-    //     isMandatory: true,
-    //     populators: { name: "Aadhar_ID" },
-    //   },
-    // ],
     body: [
       {
         type: "component",
@@ -111,8 +100,8 @@ export const loginSteps = [
   },
   {
     texts: {
-      header: "CS_LOGIN_OTP",
-      cardText: "CS_LOGIN_OTP_TEXT",
+      header: "CS_AADHAR_OTP",
+      cardText: "CS_AADHAR_OTP_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
     },
