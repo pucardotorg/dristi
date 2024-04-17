@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_table_item.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -147,12 +148,23 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                   const SizedBox(height: 10,),
                   DigitElevatedButton(
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
                         String otp = '';
                         _otpControllers.forEach((controller) {
                           otp += controller.text;
                         });
                         if (kDebugMode) {
                           print('Entered OTP: $otp');
+                        }
+                        if (otp.length != 6) {
+                          DigitToast.show(context,
+                            options: DigitToastOptions(
+                              "Enter valid OTP",
+                              true,
+                              widget.theme.theme(),
+                            ),
+                          );
+                          return;
                         }
                         Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.mobile);
                       },

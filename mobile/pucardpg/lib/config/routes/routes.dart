@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pucardpg/app/presentation/features/address_screen/address_screen.dart';
 import 'package:pucardpg/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart';
+import 'package:pucardpg/app/presentation/features/advocate_home_page/advocate_home_page.dart';
+import 'package:pucardpg/app/presentation/features/home_screen/home_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-otp-screen/id_otp_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-verification-screen/id_verification_screen.dart';
 import 'package:pucardpg/app/presentation/features/mobile-number-screen/mobile_number_screen.dart';
@@ -16,6 +18,9 @@ class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
       case '/':
+        return _materialRoute(const HomeScreen());
+
+      case '/mobileNumberScreen':
         return _materialRoute(const MobileNumberScreen());
 
       case '/MobileOtpScreen':
@@ -45,8 +50,11 @@ class AppRoutes {
       case '/SuccessScreen':
         return _materialRoute(const SuccessScreen());
 
+      case '/AdvocateHomePage':
+        return _materialRoute(const AdvocateHomePage());
+
       default:
-        return _materialRoute(const MobileNumberScreen());
+        return _materialRoute(const HomeScreen());
     }
   }
 

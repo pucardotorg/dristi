@@ -233,6 +233,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   isLatLngRequired: true,
                                   getPlaceDetailWithLatLng:
                                       (Prediction prediction) {
+                                    FocusScope.of(context).unfocus();
                                     displayPrediction(prediction, form);
                                     inspect(prediction);
                                     print("placeDetails" +
@@ -318,6 +319,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   },
                                   validationMessages: {
                                     'required': (_) => 'Pincode is required',
+                                    'number': (_) => 'Pincode should contain digits 0-9',
                                     'maxLength': (_) =>
                                     'Max length should be 6'
                                   },
@@ -448,9 +450,11 @@ class AddressScreenState extends State<AddressScreen> {
                                     padding: const EdgeInsets.all(0),
                                     label: 'Door number',
                                     isRequired: true,
+                                    keyboardType: TextInputType.number,
                                     validationMessages: {
                                       'required': (_) =>
                                           'Door number is required',
+                                      'number': (_) => 'Door number should contain digits 0-9',
                                       'minLength': (_) =>
                                       'Min length should be 2',
                                       'maxLength': (_) =>
@@ -492,7 +496,8 @@ class AddressScreenState extends State<AddressScreen> {
             FormControl<String>(value: ''),
         pinCodeKey: FormControl<String>(
             value: pinCode,
-            validators: [Validators.required, Validators.maxLength(6)]),
+            validators: [Validators.required, Validators.maxLength(6),
+            Validators.number]),
         stateKey: FormControl<String>(
             value: stateName, validators: [Validators.required]),
         districtKey: FormControl<String>(
@@ -506,6 +511,7 @@ class AddressScreenState extends State<AddressScreen> {
         ]),
         doorNoKey: FormControl<String>(value: '', validators: [
           Validators.required,
+          Validators.number,
           Validators.minLength(2),
           Validators.maxLength(8)
         ]),

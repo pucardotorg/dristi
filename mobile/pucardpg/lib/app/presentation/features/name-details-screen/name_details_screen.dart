@@ -81,6 +81,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   label: 'First name',
                                   formControlName: firstNameKey,
                                   isRequired: true,
+                                  keyboardType: TextInputType.text,
                                   validationMessages: {
                                     'required': (_) => 'First name is required',
                                     'minLength': (_) =>
@@ -94,12 +95,14 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   label: 'Middle name',
                                   formControlName: middleNameKey,
                                   isRequired: false,
+                                  keyboardType: TextInputType.text,
                                 ),
                                 const SizedBox(height: 20,),
                                 DigitTextFormField(
                                   label: 'Last name',
                                   formControlName: lastNameKey,
                                   isRequired: true,
+                                  keyboardType: TextInputType.text,
                                   validationMessages: {
                                     'required': (_) => 'Last name is required',
                                     'minLength': (_) =>
@@ -118,6 +121,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                   ),
                   DigitElevatedButton(
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
                         form.markAllAsTouched();
                         if (!form.valid) return;
                         Navigator.pushNamed(context, '/AddressScreen', arguments: widget.mobile);

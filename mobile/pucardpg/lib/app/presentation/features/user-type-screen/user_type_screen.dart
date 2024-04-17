@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
+import 'package:pucardpg/core/constant/constants.dart';
 
 class UserTypeScreen extends StatefulWidget with AppMixin{
 
@@ -22,7 +23,6 @@ class UserTypeScreen extends StatefulWidget with AppMixin{
 
 class UserTypeScreenState extends State<UserTypeScreen> {
 
-  String? selectedOption;
 
   @override
   void initState() {
