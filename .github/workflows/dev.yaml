@@ -19,8 +19,8 @@ jobs:
     - name: Build and Push Docker image for advocate
       run: |
            docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
-           docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:latest
-           docker push pucardev.azurecr.io/pucar_advocate:latest
+           docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:test1
+           docker push pucardev.azurecr.io/pucar_advocate:test1
            
     # - name: Build and Push Docker image for artifact
     #   run: |
