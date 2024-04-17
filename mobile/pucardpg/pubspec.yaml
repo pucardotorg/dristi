@@ -77,6 +77,11 @@ dependencies:
   watcher: ^1.1.0
   google_places_flutter: ^2.0.6
   google_maps_flutter: ^2.2.0
+  geocoding: ^2.0.4
+  file_picker: ^8.0.0+1
+  syncfusion_flutter_pdfviewer: ^24.2.8
+  permission_handler: ^6.1.1
+  open_file: ^3.3.2
   geolocator: ^9.0.1
   country_state_city: ^0.1.6
   http: ^1.2.0

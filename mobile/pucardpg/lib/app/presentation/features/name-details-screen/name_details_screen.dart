@@ -37,7 +37,15 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Birth registration list"),
+          title: const Text(""),
+          centerTitle: true,
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+          ],
+          leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.menu),
+          ),
         ),
         body: ReactiveFormBuilder(
             form: buildForm,
@@ -112,7 +120,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                       onPressed: () {
                         form.markAllAsTouched();
                         if (!form.valid) return;
-                        Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.mobile);
+                        Navigator.pushNamed(context, '/AddressScreen', arguments: widget.mobile);
                       },
                       child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                   ),

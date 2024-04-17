@@ -64,7 +64,12 @@ class OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Birth registration list"),
+          title: const Text(""),
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.menu),
+          ),
         ),
         body: Column(
           children: [
