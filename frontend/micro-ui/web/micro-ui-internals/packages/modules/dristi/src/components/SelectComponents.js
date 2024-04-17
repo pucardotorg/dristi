@@ -24,7 +24,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
   );
 
   function setValue(value, input) {
-    console.log(value, "value");
     if (Array.isArray(input)) {
       onSelect(config.key, {
         ...formData[config.key],

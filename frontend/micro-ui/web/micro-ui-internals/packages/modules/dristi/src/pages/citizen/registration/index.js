@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { newConfig } from "./config";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom";
 
 const Registration = () => {
   const { t } = useTranslation();
@@ -20,11 +20,23 @@ const Registration = () => {
       curr.body[0].populators.inputs.forEach((input) => {
         if (!isValid) return;
         if (Array.isArray(input.name)) return;
+        if (
+          input.isDependentOn &&
+          data[curr.body[0].key][input.isDependentOn] &&
+          !Boolean(data[curr.body[0].key][input.isDependentOn][input.dependentKey])
+        ) {
+          debugger;
+          return;
+        }
+        if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
+          isValid = false;
+        }
         if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
           isValid = false;
         }
       });
     });
+    return isValid;
   };
 
   const onSubmit = (data) => {
@@ -40,6 +52,21 @@ const Registration = () => {
           familyName: data?.userDetails?.lastName,
           otherNames: data?.userDetails?.middleName,
         },
+        userDetails: {
+          username: Digit.UserService.getUser()?.info?.userName,
+          roles: [
+            {
+              code: "USER_REGISTER",
+              name: "USER_REGISTER",
+              description: "USER_REGISTER",
+            },
+            {
+              code: "CITIZEN",
+              name: "Citizen",
+            },
+          ],
+          type: Digit.UserService.getUser()?.info?.type,
+        },
         mobileNumber: Digit.UserService.getUser()?.info?.mobileNumber,
         address: [
           {
@@ -47,24 +74,12 @@ const Registration = () => {
             doorNo: "123",
             latitude: -19,
             longitude: 34,
-            locationAccuracy: 14.27,
-            type: "PERMANENT",
-            addressLine1: "Apartment",
-            addressLine2: "2nd Floor",
-            landmark: "Near Juhu Beach",
             city: "Mumbai",
             pincode: "123456",
             district: "Apartment",
             buildingName: "Apartment",
             street: "Necklace Road",
-            locality: {
-              code: "test_9b31746b933d",
-              name: "test_58630a388978",
-              label: "test_7b7f928dcab8",
-              latitude: "test_15d4a90d15a6",
-              longitude: "test_e8854daed039",
-              children: [],
-            },
+            locality: "",
           },
         ],
         identifiers: [],
@@ -79,11 +94,11 @@ const Registration = () => {
       .then((result, err) => {
         let getdata = { ...data, get: result };
         console.log(getdata);
-        history.push(`/digit-ui/${defaultLandingUrl}/dristi/home/response`, "success");
+        history.push(`/digit-ui/citizen/dristi/home/response`, "success");
       })
       .catch((err) => {
         console.log(err);
-        history.push(`/digit-ui/${defaultLandingUrl}/dristi/home/response`, "error");
+        history.push(`/digit-ui/citizen/dristi/home/response`, "error");
       });
   };
 

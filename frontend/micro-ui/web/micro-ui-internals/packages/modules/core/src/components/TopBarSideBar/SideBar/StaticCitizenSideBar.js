@@ -92,18 +92,20 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
       return <React.Fragment></React.Fragment>;
     }
 
-    if ("style" in sidebarRef.current) sidebarRef.current.style.cursor = "pointer";
+    if (sidebarRef.current && "style" in sidebarRef.current) sidebarRef.current.style.cursor = "pointer";
     collapseNav();
   }, [isLoading]);
 
   const expandNav = () => {
-    sidebarRef.current.style.width = "260px";
+    if (sidebarRef.current && "style" in sidebarRef.current) sidebarRef.current.style.width = "260px";
     // sidebarRef.current.style.overflow = "auto";
     setSubNav(true);
   };
   const collapseNav = () => {
-    sidebarRef.current.style.width = "60px";
-    sidebarRef.current.style.overflow = "hidden";
+    if (sidebarRef.current && "style" in sidebarRef.current) {
+      sidebarRef.current.style.width = "60px";
+      sidebarRef.current.style.overflow = "hidden";
+    }
     setSubNav(false);
   };
 

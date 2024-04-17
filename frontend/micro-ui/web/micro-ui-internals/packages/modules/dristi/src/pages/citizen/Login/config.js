@@ -97,7 +97,6 @@ export const loginSteps = [
               clearFields: { ID_Proof: [], selectIdTypeType: "" },
               disableMandatoryFieldFor: ["ID_Proof", "selectIdTypeType"],
               isMandatory: true,
-              isDisabled: true,
             },
             {
               type: "infoBox",
