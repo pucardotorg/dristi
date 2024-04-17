@@ -5,10 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.pucar.repository.querybuilder.AdvocateClerkQueryBuilder;
-import org.pucar.repository.rowmapper.AdvocateClerkRowMapper;
-import org.pucar.web.models.AdvocateClerk;
-import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.repository.querybuilder.AdvocateQueryBuilder;
+import org.pucar.repository.rowmapper.AdvocateRowMapper;
 import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.pucar.web.models.Advocate;
@@ -25,47 +23,49 @@ import static org.mockito.Mockito.*;
 public class AdvocateRepositoryTest {
 
     @Mock
-    private AdvocateClerkQueryBuilder queryBuilder;
+    private AdvocateQueryBuilder queryBuilder;
 
     @Mock
     private JdbcTemplate jdbcTemplate;
 
     @Mock
-    private AdvocateClerkRowMapper rowMapper;
+    private AdvocateRowMapper rowMapper;
 
     @InjectMocks
-    private AdvocateClerkRepository repository;
+    private AdvocateRepository repository;
 
     @Test
     public void testGetApplications() {
         // Mock data
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
+        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
         // Add necessary mock behavior for queryBuilder
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList())).thenReturn("SELECT * FROM dristi_advocate_clerk WHERE condition = ?");
+        when(queryBuilder.getAdvocateSearchQuery(anyList(), anyList())).thenReturn("SELECT * FROM advocates WHERE condition = ?");
         // Mock data for jdbcTemplate
-        List<AdvocateClerk> mockAdvocates = new ArrayList<>();
-        AdvocateClerk mockAdvocate = new AdvocateClerk();
+        List<Advocate> mockAdvocates = new ArrayList<>();
+        Advocate mockAdvocate = new Advocate();
         mockAdvocate.setId(UUID.randomUUID());
         mockAdvocate.setTenantId("tenant1");
         mockAdvocate.setApplicationNumber("app123");
+        mockAdvocate.setBarRegistrationNumber("bar123");
+        mockAdvocate.setAdvocateType("type1");
+        mockAdvocate.setOrganisationID(UUID.randomUUID());
         mockAdvocate.setIndividualId("individual1");
         mockAdvocate.setIsActive(true);
         mockAdvocates.add(mockAdvocate);
         // Add necessary mock behavior for jdbcTemplate
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class)))
                 .thenReturn(mockAdvocates);
 
         // Perform the actual method call
-        List<AdvocateClerk> result = repository.getApplications(searchCriteria);
+        List<Advocate> result = repository.getApplications(searchCriteria);
 
         // Verify that queryBuilder was called with correct arguments
-        verify(queryBuilder).getAdvocateClerkSearchQuery(eq(searchCriteria), anyList());
+        verify(queryBuilder).getAdvocateSearchQuery(eq(searchCriteria), anyList());
 
         // Verify that jdbcTemplate was called with correct arguments
-        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
+        verify(jdbcTemplate).query(anyString(), any(Object[].class), any(AdvocateRowMapper.class));
 
         // Verify that result matches the expected mock data
         assertEquals(mockAdvocates, result);
     }
-
 }
