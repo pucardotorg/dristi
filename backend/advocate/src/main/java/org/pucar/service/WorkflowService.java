@@ -9,10 +9,13 @@ import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.config.Configuration;
 import org.pucar.repository.ServiceRequestRepository;
-import org.pucar.web.models.*;
+import org.pucar.web.models.Advocate;
+import org.pucar.web.models.AdvocateRequest;
+import org.pucar.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,17 +24,22 @@ import java.util.List;
 @Component
 @Slf4j
 public class WorkflowService {
+
     @Autowired
     private ObjectMapper mapper;
+
     @Autowired
     private ServiceRequestRepository repository;
+
     @Autowired
     private Configuration config;
-    public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
-        advocateClerkRequest.getClerks().forEach(advocateClerk -> {
+
+
+    public void updateWorkflowStatus(AdvocateRequest advocateRequest) {
+        advocateRequest.getAdvocates().forEach(advocate -> {
             try {
-                ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
-                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
+                ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
+                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 callWorkFlow(workflowRequest);
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
@@ -50,15 +58,15 @@ public class WorkflowService {
             throw new CustomException();
         }
     }
-    private ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstanceForADV(Advocate advocate, RequestInfo requestInfo) {
         try {
-            Workflow workflow = advocateClerk.getWorkflow();
+            Workflow workflow = advocate.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
-            processInstance.setBusinessId(advocateClerk.getApplicationNumber());
+            processInstance.setBusinessId(advocate.getApplicationNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("advocate-clerk-services");
-            processInstance.setTenantId(advocateClerk.getTenantId());
-            processInstance.setBusinessService("ADVClerk");
+            processInstance.setModuleName("advocate-services");
+            processInstance.setTenantId(advocate.getTenantId());
+            processInstance.setBusinessService("ADVOCATERGT");
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -72,7 +80,7 @@ public class WorkflowService {
             }
             return processInstance;
         } catch (Exception e) {
-            log.error("Error getting process instance for BTR: {}", e.getMessage());
+            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
             throw new CustomException();
         }
     }
@@ -90,11 +98,10 @@ public class WorkflowService {
             throw new CustomException();
         }
     }
-
-    private BusinessService getBusinessService(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
+    private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {
         try {
-            String tenantId = advocateClerk.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "ADVClerk");
+            String tenantId = advocate.getTenantId();
+            StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
             Object result = repository.fetchResult(url, requestInfoWrapper);
             BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
@@ -120,14 +127,14 @@ public class WorkflowService {
         url.append("&businessIds=").append(businessService);
         return url;
     }
-    public ProcessInstanceRequest getProcessInstanceForAdvocateClerkRegistrationPayment(AdvocateClerkRequest updateRequest) {
+    public ProcessInstanceRequest getProcessInstanceForAdvocateRegistrationPayment(AdvocateRequest updateRequest) {
         try {
-            AdvocateClerk application = updateRequest.getClerks().get(0);
+            Advocate application = updateRequest.getAdvocates().get(0);
             ProcessInstance process = ProcessInstance.builder()
-                    .businessService("ADVClerk")
+                    .businessService("ADV")
                     .businessId(application.getApplicationNumber())
-                    .comment("Payment for advocate clerk registration processed")
-                    .moduleName("advocate-clerk-services")
+                    .comment("Payment for advocate registration processed")
+                    .moduleName("advocate-services")
                     .tenantId(application.getTenantId())
                     .action("PAY")
                     .build();
@@ -136,7 +143,7 @@ public class WorkflowService {
                     .processInstances(Arrays.asList(process))
                     .build();
         } catch (Exception e) {
-            log.error("Error getting process instance for advocate clerk registration payment: {}", e.getMessage());
+            log.error("Error getting process instance for advocate registration payment: {}", e.getMessage());
             throw new CustomException();
         }
     }

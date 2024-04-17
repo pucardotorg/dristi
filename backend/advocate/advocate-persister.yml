@@ -1,0 +1,38 @@
+serviceMaps:
+  serviceName: adv-services
+  mappings:
+    - version: 1.0
+      description: Persists advocate details in tables
+      fromTopic: save-advocate-application
+      isTransaction: true	
+      queryMaps:
+
+        - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,barRegistrationNumber,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: Advocate.*
+          jsonMaps:
+            - jsonPath: $.Advocate.*.id
+
+            - jsonPath: $.Advocate.*.tenantId
+
+            - jsonPath: $.Advocate.*.applicationNumber
+          
+            - jsonPath: $.Advocate.*.barRegistrationNumber
+            
+            - jsonPath: $.Advocate.*.organisationID
+          
+            - jsonPath: $.Advocate.*.individualId
+            
+            - jsonPath: $.Advocate.*.isActive
+                                           
+            - jsonPath: $.Advocate.*.additionalDetails
+               type:JSON
+               dbType:JSONB
+
+            - jsonPath: $.Advocate.*.auditDetails.createdBy
+
+            - jsonPath: $.Advocate.*.auditDetails.lastModifiedBy
+
+            - jsonPath: $.Advocate.*.auditDetails.createdTime
+
+            - jsonPath: $.Advocate.*.auditDetails.lastModifiedTime
+
