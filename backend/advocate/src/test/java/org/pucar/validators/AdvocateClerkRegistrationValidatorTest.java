@@ -4,7 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.pucar.repository.AdvocateClerkRegistrationRepository;
+import org.pucar.repository.AdvocateClerkRepository;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 public class AdvocateClerkRegistrationValidatorTest {
 
     @Mock
-    private AdvocateClerkRegistrationRepository repository;
+    private AdvocateClerkRepository repository;
 
     @InjectMocks
     private AdvocateClerkRegistrationValidator validator;
