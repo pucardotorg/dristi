@@ -15,7 +15,7 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class AdvocateRegistrationScreen extends StatefulWidget with AppMixin{
 
-  const AdvocateRegistrationScreen({super.key, });
+  AdvocateRegistrationScreen({super.key, });
 
   @override
   AdvocateRegistrationScreenState createState() => AdvocateRegistrationScreenState();

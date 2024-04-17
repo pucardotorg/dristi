@@ -10,7 +10,7 @@ import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class SuccessScreen extends StatefulWidget with AppMixin{
 
-  const SuccessScreen({super.key, });
+  SuccessScreen({super.key, });
 
   @override
   SuccessScreenState createState() => SuccessScreenState();

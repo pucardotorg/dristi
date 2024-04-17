@@ -6,8 +6,11 @@ import 'package:pucardpg/app/presentation/features/otp-screen/otp_screen.dart';
 
 import 'app/presentation/features/mobile-number-screen/mobile_number_screen.dart';
 import 'config/routes/routes.dart';
+import 'injection_container.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDependencies();
   runApp(const MyApp());
 }
 
@@ -24,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: DigitTheme.instance.mobileTheme,
       onGenerateRoute: AppRoutes.onGenerateRoutes,
-      home: const MobileNumberScreen()
+      home: MobileNumberScreen()
     );
 
   }

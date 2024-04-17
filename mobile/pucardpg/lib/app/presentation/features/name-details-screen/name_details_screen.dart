@@ -13,7 +13,7 @@ class NameDetailsScreen extends StatefulWidget with AppMixin{
 
   final String mobile;
 
-  const NameDetailsScreen({super.key, required this.mobile});
+  NameDetailsScreen({super.key, required this.mobile});
 
   @override
   NameDetailsScreenState createState() => NameDetailsScreenState();

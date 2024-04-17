@@ -21,7 +21,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 class AddressScreen extends StatefulWidget with AppMixin {
   final String mobile;
 
-  const AddressScreen({super.key, required this.mobile});
+  AddressScreen({super.key, required this.mobile});
 
   @override
   AddressScreenState createState() => AddressScreenState();

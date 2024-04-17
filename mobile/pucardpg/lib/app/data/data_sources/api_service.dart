@@ -16,7 +16,7 @@ abstract class ApiService {
   factory ApiService(Dio dio) = _ApiService;
 
   @POST('/user-otp/v1/_send')
-  Future<HttpResponse<String>> requestOtp(
+  Future<HttpResponse<OtpResponse>> requestOtp(
       @Query('tenantId') String tenantId,
       @Query('_') int _,
       @Body() OtpRequest otpRequest

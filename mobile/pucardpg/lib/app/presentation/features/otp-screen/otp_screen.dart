@@ -13,7 +13,7 @@ class OtpScreen extends StatefulWidget with AppMixin{
 
   final String mobile;
 
-  const OtpScreen({super.key, required this.mobile});
+  OtpScreen({super.key, required this.mobile});
 
   @override
   OtpScreenState createState() => OtpScreenState();

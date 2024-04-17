@@ -6,7 +6,7 @@ class DigitBackButton extends StatelessWidget with AppMixin{
 
   final VoidCallback? onPressed;
 
-  const DigitBackButton({super.key, required this.onPressed});
+  DigitBackButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {

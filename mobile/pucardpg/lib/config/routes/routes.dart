@@ -16,7 +16,7 @@ class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return _materialRoute(const MobileNumberScreen());
+        return _materialRoute(MobileNumberScreen());
 
       case '/MobileOtpScreen':
         return _materialRoute(OtpScreen(mobile: settings.arguments as String,));
@@ -37,16 +37,16 @@ class AppRoutes {
         return _materialRoute(UserTypeScreen(mobile: settings.arguments as String,));
 
       case '/TermsAndConditionsScreen':
-        return _materialRoute(const TermsAndConditionsScreen());
+        return _materialRoute(TermsAndConditionsScreen());
 
       case '/AdvocateRegistrationScreen':
-        return _materialRoute(const AdvocateRegistrationScreen());
+        return _materialRoute(AdvocateRegistrationScreen());
 
       case '/SuccessScreen':
-        return _materialRoute(const SuccessScreen());
+        return _materialRoute(SuccessScreen());
 
       default:
-        return _materialRoute(const MobileNumberScreen());
+        return _materialRoute(MobileNumberScreen());
     }
   }
 

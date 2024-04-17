@@ -3,8 +3,12 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pucardpg/app/bloc/otp_bloc/otp_bloc.dart';
+import 'package:pucardpg/app/bloc/otp_bloc/otp_event.dart';
+import 'package:pucardpg/app/bloc/otp_bloc/otp_state.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
@@ -12,7 +16,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class MobileNumberScreen extends StatefulWidget with AppMixin{
 
-  const MobileNumberScreen({super.key});
+  MobileNumberScreen({super.key});
 
   @override
   MobileNumberScreenState createState() => MobileNumberScreenState();
@@ -132,13 +136,21 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                   });
                                 },
                               ),
-                              DigitElevatedButton(
-                                  onPressed: () {
-                                    form.markAllAsTouched();
-                                    if (!form.valid) return;
-                                    Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
-                                  },
-                                  child: const Text('Submit')
+
+                              BlocListener<OtpBloc, OtpState>(
+                                bloc: widget.otpBloc,
+                                listener: (context, state) {
+
+                                },
+                                child: DigitElevatedButton(
+                                    onPressed: () {
+                                      form.markAllAsTouched();
+                                      if (!form.valid) return;
+                                      widget.otpBloc.add(SendOtpEvent(mobileNumber: mobile));
+                                      // Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
+                                    },
+                                    child: const Text('Submit')
+                                ),
                               )
                             ],
                           );

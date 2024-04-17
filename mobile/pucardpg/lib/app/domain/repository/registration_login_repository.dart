@@ -7,7 +7,7 @@ import 'package:pucardpg/core/resources/data_state.dart';
 
 abstract class RegistrationLoginRepository {
 
-  Future<DataState<String>> requestOtp(OtpRequest otpRequest);
+  Future<DataState<OtpResponse>> requestOtp(OtpRequest otpRequest);
 
   // Future<DataState<List<BirthRegistrationApplicationModel>>> getBirthRegistrationsSearches(String search);
   //

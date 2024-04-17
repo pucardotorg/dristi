@@ -14,7 +14,7 @@ class IdOtpScreen extends StatefulWidget with AppMixin{
 
   final String mobile;
 
-  const IdOtpScreen({super.key, required this.mobile});
+  IdOtpScreen({super.key, required this.mobile});
 
   @override
   IdOtpScreenState createState() => IdOtpScreenState();

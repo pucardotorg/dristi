@@ -13,7 +13,7 @@ class UserTypeScreen extends StatefulWidget with AppMixin{
 
   final String mobile;
 
-  const UserTypeScreen({super.key, required this.mobile});
+  UserTypeScreen({super.key, required this.mobile});
 
   @override
   UserTypeScreenState createState() => UserTypeScreenState();

@@ -5,7 +5,7 @@ import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class DigitHelpButton extends StatelessWidget with AppMixin{
 
-  const DigitHelpButton({super.key});
+  DigitHelpButton({super.key});
 
   @override
   Widget build(BuildContext context) {

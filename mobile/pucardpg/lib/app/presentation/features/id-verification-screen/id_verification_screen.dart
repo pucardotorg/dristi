@@ -13,7 +13,7 @@ class IdVerificationScreen extends StatefulWidget with AppMixin{
 
   final String mobile;
 
-  const IdVerificationScreen({super.key, required this.mobile});
+  IdVerificationScreen({super.key, required this.mobile});
 
   @override
   IdVerificationScreenState createState() => IdVerificationScreenState();

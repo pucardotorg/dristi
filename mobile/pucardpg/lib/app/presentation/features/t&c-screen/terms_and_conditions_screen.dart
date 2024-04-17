@@ -10,7 +10,7 @@ import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class TermsAndConditionsScreen extends StatefulWidget with AppMixin{
 
-  const TermsAndConditionsScreen({super.key, });
+  TermsAndConditionsScreen({super.key, });
 
   @override
   TermsAndConditionsScreenState createState() => TermsAndConditionsScreenState();

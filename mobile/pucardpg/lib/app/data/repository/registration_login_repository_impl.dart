@@ -1,6 +1,6 @@
 
 
-import 'dart:html';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 
@@ -17,17 +17,17 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   RegistrationLoginRepositoryImpl(this._apiService);
 
   @override
-  Future<DataState<String>> requestOtp(OtpRequest otpRequest) async {
+  Future<DataState<OtpResponse>> requestOtp(OtpRequest otpRequest) async {
     // TODO: implement requestOtp
     try {
       final httpResponse = await _apiService.requestOtp(tenantId, timeStamp, otpRequest);
 
-      if (httpResponse.response.statusCode == HttpStatus.ok) {
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
         return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
             DioError(
-                error: httpResponse.response.statusMessage,
+                error: httpResponse.data.error?.message,
                 response: httpResponse.response,
                 type: DioErrorType.response,
                 requestOptions: httpResponse.response.requestOptions
