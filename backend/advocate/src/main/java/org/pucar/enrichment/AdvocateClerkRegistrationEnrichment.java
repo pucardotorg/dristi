@@ -41,4 +41,14 @@ public class AdvocateClerkRegistrationEnrichment {
             log.error("Error enriching advocate application: {}", e.getMessage());
         }
     }
+    public void enrichBirthApplicationUponUpdate(AdvocateClerkRequest advocateClerkRequest) {
+        try {
+            // Enrich lastModifiedTime and lastModifiedBy in case of update
+            advocateClerkRequest.getClerks().get(0).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            advocateClerkRequest.getClerks().get(0).getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
+        } catch (Exception e) {
+            log.error("Error enriching birth application upon update: {}", e.getMessage());
+            // Handle the exception or throw a custom exception
+        }
+    }
 }
