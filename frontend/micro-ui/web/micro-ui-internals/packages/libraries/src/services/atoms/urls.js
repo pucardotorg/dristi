@@ -224,6 +224,7 @@ const Urls = {
   dristi: {
     create: "",
     individual: "/individual/v1/_create",
+    searchIndividual: "/individual/v1/_search",
   },
 };
 

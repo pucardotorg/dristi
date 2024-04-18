@@ -92,7 +92,7 @@ import useGetHowItWorksJSON from "./useHowItWorksJSON";
 import { usePrivacyContext } from "./usePrivacyContext";
 import useStaticData from "./useStaticData";
 import useIndividualService from "./dristi/useIndividualService";
-
+import useGetIndividualUser from "./dristi/useGetIndividualUser";
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -120,6 +120,7 @@ const dss = {
 
 const dristi = {
   useIndividualService,
+  useGetIndividualUser,
 };
 
 const hrms = {

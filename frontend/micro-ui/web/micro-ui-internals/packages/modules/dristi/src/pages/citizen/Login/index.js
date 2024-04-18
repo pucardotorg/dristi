@@ -90,7 +90,9 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
-      history.replace(`/${window?.contextPath}/citizen/dristi/home/login/id-verification`, {
+      const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
+      const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      history.replace(isUserRegistered ? homeUrl : idVerificationUrl, {
         redirectBackTo: redirectPath,
       });
     } else {
@@ -258,11 +260,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     const fileUploadRes = await UploadServices.Filestorage("DRISTI", filedata, tenantId);
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType });
     Digit.SessionStorage.del("aadharNumber");
-    history.push(`/digit-ui/citizen/dristi/home/user-registration`);
+    history.push(`/digit-ui/citizen/dristi/home/register/user-registration`);
   };
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    history.replace(`/${window?.contextPath}/citizen/dristi/home/user-registration`);
+    history.replace(`/${window?.contextPath}/citizen/dristi/home/register/user-registration`);
     setCanSubmitAadharOtp(true);
   };
 

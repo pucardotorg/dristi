@@ -49,7 +49,6 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
         config={config}
         t={t}
         onSubmit={(data) => {
-          console.debug(data);
           if (!validateFormData(data)) {
             setShowErrorToast(!validateFormData(data));
           } else if (data?.SelectUserTypeComponent?.aadharNumber) {

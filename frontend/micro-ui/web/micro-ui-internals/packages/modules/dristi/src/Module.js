@@ -16,6 +16,7 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
 
   const moduleCode = "DRISTI";
+  const tenantID = tenants?.[0]?.code;
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
   if (isLoading) {
@@ -24,7 +25,7 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
 
   if (userType === "citizen") {
-    return <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} />;
+    return <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />;
   }
   return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants}></EmployeeApp>;
 };

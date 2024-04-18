@@ -88,7 +88,7 @@ const Registration = () => {
         isSystemUser: true,
         skills: [],
         additionalFields: {
-          userType: data?.clientDetails?.selectUserType,
+          fields: [{ key: "userType", value: data?.clientDetails?.selectUserType?.code }],
         },
         clientAuditDetails: {},
         auditDetails: {},

@@ -1,13 +1,13 @@
-import { ActionBar, Banner, Card, CardText, SubmitBar, Header } from "@egovernments/digit-ui-react-components";
+import { ActionBar, Banner, Card, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const Response = () => {
+const Response = ({ refetch }) => {
   const { t } = useTranslation();
   const location = useLocation();
-
+  const history = useHistory();
   return (
     <Card style={{ minWidth: "100%" }}>
       <Banner
@@ -19,9 +19,13 @@ const Response = () => {
         {location?.state === "success" ? t("USER_REGISTRATION_BOTTOM_SUCCESS_MSG") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
       </CardText>
       <ActionBar>
-        <Link to={`/${window?.contextPath}/citizen/dristi/home`}>
-          <SubmitBar label={t("GO TO HOME")} />
-        </Link>
+        <SubmitBar
+          label={t("GO TO HOME")}
+          onSubmit={() => {
+            refetch();
+            history.push(`/${window?.contextPath}/citizen/dristi/home`);
+          }}
+        />
       </ActionBar>
     </Card>
   );

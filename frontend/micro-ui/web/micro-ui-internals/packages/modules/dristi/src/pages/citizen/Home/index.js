@@ -5,10 +5,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
 import TakeUserToRegistration from "./TakeUserToRegistration";
 
-function CitizenHome() {
-  const history = useHistory();
-  const isApplicationAwaiting = false;
-  const isUserNotRegistered = false;
+function CitizenHome({ individualId, isApprovalPending }) {
   const cardIcons = [
     { Icon: <MyHearingsIcon />, label: "File a Case", path: "/digit-ui/employee/citizen/dristi/my-hearings" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -20,21 +17,22 @@ function CitizenHome() {
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
-      {!isApplicationAwaiting && !isUserNotRegistered && cardIcons.map((card) => {
-        return (
-          <CustomCard
-            label={card.label}
-            Icon={card.Icon}
-            style={{ width: "400px", height: "150px" }}
-            onClick={() => {
-              // history.push(card.path);
-            }}
-          ></CustomCard>
-        );
-      })}
-      {isApplicationAwaiting && !isUserNotRegistered && <ApplicationAwaitingPage /> }
-      {!isApplicationAwaiting && isUserNotRegistered && <TakeUserToRegistration /> }
-
+      {individualId &&
+        !isApprovalPending &&
+        cardIcons.map((card) => {
+          return (
+            <CustomCard
+              label={card.label}
+              Icon={card.Icon}
+              style={{ width: "400px", height: "150px" }}
+              onClick={() => {
+                // history.push(card.path);
+              }}
+            ></CustomCard>
+          );
+        })}
+      {individualId && isApprovalPending && <ApplicationAwaitingPage />}
+      {!individualId && <TakeUserToRegistration />}
     </div>
   );
 }

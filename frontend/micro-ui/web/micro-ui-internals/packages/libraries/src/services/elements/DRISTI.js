@@ -12,4 +12,14 @@ export const DRISTIService = {
       data,
       params: { tenantId },
     }),
+  searchIndividualUser: (data, params, limit) =>
+    Request({
+      url: Urls.dristi.searchIndividual,
+      useCache: false,
+      userService: false,
+      method: "POST",
+      auth: true,
+      data,
+      params,
+    }),
 };
