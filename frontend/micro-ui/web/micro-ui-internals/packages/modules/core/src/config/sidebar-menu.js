@@ -23,7 +23,7 @@ const SideBarMenu = (t, closeSidebar, redirectToLoginPage, isEmployee) => [
     id: "login-btn",
     element: "LOGIN",
     text: t("CORE_COMMON_LOGIN"),
-    icon: <LogoutIcon className="icon" />,
+    icon: "LogoutIcon",
     populators: {
       onClick: redirectToLoginPage,
     },

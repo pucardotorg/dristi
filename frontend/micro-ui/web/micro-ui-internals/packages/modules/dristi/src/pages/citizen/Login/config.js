@@ -84,6 +84,7 @@ export const loginSteps = [
                 title: "AADHAR_NUMBER_INVALID",
               },
               clearFields: { ID_Proof: [], selectIdTypeType: "" },
+              clearFieldsType: { ID_Proof: "documentUpload" },
               disableMandatoryFieldFor: ["ID_Proof", "selectIdTypeType"],
               isMandatory: true,
             },

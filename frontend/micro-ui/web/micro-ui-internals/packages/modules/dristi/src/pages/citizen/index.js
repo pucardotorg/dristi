@@ -53,8 +53,8 @@ const App = ({ stateCode }) => {
   return (
     <span className={"pt-citizen"}>
       <Switch>
-        <AppContainer>
-          <BreadCrumb crumbs={dristiCrumbs}></BreadCrumb>
+        <AppContainer style={{ minWidth: "100%" }}>
+          <BreadCrumb crumbs={dristiCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
           <PrivateRoute exact path={`${path}/home`}>
             <CitizenHome />
           </PrivateRoute>

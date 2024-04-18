@@ -267,7 +267,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
 
   return (
-    <div className="citizen-form-wrapper">
+    <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
       <Switch>
         <AppContainer>
           <Route path={`${path}`} exact>

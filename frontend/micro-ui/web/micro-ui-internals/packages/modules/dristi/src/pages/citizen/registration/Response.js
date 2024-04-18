@@ -2,20 +2,24 @@ import { ActionBar, Banner, Card, CardText, SubmitBar, Header } from "@egovernme
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRouteMatch } from "react-router-dom";
+import { useRouteMatch, useLocation } from "react-router-dom";
 
-const Response = (props) => {
+const Response = () => {
   const { t } = useTranslation();
-  const { path, url } = useRouteMatch();
+  const location = useLocation();
 
   return (
-    <Card>
-      <CardText>
-        <Header>{props?.location?.state === "success" ? t("USER_REGISTRATION_SUCCESS_MSG") : t("USER_REGISTRATION_FAILURE_MSG")}</Header>
+    <Card style={{ minWidth: "100%" }}>
+      <Banner
+        successful={location?.state === "success"}
+        message={location?.state === "success" ? t("USER_REGISTRATION_SUCCESS_MSG") : t("USER_REGISTRATION_FAILURE_MSG")}
+        style={{ minWidth: "100%" }}
+      ></Banner>
+      <CardText style={{ margin: 0 }}>
+        {location?.state === "success" ? t("USER_REGISTRATION_BOTTOM_SUCCESS_MSG") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
       </CardText>
-      <Banner successful={props?.location?.state === "success"}></Banner>
       <ActionBar>
-        <Link to={`${path}/citizen/home`}>
+        <Link to={`/${window?.contextPath}/citizen/dristi/home`}>
           <SubmitBar label={t("GO TO HOME")} />
         </Link>
       </ActionBar>

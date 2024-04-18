@@ -54,11 +54,11 @@ export const newConfig = [
       {
         type: "component",
         component: "SelectComponents",
-        key: "SelectComponents",
+        key: "addressDetails",
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city"] },
+            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates"] },
             {
               label: "PINCODE",
               type: "text",
@@ -80,9 +80,6 @@ export const newConfig = [
               type: "text",
               name: "state",
               validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,
@@ -93,9 +90,6 @@ export const newConfig = [
               type: "text",
               name: "district",
               validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,
@@ -106,9 +100,6 @@ export const newConfig = [
               type: "text",
               name: "city",
               validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,
@@ -117,16 +108,16 @@ export const newConfig = [
             {
               label: "LOCALITY",
               type: "text",
-              name: "permanentLocality",
+              name: "locality",
               validation: {
                 isRequired: true,
               },
               isMandatory: true,
             },
             {
-              label: "DOOR_NAME",
+              label: "DOOR_NUMBER",
               type: "text",
-              name: "permanentDoorName",
+              name: "doorNo",
               validation: {
                 isRequired: true,
               },
@@ -143,7 +134,7 @@ export const newConfig = [
       {
         type: "component",
         component: "SelectUserTypeComponent",
-        key: "SelectUserTypeComponent",
+        key: "clientDetails",
         withoutLabel: true,
         populators: {
           inputs: [
@@ -161,31 +152,168 @@ export const newConfig = [
                   code: "LITIGANT",
                   name: "LITIGANT",
                   showBarDetails: false,
+                  isVerified: false,
                 },
                 {
                   code: "ADVOCATE",
                   name: "ADVOCATE",
                   showBarDetails: true,
+                  isVerified: true,
                 },
                 {
                   code: "ADVOCATE_CLERK",
-                  name: "ADVOCATE_CLERK",
+                  name: "ADVOCATE CLERK",
                   showBarDetails: true,
+                  isVerified: true,
                 },
               ],
             },
             {
               label: "STATE_OF_REGISTRATION",
-              type: "text",
+              type: "dropdown",
               name: "stateOfRegistration",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                isRequired: true,
-              },
+              validation: {},
               isMandatory: true,
               isDependentOn: "selectUserType",
+              optionsKey: "name",
+              options: [
+                {
+                  code: "ANDAMAN & NICOBAR ISLANDS",
+                  name: "ANDAMAN & NICOBAR ISLANDS",
+                },
+                {
+                  code: "ANDHRA PRADESH",
+                  name: "ANDHRA PRADESH",
+                },
+                {
+                  code: "ARUNACHAL PRADESH",
+                  name: "ARUNACHAL PRADESH",
+                },
+                {
+                  code: "ASSAM",
+                  name: "ASSAM",
+                },
+                {
+                  code: "BIHAR",
+                  name: "BIHAR",
+                },
+                {
+                  code: "CHANDIGARH",
+                  name: "CHANDIGARH",
+                },
+                {
+                  code: "CHATTISGARH",
+                  name: "CHATTISGARH",
+                },
+                {
+                  code: "DAMAN & DIU",
+                  name: "DAMAN & DIU",
+                },
+                {
+                  code: "DELHI",
+                  name: "DELHI",
+                },
+                {
+                  code: "GOA",
+                  name: "GOA",
+                },
+                {
+                  code: "GUJARAT",
+                  name: "GUJARAT",
+                },
+                {
+                  code: "HIMACHAL PRADESH",
+                  name: "HIMACHAL PRADESH",
+                },
+                {
+                  code: "JAMMU & KASHMIR",
+                  name: "JAMMU & KASHMIR",
+                },
+                {
+                  code: "JHARKHAND",
+                  name: "JHARKHAND",
+                },
+                {
+                  code: "KARNATAKA",
+                  name: "KARNATAKA",
+                },
+                {
+                  code: "KERALA",
+                  name: "KERALA",
+                },
+                {
+                  code: "LAKSHADWEEP",
+                  name: "LAKSHADWEEP",
+                },
+                {
+                  code: "MADHYA PRADESH",
+                  name: "MADHYA PRADESH",
+                },
+                {
+                  code: "MAHARASHTRA",
+                  name: "MAHARASHTRA",
+                },
+                {
+                  code: "MANIPUR",
+                  name: "MANIPUR",
+                },
+                {
+                  code: "MEGHALAYA",
+                  name: "MEGHALAYA",
+                },
+                {
+                  code: "MIZORAM",
+                  name: "MIZORAM",
+                },
+                {
+                  code: "NAGALAND",
+                  name: "NAGALAND",
+                },
+                {
+                  code: "ODISHA",
+                  name: "ODISHA",
+                },
+                {
+                  code: "PONDICHERRY",
+                  name: "PONDICHERRY",
+                },
+                {
+                  code: "PUNJAB",
+                  name: "PUNJAB",
+                },
+                {
+                  code: "RAJASTHAN",
+                  name: "RAJASTHAN",
+                },
+                {
+                  code: "SIKKIM",
+                  name: "SIKKIM",
+                },
+                {
+                  code: "TAMIL NADU",
+                  name: "TAMIL NADU",
+                },
+                {
+                  code: "TELANGANA",
+                  name: "TELANGANA",
+                },
+                {
+                  code: "TRIPURA",
+                  name: "TRIPURA",
+                },
+                {
+                  code: "UTTAR PRADESH",
+                  name: "UTTAR PRADESH",
+                },
+                {
+                  code: "UTTARAKHAND",
+                  name: "UTTARAKHAND",
+                },
+                {
+                  code: "WEST BENGAL",
+                  name: "WEST BENGAL",
+                },
+              ],
               dependentKey: "showBarDetails",
             },
             {

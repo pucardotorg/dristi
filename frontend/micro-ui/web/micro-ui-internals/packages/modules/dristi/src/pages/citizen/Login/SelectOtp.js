@@ -13,15 +13,19 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
 
   const handleResendOtp = () => {
     onResend();
-    setTimeLeft(2);
+    setTimeLeft(30);
   };
 
   if (userType === "employee") {
     return (
       <Fragment>
-        <OTPInput length={6} onChange={onOtpChange} value={otp} />
+        <div style={{ width: "200px" }}>
+          <OTPInput length={6} onChange={onOtpChange} value={otp} />
+        </div>
         {timeLeft > 0 ? (
-          <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+          <CardText>
+            <span style={{ backgroundColor: "#fff" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</span>
+          </CardText>
         ) : (
           <p className="card-text-button resend-otp" onClick={handleResendOtp}>
             {t("CS_RESEND_OTP")}
@@ -38,7 +42,7 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       {timeLeft > 0 ? (
         <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
       ) : (
-        <p className="card-text-button" onClick={handleResendOtp}>
+        <p className="card-text" onClick={handleResendOtp} style={{ backgroundColor: "#fff", color: "#f47738", cursor: "pointer" }}>
           {t("CS_RESEND_OTP")}
         </p>
       )}

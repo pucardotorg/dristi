@@ -14,6 +14,7 @@ import { Controller } from "react-hook-form";
 
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control }) => {
   const { pathname: url } = useLocation();
+  const [removeFile, setRemoveFile] = useState();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -28,6 +29,14 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
 
   function setValue(value, name, input) {
     if (input && input?.clearFields && value) {
+      if (input?.clearFieldsType && formData[config.key]) {
+        Object.keys(input?.clearFields).forEach((ele) => {
+          if (ele in input?.clearFieldsType && input?.clearFieldsType[ele] === "documentUpload" && formData[config.key][ele].length > 0) {
+            const [fileData] = formData[config.key][ele];
+            setRemoveFile(fileData[1]);
+          }
+        });
+      }
       onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
     } else onSelect(config.key, { ...formData[config.key], [name]: value });
   }
@@ -97,6 +106,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       customClass={input?.customClass}
                       customErrorMsg={input?.errorMessage}
                       containerStyles={{ ...input?.containerStyles }}
+                      requestSpecifcFileRemoval={removeFile}
                     />
                   )}
                   {input?.type === "text" && (
@@ -120,7 +130,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     input.validation &&
                     !currentValue.match(Digit.Utils.getPattern(input.validation.patternType)) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                        {t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}
+                        <span style={{ color: "#FF0000" }}> {t("CORE_COMMON_INVALID")}</span>
                       </CardLabelError>
                     )}
                 </div>

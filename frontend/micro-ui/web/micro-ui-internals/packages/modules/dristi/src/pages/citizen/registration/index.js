@@ -39,6 +39,7 @@ const Registration = () => {
   };
 
   const onSubmit = (data) => {
+    console.log("data", data);
     if (!validateFormData(data)) {
       setShowErrorToast(!validateFormData(data));
       return;
@@ -58,35 +59,40 @@ const Registration = () => {
               code: "USER_REGISTER",
               name: "USER_REGISTER",
               description: "USER_REGISTER",
+              tenantId: tenantId,
             },
             {
               code: "CITIZEN",
               name: "Citizen",
+              tenantId: tenantId,
             },
           ],
           type: Digit.UserService.getUser()?.info?.type,
         },
+        userUuid: Digit.UserService.getUser()?.info?.uuid,
+        userId: Digit.UserService.getUser()?.info?.id,
         mobileNumber: Digit.UserService.getUser()?.info?.mobileNumber,
         address: [
           {
             tenantId: tenantId,
-            doorNo: "123",
-            latitude: -19,
-            longitude: 34,
-            city: "Mumbai",
-            pincode: "123456",
-            district: "Apartment",
-            buildingName: "Apartment",
-            street: "Necklace Road",
-            locality: "",
+            type: "PERMANENT",
+            doorNo: data?.addressDetails?.doorNo,
+            latitude: data?.addressDetails?.coordinates?.latitude,
+            longitude: data?.addressDetails?.coordinates?.longitude,
+            city: data?.addressDetails?.city,
+            pincode: data?.addressDetails?.pincode,
+            district: data?.addressDetails?.district,
           },
         ],
         identifiers: [],
         isSystemUser: true,
         skills: [],
-        additionalFields: {},
+        additionalFields: {
+          userType: data?.clientDetails?.selectUserType,
+        },
         clientAuditDetails: {},
         auditDetails: {},
+        // clientReferenceId: Digit.UserService.getUser()?.info?.uuid,
       },
     };
     Digit.DRISTIService.postIndividualService(Individual, tenantId)

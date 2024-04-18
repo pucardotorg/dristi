@@ -128,7 +128,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
   const redirectToLoginPage = () => {
     // localStorage.clear();
     // sessionStorage.clear();
-    history.push(`/${window?.contextPath}/citizen/login`);
+    history.push(`/${window?.contextPath}/citizen/dristi/home/login`);
   };
   const showProfilePage = () => {
     history.push(`/${window?.contextPath}/citizen/user/profile`);

@@ -51,7 +51,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
                     locationStyle={{ maxWidth: "540px" }}
-                    onChange={(pincode, location) => {
+                    onChange={(pincode, location, coordinates) => {
                       console.log(location);
                       setValue(
                         {
@@ -59,6 +59,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                           state: getLocation(location, "administrative_area_level_1"),
                           district: getLocation(location, "administrative_area_level_3"),
                           city: getLocation(location, "locality"),
+                          coordinates,
                         },
                         input.name
                       );
@@ -81,8 +82,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                   currentValue.length > 0 &&
                   input.validation &&
                   !currentValue.match(Digit.Utils.getPattern(input.validation.patternType)) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                      {t("CORE_COMMON_APPLICANT_ADDRESS_INVALID")}
+                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
+                      <span style={{ color: "#FF0000" }}> {t("CORE_COMMON_INVALID")}</span>
                     </CardLabelError>
                   )}
               </div>
