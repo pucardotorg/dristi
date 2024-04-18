@@ -9,11 +9,15 @@ import java.util.stream.Collectors;
 
 @Component
 public class AdvocateQueryBuilder {
-    private static final String ADV_QUERY = " SELECT adv.id as aid, adv.tenantId as atenantId, adv.applicationNumber as aapplicationNumber, adv.barRegistrationNumber as abarRegistrationNumber, adv.organisationID as aorganisationID, adv.individualId as aindividualId, adv.isActive as aisActive, adv.additionalDetails as aadditionalDetails, adv.createdBy as acreatedBy, adv.lastmodifiedby as alastmodifiedby, adv.createdtime as acreatedtime, adv.lastmodifiedtime as alastmodifiedtime";
-    private static final String FROM_TABLES = " FROM dristi_advocate adv";
+    private static final String BASE_ATR_QUERY = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, ";
+
+    private static final String DOCUMENT_SELECT_QUERY = " doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails ";
+    private static final String FROM_TABLES = " FROM dristi_advocate adv LEFT JOIN dristi_document doc ON adv.id = doc.advocateid";
+    private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
     public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(ADV_QUERY);
+        StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+        query.append(DOCUMENT_SELECT_QUERY);
         query.append(FROM_TABLES);
 
         try {

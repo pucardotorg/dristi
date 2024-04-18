@@ -29,18 +29,17 @@ public class AdvocateRepository {
 
     public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria) {
         List<Advocate> advocateList = new ArrayList<>();
-            List<Object> preparedStmtList = new ArrayList<>();
-            String query = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList);
-            log.info("Final query: {}", query);
-        List<Advocate> advocates = new ArrayList<>();
-            try {
-                advocates = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-            } catch (DataAccessException e) {
-                log.error("Error occurred while executing database query: {}", e.getMessage());
-                throw e;
+        List<Object> preparedStmtList = new ArrayList<>();
+        String query = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList);
+        log.info("Final query: {}", query);
+        try {
+            List<Advocate> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+            if(list != null){
+                advocateList.addAll(list);
             }
-        if(advocates != null){
-            advocateList.addAll(advocates);
+        } catch (DataAccessException e) {
+            log.error("Error occurred while executing database query: {}", e.getMessage());
+            throw e;
         }
         return advocateList;
     }

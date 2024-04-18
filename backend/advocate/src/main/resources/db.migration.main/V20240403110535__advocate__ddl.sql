@@ -3,6 +3,7 @@ CREATE TABLE dristi_advocate (
                              tenantId varchar(1000) NOT NULL,
                              applicationNumber varchar(64) NULL,
                              barRegistrationNumber varchar(64) NULL,
+                             advocateType varchar(64) NULL,
                              organisationID varchar(64) NULL,
                              individualId varchar(64) NULL,
                              isActive bool NULL,
@@ -15,5 +16,8 @@ CREATE TABLE dristi_advocate (
 CREATE TABLE dristi_document (
                              id varchar(64) NOT NULL PRIMARY KEY,
                              fileStore varchar(64) NULL,
-                             advocateId varchar(64) NOT NULL
+                             documentUid varchar(64) NOT NULL ,
+                             documentType varchar(64) NULL,
+                             advocateId varchar(64) NOT NULL,
+                             additionalDetails JSONB NULL
 );

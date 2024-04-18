@@ -51,6 +51,8 @@ public class AdvocateService {
        workflowService.updateWorkflowStatus(body);
 
         // Push the application to the topic for persister to listen and persist
+
+        // FIXME
         producer.push("save-advocate-application", body);
 
         return body.getAdvocates();

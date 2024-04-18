@@ -25,7 +25,7 @@ public class AdvocateRegistrationEnrichment {
     public void enrichAdvocateRegistration(AdvocateRequest advocateRequest) {
         try {
             if(advocateRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateRequest.getRequestInfo(), advocateRequest.getAdvocates().get(0).getTenantId(), "billnumberid", "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]", advocateRequest.getAdvocates().size());
+                List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateRequest.getRequestInfo(), advocateRequest.getAdvocates().get(0).getTenantId(), "advocate.id", null, advocateRequest.getAdvocates().size());
                 Integer index = 0;
                 for (Advocate advocate : advocateRequest.getAdvocates()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -34,6 +34,11 @@ public class AdvocateRegistrationEnrichment {
                     advocate.setId(UUID.randomUUID());
 
                     advocate.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
+
+                    advocate.getDocuments().forEach(document -> {
+                        document.setId(String.valueOf(UUID.randomUUID()));
+                        document.setDocumentUid(document.getId());
+                    });
                 }
             }
         } catch (Exception e) {

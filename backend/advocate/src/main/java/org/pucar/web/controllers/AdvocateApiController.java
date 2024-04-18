@@ -53,7 +53,7 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("*/*")) {
+		if (accept != null && accept.contains("application/json")) {
 			try {
 				List<Advocate> response = advocateService.createAdvocate(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
