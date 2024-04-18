@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:digit_components/digit_components.dart';
@@ -6,10 +7,15 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_file/open_file.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_bloc.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_event.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_state.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
+import 'package:dio/dio.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 
@@ -151,16 +157,29 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                 ),
               ),
             ),
-            DigitElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/TermsAndConditionsScreen',);
-                },
-                child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-            ),
+            BlocListener<FileBloc, FilePickerState>(
+              bloc: widget.fileBloc,
+              listener: (context, state) {
+
+              },
+              child: DigitElevatedButton(
+                  onPressed: () {
+                    // getMultipartFile();
+                    Navigator.pushNamed(context, '/TermsAndConditionsScreen',);
+                  },
+                  child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+              ),
+            )
           ],
         )
     );
 
+  }
+
+  Future getMultipartFile() async {
+    MultipartFile multiPartFile = await MultipartFile.fromFile(fileToDisplay!.path, filename: fileName);
+    inspect(multiPartFile);
+    widget.fileBloc.add(FileEvent(multipartFile: multiPartFile, file: fileToDisplay!));
   }
 
 }

@@ -1,6 +1,8 @@
 
 import 'package:get_it/get_it.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_bloc.dart';
 import 'package:pucardpg/app/data/repository/registration_login_repository_impl.dart';
+import 'package:pucardpg/app/domain/usecase/file_picker_usecase.dart';
 
 import 'app/bloc/registration_login_bloc/registration_login_bloc.dart';
 import 'app/data/data_sources/api_service.dart';
@@ -28,6 +30,14 @@ Future<void> initializeDependencies() async {
 
   sl.registerSingleton<RegistrationLoginBloc>(
       RegistrationLoginBloc(sl())
+  );
+
+  sl.registerSingleton<FilePickerUseCase>(
+      FilePickerUseCase(sl())
+  );
+
+  sl.registerSingleton<FileBloc>(
+      FileBloc(sl())
   );
 
 }

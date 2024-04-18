@@ -1,12 +1,15 @@
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/auth-model/auth_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/data/models/registration-model/registration_model.dart';
 import 'package:pucardpg/core/constant/constants.dart';
+import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'api_service.g.dart';
@@ -38,5 +41,16 @@ abstract class ApiService {
       @Query('offset') int offset,
       @Query('tenantId') String tenantId,
       @Body() IndividualSearchRequest individualSearchRequest);
+
+  @POST('/advocate/v1/_create')
+  Future<HttpResponse<AdvocateRegistrationResponse>> registerAdvocate(
+      @Body() AdvocateRegistrationRequest advocateRegistrationRequest);
+  
+  // @POST('/filestore/v1/files')
+  // Future<HttpResponse<String>> getFileStore(
+  //     @Part() String module,
+  //     @Part() String tenantId,
+  //     @Part() FormData formData,
+  //     );
 
 }

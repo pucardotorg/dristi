@@ -1,5 +1,6 @@
 
 
+import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
@@ -18,6 +19,10 @@ class LoginUseCase {
 
   Future<DataState<IndividualSearchResponse>> searchIndividual(IndividualSearchRequest individualSearchRequest) {
     return _registrationLoginRepository.searchIndividual(individualSearchRequest);
+  }
+
+  Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(AdvocateRegistrationRequest advocateRegistrationRequest) {
+    return _registrationLoginRepository.registerAdvocate(advocateRegistrationRequest);
   }
 
 }

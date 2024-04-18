@@ -146,8 +146,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: mobile));
-                                      // Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
+                                      // widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: mobile));
+                                      Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
                                     },
                                     child: const Text('Submit')
                                 ),
