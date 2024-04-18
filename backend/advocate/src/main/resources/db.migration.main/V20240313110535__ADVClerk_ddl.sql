@@ -15,10 +15,12 @@ CREATE TABLE dristi_advocate_clerk (
 
 CREATE TABLE dristi_advocate_clerk_document (
                              id varchar(64) NOT NULL PRIMARY KEY,
-                             fileStore varchar(64) NULL,
-                             documentUid varchar(64) NOT NULL ,
-                             additionalDetails JSONB,
-                             documentType varchar(64) NULL
+                             filestore varchar(64) NULL,
+                             document_uid varchar(64) NOT NULL ,
+                             document_type varchar(64) NULL,
+                             clerk_id varchar(64) NOT NULL,
+                             additional_details JSONB
+
 );
 
 

@@ -35,7 +35,7 @@ public class AdvocateClerkRegistrationEnrichment {
                     advocateClerk.setId(UUID.randomUUID());
                     advocateClerk.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));
-                        document.setDocumentUid(String.valueOf(advocateClerk.getId()));
+                        document.setDocumentUid(document.getId());
                     });
 
 
