@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:pucardpg/app/bloc/otp_bloc/otp_bloc.dart';
-import 'package:pucardpg/app/bloc/otp_bloc/otp_event.dart';
-import 'package:pucardpg/app/bloc/otp_bloc/otp_state.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
@@ -137,8 +137,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 },
                               ),
 
-                              BlocListener<OtpBloc, OtpState>(
-                                bloc: widget.otpBloc,
+                              BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
+                                bloc: widget.registrationLoginBloc,
                                 listener: (context, state) {
 
                                 },
@@ -146,7 +146,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      widget.otpBloc.add(SendOtpEvent(mobileNumber: mobile));
+                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: mobile));
                                       // Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
                                     },
                                     child: const Text('Submit')

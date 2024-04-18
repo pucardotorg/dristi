@@ -1,27 +1,27 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pucardpg/app/bloc/otp_bloc/otp_event.dart';
-import 'package:pucardpg/app/bloc/otp_bloc/otp_state.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/usecase/login_usecase.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
 
-class OtpBloc extends Bloc<OtpEvent, OtpState> {
+class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLoginState> {
 
   final LoginUseCase _loginUseCase;
 
-  OtpBloc(this._loginUseCase): super(OtpInitialState()) {
+  RegistrationLoginBloc(this._loginUseCase): super(OtpInitialState()) {
     on<OtpInitialEvent>(otpInitialEvent);
     on<SendOtpEvent>(sendOtpEvent);
   }
 
   Future<void> otpInitialEvent(OtpInitialEvent event,
-      Emitter<OtpState> emit) async {
+      Emitter<RegistrationLoginState> emit) async {
 
   }
 
   Future<void> sendOtpEvent(SendOtpEvent event,
-      Emitter<OtpState> emit) async {
+      Emitter<RegistrationLoginState> emit) async {
 
       emit(OtpLoadingState());
 

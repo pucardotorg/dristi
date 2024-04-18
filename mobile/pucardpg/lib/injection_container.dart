@@ -1,8 +1,8 @@
 
 import 'package:get_it/get_it.dart';
-import 'package:pucardpg/app/bloc/otp_bloc/otp_bloc.dart';
 import 'package:pucardpg/app/data/repository/registration_login_repository_impl.dart';
 
+import 'app/bloc/registration_login_bloc/registration_login_bloc.dart';
 import 'app/data/data_sources/api_service.dart';
 
 import 'package:dio/dio.dart';
@@ -26,8 +26,8 @@ Future<void> initializeDependencies() async {
       LoginUseCase(sl())
   );
 
-  sl.registerSingleton<OtpBloc>(
-      OtpBloc(sl())
+  sl.registerSingleton<RegistrationLoginBloc>(
+      RegistrationLoginBloc(sl())
   );
 
 }
