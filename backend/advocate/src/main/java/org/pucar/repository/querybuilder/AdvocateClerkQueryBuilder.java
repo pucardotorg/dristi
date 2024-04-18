@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 @Component
 public class AdvocateClerkQueryBuilder {
 
-    private static final String BASE_ATR_QUERY = " SELECT advc.id as aid, advc.tenantid as atenantid, advc.applicationnumber as aapplicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as aindividualid, advc.isactive as aisactive, advc.additionaldetails as aadditionaldetails, advc.createdby as acreatedby, advc.lastmodifiedby as alastmodifiedby, advc.createdtime as acreatedtime, advc.lastmodifiedtime as alastmodifiedtime, ";
+    private static final String BASE_ATR_QUERY = " SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, ";
 
-    private static final String DOCUMENT_SELECT_QUERY = " doc.id as aaid, doc.documenttype as adocumenttype, doc.filestore as afilestore, doc.documentuid as adocumentuid, doc.additionaldetails as aadditionaldetails ";
-    private static final String FROM_TABLES = " FROM dristi_advocate_clerk advc LEFT JOIN distri_documents doc ON advc.id = doc.advocateclerkid";
+    private static final String DOCUMENT_SELECT_QUERY = " doc.id as aid, doc.document_type as document_type, doc.filestore as filestore, doc.document_uid as document_uid, doc.additional_details as additional_details ";
+    private static final String FROM_TABLES = " FROM dristi_advocate_clerk advc LEFT JOIN dristi_advocate_clerk_document doc ON advc.id = doc.clerk_id";
     private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
     public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteria, List<Object> preparedStmtList){

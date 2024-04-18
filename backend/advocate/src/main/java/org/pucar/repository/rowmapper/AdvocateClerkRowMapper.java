@@ -18,31 +18,31 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
         System.out.println(rs);
 
         while (rs.next()){
-            String uuid = rs.getString("aapplicationnumber");
+            String uuid = rs.getString("applicationnumber");
             AdvocateClerk advocateClerkApplication = advocateClerkApplicationMap.get(uuid);
 
             if(advocateClerkApplication == null) {
 
-                Long lastModifiedTime = rs.getLong("alastmodifiedtime");
+                Long lastModifiedTime = rs.getLong("lastmodifiedtime");
                 if (rs.wasNull()) {
                     lastModifiedTime = null;
                 }
 
                 AuditDetails auditdetails = AuditDetails.builder()
-                        .createdBy(rs.getString("acreatedby"))
-                        .createdTime(rs.getLong("acreatedtime"))
-                        .lastModifiedBy(rs.getString("alastmodifiedby"))
+                        .createdBy(rs.getString("createdby"))
+                        .createdTime(rs.getLong("createdtime"))
+                        .lastModifiedBy(rs.getString("lastmodifiedby"))
                         .lastModifiedTime(lastModifiedTime)
                         .build();
 
                 advocateClerkApplication = AdvocateClerk.builder()
-                        .applicationNumber(rs.getString("aapplicationnumber"))
-                        .tenantId(rs.getString("atenantid"))
-                        .id(UUID.fromString(rs.getString("aid")))
+                        .applicationNumber(rs.getString("applicationnumber"))
+                        .tenantId(rs.getString("tenantid"))
+                        .id(UUID.fromString(rs.getString("id")))
                         .stateRegnNumber(rs.getString("stateregnnumber"))
-                        .individualId(rs.getString("aindividualid"))
-                        .isActive(rs.getBoolean("aisactive"))
-                        .additionalDetails(rs.getString("aadditionaldetails"))
+                        .individualId(rs.getString("individualid"))
+                        .isActive(rs.getBoolean("isactive"))
+                        .additionalDetails(rs.getString("additionaldetails"))
                         .auditDetails(auditdetails)
                         .build();
             }
@@ -61,11 +61,11 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
         List<Document> listDocument = new ArrayList<>();
         try {
             Document document = Document.builder()
-                .id(rs.getString(11))
-                .documentType(rs.getString(12))
-                .fileStore(rs.getString(13))
-                .documentUid(rs.getString(14))
-                .additionalDetails(rs.getObject(15))
+                .id(rs.getString("aid"))
+                .documentType(rs.getString("document_type"))
+                .fileStore(rs.getString("filestore"))
+                .documentUid(rs.getString("document_uid"))
+                .additionalDetails(rs.getObject("additional_details"))
                     .build();
             listDocument.add(document);
 
