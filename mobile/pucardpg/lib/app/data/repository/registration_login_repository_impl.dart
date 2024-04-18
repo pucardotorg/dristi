@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import 'package:pucardpg/app/data/data_sources/api_service.dart';
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
@@ -38,6 +39,28 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
       return DataFailed(e);
     }
 
+  }
+
+  @override
+  Future<DataState<IndividualSearchResponse>> searchIndividual(IndividualSearchRequest individualSearchRequest) async {
+    try {
+      final httpResponse = await _apiService.searchIndividual(limit, offset, tenantId, individualSearchRequest);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            DioError(
+                error: "",
+                response: httpResponse.response,
+                type: DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on DioError catch(e){
+      return DataFailed(e);
+    }
   }
 
 }

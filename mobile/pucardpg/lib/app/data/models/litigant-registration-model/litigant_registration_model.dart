@@ -143,7 +143,7 @@ class Individual with _$Individual {
     @JsonKey(name: 'mobileNumber') required String mobileNumber,
     @JsonKey(name: 'altContactNumber') required String altContactNumber,
     @JsonKey(name: 'email') @Default("souravganguly_dada@gmail.com") email,
-    @JsonKey(name: 'address') required Address address,
+    @JsonKey(name: 'address') required List<Address> address,
 
     @JsonKey(name: 'fatherName') @Default("") fatherName,
     @JsonKey(name: 'husbandName') @Default("") husbandName,

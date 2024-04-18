@@ -1,5 +1,6 @@
 
 
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
@@ -13,6 +14,10 @@ class LoginUseCase {
 
   Future<DataState<OtpResponse>> requestOtp(OtpRequest otpRequest) {
     return _registrationLoginRepository.requestOtp(otpRequest);
+  }
+
+  Future<DataState<IndividualSearchResponse>> searchIndividual(IndividualSearchRequest individualSearchRequest) {
+    return _registrationLoginRepository.searchIndividual(individualSearchRequest);
   }
 
 }

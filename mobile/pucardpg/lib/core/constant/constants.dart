@@ -11,3 +11,6 @@ const String userType = "citizen";
 const String login = "login";
 
 const String register = "register";
+
+const int limit = 1000;
+const offset = 0;

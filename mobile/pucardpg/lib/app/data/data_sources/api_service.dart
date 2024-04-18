@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:dio/dio.dart';
 import 'package:pucardpg/app/data/models/auth-model/auth_model.dart';
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/data/models/registration-model/registration_model.dart';
@@ -30,5 +31,12 @@ abstract class ApiService {
 
   @POST('/individual/v1/_create')
   Future<HttpResponse<String>> registerLitigant(@Body() LitigantNetworkModel litigantRegistrationModel);
+
+  @POST('/individual/v1/_search')
+  Future<HttpResponse<IndividualSearchResponse>> searchIndividual(
+      @Query('limit') int limit,
+      @Query('offset') int offset,
+      @Query('tenantId') String tenantId,
+      @Body() IndividualSearchRequest individualSearchRequest);
 
 }
