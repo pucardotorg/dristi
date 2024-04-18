@@ -118,29 +118,25 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
-  /order/v1/exists/{Id}:
-    get:
+  /order/v1/exists:
+    post:
       tags:
         - Order
-      summary: check if Order exists
-      operationId: getIfOrderExists
-      parameters:
-        - name: Id
-          in: path
-          description: the ID of the Order
-          required: true
-          schema:
-            type: string
-            format: uuid
-
+      summary: order exits or not
+      requestBody:
+        description: check if the order(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/OrderExistsRequest'
+        required: true
       responses:
         "201":
-          description: true if exists, else false
+          description: ResponseInfo with order(s) updated successfully
           content:
-            text/plain:
+            '*/*':
               schema:
-                type: boolean
-                description: true if exists, else false
+                $ref: '#/components/schemas/OrderExistsResponse'
         "400":
           description: failed to find Order
           content:
@@ -170,15 +166,35 @@ components:
       properties:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        orderID:
-          type: string
-          format: uuid
         TotalCount:
           type: integer
         list:
           type: array
           items:
             $ref: '#/components/schemas/Order'
+
+    OrderExistsRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        order:
+          $ref: '#/components/schemas/OrderExists'
+    OrderExistsResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        order:
+          $ref: '#/components/schemas/OrderExists'
+
+    OrderExists:
+      type: object
+      properties:
+        cnrNumber:
+          type: string
+        exists:
+          type: boolean
 
     Order:
       description: An order is created as an outcome of an hearing or based on an application. Order will contain a set of tasks
@@ -242,8 +258,13 @@ components:
             courtID:
               type: string
         orderType:
-          type: string
-          description: Master Data ID
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+          description: array of Master Data ID since an order can be of multiple order types
         orderCategory:
           type: string
           description: Master data ID
@@ -251,11 +272,14 @@ components:
         status:
           type: string
           description: workflow status
+        comments:
+          type: string
+          description: any additional comments with regards the order, the judge may want to write
         isActive:
           type: boolean
           description: to handle soft delete
         statuteSection:
-          $ref: './case-api-1.0.0.yaml#/components/schemas/StatuteSection'
+          $ref: './case-api-0.1.0.yaml#/components/schemas/StatuteSection'
         documents:
           type: array
           items:

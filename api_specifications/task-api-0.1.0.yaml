@@ -116,28 +116,25 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
-  /task/v1/exists/{Id}:
-    get:
+  /task/v1/exists:
+    post:
       tags:
         - Task
-      summary: check if task exists
-      operationId: getIfTaskExists
-      parameters:
-        - name: Id
-          in: path
-          description: the ID of the task
-          required: true
-          schema:
-            type: string
-            format: uuid
+      summary: task exits or not
+      requestBody:
+        description: check if the task(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TaskExistsRequest'
+        required: true
       responses:
-        "200":
-          description: true if exists, else false
+        "201":
+          description: ResponseInfo with task(s) updated successfully
           content:
-            text/plain:
+            '*/*':
               schema:
-                type: boolean
-                description: true if exists, else false
+                $ref: '#/components/schemas/TaskExistsResponse'
         "400":
           description: failed to find task
           content:
@@ -173,15 +170,35 @@ components:
       properties:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        orderID:
-          type: string
-          format: uuid
         TotalCount:
           type: integer
         list:
           type: array
           items:
             $ref: '#/components/schemas/Task'
+
+    TaskExistsRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        order:
+          $ref: '#/components/schemas/TaskExists'
+    TaskExistsResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        order:
+          $ref: '#/components/schemas/TaskExists'
+
+    TaskExists:
+      type: object
+      properties:
+        cnrNumber:
+          type: string
+        exists:
+          type: boolean
 
     Task:
       description: A task is created as part of an Order. It will always be linked to an order

@@ -134,30 +134,27 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
-  /hearing/v1/exists/{Id}:
-    get:
+  /hearing/v1/exists:
+    post:
       tags:
       - Hearing
-      summary: check if hearing exists
-      operationId: getIsHearingValid
-      parameters:
-      - name: Id
-        in: path
-        description: the ID of the Hearing 
+      summary: Hearing exits or not
+      requestBody:
+        description: check if the Hearing(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingExistsRequest'
         required: true
-        schema:
-          type: string
-          format: uuid
       responses:
-        "200":
-          description: true if exists, else false
+        "201":
+          description: ResponseInfo with Hearing(s) updated successfully
           content:
-            text/plain:
+            '*/*':
               schema:
-                type: boolean
-                description: true if exists, else false
+                $ref: '#/components/schemas/HearingExistsResponse'
         "400":
-          description: failed to validate hearing
+          description: failed to find hearing
           content:
             '*/*':
               schema:
@@ -195,6 +192,30 @@ components:
           items:
             $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearingList response
+
+
+    HearingExistsRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        order:
+          $ref: '#/components/schemas/HearingExists'
+    HearingExistsResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        order:
+          $ref: '#/components/schemas/HearingExists'
+
+    HearingExists:
+      type: object
+      properties:
+        cnrNumber:
+          type: string
+        exists:
+          type: boolean
 
     Hearing:
       description: a case can have multiple hearings. this represents one of the many hearings related to the case

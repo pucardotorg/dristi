@@ -132,28 +132,25 @@ paths:
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
 
-  /application/v1/exists/{Id}:
-    get:
+  /application/v1/exists:
+    post:
       tags:
         - Application
-      summary: check if application exists
-      operationId: getIsApplicationValid
-      parameters:
-        - name: Id
-          in: path
-          description: the ID of the Application
-          required: true
-          schema:
-            type: string
-            format: uuid
+      summary: application exits or not
+      requestBody:
+        description: check if the application(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationExistsRequest'
+        required: true
       responses:
-        "200":
-          description: true if exists, else false
+        "201":
+          description: ResponseInfo with application(s) updated successfully
           content:
-            text/plain:
+            '*/*':
               schema:
-                type: boolean
-                description: true if exists, else false
+                $ref: '#/components/schemas/ApplicationExistsResponse'
         "400":
           description: failed to validate Application
           content:
@@ -190,7 +187,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Application'
-      description: This object holds information about the hearingList response
+      description: This object holds information about the aapplication List response
+
+    ApplicationExistsRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        order:
+          $ref: '#/components/schemas/ApplicationExists'
+    ApplicationExistsResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        order:
+          $ref: '#/components/schemas/ApplicationExists'
+
+    ApplicationExists:
+      type: object
+      properties:
+        cnrNumber:
+          type: string
+        exists:
+          type: boolean
 
     Application:
       required: [tenantId, createdDate, applicationType, status, isActive]
@@ -215,9 +235,15 @@ components:
         cnrNumber:
           type: string
           description: The CNR number of the associated case. helps in faster search
+        referenceId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: could be the orderID due to which this application is filed, for example, application to revoke the penalty
         createdDate:
           type: string
-          format: date
+          format: datetime
           description: the date on which the order was created. Can be treated as the start date also
         createdBy:
           type: string
@@ -230,22 +256,44 @@ components:
             format: uuid
             description: ID of the users for whom the application has been raised
         applicationType:
-          type: string
-          description: Master Data ID
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+          description: array of Master Data ID since an application can be of multiple application types
         applicationNumber:
           type: string
           minLength: 24
           maxLength: 48
           description: number assigned to the application. applications are numbered serially for the court and affixed with the year.
           example: Application 1 of the year 2024
+        issuedBy:
+          type: object
+          properties:
+            benchID:
+              type: string
+            judgeID:
+              type: array
+              items:
+                type: string
+                format: uuid
+                minLength: 36
+                maxLength: 36
+            courtID:
+              type: string
         status:
           type: string
           description: workflow status
+        comment:
+          type: string
+          description: can be used to store any comments on application approval, rejection or otherwise
         isActive:
           type: boolean
           description: to handle soft delete
         statuteSection:
-          $ref: './case-api-1.0.0.yaml#/components/schemas/StatuteSection'
+          $ref: './case-api-0.1.0.yaml#/components/schemas/StatuteSection'
         documents:
           type: array
           items:

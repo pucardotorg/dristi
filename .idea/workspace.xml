@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="15d31680-14c0-43f4-9cd9-89397392e7cb" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/pucardpg.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_specifications/application-api-1.0.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_specifications/hearing-api-0.1.0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api_specifications/hearing-api-0.1.0.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_specifications/order-api-0.1.0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api_specifications/order-api-0.1.0.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_specifications/task-api-0.1.0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api_specifications/task-api-0.1.0.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2fD87oP8IyP2A71kEOVpnfqytyy" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Docker.maven/Dockerfile.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "code__atul",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "settings.editor.selected.configurable": "MavenSettings"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="maven/Dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="contextFolderPath" value="$PROJECT_DIR$" />
+          <option name="sourceFilePath" value="build/maven/Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Docker.maven/Dockerfile" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="15d31680-14c0-43f4-9cd9-89397392e7cb" name="Changes" comment="" />
+      <created>1713324123784</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1713324123784</updated>
+    </task>
+    <servers />
+  </component>
+</project>
