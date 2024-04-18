@@ -75,7 +75,7 @@ public class Advocate {
 
 	@JsonProperty("documents")
 	@Valid
-	private List<Document> documents = null;
+	private List<Document> documents = new ArrayList<>();
 
 	@JsonProperty("auditDetails")
 
@@ -87,9 +87,6 @@ public class Advocate {
 	private Object additionalDetails = null;
 
 	public Advocate addDocumentsItem(Document documentsItem) {
-		if (this.documents == null) {
-			this.documents = new ArrayList<>();
-		}
 		this.documents.add(documentsItem);
 		return this;
 	}

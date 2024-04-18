@@ -2,7 +2,7 @@ openapi: "3.0.0"
 
 info:
   title: API specs for Hearing
-  description: 
+  description:
     Hearing API paths and entity is defined in this file.
   version: "0.1.0"
 
@@ -187,6 +187,8 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
+          format: int32
+          minimum: 0
         HearingList:
           type: array
           items:
@@ -254,7 +256,7 @@ components:
           description: A single hearing can be scheduled for multiple applications. All the application numbers should belong to the same case or case group.
         hearingType:
           type: string
-          description: This field holds information about purpose of hearing. Master Data ID
+          description: This field holds information about purpose of hearing. Will also help identify if this is a judicial hearing or an admin related hearing. Master Data ID
           example: admission, trail, judgment, evidence, plea
         status:
           type: boolean
@@ -269,7 +271,22 @@ components:
           type: string
           format: date
           nullable: true
-          description: This field holds information about end date time of hearing in epoch time. Optional field. 
+          description: This field holds information about end date time of hearing in epoch time. Optional field.
+        presidedBy:
+          description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
+          type: object
+          properties:
+            benchID:
+              type: string
+            judgeID:
+              type: array
+              items:
+                type: string
+                format: uuid
+                minLength: 36
+                maxLength: 36
+            courtID:
+              type: string
         attendees:
           type: array
           description: This field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing

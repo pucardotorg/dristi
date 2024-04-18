@@ -31,12 +31,9 @@ public class CaseRequest {
 
 	@JsonProperty("cases")
 	@Valid
-	private List<CourtCase> cases = null;
+	private List<CourtCase> cases = new ArrayList<>();
 
 	public CaseRequest addCasesItem(CourtCase casesItem) {
-		if (this.cases == null) {
-			this.cases = new ArrayList<>();
-		}
 		this.cases.add(casesItem);
 		return this;
 	}

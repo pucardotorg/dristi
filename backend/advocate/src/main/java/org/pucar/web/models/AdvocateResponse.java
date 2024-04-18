@@ -31,7 +31,7 @@ public class AdvocateResponse {
 
 	@JsonProperty("advocates")
 	@Valid
-	private List<Advocate> advocates = null;
+	private List<Advocate> advocates = new ArrayList<>();
 
 	@JsonProperty("pagination")
 
@@ -39,9 +39,6 @@ public class AdvocateResponse {
 	private Pagination pagination = null;
 
 	public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
-		if (this.advocates == null) {
-			this.advocates = new ArrayList<>();
-		}
 		this.advocates.add(advocatesItem);
 		return this;
 	}
