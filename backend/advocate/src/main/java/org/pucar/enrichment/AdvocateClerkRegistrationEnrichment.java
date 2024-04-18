@@ -33,6 +33,12 @@ public class AdvocateClerkRegistrationEnrichment {
                     advocateClerk.setAuditDetails(auditDetails);
 
                     advocateClerk.setId(UUID.randomUUID());
+                    advocateClerk.getDocuments().forEach(document -> {
+                        document.setId(String.valueOf(UUID.randomUUID()));
+                        document.setDocumentUid(String.valueOf(advocateClerk.getId()));
+                    });
+
+
 
                     advocateClerk.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
                 }

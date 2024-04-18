@@ -4,7 +4,7 @@ serviceMaps:
     - version: 1.0
       description: Persists advocate clerk details in tables
       fromTopic: save-advocate-clerk
-      isTransaction: true	
+      isTransaction: true
       queryMaps:
         - query: INSERT INTO dristi_advocate_clerk(id, tenantId, applicationNumber, individualId, isActive , createdBy, lastModifiedBy, createdTime, lastModifiedTime,additionalDetails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?);
           basePath: clerks.*
@@ -16,8 +16,23 @@ serviceMaps:
             - jsonPath: $.clerks.*.isActive
             - jsonPath: $.clerks.*.auditDetails.createdBy
             - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
+            - jsonPath: $.clerks.*.stateRegnNumber
             - jsonPath: $.clerks.*.auditDetails.createdTime
             - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
             - jsonPath: $.clerks.*.additionalDetails
-            
+                type:JSON
+                dbType:JSONB
+
+        - query: INSERT INTO dristi_advocate_clerk_document(id,filestore,document_uid,document_type,clerk_id,additional_details) VALUES (?, ?, ?,?,?,?);
+          basePath: clerks.*
+          jsonMaps:
+            - jsonPath: $.clerks.*.documents[*].id
+            - jsonPath: $.clerks.*.documents[*].fileStore
+            - jsonPath: $.clerks.*.documents[*].documentUid
+            - jsonPath: $.clerks.*.documents[*].documentType
+            - jsonPath: $.clerks.*.id
+            - jsonPath: $.clerks.*.documents[*].additionalDetails
+                type:JSON
+                dbType:JSONB
+
 

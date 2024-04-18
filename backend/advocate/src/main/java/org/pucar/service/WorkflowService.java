@@ -74,9 +74,9 @@ public class WorkflowService {
             ProcessInstance processInstance = new ProcessInstance();
             processInstance.setBusinessId(advocateClerk.getApplicationNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("advocate-clerk-services");
+            processInstance.setModuleName("pucar");
             processInstance.setTenantId(advocateClerk.getTenantId());
-            processInstance.setBusinessService("ADVClerk");
+            processInstance.setBusinessService("advocate");
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -100,9 +100,9 @@ public class WorkflowService {
             ProcessInstance processInstance = new ProcessInstance();
             processInstance.setBusinessId(advocate.getApplicationNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("advocate-services");
+            processInstance.setModuleName("pucar");
             processInstance.setTenantId(advocate.getTenantId());
-            processInstance.setBusinessService("ADVOCATERGT");
+            processInstance.setBusinessService("advocate");
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {

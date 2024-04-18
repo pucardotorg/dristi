@@ -1,6 +1,7 @@
 package org.pucar.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.models.individual.IndividualResponse;
 import org.egov.common.models.individual.IndividualSearch;
 import org.pucar.config.Configuration;
@@ -19,28 +20,16 @@ public class IndividualService {
     @Autowired
     private  Configuration config;
 
-    public Boolean searchIndividual(AdvocateRequest request){
+    public Boolean searchIndividual(RequestInfo requestInfo , String individualId ){
         IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
-        individualSearchRequest.setRequestInfo(request.getRequestInfo());
+        individualSearchRequest.setRequestInfo(requestInfo);
         IndividualSearch individualSearch = new IndividualSearch();
-        individualSearch.setIndividualId(request.getAdvocates().get(0).getIndividualId());
+        individualSearch.setIndividualId(individualId);
         individualSearchRequest.setIndividual(individualSearch);
 
         StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
-        uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(request.getAdvocates().get(0).getTenantId()).append("&includeDeleted=true");
+        uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(requestInfo.getUserInfo().getTenantId()).append("&includeDeleted=true");
         Boolean isIndividualValid = individualUtils.individualCall(individualSearchRequest, uri);
         return isIndividualValid;
-    }
-    public Boolean searchIndividual(AdvocateClerkRequest advocateClerkRequest){
-        IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
-        individualSearchRequest.setRequestInfo(advocateClerkRequest.getRequestInfo());
-        IndividualSearch Individual = new IndividualSearch();
-        Individual.setIndividualId(advocateClerkRequest.getClerks().get(0).getIndividualId());
-        individualSearchRequest.setIndividual(Individual);
-        StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
-        uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(advocateClerkRequest.getClerks().get(0).getTenantId()).append("&includeDeleted=true");
-        Boolean individualResponse = individualUtils.individualCall(individualSearchRequest, uri);
-
-        return individualResponse;
     }
 }

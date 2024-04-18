@@ -50,11 +50,6 @@ public class AdvocateService {
         // Initiate workflow for the new application-
        workflowService.updateWorkflowStatus(body);
 
-        //Individual search
-        Boolean isIndividualExist = individualService.searchIndividual(body);
-        if(!isIndividualExist)
-            throw new IllegalArgumentException("Individual Id doesn't exist");
-
         // Push the application to the topic for persister to listen and persist
         producer.push("save-advocate-application", body);
 
