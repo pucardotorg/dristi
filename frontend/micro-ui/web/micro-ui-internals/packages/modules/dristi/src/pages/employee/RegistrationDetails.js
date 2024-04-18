@@ -88,38 +88,41 @@ const RegisterDetails = ({ location, match }) => {
     { title: "Bar Registration Number", content: 1233123 },
     { title: "Bar Council ID" },
   ];
+  const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
     <div>
-      <Header>{t(`Application Number ${applicationNo}`)}</Header>
+      <Header>{header}</Header>
       <DocumentDetailCard cardData={aadharData} />
       <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
       <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />
-      <ActionBar>
-        {displayMenu ? (
-          <Menu
-            menuItemStyle={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexDirection: "column",
+      {applicationNo && (
+        <ActionBar>
+          {displayMenu && applicationNo ? (
+            <Menu
+              menuItemStyle={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+              localeKeyPrefix={"BR"}
+              options={["Approve", "Reject"]}
+              t={t}
+              onSelect={onActionSelect}
+            />
+          ) : null}
+          <SubmitBar
+            label={isAction ? t("Take_Action") : t("Go_Back_Home")}
+            onSubmit={() => {
+              if (isAction) {
+                setDisplayMenu(!displayMenu);
+              } else {
+                history.push("/digit-ui/employee/dristi/registration-requests");
+              }
             }}
-            localeKeyPrefix={"BR"}
-            options={["Approve", "Reject"]}
-            t={t}
-            onSelect={onActionSelect}
           />
-        ) : null}
-        <SubmitBar
-          label={isAction ? t("Take_Action") : t("Go_Back_Home")}
-          onSubmit={() => {
-            if (isAction) {
-              setDisplayMenu(!displayMenu);
-            } else {
-              history.push("/digit-ui/employee/dristi/registration-requests");
-            }
-          }}
-        />
-      </ActionBar>
+        </ActionBar>
+      )}
       {showModal && (
         <Modal
           headerBarMain={<Heading label={t("Confirm Reject Application")} />}

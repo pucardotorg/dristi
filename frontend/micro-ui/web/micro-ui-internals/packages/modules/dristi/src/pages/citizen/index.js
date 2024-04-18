@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
+import RegisterDetails from "../employee/RegistrationDetails";
 
 const App = ({ stateCode, tenantId }) => {
   const { path } = useRouteMatch();
@@ -90,6 +91,7 @@ const App = ({ stateCode, tenantId }) => {
             <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} />
           </PrivateRoute>
           <PrivateRoute exact path={`${path}/home/register/user-registration`} component={Registration} refetch={refetch} />
+          <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <RegisterDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
           <Route path={`${path}/home/login`}>
             <Login stateCode={stateCode} />
