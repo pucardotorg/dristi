@@ -56,7 +56,7 @@ class AdvocateHomePageState extends State<AdvocateHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
-                              noResultSvg,
+                              approvalSvg,
                               width: 340,
                               height: 200,
                             ),

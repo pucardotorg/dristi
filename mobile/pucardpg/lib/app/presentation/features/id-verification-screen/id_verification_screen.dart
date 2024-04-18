@@ -99,20 +99,11 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                               label: 'Enter aadhar number',
                               maxLength: 12,
                               pattern: r'^([0-9]){12}$',
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Aadhar number is required';
-                                }
-                                if (value.length != 12) {
-                                  return 'Aadhar number must be 12 digits long';
-                                }
-                                if (!RegExp(r'^([0-9]){12}$').hasMatch(value)) {
-                                  return 'Enter a valid Aadhar number';
-                                }
-                                return null;
-                              },
                               textInputType: TextInputType.number,
                               onChange: (val) { adhaarNumber = val; },
+                              inputFormatter: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                              ],
                             ),
                             const SizedBox(height: 20,),
                             Center(child: Text("(or)", style: widget.theme.text20W400Rob(),)),
@@ -130,6 +121,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                     label: 'Upload ID proof',
                                     controller: TextEditingController(text: fileName ?? ''),
                                     readOnly: true,
+                                    hintText: 'No File selected',
                                   ),
                                 ),
                                 const SizedBox(width: 10,),

@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
+import 'package:pucardpg/core/constant/constants.dart';
 
 class OtpScreen extends StatefulWidget with AppMixin{
 
@@ -65,8 +66,27 @@ class OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(""),
-          centerTitle: true,
+          title: Row(
+            children: [
+              Image.asset(
+                digitSvg,
+                fit: BoxFit.contain,
+              ),
+              const VerticalDivider(
+                color: Colors.white,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  "State",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          centerTitle: false,
           leading: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.menu),

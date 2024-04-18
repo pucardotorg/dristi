@@ -45,8 +45,27 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(""),
-          centerTitle: true,
+          title: Row(
+            children: [
+              Image.asset(
+                  digitSvg,
+                fit: BoxFit.contain,
+                ),
+              const VerticalDivider(
+                color: Colors.white,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  "State",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          centerTitle: false,
           leading: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.menu),
@@ -96,7 +115,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                   'Mobile number should have 10 digits',
                                   'maxLength': (_) =>
                                   'Mobile number should have 10 digits',
+                                  'pattern': (_) =>
+                                  'Mobile number is not valid'
                                 },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                ],
                               ),
                               const SizedBox(height: 10,),
                               DigitCheckboxTile(
@@ -147,7 +171,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
           Validators.required,
           Validators.number,
           Validators.minLength(10),
-          Validators.maxLength(10)
+          Validators.maxLength(10),
+          Validators.pattern(r'^[6789][0-9]{9}$')
         ]
     ),
   });

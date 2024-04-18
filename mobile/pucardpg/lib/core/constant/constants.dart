@@ -25,4 +25,5 @@ Future<void> fetchStates(String countryISOCode) async {
 
 String? selectedOption;
 
-const String noResultSvg = 'assets/svg/no_result.svg';
+const String approvalSvg = 'assets/icons/svg/approval.svg';
+const String digitSvg = 'assets/icons/svg/DIGIT.png';

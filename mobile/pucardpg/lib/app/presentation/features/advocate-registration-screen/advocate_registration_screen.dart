@@ -142,6 +142,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                       label: 'Upload BAR council ID',
                                       isRequired: true,
                                       readOnly: true,
+                                      hintText: 'No File selected',
                                       controller: TextEditingController(text: fileName ?? ''),
                                       onChange: (val) { },
                                     ),
