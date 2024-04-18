@@ -32,7 +32,7 @@ const LandingPage = () => {
   return isLoading ? (
     <Loader />
   ) : (
-    <div className="selection-card-wrapper" style={{ marginTop: "80px" }}>
+    <div className="selection-card-wrapper" style={{ marginTop: "80px", minWidth: "100%" }}>
       <Card
         style={{
           height: "75vh",

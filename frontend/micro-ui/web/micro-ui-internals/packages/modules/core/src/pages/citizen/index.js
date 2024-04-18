@@ -16,7 +16,6 @@ import HowItWorks from "./HowItWorks/howItWorks";
 import Login from "./Login";
 import Search from "./SearchApp";
 import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
-import LandingPage from "./Home/LandingPage";
 
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));
@@ -66,7 +65,12 @@ const Home = ({
 
   const sidebarHiddenFor = useMemo(() => {
     const contextPath = window?.contextPath;
-    return [`/${contextPath}/citizen/select-language`, `${contextPath}/citizen/register/name`, `/${contextPath}/citizen/select-location`];
+    return [
+      `/${contextPath}/citizen/select-language`,
+      `${contextPath}/citizen/register/name`,
+      `/${contextPath}/citizen/select-location`,
+      `/${contextPath}/citizen/dristi/landing-page`,
+    ];
   }, []);
 
   const linkData = useMemo(

@@ -17,10 +17,10 @@ const App = ({ stateCode }) => {
   const Response = Digit?.ComponentRegistryService?.getComponent("DRISTICitizenResponse");
   const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
 
-  const hideHomeCrumb = [`/digit-ui/citizen/dristi/home`, `/digit-ui/citizen/dristi/landing-page`];
+  const hideHomeCrumb = [`${path}/home`, `${path}/landing-page`];
   const dristiCrumbs = [
     {
-      path: isUserLoggedIn ? `/digit-ui/citizen/dristi/home` : "",
+      path: isUserLoggedIn ? `${path}/home` : "",
       content: t("ES_COMMON_HOME"),
       show: !hideHomeCrumb.includes(location.pathname),
     },
@@ -41,14 +41,19 @@ const App = ({ stateCode }) => {
     },
   ];
   const whiteListedRoutes = [
-    "/digit-ui/citizen/dristi/landing-page",
-    "/digit-ui/citizen/dristi/home/login",
-    "/digit-ui/citizen/dristi/home/response",
-    "/digit-ui/citizen/dristi/home/register",
+    `${path}/landing-page`,
+    `${path}/home/response`,
+    `${path}/home/register`,
+    `${path}/home/login/otp`,
+    `${path}/home/login`,
+    `${path}/home/login/id-verification`,
+    `${path}/home/login/id-verification`,
+    `${path}/home/login/aadhar-otp`,
+    `${path}/home/user-registration`,
   ];
 
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
-    history.push("/digit-ui/citizen/dristi/landing-page");
+    history.push(`${path}/landing-page`);
   }
   return (
     <span className={"pt-citizen"}>
