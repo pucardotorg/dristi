@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@egovernments/digit-ui-react-components": "1.8.1-beta.11",
+    "@cyntler/react-doc-viewer": "1.10.3",
+    "@react-pdf/renderer": "^3.4.2",
     "jsonpath": "^1.1.1",
     "react": "17.0.2",
     "react-date-range": "1.3.0",

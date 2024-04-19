@@ -9,6 +9,8 @@ function DocumentDetailCard({ cardData, header }) {
         {cardData.map((row) => (
           <div className="documentDetails_row_items">
             <p className="documentDetails_title">{row?.title}</p> <p>{row?.content}</p>
+            {row?.image?.content}
+            {row?.icon}
           </div>
         ))}
       </div>

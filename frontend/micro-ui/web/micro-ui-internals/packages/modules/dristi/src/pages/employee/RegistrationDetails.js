@@ -15,6 +15,8 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import DocumentDetailCard from "../../components/DocumentDetailCard";
+import DocViewerWrapper from "./docViewerWrapper";
+import { ReactComponent as LocationOnMapIcon } from "./image/location_onmap.svg";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -31,6 +33,14 @@ const CloseBtn = (props) => {
   return (
     <div className="icon-bg-secondary" onClick={props.onClick}>
       <Close />
+    </div>
+  );
+};
+
+const LocationIcon = () => {
+  return (
+    <div style={{ marginTop: "14px", marginLeft: "10px" }}>
+      <LocationOnMapIcon></LocationOnMapIcon>
     </div>
   );
 };
@@ -81,12 +91,12 @@ const RegisterDetails = ({ location, match }) => {
   const personalData = [
     { title: "Name", content: "Nawal Kishor Tiwari" },
     { title: "Location", content: "View on map" },
-    { title: "Address", content: "12, 5th street" },
+    { title: "Address", content: "12, 5th street", icon: <LocationIcon></LocationIcon> },
   ];
   const barDetails = [
     { title: "State of Registration", content: "Kerala" },
     { title: "Bar Registration Number", content: 1233123 },
-    { title: "Bar Council ID" },
+    { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={"https://www.irs.gov/pub/irs-pdf/fw9.pdf"}></DocViewerWrapper> },
   ];
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
