@@ -5,15 +5,16 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class UserTypeScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
+  UserModel userModel = UserModel();
 
-  UserTypeScreen({super.key, required this.mobile});
+  UserTypeScreen({super.key, required this.userModel});
 
   @override
   UserTypeScreenState createState() => UserTypeScreenState();
@@ -126,10 +127,10 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                     return;
                   }
                   else if(selectedOption == 'Litigant'){
-                    Navigator.pushNamed(context, '/TermsAndConditionsScreen');
+                    Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
                   }
                   else{
-                    Navigator.pushNamed(context, '/AdvocateRegistrationScreen');
+                    Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
                   }
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)

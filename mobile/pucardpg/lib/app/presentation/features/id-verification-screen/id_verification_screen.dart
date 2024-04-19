@@ -5,15 +5,16 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class IdVerificationScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
+  UserModel userModel = UserModel();
 
-  IdVerificationScreen({super.key, required this.mobile});
+  IdVerificationScreen({super.key, required this.userModel});
 
   @override
   IdVerificationScreenState createState() => IdVerificationScreenState();
@@ -126,7 +127,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                     );
                     return;
                   }
-                  Navigator.pushNamed(context, '/IdOtpScreen', arguments: widget.mobile);
+                  Navigator.pushNamed(context, '/IdOtpScreen', arguments: widget.userModel);
                 },
                 child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
             ),

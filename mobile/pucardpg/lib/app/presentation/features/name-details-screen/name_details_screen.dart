@@ -4,6 +4,7 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
@@ -11,9 +12,9 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class NameDetailsScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
+  UserModel userModel = UserModel();
 
-  NameDetailsScreen({super.key, required this.mobile});
+  NameDetailsScreen({super.key, required this.userModel});
 
   @override
   NameDetailsScreenState createState() => NameDetailsScreenState();
@@ -120,7 +121,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                       onPressed: () {
                         form.markAllAsTouched();
                         if (!form.valid) return;
-                        Navigator.pushNamed(context, '/AddressScreen', arguments: widget.mobile);
+                        Navigator.pushNamed(context, '/AddressScreen', arguments: widget.userModel);
                       },
                       child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                   ),

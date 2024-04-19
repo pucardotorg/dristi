@@ -4,13 +4,16 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class SuccessScreen extends StatefulWidget with AppMixin{
 
-  SuccessScreen({super.key, });
+  UserModel userModel = UserModel();
+
+  SuccessScreen({super.key, required this.userModel});
 
   @override
   SuccessScreenState createState() => SuccessScreenState();

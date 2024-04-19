@@ -1,19 +1,26 @@
 import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
+import '../../../domain/entities/litigant_model.dart';
+
 class OtpScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
+  UserModel userModel = UserModel();
 
-  OtpScreen({super.key, required this.mobile});
+  OtpScreen({super.key, required this.userModel});
 
   @override
   OtpScreenState createState() => OtpScreenState();
@@ -92,7 +99,7 @@ class OtpScreenState extends State<OtpScreen> {
                 children: [
                   Text("OTP Verification", style: widget.theme.text32W700RobCon(),),
                   const SizedBox(height: 20,),
-                  Text("Enter the OTP sent to + 91 - ${widget.mobile}", style: widget.theme.text16W400Rob(),),
+                  Text("Enter the OTP sent to + 91 - ${widget.userModel.mobileNumber}", style: widget.theme.text16W400Rob(),),
                   const SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -139,19 +146,44 @@ class OtpScreenState extends State<OtpScreen> {
                     ),
                   ) : Center(child: Text('Resend OTP in $_start seconds')),
                   const SizedBox(height: 10,),
-                  DigitElevatedButton(
-                      onPressed: () {
+                  BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
+                    bloc: widget.registrationLoginBloc,
+                    listener: (context, state) {
+
+                      Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+
+                      // switch (state.runtimeType) {
+                      //
+                      //   case OtpFailedState:
+                      //     DigitToast.show(context,
+                      //       options: DigitToastOptions(
+                      //         (state as OtpFailedState).errorMsg,
+                      //         false,
+                      //         widget.theme.theme(),
+                      //       ),
+                      //     );
+                      //     break;
+                      //   case OtpSuccessState:
+                      //     Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+                      //     break;
+                      //   default:
+                      //     break;
+                      // }
+                    },
+                    child: DigitElevatedButton(
+                        onPressed: () {
                           String otp = '';
                           _otpControllers.forEach((controller) {
                             otp += controller.text;
                           });
-                          if (kDebugMode) {
-                            print('Entered OTP: $otp');
-                          }
-                          Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.mobile);
-                      },
-                      child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-                  ),
+                          widget.registrationLoginBloc.add(SubmitRegistrationOtpEvent(username: widget.userModel.mobileNumber!, otp: otp, userModel: widget.userModel));
+                          // Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+                        },
+                        child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                    ),
+                  )
+
+
                 ],
               ),
             ),

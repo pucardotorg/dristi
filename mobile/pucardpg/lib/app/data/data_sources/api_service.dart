@@ -2,7 +2,9 @@ import 'dart:ffi';
 
 import 'package:dio/dio.dart';
 import 'package:pucardpg/app/data/models/auth-model/auth_model.dart';
-import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
+import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
+import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
+import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart' as lr;
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/data/models/registration-model/registration_model.dart';
 import 'package:pucardpg/core/constant/constants.dart';
@@ -22,13 +24,24 @@ abstract class ApiService {
       @Body() OtpRequest otpRequest
   );
 
-  @POST('/user/oauth/token')
-  Future<HttpResponse<String>> getAuthToken(@Body() AuthModel authModel);
+  @POST("/user/oauth/token")
+  @FormUrlEncoded()  // Specify form data encoding
+  Future<HttpResponse<AuthResponse>> getAuthResponse(
+    @Field("username") String username,
+    [
+      @Field("password") String password = "123456",
+      @Field("tenantId") String tenantId = "pg",
+      @Field("userType") String userType = "citizen",
+      @Field("scope") String scope = "read",
+      @Field("grant_type") String grantType = "password",
+      @Query('_') int _ = 1713357247536,
+    ]
+  );
 
   @POST('/user/citizen/_create')
-  Future<HttpResponse<String>> registerUser(@Body() RegistrationModel registrationModel);
+  Future<HttpResponse<AuthResponse>> createCitizen(@Body() CitizenRegistrationRequest citizenRegistrationRequest);
 
-  @POST('/individual/v1/_create')
-  Future<HttpResponse<String>> registerLitigant(@Body() LitigantNetworkModel litigantRegistrationModel);
+  // @POST('/individual/v1/_create')
+  // Future<HttpResponse<String>> registerLitigant(@Body() lr.LitigantNetworkModel litigantRegistrationModel);
 
 }

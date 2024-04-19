@@ -1,6 +1,7 @@
 
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,9 +10,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
+import 'package:pucardpg/core/constant/constants.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class MobileNumberScreen extends StatefulWidget with AppMixin{
@@ -26,7 +29,7 @@ class MobileNumberScreen extends StatefulWidget with AppMixin{
 class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   bool rememberMe = false;
-  late String mobile;
+  UserModel userModel = UserModel();
   String mobileNumberKey = 'mobileNumber';
 
   TextEditingController searchController = TextEditingController();
@@ -115,7 +118,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 prefixText: "+91  ",
                                 formControlName: mobileNumberKey,
                                 isRequired: true,
-                                onChanged: (val) { mobile = val.value.toString(); },
+                                onChanged: (val) { userModel.mobileNumber = val.value.toString(); },
                                 keyboardType: TextInputType.number,
                                 validationMessages: {
                                   'required': (_) => 'Mobile number is required',
@@ -140,14 +143,28 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
                                 bloc: widget.registrationLoginBloc,
                                 listener: (context, state) {
-
+                                  switch (state.runtimeType) {
+                                    case OtpFailedState:
+                                      DigitToast.show(context,
+                                        options: DigitToastOptions(
+                                          (state as OtpFailedState).errorMsg,
+                                          false,
+                                          widget.theme.theme(),
+                                        ),
+                                      );
+                                      break;
+                                    case OtpSuccessState:
+                                      Navigator.pushNamed(context, '/MobileOtpScreen', arguments: userModel);
+                                      break;
+                                    default:
+                                      break;
+                                  }
                                 },
                                 child: DigitElevatedButton(
                                     onPressed: () {
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: mobile));
-                                      // Navigator.pushNamed(context, '/MobileOtpScreen', arguments: mobile);
+                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: userModel.mobileNumber!, type: register));
                                     },
                                     child: const Text('Submit')
                                 ),
@@ -166,7 +183,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   FormGroup buildForm() => fb.group(<String, Object>{
     mobileNumberKey : FormControl<String>(
-        value: '',
+        value: userModel.mobileNumber ?? "",
         validators: [
           Validators.required,
           Validators.number,

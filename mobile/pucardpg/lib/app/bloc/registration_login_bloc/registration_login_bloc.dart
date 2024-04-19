@@ -13,6 +13,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
   RegistrationLoginBloc(this._loginUseCase): super(OtpInitialState()) {
     on<OtpInitialEvent>(otpInitialEvent);
     on<SendOtpEvent>(sendOtpEvent);
+    on<SubmitRegistrationOtpEvent>(sendRegistrationOtpEvent);
   }
 
   Future<void> otpInitialEvent(OtpInitialEvent event,
@@ -25,21 +26,38 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
       emit(OtpLoadingState());
 
-      OtpRequest otpRequest = OtpRequest(otp: Otp(mobileNumber: event.mobileNumber, type: register));
-      final dataState = await _loginUseCase.requestOtp(otpRequest);
+      final dataState = await _loginUseCase.requestOtp(event.mobileNumber, event.type);
 
       if(dataState is DataSuccess){
-        print(otpRequest.toJson());
-        print("success");
+        print("success otp");
         emit(OtpSuccessState());
       }
       if(dataState is DataFailed){
-        print("failed");
-        print("error is ${dataState.error!.message}" ?? "");
+        print("failed otp");
         emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
       }
 
   }
+
+  Future<void> sendRegistrationOtpEvent(SubmitRegistrationOtpEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(OtpLoadingState());
+
+    final dataState = await _loginUseCase.createCitizen(event.username, event.otp, event.userModel);
+
+    if(dataState is DataSuccess){
+      print("success reg");
+      emit(OtpSuccessState());
+    }
+    if(dataState is DataFailed){
+      print("failed reg");
+      emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+    }
+
+  }
+
+
 
 
 

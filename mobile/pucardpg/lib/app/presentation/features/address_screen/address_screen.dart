@@ -13,15 +13,17 @@ import 'package:http/io_client.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class AddressScreen extends StatefulWidget with AppMixin {
-  final String mobile;
 
-  AddressScreen({super.key, required this.mobile});
+  UserModel userModel = UserModel();
+
+  AddressScreen({super.key, required this.userModel});
 
   @override
   AddressScreenState createState() => AddressScreenState();
@@ -42,10 +44,10 @@ class AddressScreenState extends State<AddressScreen> {
   // List<String> district = ['District'];
   // List<String> city = ['City'];
 
-  String stateName = '';
-  String districtName = '';
-  String cityName = '';
-  String pinCode = '';
+  // String stateName = '';
+  // String districtName = '';
+  // String cityName = '';
+  // String pinCode = '';
 
   late Position _currentPosition;
 
@@ -107,10 +109,10 @@ class AddressScreenState extends State<AddressScreen> {
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];
       setState(() {
-        pinCode = place.postalCode!;
-        stateName = place.administrativeArea!;
-        districtName = place.subAdministrativeArea!;
-        cityName = place.locality!;
+        widget.userModel.addressModel.pincode = place.postalCode!;
+        widget.userModel.addressModel.state = place.administrativeArea!;
+        widget.userModel.addressModel.district = place.subAdministrativeArea!;
+        widget.userModel.addressModel.street = place.locality!;
         form.control(pinCodeKey).value = place.postalCode!;
         form.control(stateKey).value = place.administrativeArea!;
         form.control(districtKey).value = place.subAdministrativeArea!;
@@ -310,7 +312,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'Pincode',
                                   keyboardType: TextInputType.number,
                                   isRequired: true,
-                                  readOnly: pinCode == '' ? false : true,
+                                  readOnly: widget.userModel.addressModel.pincode == null ? false : true,
                                   onChanged: (value) {
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
@@ -331,7 +333,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'State',
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
-                                  readOnly: stateName == '' ? false : true,
+                                  readOnly: widget.userModel.addressModel.state == null ? false : true,
                                   onChanged: (value) {
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
@@ -346,7 +348,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'District',
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
-                                  readOnly: districtName == '' ? false : true,
+                                  readOnly: widget.userModel.addressModel.district == null ? false : true,
                                   onChanged: (value) {
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
@@ -361,7 +363,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'City',
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
-                                  readOnly: cityName == '' ? false : true,
+                                  readOnly: widget.userModel.addressModel.city == null ? false : true,
                                   onChanged: (value) {
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
@@ -472,7 +474,7 @@ class AddressScreenState extends State<AddressScreen> {
                     form.markAllAsTouched();
                     if (!form.valid) return;
                     Navigator.pushNamed(context, '/UserTypeScreen',
-                        arguments: widget.mobile);
+                        arguments: widget.userModel);
                   },
                   child: Text(
                     'Next',
@@ -491,14 +493,14 @@ class AddressScreenState extends State<AddressScreen> {
         pinLocationKey:
             FormControl<String>(value: ''),
         pinCodeKey: FormControl<String>(
-            value: pinCode,
+            value: widget.userModel.addressModel.pincode,
             validators: [Validators.required, Validators.maxLength(6)]),
         stateKey: FormControl<String>(
-            value: stateName, validators: [Validators.required]),
+            value: widget.userModel.addressModel.state, validators: [Validators.required]),
         districtKey: FormControl<String>(
-            value: districtName, validators: [Validators.required]),
+            value: widget.userModel.addressModel.district, validators: [Validators.required]),
         cityKey: FormControl<String>(
-            value: cityName, validators: [Validators.required]),
+            value: widget.userModel.addressModel.city, validators: [Validators.required]),
         localityKey: FormControl<String>(value: '', validators: [
           Validators.required,
           Validators.minLength(2),
@@ -525,10 +527,10 @@ class AddressScreenState extends State<AddressScreen> {
         infoWindow: InfoWindow(title: p.description)));
 
     setState(() {
-      form.control(pinCodeKey).value = pinCode;
-      form.control(stateKey).value = stateName;
-      form.control(districtKey).value = districtName;
-      form.control(cityKey).value = cityName;
+      form.control(pinCodeKey).value = widget.userModel.addressModel.pincode;
+      form.control(stateKey).value = widget.userModel.addressModel.state;
+      form.control(districtKey).value = widget.userModel.addressModel.district;
+      form.control(cityKey).value = widget.userModel.addressModel.city;
       // city = city;
       // selectedDistrict = selectedDistrict;
     });
@@ -556,10 +558,10 @@ class AddressScreenState extends State<AddressScreen> {
       }
     }
     setState(() {
-      stateName = newStateName;
-      districtName = newDistrictName;
-      cityName = newCityName;
-      pinCode = newPinCode;
+      widget.userModel.addressModel.state = newStateName;
+      widget.userModel.addressModel.district  = newDistrictName;
+      widget.userModel.addressModel.city = newCityName;
+      widget.userModel.addressModel.pincode = newPinCode;
     });
   }
 }

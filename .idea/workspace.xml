@@ -4,14 +4,34 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c247cf93-5fde-406e-9c96-c92233d3c074" name="Changes" comment="litigant model">
+    <list default="true" id="c247cf93-5fde-406e-9c96-c92233d3c074" name="Changes" comment="naming changed">
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/citizen-registration-request/citizen_registration_request.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/request-info-model/request_info.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/role-model/role.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/otp_bloc/otp_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_bloc.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/otp_bloc/otp_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_event.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/otp_bloc/otp_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_bloc.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_bloc.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_event.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_event.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_state.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/bloc/registration_login_bloc/registration_login_state.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/data_sources/api_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/data_sources/api_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/auth-response/auth_response.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/auth-response/auth_response.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/litigant-registration-model/litigant_registration_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/litigant-registration-model/litigant_registration_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/otp-models/otp_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/models/otp-models/otp_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/repository/registration_login_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/data/repository/registration_login_repository_impl.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/entities/litigant_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/entities/litigant_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/repository/registration_login_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/repository/registration_login_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/usecase/login_usecase.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/domain/usecase/login_usecase.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/address_screen/address_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/address_screen/address_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-otp-screen/id_otp_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-otp-screen/id_otp_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-verification-screen/id_verification_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-verification-screen/id_verification_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/mobile-number-screen/mobile_number_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/mobile-number-screen/mobile_number_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/config/mixin/app_mixin.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/config/mixin/app_mixin.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/injection_container.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/injection_container.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/name-details-screen/name_details_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/name-details-screen/name_details_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/otp-screen/otp_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/otp-screen/otp_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/success-screen/success_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/success-screen/success_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/t&amp;c-screen/terms_and_conditions_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/t&amp;c-screen/terms_and_conditions_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/user-type-screen/user_type_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/user-type-screen/user_type_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/config/routes/routes.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/config/routes/routes.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mobile/pucardpg/lib/core/constant/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/mobile/pucardpg/lib/core/constant/constants.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1713372594120</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="naming changed">
+      <created>1713428654365</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1713428654365</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -175,7 +202,8 @@
     <MESSAGE value="advocate registration screen t&amp;c screen added" />
     <MESSAGE value="success screen added" />
     <MESSAGE value="litigant model" />
-    <option name="LAST_COMMIT_MESSAGE" value="litigant model" />
+    <MESSAGE value="naming changed" />
+    <option name="LAST_COMMIT_MESSAGE" value="naming changed" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -187,7 +215,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">
           <url>file://$PROJECT_DIR$/mobile/pucardpg/lib/app/presentation/features/id-verification-screen/id_verification_screen.dart</url>
-          <line>99</line>
+          <line>100</line>
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="Dart">

@@ -1,6 +1,11 @@
 import 'dart:core';
 
-class LitigantModel{
+class UserModel{
+
+  int? id;
+  String? uuid;
+  String? authToken;
+  String? username;
 
   String? firstName;
   String? middleName;
@@ -10,16 +15,15 @@ class LitigantModel{
   String? identifierType;
   String? identifierId;
 
-  AddressModel? addressModel;
+  AddressModel addressModel = AddressModel();
 
-  LitigantModel({
+  UserModel({
     this.firstName,
     this.middleName,
     this.lastName,
     this.mobileNumber,
     this.identifierType,
     this.identifierId,
-    this.addressModel
   });
 
 }

@@ -6,15 +6,16 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
 class IdOtpScreen extends StatefulWidget with AppMixin{
 
-  final String mobile;
+  UserModel userModel = UserModel();
 
-  IdOtpScreen({super.key, required this.mobile});
+  IdOtpScreen({super.key, required this.userModel});
 
   @override
   IdOtpScreenState createState() => IdOtpScreenState();
@@ -98,7 +99,7 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                   const SizedBox(height: 20,),
                   Text("OTP Verification", style: widget.theme.text32W700RobCon(),),
                   const SizedBox(height: 20,),
-                  Text("Enter the OTP sent to + 91 - ${widget.mobile}", style: widget.theme.text16W400Rob(),),
+                  Text("Enter the OTP sent to + 91 - ${widget.userModel.mobileNumber}", style: widget.theme.text16W400Rob(),),
                   const SizedBox(height: 20,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -154,7 +155,7 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                         if (kDebugMode) {
                           print('Entered OTP: $otp');
                         }
-                        Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.mobile);
+                        Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.userModel);
                       },
                       child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                   ),

@@ -1,4 +1,7 @@
 
+import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
+import 'package:pucardpg/app/data/models/role-model/role.dart';
+
 const String apiBaseURL = "https://dristi-dev.pucar.org";
 
 const String apiId = "Rainmaker";
@@ -11,3 +14,19 @@ const String userType = "citizen";
 const String login = "login";
 
 const String register = "register";
+
+const Role userRegisterRole = Role(
+    name: "USER_REGISTER",
+    code: "USER_REGISTER"
+);
+
+const Role citizenRole = Role(
+    name: "Citizen",
+    code: "CITIZEN"
+);
+
+const Field litigant = Field(
+    key: 'userType',
+    value: "LITIGANT",
+);
+

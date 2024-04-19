@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:open_file/open_file.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
@@ -15,7 +16,9 @@ import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class AdvocateRegistrationScreen extends StatefulWidget with AppMixin{
 
-  AdvocateRegistrationScreen({super.key, });
+  UserModel userModel = UserModel();
+
+  AdvocateRegistrationScreen({super.key, required this.userModel});
 
   @override
   AdvocateRegistrationScreenState createState() => AdvocateRegistrationScreenState();
