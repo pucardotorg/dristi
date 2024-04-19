@@ -15,6 +15,11 @@ const String login = "login";
 
 const String register = "register";
 
+const int limit = 1000;
+const offset = 0;
+
+const String individualId = "IND-2024-04-18-000063";
+const String module = "DRISTI";
 const Role userRegisterRole = Role(
     name: "USER_REGISTER",
     code: "USER_REGISTER"

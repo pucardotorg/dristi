@@ -1,5 +1,7 @@
 
 
+import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
@@ -25,6 +27,14 @@ class LoginUseCase {
         )
     );
     return _registrationLoginRepository.requestOtp(otpRequest);
+  }
+
+  Future<DataState<IndividualSearchResponse>> searchIndividual(IndividualSearchRequest individualSearchRequest) {
+    return _registrationLoginRepository.searchIndividual(individualSearchRequest);
+  }
+
+  Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(AdvocateRegistrationRequest advocateRegistrationRequest) {
+    return _registrationLoginRepository.registerAdvocate(advocateRegistrationRequest);
   }
 
   Future<DataState<AuthResponse>> createCitizen(String username, String otpReference, UserModel userModel) async {
