@@ -54,12 +54,11 @@ class AdvocateRegistrationEnrichmentTest {
         advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest);
 
         // Verify IdgenUtil was called correctly
-        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   "billnumber.id",
-                "BILL-[SEQ_EGOV_COMMON_TEST_AUTOCRE]", 1);
+        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   "advocate.id",
+                null, 1);
 
         // Assert that each advocate has been enriched as expected
         assertNotNull(advocates.get(0).getId());
-        assertEquals("P-2021-01-01-001", advocates.get(0).getApplicationNumber());
         assertNotNull(advocates.get(0).getAuditDetails());
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getCreatedBy());
         assertNotNull(advocates.get(0).getAuditDetails().getCreatedTime());

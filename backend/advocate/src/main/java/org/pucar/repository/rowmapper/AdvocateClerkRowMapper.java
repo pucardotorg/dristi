@@ -46,7 +46,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
                         .auditDetails(auditdetails)
                         .build();
             }
-            addChildrenToProperty(rs, advocateClerkApplication);
+
             advocateClerkApplicationMap.put(uuid, advocateClerkApplication);
         }
         return new ArrayList<>(advocateClerkApplicationMap.values());

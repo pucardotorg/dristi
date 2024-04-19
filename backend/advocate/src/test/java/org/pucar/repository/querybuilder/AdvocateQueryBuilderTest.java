@@ -13,7 +13,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@Slf4j
 class AdvocateQueryBuilderTest {
 
     @Mock
@@ -58,8 +57,8 @@ class AdvocateQueryBuilderTest {
         String query = advocateQueryBuilder.getAdvocateSearchQuery(criteriaList, preparedStmtList);
 
         // Assert the generated query string
-        String expectedQuery = " SELECT adv.id as aid, adv.tenantId as atenantId, adv.applicationNumber as aapplicationNumber, adv.barRegistrationNumber as abarRegistrationNumber, adv.organisationID as aorganisationID, adv.individualId as aindividualId, adv.isActive as aisActive, adv.additionalDetails as aadditionalDetails, adv.createdBy as acreatedBy, adv.lastmodifiedby as alastmodifiedby, adv.createdtime as acreatedtime, adv.lastmodifiedtime as alastmodifiedtime FROM dristi_advocate adv WHERE adv.id IN (?) OR adv.barRegistrationNumber IN (?) OR adv.applicationNumber IN (?)";
-        assertEquals(expectedQuery, query);
+        String e = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime  FROM dristi_advocate adv WHERE adv.id IN (?) OR adv.barRegistrationNumber IN (?) OR adv.applicationNumber IN (?)";
+        assertEquals(e, query);
 
         // Assert the prepared statement list
         assertEquals(3, preparedStmtList.size());

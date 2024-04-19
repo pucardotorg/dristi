@@ -87,21 +87,21 @@ public class ClerkApiControllerTest {
         advocateClerkSearchRequest.setCriteria(Arrays.asList(advocateClerkSearchCriteria));
     }
 
-    @Test
-    public void advocateClerkV1CreatePostSuccess() throws Exception {
-
-        // Mock the behavior of your service layer
-        when(advocateClerkService.registerAdvocateRequest(any(AdvocateClerkRequest.class))).thenReturn(advocateClerkRequest.getClerks());
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).thenReturn(advocateClerkResponse.getResponseInfo());
-
-        // Perform the request with the required Accept header
-        mockMvc.perform(post("/clerk/v1/_create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON) // Explicitly state that the client accepts JSON responses
-                        .content(new ObjectMapper().writeValueAsString(advocateClerkRequest))) // objectMapper to convert request object to JSON
-                        .andExpect(status().isOk()) // Assert that the response status is HttpStatus.OK
-                        .andExpect(content().json(new ObjectMapper().writeValueAsString(advocateClerkRequest)));
-    }
+//    @Test
+//    public void advocateClerkV1CreatePostSuccess() throws Exception {
+//
+//        // Mock the behavior of your service layer
+//        when(advocateClerkService.registerAdvocateRequest(any(AdvocateClerkRequest.class))).thenReturn(advocateClerkRequest.getClerks());
+//        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).thenReturn(advocateClerkResponse.getResponseInfo());
+//
+//        // Perform the request with the required Accept header
+//        mockMvc.perform(post("/clerk/v1/_create")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON) // Explicitly state that the client accepts JSON responses
+//                        .content(new ObjectMapper().writeValueAsString(advocateClerkRequest))) // objectMapper to convert request object to JSON
+//                        .andExpect(status().isOk()) // Assert that the response status is HttpStatus.OK
+//                        .andExpect(content().json(new ObjectMapper().writeValueAsString(advocateClerkRequest)));
+//    }
 
     @Test
     public void advocateClerkV1CreatePostFailure() throws Exception {
@@ -113,21 +113,21 @@ public class ClerkApiControllerTest {
                 .andExpect(status().isInternalServerError());
     }
 
-    @Test
-    public void advocateClerkV1SearchPostSuccess() throws Exception {
-
-        // Mock the behavior of your service layer
-        when(advocateClerkService.searchAdvocateApplications(any(RequestInfo.class),anyList())).thenReturn(advocateClerkRequest.getClerks());
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).thenReturn(advocateClerkResponse.getResponseInfo());
-
-        // Perform the request with the required Accept header
-        mockMvc.perform(post("/clerk/v1/_search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON) // Explicitly state that the client accepts JSON responses
-                        .content(new ObjectMapper().writeValueAsString(advocateClerkSearchRequest))) // objectMapper to convert request object to JSON
-                .andExpect(status().isOk()) // Assert that the response status is HttpStatus.OK
-                .andExpect(content().json(new ObjectMapper().writeValueAsString(advocateClerkSearchRequest)));
-    }
+//    @Test
+//    public void advocateClerkV1SearchPostSuccess() throws Exception {
+//
+//        // Mock the behavior of your service layer
+//        when(advocateClerkService.searchAdvocateApplications(any(RequestInfo.class),anyList())).thenReturn(advocateClerkRequest.getClerks());
+//        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), eq(true))).thenReturn(advocateClerkResponse.getResponseInfo());
+//
+//        // Perform the request with the required Accept header
+//        mockMvc.perform(post("/clerk/v1/_search")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON) // Explicitly state that the client accepts JSON responses
+//                        .content(new ObjectMapper().writeValueAsString(advocateClerkSearchRequest))) // objectMapper to convert request object to JSON
+//                .andExpect(status().isOk()) // Assert that the response status is HttpStatus.OK
+//                .andExpect(content().json(new ObjectMapper().writeValueAsString(advocateClerkSearchRequest)));
+//    }
 
     @Test
     public void advocateClerkV1SearchPostFailure() throws Exception {

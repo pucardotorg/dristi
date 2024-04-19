@@ -2,7 +2,9 @@ package org.pucar.repository.rowmapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.pucar.web.models.Advocate;
+import org.pucar.web.models.AdvocateClerk;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -18,35 +20,37 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
 
         try {
             while (rs.next()) {
-                String uuid = rs.getString("aapplicationnumber");
+                String uuid = rs.getString("applicationnumber");
                 Advocate advocate = advocateMap.get(uuid);
 
                 if (advocate == null) {
-                    Long lastModifiedTime = rs.getLong("alastModifiedTime");
+                    Long lastModifiedTime = rs.getLong("lastmodifiedtime");
                     if (rs.wasNull()) {
                         lastModifiedTime = null;
                     }
 
 
                     AuditDetails auditdetails = AuditDetails.builder()
-                            .createdBy(rs.getString("acreatedBy"))
-                            .createdTime(rs.getLong("acreatedTime"))
-                            .lastModifiedBy(rs.getString("alastModifiedBy"))
+                            .createdBy(rs.getString("createdby"))
+                            .createdTime(rs.getLong("createdtime"))
+                            .lastModifiedBy(rs.getString("lastmodifiedby"))
                             .lastModifiedTime(lastModifiedTime)
                             .build();
 
                     advocate = Advocate.builder()
-                            .applicationNumber(rs.getString("aapplicationnumber"))
-                            .tenantId(rs.getString("atenantid"))
-                            .id(UUID.fromString(rs.getString("aid")))
-                            .barRegistrationNumber(rs.getString("abarRegistrationNumber"))
-                            .organisationID(UUID.fromString(rs.getString("aorganisationID")))
-                            .individualId(rs.getString("aindividualId"))
-                            .isActive(Boolean.valueOf(rs.getString("aisActive")))
-                            .additionalDetails(rs.getString("aadditionalDetails"))
+                            .applicationNumber(rs.getString("applicationnumber"))
+                            .tenantId(rs.getString("tenantid"))
+                            .id(UUID.fromString(rs.getString("id")))
+                            .barRegistrationNumber(rs.getString("barregistrationnumber"))
+                            .organisationID(UUID.fromString(rs.getString("organisationid")))
+                            .individualId(rs.getString("individualid"))
+                            .isActive(Boolean.valueOf(rs.getString("isactive")))
+                            .additionalDetails(rs.getString("additionalDetails"))
+                            .advocateType(rs.getString("advocatetype"))
                             .auditDetails(auditdetails)
                             .build();
                 }
+                addChildrenToProperty(rs, advocate);
                 advocateMap.put(uuid, advocate);
             }
         } catch (SQLException e) {
@@ -55,6 +59,30 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
         }
 
         return new ArrayList<>(advocateMap.values());
+    }
+
+    private void addChildrenToProperty(ResultSet rs, Advocate advocate)
+            throws SQLException {
+//        addDocumentToApplication(rs, advocate);
+    }
+
+    private void addDocumentToApplication(ResultSet rs, Advocate advocateClerkApplication) throws SQLException {
+        List<Document> listDocument = new ArrayList<>();
+        try {
+            Document document = Document.builder()
+                    .id(rs.getString("aid"))
+                    .documentType(rs.getString("documenttype"))
+                    .fileStore(rs.getString("filestore"))
+                    .documentUid(rs.getString("documentuid"))
+                    .additionalDetails(rs.getObject("docadditionaldetails"))
+                    .build();
+            listDocument.add(document);
+
+            advocateClerkApplication.setDocuments(listDocument);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

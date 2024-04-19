@@ -13,13 +13,8 @@ import java.util.ArrayList;
 
 import org.pucar.enrichment.AdvocateClerkRegistrationEnrichment;
 import org.pucar.kafka.Producer;
-import org.pucar.repository.AdvocateClerkRegistrationRepository;
 import org.pucar.validators.AdvocateClerkRegistrationValidator;
-import lombok.extern.slf4j.Slf4j;
-import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -39,9 +34,6 @@ public class AdvocateClerkService {
 
     @Autowired
     private WorkflowService workflowService;
-
-    @Autowired
-    private AdvocateClerkRegistrationRepository advocateRegistrationRepository;
 
     @Autowired
     private Producer producer;
