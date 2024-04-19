@@ -43,6 +43,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
                         .individualId(rs.getString("individualid"))
                         .isActive(rs.getBoolean("isactive"))
                         .additionalDetails(rs.getString("additionaldetails"))
+                        .status(rs.getString("status"))
                         .auditDetails(auditdetails)
                         .build();
             }

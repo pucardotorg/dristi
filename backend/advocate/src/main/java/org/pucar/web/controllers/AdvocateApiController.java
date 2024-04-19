@@ -73,7 +73,7 @@ public class AdvocateApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
             try {
-				List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria() );
+				List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus() );
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);

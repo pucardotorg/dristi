@@ -66,7 +66,7 @@ public class ClerkApiController {
 		String accept = request.getHeader("Accept");
 //		if (accept != null && accept.contains("application/json")) {
 			try {
-				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria());
+				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus());
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(response,HttpStatus.OK);

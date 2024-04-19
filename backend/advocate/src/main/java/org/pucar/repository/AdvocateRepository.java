@@ -33,12 +33,12 @@ public class AdvocateRepository {
     @Autowired
     private AdvocateDocumentRowMapper advocateDocumentRowMapper;
 
-    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria) {
+    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList) {
         List<Advocate> advocateList = new ArrayList<>();
         List<Document> advocateDocumentList = new ArrayList<>();
         List<Object> preparedStmtList = new ArrayList<>();
         List<Object> preparedStmtListDoc = new ArrayList<>();
-        String advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList);
+        String advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList);
         log.info("Final query: {}", advocateQuery);
         try {
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);

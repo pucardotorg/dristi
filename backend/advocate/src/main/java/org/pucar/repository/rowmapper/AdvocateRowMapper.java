@@ -48,6 +48,7 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
                             .additionalDetails(rs.getString("additionalDetails"))
                             .advocateType(rs.getString("advocatetype"))
                             .organisationID(UUID.fromString(rs.getString("organisationid")))
+                            .status(rs.getString("status"))
                             .auditDetails(auditdetails)
                             .build();
                 }

@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 @Component
 public class AdvocateQueryBuilder {
-    private static final String BASE_ATR_QUERY = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime ";
+    private static final String BASE_ATR_QUERY = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status ";
 
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid ";
     private static final String FROM_ADVOCATES_TABLE = " FROM dristi_advocate adv";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
 
-    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList) {
+    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList) {
         StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
         query.append(FROM_ADVOCATES_TABLE);
 
@@ -67,6 +67,16 @@ public class AdvocateQueryBuilder {
                         .append(")");
                 preparedStmtList.addAll(applicationNumbers);
             }
+
+            if (statusList!=null && !statusList.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("adv.status IN (")
+                        .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
+                        .append(")");
+                preparedStmtList.addAll(statusList);
+            }
+
+
 
             return query.toString();
         } catch (Exception e) {

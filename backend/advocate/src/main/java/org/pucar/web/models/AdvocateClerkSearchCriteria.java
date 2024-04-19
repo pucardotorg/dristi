@@ -31,7 +31,8 @@ public class AdvocateClerkSearchCriteria {
 	private String applicationNumber = null;
 
 	@JsonProperty("stateRegnNumber")
-
 	private String stateRegnNumber = null;
+
+
 
 }

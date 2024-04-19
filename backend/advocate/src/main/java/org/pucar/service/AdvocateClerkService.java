@@ -58,10 +58,10 @@ public class AdvocateClerkService {
         producer.push("save-advocate-clerk", body);
         return body.getClerks();
     }
-    public List<AdvocateClerk> searchAdvocateApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria) {
+    public List<AdvocateClerk> searchAdvocateApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList) {
         // Fetch applications from database according to the given search criteria
-        List<AdvocateClerk> applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria);
-
+        List<AdvocateClerk> applications = new ArrayList<>();
+        applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList);
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))
             return new ArrayList<>();
