@@ -107,13 +107,12 @@ public class UserUtil {
      * @param tenantId
      * @param userInfo
      */
-    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo, UserType userType){
+    public void addUserDefaultFields(String mobileNumber,String tenantId, User userInfo, String userType){
         Role role = getCitizenRole(tenantId);
-        userInfo.setRoles(Collections.singleton(role));
+        userInfo.setRoles((List<Role>) Collections.singleton(role));
         userInfo.setType(userType);
-        userInfo.setUsername(mobileNumber);
+        userInfo.setUserName(mobileNumber);
         userInfo.setTenantId(getStateLevelTenant(tenantId));
-        userInfo.setActive(true);
     }
 
     /**

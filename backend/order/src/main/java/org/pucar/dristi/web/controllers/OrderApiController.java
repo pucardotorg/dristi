@@ -1,38 +1,25 @@
 package org.pucar.dristi.web.controllers;
 
 
-import org.pucar.dristi.web.models.ErrorRes;
-import org.pucar.dristi.web.models.OrderExistsRequest;
-import org.pucar.dristi.web.models.OrderExistsResponse;
-import org.pucar.dristi.web.models.OrderListResponse;
-import org.pucar.dristi.web.models.OrderRequest;
-import org.pucar.dristi.web.models.OrderResponse;
-import java.util.UUID;
-    import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestMapping;
-import java.io.IOException;
-import java.util.*;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-    import jakarta.validation.constraints.*;
-    import jakarta.validation.Valid;
-    import jakarta.servlet.http.HttpServletRequest;
-        import java.util.Optional;
+import java.io.IOException;
+import java.util.UUID;
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:13:43.389623100+05:30[Asia/Calcutta]")
 @Controller
     @RequestMapping("")

@@ -1,17 +1,14 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import hearing.src.main.java.org.pucar.dristi.web.models.Hearing;
-import org.pucar.dristi.web.models.RequestInfo;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.egov.common.contract.request.RequestInfo;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * This object holds information about the hearing request

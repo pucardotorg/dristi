@@ -6,7 +6,7 @@ import org.pucar.dristi.web.models.ApplicationExistsResponse;
 import org.pucar.dristi.web.models.ApplicationListResponse;
 import org.pucar.dristi.web.models.ApplicationRequest;
 import org.pucar.dristi.web.models.ApplicationResponse;
-import org.pucar.dristi.web.models.ErrorRes;
+
 import java.util.UUID;
     import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
