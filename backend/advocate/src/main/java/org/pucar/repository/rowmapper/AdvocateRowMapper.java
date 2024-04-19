@@ -64,7 +64,7 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
 
     private void addChildrenToProperty(ResultSet rs, Advocate advocate)
             throws SQLException {
-        addDocumentToApplication(rs, advocate);
+//        addDocumentToApplication(rs, advocate);
     }
 
     private void addDocumentToApplication(ResultSet rs, Advocate advocateClerkApplication) throws SQLException {
