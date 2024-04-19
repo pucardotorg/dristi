@@ -166,7 +166,7 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                           );
                           return;
                         }
-                        Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.mobile);
+                        Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.userModel);
                       },
                       child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                   ),

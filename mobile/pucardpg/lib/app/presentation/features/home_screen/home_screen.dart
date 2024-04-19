@@ -12,7 +12,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class HomeScreen extends StatefulWidget with AppMixin{
 
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
 
   @override
   HomeScreenState createState() => HomeScreenState();

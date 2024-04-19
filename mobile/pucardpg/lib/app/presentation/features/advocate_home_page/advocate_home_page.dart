@@ -15,7 +15,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class AdvocateHomePage extends StatefulWidget with AppMixin{
 
-  const AdvocateHomePage({super.key});
+  AdvocateHomePage({super.key});
 
   @override
   AdvocateHomePageState createState() => AdvocateHomePageState();
