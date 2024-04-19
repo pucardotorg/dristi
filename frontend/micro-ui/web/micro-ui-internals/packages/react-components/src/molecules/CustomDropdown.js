@@ -63,12 +63,29 @@ or
       },
  *
  */
-const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyle, disable, type, additionalWrapperClass = "",mdmsv2=false,props}) => {
+const CustomDropdown = ({
+  t,
+  config,
+  inputRef,
+  label,
+  onChange,
+  value,
+  errorStyle,
+  disable,
+  type,
+  additionalWrapperClass = "",
+  mdmsv2 = false,
+  props,
+}) => {
   const master = { name: config?.mdmsConfig?.masterName };
   if (config?.mdmsConfig?.filter) {
     master["filter"] = config?.mdmsConfig?.filter;
   }
-  const { isLoading, data } = Digit.Hooks.useCustomMDMS(Digit.ULBService.getStateId(), config?.mdmsConfig?.moduleName, [master], {
+  const { isLoading, data } = Digit.Hooks.useCustomMDMS(
+    Digit.ULBService.getStateId(),
+    config?.mdmsConfig?.moduleName,
+    [master],
+    {
       select: config?.mdmsConfig?.select
         ? Digit.Utils.createFunction(config?.mdmsConfig?.select)
         : (data) => {
@@ -77,12 +94,13 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
               .filter((opt) => (opt?.hasOwnProperty("active") ? opt.active : true))
               .map((opt) => ({ ...opt, name: `${config?.mdmsConfig?.localePrefix}_${Digit.Utils.locale.getTransformedLocale(opt.code)}` }));
           },
-      enabled: (config?.mdmsConfig || config?.mdmsv2) ? true : false,
-    },mdmsv2);
+      enabled: config?.mdmsConfig || config?.mdmsv2 ? true : false,
+    },
+    mdmsv2
+  );
   if (isLoading) {
     return <Loader />;
   }
-
   // const getValue = () => {
   //   let selectedValue = ""
   //   if(data?.length === 1 || config?.options?.length === 1) {
@@ -93,8 +111,8 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
   //   return selectedValue
   // }
 
-  if(config?.optionsDisable && config?.options && config?.defaultOptions){
-    config?.options?.forEach(obj1 => obj1.isDisabled = config?.defaultOptions.some(obj2 => obj2.type === obj1.code));
+  if (config?.optionsDisable && config?.options && config?.defaultOptions) {
+    config?.options?.forEach((obj1) => (obj1.isDisabled = config?.defaultOptions.some((obj2) => obj2.type === obj1.code)));
   }
 
   return (
@@ -105,7 +123,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           {config.required ? " * " : null}
         </CardLabel> */}
 
-      { (config.allowMultiSelect && type==="dropdown") ?
+      {config.allowMultiSelect && type === "dropdown" ? (
         <div style={{ display: "grid", gridAutoFlow: "row" }}>
           <MultiSelectDropdown
             options={data || config?.options || []}
@@ -130,13 +148,14 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
                   );
             }}
             selected={props?.value || value}
-            defaultLabel={t(config?.defaultText) }
+            defaultLabel={t(config?.defaultText)}
             defaultUnit={t(config?.selectedText) || t("COMMON_SELECTED")}
             config={config}
             disable={disable}
             optionsDisable={config?.optionsDisable}
           />
-        </div> : type === "radio" ? (
+        </div>
+      ) : type === "radio" ? (
         <RadioButtons
           inputRef={inputRef}
           style={{ display: "flex", justifyContent: "flex-start", gap: "3rem", ...config.styles }}
@@ -173,8 +192,7 @@ const CustomDropdown = ({ t, config, inputRef, label, onChange, value, errorStyl
           errorStyle={errorStyle}
           optionCardStyles={config?.optionsCustomStyle}
         />
-      )
-      }
+      )}
     </React.Fragment>
   );
 };

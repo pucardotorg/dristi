@@ -44,6 +44,11 @@ const Registration = () => {
       setShowErrorToast(!validateFormData(data));
       return;
     }
+    const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
+    const aadharNumber = Digit?.SessionStorage?.get("aadharNumber");
+    const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadharNumber;
+    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "ADHAAR";
+    debugger;
     let Individual = {
       Individual: {
         tenantId: tenantId,
@@ -84,7 +89,12 @@ const Registration = () => {
             district: data?.addressDetails?.district,
           },
         ],
-        identifiers: [],
+        identifiers: [
+          {
+            identifierType: identifierType,
+            identifierId: identifierId,
+          },
+        ],
         isSystemUser: true,
         skills: [],
         additionalFields: {
@@ -92,17 +102,43 @@ const Registration = () => {
         },
         clientAuditDetails: {},
         auditDetails: {},
-        // clientReferenceId: Digit.UserService.getUser()?.info?.uuid,
       },
     };
     Digit.DRISTIService.postIndividualService(Individual, tenantId)
-      .then((result, err) => {
-        let getdata = { ...data, get: result };
-        console.log(getdata);
-        history.push(`/digit-ui/citizen/dristi/home/response`, "success");
+      .then(() => {
+        if (data?.clientDetails?.selectUserType?.serviceName) {
+          const data = {
+            advocates: [
+              {
+                tenantId: tenantId,
+                applicationNumber: "string",
+                barRegistrationNumber: "string",
+                advocateType: "PROSECUTOR, PUBLIC DEFENDER",
+                organisationID: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                individualId: "string",
+                isActive: true,
+                workflow: {
+                  action: "string",
+                  comment: "string",
+                  assignees: ["string"],
+                },
+                documents: [
+                  {
+                    id: "string",
+                    documentType: "string",
+                    fileStore: "string",
+                    documentUid: "string",
+                    additionalDetails: {},
+                  },
+                ],
+                additionalDetails: {},
+              },
+            ],
+          };
+          Digit.DRISTIService.complainantService(Individual, tenantId);
+        } else history.push(`/digit-ui/citizen/dristi/home/response`, "success");
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
         history.push(`/digit-ui/citizen/dristi/home/response`, "error");
       });
   };

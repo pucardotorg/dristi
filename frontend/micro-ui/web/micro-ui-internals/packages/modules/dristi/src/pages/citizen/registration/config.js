@@ -111,6 +111,9 @@ export const newConfig = [
               name: "locality",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
               },
               isMandatory: true,
             },
@@ -120,6 +123,9 @@ export const newConfig = [
               name: "doorNo",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
               },
               isMandatory: true,
             },
@@ -159,12 +165,14 @@ export const newConfig = [
                   name: "ADVOCATE",
                   showBarDetails: true,
                   isVerified: true,
+                  serviceName: "/advocate/v1/_create",
                 },
                 {
                   code: "ADVOCATE_CLERK",
                   name: "ADVOCATE CLERK",
                   showBarDetails: true,
                   isVerified: true,
+                  serviceName: "/clerk/v1/_create",
                 },
               ],
             },
@@ -176,6 +184,10 @@ export const newConfig = [
               isMandatory: true,
               isDependentOn: "selectUserType",
               optionsKey: "name",
+              optionsCustomStyle: {
+                maxHeight: 200,
+                overflowY: "scroll",
+              },
               options: [
                 {
                   code: "ANDAMAN & NICOBAR ISLANDS",
@@ -321,9 +333,6 @@ export const newConfig = [
               type: "text",
               name: "registrationNo",
               validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,
@@ -335,9 +344,6 @@ export const newConfig = [
               type: "documentUpload",
               name: "barCouncilId",
               validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                title: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,

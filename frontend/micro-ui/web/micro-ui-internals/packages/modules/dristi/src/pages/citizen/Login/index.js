@@ -6,7 +6,6 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectId from "./SelectId";
-import { UploadServices } from "../../../../../../libraries/src/services/atoms/UploadServices";
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -256,8 +255,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     Digit.SessionStorage.del("UploadedDocument");
     history.push(`${path}/aadhar-otp`);
   };
-  const onDocumentUpload = async (filedata, IdType, tenantId) => {
-    const fileUploadRes = await UploadServices.Filestorage("DRISTI", filedata, tenantId);
+  const onDocumentUpload = async (filedata, IdType) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType });
     Digit.SessionStorage.del("aadharNumber");
     history.push(`/digit-ui/citizen/dristi/home/register/user-registration`);

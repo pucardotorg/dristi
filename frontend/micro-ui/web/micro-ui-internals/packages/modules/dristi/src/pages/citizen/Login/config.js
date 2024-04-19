@@ -51,8 +51,8 @@ export const loginSteps = [
               disableFormValidation: false,
               options: [
                 {
-                  code: "Aadhar",
-                  name: "Aadhar",
+                  code: "ADHAAR",
+                  name: "ADHAAR",
                 },
                 {
                   code: "PAN",
@@ -66,7 +66,7 @@ export const loginSteps = [
               name: "ID_Proof",
               validation: {},
               clearFields: { aadharNumber: "" },
-              allowedFileTypes: /(.*?)(pdf)$/i,
+              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,

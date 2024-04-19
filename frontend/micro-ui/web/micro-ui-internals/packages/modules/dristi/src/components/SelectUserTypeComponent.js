@@ -130,7 +130,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     input.validation &&
                     !currentValue.match(Digit.Utils.getPattern(input.validation.patternType)) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                        <span style={{ color: "#FF0000" }}> {t("CORE_COMMON_INVALID")}</span>
+                        <span style={{ color: "#FF0000" }}> {t(input.validation?.title || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>
                     )}
                 </div>
