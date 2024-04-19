@@ -1,8 +1,5 @@
 name: dristi workflow
 on:
-  push:
-    branches:
-      -  user-registration-flow 
   workflow_dispatch:    
 jobs:
   docker_image-build:
