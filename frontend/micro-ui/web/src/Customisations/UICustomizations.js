@@ -6,11 +6,8 @@ import _ from "lodash";
 // these functions will act as middlewares
 var Digit = window.Digit || {};
 
-
-
 const businessServiceMap = {
- 
-  "muster roll": "MR"
+  "muster roll": "MR",
 };
 
 const inboxModuleNameMap = {
@@ -20,7 +17,6 @@ const inboxModuleNameMap = {
 export const UICustomizations = {
   businessServiceMap,
   updatePayload: (applicationDetails, data, action, businessService) => {
-    
     if (businessService === businessServiceMap.estimate) {
       const workflow = {
         comment: data.comments,
@@ -96,7 +92,7 @@ export const UICustomizations = {
         workflow,
       };
     }
-    if(businessService === businessServiceMap?.["works.purchase"]){
+    if (businessService === businessServiceMap?.["works.purchase"]) {
       const workflow = {
         comment: data.comments,
         documents: data?.documents?.map((document) => {
@@ -117,35 +113,41 @@ export const UICustomizations = {
       });
 
       const additionalFieldsToSet = {
-        projectId:applicationDetails.additionalDetails.projectId,
-        invoiceDate:applicationDetails.billDate,
-        invoiceNumber:applicationDetails.referenceId.split('_')?.[1],
-        contractNumber:applicationDetails.referenceId.split('_')?.[0],
-        documents:applicationDetails.additionalDetails.documents
-      }
+        projectId: applicationDetails.additionalDetails.projectId,
+        invoiceDate: applicationDetails.billDate,
+        invoiceNumber: applicationDetails.referenceId.split("_")?.[1],
+        contractNumber: applicationDetails.referenceId.split("_")?.[0],
+        documents: applicationDetails.additionalDetails.documents,
+      };
       return {
-        bill: {...applicationDetails,...additionalFieldsToSet},
+        bill: { ...applicationDetails, ...additionalFieldsToSet },
         workflow,
       };
     }
   },
-  enableModalSubmit:(businessService,action,setModalSubmit,data)=>{
-    if(businessService === businessServiceMap?.["muster roll"] && action.action==="APPROVE"){
-      setModalSubmit(data?.acceptTerms)
+  enableModalSubmit: (businessService, action, setModalSubmit, data) => {
+    if (
+      businessService === businessServiceMap?.["muster roll"] &&
+      action.action === "APPROVE"
+    ) {
+      setModalSubmit(data?.acceptTerms);
     }
   },
   enableHrmsSearch: (businessService, action) => {
     if (businessService === businessServiceMap.estimate) {
-      return action.action.includes("TECHNICALSANCTION") || action.action.includes("VERIFYANDFORWARD");
+      return (
+        action.action.includes("TECHNICALSANCTION") ||
+        action.action.includes("VERIFYANDFORWARD")
+      );
     }
     if (businessService === businessServiceMap.contract) {
       return action.action.includes("VERIFY_AND_FORWARD");
     }
-     if (businessService === businessServiceMap?.["muster roll"]) {
+    if (businessService === businessServiceMap?.["muster roll"]) {
       return action.action.includes("VERIFY");
     }
-    if(businessService === businessServiceMap?.["works.purchase"]){
-      return action.action.includes("VERIFY_AND_FORWARD")
+    if (businessService === businessServiceMap?.["works.purchase"]) {
+      return action.action.includes("VERIFY_AND_FORWARD");
     }
     return false;
   },
@@ -156,17 +158,13 @@ export const UICustomizations = {
       return businessServiceMap?.contract;
     } else if (moduleCode?.includes("muster roll")) {
       return businessServiceMap?.["muster roll"];
-    }
-    else if (moduleCode?.includes("works.purchase")) {
+    } else if (moduleCode?.includes("works.purchase")) {
       return businessServiceMap?.["works.purchase"];
-    }
-    else if (moduleCode?.includes("works.wages")) {
+    } else if (moduleCode?.includes("works.wages")) {
       return businessServiceMap?.["works.wages"];
-    }
-    else if (moduleCode?.includes("works.supervision")) {
+    } else if (moduleCode?.includes("works.supervision")) {
       return businessServiceMap?.["works.supervision"];
-    }
-    else {
+    } else {
       return businessServiceMap;
     }
   },
@@ -184,16 +182,17 @@ export const UICustomizations = {
 
   AttendanceInboxConfig: {
     preProcess: (data) => {
-      
       //set tenantId
       data.body.inbox.tenantId = Digit.ULBService.getCurrentTenantId();
       data.body.inbox.processSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
       const musterRollNumber = data?.body?.inbox?.moduleSearchCriteria?.musterRollNumber?.trim();
-      if(musterRollNumber) data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber
+      if (musterRollNumber)
+        data.body.inbox.moduleSearchCriteria.musterRollNumber = musterRollNumber;
 
       const attendanceRegisterName = data?.body?.inbox?.moduleSearchCriteria?.attendanceRegisterName?.trim();
-      if(attendanceRegisterName) data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName
+      if (attendanceRegisterName)
+        data.body.inbox.moduleSearchCriteria.attendanceRegisterName = attendanceRegisterName;
 
       // deleting them for now(assignee-> need clarity from pintu,ward-> static for now,not implemented BE side)
       const assignee = _.clone(data.body.inbox.moduleSearchCriteria.assignee);
@@ -204,11 +203,16 @@ export const UICustomizations = {
 
       //cloning locality and workflow states to format them
       // let locality = _.clone(data.body.inbox.moduleSearchCriteria.locality ? data.body.inbox.moduleSearchCriteria.locality : []);
-      
-      let selectedOrg =  _.clone(data.body.inbox.moduleSearchCriteria.orgId ? data.body.inbox.moduleSearchCriteria.orgId : null);
+
+      let selectedOrg = _.clone(
+        data.body.inbox.moduleSearchCriteria.orgId
+          ? data.body.inbox.moduleSearchCriteria.orgId
+          : null
+      );
       delete data.body.inbox.moduleSearchCriteria.orgId;
-      if(selectedOrg) {
-         data.body.inbox.moduleSearchCriteria.orgId = selectedOrg?.[0]?.applicationNumber;
+      if (selectedOrg) {
+        data.body.inbox.moduleSearchCriteria.orgId =
+          selectedOrg?.[0]?.applicationNumber;
       }
 
       // let selectedWard =  _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : null);
@@ -217,8 +221,16 @@ export const UICustomizations = {
       //    data.body.inbox.moduleSearchCriteria.ward = selectedWard?.[0]?.code;
       // }
 
-      let states = _.clone(data.body.inbox.moduleSearchCriteria.state ? data.body.inbox.moduleSearchCriteria.state : []);
-      let ward = _.clone(data.body.inbox.moduleSearchCriteria.ward ? data.body.inbox.moduleSearchCriteria.ward : []);
+      let states = _.clone(
+        data.body.inbox.moduleSearchCriteria.state
+          ? data.body.inbox.moduleSearchCriteria.state
+          : []
+      );
+      let ward = _.clone(
+        data.body.inbox.moduleSearchCriteria.ward
+          ? data.body.inbox.moduleSearchCriteria.ward
+          : []
+      );
       // delete data.body.inbox.moduleSearchCriteria.locality;
       delete data.body.inbox.moduleSearchCriteria.state;
       delete data.body.inbox.moduleSearchCriteria.ward;
@@ -226,30 +238,42 @@ export const UICustomizations = {
       // locality = locality?.map((row) => row?.code);
       states = Object.keys(states)?.filter((key) => states[key]);
       ward = ward?.map((row) => row?.code);
-      
-      
+
       // //adding formatted data to these keys
       // if (locality.length > 0) data.body.inbox.moduleSearchCriteria.locality = locality;
-      if (states.length > 0) data.body.inbox.moduleSearchCriteria.status = states;  
+      if (states.length > 0)
+        data.body.inbox.moduleSearchCriteria.status = states;
       if (ward.length > 0) data.body.inbox.moduleSearchCriteria.ward = ward;
-      const projectType = _.clone(data.body.inbox.moduleSearchCriteria.projectType ? data.body.inbox.moduleSearchCriteria.projectType : {});
-      if (projectType?.code) data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
+      const projectType = _.clone(
+        data.body.inbox.moduleSearchCriteria.projectType
+          ? data.body.inbox.moduleSearchCriteria.projectType
+          : {}
+      );
+      if (projectType?.code)
+        data.body.inbox.moduleSearchCriteria.projectType = projectType.code;
 
       //adding tenantId to moduleSearchCriteria
       data.body.inbox.moduleSearchCriteria.tenantId = Digit.ULBService.getCurrentTenantId();
 
-      //setting limit and offset becoz somehow they are not getting set in muster inbox 
-      data.body.inbox .limit = data.state.tableForm.limit
-      data.body.inbox.offset = data.state.tableForm.offset
-      delete data.state
+      //setting limit and offset becoz somehow they are not getting set in muster inbox
+      data.body.inbox.limit = data.state.tableForm.limit;
+      data.body.inbox.offset = data.state.tableForm.offset;
+      delete data.state;
       return data;
     },
     postProcess: (responseArray, uiConfig) => {
       const statusOptions = responseArray?.statusMap
         ?.filter((item) => item.applicationstatus)
-        ?.map((item) => ({ code: item.applicationstatus, i18nKey: `COMMON_MASTERS_${item.applicationstatus}` }));
+        ?.map((item) => ({
+          code: item.applicationstatus,
+          i18nKey: `COMMON_MASTERS_${item.applicationstatus}`,
+        }));
       if (uiConfig?.type === "filter") {
-        let fieldConfig = uiConfig?.fields?.filter((item) => item.type === "dropdown" && item.populators.name === "musterRollStatus");
+        let fieldConfig = uiConfig?.fields?.filter(
+          (item) =>
+            item.type === "dropdown" &&
+            item.populators.name === "musterRollStatus"
+        );
         if (fieldConfig.length) {
           fieldConfig[0].populators.options = statusOptions;
         }
@@ -260,15 +284,26 @@ export const UICustomizations = {
         return (
           <span className="link">
             <Link
-              to={`/${window.contextPath}/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
+              to={`/${
+                window.contextPath
+              }/employee/attendencemgmt/view-attendance?tenantId=${Digit.ULBService.getCurrentTenantId()}&musterRollNumber=${value}`}
             >
-              {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              {String(
+                value
+                  ? column.translate
+                    ? t(column.prefix ? `${column.prefix}${value}` : value)
+                    : value
+                  : t("ES_COMMON_NA")
+              )}
             </Link>
           </span>
         );
       }
       if (key === "ATM_ATTENDANCE_WEEK") {
-        const week = `${Digit.DateUtils.ConvertTimestampToDate(value?.startDate, "dd/MM/yyyy")}-${Digit.DateUtils.ConvertTimestampToDate(
+        const week = `${Digit.DateUtils.ConvertTimestampToDate(
+          value?.startDate,
+          "dd/MM/yyyy"
+        )}-${Digit.DateUtils.ConvertTimestampToDate(
           value?.endDate,
           "dd/MM/yyyy"
         )}`;
@@ -277,8 +312,14 @@ export const UICustomizations = {
       if (key === "ATM_NO_OF_INDIVIDUALS") {
         return <div>{value?.length}</div>;
       }
-      if(key === "ATM_AMOUNT_IN_RS"){
-        return <span>{value ? Digit.Utils.dss.formatterWithoutRound(value, "number") : t("ES_COMMON_NA")}</span>;
+      if (key === "ATM_AMOUNT_IN_RS") {
+        return (
+          <span>
+            {value
+              ? Digit.Utils.dss.formatterWithoutRound(value, "number")
+              : t("ES_COMMON_NA")}
+          </span>
+        );
       }
       if (key === "ATM_SLA") {
         return parseInt(value) > 0 ? (
@@ -288,10 +329,10 @@ export const UICustomizations = {
         );
       }
       if (key === "COMMON_WORKFLOW_STATES") {
-        return <span>{t(`WF_MUSTOR_${value}`)}</span>
+        return <span>{t(`WF_MUSTOR_${value}`)}</span>;
       }
       //added this in case we change the key and not updated here , it'll throw that nothing was returned from cell error if that case is not handled here. To prevent that error putting this default
-      return <span>{t(`CASE_NOT_HANDLED`)}</span>
+      return <span>{t(`CASE_NOT_HANDLED`)}</span>;
     },
     MobileDetailsOnClick: (row, tenantId) => {
       let link;
@@ -309,9 +350,9 @@ export const UICustomizations = {
         body: {
           SearchCriteria: {
             tenantId: tenantId,
-            functions : {
-              type : "CBO"
-            }
+            functions: {
+              type: "CBO",
+            },
           },
         },
         config: {
@@ -323,17 +364,23 @@ export const UICustomizations = {
       };
     },
   },
-  SearchWageSeekerConfig:  {
+  SearchWageSeekerConfig: {
     customValidationCheck: (data) => {
       //checking both to and from date are present
       const { createdFrom, createdTo } = data;
-      if ((createdFrom === "" && createdTo !== "") || (createdFrom !== "" && createdTo === ""))
+      if (
+        (createdFrom === "" && createdTo !== "") ||
+        (createdFrom !== "" && createdTo === "")
+      )
         return { warning: true, label: "ES_COMMON_ENTER_DATE_RANGE" };
 
       return false;
     },
     preProcess: (data) => {
-      data.params = { ...data.params, tenantId: Digit.ULBService.getCurrentTenantId() };
+      data.params = {
+        ...data.params,
+        tenantId: Digit.ULBService.getCurrentTenantId(),
+      };
 
       let requestBody = { ...data.body.Individual };
       const pathConfig = {
@@ -347,7 +394,7 @@ export const UICustomizations = {
         wardCode: "wardCode[0].code",
         socialCategory: "socialCategory.code",
       };
-      const textConfig = ["name", "individualId"]
+      const textConfig = ["name", "individualId"];
       let Individual = Object.keys(requestBody)
         .map((key) => {
           if (selectConfig[key]) {
@@ -355,7 +402,7 @@ export const UICustomizations = {
           } else if (typeof requestBody[key] == "object") {
             requestBody[key] = requestBody[key]?.code;
           } else if (textConfig?.includes(key)) {
-            requestBody[key] = requestBody[key]?.trim()
+            requestBody[key] = requestBody[key]?.trim();
           }
           return key;
         })
@@ -364,7 +411,14 @@ export const UICustomizations = {
           if (pathConfig[curr]) {
             _.set(acc, pathConfig[curr], requestBody[curr]);
           } else if (dateConfig[curr] && dateConfig[curr]?.includes("day")) {
-            _.set(acc, curr, Digit.Utils.date.convertDateToEpoch(requestBody[curr], dateConfig[curr]));
+            _.set(
+              acc,
+              curr,
+              Digit.Utils.date.convertDateToEpoch(
+                requestBody[curr],
+                dateConfig[curr]
+              )
+            );
           } else {
             _.set(acc, curr, requestBody[curr]);
           }
@@ -382,28 +436,56 @@ export const UICustomizations = {
         case "MASTERS_WAGESEEKER_ID":
           return (
             <span className="link">
-              <Link to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}>
-                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              <Link
+                to={`/${window.contextPath}/employee/masters/view-wageseeker?tenantId=${row?.tenantId}&individualId=${value}`}
+              >
+                {String(
+                  value
+                    ? column.translate
+                      ? t(column.prefix ? `${column.prefix}${value}` : value)
+                      : value
+                    : t("ES_COMMON_NA")
+                )}
               </Link>
             </span>
           );
 
         case "MASTERS_SOCIAL_CATEGORY":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(`MASTERS_${value}`))}</span> : t("ES_COMMON_NA");
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>
+              {String(t(`MASTERS_${value}`))}
+            </span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
 
         case "CORE_COMMON_PROFILE_CITY":
-          return value ? <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getCityLocale(value)))}</span> : t("ES_COMMON_NA");
+          return value ? (
+            <span style={{ whiteSpace: "nowrap" }}>
+              {String(t(Digit.Utils.locale.getCityLocale(value)))}
+            </span>
+          ) : (
+            t("ES_COMMON_NA")
+          );
 
         case "MASTERS_WARD":
           return value ? (
-            <span style={{ whiteSpace: "nowrap" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+            <span style={{ whiteSpace: "nowrap" }}>
+              {String(
+                t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))
+              )}
+            </span>
           ) : (
             t("ES_COMMON_NA")
           );
 
         case "MASTERS_LOCALITY":
           return value ? (
-            <span style={{ whiteSpace: "break-spaces" }}>{String(t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId)))}</span>
+            <span style={{ whiteSpace: "break-spaces" }}>
+              {String(
+                t(Digit.Utils.locale.getMohallaLocale(value, row?.tenantId))
+              )}
+            </span>
           ) : (
             t("ES_COMMON_NA")
           );
@@ -421,8 +503,63 @@ export const UICustomizations = {
     },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
-        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+        return data[keys.start] && data[keys.end]
+          ? () =>
+              new Date(data[keys.start]).getTime() <=
+              new Date(data[keys.end]).getTime()
+          : true;
       }
-    }
+    },
+  },
+  registrationRequestsConfig: {
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end]
+          ? () =>
+              new Date(data[keys.start]).getTime() <=
+              new Date(data[keys.end]).getTime()
+          : true;
+      }
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Application No":
+          return (
+            <span className="link">
+              <Link
+                to={`/digit-ui/employee/dristi/registration-requests/details/${value}`}
+              >
+                {String(
+                  value
+                    ? column.translate
+                      ? t(column.prefix ? `${column.prefix}${value}` : value)
+                      : value
+                    : t("ES_COMMON_NA")
+                )}
+              </Link>
+            </span>
+          );
+        case "Action":
+          return (
+            <Link
+              style={{
+                border: "1px solid #F47738",
+                color: "#F47738",
+                padding: "10px",
+                width: "100px",
+                display: "block",
+                textAlign: "center",
+                textDecoration: "none",
+              }}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${value}?isAction=true`}
+            >
+              {" "}
+              {t("Verify")}
+            </Link>
+          );
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
   },
 };

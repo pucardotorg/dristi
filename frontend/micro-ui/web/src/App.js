@@ -9,28 +9,25 @@ import {
   initPGRComponents,
   PGRReducers,
 } from "@egovernments/digit-ui-module-pgr";
-import { DigitUI,initCoreComponents } from "@egovernments/digit-ui-module-core";
+import {
+  DigitUI,
+  initCoreComponents,
+} from "@egovernments/digit-ui-module-core";
 import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
 import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { UICustomizations } from "./Customisations/UICustomizations";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
+import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
-const enabledModules = [
-  "DSS",
-  "NDSS",
-  "Utilities",
-  "HRMS",
-  "Engagement",
-  "Workbench",
-  "PGR"
-];
+const enabledModules = ["DRISTI"];
 
 const moduleReducers = (initData) => ({
-  initData, pgr: PGRReducers(initData),
+  initData,
+  pgr: PGRReducers(initData),
 });
 
 const initDigitUI = () => {
@@ -46,6 +43,7 @@ const initDigitUI = () => {
   initEngagementComponents();
   initUtilitiesComponents();
   initWorkbenchComponents();
+  initDRISTIComponents();
 
   window.Digit.Customizations = {
     PGR: {},
