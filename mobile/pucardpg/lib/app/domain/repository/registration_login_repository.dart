@@ -21,7 +21,7 @@ abstract class RegistrationLoginRepository {
   Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(AdvocateRegistrationRequest advocateRegistrationRequest);
 
   Future<DataState<String>> getFileStore(MultipartFile multipartFile, File file);
-// Future<DataState<List<BirthRegistrationApplicationModel>>> getBirthRegistrationsSearches(String search);
+
   Future<DataState<AuthResponse>> getAuthResponse(String username, String password);
 
   Future<DataState<AuthResponse>> createCitizen(CitizenRegistrationRequest citizenRegistrationRequest);

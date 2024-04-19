@@ -12,6 +12,7 @@ import 'package:pucardpg/app/domain/repository/registration_login_repository.dar
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
+import 'package:pucardpg/app/data/models/request-info-model/request_info.dart' as r;
 
 class LoginUseCase {
 
@@ -87,7 +88,7 @@ class LoginUseCase {
       ),
     );
 
-    RequestInfo requestInfo = RequestInfo(
+    r.RequestInfo requestInfo = r.RequestInfo(
       authToken: userModel.authToken!
     );
 
