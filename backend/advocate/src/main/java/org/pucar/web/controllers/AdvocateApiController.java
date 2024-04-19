@@ -1,6 +1,5 @@
 package org.pucar.web.controllers;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -71,11 +70,13 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null && accept.contains("*/*")) {
 			try {
 				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.searchAdvocates(body);
-				return new ResponseEntity<>(response, HttpStatus.OK);
+				List<Advocate> response = advocateService.searchAdvocates(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -88,11 +89,13 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+		if (accept != null && accept.contains("*/*")) {
 			try {
 				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.updateAdvocate(body);
-				return new ResponseEntity<>(response, HttpStatus.OK);
+				List<Advocate> response = advocateService.updateAdvocate(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}

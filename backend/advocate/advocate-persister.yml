@@ -1,5 +1,5 @@
 serviceMaps:
-  serviceName: adv-services
+  serviceName: advocate-services
   mappings:
     - version: 1.0
       description: Persists advocate details in tables
@@ -8,31 +8,29 @@ serviceMaps:
       queryMaps:
 
         - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,barRegistrationNumber,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-          basePath: Advocate.*
+          basePath: advocates.*
           jsonMaps:
-            - jsonPath: $.Advocate.*.id
+            - jsonPath: $.advocates.*.id
 
-            - jsonPath: $.Advocate.*.tenantId
+            - jsonPath: $.advocates.*.tenantId
 
-            - jsonPath: $.Advocate.*.applicationNumber
+            - jsonPath: $.advocates.*.applicationNumber
           
-            - jsonPath: $.Advocate.*.barRegistrationNumber
+            - jsonPath: $.advocates.*.barRegistrationNumber
             
-            - jsonPath: $.Advocate.*.organisationID
+            - jsonPath: $.advocates.*.organisationID
           
-            - jsonPath: $.Advocate.*.individualId
-            
-            - jsonPath: $.Advocate.*.isActive
+            - jsonPath: $.advocates.*.individualId
+
+            - jsonPath: $.advocates.*.isActive
                                            
-            - jsonPath: $.Advocate.*.additionalDetails
-               type:JSON
-               dbType:JSONB
+            - jsonPath: $.advocates.*.additionalDetails
 
-            - jsonPath: $.Advocate.*.auditDetails.createdBy
+            - jsonPath: $.advocates.*.auditDetails.createdBy
 
-            - jsonPath: $.Advocate.*.auditDetails.lastModifiedBy
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedBy
 
-            - jsonPath: $.Advocate.*.auditDetails.createdTime
+            - jsonPath: $.advocates.*.auditDetails.createdTime
 
-            - jsonPath: $.Advocate.*.auditDetails.lastModifiedTime
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedTime
 

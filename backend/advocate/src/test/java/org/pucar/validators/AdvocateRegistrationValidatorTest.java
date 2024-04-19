@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.pucar.repository.AdvocateRegistrationRepository;
+import org.pucar.repository.AdvocateRepository;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class AdvocateRegistrationValidatorTest {
 
     @Mock
-    private AdvocateRegistrationRepository repository;
+    private AdvocateRepository repository;
 
     @InjectMocks
     private AdvocateRegistrationValidator validator;

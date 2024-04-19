@@ -12,11 +12,10 @@ import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
-import org.pucar.repository.AdvocateRegistrationRepository;
+import org.pucar.repository.AdvocateRepository;
 import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
-import org.pucar.web.models.AdvocateResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +36,7 @@ public class AdvocateServiceTest {
     private WorkflowService workflowService;
 
     @Mock
-    private AdvocateRegistrationRepository advocateRegistrationRepository;
+    private AdvocateRepository advocateRegistrationRepository;
 
     @Mock
     private Producer producer;

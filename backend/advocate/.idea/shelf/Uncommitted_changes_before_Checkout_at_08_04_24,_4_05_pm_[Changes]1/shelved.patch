@@ -1,0 +1,161 @@
+Index: src/main/java/org/pucar/web/controllers/AdvocateApiController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.pucar.web.controllers;\n\nimport java.io.IOException;\nimport java.util.List;\n\nimport org.egov.common.contract.response.ResponseInfo;\nimport org.pucar.service.AdvocateRegistrationService;\nimport org.pucar.util.ResponseInfoFactory;\nimport org.pucar.web.models.Advocate;\nimport org.pucar.web.models.AdvocateRequest;\nimport org.pucar.web.models.AdvocateResponse;\nimport org.pucar.web.models.AdvocateSearchRequest;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.http.HttpStatus;\nimport org.springframework.http.ResponseEntity;\nimport org.springframework.stereotype.Controller;\nimport org.springframework.web.bind.annotation.RequestBody;\nimport org.springframework.web.bind.annotation.RequestMapping;\nimport org.springframework.web.bind.annotation.RequestMethod;\n\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\nimport io.swagger.v3.oas.annotations.Parameter;\nimport io.swagger.v3.oas.annotations.enums.ParameterIn;\nimport io.swagger.v3.oas.annotations.media.Schema;\nimport jakarta.servlet.http.HttpServletRequest;\nimport jakarta.validation.Valid;\n\n@jakarta.annotation.Generated(value = \"org.egov.codegen.SpringBootCodegen\", date = \"2024-04-04T05:55:27.937918+05:30[Asia/Kolkata]\")\n@Controller\n@RequestMapping(\"\")\npublic class AdvocateApiController {\n\n\tprivate final ObjectMapper objectMapper;\n\n\tprivate final HttpServletRequest request;\n\n\t@Autowired\n\tprivate AdvocateRegistrationService advocateRegistrationService;\n\n\t@Autowired\n\tprivate ResponseInfoFactory responseInfoFactory;\n\n\t@Autowired\n\tpublic AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {\n\t\tthis.objectMapper = objectMapper;\n\t\tthis.request = request;\n\t}\n\n\t@RequestMapping(value = \"/advocate/v1/_create\", method = RequestMethod.POST)\n\tpublic ResponseEntity<AdvocateResponse> advocateV1CreatePost(\n\t\t\t@Parameter(in = ParameterIn.DEFAULT, description = \"Details for the user registration + RequestInfo meta data.\", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {\n\t\t\tList<Advocate> advocateList = advocateRegistrationService.registerAdvocateRequest(body);\n\t\t\tResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);\n\t\t\tAdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();\n\t\t\treturn new ResponseEntity<>(advocateResponse, HttpStatus.OK);\n\t}\n\n\t@RequestMapping(value = \"/advocate/v1/_search\", method = RequestMethod.POST)\n\tpublic ResponseEntity<AdvocateResponse> advocateV1SearchPost(\n\t\t\t@Parameter(in = ParameterIn.DEFAULT, description = \"Search criteria + RequestInfo meta data.\", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {\n\t\tString accept = request.getHeader(\"Accept\");\n\t\tif (accept != null && accept.contains(\"application/json\")) {\n\t\t\ttry {\n\t\t\t\treturn new ResponseEntity<AdvocateResponse>(objectMapper.readValue(\n\t\t\t\t\t\t\"{  \\\"pagination\\\" : {    \\\"offSet\\\" : 5.637376656633329,    \\\"limit\\\" : 59.621339166831824,    \\\"sortBy\\\" : \\\"sortBy\\\",    \\\"totalCount\\\" : 2.3021358869347655,    \\\"order\\\" : \\\"\\\"  },  \\\"advocates\\\" : [ {    \\\"barRegistrationNumber\\\" : \\\"barRegistrationNumber\\\",    \\\"advocateType\\\" : \\\"PROSECUTOR, PUBLIC DEFENDER\\\",    \\\"organisationID\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"workflow\\\" : {      \\\"action\\\" : \\\"action\\\",      \\\"assignees\\\" : [ \\\"assignees\\\", \\\"assignees\\\" ],      \\\"comment\\\" : \\\"comment\\\"    },    \\\"applicationNumber\\\" : \\\"applicationNumber\\\",    \\\"documents\\\" : [ {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    }, {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    } ],    \\\"auditDetails\\\" : {      \\\"lastModifiedTime\\\" : 1,      \\\"createdBy\\\" : \\\"createdBy\\\",      \\\"lastModifiedBy\\\" : \\\"lastModifiedBy\\\",      \\\"createdTime\\\" : 6    },    \\\"tenantId\\\" : \\\"tenantId\\\",    \\\"id\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"individualId\\\" : \\\"individualId\\\",    \\\"isActive\\\" : true,    \\\"additionalDetails\\\" : { }  }, {    \\\"barRegistrationNumber\\\" : \\\"barRegistrationNumber\\\",    \\\"advocateType\\\" : \\\"PROSECUTOR, PUBLIC DEFENDER\\\",    \\\"organisationID\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"workflow\\\" : {      \\\"action\\\" : \\\"action\\\",      \\\"assignees\\\" : [ \\\"assignees\\\", \\\"assignees\\\" ],      \\\"comment\\\" : \\\"comment\\\"    },    \\\"applicationNumber\\\" : \\\"applicationNumber\\\",    \\\"documents\\\" : [ {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    }, {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    } ],    \\\"auditDetails\\\" : {      \\\"lastModifiedTime\\\" : 1,      \\\"createdBy\\\" : \\\"createdBy\\\",      \\\"lastModifiedBy\\\" : \\\"lastModifiedBy\\\",      \\\"createdTime\\\" : 6    },    \\\"tenantId\\\" : \\\"tenantId\\\",    \\\"id\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"individualId\\\" : \\\"individualId\\\",    \\\"isActive\\\" : true,    \\\"additionalDetails\\\" : { }  } ],  \\\"responseInfo\\\" : {    \\\"ver\\\" : \\\"ver\\\",    \\\"resMsgId\\\" : \\\"resMsgId\\\",    \\\"msgId\\\" : \\\"msgId\\\",    \\\"apiId\\\" : \\\"apiId\\\",    \\\"ts\\\" : 0,    \\\"status\\\" : \\\"SUCCESSFUL\\\"  }}\",\n\t\t\t\t\t\tAdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);\n\t\t\t} catch (IOException e) {\n\t\t\t\treturn new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);\n\t\t\t}\n\t\t}\n\n\t\treturn new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);\n\t}\n\n\t@RequestMapping(value = \"/advocate/v1/_update\", method = RequestMethod.POST)\n\tpublic ResponseEntity<AdvocateResponse> advocateV1UpdatePost(\n\t\t\t@Parameter(in = ParameterIn.DEFAULT, description = \"Details of the registered advocate + RequestInfo meta data.\", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {\n\t\tString accept = request.getHeader(\"Accept\");\n\t\tif (accept != null && accept.contains(\"application/json\")) {\n\t\t\ttry {\n\t\t\t\treturn new ResponseEntity<AdvocateResponse>(objectMapper.readValue(\n\t\t\t\t\t\t\"{  \\\"pagination\\\" : {    \\\"offSet\\\" : 5.637376656633329,    \\\"limit\\\" : 59.621339166831824,    \\\"sortBy\\\" : \\\"sortBy\\\",    \\\"totalCount\\\" : 2.3021358869347655,    \\\"order\\\" : \\\"\\\"  },  \\\"advocates\\\" : [ {    \\\"barRegistrationNumber\\\" : \\\"barRegistrationNumber\\\",    \\\"advocateType\\\" : \\\"PROSECUTOR, PUBLIC DEFENDER\\\",    \\\"organisationID\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"workflow\\\" : {      \\\"action\\\" : \\\"action\\\",      \\\"assignees\\\" : [ \\\"assignees\\\", \\\"assignees\\\" ],      \\\"comment\\\" : \\\"comment\\\"    },    \\\"applicationNumber\\\" : \\\"applicationNumber\\\",    \\\"documents\\\" : [ {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    }, {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    } ],    \\\"auditDetails\\\" : {      \\\"lastModifiedTime\\\" : 1,      \\\"createdBy\\\" : \\\"createdBy\\\",      \\\"lastModifiedBy\\\" : \\\"lastModifiedBy\\\",      \\\"createdTime\\\" : 6    },    \\\"tenantId\\\" : \\\"tenantId\\\",    \\\"id\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"individualId\\\" : \\\"individualId\\\",    \\\"isActive\\\" : true,    \\\"additionalDetails\\\" : { }  }, {    \\\"barRegistrationNumber\\\" : \\\"barRegistrationNumber\\\",    \\\"advocateType\\\" : \\\"PROSECUTOR, PUBLIC DEFENDER\\\",    \\\"organisationID\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"workflow\\\" : {      \\\"action\\\" : \\\"action\\\",      \\\"assignees\\\" : [ \\\"assignees\\\", \\\"assignees\\\" ],      \\\"comment\\\" : \\\"comment\\\"    },    \\\"applicationNumber\\\" : \\\"applicationNumber\\\",    \\\"documents\\\" : [ {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    }, {      \\\"documentType\\\" : \\\"documentType\\\",      \\\"documentUid\\\" : \\\"documentUid\\\",      \\\"fileStore\\\" : \\\"fileStore\\\",      \\\"id\\\" : \\\"id\\\",      \\\"additionalDetails\\\" : { }    } ],    \\\"auditDetails\\\" : {      \\\"lastModifiedTime\\\" : 1,      \\\"createdBy\\\" : \\\"createdBy\\\",      \\\"lastModifiedBy\\\" : \\\"lastModifiedBy\\\",      \\\"createdTime\\\" : 6    },    \\\"tenantId\\\" : \\\"tenantId\\\",    \\\"id\\\" : \\\"046b6c7f-0b8a-43b9-b35d-6489e6daee91\\\",    \\\"individualId\\\" : \\\"individualId\\\",    \\\"isActive\\\" : true,    \\\"additionalDetails\\\" : { }  } ],  \\\"responseInfo\\\" : {    \\\"ver\\\" : \\\"ver\\\",    \\\"resMsgId\\\" : \\\"resMsgId\\\",    \\\"msgId\\\" : \\\"msgId\\\",    \\\"apiId\\\" : \\\"apiId\\\",    \\\"ts\\\" : 0,    \\\"status\\\" : \\\"SUCCESSFUL\\\"  }}\",\n\t\t\t\t\t\tAdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);\n\t\t\t} catch (IOException e) {\n\t\t\t\treturn new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);\n\t\t\t}\n\t\t}\n\n\t\treturn new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);\n\t}\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/pucar/web/controllers/AdvocateApiController.java b/src/main/java/org/pucar/web/controllers/AdvocateApiController.java
+--- a/src/main/java/org/pucar/web/controllers/AdvocateApiController.java	
++++ b/src/main/java/org/pucar/web/controllers/AdvocateApiController.java	
+@@ -1,12 +1,7 @@
+ package org.pucar.web.controllers;
+ 
+-import java.io.IOException;
+-import java.util.List;
+-
+-import org.egov.common.contract.response.ResponseInfo;
+ import org.pucar.service.AdvocateRegistrationService;
+ import org.pucar.util.ResponseInfoFactory;
+-import org.pucar.web.models.Advocate;
+ import org.pucar.web.models.AdvocateRequest;
+ import org.pucar.web.models.AdvocateResponse;
+ import org.pucar.web.models.AdvocateSearchRequest;
+@@ -36,7 +31,7 @@
+ 	private final HttpServletRequest request;
+ 
+ 	@Autowired
+-	private AdvocateRegistrationService advocateRegistrationService;
++	private AdvocateRegistrationService advocateService;
+ 
+ 	@Autowired
+ 	private ResponseInfoFactory responseInfoFactory;
+@@ -50,10 +45,13 @@
+ 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
+ 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
+ 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
+-			List<Advocate> advocateList = advocateRegistrationService.registerAdvocateRequest(body);
+-			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+-			AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+-			return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
++		String accept = request.getHeader("Accept");
++		if (accept != null && accept.contains("application/json")) {
++            // Example after implementing a service layer
++            AdvocateResponse response = advocateService.createAdvocate(body);
++            return new ResponseEntity<>(response, HttpStatus.OK);
++        }
++		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+ 	}
+ 
+ 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
+@@ -61,14 +59,10 @@
+ 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {
+ 		String accept = request.getHeader("Accept");
+ 		if (accept != null && accept.contains("application/json")) {
+-			try {
+-				return new ResponseEntity<AdvocateResponse>(objectMapper.readValue(
+-						"{  \"pagination\" : {    \"offSet\" : 5.637376656633329,    \"limit\" : 59.621339166831824,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 2.3021358869347655,    \"order\" : \"\"  },  \"advocates\" : [ {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  }, {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  } ],  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
+-						AdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);
+-			} catch (IOException e) {
+-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+-			}
+-		}
++            // Example after implementing a service layer
++            AdvocateResponse response = advocateService.searchAdvocates(body);
++            return new ResponseEntity<>(response, HttpStatus.OK);
++        }
+ 
+ 		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+ 	}
+@@ -78,14 +72,10 @@
+ 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
+ 		String accept = request.getHeader("Accept");
+ 		if (accept != null && accept.contains("application/json")) {
+-			try {
+-				return new ResponseEntity<AdvocateResponse>(objectMapper.readValue(
+-						"{  \"pagination\" : {    \"offSet\" : 5.637376656633329,    \"limit\" : 59.621339166831824,    \"sortBy\" : \"sortBy\",    \"totalCount\" : 2.3021358869347655,    \"order\" : \"\"  },  \"advocates\" : [ {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  }, {    \"barRegistrationNumber\" : \"barRegistrationNumber\",    \"advocateType\" : \"PROSECUTOR, PUBLIC DEFENDER\",    \"organisationID\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"applicationNumber\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { }  } ],  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}",
+-						AdvocateResponse.class), HttpStatus.NOT_IMPLEMENTED);
+-			} catch (IOException e) {
+-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+-			}
+-		}
++            // Example after implementing a service layer
++            AdvocateResponse response = advocateService.updateAdvocate(body);
++            return new ResponseEntity<>(response, HttpStatus.OK);
++        }
+ 
+ 		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+ 	}
+Index: src/main/resources/db.migration.main/V20240403110535__advocate__ddl.sql
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>CREATE TABLE dristi_advocate (\n                             id varchar(64) NOT NULL PRIMARY KEY,\n                             tenantId varchar(1000) NOT NULL,\n                             applicationNumber varchar(64) NULL,\n                             barRegistrationNumber varchar(64) NULL,\n                             organisationID varchar(64) NULL,\n                             individualId varchar(64) NULL,\n                             isActive bool NULL,\n                             additionalDetails jsonb NULL,\n                             createdBy varchar(64) NULL,\n                             lastModifiedBy varchar(64) NULL,\n                             createdTime int8 NULL,\n                             lastModifiedTime int8 NULL,\n);\nCREATE TABLE dristi_document (\n                             id varchar(64) NOT NULL PRIMARY KEY,\n                             fileStore varchar(64) NULL,\n                             advocateId varchar(64) NOT NULL,\n);
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/resources/db.migration.main/V20240403110535__advocate__ddl.sql b/src/main/resources/db.migration.main/V20240403110535__advocate__ddl.sql
+--- a/src/main/resources/db.migration.main/V20240403110535__advocate__ddl.sql	
++++ b/src/main/resources/db.migration.main/V20240403110535__advocate__ddl.sql	
+@@ -1,4 +1,4 @@
+-CREATE TABLE dristi_advocate (
++CREATE TABLE eg_advocate (
+                              id varchar(64) NOT NULL PRIMARY KEY,
+                              tenantId varchar(1000) NOT NULL,
+                              applicationNumber varchar(64) NULL,
+@@ -11,9 +11,4 @@
+                              lastModifiedBy varchar(64) NULL,
+                              createdTime int8 NULL,
+                              lastModifiedTime int8 NULL,
+-);
+-CREATE TABLE dristi_document (
+-                             id varchar(64) NOT NULL PRIMARY KEY,
+-                             fileStore varchar(64) NULL,
+-                             advocateId varchar(64) NOT NULL,
+ );
+\ No newline at end of file
+Index: src/main/java/org/pucar/service/WorkflowService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.pucar.service;\n\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport lombok.extern.slf4j.Slf4j;\nimport org.egov.common.contract.models.Workflow;\nimport org.egov.common.contract.request.RequestInfo;\nimport org.egov.common.contract.request.User;\nimport org.egov.common.contract.workflow.*;\nimport org.egov.tracer.model.CustomException;\nimport org.pucar.config.Configuration;\nimport org.pucar.repository.ServiceRequestRepository;\nimport org.pucar.web.models.Advocate;\nimport org.pucar.web.models.AdvocateRequest;\nimport org.pucar.web.models.RequestInfoWrapper;\nimport org.springframework.beans.factory.annotation.Autowired;\nimport org.springframework.stereotype.Component;\nimport org.springframework.util.CollectionUtils;\n\nimport java.util.ArrayList;\nimport java.util.Arrays;\nimport java.util.Collections;\nimport java.util.List;\n\n@Component\n@Slf4j\npublic class WorkflowService {\n    @Autowired\n    private ObjectMapper mapper;\n    @Autowired\n    private ServiceRequestRepository repository;\n    @Autowired\n    private Configuration config;\n    public void updateWorkflowStatus(AdvocateRequest advocateRequest) {\n        advocateRequest.getAdvocates().forEach(advocate -> {\n            try {\n                ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());\n                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));\n                callWorkFlow(workflowRequest);\n            } catch (Exception e) {\n                log.error(\"Error updating workflow status: {}\", e.getMessage());\n                throw new CustomException();\n            }\n        });\n    }\n    public State callWorkFlow(ProcessInstanceRequest workflowReq) {\n        try {\n            StringBuilder url = new StringBuilder(config.getWfHost().concat(config.getWfTransitionPath()));\n            Object optional = repository.fetchResult(url, workflowReq);\n            ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);\n            return response.getProcessInstances().get(0).getState();\n        } catch (Exception e) {\n            log.error(\"Error calling workflow: {}\", e.getMessage());\n            throw new CustomException();\n        }\n    }\n    private ProcessInstance getProcessInstanceForADV(Advocate advocate, RequestInfo requestInfo) {\n        try {\n            Workflow workflow = advocate.getWorkflow();\n            ProcessInstance processInstance = new ProcessInstance();\n            processInstance.setBusinessId(advocate.getApplicationNumber());\n            processInstance.setAction(workflow.getAction());\n            processInstance.setModuleName(\"advocate-services\");\n            processInstance.setTenantId(advocate.getTenantId());\n            processInstance.setBusinessService(\"ADV\");\n            processInstance.setDocuments(workflow.getDocuments());\n            processInstance.setComment(workflow.getComments());\n            if (!CollectionUtils.isEmpty(workflow.getAssignes())) {\n                List<User> users = new ArrayList<>();\n                workflow.getAssignes().forEach(uuid -> {\n                    User user = new User();\n                    user.setUuid(uuid);\n                    users.add(user);\n                });\n                processInstance.setAssignes(users);\n            }\n            return processInstance;\n        } catch (Exception e) {\n            log.error(\"Error getting process instance for ADVOCATE: {}\", e.getMessage());\n            throw new CustomException();\n        }\n    }\n    public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {\n        try {\n            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();\n            StringBuilder url = getSearchURLForProcessInstanceWithParams(tenantId, businessId);\n            Object res = repository.fetchResult(url, requestInfoWrapper);\n            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);\n            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)\n                return response.getProcessInstances().get(0);\n            return null;\n        } catch (Exception e) {\n            log.error(\"Error getting current workflow: {}\", e.getMessage());\n            throw new CustomException();\n        }\n    }\n    private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {\n        try {\n            String tenantId = advocate.getTenantId();\n            StringBuilder url = getSearchURLWithParams(tenantId, \"ADV\");\n            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();\n            Object result = repository.fetchResult(url, requestInfoWrapper);\n            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);\n            if (CollectionUtils.isEmpty(response.getBusinessServices()))\n                throw new CustomException();\n            return response.getBusinessServices().get(0);\n        } catch (Exception e) {\n            log.error(\"Error getting business service: {}\", e.getMessage());\n            throw new CustomException();\n        }\n    }\n    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {\n        StringBuilder url = new StringBuilder(config.getWfHost());\n        url.append(config.getWfBusinessServiceSearchPath());\n        url.append(\"?tenantId=\").append(tenantId);\n        url.append(\"&businessServices=\").append(businessService);\n        return url;\n    }\n    private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {\n        StringBuilder url = new StringBuilder(config.getWfHost());\n        url.append(config.getWfProcessInstanceSearchPath());\n        url.append(\"?tenantId=\").append(tenantId);\n        url.append(\"&businessIds=\").append(businessService);\n        return url;\n    }\n    public ProcessInstanceRequest getProcessInstanceForAdvocateRegistrationPayment(AdvocateRequest updateRequest) {\n        try {\n            Advocate application = updateRequest.getAdvocates().get(0);\n            ProcessInstance process = ProcessInstance.builder()\n                    .businessService(\"ADV\")\n                    .businessId(application.getApplicationNumber())\n                    .comment(\"Payment for advocate registration processed\")\n                    .moduleName(\"advocate-services\")\n                    .tenantId(application.getTenantId())\n                    .action(\"PAY\")\n                    .build();\n            return ProcessInstanceRequest.builder()\n                    .requestInfo(updateRequest.getRequestInfo())\n                    .processInstances(Arrays.asList(process))\n                    .build();\n        } catch (Exception e) {\n            log.error(\"Error getting process instance for advocate registration payment: {}\", e.getMessage());\n            throw new CustomException();\n        }\n    }\n}\n 
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/org/pucar/service/WorkflowService.java b/src/main/java/org/pucar/service/WorkflowService.java
+--- a/src/main/java/org/pucar/service/WorkflowService.java	
++++ b/src/main/java/org/pucar/service/WorkflowService.java	
+@@ -75,7 +75,7 @@
+             }
+             return processInstance;
+         } catch (Exception e) {
+-            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
++            log.error("Error getting process instance for BTR: {}", e.getMessage());
+             throw new CustomException();
+         }
+     }
+Index: src/main/resources/pucar/V20240403110535__advocate__ddl.sql
+===================================================================
+diff --git a/src/main/resources/pucar/V20240403110535__advocate__ddl.sql b/src/main/resources/pucar/V20240403110535__advocate__ddl.sql
+deleted file mode 100644
+--- a/src/main/resources/pucar/V20240403110535__advocate__ddl.sql	
++++ /dev/null	
+@@ -1,19 +0,0 @@
+-CREATE TABLE dristi_advocate (
+-                             id varchar(64) NOT NULL PRIMARY KEY,
+-                             tenantId varchar(1000) NOT NULL,
+-                             applicationNumber varchar(64) NULL,
+-                             barRegistrationNumber varchar(64) NULL,
+-                             organisationID varchar(64) NULL,
+-                             individualId varchar(64) NULL,
+-                             isActive bool NULL,
+-                             additionalDetails jsonb NULL,
+-                             createdBy varchar(64) NULL,
+-                             lastModifiedBy varchar(64) NULL,
+-                             createdTime int8 NULL,
+-                             lastModifiedTime int8 NULL
+-);
+-CREATE TABLE dristi_document (
+-                             id varchar(64) NOT NULL PRIMARY KEY,
+-                             fileStore varchar(64) NULL,
+-                             advocateId varchar(64) NOT NULL
+-);
+\ No newline at end of file

@@ -22,16 +22,14 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class AdvocateSearchCriteria {
-	@JsonProperty("id")
 
+	@JsonProperty("id")
 	private String id = null;
 
 	@JsonProperty("barRegistrationNumber")
-
 	private String barRegistrationNumber = null;
 
 	@JsonProperty("applicationNumber")
-
 	private String applicationNumber = null;
 
 }
