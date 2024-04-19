@@ -2,6 +2,7 @@ package org.pucar.repository.querybuilder;
 
 import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ public class AdvocateQueryBuilder {
             List<String> ids = criteriaList.stream()
                     .map(AdvocateSearchCriteria::getId)
                     .filter(Objects::nonNull)
-                    .toList();
+                    .collect(Collectors.toList());
 
             List<String> barRegistrationNumbers = criteriaList.stream()
                     .filter(criteria -> criteria.getId() == null)
@@ -69,14 +70,16 @@ public class AdvocateQueryBuilder {
             }
 
             if (statusList!=null && !statusList.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequiredForStatus(query, firstCriteria);
                 query.append("adv.status IN (")
                         .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(statusList);
             }
 
-
+            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
+                query.append(")");
+            }
 
             return query.toString();
         } catch (Exception e) {
@@ -86,11 +89,20 @@ public class AdvocateQueryBuilder {
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
-            query.append(" WHERE ");
+            query.append(" WHERE (");
         } else {
             query.append(" OR ");
         }
     }
+
+    private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
+        if (isFirstCriteria) {
+            query.append(" WHERE ");
+        } else {
+            query.append(" AND ");
+        }
+    }
+
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
         query.append(FROM_DOCUMENTS_TABLE);

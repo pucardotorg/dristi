@@ -58,8 +58,12 @@ public class AdvocateClerkQueryBuilder {
             addToPreparedStatement(preparedStmtList, applicationNumbers);
         }
 
+        if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) ||!CollectionUtils.isEmpty(applicationNumbers) ){
+            query.append(")");
+        }
+
         if (statusList!=null && !CollectionUtils.isEmpty(statusList)) {
-            addClauseIfRequired(query, preparedStmtList);
+            addClauseIfRequiredForStatus(query, preparedStmtList);
             query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
             addToPreparedStatement(preparedStmtList, statusList);
         }
@@ -71,7 +75,7 @@ public class AdvocateClerkQueryBuilder {
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
-            query.append(" WHERE ");
+            query.append(" WHERE (");
         }else{
             query.append(" OR ");
         }
@@ -79,6 +83,14 @@ public class AdvocateClerkQueryBuilder {
 
     private void addToPreparedStatement(List<Object> preparedStmtList, List<String> list) {
         preparedStmtList.addAll(list);
+    }
+
+    private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
+        if(preparedStmtList.isEmpty()){
+            query.append(" WHERE ");
+        }else{
+            query.append(" AND ");
+        }
     }
 
     private String createQuery(List<String> ids) {
