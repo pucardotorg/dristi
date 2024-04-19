@@ -12,29 +12,31 @@ import java.util.stream.Collectors;
 @Component
 public class AdvocateClerkQueryBuilder {
 
-    private static final String BASE_ATR_QUERY = " SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, ";
+    private static final String BASE_ATR_QUERY = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime ";
 
-    private static final String DOCUMENT_SELECT_QUERY = " doc.id as aid, doc.document_type as document_type, doc.filestore as filestore, doc.document_uid as document_uid, doc.additional_details as additional_details ";
-    private static final String FROM_TABLES = " FROM dristi_advocate_clerk advc LEFT JOIN dristi_advocate_clerk_document doc ON advc.id = doc.clerk_id";
+    private static final String DOCUMENT_SELECT_QUERY = "SELECT doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.clerk_id as clerk_id ";
+    private static final String FROM_CLERK_TABLES = " FROM dristi_advocate_clerk advc";
+    private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteria, List<Object> preparedStmtList){
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList){
         StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
-        query.append(DOCUMENT_SELECT_QUERY);
-        query.append(FROM_TABLES);
+        query.append(FROM_CLERK_TABLES);
 
-        List<String> ids = criteria.stream()
+        List<String> ids = criteriaList.stream()
                 .map(AdvocateClerkSearchCriteria::getId)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        List<String> applicationNumbers = criteria.stream()
-                .map(AdvocateClerkSearchCriteria::getApplicationNumber)
+        List<String> stateRegnNumber = criteriaList.stream()
+                .filter(criteria -> criteria.getId() == null)
+                .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        List<String> stateRegnNumber = criteria.stream()
-                .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
+        List<String> applicationNumbers = criteriaList.stream()
+                .filter(criteria -> criteria.getId() == null && criteria.getApplicationNumber() == null)
+                .map(AdvocateClerkSearchCriteria::getApplicationNumber)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
@@ -65,7 +67,7 @@ public class AdvocateClerkQueryBuilder {
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE ");
         }else{
-            query.append(" AND ");
+            query.append(" OR ");
         }
     }
 
@@ -82,5 +84,23 @@ public class AdvocateClerkQueryBuilder {
                 builder.append(",");
         }
         return builder.toString();
+    }
+
+    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+        StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
+        query.append(FROM_DOCUMENTS_TABLE);
+
+        try {
+            if (!ids.isEmpty()) {
+                query.append(" WHERE doc.clerk_id IN (")
+                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
+                        .append(")");
+                preparedStmtList.addAll(ids);
+            }
+
+            return query.toString();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error occurred while building the query", e);
+        }
     }
 }
