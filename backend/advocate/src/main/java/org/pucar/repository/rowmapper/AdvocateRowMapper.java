@@ -41,13 +41,12 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
                             .applicationNumber(rs.getString("applicationnumber"))
                             .tenantId(rs.getString("tenantid"))
                             .id(UUID.fromString(rs.getString("id")))
-                            .barRegistrationNumber(rs.getString("barRegistrationNumber"))
-                            .organisationID(UUID.fromString(rs.getString("organisationID")))
+                            .barRegistrationNumber(rs.getString("barregistrationnumber"))
+                            .organisationID(UUID.fromString(rs.getString("organisationid")))
                             .individualId(rs.getString("individualid"))
-                            .isActive(Boolean.valueOf(rs.getString("isActive")))
+                            .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .additionalDetails(rs.getString("additionalDetails"))
                             .advocateType(rs.getString("advocatetype"))
-                            .organisationID(UUID.fromString(rs.getString("organisationid")))
                             .auditDetails(auditdetails)
                             .build();
                 }

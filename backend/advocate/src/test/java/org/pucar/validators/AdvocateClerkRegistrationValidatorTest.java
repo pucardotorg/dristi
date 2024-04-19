@@ -1,60 +1,68 @@
-//package org.pucar.validators;
-//
-//import org.egov.tracer.model.CustomException;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.InjectMocks;
-//import org.mockito.Mock;
-//import org.pucar.repository.AdvocateClerkRepository;
-//import org.pucar.web.models.AdvocateClerk;
-//import org.pucar.web.models.AdvocateClerkRequest;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.util.ObjectUtils;
-//import java.util.Collections;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.mockito.Mockito.when;
-//
-//@SpringBootTest
-//public class AdvocateClerkRegistrationValidatorTest {
-//
-//    @Mock
-//    private AdvocateClerkRepository repository;
-//
-//    @InjectMocks
-//    private AdvocateClerkRegistrationValidator validator;
-//
-//    @Test
-//    void validateAdvocateClerkRegistration_ValidTenantId_NoExceptionThrown() {
-//        // Prepare valid AdvocateClerkRequest
-//        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-//        AdvocateClerk advocateClerk = new AdvocateClerk();
-//        advocateClerk.setTenantId("tenantId");
-//        advocateClerkRequest.setClerks(Collections.singletonList(advocateClerk));
-//
-//        // No exception should be thrown
-//        validator.validateAdvocateClerkRegistration(advocateClerkRequest);
-//    }
-//
-//    @Test
-//    void validateAdvocateClerkRegistration_NullTenantId_ExceptionThrown() {
-//        // Prepare AdvocateClerkRequest with null tenantId
-//        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-//        AdvocateClerk advocateClerk = new AdvocateClerk();
-//        advocateClerk.setTenantId(null);
-//        advocateClerkRequest.setClerks(Collections.singletonList(advocateClerk));
-//
-//        // Exception should be thrown
-//        assertThrows(CustomException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
-//    }
-//
-//    @Test
-//    void validateAdvocateClerkRegistration_EmptyTenantId_ExceptionThrown() {
-//        // Prepare AdvocateClerkRequest with empty tenantId
-//        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-//        AdvocateClerk advocateClerk = new AdvocateClerk();
-//        advocateClerk.setTenantId("");
-//        advocateClerkRequest.setClerks(Collections.singletonList(advocateClerk));
-//
-//        // Exception should be thrown
-//        assertThrows(CustomException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
-//    }
-//}
+package org.pucar.validators;
+
+import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.repository.AdvocateClerkRepository;
+import org.pucar.web.models.AdvocateClerk;
+import org.pucar.web.models.AdvocateClerkRequest;
+import org.egov.common.contract.request.RequestInfo;
+import org.pucar.service.IndividualService;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
+import java.util.Collections;
+
+@ExtendWith(MockitoExtension.class)
+public class AdvocateClerkRegistrationValidatorTest {
+
+    @InjectMocks
+    private AdvocateClerkRegistrationValidator validator;
+
+    @Mock
+    private IndividualService individualService;
+
+    @Mock
+    private AdvocateClerkRepository repository;
+
+    private AdvocateClerkRequest advocateClerkRequest;
+    private RequestInfo requestInfo;
+
+    @BeforeEach
+    void setUp() {
+        advocateClerkRequest = new AdvocateClerkRequest();
+        requestInfo = new RequestInfo();
+        advocateClerkRequest.setRequestInfo(requestInfo);
+    }
+
+    @Test
+    void validateAdvocateRegistration_ValidAdvocate_NoExceptionThrown() {
+        AdvocateClerk advocate = new AdvocateClerk();
+        advocate.setIndividualId("validIndividualId");
+        advocate.setTenantId("validTenantId");
+        advocateClerkRequest.setClerks(Collections.singletonList(advocate));
+
+        when(individualService.searchIndividual(requestInfo, "validIndividualId")).thenReturn(true);
+
+        assertDoesNotThrow(() -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
+    }
+
+    @Test
+    void validateAdvocateRegistration_InvalidIndividualId_ThrowsIllegalArgumentException() {
+        AdvocateClerk advocate = new AdvocateClerk();
+        advocate.setIndividualId("invalidIndividualId");
+        advocate.setTenantId("validTenantId");
+        advocateClerkRequest.setClerks(Collections.singletonList(advocate));
+
+        when(individualService.searchIndividual(requestInfo, "invalidIndividualId")).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
+    }
+
+}
