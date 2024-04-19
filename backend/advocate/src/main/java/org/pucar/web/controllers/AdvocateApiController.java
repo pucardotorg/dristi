@@ -53,7 +53,7 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("*/*")) {
+		if (accept != null && accept.contains("application/json")) {
 			try {
 				List<Advocate> response = advocateService.createAdvocate(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -64,7 +64,7 @@ public class AdvocateApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
@@ -82,7 +82,7 @@ public class AdvocateApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_update", method = RequestMethod.POST)
@@ -99,7 +99,7 @@ public class AdvocateApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 }

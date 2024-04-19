@@ -50,21 +50,24 @@ public class ClerkApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
+			try{
 				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateRequest(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-
+			} catch (Exception e) {
+			    return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+	      	}
 		}
 
-		return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/clerk/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateClerkResponse> clerkV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body) {
 		String accept = request.getHeader("Accept");
-//		if (accept != null && accept.contains("application/json")) {
+		if (accept != null && accept.contains("application/json")) {
 			try {
 				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria());
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -73,7 +76,9 @@ public class ClerkApiController {
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-//		}
+		}
+		return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.BAD_REQUEST);
+
 	}
 
 	@RequestMapping(value = "/clerk/v1/_update", method = RequestMethod.POST)
@@ -90,7 +95,7 @@ public class ClerkApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateClerkResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 }
