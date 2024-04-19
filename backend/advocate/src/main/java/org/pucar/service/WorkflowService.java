@@ -38,7 +38,8 @@ public class WorkflowService {
             try {
                 ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                callWorkFlow(workflowRequest);
+                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+                advocate.setStatus(applicationStatus);
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException();
@@ -61,7 +62,8 @@ public class WorkflowService {
             try {
                 ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                callWorkFlow(workflowRequest);
+                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+                advocateClerk.setStatus(applicationStatus);
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException();
@@ -90,7 +92,7 @@ public class WorkflowService {
             }
             return processInstance;
         } catch (Exception e) {
-            log.error("Error getting process instance for BTR: {}", e.getMessage());
+            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
             throw new CustomException();
         }
     }

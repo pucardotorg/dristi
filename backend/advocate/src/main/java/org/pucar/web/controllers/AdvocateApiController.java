@@ -64,7 +64,7 @@ public class AdvocateApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
@@ -82,7 +82,7 @@ public class AdvocateApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_update", method = RequestMethod.POST)
@@ -99,7 +99,7 @@ public class AdvocateApiController {
 			}
 		}
 
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.NOT_IMPLEMENTED);
+		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 }

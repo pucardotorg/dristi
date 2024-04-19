@@ -1,6 +1,7 @@
 package org.pucar.validators;
 
 import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,54 +10,70 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.repository.AdvocateRepository;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
+import org.egov.common.contract.request.RequestInfo;
+import org.pucar.service.IndividualService;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 @ExtendWith(MockitoExtension.class)
-class AdvocateRegistrationValidatorTest {
-
-    @Mock
-    private AdvocateRepository repository;
+public class AdvocateRegistrationValidatorTest {
 
     @InjectMocks
     private AdvocateRegistrationValidator validator;
 
-//    @Test
-//    void validateAdvocateRegistrationThrowsExceptionWhenTenantIdIsEmpty() {
-//        // Prepare data
-//        AdvocateRequest request = new AdvocateRequest();
-//        Advocate advocate = new Advocate();
-//        advocate.setTenantId(""); // Empty tenant ID
-//        request.setAdvocates(Collections.singletonList(advocate));
-//
-//        // Assert that validation throws a CustomException
-//        assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(request), "Expected validateAdvocateRegistration to throw, but it didn't");
-//    }
+    @Mock
+    private IndividualService individualService;
 
-//    @Test
-//    void validateAdvocateRegistrationThrowsExceptionWhenTenantIdIsNull() {
-//        // Prepare data
-//        AdvocateRequest request = new AdvocateRequest();
-//        Advocate advocate = new Advocate();
-//        advocate.setTenantId(null); // Null tenant ID
-//        request.setAdvocates(Collections.singletonList(advocate));
-//
-//        // Assert that validation throws a CustomException
-//        assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(request), "Expected validateAdvocateRegistration to throw, but it didn't");
-//    }
+    @Mock
+    private AdvocateRepository repository;
 
-//    @Test
-//    void validateAdvocateRegistrationPassesWhenTenantIdIsNotEmpty() {
-//        // Prepare data
-//        AdvocateRequest request = new AdvocateRequest();
-//        Advocate advocate = new Advocate();
-//        advocate.setTenantId("valid-tenant-id");
-//        request.setAdvocates(Collections.singletonList(advocate));
-//
-//        // Attempt to validate; no exception should be thrown
-//        validator.validateAdvocateRegistration(request);
-//        // No assertion for exception here, as a pass is indicated by the absence of an exception.
-//    }
+    private AdvocateRequest advocateRequest;
+    private RequestInfo requestInfo;
+
+    @BeforeEach
+    void setUp() {
+        advocateRequest = new AdvocateRequest();
+        requestInfo = new RequestInfo();
+        advocateRequest.setRequestInfo(requestInfo);
+    }
+
+    @Test
+    void validateAdvocateRegistration_ValidAdvocate_NoExceptionThrown() {
+        Advocate advocate = new Advocate();
+        advocate.setIndividualId("validIndividualId");
+        advocate.setTenantId("validTenantId");
+        advocateRequest.setAdvocates(Collections.singletonList(advocate));
+
+        when(individualService.searchIndividual(requestInfo, "validIndividualId")).thenReturn(true);
+
+        assertDoesNotThrow(() -> validator.validateAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    void validateAdvocateRegistration_InvalidIndividualId_ThrowsIllegalArgumentException() {
+        Advocate advocate = new Advocate();
+        advocate.setIndividualId("invalidIndividualId");
+        advocate.setTenantId("validTenantId");
+        advocateRequest.setAdvocates(Collections.singletonList(advocate));
+
+        when(individualService.searchIndividual(requestInfo, "invalidIndividualId")).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    void validateAdvocateRegistration_MissingTenantId_ThrowsCustomException() {
+        Advocate advocate = new Advocate();
+        advocate.setIndividualId("validIndividualId");
+        // Missing tenantId intentionally
+        advocateRequest.setAdvocates(Collections.singletonList(advocate));
+
+        when(individualService.searchIndividual(requestInfo, "validIndividualId")).thenReturn(true);
+
+        assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
+    }
 }

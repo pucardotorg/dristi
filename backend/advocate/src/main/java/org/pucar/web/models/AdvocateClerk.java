@@ -50,6 +50,9 @@ public class AdvocateClerk {
 	@Size(min = 2, max = 64)
 	private String stateRegnNumber = null;
 
+	@JsonProperty("status")
+	private String status=null;
+
 	@JsonProperty("individualId")
 
 	private String individualId = null;
