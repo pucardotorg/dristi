@@ -5,6 +5,7 @@ import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
@@ -38,7 +39,13 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   void initState() {
     _handleLocationPermission();
     _getStoragePermission();
+    fetchStates('IN');
     super.initState();
+  }
+
+  bool _validateMobile(String value) {
+    final RegExp mobileRegex = RegExp(r'^[6789][0-9]{9}$', caseSensitive: false);
+    return mobileRegex.hasMatch(value);
   }
 
   Future<bool> _handleLocationPermission() async {
@@ -79,8 +86,27 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text(""),
-          centerTitle: true,
+          title: Row(
+            children: [
+              Image.asset(
+                  digitSvg,
+                fit: BoxFit.contain,
+                ),
+              const VerticalDivider(
+                color: Colors.white,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text(
+                  "State",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          centerTitle: false,
           leading: IconButton(
             onPressed: () {},
             icon: const Icon(Icons.menu),
@@ -93,7 +119,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 DigitBackButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
                 ),
                 DigitHelpButton()
               ],
@@ -118,6 +146,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 prefixText: "+91  ",
                                 formControlName: mobileNumberKey,
                                 isRequired: true,
+                                maxLength: 10,
                                 onChanged: (val) { userModel.mobileNumber = val.value.toString(); },
                                 keyboardType: TextInputType.number,
                                 validationMessages: {
@@ -127,7 +156,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                   'Mobile number should have 10 digits',
                                   'maxLength': (_) =>
                                   'Mobile number should have 10 digits',
+                                  'pattern': (_) =>
+                                  'Mobile number is not valid'
                                 },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                                ],
                               ),
                               const SizedBox(height: 10,),
                               DigitCheckboxTile(
@@ -162,8 +196,20 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 },
                                 child: DigitElevatedButton(
                                     onPressed: () {
+                                      FocusScope.of(context).unfocus();
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
+                                      bool isValidNumber = _validateMobile(form.control(mobileNumberKey).value);
+                                      if (!isValidNumber) {
+                                        DigitToast.show(context,
+                                          options: DigitToastOptions(
+                                            "Mobile Number is not valid",
+                                            true,
+                                            widget.theme.theme(),
+                                          ),
+                                        );
+                                        return;
+                                      }
                                       widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: userModel.mobileNumber!, type: register));
                                     },
                                     child: const Text('Submit')
@@ -188,7 +234,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
           Validators.required,
           Validators.number,
           Validators.minLength(10),
-          Validators.maxLength(10)
+          Validators.maxLength(10),
+          Validators.pattern(r'^[6789][0-9]{9}$')
         ]
     ),
   });

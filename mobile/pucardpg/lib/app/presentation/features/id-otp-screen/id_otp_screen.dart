@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_table_item.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -155,7 +156,17 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                         if (kDebugMode) {
                           print('Entered OTP: $otp');
                         }
-                        Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.userModel);
+                        if (otp.length != 6) {
+                          DigitToast.show(context,
+                            options: DigitToastOptions(
+                              "Enter valid OTP",
+                              true,
+                              widget.theme.theme(),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.mobile);
                       },
                       child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                   ),

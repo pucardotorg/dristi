@@ -1,8 +1,10 @@
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
@@ -90,6 +92,16 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
+                  if (firstChecked == false) {
+                    DigitToast.show(context,
+                      options: DigitToastOptions(
+                        "Select all Terms and Conditions",
+                        true,
+                        widget.theme.theme(),
+                      ),
+                    );
+                    return;
+                  }
                   Navigator.pushNamed(context, '/SuccessScreen');
                 },
                 child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)

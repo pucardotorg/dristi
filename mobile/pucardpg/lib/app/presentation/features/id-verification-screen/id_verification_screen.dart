@@ -2,8 +2,10 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
@@ -24,12 +26,38 @@ class IdVerificationScreen extends StatefulWidget with AppMixin{
 class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   late String mobile;
-  String adhaarNumber = "", typeOfId = "", nameOfDocument = "";
+  String adhaarNumber = "", typeOfId = "";
   TextEditingController searchController = TextEditingController();
+
+  String? fileName;
+  FilePickerResult? result;
+  PlatformFile? pickedFile;
+  File? fileToDisplay;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void pickFile() async {
+    try {
+      result = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ['pdf'],
+          allowMultiple: false
+      );
+      if (result != null) {
+        fileName = result!.files.first.name;
+        pickedFile = result!.files.first;
+        // List<dynamic> files = result!.files;
+        //   files = result!.files.map((e) => File(e.path ?? '')).toList();
+        setState(() {
+          fileToDisplay = File(result!.files.single.path!);
+        });
+      }
+    } catch(e) {
+      print(e);
+    }
   }
 
   @override
@@ -135,6 +163,30 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
         )
     );
 
+  }
+
+  Future<bool> _onBackPressed() async {
+    return await DigitDialog.show(
+        context,
+        options: DigitDialogOptions(
+            titleIcon: const Icon(
+              Icons.warning,
+              color: Colors.red,
+            ),
+            titleText: 'Warning',
+            contentText:
+            'Are you sure you want to exit the application?',
+            primaryAction: DigitDialogActions(
+                label: 'Yes',
+                action: (BuildContext context) =>
+                    SystemChannels.platform.invokeMethod('SystemNavigator.pop')
+            ),
+            secondaryAction: DigitDialogActions(
+                label: 'No',
+                action: (BuildContext context) =>
+                    Navigator.of(context).pop(false)
+            ))
+    ) ?? false;
   }
 
 }

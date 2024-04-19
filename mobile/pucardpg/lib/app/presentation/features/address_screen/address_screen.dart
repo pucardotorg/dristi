@@ -450,9 +450,11 @@ class AddressScreenState extends State<AddressScreen> {
                                     padding: const EdgeInsets.all(0),
                                     label: 'Door number',
                                     isRequired: true,
+                                    keyboardType: TextInputType.number,
                                     validationMessages: {
                                       'required': (_) =>
                                           'Door number is required',
+                                      'number': (_) => 'Door number should contain digits 0-9',
                                       'minLength': (_) =>
                                       'Min length should be 2',
                                       'maxLength': (_) =>
@@ -494,7 +496,7 @@ class AddressScreenState extends State<AddressScreen> {
             FormControl<String>(value: ''),
         pinCodeKey: FormControl<String>(
             value: widget.userModel.addressModel.pincode,
-            validators: [Validators.required, Validators.maxLength(6)]),
+            validators: [Validators.required, Validators.maxLength(6), Validators.number]),
         stateKey: FormControl<String>(
             value: widget.userModel.addressModel.state, validators: [Validators.required]),
         districtKey: FormControl<String>(
@@ -508,6 +510,7 @@ class AddressScreenState extends State<AddressScreen> {
         ]),
         doorNoKey: FormControl<String>(value: '', validators: [
           Validators.required,
+          Validators.number,
           Validators.minLength(2),
           Validators.maxLength(8)
         ]),

@@ -2,6 +2,9 @@
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/role-model/role.dart';
 
+import 'package:country_state_city/utils/state_utils.dart';
+import 'package:pucardpg/app/data/models/state_model/state_model.dart';
+
 const String apiBaseURL = "https://dristi-dev.pucar.org";
 
 const String apiId = "Rainmaker";
@@ -35,3 +38,16 @@ const Field litigant = Field(
     value: "LITIGANT",
 );
 
+
+List<String> state = [];
+
+Future<void> fetchStates(String countryISOCode) async {
+  final response = await getStatesOfCountry(countryISOCode);
+  response.map((state) => StatesData.fromState(state)).toList();
+  state = response.map((state) => state.name).toList();
+}
+
+String? selectedOption;
+
+const String approvalSvg = 'assets/icons/svg/approval.svg';
+const String digitSvg = 'assets/icons/svg/DIGIT.png';

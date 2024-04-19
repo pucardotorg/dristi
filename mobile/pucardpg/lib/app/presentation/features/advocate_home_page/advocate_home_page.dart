@@ -1,30 +1,28 @@
-
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_outline_icon_button.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:pucardpg/app/domain/entities/litigant_model.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:pucardpg/core/constant/constants.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
-class SuccessScreen extends StatefulWidget with AppMixin{
+class AdvocateHomePage extends StatefulWidget with AppMixin{
 
-  UserModel userModel = UserModel();
-
-  SuccessScreen({super.key, required this.userModel});
+  const AdvocateHomePage({super.key});
 
   @override
-  SuccessScreenState createState() => SuccessScreenState();
+  AdvocateHomePageState createState() => AdvocateHomePageState();
 
 }
 
-class SuccessScreenState extends State<SuccessScreen> {
-
-  bool firstChecked = false;
+class AdvocateHomePageState extends State<AdvocateHomePage> {
 
   @override
   void initState() {
@@ -39,9 +37,6 @@ class SuccessScreenState extends State<SuccessScreen> {
           appBar: AppBar(
             title: const Text(""),
             centerTitle: true,
-            actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-            ],
             leading: IconButton(
               onPressed: () {},
               icon: const Icon(Icons.menu),
@@ -52,21 +47,30 @@ class SuccessScreenState extends State<SuccessScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      const SizedBox(height: 20,),
                       DigitCard(
                         // padding: const EdgeInsets.all(20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              color: Colors.green,
-                              padding: const EdgeInsets.all(20),
-                              child: Center(child: Text("Your registration application has been submitted successfully!", style: widget.theme.text32W700RobCon()?.apply(color: Colors.white),)),
+                            SvgPicture.asset(
+                              approvalSvg,
+                              width: 340,
+                              height: 200,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(20),
-                              child: Center(child: Text("You will be given access once your application is verified and approved.", style: widget.theme.text16W400Rob(),)),
-                            )
+                              child: Center(child: Text("Your application is awaiting approval ......!", style: widget.theme.text16W400Rob(),)),
+                            ),
+                            DigitOutlineIconButton(
+                              label: 'View My Application',
+                              onPressed: (){
+                              },
+                              icon: Icons.settings_applications,
+                              iconColor: DigitTheme.instance.colorScheme.secondary,
+                            ),
                             // const SizedBox(height: 20,),
                           ],
                         ),
@@ -76,21 +80,10 @@ class SuccessScreenState extends State<SuccessScreen> {
                   ),
                 ),
               ),
-              DigitElevatedButton(
-                  onPressed: () {
-                    if(selectedOption != 'Litigant'){
-                    Navigator.pushNamed(context, '/AdvocateHomePage');
-                    } else {
-      
-                    }
-                  },
-                  child: Text('Go to Home Page',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-              ),
             ],
           )
       ),
     );
-
   }
 
   Future<bool> _onBackPressed() async {
@@ -116,5 +109,4 @@ class SuccessScreenState extends State<SuccessScreen> {
             ))
     ) ?? false;
   }
-
 }
