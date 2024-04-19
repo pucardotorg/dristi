@@ -35,6 +35,8 @@ function getRedirectionUrl(status) {
       return `/${window?.contextPath}/citizen/dristi/home`;
     case "isNotLoggedIn":
       return `/${window?.contextPath}/citizen/dristi/landing-page`;
+    case "isRegistered":
+      return `/${window?.contextPath}/citizen/dristi/landing-page`;
     default:
       return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
   }
@@ -151,8 +153,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         setCanSubmitNo(true);
         history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
         return;
+      } else {
+        setCanSubmitNo(true);
+        setError("MOBILE_NUMBER_ALREADY_REGISTERED");
+        setTimeout(() => history.replace(getRedirectionUrl("isRegistered")), 3000);
       }
-      setCanSubmitNo(true);
     }
   };
 
