@@ -217,7 +217,11 @@ components:
           type: string
           description: >-
             The individual ID (Individual registry) of the advocate containing all their
-            details. 
+            details.
+        status:
+          type: string
+          description: >-
+            The current status of the advocate application as pulled from the Workflow service.
         isActive:
           type: boolean
           description: >-
@@ -285,6 +289,10 @@ components:
           description: >-
             The individual ID (Individual registry) of the advocate clerk containing all their
             details.
+        status:
+          type: string
+          description: >-
+            The current status of the advocate clerk application as pulled from the Workflow service.
         isActive:
           type: boolean
           description: >-
