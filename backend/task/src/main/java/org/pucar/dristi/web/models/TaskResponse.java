@@ -4,7 +4,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.pucar.dristi.web.models.ResponseInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.web.models.Task;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;

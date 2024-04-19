@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
+
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

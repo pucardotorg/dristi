@@ -1,7 +1,5 @@
 package org.pucar.dristi.web.controllers;
 
-
-import org.pucar.dristi.web.models.ErrorRes;
 import org.pucar.dristi.web.models.TaskExistsRequest;
 import org.pucar.dristi.web.models.TaskExistsResponse;
 import org.pucar.dristi.web.models.TaskListResponse;

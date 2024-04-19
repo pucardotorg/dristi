@@ -43,9 +43,10 @@ public class AdvocateApiController {
 		if (accept != null && accept.contains("application/json")) {
 			try {
 				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.createAdvocate(body);
+				//AdvocateResponse response = advocateService.createAdvocate(body);
+				AdvocateResponse response = new AdvocateResponse();
 				return new ResponseEntity<>(response, HttpStatus.OK);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -60,9 +61,10 @@ public class AdvocateApiController {
 		if (accept != null && accept.contains("application/json")) {
 			try {
 				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.searchAdvocates(body);
+				//AdvocateResponse response = advocateService.searchAdvocates(body);
+				AdvocateResponse response = new AdvocateResponse();
 				return new ResponseEntity<>(response, HttpStatus.OK);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
@@ -77,9 +79,10 @@ public class AdvocateApiController {
 		if (accept != null && accept.contains("application/json")) {
 			try {
 				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.updateAdvocate(body);
+				//AdvocateResponse response = advocateService.updateAdvocate(body);
+				AdvocateResponse response = new AdvocateResponse();
 				return new ResponseEntity<>(response, HttpStatus.OK);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}

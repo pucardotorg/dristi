@@ -1,10 +1,9 @@
 package org.pucar.dristi.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.pucar.dristi.web.models.Hearing;
+import hearing.src.main.java.org.pucar.dristi.web.models.Hearing;
 import org.pucar.dristi.web.models.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
