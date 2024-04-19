@@ -15,6 +15,9 @@ class UserModel{
   String? identifierType;
   String? identifierId;
 
+  String? type;
+  String? userType;
+
   AddressModel addressModel = AddressModel();
 
   UserModel({
@@ -24,6 +27,8 @@ class UserModel{
     this.mobileNumber,
     this.identifierType,
     this.identifierId,
+    this.type,
+    this.userType
   });
 
 }

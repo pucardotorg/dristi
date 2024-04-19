@@ -57,7 +57,7 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
       } else {
         return DataFailed(
             dio.DioError(
-                error: httpResponse.data.errorDescription,
+                error: "",
                 response: httpResponse.response,
                 type: dio.DioErrorType.response,
                 requestOptions: httpResponse.response.requestOptions
@@ -74,14 +74,14 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   Future<DataState<AuthResponse>> getAuthResponse(String username, String password) async {
     // TODO: implement getAuthResponse
     try {
-      final httpResponse = await _apiService.getAuthResponse(username);
+      final httpResponse = await _apiService.getAuthResponse('Basic ZWdvdi11c2VyLWNsaWVudDo=', username, password);
 
       if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
         return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
             dio.DioError(
-                error: httpResponse.data.errorDescription,
+                error: "",
                 response: httpResponse.response,
                 type: dio.DioErrorType.response,
                 requestOptions: httpResponse.response.requestOptions

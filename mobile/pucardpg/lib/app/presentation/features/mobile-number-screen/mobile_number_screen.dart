@@ -20,7 +20,9 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class MobileNumberScreen extends StatefulWidget with AppMixin{
 
-  MobileNumberScreen({super.key});
+  final String type;
+
+  MobileNumberScreen({super.key, required this.type});
 
   @override
   MobileNumberScreenState createState() => MobileNumberScreenState();
@@ -37,8 +39,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   @override
   void initState() {
-    _handleLocationPermission();
-    _getStoragePermission();
     fetchStates('IN');
     super.initState();
   }
@@ -46,40 +46,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   bool _validateMobile(String value) {
     final RegExp mobileRegex = RegExp(r'^[6789][0-9]{9}$', caseSensitive: false);
     return mobileRegex.hasMatch(value);
-  }
-
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Location services are disabled. Please enable the services')));
-      return false;
-    }
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
-        return false;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Location permissions are permanently denied, we cannot request permissions.')));
-      return false;
-    }
-    return true;
-  }
-
-  Future _getStoragePermission() async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
   }
 
   @override
@@ -186,6 +152,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                           widget.theme.theme(),
                                         ),
                                       );
+                                      Navigator.pushNamed(context, '/');
                                       break;
                                     case OtpSuccessState:
                                       Navigator.pushNamed(context, '/MobileOtpScreen', arguments: userModel);
@@ -199,6 +166,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       FocusScope.of(context).unfocus();
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
+                                      userModel.type = widget.type;
                                       bool isValidNumber = _validateMobile(form.control(mobileNumberKey).value);
                                       if (!isValidNumber) {
                                         DigitToast.show(context,
@@ -210,7 +178,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                         );
                                         return;
                                       }
-                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: userModel.mobileNumber!, type: register));
+                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: userModel.mobileNumber!, type: widget.type));
                                     },
                                     child: const Text('Submit')
                                 ),

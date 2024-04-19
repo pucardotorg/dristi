@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
+import 'package:pucardpg/core/constant/constants.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class HomeScreen extends StatefulWidget with AppMixin{
@@ -83,7 +84,7 @@ class HomeScreenState extends State<HomeScreen> {
                 children: [
                   DigitElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/mobileNumberScreen');
+                      Navigator.pushNamed(context, '/mobileNumberScreen', arguments: register);
                     },
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -103,7 +104,7 @@ class HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 20),
                   DigitElevatedButton(
                     onPressed: () {
-                      // Navigator.pushNamed(context, '/', arguments: mobile);
+                      Navigator.pushNamed(context, '/mobileNumberScreen', arguments: login);
                     },
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
