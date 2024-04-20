@@ -182,8 +182,8 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
     try {
       final httpResponse = await _apiService.registerLitigant(litigantNetworkModel);
 
-      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
-        return DataSuccess(httpResponse.data);
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+        return const DataSuccess("Success");
       } else {
         return DataFailed(
             dio.DioError(

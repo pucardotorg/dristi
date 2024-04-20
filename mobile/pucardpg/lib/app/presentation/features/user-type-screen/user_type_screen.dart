@@ -54,11 +54,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        DigitBackButton(
-                          onPressed: (){
-                            Navigator.of(context).pop();
-                          },
-                        ),
+                        DigitBackButton(),
                         DigitHelpButton()
                       ],
                     ),

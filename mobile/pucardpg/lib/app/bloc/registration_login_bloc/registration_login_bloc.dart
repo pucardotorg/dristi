@@ -10,32 +10,31 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
   final LoginUseCase _loginUseCase;
 
-  RegistrationLoginBloc(this._loginUseCase): super(OtpInitialState()) {
-    on<OtpInitialEvent>(otpInitialEvent);
-    on<SendOtpEvent>(sendOtpEvent);
+  RegistrationLoginBloc(this._loginUseCase): super(InitialState()) {
+    on<InitialEvent>(initialEvent);
+    on<RequestOtpEvent>(requestOtpEvent);
     on<SubmitRegistrationOtpEvent>(sendRegistrationOtpEvent);
     on<SendLoginOtpEvent>(sendLoginOtpEvent);
+    on<SubmitLitigantProfileEvent>(submitLitigantProfile);
   }
 
-  Future<void> otpInitialEvent(OtpInitialEvent event,
+  Future<void> initialEvent(InitialEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
   }
 
-  Future<void> sendOtpEvent(SendOtpEvent event,
+  Future<void> requestOtpEvent(RequestOtpEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
-      emit(OtpLoadingState());
+      emit(LoadingState());
 
       final dataState = await _loginUseCase.requestOtp(event.mobileNumber, event.type);
 
       if(dataState is DataSuccess){
-        print("success otp");
-        emit(OtpSuccessState());
+        emit(OtpGenerationSuccessState());
       }
       if(dataState is DataFailed){
-        print("failed otp");
-        emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+        emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
       }
 
   }
@@ -43,17 +42,15 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
   Future<void> sendRegistrationOtpEvent(SubmitRegistrationOtpEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
-    emit(OtpLoadingState());
+    emit(LoadingState());
 
     final dataState = await _loginUseCase.createCitizen(event.username, event.otp, event.userModel);
 
     if(dataState is DataSuccess){
-      print("success reg");
-      emit(OtpSuccessState());
+      emit(OtpCorrectState(authResponse: dataState.data!));
     }
     if(dataState is DataFailed){
-      print("failed reg");
-      emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+      emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
     }
 
   }
@@ -61,41 +58,37 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
   Future<void> sendLoginOtpEvent(SendLoginOtpEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
-    emit(OtpLoadingState());
+    emit(LoadingState());
 
     final dataState = await _loginUseCase.getAuthResponse(event.username, event.password, event.userModel);
 
     if(dataState is DataSuccess){
-      print("success reg");
       final dataStateSearch = await _loginUseCase.searchIndividual(dataState.data!.accessToken!, dataState.data!.userRequest!.uuid!);
-      if (dataState is DataSuccess) {
+      if (dataStateSearch is DataSuccess) {
         emit(IndividualSearchSuccessState(individualSearchResponse: dataStateSearch.data!));
       }
-      if(dataState is DataFailed){
-        print("failed reg");
-        emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+      if(dataStateSearch is DataFailed){
+        emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
       }
     }
     if(dataState is DataFailed){
-      print("failed reg");
-      emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+      emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
     }
 
   }
+
   Future<void> submitLitigantProfile(SubmitLitigantProfileEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
-    emit(OtpLoadingState());
+    emit(LoadingState());
 
-    final dataState = _loginUseCase.registerLitigant(event.userModel);
+    final dataState = await _loginUseCase.registerLitigant(event.userModel);
 
     if(dataState is DataSuccess){
-      print("success reg");
-      emit(OtpSuccessState());
+      emit(LitigantSubmissionSuccessState());
     }
     if(dataState is DataFailed){
-      print("failed reg");
-      emit(OtpFailedState(errorMsg: "",));
+      emit(RequestFailedState(errorMsg: "",));
     }
 
   }

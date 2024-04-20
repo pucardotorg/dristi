@@ -88,11 +88,11 @@ class LoginUseCase {
       mobileNumber: userModel.mobileNumber!,
       address: [Address(
           doorNo: userModel.addressModel.doorNo!,
-          latitude: userModel.addressModel.latitude!,
-          longitude: userModel.addressModel.longitude!,
-          city: userModel.addressModel.city!,
-          district: userModel.addressModel.district!,
-          pincode: userModel.addressModel.pincode!
+          latitude: userModel.addressModel.latitude ?? 0.0,
+          longitude: userModel.addressModel.longitude ?? 0.0,
+          city: userModel.addressModel.city ?? "",
+          district: userModel.addressModel.district ?? "",
+          pincode: userModel.addressModel.pincode ?? ""
       )],
       identifiers: userModel.identifierId == null ? [] :
       [Identifier(
@@ -112,6 +112,8 @@ class LoginUseCase {
       requestInfo: requestInfo,
       individual: individual,
     );
+
+    print(litigantNetworkModel.toJson());
 
     return _registrationLoginRepository.registerLitigant(litigantNetworkModel);
 

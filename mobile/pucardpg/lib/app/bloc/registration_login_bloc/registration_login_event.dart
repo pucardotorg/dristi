@@ -3,12 +3,12 @@ import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 
 abstract class RegistrationLoginEvent {}
 
-class OtpInitialEvent extends RegistrationLoginEvent {}
+class InitialEvent extends RegistrationLoginEvent {}
 
-class SendOtpEvent extends RegistrationLoginEvent {
+class RequestOtpEvent extends RegistrationLoginEvent {
   final String mobileNumber;
   final String type;
-  SendOtpEvent({
+  RequestOtpEvent({
     required this.mobileNumber,
     required this.type,
   });

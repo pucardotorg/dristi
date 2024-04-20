@@ -3,20 +3,15 @@ import 'package:pucardpg/app/data/models/individual-search/individual_search_mod
 
 abstract class RegistrationLoginState {}
 
-class OtpInitialState extends RegistrationLoginState {}
+class InitialState extends RegistrationLoginState {}
 
-class OtpLoadingState extends RegistrationLoginState {}
+class LoadingState extends RegistrationLoginState {}
 
-class OtpSuccessState extends RegistrationLoginState {}
+class OtpGenerationSuccessState extends RegistrationLoginState {}
 
 class IndividualSearchSuccessState extends RegistrationLoginState {
   IndividualSearchResponse individualSearchResponse;
   IndividualSearchSuccessState({required this.individualSearchResponse});
-}
-
-class OtpFailedState extends RegistrationLoginState {
-  String errorMsg;
-  OtpFailedState({required this.errorMsg});
 }
 
 class OtpCorrectState extends RegistrationLoginState {
@@ -24,11 +19,10 @@ class OtpCorrectState extends RegistrationLoginState {
   OtpCorrectState({required this.authResponse});
 }
 
-class OtpIncorrectState extends RegistrationLoginState {
+class RequestFailedState extends RegistrationLoginState {
   String errorMsg;
-  OtpIncorrectState({required this.errorMsg});
+  RequestFailedState({required this.errorMsg});
 }
 
 class LitigantSubmissionSuccessState extends RegistrationLoginState {}
 
-class LitigantSubmissionFailedState extends RegistrationLoginState {}

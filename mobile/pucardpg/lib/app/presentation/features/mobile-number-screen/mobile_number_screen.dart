@@ -40,6 +40,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   @override
   void initState() {
     fetchStates('IN');
+    userModel.type = widget.type;
     super.initState();
   }
 
@@ -84,11 +85,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                DigitBackButton(
-                  onPressed: (){
-                    Navigator.of(context).pop();
-                  },
-                ),
+                DigitBackButton(),
                 DigitHelpButton()
               ],
             ),
@@ -144,17 +141,11 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 bloc: widget.registrationLoginBloc,
                                 listener: (context, state) {
                                   switch (state.runtimeType) {
-                                    case OtpFailedState:
-                                      DigitToast.show(context,
-                                        options: DigitToastOptions(
-                                          (state as OtpFailedState).errorMsg,
-                                          false,
-                                          widget.theme.theme(),
-                                        ),
-                                      );
+                                    case RequestFailedState:
+                                      widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
                                       Navigator.pushNamed(context, '/');
                                       break;
-                                    case OtpSuccessState:
+                                    case OtpGenerationSuccessState:
                                       Navigator.pushNamed(context, '/MobileOtpScreen', arguments: userModel);
                                       break;
                                     default:
@@ -166,19 +157,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       FocusScope.of(context).unfocus();
                                       form.markAllAsTouched();
                                       if (!form.valid) return;
-                                      userModel.type = widget.type;
                                       bool isValidNumber = _validateMobile(form.control(mobileNumberKey).value);
                                       if (!isValidNumber) {
-                                        DigitToast.show(context,
-                                          options: DigitToastOptions(
-                                            "Mobile Number is not valid",
-                                            true,
-                                            widget.theme.theme(),
-                                          ),
-                                        );
+                                        widget.theme.showDigitDialog(true, "Mobile Number is not valid", context);
                                         return;
                                       }
-                                      widget.registrationLoginBloc.add(SendOtpEvent(mobileNumber: userModel.mobileNumber!, type: widget.type));
+                                      widget.registrationLoginBloc.add(RequestOtpEvent(mobileNumber: userModel.mobileNumber!, type: widget.type));
                                     },
                                     child: const Text('Submit')
                                 ),

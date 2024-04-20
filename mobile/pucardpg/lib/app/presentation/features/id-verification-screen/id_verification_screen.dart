@@ -101,7 +101,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                               maxLength: 12,
                               pattern: r'^([0-9]){12}$',
                               textInputType: TextInputType.number,
-                              onChange: (val) { adhaarNumber = val; },
+                              onChange: (val) { widget.userModel.identifierId = val; },
                               inputFormatter: [
                                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                               ],
@@ -150,7 +150,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
               DigitElevatedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
-                    if(adhaarNumber.isEmpty && typeOfId.isEmpty){
+                    if(widget.userModel.identifierId!.isEmpty && typeOfId.isEmpty){
                       DigitToast.show(context,
                         options: DigitToastOptions(
                           "Either adhaar number or ID proof is mandatory.",
@@ -170,7 +170,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                       );
                       return;
                     }
-                    if (adhaarNumber.length != 12) {
+                    if (widget.userModel.identifierId!.length != 12) {
                       DigitToast.show(context,
                         options: DigitToastOptions(
                           "Enter a valid aadhar number",

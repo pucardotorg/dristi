@@ -61,11 +61,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              DigitBackButton(
-                                onPressed: (){
-                                  Navigator.of(context).pop();
-                                },
-                              ),
+                              DigitBackButton(),
                               DigitHelpButton()
                             ],
                           ),
@@ -82,6 +78,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   label: 'First name',
                                   formControlName: firstNameKey,
                                   isRequired: true,
+                                  onChanged: (val) { widget.userModel.firstName = val.value.toString(); },
                                   keyboardType: TextInputType.text,
                                   validationMessages: {
                                     'required': (_) => 'First name is required',
@@ -94,6 +91,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                 const SizedBox(height: 20,),
                                 DigitTextFormField(
                                   label: 'Middle name',
+                                  onChanged: (val) { widget.userModel.middleName = val.value.toString(); },
                                   formControlName: middleNameKey,
                                   isRequired: false,
                                   keyboardType: TextInputType.text,
@@ -102,6 +100,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                 DigitTextFormField(
                                   label: 'Last name',
                                   formControlName: lastNameKey,
+                                  onChanged: (val) { widget.userModel.lastName = val.value.toString(); },
                                   isRequired: true,
                                   keyboardType: TextInputType.text,
                                   validationMessages: {
@@ -140,7 +139,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
 
   FormGroup buildForm() => fb.group(<String, Object>{
     firstNameKey : FormControl<String>(
-        value: '',
+        value: widget.userModel.firstName,
         validators: [
           Validators.required,
           Validators.minLength(2),
@@ -148,11 +147,11 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
         ]
     ),
     middleNameKey : FormControl<String>(
-        value: '',
+        value: widget.userModel.middleName,
         validators: []
     ),
     lastNameKey : FormControl<String>(
-        value: '',
+        value: widget.userModel.lastName,
         validators: [
           Validators.required,
           Validators.minLength(2),

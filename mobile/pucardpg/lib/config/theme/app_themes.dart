@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:digit_components/theme/digit_theme.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme{
@@ -42,6 +43,16 @@ class AppTheme{
       centerTitle: true,
       iconTheme: IconThemeData(color: Color(0XFF8B8B8B)),
       titleTextStyle: TextStyle(color: Color(0XFF8B8B8B), fontSize: 18),
+    );
+  }
+
+  showDigitDialog(bool isError, String msg, BuildContext context){
+    DigitToast.show(context,
+      options: DigitToastOptions(
+        msg,
+        isError,
+        theme(),
+      ),
     );
   }
 

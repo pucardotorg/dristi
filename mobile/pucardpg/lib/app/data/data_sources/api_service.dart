@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
-import 'package:pucardpg/app/data/models/auth-model/auth_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart' as lr;
