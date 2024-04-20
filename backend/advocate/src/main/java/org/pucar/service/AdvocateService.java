@@ -10,13 +10,15 @@ import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 import org.pucar.web.models.AdvocateSearchCriteria;
-import org.pucar.web.models.AdvocateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static org.pucar.config.ServiceConstants.APPLICATION_ACTIVE_STATUS;
 
 @Service
 @Slf4j
@@ -69,7 +71,26 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
     return applications;
 }
 
-    public AdvocateResponse updateAdvocate(AdvocateRequest body) {
-        return null;
+    public List<Advocate> updateAdvocate(AdvocateRequest advocateRequest) {
+        // Validate whether the application that is being requested for update indeed exists
+        Advocate existingApplication = validator.validateApplicationExistence(advocateRequest.getAdvocates().get(0));
+        existingApplication.setWorkflow(advocateRequest.getAdvocates().get(0).getWorkflow());
+        advocateRequest.setAdvocates(Collections.singletonList(existingApplication));
+
+        // Enrich application upon update
+        enrichmentUtil.enrichAdvocateApplicationUponUpdate(advocateRequest);
+
+        workflowService.updateWorkflowStatus(advocateRequest);
+
+        Advocate advocate = advocateRequest.getAdvocates().get(0);
+
+        if(APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocate.getStatus())) {
+            advocate.setIsActive(true);
+        }
+
+        producer.push("update-advocate-application", advocateRequest);
+
+        return advocateRequest.getAdvocates();
     }
+
 }

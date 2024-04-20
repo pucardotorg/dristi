@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.pucar.web.models.Advocate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public class AdvocateRepositoryTest {
         // Mock data
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
         // Add necessary mock behavior for queryBuilder
-        when(queryBuilder.getAdvocateSearchQuery(anyList(), anyList())).thenReturn("SELECT * FROM advocates WHERE condition = ?");
+        when(queryBuilder.getAdvocateSearchQuery(anyList(), anyList(),anyList())).thenReturn("SELECT * FROM advocates WHERE condition = ?");
         // Mock data for jdbcTemplate
         List<Advocate> mockAdvocates = new ArrayList<>();
         Advocate mockAdvocate = new Advocate();
@@ -56,11 +57,13 @@ public class AdvocateRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class)))
                 .thenReturn(mockAdvocates);
 
+        List<String> statusList = Arrays.asList("APPROVED","PENDING");
+
         // Perform the actual method call
-        List<Advocate> result = repository.getApplications(searchCriteria);
+        List<Advocate> result = repository.getApplications(searchCriteria, statusList);
 
         // Verify that queryBuilder was called with correct arguments
-        verify(queryBuilder).getAdvocateSearchQuery(eq(searchCriteria), anyList());
+        verify(queryBuilder).getAdvocateSearchQuery(eq(searchCriteria), anyList(), anyList());
 
         // Verify that jdbcTemplate was called with correct arguments
         verify(jdbcTemplate).query(anyString(), any(Object[].class), any(AdvocateRowMapper.class));

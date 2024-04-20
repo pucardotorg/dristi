@@ -1,17 +1,17 @@
 package org.pucar.enrichment;
 
 
-        import lombok.extern.slf4j.Slf4j;
-        import org.egov.common.contract.models.AuditDetails;
-        import org.pucar.util.IdgenUtil;
-        import org.pucar.util.UserUtil;
-        import org.pucar.web.models.AdvocateClerk;
-        import org.pucar.web.models.AdvocateClerkRequest;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
+import org.pucar.util.IdgenUtil;
+import org.pucar.util.UserUtil;
+import org.pucar.web.models.AdvocateClerk;
+import org.pucar.web.models.AdvocateClerkRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-        import java.util.List;
-        import java.util.UUID;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -44,7 +44,18 @@ public class AdvocateClerkRegistrationEnrichment {
                 }
             }
         } catch (Exception e) {
-            log.error("Error enriching advocate application: {}", e.getMessage());
+            log.error("Error enriching advocate clerk application: {}", e.getMessage());
+        }
+    }
+    public void enrichAdvocateClerkApplicationUponUpdate(AdvocateClerkRequest advocateClerkRequest) {
+        try {
+            // Enrich lastModifiedTime and lastModifiedBy in case of update
+            AdvocateClerk advocateClerk = advocateClerkRequest.getClerks().get(0);
+            advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
+        } catch (Exception e) {
+            log.error("Error enriching advocate clerk  application upon update: {}", e.getMessage());
+            // Handle the exception or throw a custom exception
         }
     }
 }

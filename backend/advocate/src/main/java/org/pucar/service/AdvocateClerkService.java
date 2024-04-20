@@ -2,21 +2,22 @@ package org.pucar.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.pucar.enrichment.AdvocateClerkRegistrationEnrichment;
+import org.pucar.kafka.Producer;
 import org.pucar.repository.AdvocateClerkRepository;
+import org.pucar.validators.AdvocateClerkRegistrationValidator;
 import org.pucar.web.models.AdvocateClerk;
+import org.pucar.web.models.AdvocateClerkRequest;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-
-import org.pucar.enrichment.AdvocateClerkRegistrationEnrichment;
-import org.pucar.kafka.Producer;
-import org.pucar.validators.AdvocateClerkRegistrationValidator;
-import org.pucar.web.models.AdvocateClerkRequest;
-
+import java.util.Collections;
 import java.util.List;
+
+import static org.pucar.config.ServiceConstants.APPLICATION_ACTIVE_STATUS;
 
 @Service
 @Slf4j
@@ -56,5 +57,27 @@ public class AdvocateClerkService {
 
         // Otherwise return the found applications
         return applications;
+    }
+
+    public List<AdvocateClerk> updateAdvocateClerk(AdvocateClerkRequest advocateClerkRequest) {
+        // Validate whether the application that is being requested for update indeed exists
+        AdvocateClerk existingApplication = validator.validateApplicationExistence(advocateClerkRequest.getClerks().get(0));
+        existingApplication.setWorkflow(advocateClerkRequest.getClerks().get(0).getWorkflow());
+        advocateClerkRequest.setClerks(Collections.singletonList(existingApplication));
+
+        // Enrich application upon update
+        enrichmentUtil.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest);
+
+        workflowService.updateWorkflowStatus(advocateClerkRequest);
+
+        AdvocateClerk advocateClerk = advocateClerkRequest.getClerks().get(0);
+
+        if(APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerk.getStatus())) {
+            advocateClerk.setIsActive(true);
+        }
+
+        producer.push("update-advocate-clerk-application", advocateClerkRequest);
+
+        return advocateClerkRequest.getClerks();
     }
 }
