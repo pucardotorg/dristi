@@ -1,9 +1,11 @@
 package org.pucar.web.controllers;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
@@ -19,13 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
+import java.util.List;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T05:55:27.937918+05:30[Asia/Kolkata]")
 @Controller
@@ -93,7 +89,7 @@ public class AdvocateApiController {
 		if (accept != null && accept.contains("application/json")) {
 			try {
 				// Example after implementing a service layer
-				List<Advocate> advocateList = advocateService.updateAdvocate(body, Arrays.asList("send status list here if required"));
+				List<Advocate> advocateList = advocateService.updateAdvocate(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);

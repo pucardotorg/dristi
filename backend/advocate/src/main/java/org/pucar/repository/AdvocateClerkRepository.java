@@ -5,7 +5,6 @@ import org.egov.common.contract.models.Document;
 import org.pucar.repository.querybuilder.AdvocateClerkQueryBuilder;
 import org.pucar.repository.rowmapper.AdvocateClerkDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateClerkRowMapper;
-import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,6 @@ public class AdvocateClerkRepository {
         log.info("Final query: " + query);
         try {
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-            System.out.println(list);
             if(list != null){
                 advocateList.addAll(list);
             }

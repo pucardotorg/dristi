@@ -39,4 +39,16 @@ serviceMaps:
               type: JSON
               dbType: JSONB
 
-
+    - version: 1.0
+      description: Update advocate details in tables
+      fromTopic: update-advocate-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE  dristi_advocate SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
+          basePath: advocates.*
+          jsonMaps:
+            - jsonPath: $.advocates.*.status
+            - jsonPath: $.advocates.*.isActive
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedBy
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedTime
+            - jsonPath: $.advocates.*.id

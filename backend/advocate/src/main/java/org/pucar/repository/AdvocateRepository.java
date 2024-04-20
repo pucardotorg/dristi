@@ -35,7 +35,6 @@ public class AdvocateRepository {
 
     public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList) {
         List<Advocate> advocateList = new ArrayList<>();
-        List<Document> advocateDocumentList = new ArrayList<>();
         List<Object> preparedStmtList = new ArrayList<>();
         List<Object> preparedStmtListDoc = new ArrayList<>();
         String advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList);

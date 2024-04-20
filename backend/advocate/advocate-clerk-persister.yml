@@ -35,3 +35,16 @@ serviceMaps:
             - jsonPath: $.clerks.*.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
+    - version: 1.0
+      description: Update advocate clerk details in tables
+      fromTopic: update-advocate-clerk-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE  dristi_advocate_clerk SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
+          basePath: clerks.*
+          jsonMaps:
+            - jsonPath: $.clerks.*.status
+            - jsonPath: $.clerks.*.isActive
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
+            - jsonPath: $.clerks.*.id
