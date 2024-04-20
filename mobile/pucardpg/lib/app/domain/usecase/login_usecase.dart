@@ -56,7 +56,7 @@ class LoginUseCase {
     return dataState;
   }
 
-  void registerLitigant(UserModel userModel) {
+  Future<DataState<String>> registerLitigant(UserModel userModel) {
 
     Individual individual = Individual(
       name: Name(
@@ -97,7 +97,7 @@ class LoginUseCase {
       individual: individual,
     );
 
-    // return _registrationLoginRepository.createCitizen(citizenRegistrationRequest);
+    return _registrationLoginRepository.registerLitigant(litigantNetworkModel);
 
   }
 

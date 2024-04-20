@@ -11,6 +11,7 @@ import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_re
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
+import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
@@ -157,6 +158,29 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   Future<DataState<IndividualSearchResponse>> searchIndividual(IndividualSearchRequest individualSearchRequest) async {
     try {
       final httpResponse = await _apiService.searchIndividual(limit, offset, tenantId, individualSearchRequest);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: httpResponse.response,
+                type: dio.DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
+  }
+
+  @override
+  Future<DataState<String>> registerLitigant(LitigantNetworkModel litigantNetworkModel) async {
+    // TODO: implement registerLitigant
+    try {
+      final httpResponse = await _apiService.registerLitigant(litigantNetworkModel);
 
       if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
         return DataSuccess(httpResponse.data);

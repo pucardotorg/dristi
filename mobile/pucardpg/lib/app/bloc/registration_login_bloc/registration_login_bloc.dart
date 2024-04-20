@@ -57,9 +57,22 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
   }
 
+  Future<void> submitLitigantProfile(SubmitLitigantProfileEvent event,
+      Emitter<RegistrationLoginState> emit) async {
 
+    emit(OtpLoadingState());
 
+    final dataState = _loginUseCase.registerLitigant(event.userModel);
 
+    if(dataState is DataSuccess){
+      print("success reg");
+      emit(OtpSuccessState());
+    }
+    if(dataState is DataFailed){
+      print("failed reg");
+      emit(OtpFailedState(errorMsg: "",));
+    }
 
+  }
 
 }

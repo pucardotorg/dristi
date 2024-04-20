@@ -25,3 +25,10 @@ class SubmitRegistrationOtpEvent extends RegistrationLoginEvent {
   });
 }
 
+class SubmitLitigantProfileEvent extends RegistrationLoginEvent {
+  UserModel userModel;
+  SubmitLitigantProfileEvent({
+    required this.userModel
+  });
+}
+

@@ -22,3 +22,7 @@ class OtpIncorrectState extends RegistrationLoginState {
   String errorMsg;
   OtpIncorrectState({required this.errorMsg});
 }
+
+class LitigantSubmissionSuccessState extends RegistrationLoginState {}
+
+class LitigantSubmissionFailedState extends RegistrationLoginState {}

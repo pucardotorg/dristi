@@ -23,12 +23,12 @@ class FileBloc extends Bloc<FilePickerEvent, FilePickerState> {
     final dataState = await _filePickerUseCase.getFileStore(event.multipartFile, event.file);
 
     if(dataState is DataSuccess){
-      print("success");
+      // print("success");
       emit(FileSuccessState());
     }
     if(dataState is DataFailed){
-      print("failed");
-      print("error is ${dataState.error!.message}" ?? "");
+      // print("failed");
+      // print("error is ${dataState.error!.message}" ?? "");
       emit(FileFailedState(errorMsg: dataState.error?.message ?? "",));
     }
 
