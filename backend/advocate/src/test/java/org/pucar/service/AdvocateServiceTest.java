@@ -20,6 +20,7 @@ import org.pucar.web.models.AdvocateRequest;
 import org.pucar.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -77,9 +78,9 @@ public class AdvocateServiceTest {
         // Setup
         RequestInfo requestInfo = new RequestInfo();
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-        List<String> statusList = new ArrayList<>();
-
         when(advocateRepository.getApplications(any(),anyList())).thenReturn(Collections.emptyList());
+
+        List<String> statusList = Arrays.asList("APPROVED","PENDING");
 
         // Invoke
         List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList);
