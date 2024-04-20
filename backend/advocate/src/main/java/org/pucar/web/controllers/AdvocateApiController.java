@@ -1,6 +1,7 @@
 package org.pucar.web.controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -92,8 +93,10 @@ public class AdvocateApiController {
 		if (accept != null && accept.contains("application/json")) {
 			try {
 				// Example after implementing a service layer
-				AdvocateResponse response = advocateService.updateAdvocate(body);
-				return new ResponseEntity<>(response, HttpStatus.OK);
+				List<Advocate> advocateList = advocateService.updateAdvocate(body, Arrays.asList("send status list here if required"));
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}

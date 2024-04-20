@@ -46,4 +46,15 @@ public class AdvocateRegistrationEnrichment {
             // Handle the exception or throw a custom exception
         }
     }
+
+    public void enrichBirthApplicationUponUpdate(AdvocateRequest advocateRequest) {
+        try {
+            // Enrich lastModifiedTime and lastModifiedBy in case of update
+            advocateRequest.getAdvocates().get(0).getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            advocateRequest.getAdvocates().get(0).getAuditDetails().setLastModifiedBy(advocateRequest.getRequestInfo().getUserInfo().getUuid());
+        } catch (Exception e) {
+            log.error("Error enriching birth application upon update: {}", e.getMessage());
+            // Handle the exception or throw a custom exception
+        }
+    }
 }

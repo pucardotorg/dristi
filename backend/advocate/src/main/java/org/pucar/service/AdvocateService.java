@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -69,7 +70,18 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
     return applications;
 }
 
-    public AdvocateResponse updateAdvocate(AdvocateRequest body) {
-        return null;
+    public List<Advocate> updateAdvocate(AdvocateRequest advocateRequest, List<String> statusList) {
+        // Validate whether the application that is being requested for update indeed exists
+        Advocate existingApplication = validator.validateApplicationExistence(advocateRequest.getAdvocates().get(0), statusList);
+        existingApplication.setWorkflow(advocateRequest.getAdvocates().get(0).getWorkflow());
+        advocateRequest.setAdvocates(Collections.singletonList(existingApplication));
+
+        // Enrich application upon update
+        enrichmentUtil.enrichBirthApplicationUponUpdate(advocateRequest);
+
+        workflowService.updateWorkflowStatus(advocateRequest);
+
+        return advocateRequest.getAdvocates();
     }
+
 }
