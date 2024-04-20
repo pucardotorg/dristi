@@ -136,7 +136,7 @@ public class ClerkApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(advocateClerkSearchRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
 }

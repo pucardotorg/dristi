@@ -1,5 +1,6 @@
 package org.pucar.enrichment;
 
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,6 +64,32 @@ class AdvocateRegistrationEnrichmentTest {
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getCreatedBy());
         assertNotNull(advocates.get(0).getAuditDetails().getCreatedTime());
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getLastModifiedBy());
+        assertNotNull(advocates.get(0).getAuditDetails().getLastModifiedTime());
+    }
+
+    @Test
+    void enrichAdvocateRegistrationUponUpdateTest() {
+        // Setup mock request and expected results
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        List<Advocate> advocates = new ArrayList<>();
+        Advocate advocate = new Advocate();
+        advocate.setTenantId("tenantId");
+        AuditDetails auditDetails = AuditDetails.builder().createdBy("user-uuid-1").createdTime(System.currentTimeMillis()).lastModifiedBy("user-uuid-1").lastModifiedTime(System.currentTimeMillis()).build();
+        advocate.setAuditDetails(auditDetails);
+        advocates.add(advocate);
+        advocateRequest.setAdvocates(advocates);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid-2");
+        requestInfo.setUserInfo(userInfo);
+        advocateRequest.setRequestInfo(requestInfo);
+
+        // Call the method to test
+        advocateRegistrationEnrichment.enrichAdvocateApplicationUponUpdate(advocateRequest);
+
+        // Assert that each advocate has been enriched as expected
+        assertNotNull(advocates.get(0).getAuditDetails());
+        assertEquals("user-uuid-2", advocates.get(0).getAuditDetails().getLastModifiedBy());
         assertNotNull(advocates.get(0).getAuditDetails().getLastModifiedTime());
     }
 }
