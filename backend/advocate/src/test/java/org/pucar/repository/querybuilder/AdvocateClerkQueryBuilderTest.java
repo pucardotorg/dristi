@@ -54,11 +54,14 @@ public class AdvocateClerkQueryBuilderTest {
         // Create list of prepared statements
         List<Object> preparedStmtList = new ArrayList<>();
 
+        // List of status
+        List<String> statusList = new ArrayList<>();
+
         // Call the method to be tested
-        String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(criteriaList, preparedStmtList);
+        String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(criteriaList, preparedStmtList,statusList);
 
         // Assert the generated query string
-        String ex = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime  FROM dristi_advocate_clerk advc WHERE  advc.id IN (  ? )  OR  advc.stateregnnumber IN (  ? )  ORDER BY advc.createdtime DESC ";
+        String ex = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE ( advc.id IN (  ? )  OR  advc.stateregnnumber IN (  ? ) ) ORDER BY advc.createdtime DESC ";
         assertEquals(ex, query);
 
         // Assert the prepared statement list

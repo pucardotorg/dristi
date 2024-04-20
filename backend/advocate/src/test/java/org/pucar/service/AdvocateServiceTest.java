@@ -77,13 +77,15 @@ public class AdvocateServiceTest {
         // Setup
         RequestInfo requestInfo = new RequestInfo();
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-        when(advocateRepository.getApplications(any())).thenReturn(Collections.emptyList());
+        List<String> statusList = new ArrayList<>();
+
+        when(advocateRepository.getApplications(any(),anyList())).thenReturn(Collections.emptyList());
 
         // Invoke
-        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria);
+        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList);
 
         // Verify
         assertEquals(0, result.size());
-        verify(advocateRepository, times(1)).getApplications(searchCriteria);
+        verify(advocateRepository, times(1)).getApplications(searchCriteria,statusList);
     }
 }
