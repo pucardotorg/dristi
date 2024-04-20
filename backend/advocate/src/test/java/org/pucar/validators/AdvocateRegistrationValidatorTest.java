@@ -72,7 +72,6 @@ public class AdvocateRegistrationValidatorTest {
         // Missing tenantId intentionally
         advocateRequest.setAdvocates(Collections.singletonList(advocate));
 
-        when(individualService.searchIndividual(requestInfo, "validIndividualId")).thenReturn(true);
 
         assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
     }

@@ -64,7 +64,7 @@ public class ClerkApiController {
 	public ResponseEntity<AdvocateClerkResponse> clerkV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body) {
 		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("*/*")) {
+		if (accept != null && accept.contains("application/json")) {
 			try {
 				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus());
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
