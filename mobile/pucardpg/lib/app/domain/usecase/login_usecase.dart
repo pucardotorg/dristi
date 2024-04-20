@@ -30,7 +30,10 @@ class LoginUseCase {
     return _registrationLoginRepository.requestOtp(otpRequest);
   }
 
-  Future<DataState<IndividualSearchResponse>> searchIndividual(IndividualSearchRequest individualSearchRequest) {
+  Future<DataState<IndividualSearchResponse>> searchIndividual(String authToken, String uuid) {
+    IndividualSearchRequest individualSearchRequest = IndividualSearchRequest(
+        requestInfo: RequestInfoSearch(authToken: authToken),
+        individual: IndividualSearch(userUuid: [uuid]));
     return _registrationLoginRepository.searchIndividual(individualSearchRequest);
   }
 
@@ -46,6 +49,19 @@ class LoginUseCase {
         ),
     );
     var dataState = await _registrationLoginRepository.createCitizen(citizenRegistrationRequest);
+    if(dataState is DataSuccess){
+      userModel.id = dataState.data?.userRequest?.id;
+      userModel.uuid = dataState.data?.userRequest?.uuid;
+      userModel.authToken = dataState.data?.accessToken;
+      userModel.username = dataState.data?.userRequest?.userName;
+      userModel.mobileNumber = dataState.data?.userRequest?.mobileNumber;
+    }
+    return dataState;
+  }
+
+  Future<DataState<AuthResponse>> getAuthResponse(String username, String password, UserModel userModel) async {
+
+    var dataState = await _registrationLoginRepository.getAuthResponse(username, password);
     if(dataState is DataSuccess){
       userModel.id = dataState.data?.userRequest?.id;
       userModel.uuid = dataState.data?.userRequest?.uuid;

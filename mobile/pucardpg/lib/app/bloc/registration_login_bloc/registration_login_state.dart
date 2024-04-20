@@ -1,4 +1,5 @@
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 
 abstract class RegistrationLoginState {}
 
@@ -7,6 +8,11 @@ class OtpInitialState extends RegistrationLoginState {}
 class OtpLoadingState extends RegistrationLoginState {}
 
 class OtpSuccessState extends RegistrationLoginState {}
+
+class IndividualSearchSuccessState extends RegistrationLoginState {
+  IndividualSearchResponse individualSearchResponse;
+  IndividualSearchSuccessState({required this.individualSearchResponse});
+}
 
 class OtpFailedState extends RegistrationLoginState {
   String errorMsg;

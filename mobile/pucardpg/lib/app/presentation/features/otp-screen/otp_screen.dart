@@ -170,25 +170,28 @@ class OtpScreenState extends State<OtpScreen> {
                     bloc: widget.registrationLoginBloc,
                     listener: (context, state) {
 
-                      Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+                      switch (state.runtimeType) {
 
-                      // switch (state.runtimeType) {
-                      //
-                      //   case OtpFailedState:
-                      //     DigitToast.show(context,
-                      //       options: DigitToastOptions(
-                      //         (state as OtpFailedState).errorMsg,
-                      //         false,
-                      //         widget.theme.theme(),
-                      //       ),
-                      //     );
-                      //     break;
-                      //   case OtpSuccessState:
-                      //     Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
-                      //     break;
-                      //   default:
-                      //     break;
-                      // }
+                        case OtpFailedState:
+                          DigitToast.show(context,
+                            options: DigitToastOptions(
+                              (state as OtpFailedState).errorMsg,
+                              false,
+                              widget.theme.theme(),
+                            ),
+                          );
+                          break;
+                        case OtpSuccessState:
+                          Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+                          break;
+                        case IndividualSearchSuccessState:
+                          if ((state as IndividualSearchSuccessState).individualSearchResponse.individual.isEmpty) {
+                            Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
+                          }
+                          break;
+                        default:
+                          break;
+                      }
                     },
                     child: DigitElevatedButton(
                         onPressed: () {
@@ -196,7 +199,12 @@ class OtpScreenState extends State<OtpScreen> {
                           _otpControllers.forEach((controller) {
                             otp += controller.text;
                           });
-                          widget.registrationLoginBloc.add(SubmitRegistrationOtpEvent(username: widget.userModel.mobileNumber!, otp: otp, userModel: widget.userModel));
+                          if (widget.userModel.type == register) {
+                            widget.registrationLoginBloc.add(SubmitRegistrationOtpEvent(username: widget.userModel.mobileNumber!, otp: otp, userModel: widget.userModel));
+                          }
+                          if (widget.userModel.type == login) {
+                            widget.registrationLoginBloc.add(SendLoginOtpEvent(username: widget.userModel.mobileNumber!, password: otp, userModel: widget.userModel));
+                          }
                           // Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
                         },
                         child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)

@@ -51,3 +51,4 @@ String? selectedOption;
 
 const String approvalSvg = 'assets/icons/svg/approval.svg';
 const String digitSvg = 'assets/icons/svg/DIGIT.png';
+const String yetToRegister = 'assets/icons/svg/yet_to_register.svg';

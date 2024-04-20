@@ -32,7 +32,8 @@ abstract class ApiService {
   @POST("/user/oauth/token")
   @FormUrlEncoded()  // Specify form data encoding
   Future<HttpResponse<AuthResponse>> getAuthResponse(
-    @Field("username") String username,
+      @Header('authorization') String authorization,
+      @Field("username") String username,
     [
       @Field("password") String password = "123456",
       @Field("tenantId") String tenantId = "pg",

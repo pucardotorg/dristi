@@ -32,3 +32,21 @@ class SubmitLitigantProfileEvent extends RegistrationLoginEvent {
   });
 }
 
+class SendIndividualSearchEvent extends RegistrationLoginEvent {
+  UserModel userModel;
+  SendIndividualSearchEvent({
+    required this.userModel
+  });
+}
+
+class SendLoginOtpEvent extends RegistrationLoginEvent {
+  final String username;
+  final String password;
+  UserModel userModel;
+  SendLoginOtpEvent({
+    required this.username,
+    required this.password,
+    required this.userModel
+  });
+}
+

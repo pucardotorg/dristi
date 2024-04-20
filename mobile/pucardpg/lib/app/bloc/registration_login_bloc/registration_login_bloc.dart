@@ -14,6 +14,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     on<OtpInitialEvent>(otpInitialEvent);
     on<SendOtpEvent>(sendOtpEvent);
     on<SubmitRegistrationOtpEvent>(sendRegistrationOtpEvent);
+    on<SendLoginOtpEvent>(sendLoginOtpEvent);
   }
 
   Future<void> otpInitialEvent(OtpInitialEvent event,
@@ -57,6 +58,30 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
   }
 
+  Future<void> sendLoginOtpEvent(SendLoginOtpEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(OtpLoadingState());
+
+    final dataState = await _loginUseCase.getAuthResponse(event.username, event.password, event.userModel);
+
+    if(dataState is DataSuccess){
+      print("success reg");
+      final dataStateSearch = await _loginUseCase.searchIndividual(dataState.data!.accessToken!, dataState.data!.userRequest!.uuid!);
+      if (dataState is DataSuccess) {
+        emit(IndividualSearchSuccessState(individualSearchResponse: dataStateSearch.data!));
+      }
+      if(dataState is DataFailed){
+        print("failed reg");
+        emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+      }
+    }
+    if(dataState is DataFailed){
+      print("failed reg");
+      emit(OtpFailedState(errorMsg: dataState.error?.message ?? "",));
+    }
+
+  }
   Future<void> submitLitigantProfile(SubmitLitigantProfileEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
