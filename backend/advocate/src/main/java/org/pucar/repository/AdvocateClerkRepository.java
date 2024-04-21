@@ -54,6 +54,9 @@ public class AdvocateClerkRepository {
         for (AdvocateClerk advocate : advocateList) {
             ids.add(advocate.getId().toString());
         }
+        if (ids.isEmpty()) {
+            return advocateList;
+        }
 
         String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
         log.info("Final query Document: {}", advocateDocumentQuery);
