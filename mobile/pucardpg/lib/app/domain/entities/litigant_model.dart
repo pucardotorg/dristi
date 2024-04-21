@@ -18,6 +18,11 @@ class UserModel{
   String? type;
   String? userType;
 
+  String? stateOfRegistration;
+  String? stateRegnNumber;
+  String? barRegistrationNumber;
+  String? fireStore;
+
   AddressModel addressModel = AddressModel();
 
   UserModel({

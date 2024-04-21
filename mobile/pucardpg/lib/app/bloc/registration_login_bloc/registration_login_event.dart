@@ -50,3 +50,17 @@ class SendLoginOtpEvent extends RegistrationLoginEvent {
   });
 }
 
+class SubmitAdvocateProfileEvent extends RegistrationLoginEvent {
+  UserModel userModel;
+  SubmitAdvocateProfileEvent({
+    required this.userModel
+  });
+}
+
+class SubmitAdvocateClerkProfileEvent extends RegistrationLoginEvent {
+  UserModel userModel;
+  SubmitAdvocateClerkProfileEvent({
+    required this.userModel
+  });
+}
+

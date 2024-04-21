@@ -112,6 +112,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
             ),
             DigitElevatedButton(
                 onPressed: () {
+                  widget.userModel.userType = selectedOption;
                   if(selectedOption == null){
                     DigitToast.show(context,
                       options: DigitToastOptions(

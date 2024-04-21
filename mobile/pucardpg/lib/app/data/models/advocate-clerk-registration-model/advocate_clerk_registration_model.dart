@@ -1,21 +1,20 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:pucardpg/app/data/models/advocate-request-info/advocate_request_info.dart';
 import 'package:pucardpg/app/data/models/document-model/document_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/workflow-model/workflow_model.dart';
 
-part 'advocate_registration_model.freezed.dart';
-part 'advocate_registration_model.g.dart';
+part 'advocate_clerk_registration_model.freezed.dart';
+part 'advocate_clerk_registration_model.g.dart';
 
 @freezed
-class Advocate with _$Advocate {
-  const factory Advocate({
+class Clerk with _$Clerk {
+  const factory Clerk({
     @JsonKey(name: "id") String? id,
     @JsonKey(name: 'tenantId') String? tenantId,
     @JsonKey(name: 'applicationNumber') String? applicationNumber,
     @JsonKey(name: 'status') String? status,
-    @JsonKey(name: 'barRegistrationNumber') String? barRegistrationNumber,
+    @JsonKey(name: 'stateRegnNumber') String? stateRegnNumber,
     @JsonKey(name: 'advocateType') String? advocateType,
     @JsonKey(name: 'organisationID') String? organisationID,
     @JsonKey(name: 'individualId') String? individualId,
@@ -23,30 +22,29 @@ class Advocate with _$Advocate {
     @JsonKey(name: 'workflow') Workflow? workflow,
     @JsonKey(name: 'documents') List<Document>? documents,
     @JsonKey(name: 'additionalDetails') Map<String, dynamic>? additionalDetails,
-  }) = _Advocate;
+  }) = _Clerk;
 
-  factory Advocate.fromJson(Map<String, dynamic> json) =>
-      _$AdvocateFromJson(json);
+  factory Clerk.fromJson(Map<String, dynamic> json) => _$ClerkFromJson(json);
 }
 
 @freezed
-class AdvocateRegistrationRequest with _$AdvocateRegistrationRequest {
-  const factory AdvocateRegistrationRequest({
+class AdvocateClerkRegistrationRequest with _$AdvocateClerkRegistrationRequest {
+  const factory AdvocateClerkRegistrationRequest({
     @JsonKey(name: 'RequestInfo') required AdvocateRequestInfo requestInfo,
-    @JsonKey(name: 'advocates') required List<Advocate> advocates
-  }) = _AdvocateRegistrationRequest;
+    @JsonKey(name: 'clerks') required List<Clerk> clerks
+  }) = _AdvocateClerkRegistrationRequest;
 
-  factory AdvocateRegistrationRequest.fromJson(Map<String, dynamic> json) =>
-      _$AdvocateRegistrationRequestFromJson(json);
+  factory AdvocateClerkRegistrationRequest.fromJson(Map<String, dynamic> json) =>
+      _$AdvocateClerkRegistrationRequestFromJson(json);
 }
 
 @freezed
-class AdvocateRegistrationResponse with _$AdvocateRegistrationResponse {
-  const factory AdvocateRegistrationResponse({
+class AdvocateClerkRegistrationResponse with _$AdvocateClerkRegistrationResponse {
+  const factory AdvocateClerkRegistrationResponse({
     @JsonKey(name: 'responseInfo') @Default(ResponseInfoSearch(status: "")) ResponseInfoSearch responseInfo,
-    @JsonKey(name: 'advocates') required List<Advocate> advocates,
-  }) = _AdvocateRegistrationResponse;
+    @JsonKey(name: 'clerks') required List<Clerk> clerks,
+  }) = _AdvocateClerkRegistrationResponse;
 
-  factory AdvocateRegistrationResponse.fromJson(Map<String, dynamic> json) =>
-      _$AdvocateRegistrationResponseFromJson(json);
+  factory AdvocateClerkRegistrationResponse.fromJson(Map<String, dynamic> json) =>
+      _$AdvocateClerkRegistrationResponseFromJson(json);
 }

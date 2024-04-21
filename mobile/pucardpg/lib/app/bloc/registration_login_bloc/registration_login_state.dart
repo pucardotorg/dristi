@@ -1,5 +1,6 @@
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
+import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 
 abstract class RegistrationLoginState {}
 
@@ -24,5 +25,16 @@ class RequestFailedState extends RegistrationLoginState {
   RequestFailedState({required this.errorMsg});
 }
 
-class LitigantSubmissionSuccessState extends RegistrationLoginState {}
+class RequestOtpFailedState extends RegistrationLoginState {
+  String errorMsg;
+  RequestOtpFailedState({required this.errorMsg});
+}
 
+class LitigantSubmissionSuccessState extends RegistrationLoginState {
+  LitigantResponseModel litigantResponseModel;
+  LitigantSubmissionSuccessState({required this.litigantResponseModel});
+}
+
+class AdvocateSubmissionSuccessState extends RegistrationLoginState {}
+
+class AdvocateClerkSubmissionSuccessState extends RegistrationLoginState {}

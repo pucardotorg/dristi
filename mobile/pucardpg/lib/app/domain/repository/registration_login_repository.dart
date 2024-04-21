@@ -5,6 +5,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
@@ -21,13 +22,15 @@ abstract class RegistrationLoginRepository {
 
   Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(AdvocateRegistrationRequest advocateRegistrationRequest);
 
+  Future<DataState<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);
+
   Future<DataState<String>> getFileStore(MultipartFile multipartFile, File file);
 
   Future<DataState<AuthResponse>> getAuthResponse(String username, String password);
 
   Future<DataState<AuthResponse>> createCitizen(CitizenRegistrationRequest citizenRegistrationRequest);
 
-  Future<DataState<String>> registerLitigant(LitigantNetworkModel litigantNetworkModel);
+  Future<DataState<LitigantResponseModel>> registerLitigant(LitigantNetworkModel litigantNetworkModel);
 
 // Future<DataState<List<BirthRegistrationApplicationModel>>> getBirthRegistrationsSearches(String search);
   //

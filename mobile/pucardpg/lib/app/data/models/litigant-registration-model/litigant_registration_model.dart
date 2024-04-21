@@ -1,5 +1,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/request-info-model/request_info.dart';
 import 'package:pucardpg/app/data/models/role-model/role.dart';
 
@@ -46,20 +47,20 @@ class Identifier with _$Identifier {
 @freezed
 class AdditionalFields with _$AdditionalFields {
   const factory AdditionalFields({
-    @JsonKey(name: 'fields') @Default([]) List<Field> fields, // Use "{{individualSkillExperience}}" for replacement
+    @JsonKey(name: 'fields') @Default([]) List<Fields> fields, // Use "{{individualSkillExperience}}" for replacement
   }) = _AdditionalFields ;
 
   factory AdditionalFields.fromJson(Map<String, dynamic> json) => _$AdditionalFieldsFromJson(json);
 }
 
 @freezed
-class Field with _$Field {
-  const factory Field({
+class Fields with _$Fields {
+  const factory Fields({
     @JsonKey(name: 'key') required String key, // Use "{{individualSkillType}}" for replacement
     @JsonKey(name: 'value') required String value, // Use "{{individualSkillLevel}}" for replacement
-  }) = _Field;
+  }) = _Fields;
 
-  factory Field.fromJson(Map<String, dynamic> json) => _$FieldFromJson(json);
+  factory Fields.fromJson(Map<String, dynamic> json) => _$FieldsFromJson(json);
 }
 
 @freezed
@@ -145,6 +146,25 @@ class LitigantNetworkModel with _$LitigantNetworkModel {
 
   factory LitigantNetworkModel.fromJson(Map<String, dynamic> json) => _$LitigantNetworkModelFromJson(json);
 
+}
+
+@freezed
+class IndividualInfo with _$IndividualInfo {
+  const factory IndividualInfo({
+  @JsonKey(name: 'individualId') required String individualId,
+}) = _IndividualInfo;
+
+factory IndividualInfo.fromJson(Map<String, dynamic> json) => _$IndividualInfoFromJson(json);
+}
+
+@freezed
+class LitigantResponseModel with _$LitigantResponseModel {
+  const factory LitigantResponseModel({
+    @JsonKey(name: 'ResponseInfo') required ResponseInfoSearch responseInfo,
+    @JsonKey(name: 'Individual') required IndividualInfo individualInfo,
+  }) = _LitigantResponseModel;
+
+  factory LitigantResponseModel.fromJson(Map<String, dynamic> json) => _$LitigantResponseModelFromJson(json);
 }
 
 // {

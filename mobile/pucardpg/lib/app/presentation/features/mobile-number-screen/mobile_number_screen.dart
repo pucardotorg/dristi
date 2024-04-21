@@ -141,7 +141,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 bloc: widget.registrationLoginBloc,
                                 listener: (context, state) {
                                   switch (state.runtimeType) {
-                                    case RequestFailedState:
+                                    case RequestOtpFailedState:
                                       widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
                                       Navigator.pushNamed(context, '/');
                                       break;

@@ -101,6 +101,12 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   case LitigantSubmissionSuccessState:
                     Navigator.pushNamed(context, '/SuccessScreen', arguments: widget.userModel);
                     break;
+                  case AdvocateSubmissionSuccessState:
+                    Navigator.pushNamed(context, '/SuccessScreen', arguments: widget.userModel);
+                    break;
+                  case AdvocateClerkSubmissionSuccessState:
+                    Navigator.pushNamed(context, '/SuccessScreen', arguments: widget.userModel);
+                    break;
                   default:
                     break;
                 }
@@ -111,7 +117,15 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       widget.theme.showDigitDialog(true, "Select all Terms and Conditions", context);
                       return;
                     }
-                    widget.registrationLoginBloc.add(SubmitLitigantProfileEvent(userModel: widget.userModel));
+                    if (widget.userModel.userType == 'Advocate') {
+                      widget.registrationLoginBloc.add(SubmitAdvocateProfileEvent(userModel: widget.userModel));
+                    }
+                    if (widget.userModel.userType == 'Advocate Clerk') {
+                      widget.registrationLoginBloc.add(SubmitAdvocateClerkProfileEvent(userModel: widget.userModel));
+                    }
+                    if (widget.userModel.userType == 'Litigant') {
+                      widget.registrationLoginBloc.add(SubmitLitigantProfileEvent(userModel: widget.userModel));
+                    }
                   },
                   child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
               ),

@@ -13,7 +13,7 @@ const String msgId = "1712987382117|en_IN";
 const int timeStamp = 1712987382117;
 
 const String tenantId = "pg";
-const String userType = "citizen";
+const String type = "citizen";
 const String login = "login";
 
 const String register = "register";
@@ -33,7 +33,7 @@ const Role citizenRole = Role(
     code: "CITIZEN"
 );
 
-const Field litigant = Field(
+const Fields litigant = Fields(
     key: 'userType',
     value: "LITIGANT",
 );

@@ -16,6 +16,8 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     on<SubmitRegistrationOtpEvent>(sendRegistrationOtpEvent);
     on<SendLoginOtpEvent>(sendLoginOtpEvent);
     on<SubmitLitigantProfileEvent>(submitLitigantProfile);
+    on<SubmitAdvocateProfileEvent>(submitAdvocateProfile);
+    on<SubmitAdvocateClerkProfileEvent>(submitAdvocateClerkProfile);
   }
 
   Future<void> initialEvent(InitialEvent event,
@@ -85,7 +87,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     final dataState = await _loginUseCase.registerLitigant(event.userModel);
 
     if(dataState is DataSuccess){
-      emit(LitigantSubmissionSuccessState());
+      emit(LitigantSubmissionSuccessState(litigantResponseModel: dataState.data!));
     }
     if(dataState is DataFailed){
       emit(RequestFailedState(errorMsg: "",));
@@ -93,4 +95,48 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
   }
 
+  Future<void> submitAdvocateProfile(SubmitAdvocateProfileEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(LoadingState());
+
+    final dataState = await _loginUseCase.registerLitigant(event.userModel);
+
+    if(dataState is DataSuccess){
+      final dataState1 = await _loginUseCase.registerAdvocate(dataState.data!.individualInfo.individualId, event.userModel);
+
+      if(dataState1 is DataSuccess){
+        emit(AdvocateSubmissionSuccessState());
+      }
+      if(dataState1 is DataFailed){
+        emit(RequestFailedState(errorMsg: "",));
+      }
+    }
+    if(dataState is DataFailed){
+      emit(RequestFailedState(errorMsg: "",));
+    }
+
+  }
+
+  Future<void> submitAdvocateClerkProfile(SubmitAdvocateClerkProfileEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(LoadingState());
+
+    final dataState = await _loginUseCase.registerLitigant(event.userModel);
+
+    if(dataState is DataSuccess){
+      final dataState1 = await _loginUseCase.registerAdvocateClerk(dataState.data!.individualInfo.individualId, event.userModel);
+
+      if(dataState1 is DataSuccess){
+        emit(AdvocateClerkSubmissionSuccessState());
+      }
+      if(dataState1 is DataFailed){
+        emit(RequestFailedState(errorMsg: "",));
+      }    }
+    if(dataState is DataFailed){
+      emit(RequestFailedState(errorMsg: "",));
+    }
+
+  }
 }
