@@ -45,7 +45,12 @@ const authHeaders = () => ({
   "auth-token": Digit.UserService.getUser()?.access_token || null,
 });
 
-const userServiceData = () => ({ userInfo: Digit.UserService.getUser()?.info });
+const userServiceData = (additionInfo) => {
+  if (Boolean(additionInfo) && Object.keys(additionInfo).length > 0) {
+    return { userInfo: { ...Digit.UserService.getUser()?.info, ...additionInfo } };
+  }
+  return { userInfo: Digit.UserService.getUser()?.info };
+};
 
 window.Digit = window.Digit || {};
 window.Digit = { ...window.Digit, RequestCache: window.Digit.RequestCache || {} };
@@ -67,6 +72,7 @@ export const Request = async ({
   multipartFormData = false,
   multipartData = {},
   reqTimestamp = false,
+  additionInfo = {},
 }) => {
   const ts = new Date().getTime();
   if (method.toUpperCase() === "POST") {
@@ -77,7 +83,7 @@ export const Request = async ({
       data.RequestInfo = { ...data.RequestInfo, ...requestInfo() };
     }
     if (userService) {
-      data.RequestInfo = { ...data.RequestInfo, ...userServiceData() };
+      data.RequestInfo = { ...data.RequestInfo, ...userServiceData(additionInfo) };
     }
     if (locale) {
       data.RequestInfo = { ...data.RequestInfo, msgId: `${ts}|${Digit.StoreData.getCurrentLanguage()}` };

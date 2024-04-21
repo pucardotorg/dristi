@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 
 const Registration = () => {
   const { t } = useTranslation();
+  const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -23,7 +24,19 @@ const Registration = () => {
         if (
           input.isDependentOn &&
           data[curr.body[0].key][input.isDependentOn] &&
-          !Boolean(data[curr.body[0].key][input.isDependentOn][input.dependentKey])
+          !Boolean(
+            input.dependentKey[input.isDependentOn].reduce((res, current) => {
+              if (!res) return res;
+              res = data[curr.body[0].key][input.isDependentOn][current];
+              if (
+                Array.isArray(data[curr.body[0].key][input.isDependentOn][current]) &&
+                data[curr.body[0].key][input.isDependentOn][current].length === 0
+              ) {
+                res = false;
+              }
+              return res;
+            }, true)
+          )
         ) {
           return;
         }
@@ -38,6 +51,11 @@ const Registration = () => {
     return isValid;
   };
 
+  const onDocumentUpload = async (fileData) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type };
+  };
+
   const onSubmit = (data) => {
     console.log("data", data);
     if (!validateFormData(data)) {
@@ -45,10 +63,9 @@ const Registration = () => {
       return;
     }
     const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
-    const aadharNumber = Digit?.SessionStorage?.get("aadharNumber");
-    const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadharNumber;
+    const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
+    const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadhaarNumber;
     const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "ADHAAR";
-    debugger;
     let Individual = {
       Individual: {
         tenantId: tenantId,
@@ -105,37 +122,75 @@ const Registration = () => {
       },
     };
     Digit.DRISTIService.postIndividualService(Individual, tenantId)
-      .then(() => {
-        if (data?.clientDetails?.selectUserType?.serviceName) {
-          const data = {
-            advocates: [
-              {
-                tenantId: tenantId,
-                applicationNumber: "string",
-                barRegistrationNumber: "string",
-                advocateType: "PROSECUTOR, PUBLIC DEFENDER",
-                organisationID: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                individualId: "string",
-                isActive: true,
-                workflow: {
-                  action: "string",
-                  comment: "string",
-                  assignees: ["string"],
-                },
-                documents: [
-                  {
-                    id: "string",
-                    documentType: "string",
-                    fileStore: "string",
-                    documentUid: "string",
-                    additionalDetails: {},
+      .then((individualRes) => {
+        if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
+          onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
+            console.log("document", document);
+            const requestBody = {
+              [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
+                {
+                  tenantId: tenantId,
+                  individualId: individualRes?.Individual?.individualId,
+                  isActive: true,
+                  workflow: {
+                    action: "REGISTER",
+                    comments: `Applying for ${data?.clientDetails?.selectUserType?.apiDetails?.requestKey} registration`,
+                    documents: [
+                      {
+                        id: null,
+                        documentType: document.fileType,
+                        fileStore: document.file?.files?.[0]?.fileStoreId,
+                        documentUid: "",
+                        additionalDetails: {},
+                      },
+                    ],
+                    assignes: [],
+                    rating: null,
                   },
-                ],
-                additionalDetails: {},
-              },
-            ],
-          };
-          Digit.DRISTIService.complainantService(Individual, tenantId);
+                  documents: [
+                    {
+                      id: null,
+                      documentType: document.fileType,
+                      fileStore: document.file?.files?.[0]?.fileStoreId,
+                      documentUid: "",
+                      additionalDetails: {},
+                    },
+                  ],
+                  additionalDetails: {
+                    stateOfRegistration: data?.clientDetails?.stateOfRegistration?.name,
+                    username:
+                      data?.userDetails?.firstName && data?.userDetails?.lastName
+                        ? `${data?.userDetails?.firstName} ${data?.userDetails?.lastName}`
+                        : "",
+                  },
+                  ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+                    res[curr] = data?.clientDetails[curr];
+                    return res;
+                  }, {}),
+                },
+              ],
+            };
+            Digit.DRISTIService.complainantService(data?.clientDetails?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
+              roles: [
+                {
+                  name: "Citizen",
+                  code: "CITIZEN",
+                  tenantId: "pg",
+                },
+                {
+                  name: "USER_REGISTER",
+                  code: "USER_REGISTER",
+                  tenantId: "pg",
+                },
+              ],
+            })
+              .then(() => {
+                history.push(`/digit-ui/citizen/dristi/home/response`, "success");
+              })
+              .catch(() => {
+                history.push(`/digit-ui/citizen/dristi/home/response`, "error");
+              });
+          });
         } else history.push(`/digit-ui/citizen/dristi/home/response`, "success");
       })
       .catch(() => {

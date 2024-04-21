@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   LabelFieldPair,
   CardLabel,
@@ -7,13 +7,10 @@ import {
   CustomDropdown,
   MultiUploadWrapper,
   CitizenInfoLabel,
-  Toast,
 } from "@egovernments/digit-ui-react-components";
-import { useLocation } from "react-router-dom";
-import { Controller } from "react-hook-form";
 
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control }) => {
-  const { pathname: url } = useLocation();
+  const Digit = window.Digit || {};
   const [removeFile, setRemoveFile] = useState();
   const inputs = useMemo(
     () =>
@@ -24,7 +21,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
           name: "correspondenceCity",
         },
       ],
-    []
+    [config?.populators?.inputs]
   );
 
   function setValue(value, name, input) {
@@ -62,7 +59,14 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-            ? formData && formData[config.key] && formData[config.key][input.isDependentOn][input.dependentKey]
+            ? formData &&
+              formData[config.key] &&
+              Array.isArray(input.dependentKey[input.isDependentOn]) &&
+              input.dependentKey[input.isDependentOn].reduce((res, curr) => {
+                if (!res) return res;
+                res = formData[config.key][input.isDependentOn][curr];
+                return res;
+              }, true)
             : true;
         return (
           <React.Fragment key={index}>

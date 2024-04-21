@@ -23,14 +23,15 @@ export const DRISTIService = {
       params,
     }),
 
-  complainantService: (url, data, tenantId) =>
+  complainantService: (url, data, tenantId, userService = false, additionInfo) =>
     Request({
       url: url,
       useCache: false,
-      userService: false,
+      userService: userService,
       method: "POST",
       auth: true,
       data,
       params: { tenantId },
+      additionInfo,
     }),
 };
