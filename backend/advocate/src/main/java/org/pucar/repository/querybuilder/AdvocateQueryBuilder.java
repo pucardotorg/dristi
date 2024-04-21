@@ -67,6 +67,7 @@ public class AdvocateQueryBuilder {
                         .append(applicationNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(applicationNumbers);
+                firstCriteria = false; // Update firstCriteria flag
             }
 
             if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
@@ -79,6 +80,7 @@ public class AdvocateQueryBuilder {
                         .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(statusList);
+                firstCriteria = false; // Update firstCriteria flag
             }
 
             return query.toString();
