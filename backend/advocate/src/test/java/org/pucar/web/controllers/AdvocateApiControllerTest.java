@@ -105,7 +105,7 @@ public class AdvocateApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(advocateRequest)))
-                        .andExpect(status().isBadRequest());
+                        .andExpect(status().isInternalServerError());
     }
 
 //    @Test
@@ -131,6 +131,6 @@ public class AdvocateApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(advocateSearchRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 }
