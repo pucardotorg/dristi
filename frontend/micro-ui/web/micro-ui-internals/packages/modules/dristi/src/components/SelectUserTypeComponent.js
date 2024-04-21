@@ -75,7 +75,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
             {showDependentFields && (
               <LabelFieldPair style={{ width: "100%", display: "flex" }}>
                 {input?.type !== "infoBox" && (
-                  <CardLabel className="card-label-smaller">
+                  <CardLabel style={{ fontWeight: 700 }} className="card-label-smaller">
                     {t(input.label)}
                     {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
                   </CardLabel>

@@ -103,6 +103,14 @@ const config = {
   additionalSections: {},
 };
 
+const sectionsParentStyle = {
+  height: "50%",
+  display: "flex",
+  flexDirection: "column",
+  gridTemplateColumns: "20% 1fr",
+  gap: "1rem",
+};
+
 const Inbox = ({ tenants, parentRoute }) => {
   const { t } = useTranslation();
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
@@ -131,7 +139,7 @@ const Inbox = ({ tenants, parentRoute }) => {
         <Header>{t("Registration-Requests")}</Header>
         <p>{}</p>
         <div className="inbox-search-wrapper">
-          <InboxSearchComposer configs={config}></InboxSearchComposer>
+          <InboxSearchComposer customStyle={sectionsParentStyle} configs={config}></InboxSearchComposer>
         </div>
       </div>
     </React.Fragment>

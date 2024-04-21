@@ -29,6 +29,7 @@ const SelectMobileNumber = ({
         label={"Remember me"}
         name={"Checkbox"}
         styles={{ alignItems: "center", textAlign: "center" }}
+        labeStyle={{ paddingTop: "10px" }}
       />
     </FormStep>
   );

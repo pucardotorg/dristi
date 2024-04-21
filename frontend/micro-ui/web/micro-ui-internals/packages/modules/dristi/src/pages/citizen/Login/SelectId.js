@@ -64,6 +64,7 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
         onSecondayActionClick={() => {}}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
+        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </React.Fragment>

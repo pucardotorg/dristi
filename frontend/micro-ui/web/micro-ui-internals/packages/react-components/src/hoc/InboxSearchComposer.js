@@ -11,11 +11,20 @@ import FilterAction from "../molecules/FilterAction";
 import MobileSearchComponent from "./MobileView/MobileSearchComponent";
 import MobileSearchResults from "./MobileView/MobileSearchResults";
 import MediaQuery from "react-responsive";
-import _ from "lodash";
+import _, { template } from "lodash";
 import Header from "../atoms/Header";
 import { useTranslation } from "react-i18next";
 
-const InboxSearchComposer = ({ configs, headerLabel, additionalConfig, onFormValueChange = () => {}, showTab, tabData, onTabChange }) => {
+const InboxSearchComposer = ({
+  configs,
+  customStyle,
+  headerLabel,
+  additionalConfig,
+  onFormValueChange = () => {},
+  showTab,
+  tabData,
+  onTabChange,
+}) => {
   const { t } = useTranslation();
 
   const [enable, setEnable] = useState(false);
@@ -157,7 +166,7 @@ const InboxSearchComposer = ({ configs, headerLabel, additionalConfig, onFormVal
     <InboxContext.Provider value={{ state, dispatch }}>
       {headerLabel && <Header className="digit-form-composer-header">{t(headerLabel)}</Header>}
       <div className="inbox-search-component-wrapper ">
-        <div className={`sections-parent ${configs?.type}`}>
+        <div style={{ ...(customStyle ? customStyle : {}) }} className={`sections-parent ${configs?.type}`}>
           {configs?.sections?.links?.show && (
             <div className="section links">
               <InboxSearchLinks
