@@ -49,44 +49,34 @@ public class AdvocateApiController {
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
 			try {
 				List<Advocate> response = advocateService.createAdvocate(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 			} catch (Exception e) {
-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}
-
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+
             try {
 				List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus() );
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 			} catch (Exception e) {
-				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		}
-
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/advocate/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
+
 			try {
 				// Example after implementing a service layer
 				List<Advocate> advocateList = advocateService.updateAdvocate(body);
@@ -97,8 +87,5 @@ public class AdvocateApiController {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}
-
-		return new ResponseEntity<AdvocateResponse>(HttpStatus.BAD_REQUEST);
-	}
 
 }

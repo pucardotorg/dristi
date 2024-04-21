@@ -68,6 +68,10 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
     if(CollectionUtils.isEmpty(applications))
         return new ArrayList<>();
 
+    applications.forEach(application -> {
+        application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber())));
+    });
+
     return applications;
 }
 

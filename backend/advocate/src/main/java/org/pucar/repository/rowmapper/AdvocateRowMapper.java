@@ -42,12 +42,11 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
                             .tenantId(rs.getString("tenantid"))
                             .id(UUID.fromString(rs.getString("id")))
                             .barRegistrationNumber(rs.getString("barregistrationnumber"))
-                            .organisationID(UUID.fromString(rs.getString("organisationid")))
+                            .organisationID(toUUID(rs.getString("organisationid")))
                             .individualId(rs.getString("individualid"))
-                            .isActive(Boolean.valueOf(rs.getString("isactive")))
-                            .additionalDetails(rs.getString("additionalDetails"))
+                            .isActive(rs.getBoolean("isactive"))
+                            .additionalDetails(rs.getObject("additionalDetails"))
                             .advocateType(rs.getString("advocatetype"))
-                            .organisationID(UUID.fromString(rs.getString("organisationid")))
                             .status(rs.getString("status"))
                             .auditDetails(auditdetails)
                             .build();
@@ -65,7 +64,6 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
 
     private void addChildrenToProperty(ResultSet rs, Advocate advocate)
             throws SQLException {
-//        addDocumentToApplication(rs, advocate);
     }
 
     private void addDocumentToApplication(ResultSet rs, Advocate advocateClerkApplication) throws SQLException {
@@ -85,6 +83,12 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+    private UUID toUUID(String toUuid) {
+        if(toUuid == null) {
+            return null;
+        }
+        return UUID.fromString(toUuid);
     }
 
 }

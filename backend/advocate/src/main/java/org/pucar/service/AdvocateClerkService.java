@@ -55,6 +55,9 @@ public class AdvocateClerkService {
         if(CollectionUtils.isEmpty(applications))
             return new ArrayList<>();
 
+        applications.forEach(application -> {
+            application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber())));
+        });
         // Otherwise return the found applications
         return applications;
     }

@@ -16,6 +16,7 @@ public class AdvocateQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid ";
     private static final String FROM_ADVOCATES_TABLE = " FROM dristi_advocate adv";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
+    private final String ORDERBY_CREATEDTIME = " ORDER BY adv.createdtime DESC ";
 
     public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList) {
         StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
@@ -67,7 +68,12 @@ public class AdvocateQueryBuilder {
                         .append(applicationNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(applicationNumbers);
+                firstCriteria = false;
             }
+            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
+                query.append(")");
+            }
+
 
             if (statusList!=null && !statusList.isEmpty()) {
                 addClauseIfRequiredForStatus(query, firstCriteria);
@@ -76,10 +82,7 @@ public class AdvocateQueryBuilder {
                         .append(")");
                 preparedStmtList.addAll(statusList);
             }
-
-            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
-                query.append(")");
-            }
+            query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
         } catch (Exception e) {
