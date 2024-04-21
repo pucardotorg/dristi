@@ -16,7 +16,7 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
 
   const moduleCode = "DRISTI";
-  const tenantID = tenants?.[0]?.code;
+  const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading, data: store } = Digit.Services.useStore({ stateCode, moduleCode, language });
   if (isLoading) {

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { newConfig } from "./config";
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
@@ -10,6 +10,29 @@ const Registration = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
+  const moduleCode = "DRISTI";
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    moduleCode,
+    userInfo?.uuid && isUserLoggedIn
+  );
+  const individualId = data?.Individual?.[0]?.individualId;
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (Boolean(individualId)) {
+    history.push(`${window?.contextPath}/dristi/home`);
+  }
 
   const validateFormData = (data) => {
     let isValid = true;

@@ -57,7 +57,7 @@ const App = ({ stateCode, tenantId }) => {
     },
     {
       path: isUserLoggedIn ? `${path}/home/register/user-registration` : "",
-      content: t("ES_COMMON_asdf_REGISTER"),
+      content: t("ES_COMMON_USER_REGISTER"),
       show: location.pathname.includes("/home/register/user-registration"),
       isLast: true,
     },
@@ -69,9 +69,6 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/register/otp`,
     `${path}/home/login/otp`,
     `${path}/home/login`,
-    `${path}/home/login/id-verification`,
-    `${path}/home/login/aadhar-otp`,
-    `${path}/home/register/user-registration`,
   ];
 
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
