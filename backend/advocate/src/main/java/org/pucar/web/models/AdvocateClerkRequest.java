@@ -27,7 +27,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class AdvocateClerkRequest {
-	@JsonProperty("requestInfo")
+	@JsonProperty("RequestInfo")
 
 	@Valid
 	private RequestInfo requestInfo = null;

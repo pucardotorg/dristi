@@ -35,7 +35,7 @@ public class AdvocateClerkQueryBuilder {
                 .collect(Collectors.toList());
 
         List<String> applicationNumbers = criteriaList.stream()
-                .filter(criteria -> criteria.getId() == null && criteria.getApplicationNumber() == null)
+                .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
                 .map(AdvocateClerkSearchCriteria::getApplicationNumber)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

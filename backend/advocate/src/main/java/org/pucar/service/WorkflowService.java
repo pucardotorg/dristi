@@ -185,5 +185,12 @@ public class WorkflowService {
             throw new CustomException();
         }
     }
+
+    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
+        if(processInstance == null) {
+            return null;
+        }
+        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
+    }
 }
  
