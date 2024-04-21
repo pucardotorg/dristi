@@ -44,7 +44,8 @@ public class AdvocateRepository {
             if(list != null){
                 advocateList.addAll(list);
             }
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error("Error occurred while executing database query: {}", e.getMessage());
             throw e;
         }
@@ -62,7 +63,7 @@ public class AdvocateRepository {
                     advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
                 });
             }
-        } catch (DataAccessException e) {
+        } catch (Exception e) {
             log.error("Error occurred while executing database query: {}", e.getMessage());
             e.printStackTrace();
             throw e;

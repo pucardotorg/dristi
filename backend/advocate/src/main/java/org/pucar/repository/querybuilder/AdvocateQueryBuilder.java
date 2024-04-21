@@ -69,16 +69,16 @@ public class AdvocateQueryBuilder {
                 preparedStmtList.addAll(applicationNumbers);
             }
 
+            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
+                query.append(")");
+            }
+
             if (statusList!=null && !statusList.isEmpty()) {
                 addClauseIfRequiredForStatus(query, firstCriteria);
                 query.append("adv.status IN (")
                         .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(statusList);
-            }
-
-            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
-                query.append(")");
             }
 
             return query.toString();
