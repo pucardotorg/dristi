@@ -62,7 +62,6 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
         inline
         label={"Next"}
         onSecondayActionClick={() => {}}
-        description={"Description"}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
       ></FormComposerV2>

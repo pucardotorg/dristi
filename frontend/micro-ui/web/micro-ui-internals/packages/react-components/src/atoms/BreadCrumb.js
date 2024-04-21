@@ -3,12 +3,14 @@ import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 const Breadcrumb = (props) => {
-  function isLast(index) {
+  function isLastCrumb(index) {
     return index === props.crumbs.length - 1;
   }
+
   return (
     <ol className={`bread-crumb ${props?.className ? props?.className : ""}`} style={props?.breadcrumbStyle}>
       {props?.crumbs?.map((crumb, ci) => {
+        const { isLast } = crumb;
         if (!crumb?.show) return;
         if (crumb?.isBack)
           return (
@@ -19,9 +21,9 @@ const Breadcrumb = (props) => {
             </li>
           );
         return (
-          <li key={ci} style={{ ...props.style }} className="bread-crumb--item">
-            {isLast(ci) || !crumb?.path ? (
-              <span style={props?.spanStyle ? { ...props?.spanStyle, color: "#0B0C0C" } : { color: "#0B0C0C" }}>{crumb.content}</span>
+          <li key={ci} style={isLast ? { color: "#0B0C0C" } : { color: "#F47738" }} className="bread-crumb--item">
+            {isLast || !crumb?.path ? (
+              <span style={props?.spanStyle ? { ...props?.spanStyle } : {}}>{crumb.content}</span>
             ) : (
               <Link to={{ pathname: crumb.path, state: { count: crumb?.count }, search: crumb?.query }}>{crumb.content}</Link>
             )}

@@ -58,6 +58,7 @@ body {
 
   &:not(:last-child):after {
     content: "  /";
+    color: #0b0c0c !important;
   }
 
   button {

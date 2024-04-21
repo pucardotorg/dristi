@@ -47,16 +47,19 @@ const App = ({ stateCode, tenantId }) => {
       path: isUserLoggedIn ? `${path}/home/login` : "",
       content: t("ES_COMMON_LOGIN"),
       show: location.pathname.includes("/home/login"),
+      isLast: true,
     },
     {
       path: isUserLoggedIn ? `${path}/home/register` : "",
       content: t("ES_COMMON_REGISTER"),
       show: location.pathname.includes("/home/register"),
+      isLast: !location.pathname.includes("/user-registration"),
     },
     {
       path: isUserLoggedIn ? `${path}/home/register/user-registration` : "",
       content: t("ES_COMMON_asdf_REGISTER"),
       show: location.pathname.includes("/home/register/user-registration"),
+      isLast: true,
     },
   ];
   const whiteListedRoutes = [

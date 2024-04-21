@@ -37,10 +37,17 @@ const CloseBtn = (props) => {
   );
 };
 
-const LocationIcon = () => {
+const LocationContent = () => {
   return (
-    <div style={{ marginTop: "14px", marginLeft: "10px" }}>
-      <LocationOnMapIcon></LocationOnMapIcon>
+    <div style={{ fontSize: "16px", display: "flex", marginTop: "-2px" }}>
+      <div>
+        <a href="https://www.google.com/maps" target="_blank" style={{ color: "#F47738" }}>
+          View on map
+        </a>
+      </div>
+      <div style={{ marginLeft: "10px" }}>
+        <LocationOnMapIcon></LocationOnMapIcon>
+      </div>
     </div>
   );
 };
@@ -90,8 +97,8 @@ const RegisterDetails = ({ location, match }) => {
   ];
   const personalData = [
     { title: "Name", content: "Nawal Kishor Tiwari" },
-    { title: "Location", content: "View on map" },
-    { title: "Address", content: "12, 5th street", icon: <LocationIcon></LocationIcon> },
+    { title: "Location", content: <LocationContent></LocationContent> },
+    { title: "Address", content: "12, 5th street" },
   ];
   const barDetails = [
     { title: "State of Registration", content: "Kerala" },

@@ -107,10 +107,13 @@ const getCitizenStyles = (value) => {
       buttonStyles: {
         height: "auto",
         minHeight: "40px",
-        width: "43%",
+        width: "18%",
         maxHeight: "40px",
         margin: "5px",
-        padding: "0px",
+        padding: "1px 0px 0px 5px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       },
       closeIconStyles: {
         width: "20px",
@@ -200,6 +203,7 @@ const UploadFile = (props) => {
             theme="border"
             label={t("CS_COMMON_CHOOSE_FILE")}
             style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}) }}
+            // style={{ display: "flex", justifyContent: "center", alignItems: "center" }}
             textStyles={props?.textStyles}
             type={props.buttonType}
           />
