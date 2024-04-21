@@ -36,18 +36,17 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
                             .lastModifiedBy(rs.getString("lastmodifiedby"))
                             .lastModifiedTime(lastModifiedTime)
                             .build();
-
+                    String organisationID = rs.getString("organisationid");
                     advocate = Advocate.builder()
                             .applicationNumber(rs.getString("applicationnumber"))
                             .tenantId(rs.getString("tenantid"))
                             .id(UUID.fromString(rs.getString("id")))
                             .barRegistrationNumber(rs.getString("barregistrationnumber"))
-                            .organisationID(UUID.fromString(rs.getString("organisationid")))
+                            .organisationID(organisationID!=null ? UUID.fromString(organisationID): UUID.fromString("00000000-0000-0000-0000-000000000000"))
                             .individualId(rs.getString("individualid"))
                             .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .additionalDetails(rs.getString("additionalDetails"))
                             .advocateType(rs.getString("advocatetype"))
-                            .organisationID(UUID.fromString(rs.getString("organisationid")))
                             .status(rs.getString("status"))
                             .auditDetails(auditdetails)
                             .build();
@@ -86,5 +85,4 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
             e.printStackTrace();
         }
     }
-
 }

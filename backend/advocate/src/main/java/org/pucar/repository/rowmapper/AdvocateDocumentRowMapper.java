@@ -19,7 +19,8 @@ public class AdvocateDocumentRowMapper implements ResultSetExtractor<Map<UUID,Li
 
         try {
             while (rs.next()) {
-                UUID uuid = UUID.fromString(rs.getString("advocateid"));
+                String advocateId = rs.getString("advocateid");
+                UUID uuid = UUID.fromString(advocateId!=null ? advocateId : "00000000-0000-0000-0000-000000000000");
                 Document document = Document.builder()
                         .id(rs.getString("aid"))
                         .documentType(rs.getString("documenttype"))

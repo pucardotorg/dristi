@@ -65,6 +65,7 @@ public class WorkflowService {
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 advocateClerk.setStatus(applicationStatus);
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException();
             }

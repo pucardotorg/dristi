@@ -18,7 +18,8 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
 
         try {
             while (rs.next()) {
-                UUID uuid = UUID.fromString(rs.getString("clerk_id"));
+                String clerkId = rs.getString("clerk_id");
+                UUID uuid = UUID.fromString(clerkId!=null ? clerkId : "00000000-0000-0000-0000-000000000000");
                 Document document = Document.builder()
                         .id(rs.getString("aid"))
                         .documentType(rs.getString("documenttype"))

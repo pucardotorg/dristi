@@ -44,6 +44,7 @@ public class AdvocateClerkRegistrationEnrichment {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Error enriching advocate clerk application: {}", e.getMessage());
         }
     }
