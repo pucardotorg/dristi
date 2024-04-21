@@ -52,7 +52,6 @@ public class AdvocateApiControllerTest {
 
     @BeforeEach
     public void setup() {
-        when(request.getHeader("Accept")).thenReturn("application/json");
         mockMvc = MockMvcBuilders.standaloneSetup(advocateApiController).build();
 
 
