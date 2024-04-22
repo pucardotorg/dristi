@@ -1,12 +1,16 @@
-
-
+import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
+import 'package:pucardpg/app/data/models/advocate-request-info/advocate_request_info.dart';
+import 'package:pucardpg/app/data/models/advocate-user-info/advocate_user_info.dart';
+import 'package:pucardpg/app/data/models/document-model/document_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/data/models/request-info-model/request_info.dart';
+import 'package:pucardpg/app/data/models/role-model/role.dart';
+import 'package:pucardpg/app/data/models/workflow-model/workflow_model.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
@@ -37,8 +41,80 @@ class LoginUseCase {
     return _registrationLoginRepository.searchIndividual(individualSearchRequest);
   }
 
-  Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(AdvocateRegistrationRequest advocateRegistrationRequest) {
+  Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(String individualId, UserModel userModel) {
+    AdvocateRegistrationRequest advocateRegistrationRequest = AdvocateRegistrationRequest(
+    requestInfo: AdvocateRequestInfo(
+        userInfo: AdvocateUserInfo(
+          type: type,
+          tenantId: tenantId,
+          roles: [
+            Role(
+              code: "USER_REGISTER",
+              name: "USER_REGISTER",
+              tenantId: tenantId
+            )
+          ],
+          uuid: userModel.uuid
+        ),
+        authToken: userModel.authToken
+      ),
+      advocates: [
+        Advocate(
+          tenantId: tenantId,
+          barRegistrationNumber: userModel.barRegistrationNumber,
+          individualId: individualId,
+          workflow: Workflow(
+            action: "REGISTER",
+            documents: [
+              Document(fileStore: userModel.fireStore)
+            ]
+          ),
+          documents: [
+            Document(fileStore: userModel.fireStore)
+          ],
+          additionalDetails: {'stateOfRegistration' : userModel.stateOfRegistration, "username" : userModel.firstName! + userModel.lastName!}
+        )
+      ]
+    );
     return _registrationLoginRepository.registerAdvocate(advocateRegistrationRequest);
+  }
+
+  Future<DataState<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(String individualId, UserModel userModel) {
+    AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest = AdvocateClerkRegistrationRequest(
+        requestInfo: AdvocateRequestInfo(
+            userInfo: AdvocateUserInfo(
+                type: type,
+                tenantId: tenantId,
+                roles: [
+                  Role(
+                      code: "USER_REGISTER",
+                      name: "USER_REGISTER",
+                      tenantId: tenantId
+                  )
+                ],
+                uuid: userModel.uuid
+            ),
+            authToken: userModel.authToken
+        ),
+        clerks: [
+          Clerk(
+              tenantId: tenantId,
+              stateRegnNumber: userModel.stateRegnNumber,
+              individualId: individualId,
+              workflow: Workflow(
+                  action: "REGISTER",
+                  documents: [
+                    Document(fileStore: userModel.fireStore)
+                  ]
+              ),
+              documents: [
+                Document(fileStore: userModel.fireStore)
+              ],
+              additionalDetails: {'stateOfRegistration' : userModel.stateOfRegistration, "username" : userModel.firstName! + userModel.lastName!}
+          )
+        ]
+    );
+    return _registrationLoginRepository.registerAdvocateClerk(advocateClerkRegistrationRequest);
   }
 
   Future<DataState<AuthResponse>> createCitizen(String username, String otpReference, UserModel userModel) async {
@@ -72,7 +148,7 @@ class LoginUseCase {
     return dataState;
   }
 
-  Future<DataState<String>> registerLitigant(UserModel userModel) {
+  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel) {
 
     Individual individual = Individual(
       name: Name(

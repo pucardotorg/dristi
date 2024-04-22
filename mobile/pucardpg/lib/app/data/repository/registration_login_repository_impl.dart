@@ -7,6 +7,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
 
 import 'package:pucardpg/app/data/data_sources/api_service.dart';
+import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
@@ -29,7 +30,7 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
     try {
       final httpResponse = await _apiService.requestOtp(tenantId, timeStamp, otpRequest);
 
-      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
         return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
@@ -98,9 +99,31 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   @override
   Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(AdvocateRegistrationRequest advocateRegistrationRequest) async {
     try {
-      final httpResponse = await _apiService.registerAdvocate(advocateRegistrationRequest);
+      final httpResponse = await _apiService.registerAdvocate('application/json', advocateRegistrationRequest);
 
-      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: httpResponse.response,
+                type: dio.DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
+  }
+
+  @override
+  Future<DataState<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest) async {
+    try {
+      final httpResponse = await _apiService.registerAdvocateClerk('application/json', advocateClerkRegistrationRequest);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
         return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
@@ -159,7 +182,7 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
     try {
       final httpResponse = await _apiService.searchIndividual(limit, offset, tenantId, individualSearchRequest);
 
-      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
         return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
@@ -177,13 +200,12 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   }
 
   @override
-  Future<DataState<String>> registerLitigant(LitigantNetworkModel litigantNetworkModel) async {
-    // TODO: implement registerLitigant
+  Future<DataState<LitigantResponseModel>> registerLitigant(LitigantNetworkModel litigantNetworkModel) async {
     try {
       final httpResponse = await _apiService.registerLitigant(litigantNetworkModel);
 
       if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
-        return const DataSuccess("Success");
+        return DataSuccess(httpResponse.data);
       } else {
         return DataFailed(
             dio.DioError(

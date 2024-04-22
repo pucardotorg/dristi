@@ -85,7 +85,16 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        DigitBackButton(),
+                        DigitHelpButton()
+                      ],
+                    ),
                     DigitCard(
                       padding: const EdgeInsets.all(20),
                       child: Column(
@@ -98,14 +107,29 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                           DigitTextField(
                             label: 'State of registration',
                             isRequired: true,
-                            onChange: (val) { },
+                            onChange: (val) {
+                              widget.userModel.stateOfRegistration = val;
+                            },
                           ),
                           const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'BAR registration number',
-                            isRequired: true,
-                            onChange: (val) { },
-                          ),
+                          if (widget.userModel.userType == 'Advocate') ...[
+                            DigitTextField(
+                              label: 'BAR registration number',
+                              isRequired: true,
+                              onChange: (val) {
+                                widget.userModel.barRegistrationNumber = val;
+                              },
+                            ),
+                          ],
+                          if (widget.userModel.userType == 'Advocate Clerk') ...[
+                            DigitTextField(
+                              label: 'State registration number',
+                              isRequired: true,
+                              onChange: (val) {
+                                widget.userModel.stateRegnNumber = val;
+                              },
+                            ),
+                          ],
                           const SizedBox(height: 20,),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
@@ -168,7 +192,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
               child: DigitElevatedButton(
                   onPressed: () {
                     // getMultipartFile();
-                    Navigator.pushNamed(context, '/TermsAndConditionsScreen',);
+                    Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
                   },
                   child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
               ),
