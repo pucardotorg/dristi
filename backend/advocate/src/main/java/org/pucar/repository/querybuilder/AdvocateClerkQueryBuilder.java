@@ -1,6 +1,7 @@
 package org.pucar.repository.querybuilder;
 
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -40,6 +41,12 @@ public class AdvocateClerkQueryBuilder {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
+        List<String> individualIds = criteriaList.stream()
+                .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
+                .map(AdvocateClerkSearchCriteria::getIndividualId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
         if (!CollectionUtils.isEmpty(ids)) {
             addClauseIfRequired(query, preparedStmtList);
             query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
@@ -58,7 +65,13 @@ public class AdvocateClerkQueryBuilder {
             addToPreparedStatement(preparedStmtList, applicationNumbers);
         }
 
-        if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) ||!CollectionUtils.isEmpty(applicationNumbers) ){
+        if (!CollectionUtils.isEmpty(individualIds)) {
+            addClauseIfRequired(query, preparedStmtList);
+            query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
+            addToPreparedStatement(preparedStmtList, individualIds);
+        }
+
+        if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) ||!CollectionUtils.isEmpty(applicationNumbers) ||!CollectionUtils.isEmpty(individualIds)){
             query.append(")");
         }
 
