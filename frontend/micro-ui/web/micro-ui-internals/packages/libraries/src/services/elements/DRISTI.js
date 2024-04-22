@@ -38,10 +38,19 @@ export const DRISTIService = {
     Request({
       url: Urls.dristi.searchIndividualAdvocate,
       useCache: false,
-      userService: false,
+      userService: true,
       method: "POST",
       auth: true,
       data,
+      params,
+    }),
+  getDocument: (params) =>
+    Request({
+      url: Urls.FileFetch,
+      useCache: false,
+      method: "GET",
+      auth: true,
+      userService: true,
       params,
     }),
 };

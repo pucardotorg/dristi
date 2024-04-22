@@ -1,17 +1,12 @@
 import {
   Header,
-  Card,
-  CardSectionHeader,
-  PDFSvg,
-  Loader,
-  StatusTable,
-  Menu,
+  Card, Loader, Menu,
   ActionBar,
   SubmitBar,
   Modal,
-  CardText,
+  CardText
 } from "@egovernments/digit-ui-react-components";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import DocumentDetailCard from "../../components/DocumentDetailCard";
@@ -52,76 +47,88 @@ const LocationContent = () => {
   );
 };
 
-const RegisterDetails = ({ location, match }) => {
+const ApplicationDetails = ({ location, match }) => {
   const { id, applicationNo } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const isAction = urlParams.get("isAction");
+  const individualId = urlParams.get("individualId");
+
   const moduleCode = "DRISTI";
   const { t } = useTranslation();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
-  //   const { isLoading, data } = Digit.Hooks.br.useBRSearch(tenantId, { ids: id });
-  // const data = {};
-  const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualAdvocate(
+  // const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+  const { data: advocateData, isLoading: isLoading1 } = Digit.Hooks.dristi.useGetIndividualAdvocate(
     {
-      RequestInfo: {
-        apiId: "Rainmaker",
-        authToken: "6c20cb67-a3d5-436d-be87-4a12fb81d52b",
-        userInfo: {
-          id: 92,
-          uuid: "ab8004c1-544f-4e20-acf8-b3327e6e8ff6",
-          userName: "qasuperuser1",
-          name: "Super User",
-          mobileNumber: "7474747471",
-          emailId: "qasuperuser@gmail.com",
-          locale: null,
-          type: "EMPLOYEE",
-          roles: [
-            {
-              name: "MDMS ADMIN",
-              code: "MDMS_ADMIN",
-              tenantId: "pg",
-            },
-            {
-              name: "Super User",
-              code: "SUPERUSER",
-              tenantId: "pg",
-            },
-            {
-              name: "HRMS ADMIN",
-              code: "HRMS_ADMIN",
-              tenantId: "pg",
-            },
-            {
-              name: "USER_APPROVER",
-              code: "USER_APPROVER",
-              tenantId: "pg",
-            },
-          ],
-          active: true,
-          tenantId: "pg",
-          permanentCity: null,
-        },
-        msgId: "1713761331254|en_IN",
-        plainAccessRequest: {},
-      },
       criteria: [{ applicationNumber: applicationNo, id: null, barRegistrationNumber: null }],
       status: ["INWORKFLOW"],
     },
     {},
-    moduleCode
+    moduleCode,
+    applicationNo,
+    true
   );
-  console.debug(data);
+
+  const { data: individualData, isLoading: isLoading2 } = Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        individualId: individualId,
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    moduleCode,
+    individualId,
+    Boolean(individualId)
+  );
+
+  // const { data: documentData, isLoading: isLoading3 } = Digit.Hooks.dristi.useGetDocument(
+  //   { tenantId, fileStoreIds: ["ea07c753-e075-483c-8a82-e6e873ec97c6"] },
+  //   moduleCode,
+  //   applicationNo,
+  //   Boolean(applicationNo)
+  // );
+  // console.debug(documentData, "Vaibhav");
 
   let isMobile = window.Digit.Utils.browser.isMobile();
 
+  function takeAction(action) {
+    console.debug(advocateData);
+    const filteredAdvocates = advocateData?.advocates?.filter((advocate) => advocate.workflow.action === "APPROVE");
+    const requestBody = { advocates: filteredAdvocates };
+    console.debug(requestBody);
+    // Digit.DRISTIService.complainantService("/advocate/v1/_update", requestBody, tenantId, true, {
+    //   roles: [
+    //     {
+    //       name: "MDMS ADMIN",
+    //       code: "MDMS_ADMIN",
+    //       tenantId: "pg",
+    //     },
+    //     {
+    //       name: "Super User",
+    //       code: "SUPERUSER",
+    //       tenantId: "pg",
+    //     },
+    //     {
+    //       name: "HRMS ADMIN",
+    //       code: "HRMS_ADMIN",
+    //       tenantId: "pg",
+    //     },
+    //   ],
+    // })
+    //   .then(() => {
+    //     history.push(`/digit-ui/citizen/dristi/home/response`, "success");
+    //   })
+    //   .catch(() => {
+    //     history.push(`/digit-ui/citizen/dristi/home/response`, "error");
+    //   });
+  }
+
   function onActionSelect(action) {
-    // setSelectedAction(action);
     if (action === "Approve") {
-      history.push(`/digit-ui/employee/br/responseemp`);
+      takeAction(action);
+      history.push(`/digit-ui/employee`);
     }
     if (action === "Reject") {
       setShowModal(true);
@@ -130,29 +137,42 @@ const RegisterDetails = ({ location, match }) => {
   }
 
   const handleDelete = () => {
-    const details = {
-      events: [
-        {
-          ...data?.applicationData,
-          status: "CANCELLED",
-        },
-      ],
-    };
+    takeAction();
     history.push(`/digit-ui/employee`);
   };
+
+  if (isLoading1 || isLoading2) {
+    return <Loader />;
+  }
+
   const aadharData = [
-    { title: "Mobile Number", content: "+91 9876543210" },
-    { title: "ID Type", content: "Aadhar" },
-    { title: "Aadhar Number", content: "4321 1234 4312" },
+    { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
+    { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
+    { title: "Aadhar Number", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierId },
   ];
+  const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "";
+  const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "";
+  const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+  const street = individualData?.Individual?.[0]?.address[0]?.street || "";
+  const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+  const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+  const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+
+  const address = `${addressLine1} ${addressLine2} ${buildingName} ${street} ${landmark} ${city} ${pincode}`.trim();
+
+  const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
+  const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
+  const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
+
+  const fullName = `${givenName} ${otherNames} ${familyName}`.trim();
   const personalData = [
-    { title: "Name", content: "Nawal Kishor Tiwari" },
+    { title: "Name", content: fullName },
     { title: "Location", content: <LocationContent></LocationContent> },
-    { title: "Address", content: "12, 5th street" },
+    { title: "Address", content: address },
   ];
   const barDetails = [
-    { title: "State of Registration", content: "Kerala" },
-    { title: "Bar Registration Number", content: 1233123 },
+    { title: "State of Registration", content: JSON.parse(advocateData?.advocates?.[0]?.additionalDetails?.value)?.stateOfRegistration || "N/A" },
+    { title: "Bar Registration Number", content: advocateData?.advocates?.[0]?.barRegistrationNumber || "N/A" },
     { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={"https://www.irs.gov/pub/irs-pdf/fw9.pdf"}></DocViewerWrapper> },
   ];
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
@@ -208,4 +228,4 @@ const RegisterDetails = ({ location, match }) => {
   );
 };
 
-export default RegisterDetails;
+export default ApplicationDetails;

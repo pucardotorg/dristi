@@ -1,4 +1,4 @@
-import { AppContainer, BreadCrumb, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BreadCrumb, HelpLineIcon, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
-import RegisterDetails from "../employee/RegistrationDetails";
+import ApplicationDetails from "../employee/ApplicationDetails";
+import { Link } from "react-router-dom/cjs/react-router-dom";
 
 const App = ({ stateCode, tenantId }) => {
   const Digit = window?.Digit || {};
@@ -31,6 +32,7 @@ const App = ({ stateCode, tenantId }) => {
     },
     { tenantId, limit: 1000, offset: 0 },
     moduleCode,
+    "",
     userInfo?.uuid && isUserLoggedIn
   );
   const individualId = data?.Individual?.[0]?.individualId;
@@ -92,12 +94,22 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
-          <BreadCrumb crumbs={dristiCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <BreadCrumb crumbs={dristiCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
+            {!hideHomeCrumb.includes(location.pathname) && (
+              <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+                <Link target="_blank" style={{ color: "#f47738" }}>
+                  Help
+                </Link>
+                <HelpOutlineIcon />
+              </span>
+            )}
+          </div>
           <PrivateRoute exact path={`${path}/home`}>
-            <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} />
+            <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} refetch={refetch} />
           </PrivateRoute>
           <PrivateRoute exact path={`${path}/home/register/user-registration`} component={Registration} refetch={refetch} />
-          <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <RegisterDetails {...props} />} />
+          <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
           <Route path={`${path}/home/login`}>
             <Login stateCode={stateCode} />

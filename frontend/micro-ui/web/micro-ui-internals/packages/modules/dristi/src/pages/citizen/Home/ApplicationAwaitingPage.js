@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { ReactComponent as WaitImage } from "./ImageUpload/image/AppAwait.svg";
 import { ReactComponent as RightArrow } from "./ImageUpload/image/arrow_forward.svg";
 
-function ApplicationAwaitingPage() {
+function ApplicationAwaitingPage({ individualId }) {
   const { t } = useTranslation();
   const history = useHistory();
   return (
@@ -19,7 +19,7 @@ function ApplicationAwaitingPage() {
       <div>
         <Button
           onButtonClick={() => {
-            history.push(`/digit-ui/citizen/dristi/home/application-details`);
+            history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}`);
           }}
           label={t("View My Application")}
           style={{

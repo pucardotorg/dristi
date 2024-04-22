@@ -639,7 +639,7 @@ export const UICustomizations = {
         case "Application No":
           return (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}`}>
+              <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${row.individualId}`}>
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -656,7 +656,7 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${value}?isAction=true`}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?individualId=${value}&isAction=true`}
             >
               {" "}
               {t("Verify")}
@@ -664,6 +664,24 @@ export const UICustomizations = {
           );
         case "User Type":
           return t("Advocate");
+        case "Date Created":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        case "Due Since (no of days)":
+          const createdAt = new Date(row.auditDetails.createdTime);
+          const today = new Date();
+          const formattedcreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+          const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          const differenceInTime = formattedToday.getTime() - formattedcreatedAt.getTime();
+          const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+          return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
+        case "User Name":
+          const obj = JSON.parse(value || "{}");
+          return <span>{obj?.username || obj?.name || t("ES_COMMON_NA")}</span>;
         default:
           return t("ES_COMMON_NA");
       }

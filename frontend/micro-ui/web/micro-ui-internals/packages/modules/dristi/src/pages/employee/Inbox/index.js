@@ -62,7 +62,8 @@ const config = {
           },
           {
             label: "User Name",
-            jsonPath: "username",
+            jsonPath: "additionalDetails.value",
+            additionalCustomization: true,
           },
           {
             label: "User Type",
@@ -72,12 +73,14 @@ const config = {
           {
             label: "Date Created",
             jsonPath: "auditDetails.createdTime",
+            additionalCustomization: true,
           },
           {
             label: "Due Since (no of days)",
             jsonPath: "dueSince",
+            additionalCustomization: true,
           },
-          { label: "Action", jsonPath: "apply", additionalCustomization: true },
+          { label: "Action", jsonPath: "individualId", additionalCustomization: true },
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,

@@ -7,7 +7,6 @@ export const UploadServices = {
     formData.append("file", filedata, filedata.name);
     formData.append("tenantId", tenantId);
     formData.append("module", module);
-    console.debug("formdata", formData, formData.getAll("file"));
     formData.entries((key, value) => console.log(key, value));
     let tenantInfo = window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE") ? `?tenantId=${tenantId}` : "";
     var config = {
