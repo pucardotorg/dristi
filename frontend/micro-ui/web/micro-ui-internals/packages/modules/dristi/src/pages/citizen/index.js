@@ -9,6 +9,7 @@ import LandingPage from "./Home/LandingPage";
 import RegisterDetails from "../employee/RegistrationDetails";
 
 const App = ({ stateCode, tenantId }) => {
+  const Digit = window?.Digit || {};
   const { path } = useRouteMatch();
   const location = useLocation();
   const { t } = useTranslation();
@@ -74,7 +75,12 @@ const App = ({ stateCode, tenantId }) => {
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
     history.push(`${path}/landing-page`);
   }
+
   if (individualId && whiteListedRoutes.includes(location.pathname)) {
+    history.push(`${path}/home`);
+  }
+
+  if (isUserLoggedIn && !location.pathname.includes(`${path}/home`)) {
     history.push(`${path}/home`);
   }
 
