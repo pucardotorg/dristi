@@ -45,11 +45,18 @@ public class AdvocateClerkQueryBuilderTest {
         when(criteria3.getStateRegnNumber()).thenReturn(null);
         when(criteria3.getApplicationNumber()).thenReturn("APP456");
 
+        AdvocateClerkSearchCriteria criteria4 = mock(AdvocateClerkSearchCriteria.class);
+        when(criteria4.getId()).thenReturn(null);
+        when(criteria4.getStateRegnNumber()).thenReturn(null);
+        when(criteria4.getApplicationNumber()).thenReturn(null);
+        when(criteria4.getIndividualId()).thenReturn("Ind123");
+
         // Create list of AdvocateSearchCriteria
         List<AdvocateClerkSearchCriteria> criteriaList = new ArrayList<>();
         criteriaList.add(criteria1);
         criteriaList.add(criteria2);
         criteriaList.add(criteria3);
+        criteriaList.add(criteria4);
 
         // Create list of prepared statements
         List<Object> preparedStmtList = new ArrayList<>();
@@ -61,11 +68,11 @@ public class AdvocateClerkQueryBuilderTest {
         String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(criteriaList, preparedStmtList,statusList);
 
         // Assert the generated query string
-        String e = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE ( advc.id IN (  ? )  OR  advc.stateregnnumber IN (  ? )  OR  advc.applicationnumber IN (  ? ) ) ORDER BY advc.createdtime DESC ";
+        String e = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE ( advc.id IN (  ? )  OR  advc.stateregnnumber IN (  ? )  OR  advc.applicationnumber IN (  ? )  OR  advc.individualid IN (  ? ) ) ORDER BY advc.createdtime DESC ";
         assertEquals(e, query);
 
         // Assert the prepared statement list
-        assertEquals(3, preparedStmtList.size());
+        assertEquals(4, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));
         assertEquals("BR123", preparedStmtList.get(1));
     }

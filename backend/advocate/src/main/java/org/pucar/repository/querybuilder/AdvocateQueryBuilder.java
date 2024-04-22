@@ -43,6 +43,12 @@ public class AdvocateQueryBuilder {
                     .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
+            List<String> individualIds = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null && criteria.getApplicationNumber() == null)
+                    .map(AdvocateSearchCriteria::getIndividualId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
             if (!ids.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("adv.id IN (")
@@ -70,7 +76,17 @@ public class AdvocateQueryBuilder {
                 preparedStmtList.addAll(applicationNumbers);
                 firstCriteria = false;
             }
-            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) ){
+
+            if (!individualIds.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("adv.individualId IN (")
+                        .append(individualIds.stream().map(num -> "?").collect(Collectors.joining(",")))
+                        .append(")");
+                preparedStmtList.addAll(individualIds);
+                firstCriteria = false;
+            }
+
+            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds) ){
                 query.append(")");
             }
 

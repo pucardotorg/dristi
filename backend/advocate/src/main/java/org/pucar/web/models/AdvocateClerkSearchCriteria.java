@@ -33,6 +33,8 @@ public class AdvocateClerkSearchCriteria {
 	@JsonProperty("stateRegnNumber")
 	private String stateRegnNumber = null;
 
+	@JsonProperty("individualId")
 
+	private String individualId = null;
 
 }
