@@ -38,15 +38,6 @@ const Fields litigant = Fields(
     value: "LITIGANT",
 );
 
-
-List<String> state = [];
-
-Future<void> fetchStates(String countryISOCode) async {
-  final response = await getStatesOfCountry(countryISOCode);
-  response.map((state) => StatesData.fromState(state)).toList();
-  state = response.map((state) => state.name).toList();
-}
-
 String? selectedOption;
 
 const String approvalSvg = 'assets/icons/svg/approval.svg';

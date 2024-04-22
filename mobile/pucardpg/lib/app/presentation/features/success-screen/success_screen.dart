@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
+import 'package:pucardpg/app/presentation/widgets/success_card.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 
@@ -53,24 +54,18 @@ class SuccessScreenState extends State<SuccessScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      DigitCard(
-                        // padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              color: Colors.green,
-                              padding: const EdgeInsets.all(20),
-                              child: Center(child: Text("Your registration application has been submitted successfully!", style: widget.theme.text32W700RobCon()?.apply(color: Colors.white),)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Center(child: Text("You will be given access once your application is verified and approved.", style: widget.theme.text16W400Rob(),)),
-                            )
-                            // const SizedBox(height: 20,),
-                          ],
-                        ),
-                      ),
+                      if (widget.userModel.userType != 'Litigant') ...[
+                        SuccessCard(
+                            heading: "Your registration application has been submitted successfully!",
+                            subHeading: "You will be given access once your application is verified and approved."
+                        )
+                      ],
+                      if (widget.userModel.userType == 'Litigant') ...[
+                        SuccessCard(
+                            heading: "Thank you for registering",
+                            subHeading: "You can proceed to file a case or respond to a case."
+                        )
+                      ]
                       // Expanded(child: Container(),),
                     ],
                   ),

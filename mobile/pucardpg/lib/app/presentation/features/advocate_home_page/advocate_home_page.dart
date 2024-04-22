@@ -67,6 +67,7 @@ class AdvocateHomePageState extends State<AdvocateHomePage> {
                             DigitOutlineIconButton(
                               label: 'View My Application',
                               onPressed: (){
+                                Navigator.pushNamed(context, '/ViewApplicationScreen');
                               },
                               icon: Icons.settings_applications,
                               iconColor: DigitTheme.instance.colorScheme.secondary,

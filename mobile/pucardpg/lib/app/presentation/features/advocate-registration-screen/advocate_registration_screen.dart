@@ -33,6 +33,7 @@ class AdvocateRegistrationScreen extends StatefulWidget with AppMixin{
 
 class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> {
 
+  bool fileSizeExceeded = false;
   bool firstChecked = false;
   String? fileName;
   FilePickerResult? result;
@@ -48,17 +49,25 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
     try {
       result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
-        allowedExtensions: ['pdf'],
+        allowedExtensions: ['pdf', 'jpg', 'png'],
         allowMultiple: false
       );
       if (result != null) {
-        fileName = result!.files.first.name;
-        pickedFile = result!.files.first;
-        // List<dynamic> files = result!.files;
-        //   files = result!.files.map((e) => File(e.path ?? '')).toList();
-        setState(() {
-          fileToDisplay = File(result!.files.single.path!);
-        });
+        final file = File(result!.files.single.path!);
+        final fileSize = await file.length(); // Get file size in bytes
+        const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (fileSize <= maxFileSize) {
+          fileName = result!.files.single.name;
+          pickedFile = result!.files.single;
+          setState(() {
+            fileToDisplay = file;
+            fileSizeExceeded = false;
+          });
+        } else {
+          setState(() {
+            fileSizeExceeded = true;
+          });
+        }
       }
     } catch(e) {
       print(e);
@@ -104,14 +113,6 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                           const SizedBox(height: 20,),
                           Text("Provide details for the following", style: widget.theme.text32W700RobCon()?.apply(),),
                           const SizedBox(height: 20,),
-                          DigitTextField(
-                            label: 'State of registration',
-                            isRequired: true,
-                            onChange: (val) {
-                              widget.userModel.stateOfRegistration = val;
-                            },
-                          ),
-                          const SizedBox(height: 20,),
                           if (widget.userModel.userType == 'Advocate') ...[
                             DigitTextField(
                               label: 'BAR registration number',
@@ -156,25 +157,49 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                               ),
                             ],
                           ),
+                          const SizedBox(height: 8,),
+                          if (fileSizeExceeded) // Show text line in red if file size exceeded
+                            const Text(
+                              'File Size Limit Exceeded. Upload a file below 5MB.',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           if (pickedFile != null) ...[
                             const SizedBox(height: 20),
-                            Container(
-                              height: 300,
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey),
-                              ),
-                              child: Center(
-                                child: SfPdfViewer.file(
-                                    fileToDisplay!,
-                                    onTap: (pdfDetails) {
-                                      print("Tapped on PDF display");
-                                      if (fileToDisplay != null) {
-                                        OpenFile.open(fileToDisplay!.path);
-                                      }
-                                    },
+                            if (pickedFile!.extension == 'pdf')
+                              Container(
+                                height: 300,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
                                 ),
+                                child: SfPdfViewer.file(
+                                      fileToDisplay!,
+                                      onTap: (pdfDetails) {
+                                        if (fileToDisplay != null) {
+                                          OpenFile.open(fileToDisplay!.path);
+                                        }
+                                      },
+                                  )
+                              ),
+                            if (pickedFile!.extension != 'pdf')
+                              GestureDetector(
+                                child: Container(
+                                  height: 300,
+                                  width: 500,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                  ),
+                                  child: Image.file(fileToDisplay!,
+                                    filterQuality: FilterQuality.high,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                onTap: () {
+                                  if (pickedFile!.extension != 'pdf') {
+                                    OpenFile.open(fileToDisplay!.path);
+                                  }
+                                },
                               )
-                            ),
                           ],
                         ],
                       ),

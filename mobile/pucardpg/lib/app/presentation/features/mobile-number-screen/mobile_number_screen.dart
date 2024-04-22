@@ -39,7 +39,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   @override
   void initState() {
-    fetchStates('IN');
     userModel.type = widget.type;
     super.initState();
   }

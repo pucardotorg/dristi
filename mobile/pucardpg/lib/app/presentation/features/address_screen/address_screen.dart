@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:google_places_flutter/model/place_details.dart';
 import 'package:http/io_client.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -113,6 +114,9 @@ class AddressScreenState extends State<AddressScreen> {
         widget.userModel.addressModel.state = place.administrativeArea!;
         widget.userModel.addressModel.district = place.subAdministrativeArea!;
         widget.userModel.addressModel.city = place.locality!;
+        widget.userModel.addressModel.latitude = _currentPosition.latitude;
+        widget.userModel.addressModel.longitude = _currentPosition.longitude;
+
         form.control(pinCodeKey).value = place.postalCode!;
         form.control(stateKey).value = place.administrativeArea!;
         form.control(districtKey).value = place.subAdministrativeArea!;
@@ -308,7 +312,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'Pincode',
                                   keyboardType: TextInputType.number,
                                   isRequired: true,
-                                  readOnly: widget.userModel.addressModel.pincode == null ? false : true,
+                                  maxLength: 6,
                                   onChanged: (value) {
                                     widget.userModel.addressModel.pincode = value.value.toString();
                                     // if (value.value.length == 6) {
@@ -330,7 +334,6 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'State',
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
-                                  readOnly: widget.userModel.addressModel.state == null ? false : true,
                                   onChanged: (value) {
                                     widget.userModel.addressModel.state = value.value.toString();
                                     // if (value.value.length == 6) {
@@ -346,7 +349,6 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'District',
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
-                                  readOnly: widget.userModel.addressModel.district == null ? false : true,
                                   onChanged: (value) {
                                     widget.userModel.addressModel.district = value.value.toString();
                                     // if (value.value.length == 6) {
@@ -362,7 +364,6 @@ class AddressScreenState extends State<AddressScreen> {
                                   label: 'City',
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
-                                  readOnly: widget.userModel.addressModel.city == null ? false : true,
                                   onChanged: (value) {
                                     widget.userModel.addressModel.city = value.value.toString();
                                     // if (value.value.length == 6) {
@@ -540,6 +541,8 @@ class AddressScreenState extends State<AddressScreen> {
       form.control(stateKey).value = widget.userModel.addressModel.state;
       form.control(districtKey).value = widget.userModel.addressModel.district;
       form.control(cityKey).value = widget.userModel.addressModel.city;
+      widget.userModel.addressModel.latitude = double.parse(p.lat!);
+      widget.userModel.addressModel.longitude = double.parse(p.lng!);
       // city = city;
       // selectedDistrict = selectedDistrict;
     });

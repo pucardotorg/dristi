@@ -18,7 +18,6 @@ class UserModel{
   String? type;
   String? userType;
 
-  String? stateOfRegistration;
   String? stateRegnNumber;
   String? barRegistrationNumber;
   String? fireStore;
@@ -40,15 +39,15 @@ class UserModel{
 
 class AddressModel{
 
-  String? doorNo = "";
-  double? latitude = 0.0;
-  double? longitude = 0.0;
-  double? locationAccuracy = 0.0;
-  String? city = "";
-  String? pincode = "";
-  String? street = "";
-  String? district = "";
-  String? state = "";
+  String? doorNo;
+  double? latitude;
+  double? longitude;
+  double? locationAccuracy ;
+  String? city;
+  String? pincode;
+  String? street;
+  String? district;
+  String? state;
 
   AddressModel({
     this.doorNo,

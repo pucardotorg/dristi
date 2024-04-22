@@ -3,6 +3,7 @@ import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/features/address_screen/address_screen.dart';
 import 'package:pucardpg/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart';
 import 'package:pucardpg/app/presentation/features/advocate_home_page/advocate_home_page.dart';
+import 'package:pucardpg/app/presentation/features/application-details-screen/application_details_screen.dart';
 import 'package:pucardpg/app/presentation/features/home_screen/home_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-otp-screen/id_otp_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-verification-screen/id_verification_screen.dart';
@@ -57,6 +58,9 @@ class AppRoutes {
 
       case '/AdvocateHomePage':
         return _materialRoute(AdvocateHomePage());
+
+      case '/ViewApplicationScreen':
+        return _materialRoute(ApplicationDetailsScreen());
 
       default:
         return _materialRoute(HomeScreen());
