@@ -79,6 +79,7 @@ export const Request = async ({
     data.RequestInfo = {
       apiId: "Rainmaker",
     };
+    debugger;
     if (auth || !!Digit.UserService.getUser()?.access_token) {
       data.RequestInfo = { ...data.RequestInfo, ...requestInfo() };
     }
@@ -128,7 +129,7 @@ export const Request = async ({
   if (reqTimestamp) {
     data.RequestInfo = { ...data.RequestInfo, ts: Number(ts) };
   }
-
+  console.debug(data);
   let _url = url
     .split("/")
     .map((path) => {

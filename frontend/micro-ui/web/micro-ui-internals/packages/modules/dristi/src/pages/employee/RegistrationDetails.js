@@ -56,7 +56,7 @@ const RegisterDetails = ({ location, match }) => {
   const { id, applicationNo } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const isAction = urlParams.get("isAction");
-
+  const moduleCode = "DRISTI";
   const { t } = useTranslation();
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
@@ -64,7 +64,57 @@ const RegisterDetails = ({ location, match }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   //   const { isLoading, data } = Digit.Hooks.br.useBRSearch(tenantId, { ids: id });
-  const data = {};
+  // const data = {};
+  const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualAdvocate(
+    {
+      RequestInfo: {
+        apiId: "Rainmaker",
+        authToken: "6c20cb67-a3d5-436d-be87-4a12fb81d52b",
+        userInfo: {
+          id: 92,
+          uuid: "ab8004c1-544f-4e20-acf8-b3327e6e8ff6",
+          userName: "qasuperuser1",
+          name: "Super User",
+          mobileNumber: "7474747471",
+          emailId: "qasuperuser@gmail.com",
+          locale: null,
+          type: "EMPLOYEE",
+          roles: [
+            {
+              name: "MDMS ADMIN",
+              code: "MDMS_ADMIN",
+              tenantId: "pg",
+            },
+            {
+              name: "Super User",
+              code: "SUPERUSER",
+              tenantId: "pg",
+            },
+            {
+              name: "HRMS ADMIN",
+              code: "HRMS_ADMIN",
+              tenantId: "pg",
+            },
+            {
+              name: "USER_APPROVER",
+              code: "USER_APPROVER",
+              tenantId: "pg",
+            },
+          ],
+          active: true,
+          tenantId: "pg",
+          permanentCity: null,
+        },
+        msgId: "1713761331254|en_IN",
+        plainAccessRequest: {},
+      },
+      criteria: [{ applicationNumber: applicationNo, id: null, barRegistrationNumber: null }],
+      status: ["INWORKFLOW"],
+    },
+    {},
+    moduleCode
+  );
+  console.debug(data);
 
   let isMobile = window.Digit.Utils.browser.isMobile();
 

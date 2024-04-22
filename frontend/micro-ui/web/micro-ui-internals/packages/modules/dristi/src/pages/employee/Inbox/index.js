@@ -1,37 +1,23 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
-
-import { useQuery } from "react-query";
 
 const Digit = window?.Digit || {};
 const config = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/inbox/v2/_search",
+    serviceName: "/advocate/v1/_search",
     requestParam: {},
     requestBody: {
-      inbox: {
-        processSearchCriteria: {
-          businessService: ["PQM"],
-          moduleName: "pqm",
-          tenantId: "pg.citya",
-        },
-        moduleSearchCriteria: {
-          plantCodes: ["PURI_FSTP"],
-          tenantId: "pg.citya",
-        },
-        tenantId: "pg.citya",
-      },
+      criteria: [],
+      status: ["INWORKFLOW"],
     },
     minParametersForSearchForm: 1,
-    tableFormJsonPath: "requestBody.inbox",
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    filterFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+    searchFormJsonPath: "requestBody.criteria[0]",
   },
   sections: {
     search: {
@@ -42,7 +28,7 @@ const config = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          testIds: "",
+          applicationNumber: "",
         },
         fields: [
           {
@@ -51,7 +37,7 @@ const config = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "testIds",
+              name: "applicationNumber",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -71,7 +57,7 @@ const config = {
         columns: [
           {
             label: "Application No",
-            jsonPath: "applicationNo",
+            jsonPath: "applicationNumber",
             additionalCustomization: true,
           },
           {
@@ -81,10 +67,11 @@ const config = {
           {
             label: "User Type",
             jsonPath: "usertype",
+            additionalCustomization: true,
           },
           {
             label: "Date Created",
-            jsonPath: "datecreated",
+            jsonPath: "auditDetails.createdTime",
           },
           {
             label: "Due Since (no of days)",
@@ -94,7 +81,7 @@ const config = {
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,
-        resultsJsonPath: "items",
+        resultsJsonPath: "advocates",
       },
       children: {},
       show: true,

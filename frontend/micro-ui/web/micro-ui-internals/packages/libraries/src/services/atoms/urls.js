@@ -225,6 +225,7 @@ const Urls = {
     create: "",
     individual: "/individual/v1/_create",
     searchIndividual: "/individual/v1/_search",
+    searchIndividualAdvocate: "/advocate/v1/_search",
   },
 };
 

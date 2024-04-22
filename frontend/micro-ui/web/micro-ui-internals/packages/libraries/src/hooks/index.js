@@ -93,6 +93,7 @@ import { usePrivacyContext } from "./usePrivacyContext";
 import useStaticData from "./useStaticData";
 import useIndividualService from "./dristi/useIndividualService";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
+import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -121,6 +122,7 @@ const dss = {
 const dristi = {
   useIndividualService,
   useGetIndividualUser,
+  useGetIndividualAdvocate,
 };
 
 const hrms = {

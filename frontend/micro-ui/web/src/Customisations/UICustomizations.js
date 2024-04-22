@@ -558,6 +558,8 @@ export const UICustomizations = {
               {t("Verify")}
             </Link>
           );
+        case "User Type":
+          return t("Advocate");
         default:
           return t("ES_COMMON_NA");
       }
