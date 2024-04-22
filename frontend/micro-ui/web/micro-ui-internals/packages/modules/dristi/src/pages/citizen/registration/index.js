@@ -22,6 +22,7 @@ const Registration = () => {
     },
     { tenantId, limit: 1000, offset: 0 },
     moduleCode,
+    "",
     userInfo?.uuid && isUserLoggedIn
   );
   const individualId = data?.Individual?.[0]?.individualId;

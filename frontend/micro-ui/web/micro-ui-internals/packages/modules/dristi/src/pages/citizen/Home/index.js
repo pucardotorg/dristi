@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import CustomCard from "../../../components/CustomCard";
 import { CaseInProgressIcon, ClosedCasesIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
 import TakeUserToRegistration from "./TakeUserToRegistration";
 
-function CitizenHome({ individualId, isApprovalPending }) {
+function CitizenHome({ individualId, isApprovalPending, refetch }) {
   const cardIcons = [
     { Icon: <MyHearingsIcon />, label: "File a Case", path: "/digit-ui/employee/citizen/dristi/my-hearings" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -14,6 +14,10 @@ function CitizenHome({ individualId, isApprovalPending }) {
     { Icon: <ClosedCasesIcon />, label: "Closed Cases", path: "/digit-ui/employee/citizen/dristi/closed-cases" },
     { Icon: <PendingActionsIcon />, label: "Pending Actions", path: "/digit-ui/employee/citizen/dristi/pending-actions" },
   ];
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
@@ -31,7 +35,7 @@ function CitizenHome({ individualId, isApprovalPending }) {
             ></CustomCard>
           );
         })}
-      {individualId && isApprovalPending && <ApplicationAwaitingPage />}
+      {individualId && isApprovalPending && <ApplicationAwaitingPage individualId={individualId} />}
       {!individualId && <TakeUserToRegistration />}
     </div>
   );

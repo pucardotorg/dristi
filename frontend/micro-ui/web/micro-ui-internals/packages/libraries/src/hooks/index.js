@@ -94,6 +94,7 @@ import useStaticData from "./useStaticData";
 import useIndividualService from "./dristi/useIndividualService";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
+import useGetDocument from "./dristi/useGetDocument";
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -123,6 +124,7 @@ const dristi = {
   useIndividualService,
   useGetIndividualUser,
   useGetIndividualAdvocate,
+  useGetDocument,
 };
 
 const hrms = {
