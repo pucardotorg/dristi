@@ -24,7 +24,7 @@ const FormStep = ({
   isMultipleAllow = false,
   showErrorBelowChildren = false,
   childrenAtTheBottom = true,
-  textInputStyle
+  textInputStyle,
 }) => {
   const { register, watch, errors, handleSubmit } = useForm({
     defaultValues: _defaultValues,

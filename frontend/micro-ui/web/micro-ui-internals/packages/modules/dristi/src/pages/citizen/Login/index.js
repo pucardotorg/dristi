@@ -125,7 +125,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
-    setParmas({ ...params, mobileNumber: value });
+    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, "") });
   };
 
   const selectMobileNumber = async (mobileNumber) => {

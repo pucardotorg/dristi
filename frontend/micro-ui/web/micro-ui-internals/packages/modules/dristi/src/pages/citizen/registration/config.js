@@ -373,3 +373,13 @@ export const newConfig = [
     ],
   },
 ];
+
+export const termsAndConditionConfig = {
+  body: [
+    {
+      type: "checkbox",
+      key: "Terms_Conditions",
+      populators: { title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit", name: "Terms_Conditions" },
+    },
+  ],
+};
