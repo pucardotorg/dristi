@@ -1,6 +1,7 @@
 package org.pucar.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.pucar.repository.ServiceRequestRepository;
 import org.pucar.config.Configuration;
 import org.egov.common.contract.idgen.IdGenerationRequest;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import static org.pucar.config.ServiceConstants.*;
 
 @Component
+@Slf4j
 public class IdgenUtil {
 
 	@Autowired
@@ -32,23 +34,35 @@ public class IdgenUtil {
 	private Configuration configs;
 
 	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
-			Integer count) {
-		List<IdRequest> reqList = new ArrayList<>();
-		for (int i = 0; i < count; i++) {
-			reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
+								  Integer count) {
+		try {
+			List<IdRequest> reqList = new ArrayList<>();
+			for (int i = 0; i < count; i++) {
+				reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
+			}
+
+			IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo)
+					.build();
+			StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
+			IdGenerationResponse response;
+			try {
+				response = mapper.convertValue(restRepo.fetchResult(uri, request),
+						IdGenerationResponse.class);
+			} catch (Exception e) {
+				log.error("Error fetching ID from ID generation service: {}", e.getMessage());
+				throw new CustomException(IDGEN_ERROR, "Error fetching ID from ID generation service");
+			}
+
+			List<IdResponse> idResponses = response.getIdResponses();
+
+			if (CollectionUtils.isEmpty(idResponses))
+				throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
+
+			return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+		} catch (CustomException e){
+			throw e;
+		} catch (Exception e){
+			throw new CustomException(IDGEN_ERROR,"ERROR in IDGEN Service");
 		}
-
-		IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo)
-				.build();
-		StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
-		IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request),
-				IdGenerationResponse.class);
-
-		List<IdResponse> idResponses = response.getIdResponses();
-
-		if (CollectionUtils.isEmpty(idResponses))
-			throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
-
-		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 	}
 }

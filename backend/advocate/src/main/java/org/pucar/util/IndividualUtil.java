@@ -1,13 +1,10 @@
 package org.pucar.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.egov.common.models.individual.Individual;
-import org.egov.common.models.individual.IndividualResponse;
 import org.egov.tracer.model.CustomException;
 import org.pucar.config.Configuration;
 import org.pucar.repository.ServiceRequestRepository;
@@ -45,7 +42,7 @@ public class IndividualUtil {
             }
             return false;
         }catch (Exception e){
-            return false;
+            throw new CustomException(e.getMessage(),"Error while calling external individual service");
         }
 
     }

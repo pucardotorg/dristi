@@ -2,7 +2,6 @@ package org.pucar.repository.rowmapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
-import org.pucar.web.models.Advocate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -40,8 +39,6 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
             log.error("Error occurred while processing ResultSet: {}", e.getMessage());
             throw new RuntimeException("Error occurred while processing ResultSet", e);
         }
-
         return documentMap;
     }
-
 }

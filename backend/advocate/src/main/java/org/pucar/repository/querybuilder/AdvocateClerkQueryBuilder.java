@@ -1,16 +1,20 @@
 package org.pucar.repository.querybuilder;
 
+import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
-import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.ObjectUtils;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.pucar.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
+
 @Component
+@Slf4j
 public class AdvocateClerkQueryBuilder {
 
     private static final String BASE_ATR_QUERY = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status ";
@@ -21,69 +25,75 @@ public class AdvocateClerkQueryBuilder {
     private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
     public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList){
-        StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
-        query.append(FROM_CLERK_TABLES);
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_CLERK_TABLES);
 
-        List<String> ids = criteriaList.stream()
-                .map(AdvocateClerkSearchCriteria::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            List<String> ids = criteriaList.stream()
+                    .map(AdvocateClerkSearchCriteria::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-        List<String> stateRegnNumber = criteriaList.stream()
-                .filter(criteria -> criteria.getId() == null)
-                .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            List<String> stateRegnNumber = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null)
+                    .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-        List<String> applicationNumbers = criteriaList.stream()
-                .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
-                .map(AdvocateClerkSearchCriteria::getApplicationNumber)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            List<String> applicationNumbers = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
+                    .map(AdvocateClerkSearchCriteria::getApplicationNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-        List<String> individualIds = criteriaList.stream()
-                .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
-                .map(AdvocateClerkSearchCriteria::getIndividualId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+            List<String> individualIds = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
+                    .map(AdvocateClerkSearchCriteria::getIndividualId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-        if (!CollectionUtils.isEmpty(ids)) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
-            addToPreparedStatement(preparedStmtList, ids);
+            if (!CollectionUtils.isEmpty(ids)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, ids);
+            }
+
+            if (!CollectionUtils.isEmpty(stateRegnNumber)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, stateRegnNumber);
+            }
+
+            if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, applicationNumbers);
+            }
+
+            if (!CollectionUtils.isEmpty(individualIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, individualIds);
+            }
+
+            if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                query.append(")");
+            }
+
+            if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, statusList);
+            }
+
+            query.append(ORDERBY_CREATEDTIME);
+
+            return query.toString();
         }
-
-        if (!CollectionUtils.isEmpty(stateRegnNumber)) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
-            addToPreparedStatement(preparedStmtList, stateRegnNumber);
+        catch (Exception e) {
+            log.error("Error while building advocate clerk search query");
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
         }
-
-        if (!CollectionUtils.isEmpty(applicationNumbers)) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
-            addToPreparedStatement(preparedStmtList, applicationNumbers);
-        }
-
-        if (!CollectionUtils.isEmpty(individualIds)) {
-            addClauseIfRequired(query, preparedStmtList);
-            query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
-            addToPreparedStatement(preparedStmtList, individualIds);
-        }
-
-        if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) ||!CollectionUtils.isEmpty(applicationNumbers) ||!CollectionUtils.isEmpty(individualIds)){
-            query.append(")");
-        }
-
-        if (statusList!=null && !CollectionUtils.isEmpty(statusList)) {
-            addClauseIfRequiredForStatus(query, preparedStmtList);
-            query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
-            addToPreparedStatement(preparedStmtList, statusList);
-        }
-
-        query.append(ORDERBY_CREATEDTIME);
-
-        return query.toString();
     }
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
@@ -118,10 +128,9 @@ public class AdvocateClerkQueryBuilder {
     }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
-        query.append(FROM_DOCUMENTS_TABLE);
-
         try {
+            StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
+            query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
                 query.append(" WHERE doc.clerk_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
@@ -131,7 +140,8 @@ public class AdvocateClerkQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error occurred while building the query", e);
+            log.error("Error while building clerk document search query");
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the clerk document query: "+ e);
         }
     }
 }

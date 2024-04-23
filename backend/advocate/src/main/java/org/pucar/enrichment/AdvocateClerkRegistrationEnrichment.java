@@ -3,6 +3,7 @@ package org.pucar.enrichment;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.tracer.model.CustomException;
 import org.pucar.util.IdgenUtil;
 import org.pucar.util.UserUtil;
 import org.pucar.web.models.AdvocateClerk;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.pucar.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @Component
 @Slf4j
@@ -33,26 +36,32 @@ public class AdvocateClerkRegistrationEnrichment {
                     advocateClerk.setAuditDetails(auditDetails);
 
                     advocateClerk.setId(UUID.randomUUID());
-                    advocateClerk.getDocuments().forEach(document -> {
+
+                    if(advocateClerk.getDocuments()!=null)
+                        advocateClerk.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));
                         document.setDocumentUid(document.getId());
                     });
 
-
-
                     advocateClerk.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
                 }
             }
+        } catch (CustomException e){
+            log.error("Custom Exception occurred while Enriching advocate clerk");
+            throw e;
         } catch (Exception e) {
             log.error("Error enriching advocate clerk application: {}", e.getMessage());
+            // Handle the exception or throw a custom exception
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service");
         }
     }
     public void enrichAdvocateClerkApplicationUponUpdate(AdvocateClerkRequest advocateClerkRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
-            AdvocateClerk advocateClerk = advocateClerkRequest.getClerks().get(0);
-            advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-            advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
+            for(AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()){
+                advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
+            }
         } catch (Exception e) {
             log.error("Error enriching advocate clerk  application upon update: {}", e.getMessage());
             // Handle the exception or throw a custom exception

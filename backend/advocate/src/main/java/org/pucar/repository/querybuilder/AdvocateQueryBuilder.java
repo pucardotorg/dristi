@@ -1,5 +1,7 @@
 package org.pucar.repository.querybuilder;
 
+import lombok.extern.slf4j.Slf4j;
+import org.egov.tracer.model.CustomException;
 import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -9,7 +11,11 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
+
 @Component
+@Slf4j
 public class AdvocateQueryBuilder {
     private static final String BASE_ATR_QUERY = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status ";
 
@@ -19,10 +25,9 @@ public class AdvocateQueryBuilder {
     private final String ORDERBY_CREATEDTIME = " ORDER BY adv.createdtime DESC ";
 
     public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList) {
-        StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
-        query.append(FROM_ADVOCATES_TABLE);
-
         try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_ADVOCATES_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
             // Collecting ids, application numbers, and bar registration numbers
@@ -86,12 +91,12 @@ public class AdvocateQueryBuilder {
                 firstCriteria = false;
             }
 
-            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds) ){
+            if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
                 query.append(")");
             }
 
 
-            if (statusList!=null && !statusList.isEmpty()) {
+            if (statusList != null && !statusList.isEmpty()) {
                 addClauseIfRequiredForStatus(query, firstCriteria);
                 query.append("adv.status IN (")
                         .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
@@ -101,8 +106,10 @@ public class AdvocateQueryBuilder {
             query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Error occurred while building the query", e);
+        }
+         catch (Exception e) {
+            log.error("Error while building advocate search query");
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
@@ -123,10 +130,9 @@ public class AdvocateQueryBuilder {
     }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-        StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
-        query.append(FROM_DOCUMENTS_TABLE);
-
         try {
+            StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
+            query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
                 query.append(" WHERE doc.advocateid IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
@@ -136,7 +142,8 @@ public class AdvocateQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error occurred while building the query", e);
+            log.error("Error while building document search query");
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e);
         }
     }
 }

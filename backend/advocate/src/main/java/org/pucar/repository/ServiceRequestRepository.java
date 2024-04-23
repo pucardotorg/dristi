@@ -37,6 +37,7 @@ public class ServiceRequestRepository {
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
 			log.error(SEARCHER_SERVICE_EXCEPTION, e);
+			throw new RuntimeException(SEARCHER_SERVICE_EXCEPTION,e);
 		}
 
 		return response;

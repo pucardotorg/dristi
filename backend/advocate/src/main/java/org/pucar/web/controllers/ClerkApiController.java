@@ -13,6 +13,8 @@ import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
 import org.pucar.web.models.AdvocateClerkResponse;
 import org.pucar.web.models.AdvocateClerkSearchRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +33,8 @@ public class ClerkApiController {
 	private final ObjectMapper objectMapper;
 
 	private final HttpServletRequest request;
+	private final Logger logger = LoggerFactory.getLogger(ClerkApiController.class);
+
 	@Autowired
 	private AdvocateClerkService advocateClerkService;
 
@@ -47,14 +51,15 @@ public class ClerkApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try{
-				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateRequest(body);
+//			try{
+				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateClerkRequest(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-			} catch (Exception e) {
-			    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	      	}
+//			} catch (Exception e) {
+//				logger.error("Error occurred while processing advocate-clerk creation request", e);
+//			    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//	      	}
 		}
 
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -65,14 +70,15 @@ public class ClerkApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus());
+//			try {
+				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus());
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(response,HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+//			} catch (Exception e) {
+//				logger.error("Error occurred while processing advocate-clerk search request", e);
+//				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
@@ -83,15 +89,16 @@ public class ClerkApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")){
-			try {
+//			try {
 				// Example after implementing a service layer
 				List<AdvocateClerk> advocateClerkList = advocateClerkService.updateAdvocateClerk(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateClerkList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+//			} catch (Exception e) {
+//				logger.error("Error occurred while processing advocate-clerk update request", e);
+//				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//			}
 		}
 
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
