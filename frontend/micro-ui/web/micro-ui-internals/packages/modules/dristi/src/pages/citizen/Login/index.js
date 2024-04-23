@@ -264,11 +264,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType });
     Digit.SessionStorage.del("aadharNumber");
-    history.push(`/digit-ui/citizen/dristi/home/register/user-registration`);
+    history.push(`/digit-ui/citizen/dristi/home/registration`);
   };
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    history.replace(`/${window?.contextPath}/citizen/dristi/home/register/user-registration`);
+    history.replace(`/${window?.contextPath}/citizen/dristi/home/registration`);
     setCanSubmitAadharOtp(true);
   };
 
@@ -316,7 +316,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               t={t}
             />
           </Route>
-          <Route path={`${path}/terms-conditions`}></Route>
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </AppContainer>
       </Switch>

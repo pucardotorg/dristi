@@ -1,4 +1,4 @@
-import { AppContainer, BreadCrumb, HelpLineIcon, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BreadCrumb, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
@@ -56,12 +56,18 @@ const App = ({ stateCode, tenantId }) => {
       path: isUserLoggedIn ? `${path}/home/register` : "",
       content: t("ES_COMMON_REGISTER"),
       show: location.pathname.includes("/home/register"),
-      isLast: !location.pathname.includes("/user-registration"),
+      isLast: true,
     },
     {
-      path: isUserLoggedIn ? `${path}/home/register/user-registration` : "",
-      content: t("ES_COMMON_USER_REGISTER"),
-      show: location.pathname.includes("/home/register/user-registration"),
+      path: isUserLoggedIn ? `${path}/home/registration` : "",
+      content: t("ES_COMMON_REGISTER"),
+      show: location.pathname.includes("/home/registration"),
+      isLast: !location.pathname.includes("/registration"),
+    },
+    {
+      path: isUserLoggedIn ? `${path}/home/registration/terms-conditions` : "",
+      content: t("ES_COMMON_USER_TERMS_AND_CONDITIONS"),
+      show: location.pathname.includes("/home/registration/terms-conditions"),
       isLast: true,
     },
   ];
@@ -108,7 +114,6 @@ const App = ({ stateCode, tenantId }) => {
           <PrivateRoute exact path={`${path}/home`}>
             <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} />
           </PrivateRoute>
-          <PrivateRoute exact path={`${path}/home/register/user-registration`} component={Registration} />
           <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
           <Route path={`${path}/home/login`}>
@@ -116,6 +121,9 @@ const App = ({ stateCode, tenantId }) => {
           </Route>
           <Route path={`${path}/home/register`}>
             <Login stateCode={stateCode} isUserRegistered={false} />
+          </Route>
+          <Route path={`${path}/home/registration`}>
+            <Registration stateCode={stateCode} isUserRegistered={false} />
           </Route>
           <Route path={`${path}/home/response`}>
             <Response refetch={refetch} />

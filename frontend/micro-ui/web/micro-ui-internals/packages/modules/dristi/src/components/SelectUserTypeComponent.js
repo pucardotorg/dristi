@@ -28,7 +28,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     if (input && input?.clearFields && value) {
       if (input?.clearFieldsType && formData[config.key]) {
         Object.keys(input?.clearFields).forEach((ele) => {
-          if (ele in input?.clearFieldsType && input?.clearFieldsType[ele] === "documentUpload" && formData[config.key][ele].length > 0) {
+          if (ele in input?.clearFieldsType && input?.clearFieldsType[ele] === "documentUpload" && formData[config.key][ele]?.length > 0) {
             const [fileData] = formData[config.key][ele];
             setRemoveFile(fileData[1]);
           }
@@ -38,6 +38,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     } else onSelect(config.key, { ...formData[config.key], [name]: value });
   }
   function getFileStoreData(filesData, input) {
+    debugger;
     const numberOfFiles = filesData.length;
     let finalDocumentData = [];
     if (numberOfFiles > 0) {
@@ -49,7 +50,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         });
       });
     }
-    setValue(numberOfFiles > 0 ? filesData : [], input.name);
+    setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
   return (
     <div>
@@ -101,7 +102,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       tenantId={Digit.ULBService.getCurrentTenantId()}
                       getFormState={(fileData) => getFileStoreData(fileData, input)}
                       showHintBelow={input?.showHintBelow ? true : false}
-                      setuploadedstate={[]}
+                      setuploadedstate={formData?.[config.key]?.[input.name] || []}
                       allowedFileTypesRegex={input.allowedFileTypes}
                       allowedMaxSizeInMB={input.allowedMaxSizeInMB || "5"}
                       hintText={input.hintText}

@@ -25,11 +25,16 @@ const CloseBtn = (props) => {
   );
 };
 
-const LocationContent = () => {
+const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
   return (
     <div style={{ fontSize: "16px", display: "flex", marginTop: "-2px" }}>
       <div>
-        <a href="https://www.google.com/maps" target="_blank" style={{ color: "#F47738" }}>
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: "#F47738" }}
+        >
           View on map
         </a>
       </div>
@@ -151,10 +156,6 @@ const ApplicationDetails = ({ location, match }) => {
     { title: "Address", content: address },
   ];
   const barDetails = [
-    {
-      title: "State of Registration",
-      content: JSON.parse(advocateData?.advocates?.[0]?.additionalDetails?.value || "{}")?.stateOfRegistration || "N/A",
-    },
     { title: "Bar Registration Number", content: advocateData?.advocates?.[0]?.barRegistrationNumber || "N/A" },
     { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={documentData?.fileStoreIds?.[0]?.url}></DocViewerWrapper> },
   ];

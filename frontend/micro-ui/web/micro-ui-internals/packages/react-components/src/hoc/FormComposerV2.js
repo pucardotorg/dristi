@@ -330,7 +330,7 @@ export const FormComposer = (props) => {
                     checked={formData?.[populators.name]}
                     label={t(`${populators?.title}`)}
                     styles={populators?.styles}
-                    style={populators?.labelStyles}
+                    labeStyle={populators?.labelStyles}
                     customLabelMarkup={populators?.customLabelMarkup}
                   />
                 </div>

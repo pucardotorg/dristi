@@ -265,8 +265,9 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
     fields: ["address_components", "geometry", "icon", "name"],
     origin: position,
     strictBounds: false,
-    types: ["address"],
+    // types: ["address"],
   };
+
   const searchBox = new window.google.maps.places.Autocomplete(input, options);
   // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input); // Bias the SearchBox results towards current map's viewport.
 
@@ -283,7 +284,6 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
       clickable: true,
     }),
   ];
-
   if (isPlaceRequired) setLocationText(position, onChange, true);
   else setLocationText(position, onChange);
 
@@ -305,6 +305,13 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
       };
       if (isPlaceRequired) onChange(pincode, place, geoLocation, place.name);
       else onChange(pincode, place, geoLocation);
+    } else {
+      const { geometry } = place;
+      const geoLocation = {
+        latitude: geometry.location.lat(),
+        longitude: geometry.location.lng(),
+      };
+      onChange("", place, geoLocation);
     }
     markers.forEach((marker) => {
       marker.setMap(null);
