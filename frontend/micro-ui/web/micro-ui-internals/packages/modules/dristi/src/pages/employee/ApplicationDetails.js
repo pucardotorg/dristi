@@ -97,7 +97,7 @@ const ApplicationDetails = ({ location, match }) => {
     Digit.DRISTIService.updateAdvocateService(requestBody, params)
       .then(() => {
         setShowModal(false);
-        setMessage(t("ES_USER_APPROVED"));
+        setMessage(action === "Approve" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
         setTimeout(() => history.push("/digit-ui/employee/dristi/registration-requests"), 2000);
       })
       .catch(() => {
@@ -207,7 +207,7 @@ const ApplicationDetails = ({ location, match }) => {
           </Card>
         </Modal>
       )}
-      {message && <Toast error={message === t("ES_API_ERROR")} label={message} onClose={() => setMessage(null)} />}
+      {message && <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED") } label={message} onClose={() => setMessage(null)} />}
     </div>
   );
 };
