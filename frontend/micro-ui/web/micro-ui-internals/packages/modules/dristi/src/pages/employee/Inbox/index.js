@@ -8,7 +8,7 @@ const config = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/advocate/v1/_search",
+    serviceName: "/advocate/advocate/v1/_search",
     requestParam: {},
     requestBody: {
       criteria: [],

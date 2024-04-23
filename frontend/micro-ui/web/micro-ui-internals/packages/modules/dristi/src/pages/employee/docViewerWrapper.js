@@ -23,10 +23,9 @@ const SUPPORTED_FILE_FORMATS = [
   ".xls",
 ];
 
-const DocViewerWrapper = (props) => {
+const DocViewerWrapper = ({ pdfUrl }) => {
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   const [selectedDocs, setSelectedDocs] = useState([]);
-  const { pdfUrl } = props;
 
   const documents = pdfUrl
     ? [{ uri: samplePDF, fileName: "fileName" }]

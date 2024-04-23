@@ -161,7 +161,7 @@ export const newConfig = [
                   isVerified: true,
                   hasBarRegistrationNo: true,
                   apiDetails: {
-                    serviceName: "/advocate/v1/_create",
+                    serviceName: "/advocate/advocate/v1/_create",
                     requestKey: "advocates",
                     AdditionalFields: ["barRegistrationNumber"],
                   },

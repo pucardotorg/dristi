@@ -1,11 +1,4 @@
-import {
-  Header,
-  Card, Loader, Menu,
-  ActionBar,
-  SubmitBar,
-  Modal,
-  CardText
-} from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, Menu, ActionBar, SubmitBar, Modal, CardText } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -62,12 +55,12 @@ const ApplicationDetails = ({ location, match }) => {
   // const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
   const { data: advocateData, isLoading: isLoading1 } = Digit.Hooks.dristi.useGetIndividualAdvocate(
     {
-      criteria: [{ applicationNumber: applicationNo, id: null, barRegistrationNumber: null }],
+      criteria: [{ individualId }],
       status: ["INWORKFLOW"],
     },
     {},
     moduleCode,
-    applicationNo,
+    applicationNo || individualId,
     true
   );
 
@@ -83,52 +76,35 @@ const ApplicationDetails = ({ location, match }) => {
     Boolean(individualId)
   );
 
-  // const { data: documentData, isLoading: isLoading3 } = Digit.Hooks.dristi.useGetDocument(
-  //   { tenantId, fileStoreIds: ["ea07c753-e075-483c-8a82-e6e873ec97c6"] },
-  //   moduleCode,
-  //   applicationNo,
-  //   Boolean(applicationNo)
-  // );
-  // console.debug(documentData, "Vaibhav");
+  const { data: documentData, isLoading: isLoading3 } = Digit.Hooks.dristi.useGetDocument(
+    { tenantId, fileStoreIds: "ea07c753-e075-483c-8a82-e6e873ec97c6" },
+    moduleCode,
+    applicationNo || individualId,
+    Boolean(individualId)
+  );
 
   let isMobile = window.Digit.Utils.browser.isMobile();
 
   function takeAction(action) {
-    console.debug(advocateData);
-    const filteredAdvocates = advocateData?.advocates?.filter((advocate) => advocate.workflow.action === "APPROVE");
-    const requestBody = { advocates: filteredAdvocates };
-    console.debug(requestBody);
-    // Digit.DRISTIService.complainantService("/advocate/v1/_update", requestBody, tenantId, true, {
-    //   roles: [
-    //     {
-    //       name: "MDMS ADMIN",
-    //       code: "MDMS_ADMIN",
-    //       tenantId: "pg",
-    //     },
-    //     {
-    //       name: "Super User",
-    //       code: "SUPERUSER",
-    //       tenantId: "pg",
-    //     },
-    //     {
-    //       name: "HRMS ADMIN",
-    //       code: "HRMS_ADMIN",
-    //       tenantId: "pg",
-    //     },
-    //   ],
-    // })
-    //   .then(() => {
-    //     history.push(`/digit-ui/citizen/dristi/home/response`, "success");
-    //   })
-    //   .catch(() => {
-    //     history.push(`/digit-ui/citizen/dristi/home/response`, "error");
-    //   });
+    const advocates = advocateData?.advocates || [];
+    advocates.forEach((advocate) => {
+      advocate.workflow.action = action.toUpperCase();
+    });
+
+    const requestBody = { advocates };
+    const params = { tenantId };
+    Digit.DRISTIService.updateAdvocateService(requestBody, params)
+      .then(() => {
+        history.push("/digit-ui/employee/dristi/registration-requests");
+      })
+      .catch(() => {
+        history.push("/digit-ui/employee/dristi/registration-requests");
+      });
   }
 
   function onActionSelect(action) {
     if (action === "Approve") {
       takeAction(action);
-      history.push(`/digit-ui/employee`);
     }
     if (action === "Reject") {
       setShowModal(true);
@@ -137,11 +113,10 @@ const ApplicationDetails = ({ location, match }) => {
   }
 
   const handleDelete = () => {
-    takeAction();
-    history.push(`/digit-ui/employee`);
+    takeAction("Reject");
   };
 
-  if (isLoading1 || isLoading2) {
+  if (isLoading1 || isLoading2 || isLoading3) {
     return <Loader />;
   }
 
@@ -171,9 +146,12 @@ const ApplicationDetails = ({ location, match }) => {
     { title: "Address", content: address },
   ];
   const barDetails = [
-    { title: "State of Registration", content: JSON.parse(advocateData?.advocates?.[0]?.additionalDetails?.value)?.stateOfRegistration || "N/A" },
+    {
+      title: "State of Registration",
+      content: JSON.parse(advocateData?.advocates?.[0]?.additionalDetails?.value || "{}")?.stateOfRegistration || "N/A",
+    },
     { title: "Bar Registration Number", content: advocateData?.advocates?.[0]?.barRegistrationNumber || "N/A" },
-    { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={"https://www.irs.gov/pub/irs-pdf/fw9.pdf"}></DocViewerWrapper> },
+    { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={documentData?.fileStoreIds?.[0]?.url}></DocViewerWrapper> },
   ];
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (

@@ -12,6 +12,16 @@ export const DRISTIService = {
       data,
       params: { tenantId },
     }),
+  updateAdvocateService: (data, params) =>
+    Request({
+      url: Urls.dristi.updateAdvocateDetails,
+      useCache: false,
+      userService: true,
+      method: "POST",
+      auth: true,
+      data,
+      params,
+    }),
   searchIndividualUser: (data, params) =>
     Request({
       url: Urls.dristi.searchIndividual,
