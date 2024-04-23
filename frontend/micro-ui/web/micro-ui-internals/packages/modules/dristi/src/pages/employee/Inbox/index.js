@@ -13,6 +13,7 @@ const config = {
     requestBody: {
       criteria: [],
       status: ["INWORKFLOW"],
+      tenantId: "pg",
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",

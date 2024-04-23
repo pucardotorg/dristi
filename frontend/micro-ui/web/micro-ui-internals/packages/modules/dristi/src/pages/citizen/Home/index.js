@@ -4,7 +4,7 @@ import { CaseInProgressIcon, ClosedCasesIcon, JoinCaseIcon, MyHearingsIcon, Pend
 import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
 import TakeUserToRegistration from "./TakeUserToRegistration";
 
-function CitizenHome({ individualId, isApprovalPending, refetch }) {
+function CitizenHome({ individualId, isApprovalPending }) {
   const cardIcons = [
     { Icon: <MyHearingsIcon />, label: "File a Case", path: "/digit-ui/employee/citizen/dristi/my-hearings" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },

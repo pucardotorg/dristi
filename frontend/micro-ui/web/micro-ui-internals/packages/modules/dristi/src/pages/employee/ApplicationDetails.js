@@ -52,11 +52,12 @@ const ApplicationDetails = ({ location, match }) => {
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  // const fileStore = await Digit.PaymentService.printReciept(tenantId, { fileStoreIds: fileStoreId });
+
   const { data: advocateData, isLoading: isLoading1 } = Digit.Hooks.dristi.useGetIndividualAdvocate(
     {
       criteria: [{ individualId }],
       status: ["INWORKFLOW"],
+      tenantId,
     },
     {},
     moduleCode,
@@ -67,7 +68,7 @@ const ApplicationDetails = ({ location, match }) => {
   const { data: individualData, isLoading: isLoading2 } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
-        individualId: individualId,
+        individualId,
       },
     },
     { tenantId, limit: 1000, offset: 0 },

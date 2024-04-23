@@ -106,9 +106,9 @@ const App = ({ stateCode, tenantId }) => {
             )}
           </div>
           <PrivateRoute exact path={`${path}/home`}>
-            <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} refetch={refetch} />
+            <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} />
           </PrivateRoute>
-          <PrivateRoute exact path={`${path}/home/register/user-registration`} component={Registration} refetch={refetch} />
+          <PrivateRoute exact path={`${path}/home/register/user-registration`} component={Registration} />
           <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
           <Route path={`${path}/home/login`}>
