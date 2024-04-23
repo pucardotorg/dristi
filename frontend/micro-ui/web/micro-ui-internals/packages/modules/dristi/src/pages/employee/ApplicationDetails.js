@@ -1,4 +1,4 @@
-import { Header, Card, Loader, Menu, ActionBar, SubmitBar, Modal, CardText } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, Menu, ActionBar, SubmitBar, Modal, CardText, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -52,7 +52,7 @@ const ApplicationDetails = ({ location, match }) => {
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-
+  const [message, setMessage] = useState(null);
   const { data: advocateData, isLoading: isLoading1 } = Digit.Hooks.dristi.useGetIndividualAdvocate(
     {
       criteria: [{ individualId }],
@@ -96,10 +96,14 @@ const ApplicationDetails = ({ location, match }) => {
     const params = { tenantId };
     Digit.DRISTIService.updateAdvocateService(requestBody, params)
       .then(() => {
-        history.push("/digit-ui/employee/dristi/registration-requests");
+        setShowModal(false);
+        setMessage(t("ES_USER_APPROVED"));
+        setTimeout(() => history.push("/digit-ui/employee/dristi/registration-requests"), 2000);
       })
       .catch(() => {
-        history.push("/digit-ui/employee/dristi/registration-requests");
+        setShowModal(false);
+        setMessage(t("ES_API_ERROR"));
+        setTimeout(() => history.push("/digit-ui/employee/dristi/registration-requests"), 2000);
       });
   }
 
@@ -203,6 +207,7 @@ const ApplicationDetails = ({ location, match }) => {
           </Card>
         </Modal>
       )}
+      {message && <Toast error={message === t("ES_API_ERROR")} label={message} onClose={() => setMessage(null)} />}
     </div>
   );
 };
