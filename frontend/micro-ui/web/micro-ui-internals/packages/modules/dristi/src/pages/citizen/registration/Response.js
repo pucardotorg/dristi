@@ -9,7 +9,7 @@ const Response = ({ refetch }) => {
   const location = useLocation();
   const history = useHistory();
   return (
-    <Card style={{ minWidth: "100%" }}>
+    <Card style={{ minWidth: "97%", marginLeft: "24px" }}>
       <Banner
         successful={location?.state === "success"}
         message={location?.state === "success" ? t("USER_REGISTRATION_SUCCESS_MSG") : t("USER_REGISTRATION_FAILURE_MSG")}

@@ -81,7 +81,6 @@ const Registration = () => {
   };
 
   const onSubmit = (data) => {
-    console.log("data", data);
     if (!validateFormData(data)) {
       setShowErrorToast(!validateFormData(data));
       return;
@@ -149,7 +148,6 @@ const Registration = () => {
       .then((individualRes) => {
         if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
           onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
-            console.log("document", document);
             const requestBody = {
               [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
                 {
@@ -227,8 +225,8 @@ const Registration = () => {
   };
 
   return (
-    <div className="employee-card-wrapper">
-      <div className="header-content">
+    <div style={{ paddingLeft: "15px", paddingRight: "10px" }} className="employee-card-wrapper">
+      <div style={{ paddingLeft: "7px" }} className="header-content">
         <Header>{t("CS_COMMON_REGISTRATION_DETAIL")}</Header>
       </div>
       <FormComposerV2

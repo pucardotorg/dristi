@@ -177,7 +177,7 @@ const ApplicationDetails = ({ location, match }) => {
   ];
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
-    <div>
+    <div style={{ paddingLeft: "20px" }}>
       <Header>{header}</Header>
       <DocumentDetailCard cardData={aadharData} />
       <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
