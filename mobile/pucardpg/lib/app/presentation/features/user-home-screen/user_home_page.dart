@@ -1,31 +1,31 @@
-
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_outline_icon_button.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
-import 'package:pucardpg/app/presentation/widgets/success_card.dart';
+import 'package:pucardpg/app/presentation/widgets/home_card.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:pucardpg/core/constant/constants.dart';
+import 'package:reactive_forms/reactive_forms.dart';
 
-class SuccessScreen extends StatefulWidget with AppMixin{
+class UserHomeScreen extends StatefulWidget with AppMixin{
 
   UserModel userModel = UserModel();
-
-  SuccessScreen({super.key, required this.userModel});
+  UserHomeScreen({super.key, required this.userModel});
 
   @override
-  SuccessScreenState createState() => SuccessScreenState();
+  UserHomeScreenState createState() => UserHomeScreenState();
 
 }
 
-class SuccessScreenState extends State<SuccessScreen> {
-
-  bool firstChecked = false;
+class UserHomeScreenState extends State<UserHomeScreen> {
 
   @override
   void initState() {
@@ -40,9 +40,6 @@ class SuccessScreenState extends State<SuccessScreen> {
           appBar: AppBar(
             title: const Text(""),
             centerTitle: true,
-            actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-            ],
             leading: IconButton(
               onPressed: () {},
               icon: const Icon(Icons.menu),
@@ -53,39 +50,43 @@ class SuccessScreenState extends State<SuccessScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      if (widget.userModel.userType != 'Litigant') ...[
-                        SuccessCard(
-                            heading: "Your registration application has been submitted successfully!",
-                            subHeading: "You will be given access once your application is verified and approved."
-                        )
-                      ],
-                      if (widget.userModel.userType == 'Litigant') ...[
-                        SuccessCard(
-                            heading: "Thank you for registering",
-                            subHeading: "You can proceed to file a case or respond to a case."
-                        )
-                      ]
-                      // Expanded(child: Container(),),
+                      const SizedBox(height: 10,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            child: HomeCard(heading: "Start a new case", icon: Icons.add_circle_sharp)
+                          ),
+                          Expanded(
+                              child: HomeCard(heading: "Cases in progress", icon: Icons.description)
+                          ),
+                          Expanded(
+                              child: HomeCard(heading: "Closed Cases", icon: Icons.fact_check)
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                              child: HomeCard(heading: "My Hearings", icon: Icons.account_balance)
+                          ),
+                          Expanded(
+                              child: HomeCard(heading: "Join a new case", icon: Icons.description)
+                          ),
+                          const Expanded(child: SizedBox(width: 0,))
+                        ],
+                      ),
                     ],
                   ),
                 ),
-              ),
-              DigitElevatedButton(
-                  onPressed: () {
-                    if(selectedOption != 'Litigant'){
-                    Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
-                    } else {
-      
-                    }
-                  },
-                  child: Text('Go to Home Page',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
               ),
             ],
           )
       ),
     );
-
   }
 
   Future<bool> _onBackPressed() async {
@@ -111,5 +112,4 @@ class SuccessScreenState extends State<SuccessScreen> {
             ))
     ) ?? false;
   }
-
 }

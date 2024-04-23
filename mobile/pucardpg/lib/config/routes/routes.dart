@@ -13,6 +13,7 @@ import 'package:pucardpg/app/presentation/features/not-registered-screen/not_reg
 import 'package:pucardpg/app/presentation/features/otp-screen/otp_screen.dart';
 import 'package:pucardpg/app/presentation/features/success-screen/success_screen.dart';
 import 'package:pucardpg/app/presentation/features/t&c-screen/terms_and_conditions_screen.dart';
+import 'package:pucardpg/app/presentation/features/user-home-screen/user_home_page.dart';
 import 'package:pucardpg/app/presentation/features/user-type-screen/user_type_screen.dart';
 
 
@@ -57,10 +58,13 @@ class AppRoutes {
         return _materialRoute(SuccessScreen(userModel: settings.arguments as UserModel,));
 
       case '/AdvocateHomePage':
-        return _materialRoute(AdvocateHomePage());
+        return _materialRoute(AdvocateHomePage(userModel: settings.arguments as UserModel,));
 
       case '/ViewApplicationScreen':
-        return _materialRoute(ApplicationDetailsScreen());
+        return _materialRoute(ApplicationDetailsScreen(userModel: settings.arguments as UserModel,));
+
+      case '/UserHomeScreen':
+        return _materialRoute(UserHomeScreen(userModel: settings.arguments as UserModel,));
 
       default:
         return _materialRoute(HomeScreen());

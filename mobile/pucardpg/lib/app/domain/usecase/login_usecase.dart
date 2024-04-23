@@ -148,7 +148,7 @@ class LoginUseCase {
     return dataState;
   }
 
-  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel) {
+  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel, Fields fields) {
 
     Individual individual = Individual(
       name: Name(
@@ -160,7 +160,7 @@ class LoginUseCase {
           roles: [ userRegisterRole, citizenRole],
       ),
       userUuid: userModel.uuid!,
-      userId: userModel.id!,
+      userId: userModel.id!.toString(),
       mobileNumber: userModel.mobileNumber!,
       address: [Address(
           doorNo: userModel.addressModel.doorNo!,
@@ -168,6 +168,7 @@ class LoginUseCase {
           longitude: userModel.addressModel.longitude!,
           city: userModel.addressModel.city!,
           district: userModel.addressModel.district!,
+          street: userModel.addressModel.street!,
           pincode: userModel.addressModel.pincode!
       )],
       identifiers: userModel.identifierId == null ? [] :
@@ -175,8 +176,8 @@ class LoginUseCase {
           identifierType: "ADHAAR",
           identifierId: userModel.identifierId!
       )],
-      additionalFields: const AdditionalFields(
-          fields: [litigant],
+      additionalFields: AdditionalFields(
+          fields: [fields],
       ),
     );
 

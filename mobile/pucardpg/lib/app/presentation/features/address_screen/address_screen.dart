@@ -114,6 +114,7 @@ class AddressScreenState extends State<AddressScreen> {
         widget.userModel.addressModel.state = place.administrativeArea!;
         widget.userModel.addressModel.district = place.subAdministrativeArea!;
         widget.userModel.addressModel.city = place.locality!;
+        widget.userModel.addressModel.street = place.street! + place.subLocality!;
         widget.userModel.addressModel.latitude = _currentPosition.latitude;
         widget.userModel.addressModel.longitude = _currentPosition.longitude;
 
@@ -121,6 +122,7 @@ class AddressScreenState extends State<AddressScreen> {
         form.control(stateKey).value = place.administrativeArea!;
         form.control(districtKey).value = place.subAdministrativeArea!;
         form.control(cityKey).value = place.locality!;
+        form.control(localityKey).value = place.street! + place.subLocality!;
       });
       markersList.clear();
       markersList.add(Marker(
@@ -330,6 +332,7 @@ class AddressScreenState extends State<AddressScreen> {
                                   ],
                                 ),
                                 DigitTextFormField(
+                                  padding: const EdgeInsets.only(top: 0),
                                   formControlName: stateKey,
                                   label: 'State',
                                   keyboardType: TextInputType.text,
@@ -518,7 +521,7 @@ class AddressScreenState extends State<AddressScreen> {
         doorNoKey: FormControl<String>(value: widget.userModel.addressModel.doorNo, validators: [
           Validators.required,
           Validators.number,
-          Validators.minLength(2),
+          Validators.minLength(1),
           Validators.maxLength(8)
         ]),
       });
@@ -541,6 +544,7 @@ class AddressScreenState extends State<AddressScreen> {
       form.control(stateKey).value = widget.userModel.addressModel.state;
       form.control(districtKey).value = widget.userModel.addressModel.district;
       form.control(cityKey).value = widget.userModel.addressModel.city;
+      form.control(localityKey).value = widget.userModel.addressModel.street;
       widget.userModel.addressModel.latitude = double.parse(p.lat!);
       widget.userModel.addressModel.longitude = double.parse(p.lng!);
       // city = city;
@@ -555,6 +559,7 @@ class AddressScreenState extends State<AddressScreen> {
     String newDistrictName = '';
     String newCityName = '';
     String newPinCode = '';
+    String newLocality = '';
     for (var component in addressComponents!) {
       List<String>? types = component.types;
       String? longName = component.longName;
@@ -567,6 +572,28 @@ class AddressScreenState extends State<AddressScreen> {
         newCityName = longName!;
       } else if (types.contains('postal_code')) {
         newPinCode = longName!;
+      } else if (types.contains('route')) {
+        newLocality = longName!;
+      } else if (types.contains('neighborhood')) {
+        if (newLocality.isEmpty) {
+          newLocality = longName!;
+        }
+      } else if (types.contains('sublocality_level_3')) {
+        if (newLocality.isEmpty) {
+          newLocality = longName!;
+        }
+      } else if (types.contains('sublocality_level_2')) {
+        if (newLocality.isEmpty) {
+          newLocality = longName!;
+        }
+      } else if (types.contains('sublocality_level_1')) {
+        if (newLocality.isEmpty) {
+          newLocality = longName!;
+        }
+      } else if (types.contains('sublocality')) {
+        if (newLocality.isEmpty) {
+          newLocality = longName!;
+        }
       }
     }
     setState(() {
@@ -574,6 +601,7 @@ class AddressScreenState extends State<AddressScreen> {
       widget.userModel.addressModel.district  = newDistrictName;
       widget.userModel.addressModel.city = newCityName;
       widget.userModel.addressModel.pincode = newPinCode;
+      widget.userModel.addressModel.street = newLocality;
     });
   }
 }

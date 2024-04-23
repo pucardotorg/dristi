@@ -13,7 +13,7 @@ const String msgId = "1712987382117|en_IN";
 const int timeStamp = 1712987382117;
 
 const String tenantId = "pg";
-const String type = "citizen";
+const String type = "CITIZEN";
 const String login = "login";
 
 const String register = "register";
@@ -36,6 +36,16 @@ const Role citizenRole = Role(
 const Fields litigant = Fields(
     key: 'userType',
     value: "LITIGANT",
+);
+
+const Fields advocate = Fields(
+    key: 'userType',
+    value: "ADVOCATE",
+);
+
+const Fields clerk = Fields(
+    key: 'userType',
+    value: "ADVOCATE CLERK",
 );
 
 String? selectedOption;

@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
+import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
@@ -169,17 +170,39 @@ class OtpScreenState extends State<OtpScreen> {
                       switch (state.runtimeType) {
 
                         case RequestFailedState:
-                          widget.theme.showDigitDialog(false, (state as RequestFailedState).errorMsg, context);
+                          widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
                           return;
                         case OtpCorrectState:
                           Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
                           break;
                         case IndividualSearchSuccessState:
-                          if ((state as IndividualSearchSuccessState).individualSearchResponse.individual.isEmpty) {
+                          List<Individual> listIndividuals =  (state as IndividualSearchSuccessState).individualSearchResponse.individual;
+                          if (listIndividuals.isEmpty) {
                             Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
-                          }
-                          else{
-
+                          } else{
+                            Individual individual = listIndividuals[0];
+                            var userTypeField = individual.additionalFields.fields.firstWhere(
+                                  (field) => field.key == "userType",
+                              orElse: () => const Fields(key: "", value: ""), // Provide a default Field if "userType" is not found
+                            );
+                            if (userTypeField.value == 'LITIGANT') {
+                              Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
+                            } else {
+                              widget.userModel.individualId = individual.individualId;
+                              widget.userModel.identifierType = individual.identifiers[0].identifierType;
+                              widget.userModel.identifierId = individual.identifiers[0].identifierId;
+                              widget.userModel.firstName = individual.name.givenName;
+                              widget.userModel.lastName = individual.name.familyName;
+                              var address = individual.address[0]; // Assuming you're interested in the first address
+                              widget.userModel.addressModel.doorNo = address.doorNo;
+                              widget.userModel.addressModel.city = address.city;
+                              widget.userModel.addressModel.pincode = address.pincode;
+                              widget.userModel.addressModel.street = address.street;
+                              widget.userModel.addressModel.district = address.district;
+                              widget.userModel.addressModel.latitude = address.latitude;
+                              widget.userModel.addressModel.longitude = address.longitude;
+                              Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
+                            }
                           }
                           break;
                         default:

@@ -55,12 +55,12 @@ abstract class ApiService {
       @Query('tenantId') String tenantId,
       @Body() IndividualSearchRequest individualSearchRequest);
 
-  @POST('/advocate/v1/_create')
+  @POST('/advocate/advocate/v1/_create')
   Future<HttpResponse<AdvocateRegistrationResponse>> registerAdvocate(
       @Header('Accept') String accept,
       @Body() AdvocateRegistrationRequest advocateRegistrationRequest);
 
-  @POST('/clerk/v1/_create')
+  @POST('/advocate/clerk/v1/_create')
   Future<HttpResponse<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(
       @Header('Accept') String accept,
       @Body() AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);

@@ -10,14 +10,13 @@ import 'package:pucardpg/app/presentation/widgets/detail_field.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ApplicationDetailsScreen extends StatefulWidget with AppMixin{
 
-  // UserModel userModel = UserModel();
+  UserModel userModel = UserModel();
 
-  ApplicationDetailsScreen({super.key,
-    // required this.userModel
-  });
+  ApplicationDetailsScreen({super.key, required this.userModel});
 
   @override
   ApplicationDetailsScreenState createState() => ApplicationDetailsScreenState();
@@ -35,6 +34,13 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> _openMap(String lat, String lng) async {
+    String googleURL = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+    await canLaunchUrlString(googleURL)
+      ? await launchUrlString(googleURL)
+          : throw 'Could not launch $googleURL';
   }
 
   @override
@@ -72,11 +78,11 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DetailField(heading: 'Mobile number', value: '+91 8219862225'),
+                    DetailField(heading: 'Mobile number', value: '+91 ${widget.userModel.mobileNumber ?? ""}'),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'ID type', value: '+91 8219862225'),
+                    DetailField(heading: 'ID type', value: widget.userModel.identifierType ?? ""),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'Aadhar number', value: '+91 8219862225')
+                    DetailField(heading: '${widget.userModel.identifierType} number', value: widget.userModel.identifierId ?? "")
                   ],
                 ),
               ),
@@ -90,11 +96,42 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                       style: widget.theme.text24W700(),
                     ),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'Name', value: '+91 8219862225'),
+                    DetailField(heading: 'Name', value: (widget.userModel.firstName ?? "") + (widget.userModel.lastName ?? "")),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'Location', value: '+91 8219862225'),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Text(
+                          'Location',
+                          style: widget.theme.text16W700Rob(),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 1,
+                        child: GestureDetector(
+                          onTap: () {
+                            _openMap(widget.userModel.addressModel.latitude!.toString(), widget.userModel.addressModel.longitude!.toString());
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                'View On Map',
+                                style: widget.theme.text16W400Rob()?.apply(color: const Color(0xFFF47738), decoration: TextDecoration.underline),
+                              ),
+                              const Icon(
+                                Icons.location_on,
+                                color: Color(0xFFF47738),
+                              )
+                            ],
+                          ),
+                        )
+                      ),
+                    ],
+                  ),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'Address', value: '+91 8219862225')
+                    DetailField(heading: 'Address', value: (widget.userModel.addressModel.doorNo ?? "") + (widget.userModel.addressModel.street ?? "") + (widget.userModel.addressModel.city ?? "") + (widget.userModel.addressModel.district ?? "") + (widget.userModel.addressModel.state ?? "") + (widget.userModel.addressModel.pincode ?? ""))
                   ],
                 ),
               ),
@@ -108,7 +145,7 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                       style: widget.theme.text24W700(),
                     ),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'Bar Registration number', value: '+91 8219862225'),
+                    DetailField(heading: 'Bar Registration number', value: (widget.userModel.barRegistrationNumber ?? "")),
                     const SizedBox(height: 20,),
                     Text(
                       'BAR Council ID',

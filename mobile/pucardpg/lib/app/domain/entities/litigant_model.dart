@@ -21,6 +21,9 @@ class UserModel{
   String? stateRegnNumber;
   String? barRegistrationNumber;
   String? fireStore;
+  String? documentType;
+
+  String? individualId;
 
   AddressModel addressModel = AddressModel();
 

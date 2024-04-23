@@ -22,12 +22,13 @@ class Address with _$Address {
   const factory Address({
     @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
     @JsonKey(name: 'type') @Default("PERMANENT") String type,
-    @JsonKey(name: 'doorNo') required String doorNo,
-    @JsonKey(name: 'latitude') required double latitude,
-    @JsonKey(name: 'longitude') required double longitude,
-    @JsonKey(name: 'city') required String city,
-    @JsonKey(name: 'pincode') required String pincode,
-    @JsonKey(name: 'district') required String district,
+    @JsonKey(name: 'doorNo') required String? doorNo,
+    @JsonKey(name: 'latitude') required double? latitude,
+    @JsonKey(name: 'longitude') required double? longitude,
+    @JsonKey(name: 'city') required String? city,
+    @JsonKey(name: 'street') required String? street,
+    @JsonKey(name: 'pincode') required String? pincode,
+    @JsonKey(name: 'district') required String? district,
   }) = _Address ;
 
   factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);
@@ -79,11 +80,12 @@ class UserDetails with _$UserDetails {
 class Individual with _$Individual {
   const factory Individual({
     @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
+    @JsonKey(name: 'individualId') String? individualId,
     @JsonKey(name: 'name') required Name name,
     @JsonKey(name: 'userDetails') required UserDetails userDetails, // Use "{{individualDateOfBirth}}" for replacement
 
     @JsonKey(name: 'userUuid') required String userUuid, // Use "{{individualGenderType}}" for replacement
-    @JsonKey(name: 'userId') required int userId,
+    @JsonKey(name: 'userId') required String userId,
     @JsonKey(name: 'mobileNumber') required String mobileNumber,
     @JsonKey(name: 'address') required List<Address> address,
 

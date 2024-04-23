@@ -141,7 +141,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 listener: (context, state) {
                                   switch (state.runtimeType) {
                                     case RequestOtpFailedState:
-                                      widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
+                                      widget.theme.showDigitDialog(true, (state as RequestOtpFailedState).errorMsg, context);
                                       Navigator.pushNamed(context, '/');
                                       break;
                                     case OtpGenerationSuccessState:
