@@ -33,6 +33,6 @@ public class AdvocateRegistrationValidator {
     }
 
     public Advocate validateApplicationExistence(Advocate advocate) {
-        return repository.getApplications(Collections.singletonList(AdvocateSearchCriteria.builder().applicationNumber(advocate.getApplicationNumber()).build()), new ArrayList<>()).get(0);
+        return repository.getApplications(Collections.singletonList(AdvocateSearchCriteria.builder().applicationNumber(advocate.getApplicationNumber()).build()), new ArrayList<>(), new String()).get(0);
     }
 }

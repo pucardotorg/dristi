@@ -33,6 +33,6 @@ public class AdvocateClerkRegistrationValidator {
         });
     }
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
-        return repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>()).get(0);
+        return repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String()).get(0);
     }
 }

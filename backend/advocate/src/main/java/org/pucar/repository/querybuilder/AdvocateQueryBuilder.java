@@ -18,76 +18,84 @@ public class AdvocateQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private final String ORDERBY_CREATEDTIME = " ORDER BY adv.createdtime DESC ";
 
-    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList) {
+    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber) {
         StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
         query.append(FROM_ADVOCATES_TABLE);
 
         try {
             boolean firstCriteria = true; // To check if it's the first criteria
+            if(criteriaList != null) {
+                // Collecting ids, application numbers, and bar registration numbers
+                List<String> ids = criteriaList.stream()
+                        .map(AdvocateSearchCriteria::getId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            // Collecting ids, application numbers, and bar registration numbers
-            List<String> ids = criteriaList.stream()
-                    .map(AdvocateSearchCriteria::getId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                List<String> barRegistrationNumbers = criteriaList.stream()
+                        .filter(criteria -> criteria.getId() == null)
+                        .map(AdvocateSearchCriteria::getBarRegistrationNumber)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> barRegistrationNumbers = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null)
-                    .map(AdvocateSearchCriteria::getBarRegistrationNumber)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                List<String> applicationNumbers = criteriaList.stream()
+                        .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null)
+                        .map(AdvocateSearchCriteria::getApplicationNumber)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> applicationNumbers = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null)
-                    .map(AdvocateSearchCriteria::getApplicationNumber)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                List<String> individualIds = criteriaList.stream()
+                        .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null && criteria.getApplicationNumber() == null)
+                        .map(AdvocateSearchCriteria::getIndividualId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> individualIds = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null && criteria.getApplicationNumber() == null)
-                    .map(AdvocateSearchCriteria::getIndividualId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                if (!ids.isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("adv.id IN (")
+                            .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
+                            .append(")");
+                    preparedStmtList.addAll(ids);
+                    firstCriteria = false; // Update firstCriteria flag
+                }
 
-            if (!ids.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("adv.id IN (")
-                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(ids);
-                firstCriteria = false; // Update firstCriteria flag
+                if (!barRegistrationNumbers.isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("adv.barRegistrationNumber IN (")
+                            .append(barRegistrationNumbers.stream().map(reg -> "?").collect(Collectors.joining(",")))
+                            .append(")");
+                    preparedStmtList.addAll(barRegistrationNumbers);
+                    firstCriteria = false; // Update firstCriteria flag
+
+                }
+
+                if (!applicationNumbers.isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("adv.applicationNumber IN (")
+                            .append(applicationNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
+                            .append(")");
+                    preparedStmtList.addAll(applicationNumbers);
+                    firstCriteria = false;
+                }
+
+                if (!individualIds.isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("adv.individualId IN (")
+                            .append(individualIds.stream().map(num -> "?").collect(Collectors.joining(",")))
+                            .append(")");
+                    preparedStmtList.addAll(individualIds);
+                    firstCriteria = false;
+                }
+
+                if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                    query.append(")");
+                }
             }
-
-            if (!barRegistrationNumbers.isEmpty()) {
+            else if(applicationNumber != null && !applicationNumber.isEmpty()){
                 addClauseIfRequired(query, firstCriteria);
-                query.append("adv.barRegistrationNumber IN (")
-                        .append(barRegistrationNumbers.stream().map(reg -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(barRegistrationNumbers);
-                firstCriteria = false; // Update firstCriteria flag
-
-            }
-
-            if (!applicationNumbers.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("adv.applicationNumber IN (")
-                        .append(applicationNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(applicationNumbers);
+                query.append("adv.applicationNumber LIKE ?")
+                     .append(")");
+                preparedStmtList.add("%" + applicationNumber + "%");
                 firstCriteria = false;
-            }
-
-            if (!individualIds.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("adv.individualId IN (")
-                        .append(individualIds.stream().map(num -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(individualIds);
-                firstCriteria = false;
-            }
-
-            if(!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) ||!CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds) ){
-                query.append(")");
             }
 
 

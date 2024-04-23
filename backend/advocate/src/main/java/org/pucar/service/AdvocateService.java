@@ -60,9 +60,9 @@ public class AdvocateService {
         return body.getAdvocates();
     }
 
-public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList) {
+public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber) {
     // Fetch applications from database according to the given search criteria
-    List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList);
+    List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber);
 
     // If no applications are found matching the given criteria, return an empty list
     if(CollectionUtils.isEmpty(applications))
