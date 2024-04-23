@@ -9,7 +9,17 @@ function TakeUserToRegistration() {
   const { t } = useTranslation();
   const history = useHistory();
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "90vw", height: "52vh", background: "white", alignItems: "center" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "90vw",
+        height: "52vh",
+        background: "white",
+        alignItems: "center",
+        marginLeft: "10px",
+      }}
+    >
       <div style={{ maxHeight: "40vh" }}>
         <RegisterImage></RegisterImage>
       </div>

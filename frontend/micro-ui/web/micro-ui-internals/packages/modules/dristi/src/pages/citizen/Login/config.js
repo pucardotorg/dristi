@@ -69,6 +69,7 @@ export const loginSteps = [
               allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
+              errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",
               disableFormValidation: false,
               hasBreakPoint: true,
             },
@@ -112,8 +113,8 @@ export const loginSteps = [
     body: [
       {
         type: "checkbox",
-        key: "Terms_Conditions",
-        populators: { title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit", name: "Terms_Conditions" },
+        key: "terms_Conditions",
+        populators: { title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit", name: "terms_Conditions" },
       },
     ],
   },

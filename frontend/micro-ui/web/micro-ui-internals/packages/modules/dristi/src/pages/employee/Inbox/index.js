@@ -8,11 +8,12 @@ const config = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/advocate/v1/_search",
+    serviceName: "/advocate/advocate/v1/_search",
     requestParam: {},
     requestBody: {
       criteria: [],
       status: ["INWORKFLOW"],
+      tenantId: "pg",
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",

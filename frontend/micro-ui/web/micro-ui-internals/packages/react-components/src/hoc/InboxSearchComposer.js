@@ -161,61 +161,6 @@ const InboxSearchComposer = ({
     setPopup(false);
     setType("");
   };
-  const dummyData = {
-    responseInfo: {
-      apiId: "null",
-      ver: "null",
-      ts: null,
-      resMsgId: "uief87324",
-      msgId: "8c11c5ca-03bd-11e7-93ae-92361f002671",
-      status: "successful",
-    },
-    advocates: [
-      {
-        id: "6e14d160-4881-4c14-afe3-079366788ba1",
-        tenantId: "pg",
-        applicationNumber: "ADV-2024-04-21-000126",
-        status: "INWORKFLOW",
-        barRegistrationNumber: "mnbvljhf",
-        advocateType: null,
-        organisationID: null,
-        individualId: "IND-2024-04-19-000079",
-        isActive: true,
-        workflow: {
-          action: "REGISTER",
-          comments: "Applying for ADVClerk registration",
-          documents: [
-            {
-              id: null,
-              documentType: "PDF",
-              fileStore: null,
-              documentUid: "",
-              additionalDetails: {},
-            },
-          ],
-          assignes: [],
-          rating: null,
-        },
-        documents: [
-          {
-            id: "dfc74002-30c0-4dc5-b49a-eadf76f2a7f8",
-            documentType: "PDF",
-            fileStore: "b0c5a846-c75a-11ea-87d0-0242ac130003",
-            documentUid: "dfc74002-30c0-4dc5-b49a-eadf76f2a7f8",
-            additionalDetails: {},
-          },
-        ],
-        auditDetails: {
-          createdBy: "a8ba6be8-2aa5-4a2a-b3f7-4c5e9f0b9354",
-          lastModifiedBy: "a8ba6be8-2aa5-4a2a-b3f7-4c5e9f0b9354",
-          createdTime: 1713679920148,
-          lastModifiedTime: 1713679920148,
-        },
-        additionalDetails: null,
-      },
-    ],
-    pagination: null,
-  };
 
   return (
     <InboxContext.Provider value={{ state, dispatch }}>
@@ -324,7 +269,7 @@ const InboxSearchComposer = ({
 
                 <ResultsTable
                   config={configs?.sections?.searchResult?.uiConfig}
-                  data={data || dummyData}
+                  data={data}
                   isLoading={isLoading}
                   isFetching={isFetching}
                   fullConfig={configs}

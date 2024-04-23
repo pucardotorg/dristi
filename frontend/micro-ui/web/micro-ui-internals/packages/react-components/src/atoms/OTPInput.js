@@ -84,7 +84,11 @@ const OTPInput = (props) => {
     );
   }
 
-  return <div className="input-otp-wrap">{OTPStack}</div>;
+  return (
+    <div style={{ backgroundColor: "none" }} className="input-otp-wrap">
+      {OTPStack}
+    </div>
+  );
 };
 
 OTPInput.propTypes = {

@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, LocationSearch } from "@egovernments/digit-ui-react-components";
-import { useLocation } from "react-router-dom";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -10,7 +9,6 @@ const getLocation = (places, code) => {
   return location ? location : null;
 };
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
-  const { pathname: url } = useLocation();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -20,7 +18,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
           name: [],
         },
       ],
-    []
+    [config?.populators?.inputs]
   );
 
   function setValue(value, input) {
@@ -51,14 +49,37 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
                     locationStyle={{ maxWidth: "540px" }}
-                    onChange={(pincode, location, coordinates) => {
+                    position={formData?.[config.key]?.coordinates || {}}
+                    onChange={(pincode, location, coordinates = {}) => {
                       console.log(location);
                       setValue(
                         {
-                          pincode,
-                          state: getLocation(location, "administrative_area_level_1"),
-                          district: getLocation(location, "administrative_area_level_3"),
-                          city: getLocation(location, "locality"),
+                          pincode: formData && formData[config.key] ? formData[config.key]["pincode"] : pincode || "",
+                          state:
+                            formData && formData[config.key]
+                              ? formData[config.key]["state"]
+                              : getLocation(location, "administrative_area_level_1") || "",
+                          district:
+                            formData && formData[config.key]
+                              ? formData[config.key]["district"]
+                              : getLocation(location, "administrative_area_level_3") || "",
+                          city: formData && formData[config.key] ? formData[config.key]["city"] : getLocation(location, "locality") || "",
+                          locality: formData[config.key]
+                            ? formData[config.key]["locality"]
+                            : (() => {
+                                const plusCode = getLocation(location, "plus_code");
+                                const neighborhood = getLocation(location, "neighborhood");
+                                const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                                const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                                return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                                  .reduce((result, current) => {
+                                    if (current) {
+                                      result.push(current);
+                                    }
+                                    return result;
+                                  }, [])
+                                  .join(", ");
+                              })(),
                           coordinates,
                         },
                         input.name

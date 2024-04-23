@@ -1,43 +1,29 @@
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { termsAndConditionConfig } from "./config";
+import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 
-function TermsConditions({ config, t }) {
+function TermsConditions({ params = {}, setParams = () => {} }) {
   const { t } = useTranslation();
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const token = window.localStorage.getItem("token");
-  const isUserLoggedIn = Boolean(token);
-  const moduleCode = "DRISTI";
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
-    {
-      Individual: {
-        userUuid: [userInfo?.uuid],
-      },
-    },
-    { tenantId, limit: 1000, offset: 0 },
-    moduleCode,
-    userInfo?.uuid && isUserLoggedIn
-  );
-  const individualId = data?.Individual?.[0]?.individualId;
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (Boolean(individualId)) {
-    history.push(`${window?.contextPath}/dristi/home`);
-  }
   const closeToast = () => {
     setShowErrorToast(false);
   };
 
-  const onSubmit = (data) => {
-    console.log("data", data);
+  const onDocumentUpload = async (fileData) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type };
+  };
 
+  const onSubmit = (termsAndConditionData) => {
+    console.debug("data", termsAndConditionData);
+    const data = params?.registrationData;
+    setParams({ ...params, ...termsAndConditionData });
     const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
     const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
     const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadhaarNumber;
@@ -91,7 +77,10 @@ function TermsConditions({ config, t }) {
         isSystemUser: true,
         skills: [],
         additionalFields: {
-          fields: [{ key: "userType", value: data?.clientDetails?.selectUserType?.code }],
+          fields: [
+            { key: "userType", value: data?.clientDetails?.selectUserType?.code },
+            { key: "termsAndCondition", value: termsAndConditionData?.Terms_Conditions },
+          ],
         },
         clientAuditDetails: {},
         auditDetails: {},
@@ -101,7 +90,6 @@ function TermsConditions({ config, t }) {
       .then((individualRes) => {
         if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
           onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
-            console.log("document", document);
             const requestBody = {
               [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
                 {
@@ -133,7 +121,6 @@ function TermsConditions({ config, t }) {
                     },
                   ],
                   additionalDetails: {
-                    stateOfRegistration: data?.clientDetails?.stateOfRegistration?.name,
                     username:
                       data?.userDetails?.firstName && data?.userDetails?.lastName
                         ? `${data?.userDetails?.firstName} ${data?.userDetails?.lastName}`
@@ -151,12 +138,12 @@ function TermsConditions({ config, t }) {
                 {
                   name: "Citizen",
                   code: "CITIZEN",
-                  tenantId: "pg",
+                  tenantId: tenantId,
                 },
                 {
                   name: "USER_REGISTER",
                   code: "USER_REGISTER",
-                  tenantId: "pg",
+                  tenantId: tenantId,
                 },
               ],
             })
@@ -171,6 +158,9 @@ function TermsConditions({ config, t }) {
       })
       .catch(() => {
         history.push(`/digit-ui/citizen/dristi/home/response`, "error");
+      })
+      .finally(() => {
+        setParams({});
       });
   };
 
@@ -180,23 +170,15 @@ function TermsConditions({ config, t }) {
         <Header>{t("CS_COMMON_TERMS_&_CONDITION")}</Header>
       </div>
       <FormComposerV2
-        config={termsAndConditionConfig.map((config) => {
-          return {
-            ...config,
-            body: config.body.filter((a) => !a.hideInEmployee),
-          };
-        })}
+        config={termsAndConditionConfig}
         t={t}
         onSubmit={(props) => {
-          onSubmit();
+          onSubmit(props);
         }}
-        noBoxShadow
-        inline
+        defaultValues={params?.Terms_Conditions || {}}
         label={"CS_COMMON_SUBMIT"}
-        description={"Description"}
         headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "100%", paddingRight: "90vh" }}
-        className="employeeForgotPassword"
+        cardStyle={{ minWidth: "100%" }}
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
