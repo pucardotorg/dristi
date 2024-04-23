@@ -47,7 +47,6 @@
     "build:engagement": "cd packages/modules/engagement && yarn build",
     "build:workbench": "cd packages/modules/workbench && yarn build",
     "build:pgr": "cd packages/modules/pgr && yarn build",
-    "build:css": "cd packages/css && yarn build:prod",
     "deploy:jenkins": "./scripts/jenkins.sh",
     "clean": "rm -rf node_modules"
   },

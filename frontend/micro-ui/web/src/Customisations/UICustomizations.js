@@ -552,7 +552,7 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?isAction=true?individualId=${value}`}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?individualId=${value}&isAction=true`}
             >
               {" "}
               {t("Verify")}
