@@ -28,7 +28,7 @@
           "sla": null,
           "state": "USERREGISTRATIONREQUESTED",
           "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
+          "docUploadRequired": false,
           "isStartState": true,
           "isTerminateState": false,
           "isStateUpdatable": true,

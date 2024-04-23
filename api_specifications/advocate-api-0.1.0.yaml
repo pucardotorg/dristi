@@ -217,7 +217,11 @@ components:
           type: string
           description: >-
             The individual ID (Individual registry) of the advocate containing all their
-            details. 
+            details.
+        status:
+          type: string
+          description: >-
+            The current status of the advocate application as pulled from the Workflow service.
         isActive:
           type: boolean
           description: >-
@@ -252,6 +256,8 @@ components:
           type: string
         applicationNumber:
           type: string
+        individualId:
+          type: string
     
     AdvocateClerk:
       type: object
@@ -285,6 +291,10 @@ components:
           description: >-
             The individual ID (Individual registry) of the advocate clerk containing all their
             details.
+        status:
+          type: string
+          description: >-
+            The current status of the advocate clerk application as pulled from the Workflow service.
         isActive:
           type: boolean
           description: >-
@@ -319,33 +329,51 @@ components:
           type: string
         stateRegnNumber:
           type: string
+        individualId:
+          type: string
     
     AdvocateSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
           type: array
           items:
             $ref: '#/components/schemas/AdvocateSearchCriteria'
-    
+        status:
+          type: array
+          items:
+            type: string
+            description: list of workflow status ex INWORKFLOW, ACTIVE, INACTIVE
+        applicationNumber:
+          type: string
+          description: search on application number
+
     AdvocateClerkSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
           type: array
           items:
             $ref: '#/components/schemas/AdvocateClerkSearchCriteria'
+        status:
+          type: array
+          items:
+            type: string
+            description: list of workflow status ex INWORKFLOW, ACTIVE, INACTIVE
+        applicationNumber:
+          type: string
+          description: search on application number
     
     AdvocateRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         advocates:
@@ -368,7 +396,7 @@ components:
     AdvocateClerkRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         clerks:
