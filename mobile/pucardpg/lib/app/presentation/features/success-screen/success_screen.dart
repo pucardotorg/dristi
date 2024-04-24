@@ -54,13 +54,13 @@ class SuccessScreenState extends State<SuccessScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      if (widget.userModel.userType != 'Litigant') ...[
+                      if (widget.userModel.userType != 'LITIGANT') ...[
                         SuccessCard(
                             heading: "Your registration application has been submitted successfully!",
                             subHeading: "You will be given access once your application is verified and approved."
                         )
                       ],
-                      if (widget.userModel.userType == 'Litigant') ...[
+                      if (widget.userModel.userType == 'LITIGANT') ...[
                         SuccessCard(
                             heading: "Thank you for registering",
                             subHeading: "You can proceed to file a case or respond to a case."
@@ -73,10 +73,10 @@ class SuccessScreenState extends State<SuccessScreen> {
               ),
               DigitElevatedButton(
                   onPressed: () {
-                    if(selectedOption != 'Litigant'){
+                    if(widget.userModel.userType != 'LITIGANT'){
                     Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                     } else {
-      
+                      Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
                     }
                   },
                   child: Text('Go to Home Page',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)

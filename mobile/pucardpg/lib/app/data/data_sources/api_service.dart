@@ -3,12 +3,15 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
+import 'package:pucardpg/app/data/models/advocate-clerk-search/advocate_clerk_search_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
+import 'package:pucardpg/app/data/models/advocate-search/advocate_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/file-upload-response-model/file_upload_response_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
+import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:retrofit/http.dart';
@@ -46,6 +49,12 @@ abstract class ApiService {
     ]
   );
 
+  @POST('/user/_logout')
+  Future<HttpResponse<ResponseInfoSearch>> logoutUser(
+      @Query('tenantId') String tenantId,
+      @Query('_') int _,
+      @Body() LogoutRequest logoutRequest);
+
   @POST('/user/citizen/_create')
   Future<HttpResponse<AuthResponse>> createCitizen(@Body() CitizenRegistrationRequest citizenRegistrationRequest);
 
@@ -68,4 +77,14 @@ abstract class ApiService {
   Future<HttpResponse<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(
       @Header('Accept') String accept,
       @Body() AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);
+
+  @POST('/advocate/advocate/v1/_search')
+  Future<HttpResponse<AdvocateSearchResponse>> searchAdvocate(
+      @Header('Accept') String accept,
+      @Body() AdvocateSearchRequest advocateSearchRequest);
+
+  @POST('/advocate/clerk/v1/_search')
+  Future<HttpResponse<AdvocateClerkSearchResponse>> searchAdvocateClerk(
+      @Header('Accept') String accept,
+      @Body() AdvocateClerkSearchRequest advocateClerkSearchRequest);
 }

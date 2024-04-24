@@ -10,6 +10,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
+import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
+import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -188,29 +190,25 @@ class OtpScreenState extends State<OtpScreen> {
                           if (listIndividuals.isEmpty) {
                             Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
                           } else{
-                            Individual individual = listIndividuals[0];
-                            var userTypeField = individual.additionalFields.fields.firstWhere(
-                                  (field) => field.key == "userType",
-                              orElse: () => const Fields(key: "", value: ""), // Provide a default Field if "userType" is not found
-                            );
-                            if (userTypeField.value == 'LITIGANT') {
+                            if (widget.userModel.userType == 'LITIGANT') {
                               Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
-                            } else {
-                              widget.userModel.individualId = individual.individualId;
-                              widget.userModel.identifierType = individual.identifiers[0].identifierType;
-                              widget.userModel.identifierId = individual.identifiers[0].identifierId;
-                              widget.userModel.firstName = individual.name.givenName;
-                              widget.userModel.lastName = individual.name.familyName;
-                              var address = individual.address[0]; // Assuming you're interested in the first address
-                              widget.userModel.addressModel.doorNo = address.doorNo;
-                              widget.userModel.addressModel.city = address.city;
-                              widget.userModel.addressModel.pincode = address.pincode;
-                              widget.userModel.addressModel.street = address.street;
-                              widget.userModel.addressModel.district = address.district;
-                              widget.userModel.addressModel.latitude = address.latitude;
-                              widget.userModel.addressModel.longitude = address.longitude;
-                              Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                             }
+                          }
+                          break;
+                        case AdvocateSearchSuccessState:
+                          List<Advocate> advocates =  (state as AdvocateSearchSuccessState).advocateSearchResponse.advocates;
+                          if (advocates.isEmpty) {
+                            Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
+                          } else {
+                            Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
+                          }
+                          break;
+                        case AdvocateClerkSearchSuccessState:
+                          List<Clerk> clerks =  (state as AdvocateClerkSearchSuccessState).advocateClerkSearchResponse.clerks;
+                          if (clerks.isEmpty) {
+                            Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
+                          } else {
+                            Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                           }
                           break;
                         default:

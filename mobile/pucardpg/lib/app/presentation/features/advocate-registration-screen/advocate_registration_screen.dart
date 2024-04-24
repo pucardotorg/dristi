@@ -113,7 +113,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                           const SizedBox(height: 20,),
                           Text("Provide details for the following", style: widget.theme.text32W700RobCon()?.apply(),),
                           const SizedBox(height: 20,),
-                          if (widget.userModel.userType == 'Advocate') ...[
+                          if (widget.userModel.userType == 'ADVOCATE') ...[
                             DigitTextField(
                               label: 'BAR registration number',
                               isRequired: true,
@@ -122,7 +122,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                               },
                             ),
                           ],
-                          if (widget.userModel.userType == 'Advocate Clerk') ...[
+                          if (widget.userModel.userType == 'ADVOCATE CLERK') ...[
                             DigitTextField(
                               label: 'State registration number',
                               isRequired: true,

@@ -23,6 +23,13 @@ class SubmitRegistrationOtpEvent extends RegistrationLoginEvent {
   });
 }
 
+class SubmitLogoutUserEvent extends RegistrationLoginEvent {
+  String authToken;
+  SubmitLogoutUserEvent({
+    required this.authToken
+  });
+}
+
 class SubmitLitigantProfileEvent extends RegistrationLoginEvent {
   UserModel userModel;
   SubmitLitigantProfileEvent({
@@ -44,6 +51,20 @@ class SendLoginOtpEvent extends RegistrationLoginEvent {
   SendLoginOtpEvent({
     required this.username,
     required this.password,
+    required this.userModel
+  });
+}
+
+class SubmitAdvocateIndividualEvent extends RegistrationLoginEvent {
+  UserModel userModel;
+  SubmitAdvocateIndividualEvent({
+    required this.userModel
+  });
+}
+
+class SubmitAdvocateClerkIndividualEvent extends RegistrationLoginEvent {
+  UserModel userModel;
+  SubmitAdvocateClerkIndividualEvent({
     required this.userModel
   });
 }

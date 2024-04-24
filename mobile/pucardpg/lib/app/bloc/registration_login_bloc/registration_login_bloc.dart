@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
+import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
+import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/usecase/login_usecase.dart';
 import 'package:pucardpg/core/constant/constants.dart';
@@ -18,6 +20,8 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     on<SubmitLitigantProfileEvent>(submitLitigantProfile);
     on<SubmitAdvocateProfileEvent>(submitAdvocateProfile);
     on<SubmitAdvocateClerkProfileEvent>(submitAdvocateClerkProfile);
+    on<SubmitAdvocateIndividualEvent>(submitAdvocateIndividual);
+    on<SubmitAdvocateClerkIndividualEvent>(submitAdvocateClerkIndividual);
   }
 
   Future<void> initialEvent(InitialEvent event,
@@ -63,6 +67,21 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
   }
 
+  // Future<void> logoutUserEvent(SubmitLogoutUserEvent event,
+  //     Emitter<RegistrationLoginState> emit) async {
+  //
+  //   emit(LoadingState());
+  //
+  //   final dataState = await _loginUseCase.logoutUser(event.authToken);
+  //
+  //   if(dataState is DataSuccess){
+  //       emit(LogoutSuccessState(data: dataState.data!));
+  //   }
+  //   if(dataState is DataFailed){
+  //     emit(LogoutFailedState(data: dataState.data!));
+  //   }
+  // }
+
   Future<void> sendLoginOtpEvent(SendLoginOtpEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
@@ -71,11 +90,35 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     final dataState = await _loginUseCase.getAuthResponse(event.username, event.password, event.userModel);
 
     if(dataState is DataSuccess){
-      final dataStateSearch = await _loginUseCase.searchIndividual(dataState.data!.accessToken!, dataState.data!.userRequest!.uuid!);
-      if (dataStateSearch is DataSuccess) {
-        emit(IndividualSearchSuccessState(individualSearchResponse: dataStateSearch.data!));
+      final dataStateSearchIndividual = await _loginUseCase.searchIndividual(event.userModel);
+      if (dataStateSearchIndividual is DataSuccess) {
+        if (dataStateSearchIndividual.data!.individual.isEmpty) {
+          emit(IndividualSearchSuccessState(individualSearchResponse: dataStateSearchIndividual.data!));
+        } else {
+          if (event.userModel.userType == 'LITIGANT') {
+            emit(IndividualSearchSuccessState(individualSearchResponse: dataStateSearchIndividual.data!));
+          }
+          if (event.userModel.userType == 'ADVOCATE') {
+            final dataStateSearchAdvocate = await _loginUseCase.searchAdvocate(event.userModel);
+            if(dataState is DataSuccess){
+              emit(AdvocateSearchSuccessState(advocateSearchResponse: dataStateSearchAdvocate.data!));
+            }
+            if(dataState is DataFailed){
+              emit(RequestFailedState(errorMsg: "",));
+            }
+          }
+          if (event.userModel.userType == 'ADVOCATE CLERK') {
+            final dataStateSearchAdvocateClerk = await _loginUseCase.searchAdvocateClerk(event.userModel);
+            if(dataState is DataSuccess){
+              emit(AdvocateClerkSearchSuccessState(advocateClerkSearchResponse: dataStateSearchAdvocateClerk.data!));
+            }
+            if(dataState is DataFailed){
+              emit(RequestFailedState(errorMsg: "",));
+            }
+          }
+        }
       }
-      if(dataStateSearch is DataFailed){
+      if(dataStateSearchIndividual is DataFailed){
         emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
       }
     }
@@ -101,7 +144,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
   }
 
-  Future<void> submitAdvocateProfile(SubmitAdvocateProfileEvent event,
+  Future<void> submitAdvocateIndividual(SubmitAdvocateIndividualEvent event,
       Emitter<RegistrationLoginState> emit) async {
 
     emit(LoadingState());
@@ -109,14 +152,53 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     final dataState = await _loginUseCase.registerLitigant(event.userModel, advocate);
 
     if(dataState is DataSuccess){
-      final dataState1 = await _loginUseCase.registerAdvocate(dataState.data!.individualInfo.individualId, event.userModel);
+      final dataState1 = await _loginUseCase.logoutUser(event.userModel.authToken ?? "");
 
       if(dataState1 is DataSuccess){
-        emit(AdvocateSubmissionSuccessState());
+        emit(LogoutSuccessState(data: dataState1.data!));
       }
       if(dataState1 is DataFailed){
-        emit(RequestFailedState(errorMsg: "",));
+        emit(LogoutFailedState(errorMsg: ""));
       }
+    }
+    if(dataState is DataFailed){
+      emit(RequestFailedState(errorMsg: "",));
+    }
+
+  }
+
+  Future<void> submitAdvocateClerkIndividual(SubmitAdvocateClerkIndividualEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(LoadingState());
+
+    final dataState = await _loginUseCase.registerLitigant(event.userModel, clerk);
+
+    if(dataState is DataSuccess){
+      final dataState1 = await _loginUseCase.logoutUser(event.userModel.authToken ?? "");
+
+      if(dataState1 is DataSuccess){
+        emit(LogoutSuccessState(data: dataState1.data!));
+      }
+      if(dataState1 is DataFailed){
+        emit(LogoutFailedState(errorMsg: ""));
+      }
+    }
+    if(dataState is DataFailed){
+      emit(RequestFailedState(errorMsg: "",));
+    }
+
+  }
+
+  Future<void> submitAdvocateProfile(SubmitAdvocateProfileEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(LoadingState());
+
+    final dataState = await _loginUseCase.registerAdvocate(event.userModel);
+
+    if(dataState is DataSuccess){
+      emit(AdvocateSubmissionSuccessState());
     }
     if(dataState is DataFailed){
       emit(RequestFailedState(errorMsg: "",));
@@ -129,17 +211,11 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
     emit(LoadingState());
 
-    final dataState = await _loginUseCase.registerLitigant(event.userModel, clerk);
+    final dataState = await _loginUseCase.registerAdvocateClerk(event.userModel);
 
     if(dataState is DataSuccess){
-      final dataState1 = await _loginUseCase.registerAdvocateClerk(dataState.data!.individualInfo.individualId, event.userModel);
-
-      if(dataState1 is DataSuccess){
-        emit(AdvocateClerkSubmissionSuccessState());
-      }
-      if(dataState1 is DataFailed){
-        emit(RequestFailedState(errorMsg: "",));
-      }    }
+      emit(AdvocateSubmissionSuccessState());
+    }
     if(dataState is DataFailed){
       emit(RequestFailedState(errorMsg: "",));
     }

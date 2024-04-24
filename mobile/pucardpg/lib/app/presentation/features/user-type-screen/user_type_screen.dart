@@ -5,6 +5,10 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
+import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -110,28 +114,45 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                 ),
               ),
             ),
-            DigitElevatedButton(
-                onPressed: () {
-                  widget.userModel.userType = selectedOption;
-                  if(selectedOption == null){
-                    DigitToast.show(context,
-                      options: DigitToastOptions(
-                        "Please select a user type.",
-                        true,
-                        widget.theme.theme(),
-                      ),
-                    );
-                    return;
-                  }
-                  else if(selectedOption == 'Litigant'){
-                    Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
-                  }
-                  else{
-                    Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
-                  }
-                },
-                child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-            ),
+            BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
+              bloc: widget.registrationLoginBloc,
+              listener: (context, state) {
+
+                switch (state.runtimeType) {
+                  case LogoutFailedState:
+                    widget.theme.showDigitDialog(true, (state as LogoutFailedState).errorMsg, context);
+                    break;
+                  case LogoutSuccessState:
+                    Navigator.pushNamed(context, '/', arguments: widget.userModel);
+                    break;
+                }
+              },
+              child: DigitElevatedButton(
+                  onPressed: () {
+                    widget.userModel.userType = selectedOption?.toUpperCase();
+                    if(selectedOption == null){
+                      DigitToast.show(context,
+                        options: DigitToastOptions(
+                          "Please select a user type.",
+                          true,
+                          widget.theme.theme(),
+                        ),
+                      );
+                      return;
+                    }
+                    else if(widget.userModel.userType == 'LITIGANT'){
+                      Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
+                    }
+                    else if(widget.userModel.userType == 'ADVOCATE'){
+                      widget.registrationLoginBloc.add(SubmitAdvocateIndividualEvent(userModel: widget.userModel));
+                    }
+                    else if(widget.userModel.userType == 'ADVOCATE CLERK'){
+                      widget.registrationLoginBloc.add(SubmitAdvocateClerkIndividualEvent(userModel: widget.userModel));
+                    }
+                  },
+                  child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+              ),
+            )
           ],
         )
     );

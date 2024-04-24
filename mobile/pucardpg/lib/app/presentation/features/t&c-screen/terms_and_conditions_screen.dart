@@ -117,13 +117,13 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       widget.theme.showDigitDialog(true, "Select all Terms and Conditions", context);
                       return;
                     }
-                    if (widget.userModel.userType == 'Advocate') {
+                    if (widget.userModel.userType == 'ADVOCATE') {
                       widget.registrationLoginBloc.add(SubmitAdvocateProfileEvent(userModel: widget.userModel));
                     }
-                    if (widget.userModel.userType == 'Advocate Clerk') {
+                    if (widget.userModel.userType == 'ADVOCATE CLERK') {
                       widget.registrationLoginBloc.add(SubmitAdvocateClerkProfileEvent(userModel: widget.userModel));
                     }
-                    if (widget.userModel.userType == 'Litigant') {
+                    if (widget.userModel.userType == 'LITIGANT') {
                       widget.registrationLoginBloc.add(SubmitLitigantProfileEvent(userModel: widget.userModel));
                     }
                   },

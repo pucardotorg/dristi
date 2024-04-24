@@ -8,12 +8,15 @@ import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
 
 import 'package:pucardpg/app/data/data_sources/api_service.dart';
 import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
+import 'package:pucardpg/app/data/models/advocate-clerk-search/advocate_clerk_search_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
+import 'package:pucardpg/app/data/models/advocate-search/advocate_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/file-upload-response-model/file_upload_response_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
+import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
@@ -65,6 +68,29 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
     // TODO: implement createCitizen
     try {
       final httpResponse = await _apiService.createCitizen(citizenRegistrationRequest);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: httpResponse.response,
+                type: dio.DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
+
+  }
+
+  @override
+  Future<DataState<ResponseInfoSearch>> logoutUser(LogoutRequest logoutRequest) async {
+    try {
+      final httpResponse = await _apiService.logoutUser(tenantId, timeStamp, logoutRequest);
 
       if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
         return DataSuccess(httpResponse.data);
@@ -215,6 +241,50 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   Future<DataState<LitigantResponseModel>> registerLitigant(LitigantNetworkModel litigantNetworkModel) async {
     try {
       final httpResponse = await _apiService.registerLitigant(litigantNetworkModel);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: httpResponse.response,
+                type: dio.DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
+  }
+
+  @override
+  Future<DataState<AdvocateSearchResponse>> searchAdvocate(AdvocateSearchRequest advocateSearchRequest) async {
+    try {
+      final httpResponse = await _apiService.searchAdvocate('application/json', advocateSearchRequest);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: httpResponse.response,
+                type: dio.DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
+  }
+
+  @override
+  Future<DataState<AdvocateClerkSearchResponse>> searchAdvocateClerk(AdvocateClerkSearchRequest advocateClerkSearchRequest) async {
+    try {
+      final httpResponse = await _apiService.searchAdvocateClerk('application/json', advocateClerkSearchRequest);
 
       if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
         return DataSuccess(httpResponse.data);
