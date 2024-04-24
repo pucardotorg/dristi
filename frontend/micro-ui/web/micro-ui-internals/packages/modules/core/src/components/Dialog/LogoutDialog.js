@@ -103,7 +103,7 @@ const LogoutDialog = ({ onSelect, onCancel, onDismiss }) => {
       formId="modal-action"
     >
       <div>
-        <CardText style={{ marginBottom: "54px", marginLeft: "8px", marginRight: "8px" }}>
+        <CardText style={{ marginBottom: "54px", color: "#0B0C0C", textAlign: "center", fontSize: "24px" }}>
           {t("CORE_LOGOUT_WEB_CONFIRMATION_MESSAGE") + " "}
           <strong>{t("CORE_LOGOUT_MESSAGE")}</strong>
         </CardText>

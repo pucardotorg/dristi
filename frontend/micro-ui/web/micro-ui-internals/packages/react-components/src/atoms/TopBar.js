@@ -46,7 +46,7 @@ const TopBar = ({
         <div className="RightMostTopBarOptions">
           {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? changeLanguage : null}
           {!hideNotificationIconOnSomeUrlsWhenNotLoggedIn ? (
-            <div className="EventNotificationWrapper" onClick={onNotificationIconClick}>
+            <div className="EventNotificationWrapper">
               {notificationCountLoaded && notificationCount ? (
                 <span>
                   <p>{notificationCount}</p>

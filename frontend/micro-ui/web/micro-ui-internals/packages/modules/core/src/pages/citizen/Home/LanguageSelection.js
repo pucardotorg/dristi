@@ -3,6 +3,20 @@ import { PageBasedInput, Loader, RadioButtons, CardHeader } from "@egovernments/
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
+const getLanguageSelectionStyles = () => {
+  const style = {
+    pageStyle: {
+      display: "flex",
+      justifyContent: "center",
+      marginRight: "40px",
+    },
+    cardStyle: {
+      width: "100vw",
+    },
+  };
+  return style;
+};
+
 const LanguageSelection = () => {
   const { t } = useTranslation();
   const history = useHistory();
@@ -37,7 +51,7 @@ const LanguageSelection = () => {
     <Loader />
   ) : (
     <div className="selection-card-wrapper">
-      <PageBasedInput texts={texts} onSubmit={onSubmit}>
+      <PageBasedInput style={getLanguageSelectionStyles()} texts={texts} onSubmit={onSubmit}>
         <CardHeader>{t("CS_COMMON_CHOOSE_LANGUAGE")}</CardHeader>
         <RadioButtons {...RadioButtonProps} />
       </PageBasedInput>
