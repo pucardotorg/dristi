@@ -1,16 +1,14 @@
 package org.pucar.dristi.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+
+import java.util.UUID;
 
 /**
  * TaskExists
@@ -21,14 +19,21 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskExists   {
-        @JsonProperty("cnrNumber")
+public class TaskExists {
+    @JsonProperty("taskId")
 
-                private String cnrNumber = null;
+    @Valid
+    private UUID taskId = null;
 
-        @JsonProperty("exists")
+    @JsonProperty("filingNumber")
 
-                private Boolean exists = null;
+    private String filingNumber = null;
 
+    @JsonProperty("cnrNumber")
 
+    private String cnrNumber = null;
+
+    @JsonProperty("exists")
+
+    private Boolean exists = null;
 }

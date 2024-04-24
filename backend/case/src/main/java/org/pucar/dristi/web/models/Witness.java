@@ -22,42 +22,51 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Witness   {
-        @JsonProperty("id")
+public class Witness {
+    @JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+    @Valid
+    private UUID id = null;
 
-        @JsonProperty("caseId")
-          @NotNull
+    @JsonProperty("caseId")
+    @NotNull
 
-                private String caseId = null;
+    private String caseId = null;
 
-        @JsonProperty("witnessIdentifier")
+    @JsonProperty("filingNumber")
 
-                private String witnessIdentifier = null;
+    private String filingNumber = null;
 
-        @JsonProperty("individualId")
-          @NotNull
+    @JsonProperty("cnrNumber")
 
-                private String individualId = null;
+    private String cnrNumber = null;
 
-        @JsonProperty("remarks")
+    @JsonProperty("witnessIdentifier")
 
-        @Size(min=10,max=5000)         private String remarks = null;
+    private String witnessIdentifier = null;
 
-        @JsonProperty("isActive")
+    @JsonProperty("individualId")
+    @NotNull
 
-                private Boolean isActive = true;
+    private String individualId = null;
 
-        @JsonProperty("auditDetails")
+    @JsonProperty("remarks")
 
-          @Valid
-                private AuditDetails auditDetails = null;
+    @Size(min = 10, max = 5000)
+    private String remarks = null;
 
-        @JsonProperty("additionalDetails")
+    @JsonProperty("isActive")
 
-                private Object additionalDetails = null;
+    private Boolean isActive = true;
+
+    @JsonProperty("auditDetails")
+
+    @Valid
+    private AuditDetails auditDetails = null;
+
+    @JsonProperty("additionalDetails")
+
+    private Object additionalDetails = null;
 
 
 }

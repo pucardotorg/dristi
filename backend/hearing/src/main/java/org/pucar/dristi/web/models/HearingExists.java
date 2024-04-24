@@ -1,11 +1,14 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.UUID;
 
 /**
  * HearingExists
@@ -17,13 +20,24 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class HearingExists   {
+        @JsonProperty("hearingId")
+
+        @Valid
+        private UUID hearingId = null;
+
+        @JsonProperty("filingNumber")
+
+        private String filingNumber = null;
+
         @JsonProperty("cnrNumber")
 
-                private String cnrNumber = null;
+        private String cnrNumber = null;
+
+        @JsonProperty("applicationNumber")
+
+        private String applicationNumber = null;
 
         @JsonProperty("exists")
 
-                private Boolean exists = null;
-
-
+        private Boolean exists = null;
 }

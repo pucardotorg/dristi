@@ -81,14 +81,9 @@ paths:
           description: Search by application ID
           schema:
             type: string
-        - name: applicationNumber
+        - name: filingNumber
           in: query
-          description: Search by application number
-          schema:
-            type: string
-        - name: caseId
-          in: query
-          description: Search by case ID
+          description: Search by filingNumber
           schema:
             type: string
             format: uuid
@@ -183,7 +178,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
-        HearingList:
+        applicationlist:
           type: array
           items:
             $ref: '#/components/schemas/Application'
@@ -194,20 +189,29 @@ components:
       properties:
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-        order:
-          $ref: '#/components/schemas/ApplicationExists'
+        applicationlist:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationExists'
     ApplicationExistsResponse:
       type: object
       properties:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        order:
+        applicationlist:
+          type: array
+          items:
           $ref: '#/components/schemas/ApplicationExists'
 
     ApplicationExists:
       type: object
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        filingNumber:
+          type: string
         cnrNumber:
+          type: string
+        applicationNumber:
           type: string
         exists:
           type: boolean
@@ -226,11 +230,8 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
-        caseId:
+        filingNumber:
           type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
           description: the associated case
         cnrNumber:
           type: string
