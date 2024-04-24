@@ -191,8 +191,8 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
               },
               child: DigitElevatedButton(
                   onPressed: () {
-                    // getMultipartFile();
-                    Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
+                    getMultipartFile();
+                    // Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
                   },
                   child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
               ),
@@ -206,6 +206,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
   Future getMultipartFile() async {
     MultipartFile multiPartFile = await MultipartFile.fromFile(fileToDisplay!.path, filename: fileName);
     inspect(multiPartFile);
+    print("path is ${fileToDisplay!.path}");
     widget.fileBloc.add(FileEvent(multipartFile: multiPartFile, file: fileToDisplay!));
   }
 

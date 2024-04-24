@@ -12,15 +12,16 @@ class FileBloc extends Bloc<FilePickerEvent, FilePickerState> {
   final FilePickerUseCase _filePickerUseCase;
 
   FileBloc(this._filePickerUseCase): super(FileInitialState()) {
-    on<FileEvent>(sendOtpEvent);
+    on<FileEvent>(uploadFileEvent);
   }
 
-  Future<void> sendOtpEvent(FileEvent event,
+  Future<void> uploadFileEvent(FileEvent event,
       Emitter<FilePickerState> emit) async {
 
     emit(FileLoadingState());
 
-    final dataState = await _filePickerUseCase.getFileStore(event.multipartFile, event.file);
+    // final dataState = await _filePickerUseCase.getFileStore(event.multipartFile, event.file);
+    final dataState = await _filePickerUseCase.uploadFile(event.file);
 
     if(dataState is DataSuccess){
       // print("success");

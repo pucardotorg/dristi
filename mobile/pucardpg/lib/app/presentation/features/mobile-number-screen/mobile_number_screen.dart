@@ -136,7 +136,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                   });
                                 },
                               ),
-
                               BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
                                 bloc: widget.registrationLoginBloc,
                                 listener: (context, state) {
@@ -146,6 +145,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       Navigator.pushNamed(context, '/');
                                       break;
                                     case OtpGenerationSuccessState:
+                                      userModel.type = (state as OtpGenerationSuccessState).type;
                                       Navigator.pushNamed(context, '/MobileOtpScreen', arguments: userModel);
                                       break;
                                     default:

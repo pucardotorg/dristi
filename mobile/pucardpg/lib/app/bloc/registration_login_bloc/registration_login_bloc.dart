@@ -30,13 +30,19 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
       emit(LoadingState());
 
-      final dataState = await _loginUseCase.requestOtp(event.mobileNumber, event.type);
+      final dataStateRegister = await _loginUseCase.requestOtp(event.mobileNumber, register);
 
-      if(dataState is DataSuccess){
-        emit(OtpGenerationSuccessState());
+      if(dataStateRegister is DataSuccess){
+        emit(OtpGenerationSuccessState(type: register));
       }
-      if(dataState is DataFailed){
-        emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
+      if(dataStateRegister is DataFailed){
+        final dataStateLogin = await _loginUseCase.requestOtp(event.mobileNumber, login);
+        if(dataStateLogin is DataSuccess){
+          emit(OtpGenerationSuccessState(type: login));
+        }
+        if(dataStateLogin is DataFailed){
+          emit(RequestFailedState(errorMsg: dataStateLogin.error?.message ?? "",));
+        }
       }
 
   }

@@ -8,7 +8,10 @@ class InitialState extends RegistrationLoginState {}
 
 class LoadingState extends RegistrationLoginState {}
 
-class OtpGenerationSuccessState extends RegistrationLoginState {}
+class OtpGenerationSuccessState extends RegistrationLoginState {
+  String type;
+  OtpGenerationSuccessState({required this.type});
+}
 
 class IndividualSearchSuccessState extends RegistrationLoginState {
   IndividualSearchResponse individualSearchResponse;

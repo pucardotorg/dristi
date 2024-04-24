@@ -6,12 +6,16 @@ import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advoc
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
+import 'package:pucardpg/app/data/models/file-upload-response-model/file_upload_response_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
+
+import 'package:http/http.dart' as http;
+
 
 part 'api_service.g.dart';
 
@@ -64,4 +68,23 @@ abstract class ApiService {
   Future<HttpResponse<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(
       @Header('Accept') String accept,
       @Body() AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);
+
+  // @POST("/filestore/v1/files")
+  // @MultiPart()
+  // Future<HttpResponse<FileUploadResponseModel>> uploadFile(
+  //     @Part() String tenantId,
+  //     @Part() String module,
+  //     @Part() File file);
+
+  @POST("/filestore/v1/files")
+  @FormUrlEncoded()  // Specify form data encoding
+  Future<HttpResponse<FileUploadResponseModel>> uploadFile(
+      @Field("tenantId") String tenantId,
+      @Field("module") String module,
+      @Field("file") File file);
+
+  // @Field("password") String password = "123456",
+  // @Field("tenantId") String tenantId = "pg",
+  // @Field("userType") String userType = "citizen",
+
 }

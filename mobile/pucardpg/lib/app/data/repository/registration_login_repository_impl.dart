@@ -11,12 +11,14 @@ import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advoc
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
+import 'package:pucardpg/app/data/models/file-upload-response-model/file_upload_response_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
+import 'package:retrofit/dio.dart';
 
 class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
 
@@ -43,6 +45,16 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
         );
       }
     } on dio.DioError catch(e){
+      if(e.response?.statusCode == 400){
+        return DataFailed(
+            dio.DioError(
+                error: e.response?.data.error?.message,
+                response: e.response,
+                type: dio.DioErrorType.response,
+                requestOptions: e.requestOptions
+            )
+        );
+      }
       return DataFailed(e);
     }
 
@@ -220,5 +232,27 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
       return DataFailed(e);
     }
   }
+
+  Future<DataState<FileUploadResponseModel>> uploadFile(File file) async{
+    try {
+      final httpResponse = await _apiService.uploadFile("pg", "DRISTI", file);
+
+      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+        return DataSuccess(httpResponse.data);
+      } else {
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: httpResponse.response,
+                type: dio.DioErrorType.response,
+                requestOptions: httpResponse.response.requestOptions
+            )
+        );
+      }
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
+  }
+
 
 }

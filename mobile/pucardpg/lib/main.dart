@@ -1,6 +1,8 @@
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
+import 'package:pucardpg/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart';
 import 'package:pucardpg/app/presentation/features/home_screen/home_screen.dart';
 import 'package:pucardpg/app/presentation/features/id-verification-screen/id_verification_screen.dart';
 import 'package:pucardpg/app/presentation/features/otp-screen/otp_screen.dart';
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: DigitTheme.instance.mobileTheme,
       onGenerateRoute: AppRoutes.onGenerateRoutes,
-      home: HomeScreen()
+      home: AdvocateRegistrationScreen(userModel: UserModel())
     );
 
   }
