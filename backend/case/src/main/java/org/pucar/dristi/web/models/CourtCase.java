@@ -74,6 +74,10 @@ public class CourtCase   {
 
         @Size(min=2,max=64)         private String benchId = null;
 
+        @JsonProperty("judgeId")
+
+        @Size(min=2,max=64)         private String judgeId = null;
+
         @JsonProperty("linkedCases")
           @Valid
                 private List<LinkedCase> linkedCases = null;
@@ -97,6 +101,10 @@ public class CourtCase   {
 
         @Size(min=2,max=64)         private String caseCategory = null;
 
+        @JsonProperty("caseType")
+        @Size(min=2,max=64)
+        private String caseType = null;
+
         @JsonProperty("natureOfPleading")
 
         @Size(min=2,max=64)         private String natureOfPleading = null;
@@ -109,7 +117,8 @@ public class CourtCase   {
         @JsonProperty("litigants")
           @NotNull
           @Valid
-        @Size(min=2)         private List<Party> litigants = new ArrayList<>();
+        @Size(min=2)
+        private List<Party> litigants = new ArrayList<>();
 
         @JsonProperty("status")
 

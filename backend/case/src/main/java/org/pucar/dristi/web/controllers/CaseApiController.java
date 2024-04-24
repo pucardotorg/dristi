@@ -2,11 +2,12 @@ package org.pucar.dristi.web.controllers;
 
 
 import java.io.IOException;
+import java.util.List;
 
-import org.pucar.dristi.web.models.CaseExistsResponse;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseResponse;
-import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.CaseService;
+import org.pucar.dristi.util.ResponseInfoFactory;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,12 @@ import jakarta.validation.Valid;
         private final HttpServletRequest request;
 
         @Autowired
+        private CaseService caseService;
+
+        @Autowired
+        private ResponseInfoFactory responseInfoFactory;
+
+        @Autowired
         public CaseApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -40,11 +47,18 @@ import jakarta.validation.Valid;
                 @RequestMapping(value="/case/v1/_create", method = RequestMethod.POST)
                 public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody CaseRequest body) {
                         String accept = request.getHeader("Accept");
-                            if (accept != null && accept.contains("application/json")) {
-                            return new ResponseEntity<CaseResponse>(HttpStatus.CREATED);
-                            }
+                    if (accept != null && accept.contains("application/json")) {
+                        try{
+                            List<CourtCase> caseList = caseService.registerCaseRequest(body);
+                            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                            CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+                            return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
+                        } catch (Exception e) {
+                            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                        }
+                    }
 
-                        return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
 
                 @RequestMapping(value="/case/v1/_exists", method = RequestMethod.POST)

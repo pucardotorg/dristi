@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,10 +25,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CaseResponse   {
-        @JsonProperty("requestInfo")
+        @JsonProperty("responseInfo")
 
           @Valid
-                private RequestInfo requestInfo = null;
+                private ResponseInfo responseInfo = null;
 
         @JsonProperty("cases")
           @Valid
