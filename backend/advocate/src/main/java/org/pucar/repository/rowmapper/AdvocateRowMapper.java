@@ -1,8 +1,10 @@
 package org.pucar.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
 import org.pucar.web.models.Advocate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
         Map<String, Advocate> advocateMap = new LinkedHashMap<>();
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String uuid = rs.getString("applicationnumber");
                 Advocate advocate = advocateMap.get(uuid);
@@ -45,12 +48,16 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
                             .organisationID(toUUID(rs.getString("organisationid")))
                             .individualId(rs.getString("individualid"))
                             .isActive(rs.getBoolean("isactive"))
-                            .additionalDetails(rs.getObject("additionalDetails"))
                             .advocateType(rs.getString("advocatetype"))
                             .status(rs.getString("status"))
                             .auditDetails(auditdetails)
                             .build();
                 }
+
+                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
+                if(pgObject!=null)
+                    advocate.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+
                 advocateMap.put(uuid, advocate);
             }
         }

@@ -1,8 +1,10 @@
 package org.pucar.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,7 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
         Map<UUID, List<Document>> documentMap = new LinkedHashMap<>();
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 UUID uuid = UUID.fromString(rs.getString("clerk_id"));
                 Document document = Document.builder()
@@ -27,6 +30,10 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
                         .documentUid(rs.getString("documentuid"))
                         .additionalDetails(rs.getString("additionaldetails"))
                         .build();
+
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
+                if(pgObject!=null)
+                    document.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
                 if (documentMap.containsKey(uuid) ) {
                     documentMap.get(uuid).add(document);
