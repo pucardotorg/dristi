@@ -77,4 +77,26 @@ class AdvocateQueryBuilderTest {
         assertEquals("BR123", preparedStmtList.get(1));
         assertEquals("APP456", preparedStmtList.get(2));
     }
+
+    @Test
+    void testGetAdvocateSearchQueryByApplicationNumber() {
+
+        // Create list of prepared statements
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        // Status List
+        List<String> statusList = new ArrayList<>();
+        String applicationNumber = "123APP";
+
+        // Call the method to be tested
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(null, preparedStmtList,statusList, applicationNumber);
+
+        // Assert the generated query string
+        String e = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status  FROM dristi_advocate adv WHERE (adv.applicationNumber LIKE ?) ORDER BY adv.createdtime DESC ";
+        assertEquals(e, query);
+
+        // Assert the prepared statement list
+        assertEquals(1, preparedStmtList.size());
+        assertEquals("%123APP%", preparedStmtList.get(0));
+    }
 }
