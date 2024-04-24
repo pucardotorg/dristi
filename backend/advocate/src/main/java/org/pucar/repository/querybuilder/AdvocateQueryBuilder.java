@@ -24,7 +24,7 @@ public class AdvocateQueryBuilder {
 
         try {
             boolean firstCriteria = true; // To check if it's the first criteria
-            if(criteriaList != null) {
+            if(criteriaList != null && !criteriaList.isEmpty()) {
                 // Collecting ids, application numbers, and bar registration numbers
                 List<String> ids = criteriaList.stream()
                         .map(AdvocateSearchCriteria::getId)

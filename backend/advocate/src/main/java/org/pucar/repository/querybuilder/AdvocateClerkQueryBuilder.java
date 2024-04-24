@@ -22,7 +22,7 @@ public class AdvocateClerkQueryBuilder {
         StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
         query.append(FROM_CLERK_TABLES);
 
-        if(criteriaList != null) {
+        if(criteriaList != null && !criteriaList.isEmpty()) {
             List<String> ids = criteriaList.stream()
                     .map(AdvocateClerkSearchCriteria::getId)
                     .filter(Objects::nonNull)
