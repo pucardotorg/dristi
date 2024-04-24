@@ -95,6 +95,7 @@ import useIndividualService from "./dristi/useIndividualService";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
 import useGetDocument from "./dristi/useGetDocument";
+import useGetAdvocateClerk from "./dristi/useGetAdvocateClerk";
 const pgr = {
   useComplaintDetails,
   useComplaintsList,
@@ -125,6 +126,7 @@ const dristi = {
   useGetIndividualUser,
   useGetIndividualAdvocate,
   useGetDocument,
+  useGetAdvocateClerk,
 };
 
 const hrms = {

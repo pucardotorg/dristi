@@ -7,6 +7,7 @@ import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectId from "./SelectId";
 import SelectName from "./SelectName";
+import { userTypeOptions } from "../registration/config";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -49,6 +50,7 @@ const getFromLocation = (state, searchParams) => {
 };
 
 const Login = ({ stateCode }) => {
+  const Digit = window.Digit || {};
   const { t } = useTranslation();
   const location = useLocation();
   const { path, url } = useRouteMatch();
@@ -82,6 +84,37 @@ const Login = ({ stateCode }) => {
     };
   }, [error]);
 
+  const routeToAdditionalDetail = async (info) => {
+    const individualDetails = await Digit.DRISTIService.searchIndividualUser(
+      {
+        Individual: {
+          userUuid: [info?.uuid],
+        },
+      },
+      { tenantId: Digit.ULBService.getStateId(), limit: 1000, offset: 0 }
+    );
+    const individualId = individualDetails?.Individual?.[0]?.individualId;
+    const userType = individualDetails?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
+    const userTypeDetails = userTypeOptions.find((item) => item.code === userType);
+    const searchAdvocateClerkData = await Digit.DRISTIService.searchAdvocateClerk(
+      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search",
+      {
+        criteria: [{ individualId }],
+        tenantId: Digit.ULBService.getStateId(),
+      },
+      { tenantId: Digit.ULBService.getStateId() }
+    );
+
+    if (
+      userType !== "LITIGANT" &&
+      individualId &&
+      Array.isArray(searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey]) &&
+      searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey].length === 0
+    ) {
+      history.push(`/digit-ui/citizen/dristi/home/additional-details`);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       return;
@@ -90,6 +123,7 @@ const Login = ({ stateCode }) => {
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
+    routeToAdditionalDetail(user?.info);
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
       const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;

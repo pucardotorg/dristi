@@ -1,3 +1,36 @@
+export const userTypeOptions = [
+  {
+    code: "LITIGANT",
+    name: "LITIGANT",
+    showBarDetails: false,
+    isVerified: false,
+  },
+  {
+    code: "ADVOCATE",
+    name: "ADVOCATE",
+    showBarDetails: true,
+    isVerified: true,
+    hasBarRegistrationNo: true,
+    apiDetails: {
+      serviceName: "/advocate/advocate/v1/_create",
+      requestKey: "advocates",
+      AdditionalFields: ["barRegistrationNumber"],
+    },
+  },
+  {
+    code: "ADVOCATE_CLERK",
+    name: "ADVOCATE CLERK",
+    showBarDetails: true,
+    hasStateRegistrationNo: true,
+    isVerified: true,
+    apiDetails: {
+      serviceName: "/clerk/v1/_create",
+      requestKey: "clerks",
+      AdditionalFields: ["stateRegnNumber"],
+    },
+  },
+];
+
 export const newConfig = [
   {
     body: [
@@ -176,6 +209,41 @@ export const newConfig = [
                 },
               ],
             },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+export const termsAndConditionConfig = [
+  {
+    body: [
+      {
+        type: "checkbox",
+        key: "Terms_Conditions",
+        populators: {
+          title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+          name: "Terms_Conditions",
+          styles: { minWidth: "100%" },
+          labelStyles: { padding: "8px" },
+          customStyle: { minWidth: "100%" },
+        },
+      },
+    ],
+  },
+];
+
+export const advocateClerkConfig = [
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "clientDetails",
+        withoutLabel: true,
+        populators: {
+          inputs: [
             {
               label: "BAR_REGISTRATION_NUMBER",
               type: "text",
@@ -212,24 +280,6 @@ export const newConfig = [
               dependentKey: { selectUserType: ["showBarDetails"] },
             },
           ],
-        },
-      },
-    ],
-  },
-];
-
-export const termsAndConditionConfig = [
-  {
-    body: [
-      {
-        type: "checkbox",
-        key: "Terms_Conditions",
-        populators: {
-          title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit",
-          name: "Terms_Conditions",
-          styles: { minWidth: "100%" },
-          labelStyles: { padding: "8px" },
-          customStyle: { minWidth: "100%" },
         },
       },
     ],

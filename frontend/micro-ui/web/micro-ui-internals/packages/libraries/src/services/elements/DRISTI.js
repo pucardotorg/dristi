@@ -33,7 +33,7 @@ export const DRISTIService = {
       params,
     }),
 
-  complainantService: (url, data, tenantId, userService = false, additionInfo) =>
+  advocateClerkService: (url, data, tenantId, userService = false, additionInfo) =>
     Request({
       url: url,
       useCache: false,
@@ -47,6 +47,16 @@ export const DRISTIService = {
   searchIndividualAdvocate: (data, params) =>
     Request({
       url: Urls.dristi.searchIndividualAdvocate,
+      useCache: false,
+      userService: true,
+      method: "POST",
+      auth: true,
+      data,
+      params,
+    }),
+  searchAdvocateClerk: (url, data, params) =>
+    Request({
+      url: url,
       useCache: false,
       userService: true,
       method: "POST",

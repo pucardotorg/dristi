@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import CustomCard from "../../../components/CustomCard";
 import {
   CaseInProgressIcon,
@@ -10,6 +10,7 @@ import {
 } from "@egovernments/digit-ui-react-components";
 import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
 import TakeUserToRegistration from "./TakeUserToRegistration";
+import { userTypeOptions } from "../registration/config";
 
 function CitizenHome({ tenantId }) {
   const Digit = window?.Digit || {};
@@ -37,11 +38,36 @@ function CitizenHome({ tenantId }) {
     { Icon: <PendingActionsIcon />, label: "Pending Actions", path: "/digit-ui/employee/citizen/dristi/pending-actions" },
   ];
 
-  const individualId = data?.Individual?.[0]?.individualId;
-  const userType = data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
-  const isApprovalPending = userType !== "LITIGANT";
+  const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
 
-  if (isLoading) {
+  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+    {
+      criteria: [{ individualId }],
+      tenantId,
+    },
+    {},
+    moduleCode,
+    Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+  );
+
+  const userTypeDetail = useMemo(() => {
+    return userTypeOptions.find((item) => item.code === userType) || {};
+  }, [userType]);
+
+  const isApprovalPending = useMemo(() => {
+    const searchResult = searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    return (
+      userType !== "LITIGANT" &&
+      Array.isArray(searchResult) &&
+      searchResult.length > 0 &&
+      searchResult[0]?.isActive === false &&
+      searchResult[0]?.status !== "INACTIVE"
+    );
+  }, [searchData, userType, userTypeDetail?.apiDetails?.requestKey]);
+
+  if (isLoading || isSearchLoading) {
     return <Loader />;
   }
 

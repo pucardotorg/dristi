@@ -1,5 +1,5 @@
 import { AppContainer, BreadCrumb, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import { Link } from "react-router-dom/cjs/react-router-dom";
+import { userTypeOptions } from "./registration/config";
 
 const App = ({ stateCode, tenantId }) => {
   const Digit = window?.Digit || {};
@@ -18,6 +19,7 @@ const App = ({ stateCode, tenantId }) => {
   const Registration = Digit?.ComponentRegistryService?.getComponent("DRISTIRegistration");
   const Response = Digit?.ComponentRegistryService?.getComponent("DRISTICitizenResponse");
   const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
+  const AdvocateClerkAdditionalDetail = Digit?.ComponentRegistryService?.getComponent("AdvocateClerkAdditionalDetail");
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
 
@@ -35,9 +37,24 @@ const App = ({ stateCode, tenantId }) => {
     "",
     userInfo?.uuid && isUserLoggedIn
   );
-  const individualId = data?.Individual?.[0]?.individualId;
-  const userType = data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
-  const isApprovalPending = userType !== "LITIGANT";
+
+  const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
+
+  const { data: searchData = {}, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
+    {
+      criteria: [{ individualId }],
+      tenantId,
+    },
+    { tenantId },
+    moduleCode,
+    Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+  );
+
+  const userTypeDetail = useMemo(() => {
+    return userTypeOptions.find((item) => item.code === userType) || {};
+  }, [userType]);
 
   const hideHomeCrumb = [`${path}/home`];
   const dristiCrumbs = [
@@ -76,6 +93,12 @@ const App = ({ stateCode, tenantId }) => {
       show: location.pathname.includes("/home/registration/terms-conditions"),
       isLast: true,
     },
+    {
+      path: isUserLoggedIn ? `${path}/home/additional-details` : "",
+      content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
+      show: location.pathname.includes("/home/additional-details"),
+      isLast: true,
+    },
   ];
   const whiteListedRoutes = [
     `${path}/home/response`,
@@ -98,7 +121,7 @@ const App = ({ stateCode, tenantId }) => {
     history.push(`${path}/home`);
   }
 
-  if (isLoading) {
+  if (isLoading || isSearchLoading) {
     return <Loader />;
   }
 
@@ -111,7 +134,7 @@ const App = ({ stateCode, tenantId }) => {
             {!hideHomeCrumb.includes(location.pathname) && (
               <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
                 <Link target="_blank" style={{ color: "#f47738" }}>
-                  Help
+                  {t("Help")}
                 </Link>
                 <HelpOutlineIcon />
               </span>
@@ -129,7 +152,15 @@ const App = ({ stateCode, tenantId }) => {
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
           <Route path={`${path}/home/registration`}>
-            <Registration stateCode={stateCode} isUserRegistered={false} />
+            <Registration stateCode={stateCode} />
+          </Route>
+          <Route path={`${path}/home/additional-details`}>
+            <AdvocateClerkAdditionalDetail
+              userTypeDetail={userTypeDetail}
+              individualId={individualId}
+              userType={userType}
+              refetch={refetchAdvocateClerk}
+            />
           </Route>
           <Route path={`${path}/home/response`}>
             <Response refetch={refetch} />

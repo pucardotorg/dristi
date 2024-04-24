@@ -15,10 +15,10 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
     setShowErrorToast(false);
   };
 
-  const onDocumentUpload = async (fileData) => {
-    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
-    return { file: fileUploadRes?.data, fileType: fileData.type };
-  };
+  // const onDocumentUpload = async (fileData) => {
+  //   const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+  //   return { file: fileUploadRes?.data, fileType: fileData.type };
+  // };
 
   const onSubmit = (termsAndConditionData) => {
     const data = params?.registrationData;
@@ -78,6 +78,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
         additionalFields: {
           fields: [
             { key: "userType", value: data?.clientDetails?.selectUserType?.code },
+            { key: "userTypeDetail", value: JSON.stringify(data?.clientDetails?.selectUserType) },
             { key: "termsAndCondition", value: termsAndConditionData?.Terms_Conditions },
           ],
         },
@@ -86,77 +87,80 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
       },
     };
     Digit.DRISTIService.postIndividualService(Individual, tenantId)
-      .then((individualRes) => {
-        if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
-          onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
-            const requestBody = {
-              [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
-                {
-                  tenantId: tenantId,
-                  individualId: individualRes?.Individual?.individualId,
-                  isActive: true,
-                  workflow: {
-                    action: "REGISTER",
-                    comments: `Applying for ${data?.clientDetails?.selectUserType?.apiDetails?.requestKey} registration`,
-                    documents: [
-                      {
-                        id: null,
-                        documentType: document.fileType,
-                        fileStore: document.file?.files?.[0]?.fileStoreId,
-                        documentUid: "",
-                        additionalDetails: {},
-                      },
-                    ],
-                    assignes: [],
-                    rating: null,
-                  },
-                  documents: [
-                    {
-                      id: null,
-                      documentType: document.fileType,
-                      fileStore: document.file?.files?.[0]?.fileStoreId,
-                      documentUid: "",
-                      additionalDetails: {},
-                    },
-                  ],
-                  additionalDetails: {
-                    username:
-                      data?.userDetails?.firstName && data?.userDetails?.lastName
-                        ? `${data?.userDetails?.firstName} ${data?.userDetails?.lastName}`
-                        : "",
-                  },
-                  ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                    res[curr] = data?.clientDetails[curr];
-                    return res;
-                  }, {}),
-                },
-              ],
-            };
-            Digit.DRISTIService.complainantService(data?.clientDetails?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
-              roles: [
-                {
-                  name: "Citizen",
-                  code: "CITIZEN",
-                  tenantId: tenantId,
-                },
-                {
-                  name: "USER_REGISTER",
-                  code: "USER_REGISTER",
-                  tenantId: tenantId,
-                },
-              ],
-            })
-              .then(() => {
-                history.push(`/digit-ui/citizen/dristi/home/response`, "success");
-              })
-              .catch(() => {
-                history.push(`/digit-ui/citizen/dristi/home/response`, "error");
-              });
-          });
-        } else history.push(`/digit-ui/citizen/dristi/home/response`, "success");
+      // .then((individualRes) => {
+      //   if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
+      //     onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
+      //       const requestBody = {
+      //         [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
+      //           {
+      //             tenantId: tenantId,
+      //             individualId: individualRes?.Individual?.individualId,
+      //             isActive: false,
+      //             workflow: {
+      //               action: "REGISTER",
+      //               comments: `Applying for ${data?.clientDetails?.selectUserType?.apiDetails?.requestKey} registration`,
+      //               documents: [
+      //                 {
+      //                   id: null,
+      //                   documentType: document.fileType,
+      //                   fileStore: document.file?.files?.[0]?.fileStoreId,
+      //                   documentUid: "",
+      //                   additionalDetails: {},
+      //                 },
+      //               ],
+      //               assignes: [],
+      //               rating: null,
+      //             },
+      //             documents: [
+      //               {
+      //                 id: null,
+      //                 documentType: document.fileType,
+      //                 fileStore: document.file?.files?.[0]?.fileStoreId,
+      //                 documentUid: "",
+      //                 additionalDetails: {},
+      //               },
+      //             ],
+      //             additionalDetails: {
+      //               username:
+      //                 data?.userDetails?.firstName && data?.userDetails?.lastName
+      //                   ? `${data?.userDetails?.firstName} ${data?.userDetails?.lastName}`
+      //                   : "",
+      //             },
+      //             ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+      //               res[curr] = data?.clientDetails[curr];
+      //               return res;
+      //             }, {}),
+      //           },
+      //         ],
+      //       };
+      //       Digit.DRISTIService.advocateClerkService(data?.clientDetails?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
+      //         roles: [
+      //           {
+      //             name: "Citizen",
+      //             code: "CITIZEN",
+      //             tenantId: tenantId,
+      //           },
+      //           {
+      //             name: "USER_REGISTER",
+      //             code: "USER_REGISTER",
+      //             tenantId: tenantId,
+      //           },
+      //         ],
+      //       })
+      //         .then(() => {
+      //           history.push(`/digit-ui/citizen/dristi/home/response`, "success");
+      //         })
+      //         .catch(() => {
+      //           history.push(`/digit-ui/citizen/dristi/home/response`, "error");
+      //         });
+      //     });
+      //   } else history.push(`/digit-ui/citizen/dristi/home/response`, "success");
+      // })
+      .then(() => {
+        history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success", createType: data?.clientDetails?.selectUserType?.code });
       })
       .catch(() => {
-        history.push(`/digit-ui/citizen/dristi/home/response`, "error");
+        history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
       })
       .finally(() => {
         setParams({});
