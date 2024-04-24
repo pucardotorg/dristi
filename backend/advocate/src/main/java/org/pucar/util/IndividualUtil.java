@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
-import org.pucar.config.Configuration;
 import org.pucar.repository.ServiceRequestRepository;
 import org.pucar.web.models.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;

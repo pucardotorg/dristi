@@ -5,12 +5,10 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.web.models.AdvocateClerk;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 import static org.pucar.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
@@ -64,7 +62,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
     }
 
     private void addChildrenToProperty(ResultSet rs, AdvocateClerk advocateClerkApplication)
-            throws SQLException {
+    {
         addDocumentToApplication(rs, advocateClerkApplication);
     }
 
