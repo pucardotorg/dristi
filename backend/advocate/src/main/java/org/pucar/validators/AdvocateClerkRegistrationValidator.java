@@ -14,9 +14,9 @@ import org.springframework.util.ObjectUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.pucar.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
+import static org.pucar.config.ServiceConstants.VALIDATION_EXCEPTION;
 
 @Component
 public class AdvocateClerkRegistrationValidator {
@@ -38,7 +38,7 @@ public class AdvocateClerkRegistrationValidator {
     }
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
         List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>());
-        if(existingApplications.isEmpty()) throw new NoSuchElementException("Application does not exist");
+        if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);
     }
 }

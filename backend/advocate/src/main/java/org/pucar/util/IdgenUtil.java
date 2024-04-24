@@ -48,7 +48,12 @@ public class IdgenUtil {
 			try {
 				response = mapper.convertValue(restRepo.fetchResult(uri, request),
 						IdGenerationResponse.class);
-			} catch (Exception e) {
+			}
+			catch (CustomException e) {
+				log.error("Custom Exception occurred in Idgen Utility");
+				throw e;
+			}
+			catch (Exception e) {
 				log.error("Error fetching ID from ID generation service: {}", e.getMessage());
 				throw new CustomException(IDGEN_ERROR, "Error fetching ID from ID generation service");
 			}

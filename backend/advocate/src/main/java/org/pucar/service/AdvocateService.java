@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import static org.pucar.config.ServiceConstants.*;
 
@@ -35,9 +33,6 @@ public class AdvocateService {
 
     @Autowired
     private WorkflowService workflowService;
-
-    @Autowired
-    private IndividualService individualService;
 
     @Autowired
     private AdvocateRepository advocateRepository;
@@ -82,9 +77,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))
             return new ArrayList<>();
-        applications.forEach(application -> {
-                application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber())));
-            });
+        applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
         return applications;
     }
     catch (CustomException e){
@@ -104,7 +97,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
             // Validate whether the application that is being requested for update indeed exists
             List<Advocate> advocatesList = new ArrayList<>();
             advocateRequest.getAdvocates().forEach(advocate -> {
-                Advocate existingApplication = null;
+                Advocate existingApplication;
                 try {
                     existingApplication = validator.validateApplicationExistence(advocate);
                     if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(existingApplication.getStatus())) {
@@ -132,8 +125,8 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
             log.error("Custom Exception occurred while updating advocate");
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while creating advocate");
-            throw new CustomException(e.getMessage(),e.getMessage());
+            log.error("Error occurred while updating advocate");
+            throw new CustomException(ADVOCATE_UPDATE_EXCEPTION,"Error occurred while updating advocate: " + e.getMessage());
         }
 
     }

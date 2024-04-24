@@ -61,15 +61,13 @@ public class AdvocateClerkService {
     public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<AdvocateClerk> applications = new ArrayList<>();
+            List<AdvocateClerk> applications;
             applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList);
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
 
-            applications.forEach(application -> {
-                application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber())));
-            });
+            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             // Otherwise return the found applications
             return applications;
         }
@@ -90,7 +88,7 @@ public class AdvocateClerkService {
 
             List<AdvocateClerk> advocateClerkList= new ArrayList<>();
             advocateClerkRequest.getClerks().forEach(advocateClerk -> {
-                AdvocateClerk existingApplication = null;
+                AdvocateClerk existingApplication;
                 try {
                     existingApplication = validator.validateApplicationExistence(advocateClerk);
                     if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(existingApplication.getStatus())) {
@@ -117,8 +115,8 @@ public class AdvocateClerkService {
             log.error("Custom Exception occurred while updating advocate clerk");
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while creating advocate clerk");
-            throw new CustomException(e.getMessage(),e.getMessage());
+            log.error("Error occurred while updating advocate clerk");
+            throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION,"Error occurred while updating advocate clerk: " + e.getMessage());
         }
     }
 }

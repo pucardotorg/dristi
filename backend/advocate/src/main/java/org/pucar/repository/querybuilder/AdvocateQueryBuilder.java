@@ -8,7 +8,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_QUERY_EXCEPTION;
@@ -22,7 +21,7 @@ public class AdvocateQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid ";
     private static final String FROM_ADVOCATES_TABLE = " FROM dristi_advocate adv";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
-    private final String ORDERBY_CREATEDTIME = " ORDER BY adv.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME = " ORDER BY adv.createdtime DESC ";
 
     public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList) {
         try {
@@ -34,25 +33,25 @@ public class AdvocateQueryBuilder {
             List<String> ids = criteriaList.stream()
                     .map(AdvocateSearchCriteria::getId)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .toList();
 
             List<String> barRegistrationNumbers = criteriaList.stream()
                     .filter(criteria -> criteria.getId() == null)
                     .map(AdvocateSearchCriteria::getBarRegistrationNumber)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .toList();
 
             List<String> applicationNumbers = criteriaList.stream()
                     .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null)
                     .map(AdvocateSearchCriteria::getApplicationNumber)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .toList();
 
             List<String> individualIds = criteriaList.stream()
                     .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null && criteria.getApplicationNumber() == null)
                     .map(AdvocateSearchCriteria::getIndividualId)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!ids.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
@@ -143,7 +142,7 @@ public class AdvocateQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e);
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
         }
     }
 }

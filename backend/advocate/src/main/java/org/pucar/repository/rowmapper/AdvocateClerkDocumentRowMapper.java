@@ -2,12 +2,14 @@ package org.pucar.repository.rowmapper;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
+
+import static org.pucar.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 @Component
 @Slf4j
@@ -35,9 +37,10 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
                     documentMap.put(uuid,documents);
                 }
             }
-        } catch (SQLException e) {
-            log.error("Error occurred while processing ResultSet: {}", e.getMessage());
-            throw new RuntimeException("Error occurred while processing ResultSet", e);
+        }
+        catch (Exception e){
+            log.error("Error occurred while processing document ResultSet: {}", e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing document ResultSet: "+ e.getMessage());
         }
         return documentMap;
     }

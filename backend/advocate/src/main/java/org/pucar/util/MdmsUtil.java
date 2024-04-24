@@ -1,6 +1,7 @@
 package org.pucar.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.CustomException;
 import org.pucar.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -42,8 +43,14 @@ public class MdmsUtil {
 		try {
 			response = restTemplate.postForObject(uri.toString(), mdmsCriteriaReq, Map.class);
 			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
-		} catch (Exception e) {
+		}
+		catch (CustomException e) {
+			log.error("Custom Exception occurred in MDMS Utility");
+			throw e;
+		}
+		catch (Exception e) {
 			log.error(ERROR_WHILE_FETCHING_FROM_MDMS, e);
+			throw new CustomException(ERROR_WHILE_FETCHING_FROM_MDMS,e.getMessage());
 		}
 
 		return mdmsResponse.getMdmsRes();

@@ -23,14 +23,11 @@ public class AdvocateClerkRegistrationEnrichment {
     @Autowired
     private IdgenUtil idgenUtil;
 
-    @Autowired
-    private UserUtil userUtils;
-
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
             if(advocateClerkRequest.getRequestInfo().getUserInfo() != null) {
                 List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getClerks().get(0).getTenantId(), "clerk.id", null, advocateClerkRequest.getClerks().size());
-                Integer index = 0;
+                int index = 0;
                 for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                     advocateClerk.setAuditDetails(auditDetails);
@@ -52,7 +49,7 @@ public class AdvocateClerkRegistrationEnrichment {
         } catch (Exception e) {
             log.error("Error enriching advocate clerk application: {}", e.getMessage());
             // Handle the exception or throw a custom exception
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service");
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service: "+ e.getMessage());
         }
     }
     public void enrichAdvocateClerkApplicationUponUpdate(AdvocateClerkRequest advocateClerkRequest) {
@@ -65,6 +62,7 @@ public class AdvocateClerkRegistrationEnrichment {
         } catch (Exception e) {
             log.error("Error enriching advocate clerk  application upon update: {}", e.getMessage());
             // Handle the exception or throw a custom exception
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service during update: "+ e.getMessage());
         }
     }
 }

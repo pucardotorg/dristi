@@ -3,6 +3,7 @@ package org.pucar.repository.rowmapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.pucar.web.models.AdvocateClerk;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -12,10 +13,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.pucar.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+
 @Component
 @Slf4j
 public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateClerk>> {
-    public List<AdvocateClerk> extractData(ResultSet rs) throws SQLException, DataAccessException {
+    public List<AdvocateClerk> extractData(ResultSet rs) throws CustomException {
         Map<String,AdvocateClerk> advocateClerkApplicationMap = new LinkedHashMap<>();
         System.out.println(rs);
         try {
@@ -53,9 +56,9 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
                 advocateClerkApplicationMap.put(uuid, advocateClerkApplication);
             }
         }
-        catch (SQLException e) {
-            log.error("Error occurred while processing ResultSet: {}", e.getMessage());
-            throw new RuntimeException("Error occurred while processing ResultSet", e);
+        catch (Exception e){
+            log.error("Error occurred while processing clerk ResultSet: {}", e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing clerk ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(advocateClerkApplicationMap.values());
     }
@@ -65,7 +68,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
         addDocumentToApplication(rs, advocateClerkApplication);
     }
 
-    private void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) throws SQLException {
+    private void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) {
         List<Document> listDocument = new ArrayList<>();
         try {
             Document document = Document.builder()

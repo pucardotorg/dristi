@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.config.Configuration;
 import org.pucar.repository.ServiceRequestRepository;
@@ -12,7 +13,10 @@ import org.pucar.web.models.IndividualSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static org.pucar.config.ServiceConstants.INDIVIDUAL_UTILITY_EXCEPTION;
+
 @Component
+@Slf4j
 public class IndividualUtil {
 
     @Autowired
@@ -21,8 +25,6 @@ public class IndividualUtil {
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
 
-    @Autowired
-    private Configuration configs;
 
     @Autowired
     public IndividualUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
@@ -41,8 +43,13 @@ public class IndividualUtil {
                 return !individualObject.isEmpty() && individualObject.get(0).getAsJsonObject().get("individualId") != null;
             }
             return false;
-        }catch (Exception e){
-            throw new CustomException(e.getMessage(),"Error while calling external individual service");
+        }
+        catch (CustomException e) {
+            log.error("Custom Exception occurred in Idgen Utility");
+            throw e;
+        }
+        catch (Exception e){
+            throw new CustomException(INDIVIDUAL_UTILITY_EXCEPTION,"Error in individual utility service: "+e.getMessage());
         }
 
     }

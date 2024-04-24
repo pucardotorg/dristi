@@ -22,7 +22,7 @@ public class AdvocateClerkQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "SELECT doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.clerk_id as clerk_id ";
     private static final String FROM_CLERK_TABLES = " FROM dristi_advocate_clerk advc";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
-    private final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
     public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList){
         try {
@@ -141,7 +141,7 @@ public class AdvocateClerkQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building clerk document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the clerk document query: "+ e);
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the clerk document query: "+ e.getMessage());
         }
     }
 }

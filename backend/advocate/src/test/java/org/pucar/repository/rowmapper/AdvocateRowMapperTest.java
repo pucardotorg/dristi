@@ -3,6 +3,7 @@ package org.pucar.repository.rowmapper;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,11 +55,11 @@ public class AdvocateRowMapperTest {
     }
 
     @Test
-    void shouldHandleSQLExceptionGracefully() throws SQLException {
+    void shouldHandleExceptionGracefully() throws SQLException {
         // Arrange
         when(rs.next()).thenThrow(new SQLException("Database error"));
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> rowMapper.extractData(rs));
+        assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
     }
 }
