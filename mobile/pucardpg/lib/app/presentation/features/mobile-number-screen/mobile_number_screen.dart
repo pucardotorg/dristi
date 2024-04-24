@@ -20,9 +20,7 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class MobileNumberScreen extends StatefulWidget with AppMixin{
 
-  final String type;
-
-  MobileNumberScreen({super.key, required this.type});
+  MobileNumberScreen({super.key});
 
   @override
   MobileNumberScreenState createState() => MobileNumberScreenState();
@@ -39,7 +37,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   @override
   void initState() {
-    userModel.type = widget.type;
     super.initState();
   }
 
@@ -82,9 +79,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
           children: [
             const SizedBox(height: 10,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                DigitBackButton(),
+                // DigitBackButton(),
                 DigitHelpButton()
               ],
             ),
@@ -146,7 +143,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       break;
                                     case OtpGenerationSuccessState:
                                       userModel.type = (state as OtpGenerationSuccessState).type;
-                                      Navigator.pushNamed(context, '/MobileOtpScreen', arguments: userModel);
+                                      if(userModel.type == register){
+                                        Navigator.pushNamed(context, '/UsernameScreen', arguments: userModel);
+                                      }
+                                      else{
+                                        Navigator.pushNamed(context, '/MobileOtpScreen', arguments: userModel);
+                                      }
                                       break;
                                     default:
                                       break;
@@ -162,7 +164,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                         widget.theme.showDigitDialog(true, "Mobile Number is not valid", context);
                                         return;
                                       }
-                                      widget.registrationLoginBloc.add(RequestOtpEvent(mobileNumber: userModel.mobileNumber!, type: widget.type));
+                                      widget.registrationLoginBloc.add(RequestOtpEvent(mobileNumber: userModel.mobileNumber!));
                                     },
                                     child: const Text('Submit')
                                 ),

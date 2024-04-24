@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: DigitTheme.instance.mobileTheme,
       onGenerateRoute: AppRoutes.onGenerateRoutes,
-      home: AdvocateRegistrationScreen(userModel: UserModel())
+      home: MobileNumberScreen()
     );
 
   }

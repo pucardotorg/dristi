@@ -52,7 +52,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
     emit(LoadingState());
 
-    final dataState = await _loginUseCase.createCitizen(event.username, event.otp, event.userModel);
+    final dataState = await _loginUseCase.createCitizen(event.userModel.enteredUserName ?? "", event.username, event.otp, event.userModel);
 
     if(dataState is DataSuccess){
       emit(OtpCorrectState(authResponse: dataState.data!));

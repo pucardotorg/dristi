@@ -15,6 +15,7 @@ import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:pucardpg/core/constant/constants.dart';
+import 'package:pucardpg/core/constant/constants.dart';
 
 import '../../../domain/entities/litigant_model.dart';
 
@@ -170,7 +171,14 @@ class OtpScreenState extends State<OtpScreen> {
                       switch (state.runtimeType) {
 
                         case RequestFailedState:
-                          widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
+                          DigitToast.show(context,
+                            options: DigitToastOptions(
+                              "sadasdasd",
+                              true,
+                              widget.theme.theme(),
+                            ),
+                          );
+                          // widget.theme.showDigitDialog(true, "sadasdasd", context);
                           return;
                         case OtpCorrectState:
                           Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);

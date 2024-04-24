@@ -117,9 +117,10 @@ class LoginUseCase {
     return _registrationLoginRepository.registerAdvocateClerk(advocateClerkRegistrationRequest);
   }
 
-  Future<DataState<AuthResponse>> createCitizen(String username, String otpReference, UserModel userModel) async {
+  Future<DataState<AuthResponse>> createCitizen(String name, String username, String otpReference, UserModel userModel) async {
     CitizenRegistrationRequest citizenRegistrationRequest = CitizenRegistrationRequest(
         userInfo: UserInfo(
+            name: name,
             username: username,
             otpReference: otpReference
         ),

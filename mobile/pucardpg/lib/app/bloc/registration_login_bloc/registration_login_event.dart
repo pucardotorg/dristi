@@ -7,10 +7,8 @@ class InitialEvent extends RegistrationLoginEvent {}
 
 class RequestOtpEvent extends RegistrationLoginEvent {
   final String mobileNumber;
-  final String type;
   RequestOtpEvent({
     required this.mobileNumber,
-    required this.type,
   });
 }
 

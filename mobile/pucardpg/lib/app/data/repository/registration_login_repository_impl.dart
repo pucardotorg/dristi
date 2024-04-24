@@ -45,16 +45,16 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
         );
       }
     } on dio.DioError catch(e){
-      if(e.response?.statusCode == 400){
-        return DataFailed(
-            dio.DioError(
-                error: e.response?.data.error?.message,
-                response: e.response,
-                type: dio.DioErrorType.response,
-                requestOptions: e.requestOptions
-            )
-        );
-      }
+      // if(e.response?.statusCode == 400){
+      //   return DataFailed(
+      //       dio.DioError(
+      //           error: e.response?.data.error?.message,
+      //           response: e.response,
+      //           type: dio.DioErrorType.response,
+      //           requestOptions: e.requestOptions
+      //       )
+      //   );
+      // }
       return DataFailed(e);
     }
 
@@ -235,20 +235,22 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
 
   Future<DataState<FileUploadResponseModel>> uploadFile(File file) async{
     try {
-      final httpResponse = await _apiService.uploadFile("pg", "DRISTI", file);
-
-      if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
-        return DataSuccess(httpResponse.data);
-      } else {
-        return DataFailed(
-            dio.DioError(
-                error: "",
-                response: httpResponse.response,
-                type: dio.DioErrorType.response,
-                requestOptions: httpResponse.response.requestOptions
-            )
-        );
-      }
+      return DataSuccess(FileUploadResponseModel());
+      // final httpResponse = await _apiService.uploadFile("pg", "DRISTI", file);
+      //
+      // if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
+      //   return DataSuccess(httpResponse.data);
+      // }
+      // else {
+      //   return DataFailed(
+      //       dio.DioError(
+      //           error: "",
+      //           response: httpResponse.response,
+      //           type: dio.DioErrorType.response,
+      //           requestOptions: httpResponse.response.requestOptions
+      //       )
+      //   );
+      // }
     } on dio.DioError catch(e){
       return DataFailed(e);
     }

@@ -14,6 +14,7 @@ import 'package:pucardpg/app/presentation/features/otp-screen/otp_screen.dart';
 import 'package:pucardpg/app/presentation/features/success-screen/success_screen.dart';
 import 'package:pucardpg/app/presentation/features/t&c-screen/terms_and_conditions_screen.dart';
 import 'package:pucardpg/app/presentation/features/user-home-screen/user_home_page.dart';
+import 'package:pucardpg/app/presentation/features/user-name-screen/user_name_screen.dart';
 import 'package:pucardpg/app/presentation/features/user-type-screen/user_type_screen.dart';
 
 
@@ -21,11 +22,12 @@ import 'package:pucardpg/app/presentation/features/user-type-screen/user_type_sc
 class AppRoutes {
   static Route onGenerateRoutes(RouteSettings settings) {
     switch (settings.name) {
-      case '/':
-        return _materialRoute(HomeScreen());
 
-      case '/mobileNumberScreen':
-        return _materialRoute(MobileNumberScreen(type: settings.arguments as String));
+      case '/':
+        return _materialRoute(MobileNumberScreen());
+
+      case '/UsernameScreen':
+        return _materialRoute(UserNameScreen(userModel: settings.arguments as UserModel,));
 
       case '/MobileOtpScreen':
         return _materialRoute(OtpScreen(userModel: settings.arguments as UserModel,));
@@ -67,7 +69,7 @@ class AppRoutes {
         return _materialRoute(UserHomeScreen(userModel: settings.arguments as UserModel,));
 
       default:
-        return _materialRoute(HomeScreen());
+        return _materialRoute(MobileNumberScreen());
     }
   }
 

@@ -7,6 +7,7 @@ class UserModel{
   String? authToken;
   String? username;
 
+  String? enteredUserName;
   String? firstName;
   String? middleName;
   String? lastName;
