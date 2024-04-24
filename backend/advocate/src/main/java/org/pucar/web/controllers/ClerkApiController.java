@@ -45,56 +45,31 @@ public class ClerkApiController {
 	@RequestMapping(value = "/clerk/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateClerkResponse> clerkV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try{
-				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateRequest(body);
+
+				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateClerkRequest(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-			} catch (Exception e) {
-			    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-	      	}
-		}
-
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@RequestMapping(value = "/clerk/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateClerkResponse> clerkV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus());
+
+				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus());
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(response,HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
 	}
 
 	@RequestMapping(value = "/clerk/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateClerkResponse> clerkV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")){
-			try {
-				// Example after implementing a service layer
+
 				List<AdvocateClerk> advocateClerkList = advocateClerkService.updateAdvocateClerk(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateClerkList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-			} catch (Exception e) {
-				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 }

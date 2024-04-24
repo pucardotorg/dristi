@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,12 +53,12 @@ public class AdvocateDocumentRowMapperTest {
     }
 
     @Test
-    void shouldHandleSQLException() throws SQLException {
+    void shouldHandleException() throws SQLException {
         // Setup
         when(rs.next()).thenThrow(new SQLException("Database error"));
 
         // Execution & Verification
-        Exception exception = assertThrows(RuntimeException.class, () -> rowMapper.extractData(rs));
-        assertTrue(exception.getMessage().contains("Error occurred while processing ResultSet"));
+        Exception exception = assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
+        assertTrue(exception.getMessage().contains("Error occurred while processing document ResultSet: Database error"));
     }
 }
