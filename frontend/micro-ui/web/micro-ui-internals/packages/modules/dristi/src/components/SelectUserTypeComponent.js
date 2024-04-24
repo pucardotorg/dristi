@@ -38,7 +38,6 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     } else onSelect(config.key, { ...formData[config.key], [name]: value });
   }
   function getFileStoreData(filesData, input) {
-    debugger;
     const numberOfFiles = filesData.length;
     let finalDocumentData = [];
     if (numberOfFiles > 0) {

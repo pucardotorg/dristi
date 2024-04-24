@@ -10,7 +10,7 @@ import SelectOtp from "./SelectOtp";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/dristi/landing-page`;
+const DEFAULT_REDIRECT_URL = `/${window?.contextPath}/citizen/dristi/home/login`;
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {

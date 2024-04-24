@@ -21,7 +21,6 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
   };
 
   const onSubmit = (termsAndConditionData) => {
-    console.debug("data", termsAndConditionData);
     const data = params?.registrationData;
     setParams({ ...params, ...termsAndConditionData });
     const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");

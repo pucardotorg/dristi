@@ -39,7 +39,7 @@ const App = ({ stateCode, tenantId }) => {
   const userType = data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
   const isApprovalPending = userType !== "LITIGANT";
 
-  const hideHomeCrumb = [`${path}/home`, `${path}/landing-page`];
+  const hideHomeCrumb = [`${path}/home`];
   const dristiCrumbs = [
     {
       path: isUserLoggedIn ? `${path}/home` : "",
@@ -47,9 +47,15 @@ const App = ({ stateCode, tenantId }) => {
       show: !hideHomeCrumb.includes(location.pathname),
     },
     {
-      path: isUserLoggedIn ? `${path}/home/login` : "",
+      path: `${path}/home/login`,
       content: t("ES_COMMON_LOGIN"),
       show: location.pathname.includes("/home/login"),
+      isLast: !location.pathname.includes("/login"),
+    },
+    {
+      path: isUserLoggedIn ? `${path}/home/login/user-name` : "",
+      content: t("ES_COMMON_USER_NAME"),
+      show: location.pathname.includes("/home/login/user-name"),
       isLast: true,
     },
     {
@@ -72,16 +78,16 @@ const App = ({ stateCode, tenantId }) => {
     },
   ];
   const whiteListedRoutes = [
-    `${path}/landing-page`,
     `${path}/home/response`,
     `${path}/home/register`,
     `${path}/home/register/otp`,
     `${path}/home/login/otp`,
     `${path}/home/login`,
+    `${path}/home/login/user-name`,
   ];
 
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
-    history.push(`${path}/landing-page`);
+    history.push(`${path}/home/login`);
   }
 
   if (individualId && whiteListedRoutes.includes(location.pathname)) {
@@ -112,7 +118,7 @@ const App = ({ stateCode, tenantId }) => {
             )}
           </div>
           <PrivateRoute exact path={`${path}/home`}>
-            <CitizenHome tenantId={tenantId} individualId={individualId} isApprovalPending={isApprovalPending} />
+            <CitizenHome tenantId={tenantId} />
           </PrivateRoute>
           <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />

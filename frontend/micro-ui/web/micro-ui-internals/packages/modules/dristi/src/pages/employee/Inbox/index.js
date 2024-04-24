@@ -12,7 +12,6 @@ const config = {
     requestParam: {},
     requestBody: {
       criteria: [],
-      status: ["INWORKFLOW"],
       tenantId: "pg",
     },
     minParametersForSearchForm: 1,

@@ -6,7 +6,7 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectId from "./SelectId";
-
+import SelectName from "./SelectName";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -34,9 +34,9 @@ function getRedirectionUrl(status) {
     case "isApproved":
       return `/${window?.contextPath}/citizen/dristi/home`;
     case "isNotLoggedIn":
-      return `/${window?.contextPath}/citizen/dristi/landing-page`;
+      return `/${window?.contextPath}/citizen/dristi/home/login`;
     case "isRegistered":
-      return `/${window?.contextPath}/citizen/dristi/landing-page`;
+      return `/${window?.contextPath}/citizen/dristi/home/login`;
     default:
       return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
   }
@@ -48,7 +48,7 @@ const getFromLocation = (state, searchParams) => {
   return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
 };
 
-const Login = ({ stateCode, isUserRegistered = true }) => {
+const Login = ({ stateCode }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const { path, url } = useRouteMatch();
@@ -64,7 +64,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
-
+  const [isUserRegistered, setIsUserRegistered] = useState(true);
   useEffect(() => {
     let errorTimeout;
     if (error) {
@@ -144,8 +144,10 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         return;
       } else {
         setCanSubmitNo(true);
-        setError("MOBILE_NUMBER_NOT_REGISTERED");
-        setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
+        // setError("MOBILE_NUMBER_NOT_REGISTERED");
+        // setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
+        setIsUserRegistered(false);
+        history.replace(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
       }
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
@@ -155,8 +157,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         return;
       } else {
         setCanSubmitNo(true);
-        setError("MOBILE_NUMBER_ALREADY_REGISTERED");
-        setTimeout(() => history.replace(getRedirectionUrl("isRegistered")), 3000);
+        // setError("MOBILE_NUMBER_ALREADY_REGISTERED");
+        // setTimeout(() => history.replace(getRedirectionUrl("isRegistered")), 3000);
       }
     }
   };
@@ -289,9 +291,12 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               handleRememberMeChange={handleRememberMeChange}
             />
           </Route>
+          <Route path={`${path}/user-name`}>
+            <SelectName t={t} config={stepItems[1]} onSelect={selectName} />
+          </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+              config={{ ...stepItems[2], texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || ""}` } }}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
@@ -302,11 +307,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             />
           </Route>
           <Route path={`${path}/id-verification`}>
-            <SelectId t={t} config={[stepItems[2]]} onAadharChange={onAadharChange} onDocumentUpload={onDocumentUpload} />
+            <SelectId t={t} config={[stepItems[3]]} onAadharChange={onAadharChange} onDocumentUpload={onDocumentUpload} />
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp
-              config={{ ...stepItems[3], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params.mobileNumber || ""}` } }}
+              config={{ ...stepItems[4], texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || ""}` } }}
               onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}
               onSelect={onAadharOtpSelect}

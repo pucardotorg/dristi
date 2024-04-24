@@ -22,6 +22,26 @@ export const loginSteps = [
   },
   {
     texts: {
+      header: "CS_REGISTER_PROVIDE_USER_NAME",
+      cardText: "CS_USER_TEXT",
+      nextText: "CS_COMMONS_NEXT",
+      submitBarLabel: "CS_COMMONS_NEXT",
+    },
+    inputs: [
+      {
+        label: "CORE_COMMON_USER_NAME",
+        type: "text",
+        name: "name",
+        error: "ERR_HRMS_INVALID_USER_NAME",
+        validation: {
+          required: true,
+          minlength: 1,
+        },
+      },
+    ],
+  },
+  {
+    texts: {
       header: "CS_LOGIN_OTP",
       cardText: "CS_LOGIN_OTP_TEXT",
       nextText: "CS_COMMONS_NEXT",

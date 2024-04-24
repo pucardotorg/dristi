@@ -61,7 +61,6 @@ const ApplicationDetails = ({ location, match }) => {
   const { data: advocateData, isLoading: isLoading1 } = Digit.Hooks.dristi.useGetIndividualAdvocate(
     {
       criteria: [{ individualId }],
-      status: ["INWORKFLOW"],
       tenantId,
     },
     {},
@@ -208,7 +207,9 @@ const ApplicationDetails = ({ location, match }) => {
           </Card>
         </Modal>
       )}
-      {message && <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED") } label={message} onClose={() => setMessage(null)} />}
+      {message && (
+        <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")} label={message} onClose={() => setMessage(null)} />
+      )}
     </div>
   );
 };
