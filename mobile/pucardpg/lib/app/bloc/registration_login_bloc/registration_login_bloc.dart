@@ -90,7 +90,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
     emit(LoadingState());
 
-    final dataState = await _loginUseCase.registerLitigant(event.userModel);
+    final dataState = await _loginUseCase.registerLitigant(event.userModel, litigant);
 
     if(dataState is DataSuccess){
       emit(LitigantSubmissionSuccessState(litigantResponseModel: dataState.data!));
@@ -106,7 +106,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
     emit(LoadingState());
 
-    final dataState = await _loginUseCase.registerLitigant(event.userModel);
+    final dataState = await _loginUseCase.registerLitigant(event.userModel, advocate);
 
     if(dataState is DataSuccess){
       final dataState1 = await _loginUseCase.registerAdvocate(dataState.data!.individualInfo.individualId, event.userModel);
@@ -129,7 +129,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
     emit(LoadingState());
 
-    final dataState = await _loginUseCase.registerLitigant(event.userModel);
+    final dataState = await _loginUseCase.registerLitigant(event.userModel, clerk);
 
     if(dataState is DataSuccess){
       final dataState1 = await _loginUseCase.registerAdvocateClerk(dataState.data!.individualInfo.individualId, event.userModel);
@@ -145,4 +145,5 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
     }
 
   }
+
 }

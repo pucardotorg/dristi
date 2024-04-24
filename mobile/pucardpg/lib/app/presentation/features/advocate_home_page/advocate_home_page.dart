@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
@@ -15,7 +16,8 @@ import 'package:reactive_forms/reactive_forms.dart';
 
 class AdvocateHomePage extends StatefulWidget with AppMixin{
 
-  AdvocateHomePage({super.key});
+  UserModel userModel = UserModel();
+  AdvocateHomePage({super.key, required this.userModel});
 
   @override
   AdvocateHomePageState createState() => AdvocateHomePageState();
@@ -67,6 +69,7 @@ class AdvocateHomePageState extends State<AdvocateHomePage> {
                             DigitOutlineIconButton(
                               label: 'View My Application',
                               onPressed: (){
+                                Navigator.pushNamed(context, '/ViewApplicationScreen', arguments: widget.userModel);
                               },
                               icon: Icons.settings_applications,
                               iconColor: DigitTheme.instance.colorScheme.secondary,

@@ -39,7 +39,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   @override
   void initState() {
-    fetchStates('IN');
     userModel.type = widget.type;
     super.initState();
   }
@@ -136,12 +135,13 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                   });
                                 },
                               ),
+
                               BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
                                 bloc: widget.registrationLoginBloc,
                                 listener: (context, state) {
                                   switch (state.runtimeType) {
                                     case RequestOtpFailedState:
-                                      widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
+                                      widget.theme.showDigitDialog(true, (state as RequestOtpFailedState).errorMsg, context);
                                       Navigator.pushNamed(context, '/');
                                       break;
                                     case OtpGenerationSuccessState:

@@ -27,6 +27,7 @@ class IdVerificationScreen extends StatefulWidget with AppMixin{
 
 class IdVerificationScreenState extends State<IdVerificationScreen> {
 
+  bool fileSizeExceeded = false;
   late String mobile;
   String adhaarNumber = "", typeOfId = "";
   TextEditingController searchController = TextEditingController();
@@ -45,17 +46,25 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
     try {
       result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
-          allowedExtensions: ['pdf'],
+          allowedExtensions: ['pdf', 'jpg', 'png'],
           allowMultiple: false
       );
       if (result != null) {
-        fileName = result!.files.first.name;
-        pickedFile = result!.files.first;
-        // List<dynamic> files = result!.files;
-        //   files = result!.files.map((e) => File(e.path ?? '')).toList();
-        setState(() {
-          fileToDisplay = File(result!.files.single.path!);
-        });
+        final file = File(result!.files.single.path!);
+        final fileSize = await file.length(); // Get file size in bytes
+        const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (fileSize <= maxFileSize) {
+          fileName = result!.files.single.name;
+          pickedFile = result!.files.single;
+          setState(() {
+            fileToDisplay = file;
+            fileSizeExceeded = false;
+          });
+        } else {
+          setState(() {
+            fileSizeExceeded = true;
+          });
+        }
       }
     } catch(e) {
       print(e);
@@ -138,6 +147,12 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                 ),
                               ],
                             ),
+                            const SizedBox(height: 8,),
+                            if (fileSizeExceeded) // Show text line in red if file size exceeded
+                             const Text(
+                                 'File Size Limit Exceeded. Upload a file below 5MB.',
+                                 style: TextStyle(color: Colors.red),
+                             ),
                           ],
                         ),
                       ),

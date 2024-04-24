@@ -13,7 +13,7 @@ const String msgId = "1712987382117|en_IN";
 const int timeStamp = 1712987382117;
 
 const String tenantId = "pg";
-const String type = "citizen";
+const String type = "CITIZEN";
 const String login = "login";
 
 const String register = "register";
@@ -38,14 +38,15 @@ const Fields litigant = Fields(
     value: "LITIGANT",
 );
 
+const Fields advocate = Fields(
+    key: 'userType',
+    value: "ADVOCATE",
+);
 
-List<String> state = [];
-
-Future<void> fetchStates(String countryISOCode) async {
-  final response = await getStatesOfCountry(countryISOCode);
-  response.map((state) => StatesData.fromState(state)).toList();
-  state = response.map((state) => state.name).toList();
-}
+const Fields clerk = Fields(
+    key: 'userType',
+    value: "ADVOCATE CLERK",
+);
 
 String? selectedOption;
 

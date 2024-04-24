@@ -9,7 +9,7 @@ class Workflow with _$Workflow {
   const factory Workflow({
     @JsonKey(name: 'action') String? action,
     @JsonKey(name: 'comments') String? comment,
-    @JsonKey(name: 'assignees') List<String>? assignees,
+    @JsonKey(name: 'assignes') List<String>? assignees,
     @JsonKey(name: 'documents') List<Document>? documents,
   }) = _Workflow;
 

@@ -59,32 +59,13 @@ abstract class ApiService {
       @Query('tenantId') String tenantId,
       @Body() IndividualSearchRequest individualSearchRequest);
 
-  @POST('/advocate/v1/_create')
+  @POST('/advocate/advocate/v1/_create')
   Future<HttpResponse<AdvocateRegistrationResponse>> registerAdvocate(
       @Header('Accept') String accept,
       @Body() AdvocateRegistrationRequest advocateRegistrationRequest);
 
-  @POST('/clerk/v1/_create')
+  @POST('/advocate/clerk/v1/_create')
   Future<HttpResponse<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(
       @Header('Accept') String accept,
       @Body() AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);
-
-  // @POST("/filestore/v1/files")
-  // @MultiPart()
-  // Future<HttpResponse<FileUploadResponseModel>> uploadFile(
-  //     @Part() String tenantId,
-  //     @Part() String module,
-  //     @Part() File file);
-
-  @POST("/filestore/v1/files")
-  @FormUrlEncoded()  // Specify form data encoding
-  Future<HttpResponse<FileUploadResponseModel>> uploadFile(
-      @Field("tenantId") String tenantId,
-      @Field("module") String module,
-      @Field("file") File file);
-
-  // @Field("password") String password = "123456",
-  // @Field("tenantId") String tenantId = "pg",
-  // @Field("userType") String userType = "citizen",
-
 }

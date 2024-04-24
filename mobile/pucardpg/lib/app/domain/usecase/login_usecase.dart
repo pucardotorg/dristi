@@ -72,7 +72,7 @@ class LoginUseCase {
           documents: [
             Document(fileStore: userModel.fireStore)
           ],
-          additionalDetails: {'stateOfRegistration' : userModel.stateOfRegistration, "username" : userModel.firstName! + userModel.lastName!}
+          additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
         )
       ]
     );
@@ -110,7 +110,7 @@ class LoginUseCase {
               documents: [
                 Document(fileStore: userModel.fireStore)
               ],
-              additionalDetails: {'stateOfRegistration' : userModel.stateOfRegistration, "username" : userModel.firstName! + userModel.lastName!}
+              additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
           )
         ]
     );
@@ -148,7 +148,7 @@ class LoginUseCase {
     return dataState;
   }
 
-  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel) {
+  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel, Fields fields) {
 
     Individual individual = Individual(
       name: Name(
@@ -160,23 +160,24 @@ class LoginUseCase {
           roles: [ userRegisterRole, citizenRole],
       ),
       userUuid: userModel.uuid!,
-      userId: userModel.id!,
+      userId: userModel.id!.toString(),
       mobileNumber: userModel.mobileNumber!,
       address: [Address(
           doorNo: userModel.addressModel.doorNo!,
-          latitude: userModel.addressModel.latitude ?? 0.0,
-          longitude: userModel.addressModel.longitude ?? 0.0,
-          city: userModel.addressModel.city ?? "",
-          district: userModel.addressModel.district ?? "",
-          pincode: userModel.addressModel.pincode ?? ""
+          latitude: userModel.addressModel.latitude!,
+          longitude: userModel.addressModel.longitude!,
+          city: userModel.addressModel.city!,
+          district: userModel.addressModel.district!,
+          street: userModel.addressModel.street!,
+          pincode: userModel.addressModel.pincode!
       )],
       identifiers: userModel.identifierId == null ? [] :
       [Identifier(
           identifierType: "ADHAAR",
           identifierId: userModel.identifierId!
       )],
-      additionalFields: const AdditionalFields(
-          fields: [litigant],
+      additionalFields: AdditionalFields(
+          fields: [fields],
       ),
     );
 
