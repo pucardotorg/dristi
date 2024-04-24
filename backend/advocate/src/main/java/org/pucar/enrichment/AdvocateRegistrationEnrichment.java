@@ -30,9 +30,8 @@ public class AdvocateRegistrationEnrichment {
                 for (Advocate advocate : advocateRequest.getAdvocates()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                     advocate.setAuditDetails(auditDetails);
-
                     advocate.setId(UUID.randomUUID());
-
+                    advocate.setIsActive(false);
                     advocate.setApplicationNumber(advocateRegistrationIdList.get(index++));
                     if(advocate.getDocuments()!=null){
                         advocate.getDocuments().forEach(document -> {
@@ -40,7 +39,6 @@ public class AdvocateRegistrationEnrichment {
                             document.setDocumentUid(document.getId());
                         });
                     }
-
                 }
             }
         } catch (CustomException e){

@@ -64,6 +64,7 @@ class AdvocateRegistrationEnrichmentTest {
         // Assert that each advocate has been enriched as expected
         assertNotNull(advocates.get(0).getId());
         assertNotNull(advocates.get(0).getAuditDetails());
+        assertEquals(false, advocates.get(0).getIsActive());
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getCreatedBy());
         assertNotNull(advocates.get(0).getAuditDetails().getCreatedTime());
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getLastModifiedBy());
