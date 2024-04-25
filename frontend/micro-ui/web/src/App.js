@@ -1,21 +1,9 @@
 import React from "react";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import {
-  paymentConfigs,
-  PaymentLinks,
-  PaymentModule,
-} from "@egovernments/digit-ui-module-common";
-import {
-  initPGRComponents,
-  PGRReducers,
-} from "@egovernments/digit-ui-module-pgr";
-import {
   DigitUI,
   initCoreComponents,
 } from "@egovernments/digit-ui-module-core";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
-import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { UICustomizations } from "./Customisations/UICustomizations";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
@@ -27,20 +15,11 @@ const enabledModules = ["DRISTI"];
 
 const moduleReducers = (initData) => ({
   initData,
-  pgr: PGRReducers(initData),
 });
 
 const initDigitUI = () => {
-  window.Digit.ComponentRegistryService.setupRegistry({
-    PaymentModule,
-    ...paymentConfigs,
-    PaymentLinks,
-  });
-  initPGRComponents();
+  window.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
-  initDSSComponents();
-  initHRMSComponents();
-  initEngagementComponents();
   initUtilitiesComponents();
   initWorkbenchComponents();
   initDRISTIComponents();
@@ -56,7 +35,8 @@ initLibraries().then(() => {
 });
 
 function App() {
-  window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+  window.contextPath =
+    window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
   const stateCode =
     window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") ||
     process.env.REACT_APP_STATE_LEVEL_TENANT_ID;

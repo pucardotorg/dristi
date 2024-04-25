@@ -1,20 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { PGRReducers } from "@egovernments/digit-ui-module-pgr";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
-// import { paymentConfigs, PaymentLinks, PaymentModule } from "@egovernments/digit-ui-module-common";
 import { DigitUI, initCoreComponents } from "@egovernments/digit-ui-module-core";
-import { initDSSComponents } from "@egovernments/digit-ui-module-dss";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
-import { initEngagementComponents } from "@egovernments/digit-ui-module-engagement";
-import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
-import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
-import { initPGRComponents } from "@egovernments/digit-ui-module-pgr";
 
 import "@egovernments/digit-ui-css/example/index.css";
 
-import { pgrCustomizations, pgrComponents } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
 
 var Digit = window.Digit || {};
@@ -50,24 +42,13 @@ const initTokens = (stateCode) => {
 const initDigitUI = () => {
   window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
   window.Digit.Customizations = {
-    PGR: pgrCustomizations,
     commonUiConfig: UICustomizations,
   };
-  window?.Digit.ComponentRegistryService.setupRegistry({
-    ...pgrComponents,
-    // PaymentModule,
-    // ...paymentConfigs,
-    // PaymentLinks,
-  });
+  window?.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
-  initHRMSComponents();
-  initUtilitiesComponents();
   initWorkbenchComponents();
-  initPGRComponents();
   initDRISTIComponents();
-  const moduleReducers = (initData) => ({
-    pgr: PGRReducers(initData),
-  });
+  const moduleReducers = (initData) => ({});
 
   const stateCode = window?.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || "pb";
   initTokens(stateCode);
