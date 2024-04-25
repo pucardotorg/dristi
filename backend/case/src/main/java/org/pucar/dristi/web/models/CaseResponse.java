@@ -24,10 +24,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CaseResponse {
-	@JsonProperty("responseInfo")
+	@JsonProperty("requestInfo")
 
 	@Valid
-	private ResponseInfo responseInfo = null;
+	private ResponseInfo requestInfo = null;
 
 	@JsonProperty("cases")
 	@Valid

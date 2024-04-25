@@ -47,6 +47,18 @@ public class AdvocateApiController {
 
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				// Example after implementing a service layer
+				//AdvocateResponse response = advocateService.createAdvocate(body);
+				AdvocateResponse response = new AdvocateResponse();
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} catch (Exception e) {
+				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 				List<Advocate> response = advocateService.createAdvocate(body);
@@ -58,6 +70,17 @@ public class AdvocateApiController {
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				// Example after implementing a service layer
+				//AdvocateResponse response = advocateService.searchAdvocates(body);
+				AdvocateResponse response = new AdvocateResponse();
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			} catch (Exception e) {
+				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
 				List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber() );
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
