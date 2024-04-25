@@ -24,62 +24,68 @@ public class AdvocateClerkQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
 
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList){
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
+            if(criteriaList != null && !criteriaList.isEmpty()) {
+                List<String> ids = criteriaList.stream()
+                        .map(AdvocateClerkSearchCriteria::getId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> ids = criteriaList.stream()
-                    .map(AdvocateClerkSearchCriteria::getId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                List<String> stateRegnNumber = criteriaList.stream()
+                        .filter(criteria -> criteria.getId() == null)
+                        .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> stateRegnNumber = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null)
-                    .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                List<String> applicationNumbers = criteriaList.stream()
+                        .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
+                        .map(AdvocateClerkSearchCriteria::getApplicationNumber)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> applicationNumbers = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
-                    .map(AdvocateClerkSearchCriteria::getApplicationNumber)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                List<String> individualIds = criteriaList.stream()
+                        .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
+                        .map(AdvocateClerkSearchCriteria::getIndividualId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
 
-            List<String> individualIds = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
-                    .map(AdvocateClerkSearchCriteria::getIndividualId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                if (!CollectionUtils.isEmpty(ids)) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
+                    addToPreparedStatement(preparedStmtList, ids);
+                }
 
-            if (!CollectionUtils.isEmpty(ids)) {
+                if (!CollectionUtils.isEmpty(stateRegnNumber)) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
+                    addToPreparedStatement(preparedStmtList, stateRegnNumber);
+                }
+
+                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
+                    addToPreparedStatement(preparedStmtList, applicationNumbers);
+                }
+
+                if (!CollectionUtils.isEmpty(individualIds)) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
+                    addToPreparedStatement(preparedStmtList, individualIds);
+                }
+
+                if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                    query.append(")");
+                }
+            }
+            else if(applicationNumber != null && !applicationNumber.isEmpty()){
                 addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, ids);
+                query.append("advc.applicationnumber LIKE ? ")
+                        .append(")");
+                preparedStmtList.add("%" + applicationNumber + "%");
             }
-
-            if (!CollectionUtils.isEmpty(stateRegnNumber)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, stateRegnNumber);
-            }
-
-            if (!CollectionUtils.isEmpty(applicationNumbers)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, applicationNumbers);
-            }
-
-            if (!CollectionUtils.isEmpty(individualIds)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, individualIds);
-            }
-
-            if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
-                query.append(")");
-            }
-
             if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
                 addClauseIfRequiredForStatus(query, preparedStmtList);
                 query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");

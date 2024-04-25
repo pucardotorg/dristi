@@ -2,7 +2,6 @@ package org.pucar.service;
 
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -83,16 +82,17 @@ public class AdvocateServiceTest {
         // Setup
         RequestInfo requestInfo = new RequestInfo();
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-        when(advocateRepository.getApplications(any(),anyList())).thenReturn(Collections.emptyList());
+        String applicationNumber = new String();
+        when(advocateRepository.getApplications(any(),anyList(), anyString())).thenReturn(Collections.emptyList());
 
         List<String> statusList = Arrays.asList("APPROVED","PENDING");
 
         // Invoke
-        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList);
+        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList, applicationNumber);
 
         // Verify
         assertEquals(0, result.size());
-        verify(advocateRepository, times(1)).getApplications(searchCriteria,statusList);
+        verify(advocateRepository, times(1)).getApplications(searchCriteria,statusList, applicationNumber);
     }
 
     @Test

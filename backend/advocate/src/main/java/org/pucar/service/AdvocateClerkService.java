@@ -58,11 +58,11 @@ public class AdvocateClerkService {
             throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
         }
     }
-    public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList) {
+    public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList, String applicationNumber) {
         try {
             // Fetch applications from database according to the given search criteria
             List<AdvocateClerk> applications;
-            applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList);
+            applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList, applicationNumber);
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
