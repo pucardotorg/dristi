@@ -3,6 +3,7 @@ import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
@@ -80,6 +81,9 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   isRequired: true,
                                   onChanged: (val) { widget.userModel.firstName = val.value.toString(); },
                                   keyboardType: TextInputType.text,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                  ],
                                   validationMessages: {
                                     'required': (_) => 'First name is required',
                                     'minLength': (_) =>
@@ -95,6 +99,9 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   formControlName: middleNameKey,
                                   isRequired: false,
                                   keyboardType: TextInputType.text,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                  ],
                                 ),
                                 const SizedBox(height: 20,),
                                 DigitTextFormField(
@@ -103,6 +110,9 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   onChanged: (val) { widget.userModel.lastName = val.value.toString(); },
                                   isRequired: true,
                                   keyboardType: TextInputType.text,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                  ],
                                   validationMessages: {
                                     'required': (_) => 'Last name is required',
                                     'minLength': (_) =>

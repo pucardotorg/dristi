@@ -29,8 +29,8 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   bool fileSizeExceeded = false;
   late String mobile;
-  String adhaarNumber = "", typeOfId = "";
-  TextEditingController searchController = TextEditingController();
+  TextEditingController aadharController = TextEditingController();
+  TextEditingController typeOfIdController = TextEditingController();
 
   String? fileName;
   FilePickerResult? result;
@@ -110,7 +110,15 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                               maxLength: 12,
                               pattern: r'^([0-9]){12}$',
                               textInputType: TextInputType.number,
-                              onChange: (val) { widget.userModel.identifierId = val; },
+                              controller: aadharController,
+                              onChange: (val) {
+                                widget.userModel.identifierId = val;
+                                setState(() {
+                                  fileName = '';
+                                  typeOfIdController.clear();
+                                  widget.userModel.identifierType = '';
+                                });
+                                },
                               inputFormatter: [
                                 FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                               ],
@@ -120,7 +128,20 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                             const SizedBox(height: 20,),
                             DigitTextField(
                               label: 'Type of ID',
-                              onChange: (val) { typeOfId = val; },
+                              textInputType: TextInputType.text,
+                              pattern: r'[a-zA-Z]',
+                              controller: typeOfIdController,
+                              textCapitalization: TextCapitalization.characters,
+                              onChange: (val) {
+                                widget.userModel.identifierType = val.toUpperCase();
+                                setState(() {
+                                  aadharController.clear();
+                                  widget.userModel.identifierId = '';
+                                });
+                                },
+                              inputFormatter: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                              ],
                             ),
                             const SizedBox(height: 20,),
                             Row(
@@ -130,6 +151,10 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                   child: DigitTextField(
                                     label: 'Upload ID proof',
                                     controller: TextEditingController(text: fileName ?? ''),
+                                    onChange: (val) {
+                                      aadharController.clear();
+                                      widget.userModel.identifierId = '';
+                                    },
                                     readOnly: true,
                                     hintText: 'No File selected',
                                   ),
@@ -165,7 +190,8 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
               DigitElevatedButton(
                   onPressed: () {
                     FocusScope.of(context).unfocus();
-                    if(widget.userModel.identifierId!.isEmpty && typeOfId.isEmpty){
+                    if((widget.userModel.identifierId == null || widget.userModel.identifierId!.isEmpty)
+                        && (widget.userModel.identifierType == null || widget.userModel.identifierType!.isEmpty)){
                       DigitToast.show(context,
                         options: DigitToastOptions(
                           "Either adhaar number or ID proof is mandatory.",
@@ -175,7 +201,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                       );
                       return;
                     }
-                    if(typeOfId.isNotEmpty && (fileName == null || fileName!.isEmpty)) {
+                    if(widget.userModel.identifierType!.isNotEmpty && (fileName == null || fileName!.isEmpty)) {
                       DigitToast.show(context,
                         options: DigitToastOptions(
                           "Please upload ID proof",
@@ -185,7 +211,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                       );
                       return;
                     }
-                    if (widget.userModel.identifierId!.length != 12) {
+                    if ((widget.userModel.identifierType == null || widget.userModel.identifierType!.isEmpty) && widget.userModel.identifierId!.length != 12) {
                       DigitToast.show(context,
                         options: DigitToastOptions(
                           "Enter a valid aadhar number",

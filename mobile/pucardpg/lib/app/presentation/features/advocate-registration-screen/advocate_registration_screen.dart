@@ -2,10 +2,12 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_file/open_file.dart';
@@ -120,6 +122,11 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                               onChange: (val) {
                                 widget.userModel.barRegistrationNumber = val;
                               },
+                              inputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[a-zA-Z0-9\\/\\']"))
+                              ],
+                              textCapitalization: TextCapitalization.characters,
                             ),
                           ],
                           if (widget.userModel.userType == 'ADVOCATE CLERK') ...[
@@ -129,6 +136,11 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                               onChange: (val) {
                                 widget.userModel.stateRegnNumber = val;
                               },
+                              inputFormatter: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[a-zA-Z0-9\\/\\']"))
+                              ],
+                              textCapitalization: TextCapitalization.characters,
                             ),
                           ],
                           const SizedBox(height: 20,),
@@ -216,6 +228,78 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
               },
               child: DigitElevatedButton(
                   onPressed: () {
+                    FocusScope.of(context).unfocus();
+                    if (widget.userModel.userType == 'ADVOCATE') {
+                      if((widget.userModel.barRegistrationNumber == null || widget.userModel.barRegistrationNumber!.isEmpty)
+                          && (fileName == null || fileName!.isEmpty)) {
+                        DigitToast.show(context,
+                          options: DigitToastOptions(
+                            "Please fill the details",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                      if((widget.userModel.barRegistrationNumber == null || widget.userModel.barRegistrationNumber!.isEmpty)
+                          && (fileName != null || fileName!.isNotEmpty)) {
+                        DigitToast.show(context,
+                          options: DigitToastOptions(
+                            "Please fill the BAR registration number",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                      if((widget.userModel.barRegistrationNumber != null || widget.userModel.barRegistrationNumber!.isNotEmpty)
+                          && (fileName == null || fileName!.isEmpty)) {
+                        DigitToast.show(context,
+                          options: DigitToastOptions(
+                            "Please upload the BAR council ID",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                    }
+                    if (widget.userModel.userType == 'ADVOCATE CLERK') {
+                      if((widget.userModel.stateRegnNumber == null || widget.userModel.stateRegnNumber!.isEmpty)
+                          && (fileName == null || fileName!.isEmpty)) {
+                        DigitToast.show(context,
+                          options: DigitToastOptions(
+                            "Please fill the details",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                      if((widget.userModel.stateRegnNumber == null || widget.userModel.stateRegnNumber!.isEmpty)
+                          && (fileName != null || fileName!.isNotEmpty)) {
+                        DigitToast.show(context,
+                          options: DigitToastOptions(
+                            "Please fill the BAR registration number",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                      if((widget.userModel.stateRegnNumber != null || widget.userModel.stateRegnNumber!.isNotEmpty)
+                          && (fileName == null || fileName!.isEmpty)) {
+                        DigitToast.show(context,
+                          options: DigitToastOptions(
+                            "Please upload the BAR council ID",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                    }
+
                     // getMultipartFile();
                     Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
                   },

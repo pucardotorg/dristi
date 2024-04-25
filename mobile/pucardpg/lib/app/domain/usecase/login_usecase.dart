@@ -217,6 +217,18 @@ class LoginUseCase {
 
   Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel, Fields fields) {
 
+    String? identifierType;
+    if (userModel.identifierType == null || userModel.identifierType!.isEmpty) {
+      identifierType = 'AADHAR';
+    } else {
+      identifierType = userModel.identifierType;
+    }
+    String? individualId;
+    if (userModel.identifierId == null || userModel.individualId?.length != 12) {
+      individualId = '448022452235';
+    } else {
+      individualId = userModel.individualId;
+    }
     Individual individual = Individual(
       name: Name(
           givenName: userModel.firstName!,
@@ -240,8 +252,8 @@ class LoginUseCase {
       )],
       identifiers: userModel.identifierId == null ? [] :
       [Identifier(
-          identifierType: "ADHAAR",
-          identifierId: userModel.identifierId!
+          identifierType: identifierType ?? 'AADHAR',
+          identifierId: individualId ?? '448022345455',
       )],
       additionalFields: AdditionalFields(
           fields: [fields],

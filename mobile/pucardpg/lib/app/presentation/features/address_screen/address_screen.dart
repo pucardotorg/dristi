@@ -254,6 +254,7 @@ class AddressScreenState extends State<AddressScreen> {
                                         TextSelection.fromPosition(TextPosition(
                                             offset: prediction
                                                 .description!.length));
+                                    FocusScope.of(context).unfocus();
                                   },
                                   boxDecoration: BoxDecoration(
                                     border: Border.all(
@@ -343,6 +344,9 @@ class AddressScreenState extends State<AddressScreen> {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                  ],
                                   validationMessages: {
                                     'required': (_) => 'State is required',
                                   },
@@ -358,6 +362,9 @@ class AddressScreenState extends State<AddressScreen> {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                  ],
                                   validationMessages: {
                                     'required': (_) => 'District is required',
                                   },
@@ -373,6 +380,9 @@ class AddressScreenState extends State<AddressScreen> {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                  ],
                                   validationMessages: {
                                     'required': (_) => 'City is required',
                                   },
@@ -521,7 +531,7 @@ class AddressScreenState extends State<AddressScreen> {
         doorNoKey: FormControl<String>(value: widget.userModel.addressModel.doorNo, validators: [
           Validators.required,
           Validators.number,
-          Validators.minLength(1),
+          Validators.minLength(2),
           Validators.maxLength(8)
         ]),
       });
