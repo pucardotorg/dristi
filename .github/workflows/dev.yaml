@@ -2,12 +2,18 @@ name: dristi workflow
 on:
   push:
     branches:
+<<<<<<< HEAD
       - dev_backend_advocate_bis_RAJAT_ADVOCATE
   workflow_dispatch:
+=======
+      - main    
+  workflow_dispatch:    
+>>>>>>> main
 jobs:
   docker_image-build:
     runs-on: ubuntu-latest
     steps:
+<<<<<<< HEAD
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Setup Docker
@@ -27,3 +33,31 @@ jobs:
            docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
            docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
         working-directory: backend/advocate/src/main/resources/db
+=======
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    - name: Setup Docker
+      uses: docker/setup-buildx-action@v1
+    # Login to Azure Container Registry
+    - name: Login to Azure Container Registry
+      run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+      
+    # - name: Build and Push Docker image for advocate
+    #   run: |
+    #        docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
+    #        docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:latest
+    #        docker push pucardev.azurecr.io/pucar_advocate:latest
+           
+    # - name: Build and Push Docker image for case
+    #   run: |
+    #        docker build --build-arg WORK_DIR="backend/artifacts" -t pucar_artifacts:latest -f build/maven/Dockerfile .
+    #        docker tag pucar_artifacts:latest pucardev.azurecr.io/pucar_artifacts:latest
+    #        docker push pucardev.azurecr.io/pucar_artifacts:latest
+           
+    # - name: Build and Push Docker image for case
+    #   run: |
+    #        docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
+    #        docker tag pucar_case:latest pucardev.azurecr.io/pucar_case:latest
+    #        docker push pucardev.azurecr.io/pucar_case:latest
+    
+>>>>>>> main

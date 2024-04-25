@@ -1,0 +1,307 @@
+openapi: "3.0.0"
+
+info:
+  title: API specs for Application
+  description:
+    Application API paths and entity is defined in this file.
+  version: "0.1.0"
+
+servers:
+  - url: ""
+
+tags:
+  - name: Application
+    description: APIs for managing Application related to a Case
+
+paths:
+  /application/v1/create:
+    post:
+      tags:
+        - Application
+      summary: create new application
+      requestBody:
+        description: Details for the new application + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+        required: true
+      responses:
+        "201":
+          description: success
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        "400":
+          description: application(s) creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+      x-codegen-request-body-name: applicationRequest
+
+  /application/v1/update:
+    post:
+      tags:
+        - Application
+      summary: update application requests.
+      requestBody:
+        description: Details for the update application(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationRequest'
+        required: true
+      responses:
+        "200":
+          description: ResponseInfo with application(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        "400":
+          description: application(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+      x-codegen-request-body-name: applicationRequest
+
+  /application/v1/search:
+    post:
+      tags:
+        - Application
+      summary: search for application(s)
+      description: |
+        Gets the list of Application(s)
+      parameters:
+        - name: id
+          in: query
+          description: Search by application ID
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          description: Search by application number
+          schema:
+            type: string
+        - name: caseId
+          in: query
+          description: Search by case ID
+          schema:
+            type: string
+            format: uuid
+        - name: cnrNumber
+          in: query
+          description: the cnrNumber of the case whose task(s) are being queried
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId 
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          description: No of records return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: offset
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          description: sorted by ascending by default if this parameter is not provided
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ResponseInfo with application(s) search successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationListResponse'
+        "400":
+          description: application(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+  /application/v1/exists:
+    post:
+      tags:
+        - Application
+      summary: application exits or not
+      requestBody:
+        description: check if the application(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ApplicationExistsRequest'
+        required: true
+      responses:
+        "201":
+          description: ResponseInfo with application(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationExistsResponse'
+        "400":
+          description: failed to validate Application
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+
+components:
+  schemas:
+    ApplicationRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        application:
+          $ref: '#/components/schemas/Application'
+
+    ApplicationResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        application:
+          $ref: '#/components/schemas/Application'
+
+    ApplicationListResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        TotalCount:
+          type: integer
+        HearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Application'
+      description: This object holds information about the aapplication List response
+
+    ApplicationExistsRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+        order:
+          $ref: '#/components/schemas/ApplicationExists'
+    ApplicationExistsResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+        order:
+          $ref: '#/components/schemas/ApplicationExists'
+
+    ApplicationExists:
+      type: object
+      properties:
+        cnrNumber:
+          type: string
+        exists:
+          type: boolean
+
+    Application:
+      required: [tenantId, createdDate, applicationType, status, isActive]
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: auto generated primary for internal reference
+          readOnly: true
+        tenantId:
+          type: string
+          description: This is tenantId of the case
+        caseId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: the associated case
+        cnrNumber:
+          type: string
+          description: The CNR number of the associated case. helps in faster search
+        referenceId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: could be the orderID due to which this application is filed, for example, application to revoke the penalty
+        createdDate:
+          type: string
+          format: datetime
+          description: the date on which the order was created. Can be treated as the start date also
+        createdBy:
+          type: string
+          format: uuid
+          description: ID of the person (lawyer) who created the application
+        onBehalfOf:
+          type: array
+          items:
+            type: string
+            format: uuid
+            description: ID of the users for whom the application has been raised
+        applicationType:
+          type: array
+          items:
+            type: string
+            format: uuid
+            minLength: 36
+            maxLength: 36
+          description: array of Master Data ID since an application can be of multiple application types
+        applicationNumber:
+          type: string
+          minLength: 24
+          maxLength: 48
+          description: number assigned to the application. applications are numbered serially for the court and affixed with the year.
+          example: Application 1 of the year 2024
+        issuedBy:
+          type: object
+          properties:
+            benchID:
+              type: string
+            judgeID:
+              type: array
+              items:
+                type: string
+                format: uuid
+                minLength: 36
+                maxLength: 36
+            courtID:
+              type: string
+        status:
+          type: string
+          description: workflow status
+        comment:
+          type: string
+          description: can be used to store any comments on application approval, rejection or otherwise
+        isActive:
+          type: boolean
+          description: to handle soft delete
+        statuteSection:
+          $ref: './case-api-0.1.0.yaml#/components/schemas/StatuteSection'
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+        additionalDetails:
+          type: string
+          description: This field is meant to hold any extra information that we want to store.
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'

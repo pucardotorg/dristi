@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,54 +20,52 @@ import lombok.NoArgsConstructor;
  * LinkedCase
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T13:54:45.904122+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LinkedCase   {
-        @JsonProperty("id")
+public class LinkedCase {
+	@JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+	@Valid
+	private UUID id = null;
 
-        @JsonProperty("relationshipType")
-          @NotNull
+	@JsonProperty("relationshipType")
 
-                private String relationshipType = null;
+	private String relationshipType = null;
 
-        @JsonProperty("caseUrn")
+	@JsonProperty("caseNumber")
 
-                private String caseUrn = null;
+	private String caseNumber = null;
 
-        @JsonProperty("referenceUri")
+	@JsonProperty("referenceUri")
 
-                private String referenceUri = null;
+	private String referenceUri = null;
 
-        @JsonProperty("isActive")
+	@JsonProperty("isActive")
 
-                private Boolean isActive = null;
+	private Boolean isActive = null;
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
-        @JsonProperty("additionalDetails")
+	@JsonProperty("additionalDetails")
 
-                private String additionalDetails = null;
+	private String additionalDetails = null;
 
-        @JsonProperty("auditdetails")
+	@JsonProperty("auditdetails")
 
-          @Valid
-                private AuditDetails auditdetails = null;
+	@Valid
+	private AuditDetails auditdetails = null;
 
-
-        public LinkedCase addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
+	public LinkedCase addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
 
 }

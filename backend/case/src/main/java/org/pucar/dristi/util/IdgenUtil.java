@@ -22,30 +22,33 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class IdgenUtil {
 
-    @Autowired
-    private ObjectMapper mapper;
+	@Autowired
+	private ObjectMapper mapper;
 
-    @Autowired
-    private ServiceRequestRepository restRepo;
+	@Autowired
+	private ServiceRequestRepository restRepo;
 
-    @Autowired
-    private Configuration configs;
+	@Autowired
+	private Configuration configs;
 
-    public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat, Integer count) {
-        List<IdRequest> reqList = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
-        }
+	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
+			Integer count) {
+		List<IdRequest> reqList = new ArrayList<>();
+		for (int i = 0; i < count; i++) {
+			reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
+		}
 
-        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
-        IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request), IdGenerationResponse.class);
+		IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo)
+				.build();
+		StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
+		IdGenerationResponse response = mapper.convertValue(restRepo.fetchResult(uri, request),
+				IdGenerationResponse.class);
 
-        List<IdResponse> idResponses = response.getIdResponses();
+		List<IdResponse> idResponses = response.getIdResponses();
 
-        if (CollectionUtils.isEmpty(idResponses))
-            throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
+		if (CollectionUtils.isEmpty(idResponses))
+			throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
 
-        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-    }
+		return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+	}
 }
