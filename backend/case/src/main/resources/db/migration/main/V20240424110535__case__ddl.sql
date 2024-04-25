@@ -26,7 +26,6 @@ CREATE TABLE dristi_case_document (
                                       fileStore varchar(64) NULL,
                                       documentUid varchar(64)  NULL ,
                                       documentType varchar(64) NULL,
-                                      advocateId varchar(64)  NULL,
                                       case_id varchar(64)  NULL,
                                       linked_case_id varchar(64)  NULL,
                                       litigant_id varchar(64)  NULL,
