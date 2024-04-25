@@ -2,10 +2,10 @@ import React from "react";
 import Card from "../atoms/Card";
 import SubmitBar from "../atoms/SubmitBar";
 
-const PageBasedInput = ({ children, texts, onSubmit }) => {
+const PageBasedInput = ({ style, children, texts, onSubmit }) => {
   return (
-    <div className="PageBasedInputWrapper PageBased">
-      <Card>
+    <div style={{ ...(style ? style.pageStyle : {}) }} className="PageBasedInputWrapper PageBased">
+      <Card style={{ ...(style ? style.cardStyle : {}) }}>
         {children}
         <SubmitBar className="SubmitBarInCardInDesktopView" label={texts.submitBarLabel} onSubmit={onSubmit} />
       </Card>
