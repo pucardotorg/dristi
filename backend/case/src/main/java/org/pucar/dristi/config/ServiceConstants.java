@@ -46,5 +46,7 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
+    public static final String CASE_CREATE_EXCEPTION = "CASE_CREATE_EXCEPTION";
+
 
 }

@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
@@ -35,11 +36,22 @@ public class CaseService {
     private Producer producer;
 
     public List<CourtCase> registerCaseRequest(CaseRequest body) {
-        validator.validateCaseRegistration(body);
-        enrichmentUtil.enrichCaseRegistration(body);
-        workflowService.updateWorkflowStatus(body);
+        try {
+            validator.validateCaseRegistration(body);
+            enrichmentUtil.enrichCaseRegistration(body);
+            workflowService.updateWorkflowStatus(body);
 
-        producer.push("save-advocate-clerk", body);
-        return body.getCases();
+            producer.push("save-advocate-clerk", body);
+            return body.getCases();
+        }
+        catch (CustomException e){
+            log.error("Custom Exception occurred while creating advocate");
+            throw e;
+        } catch (Exception e){
+            log.error("Error occurred while creating advocate");
+            throw new CustomException("CASE_CREATE_EXCEPTION",e.getMessage());
+        }
+
+
     }
 }

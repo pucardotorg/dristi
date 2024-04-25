@@ -3,6 +3,7 @@ package org.pucar.dristi.enrichment;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.CaseRequest;
@@ -33,6 +34,7 @@ public class CaseRegistrationEnrichment {
                     courtCase.setAuditdetails(auditDetails);
 
                     courtCase.setId(UUID.randomUUID());
+//                    courtCase.setIsActive(false);
                     courtCase.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));
                         document.setDocumentUid(document.getId());
@@ -43,9 +45,14 @@ public class CaseRegistrationEnrichment {
                     courtCase.setFilingNumber(courtCaseRegistrationIdList.get(index++));
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (CustomException e){
+        log.error("Custom Exception occurred while Enriching advocate clerk");
+        throw e;
+        }
+        catch (Exception e) {
             e.printStackTrace();
-            log.error("Error enriching advocate clerk application: {}", e.getMessage());
+            log.error("Error enriching case application: {}", e.getMessage());
         }
     }
 }
