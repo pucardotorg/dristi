@@ -3,10 +3,7 @@ package org.pucar.dristi.web.controllers;
 import java.io.IOException;
 import java.util.List;
 
-import org.pucar.dristi.web.models.CaseExistsResponse;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseResponse;
-import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
