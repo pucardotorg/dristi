@@ -27,8 +27,5 @@ COPY --from=build /app/target/*.jar /app/start.sh /opt/egov/
 
 RUN chmod +x /opt/egov/start.sh
 
-<<<<<<< HEAD
 CMD ["/opt/egov/start.sh"]
-=======
-CMD ["/opt/egov/start.sh"]
->>>>>>> main
+
