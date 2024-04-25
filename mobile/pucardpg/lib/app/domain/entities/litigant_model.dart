@@ -21,7 +21,7 @@ class UserModel{
 
   String? stateRegnNumber;
   String? barRegistrationNumber;
-  String? fireStore;
+  String? fileStore;
   String? documentType;
 
   String? individualId;

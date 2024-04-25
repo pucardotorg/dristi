@@ -145,7 +145,14 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                       style: widget.theme.text24W700(),
                     ),
                     const SizedBox(height: 20,),
-                    DetailField(heading: 'Bar Registration number', value: (widget.userModel.barRegistrationNumber ?? "")),
+                    if (widget.userModel.userType == 'ADVOCATE') ...[
+                      DetailField(heading: 'Bar Registration number',
+                          value: (widget.userModel.barRegistrationNumber ?? "")),
+                    ],
+                    if (widget.userModel.userType == 'ADVOCATE CLERK') ...[
+                      DetailField(heading: 'State Registration number',
+                          value: (widget.userModel.stateRegnNumber ?? "")),
+                    ],
                     const SizedBox(height: 20,),
                     Text(
                       'BAR Council ID',

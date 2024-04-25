@@ -75,7 +75,7 @@ class LoginUseCase {
     return dataState;
   }
 
-  Future<DataState<AdvocateSearchResponse>> searchAdvocate(UserModel userModel) {
+  Future<DataState<AdvocateSearchResponse>> searchAdvocate(UserModel userModel) async {
     AdvocateSearchRequest advocateSearchRequest = AdvocateSearchRequest(
       criteria: [SearchCriteria(individualId: userModel.individualId)],
         tenantId: tenantId,
@@ -88,10 +88,19 @@ class LoginUseCase {
               roles: [userRegisterRole, citizenRole]
             )
         ));
-    return _registrationLoginRepository.searchAdvocate(advocateSearchRequest);
+
+    var dataState = await _registrationLoginRepository.searchAdvocate(advocateSearchRequest);
+
+    if (dataState is DataSuccess) {
+      Advocate advocate = dataState.data!.advocates[0];
+      userModel.barRegistrationNumber = advocate.barRegistrationNumber;
+      userModel.fileStore = advocate.documents?[0].fileStore;
+      userModel.documentType = advocate.documents?[0].documentType;
+    }
+    return dataState;
   }
 
-  Future<DataState<AdvocateClerkSearchResponse>> searchAdvocateClerk(UserModel userModel) {
+  Future<DataState<AdvocateClerkSearchResponse>> searchAdvocateClerk(UserModel userModel) async {
     AdvocateClerkSearchRequest advocateClerkSearchRequest = AdvocateClerkSearchRequest(
         criteria: [SearchCriteria(individualId: userModel.individualId)],
         tenantId: tenantId,
@@ -104,7 +113,15 @@ class LoginUseCase {
                 roles: [userRegisterRole, citizenRole]
             )
         ));
-    return _registrationLoginRepository.searchAdvocateClerk(advocateClerkSearchRequest);
+    var dataState = await _registrationLoginRepository.searchAdvocateClerk(advocateClerkSearchRequest);
+
+    if (dataState is DataSuccess) {
+      Clerk clerk = dataState.data!.clerks[0];
+      userModel.stateRegnNumber = clerk.stateRegnNumber;
+      userModel.fileStore = clerk.documents?[0].fileStore;
+      userModel.documentType = clerk.documents?[0].documentType;
+    }
+    return dataState;
   }
 
   Future<DataState<AdvocateRegistrationResponse>> registerAdvocate(UserModel userModel) {
@@ -132,11 +149,11 @@ class LoginUseCase {
           workflow: Workflow(
             action: "REGISTER",
             documents: [
-              Document(fileStore: userModel.fireStore)
+              Document(fileStore: userModel.fileStore)
             ]
           ),
           documents: [
-            Document(fileStore: userModel.fireStore)
+            Document(fileStore: userModel.fileStore)
           ],
           additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
         )
@@ -170,11 +187,11 @@ class LoginUseCase {
               workflow: Workflow(
                   action: "REGISTER",
                   documents: [
-                    Document(fileStore: userModel.fireStore)
+                    Document(fileStore: userModel.fileStore)
                   ]
               ),
               documents: [
-                Document(fileStore: userModel.fireStore)
+                Document(fileStore: userModel.fileStore)
               ],
               additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
           )
