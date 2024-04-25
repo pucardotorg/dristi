@@ -40,8 +40,6 @@ public class CaseRegistrationEnrichment {
                         document.setDocumentUid(document.getId());
                     });
 
-
-
                     courtCase.setFilingNumber(courtCaseRegistrationIdList.get(index++));
                 }
             }
