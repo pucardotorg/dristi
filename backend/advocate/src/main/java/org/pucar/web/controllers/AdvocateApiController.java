@@ -52,17 +52,10 @@ public class AdvocateApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-<<<<<<< HEAD
 				List<Advocate> response = advocateService.createAdvocate(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
-=======
-				// Example after implementing a service layer
-				//AdvocateResponse response = advocateService.createAdvocate(body);
-				AdvocateResponse response = new AdvocateResponse();
-				return new ResponseEntity<>(response, HttpStatus.OK);
->>>>>>> main
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -76,19 +69,12 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-<<<<<<< HEAD
             try {
 				List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus() );
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
-=======
-			try {
-				// Example after implementing a service layer
-				//AdvocateResponse response = advocateService.searchAdvocates(body);
-				AdvocateResponse response = new AdvocateResponse();
-				return new ResponseEntity<>(response, HttpStatus.OK);
->>>>>>> main
+
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -104,16 +90,11 @@ public class AdvocateApiController {
 		if (accept != null && accept.contains("application/json")) {
 			try {
 				// Example after implementing a service layer
-<<<<<<< HEAD
 				List<Advocate> advocateList = advocateService.updateAdvocate(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
-=======
-				//AdvocateResponse response = advocateService.updateAdvocate(body);
-				AdvocateResponse response = new AdvocateResponse();
-				return new ResponseEntity<>(response, HttpStatus.OK);
->>>>>>> main
+
 			} catch (Exception e) {
 				return new ResponseEntity<AdvocateResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
