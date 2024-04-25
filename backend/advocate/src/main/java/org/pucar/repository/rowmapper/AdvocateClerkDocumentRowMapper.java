@@ -1,14 +1,17 @@
 package org.pucar.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
-import org.pucar.web.models.Advocate;
+import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
+
+import static org.pucar.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 @Component
 @Slf4j
@@ -17,6 +20,7 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
         Map<UUID, List<Document>> documentMap = new LinkedHashMap<>();
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String clerkId = rs.getString("clerk_id");
                 UUID uuid = UUID.fromString(clerkId!=null ? clerkId : "00000000-0000-0000-0000-000000000000");
@@ -28,6 +32,10 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
                         .additionalDetails(rs.getString("additionaldetails"))
                         .build();
 
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
+                if(pgObject!=null)
+                    document.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+
                 if (documentMap.containsKey(uuid) ) {
                     documentMap.get(uuid).add(document);
                 }
@@ -37,12 +45,11 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
                     documentMap.put(uuid,documents);
                 }
             }
-        } catch (SQLException e) {
-            log.error("Error occurred while processing ResultSet: {}", e.getMessage());
-            throw new RuntimeException("Error occurred while processing ResultSet", e);
         }
-
+        catch (Exception e){
+            log.error("Error occurred while processing document ResultSet: {}", e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing document ResultSet: "+ e.getMessage());
+        }
         return documentMap;
     }
-
 }

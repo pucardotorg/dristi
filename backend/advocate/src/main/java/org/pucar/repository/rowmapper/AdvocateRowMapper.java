@@ -1,16 +1,18 @@
 package org.pucar.repository.rowmapper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
+import org.postgresql.util.PGobject;
 import org.pucar.web.models.Advocate;
-import org.pucar.web.models.AdvocateClerk;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
+
+import static org.pucar.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 @Component
 @Slf4j
@@ -19,6 +21,7 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
         Map<String, Advocate> advocateMap = new LinkedHashMap<>();
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String uuid = rs.getString("applicationnumber");
                 Advocate advocate = advocateMap.get(uuid);
@@ -42,47 +45,32 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
                             .tenantId(rs.getString("tenantid"))
                             .id(UUID.fromString(rs.getString("id")))
                             .barRegistrationNumber(rs.getString("barregistrationnumber"))
-                            .organisationID(organisationID!=null ? UUID.fromString(organisationID): UUID.fromString("00000000-0000-0000-0000-000000000000"))
+                            .organisationID(toUUID(rs.getString("organisationid")))
                             .individualId(rs.getString("individualid"))
-                            .isActive(Boolean.valueOf(rs.getString("isactive")))
-                            .additionalDetails(rs.getString("additionalDetails"))
+                            .isActive(rs.getBoolean("isactive"))
                             .advocateType(rs.getString("advocatetype"))
                             .status(rs.getString("status"))
                             .auditDetails(auditdetails)
                             .build();
                 }
-                addChildrenToProperty(rs, advocate);
+
+                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
+                if(pgObject!=null)
+                    advocate.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+
                 advocateMap.put(uuid, advocate);
             }
-        } catch (SQLException e) {
-            log.error("Error occurred while processing ResultSet: {}", e.getMessage());
-            throw new RuntimeException("Error occurred while processing ResultSet", e);
-        }
-
-        return new ArrayList<>(advocateMap.values());
-    }
-
-    private void addChildrenToProperty(ResultSet rs, Advocate advocate)
-            throws SQLException {
-//        addDocumentToApplication(rs, advocate);
-    }
-
-    private void addDocumentToApplication(ResultSet rs, Advocate advocateClerkApplication) throws SQLException {
-        List<Document> listDocument = new ArrayList<>();
-        try {
-            Document document = Document.builder()
-                    .id(rs.getString("aid"))
-                    .documentType(rs.getString("documenttype"))
-                    .fileStore(rs.getString("filestore"))
-                    .documentUid(rs.getString("documentuid"))
-                    .additionalDetails(rs.getObject("docadditionaldetails"))
-                    .build();
-            listDocument.add(document);
-
-            advocateClerkApplication.setDocuments(listDocument);
         }
         catch (Exception e){
-            e.printStackTrace();
+            log.error("Error occurred while processing Advocate ResultSet: {}", e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing Advocate ResultSet: "+ e.getMessage());
         }
+        return new ArrayList<>(advocateMap.values());
+    }
+    private UUID toUUID(String toUuid) {
+        if(toUuid == null) {
+            return null;
+        }
+        return UUID.fromString(toUuid);
     }
 }

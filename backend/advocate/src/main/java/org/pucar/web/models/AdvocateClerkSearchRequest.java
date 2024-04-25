@@ -27,7 +27,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class AdvocateClerkSearchRequest {
-	@JsonProperty("requestInfo")
+	@JsonProperty("RequestInfo")
 
 	@Valid
 	private RequestInfo requestInfo = null;
@@ -38,6 +38,9 @@ public class AdvocateClerkSearchRequest {
 
 	@JsonProperty("status")
 	private List<String> status = null;
+
+	@JsonProperty("applicationNumber")
+	private String applicationNumber = null;
 
 	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
 		if (this.criteria == null) {

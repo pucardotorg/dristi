@@ -34,4 +34,7 @@ public class AdvocateSearchCriteria {
 
 	private String applicationNumber = null;
 
+	@JsonProperty("individualId")
+
+	private String individualId = null;
 }

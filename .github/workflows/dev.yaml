@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - dev_backend_advocate_bis_RAJAT_ADVOCATE
+      - dev_backend_advocate_bis
   workflow_dispatch:
 jobs:
   docker_image-build:

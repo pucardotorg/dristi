@@ -2,6 +2,7 @@ package org.pucar.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.pucar.repository.querybuilder.AdvocateQueryBuilder;
 import org.pucar.repository.rowmapper.AdvocateDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateRowMapper;
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_EXCEPTION;
+import static org.pucar.config.ServiceConstants.QUERY_EXECUTION_FAILED;
 
 
 @Slf4j
@@ -33,42 +37,47 @@ public class AdvocateRepository {
     @Autowired
     private AdvocateDocumentRowMapper advocateDocumentRowMapper;
 
-    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList) {
-        List<Advocate> advocateList = new ArrayList<>();
-        List<Object> preparedStmtList = new ArrayList<>();
-        List<Object> preparedStmtListDoc = new ArrayList<>();
-        String advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList);
-        log.info("Final query: {}", advocateQuery);
+    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber) {
+
         try {
+            List<Advocate> advocateList = new ArrayList<>();
+            List<Object> preparedStmtList = new ArrayList<>();
+            List<Object> preparedStmtListDoc = new ArrayList<>();
+            String advocateQuery = "";
+            advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber);
+            log.info("Final advocate list query: {}", advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
-            if(list != null){
+            if (list != null) {
                 advocateList.addAll(list);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Error occurred while executing database query: {}", e.getMessage());
-            throw e;
-        }
-        List<String> ids = new ArrayList<>();
-        for (Advocate advocate : advocateList) {
-            ids.add(advocate.getId().toString());
-        }
 
-        String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-        log.info("Final query: {}", advocateDocumentQuery);
-        try {
-            Map<UUID,List<Document>> advocateDocumentMap= jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
-            if(advocateDocumentMap != null){
+            List<String> ids = new ArrayList<>();
+            for (Advocate advocate : advocateList) {
+                ids.add(advocate.getId().toString());
+            }
+            if (ids.isEmpty()) {
+                return advocateList;
+            }
+
+            String advocateDocumentQuery = "";
+            advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+            log.info("Final document query: {}", advocateDocumentQuery);
+            Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
+            if (advocateDocumentMap != null) {
                 advocateList.forEach(advocate -> {
                     advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
                 });
             }
-        } catch (Exception e) {
-            log.error("Error occurred while executing database query: {}", e.getMessage());
-            e.printStackTrace();
+
+            return advocateList;
+        }
+        catch (CustomException e){
             throw e;
         }
-        return advocateList;
+        catch (Exception e){
+            log.error("Error while fetching advocate application list");
+            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
+        }
     }
 
 }

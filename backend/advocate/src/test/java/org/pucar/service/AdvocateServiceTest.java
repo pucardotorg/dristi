@@ -2,7 +2,6 @@ package org.pucar.service;
 
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.config.Configuration;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
 import org.pucar.repository.AdvocateRepository;
@@ -48,6 +48,8 @@ public class AdvocateServiceTest {
 
     @InjectMocks
     private AdvocateService service;
+    @Mock
+    private Configuration config;
 
     @Test
     void testCreateAdvocateRequest() {
@@ -59,6 +61,7 @@ public class AdvocateServiceTest {
         advocate.setTenantId("tenant1");
         advocate.setIndividualId("individualId");
         request.setAdvocates(Collections.singletonList(advocate));
+        when(config.getAdvocateCreateTopic()).thenReturn("save-advocate-application");
 
         // Execute the method under test
         List<Advocate> result = service.createAdvocate(request);
@@ -79,16 +82,17 @@ public class AdvocateServiceTest {
         // Setup
         RequestInfo requestInfo = new RequestInfo();
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-        when(advocateRepository.getApplications(any(),anyList())).thenReturn(Collections.emptyList());
+        String applicationNumber = new String();
+        when(advocateRepository.getApplications(any(),anyList(), anyString())).thenReturn(Collections.emptyList());
 
         List<String> statusList = Arrays.asList("APPROVED","PENDING");
 
         // Invoke
-        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList);
+        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList, applicationNumber);
 
         // Verify
         assertEquals(0, result.size());
-        verify(advocateRepository, times(1)).getApplications(searchCriteria,statusList);
+        verify(advocateRepository, times(1)).getApplications(searchCriteria,statusList, applicationNumber);
     }
 
     @Test
@@ -105,6 +109,7 @@ public class AdvocateServiceTest {
         request.setAdvocates(Collections.singletonList(advocate));
 
         when(validator.validateApplicationExistence(any())).thenReturn(advocate);
+        when(config.getAdvocateUpdateTopic()).thenReturn("update-advocate-application");
 
         // Execute the method under test
         List<Advocate> result = service.updateAdvocate(request);

@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
+
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pucar.util.IdgenUtil;
 import org.pucar.util.UserUtil;
@@ -47,9 +49,10 @@ class AdvocateRegistrationEnrichmentTest {
         User userInfo = new User();
         userInfo.setUuid("user-uuid");
         requestInfo.setUserInfo(userInfo);
+        requestInfo.getUserInfo().setTenantId("tenantId");
         advocateRequest.setRequestInfo(requestInfo);
         List<String> idList = List.of("P-2021-01-01-001");
-        when(idgenUtil.getIdList(any(), anyString(), anyString(), anyString(), anyInt())).thenReturn(idList);
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenReturn(idList);
 
         // Call the method to test
         advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest);
@@ -61,6 +64,7 @@ class AdvocateRegistrationEnrichmentTest {
         // Assert that each advocate has been enriched as expected
         assertNotNull(advocates.get(0).getId());
         assertNotNull(advocates.get(0).getAuditDetails());
+        assertEquals(false, advocates.get(0).getIsActive());
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getCreatedBy());
         assertNotNull(advocates.get(0).getAuditDetails().getCreatedTime());
         assertEquals("user-uuid", advocates.get(0).getAuditDetails().getLastModifiedBy());

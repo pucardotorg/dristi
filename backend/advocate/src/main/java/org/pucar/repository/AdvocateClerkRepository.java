@@ -2,6 +2,7 @@ package org.pucar.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.pucar.repository.querybuilder.AdvocateClerkQueryBuilder;
 import org.pucar.repository.rowmapper.AdvocateClerkDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateClerkRowMapper;
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import static org.pucar.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_EXCEPTION;
+import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_EXCEPTION;
 
 
 @Slf4j
@@ -34,42 +38,42 @@ public class AdvocateClerkRepository {
     @Autowired
     private AdvocateClerkDocumentRowMapper documentRowMapper;
 
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList){
-        List<AdvocateClerk> advocateList = new ArrayList<>();
-        List<Object> preparedStmtList = new ArrayList<>();
-        List<Object> preparedStmtListDoc = new ArrayList<>();
-        String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList);
-        log.info("Final query: " + query);
+    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber){
         try {
+            List<AdvocateClerk> advocateList = new ArrayList<>();
+            List<Object> preparedStmtList = new ArrayList<>();
+            List<Object> preparedStmtListDoc = new ArrayList<>();
+            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber);
+            log.info("Final query: " + query);
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-            if(list != null){
+            if (list != null) {
                 advocateList.addAll(list);
             }
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
 
-        List<String> ids = new ArrayList<>();
-        for (AdvocateClerk advocate : advocateList) {
-            ids.add(advocate.getId().toString());
-        }
+            List<String> ids = new ArrayList<>();
+            for (AdvocateClerk advocate : advocateList) {
+                ids.add(advocate.getId().toString());
+            }
+            if (ids.isEmpty()) {
+                return advocateList;
+            }
 
-        String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-        log.info("Final query Document: {}", advocateDocumentQuery);
-        try {
-            Map<UUID,List<Document>> advocateDocumentMap= jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
-            if(advocateDocumentMap != null){
+            String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+            log.info("Final query Document: {}", advocateDocumentQuery);
+            Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+            if (advocateDocumentMap != null) {
                 advocateList.forEach(advocate -> {
                     advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
                 });
             }
-        } catch (DataAccessException e) {
-            log.error("Error occurred while executing database query: {}", e.getMessage());
-            e.printStackTrace();
+            return advocateList;
+        }
+        catch (CustomException e){
             throw e;
         }
-
-        return advocateList;
+        catch (Exception e){
+            log.error("Error while fetching advocate clerk application list");
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
+        }
     }
 }

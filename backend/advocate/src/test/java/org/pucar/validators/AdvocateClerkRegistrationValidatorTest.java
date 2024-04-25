@@ -62,7 +62,7 @@ public class AdvocateClerkRegistrationValidatorTest {
 
         when(individualService.searchIndividual(requestInfo, "invalidIndividualId")).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
+        assertThrows(CustomException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
     }
 
 }
