@@ -2,10 +2,12 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:digit_components/digit_components.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -101,12 +103,11 @@ class AddressScreenState extends State<AddressScreen> {
     setState(() {
       _currentPosition = position;
     });
-    _getAddressFromLatLng(form);
+    _getAddressFromLatLng(form, LatLng(_currentPosition.latitude, _currentPosition.longitude));
   }
 
-  Future<void> _getAddressFromLatLng(FormGroup form) async {
-    await placemarkFromCoordinates(
-            _currentPosition.latitude, _currentPosition.longitude)
+  Future<void> _getAddressFromLatLng(FormGroup form, LatLng position) async {
+    await placemarkFromCoordinates(position.latitude, position.longitude)
         .then((List<Placemark> placemarks) {
       Placemark place = placemarks[0];
       setState(() {
@@ -124,17 +125,23 @@ class AddressScreenState extends State<AddressScreen> {
         form.control(cityKey).value = place.locality!;
         form.control(localityKey).value = place.street! + place.subLocality!;
       });
-      markersList.clear();
-      markersList.add(Marker(
-          markerId: MarkerId(""),
-          position:
-              LatLng(_currentPosition.latitude, _currentPosition.longitude)));
-      googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
-          LatLng(_currentPosition.latitude, _currentPosition.longitude), 14.0));
+      _goToSpecificPosition(position, "", "");
       inspect(place);
     }).catchError((e) {
       debugPrint(e);
     });
+  }
+
+  Future _goToSpecificPosition(LatLng position, String description, String id) async {
+    markersList.clear();
+
+    markersList.add(Marker(
+        markerId: MarkerId(id),
+        position: LatLng(position.latitude, position.longitude),
+        infoWindow: InfoWindow(title: description)));
+
+    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
+        LatLng(position.latitude, position.longitude), 14.0));
   }
 
   // Future<void> _fetchDistrict(String pincode) async {
@@ -160,17 +167,7 @@ class AddressScreenState extends State<AddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(""),
-        centerTitle: true,
-        actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-        ],
-        leading: IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.menu),
-        ),
-      ),
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: ReactiveFormBuilder(
         form: () => buildForm(),
@@ -180,10 +177,10 @@ class AddressScreenState extends State<AddressScreen> {
             children: [
               Expanded(
                   child: SingleChildScrollView(
-                child: Column(
+                    child: Column(
                   children: [
                     const SizedBox(
-                      height: 10,
+                      height: 30,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -192,301 +189,313 @@ class AddressScreenState extends State<AddressScreen> {
                         DigitHelpButton()
                       ],
                     ),
-                    DigitCard(
-                      padding: const EdgeInsets.all(20.0),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Text(
+                      "Enter Your address",
+                      style: widget.theme.text32W700RobCon()?.apply(),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Registration",
-                            style: widget.theme
-                                .text20W400Rob()
-                                ?.apply(fontStyle: FontStyle.italic),
-                          ),
                           const SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
-                          Text(
-                            "Enter Your Address",
-                            style: widget.theme.text32W700RobCon()?.apply(),
-                          ),
-                          const SizedBox(
-                            height: 25,
-                          ),
-                          Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Pin Location",
-                                  style: DigitTheme.instance.mobileTheme
-                                      .textTheme.labelSmall,
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                GooglePlaceAutoCompleteTextField(
-                                  textEditingController: controller,
-                                  googleAPIKey: kGoogleApiKey,
-                                  inputDecoration: const InputDecoration(
-                                    hintText: "Search your location",
-                                    border: InputBorder.none,
-                                    enabledBorder: InputBorder.none,
-                                  ),
-                                  debounceTime: 400,
-                                  countries: ["in"],
-                                  isLatLngRequired: true,
-                                  getPlaceDetailWithLatLng:
-                                      (Prediction prediction) {
-                                    displayPrediction(prediction, form);
-                                    inspect(prediction);
-                                    print("placeDetails" +
-                                        prediction.toString() +
-                                        prediction.matchedSubstrings
-                                            .toString() +
-                                        prediction.types.toString() +
-                                        prediction.terms!
-                                            .map((e) => e.value)
-                                            .toString());
-                                  },
-                                  itemClick: (Prediction prediction) {
-                                    controller.text = prediction.description!;
-                                    controller.selection =
-                                        TextSelection.fromPosition(TextPosition(
-                                            offset: prediction
-                                                .description!.length));
-                                    FocusScope.of(context).unfocus();
-                                  },
-                                  boxDecoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.black,
-                                      width: 1,
+                          GooglePlaceAutoCompleteTextField(
+                            textEditingController: controller,
+                            googleAPIKey: kGoogleApiKey,
+                            inputDecoration: const InputDecoration(
+                              hintText: "Search for a building, street, or area",
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                            ),
+                            debounceTime: 400,
+                            countries: ["in"],
+                            isLatLngRequired: true,
+                            getPlaceDetailWithLatLng:
+                                (Prediction prediction) {
+                              displayPrediction(prediction, form);
+                              inspect(prediction);
+                              print("placeDetails" +
+                                  prediction.toString() +
+                                  prediction.matchedSubstrings
+                                      .toString() +
+                                  prediction.types.toString() +
+                                  prediction.terms!
+                                      .map((e) => e.value)
+                                      .toString());
+                            },
+                            itemClick: (Prediction prediction) {
+                              controller.text = prediction.description!;
+                              controller.selection =
+                                  TextSelection.fromPosition(TextPosition(
+                                      offset: prediction
+                                          .description!.length));
+                              FocusScope.of(context).unfocus();
+                            },
+                            boxDecoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                  0), // Border radius
+                            ),
+                            itemBuilder:
+                                (context, index, Prediction prediction) {
+                              return Container(
+                                padding: const EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.location_on),
+                                    const SizedBox(
+                                      width: 7,
                                     ),
-                                    borderRadius: BorderRadius.circular(
-                                        0), // Border radius
-                                  ),
-                                  itemBuilder:
-                                      (context, index, Prediction prediction) {
-                                    return Container(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Row(
-                                        children: [
-                                          const Icon(Icons.location_on),
-                                          const SizedBox(
-                                            width: 7,
-                                          ),
-                                          Expanded(
-                                              child: Text(
-                                                  "${prediction.description ?? ""}"))
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                  seperatedBuilder: Divider(),
-                                  isCrossBtnShown: true,
-                                ),
-                                const SizedBox(
-                                  height: 6,
-                                ),
-                                Container(
-                                  height: 300,
-                                  child: GoogleMap(
-                                    initialCameraPosition:
-                                        initialCameraPosition,
-                                    markers: markersList,
-                                    mapType: MapType.normal,
-                                    onMapCreated:
-                                        (GoogleMapController controller) {
-                                      _getCurrentLocation(form);
-                                      googleMapController = controller;
-                                    },
-                                    gestureRecognizers: <Factory<
-                                        OneSequenceGestureRecognizer>>{
-                                      Factory<OneSequenceGestureRecognizer>(
-                                        () => EagerGestureRecognizer(),
-                                      ),
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                DigitTextFormField(
-                                  formControlName: pinCodeKey,
-                                  label: 'Pincode',
-                                  keyboardType: TextInputType.number,
-                                  isRequired: true,
-                                  maxLength: 6,
-                                  onChanged: (value) {
-                                    widget.userModel.addressModel.pincode = value.value.toString();
-                                    // if (value.value.length == 6) {
-                                    //   _fetchDistrict(value.value);
-                                    // }
-                                  },
-                                  validationMessages: {
-                                    'required': (_) => 'Pincode is required',
-                                    'maxLength': (_) =>
-                                    'Max length should be 6'
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[0-9]")),
+                                    Expanded(
+                                        child: Text(
+                                            "${prediction.description ?? ""}"))
                                   ],
                                 ),
-                                DigitTextFormField(
-                                  padding: const EdgeInsets.only(top: 0),
-                                  formControlName: stateKey,
-                                  label: 'State',
-                                  keyboardType: TextInputType.text,
-                                  isRequired: true,
-                                  onChanged: (value) {
-                                    widget.userModel.addressModel.state = value.value.toString();
-                                    // if (value.value.length == 6) {
-                                    //   _fetchDistrict(value.value);
-                                    // }
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                                  ],
-                                  validationMessages: {
-                                    'required': (_) => 'State is required',
-                                  },
+                              );
+                            },
+                            seperatedBuilder: Divider(),
+                            isCrossBtnShown: true,
+                          ),
+                          const SizedBox(
+                            height: 12,
+                          ),
+                          Container(
+                            height: 220,
+                            child: GoogleMap(
+                              initialCameraPosition:
+                              initialCameraPosition,
+                              markers: markersList,
+                              mapType: MapType.normal,
+                              onMapCreated:
+                                  (GoogleMapController controller) {
+                                _getCurrentLocation(form);
+                                googleMapController = controller;
+                              },
+                              onTap: (position) {
+                                _getAddressFromLatLng(form, position);
+                              },
+                              gestureRecognizers: <Factory<
+                                  OneSequenceGestureRecognizer>>{
+                                Factory<OneSequenceGestureRecognizer>(
+                                      () => EagerGestureRecognizer(),
                                 ),
-                                DigitTextFormField(
-                                  formControlName: districtKey,
-                                  label: 'District',
-                                  keyboardType: TextInputType.text,
-                                  isRequired: true,
-                                  onChanged: (value) {
-                                    widget.userModel.addressModel.district = value.value.toString();
-                                    // if (value.value.length == 6) {
-                                    //   _fetchDistrict(value.value);
-                                    // }
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                                  ],
-                                  validationMessages: {
-                                    'required': (_) => 'District is required',
-                                  },
-                                ),
-                                DigitTextFormField(
-                                  formControlName: cityKey,
-                                  label: 'City',
-                                  keyboardType: TextInputType.text,
-                                  isRequired: true,
-                                  onChanged: (value) {
-                                    widget.userModel.addressModel.city = value.value.toString();
-                                    // if (value.value.length == 6) {
-                                    //   _fetchDistrict(value.value);
-                                    // }
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
-                                  ],
-                                  validationMessages: {
-                                    'required': (_) => 'City is required',
-                                  },
-                                ),
-                                // DigitReactiveDropdown<String>(
-                                //   label: 'State',
-                                //   menuItems: state,
-                                //   initialValue: stateName,
-                                //   padding: const EdgeInsets.all(0),
-                                //   isRequired: true,
-                                //   formControlName: stateKey,
-                                //   valueMapper: (value) => value.toUpperCase(),
-                                //   onChanged: (value) {
-                                //     selectedStateISOCode = statesData
-                                //         .firstWhere(
-                                //             (state) => state.name == value)
-                                //         .isoCode;
-                                //     // Call fetchCities with selected state and country ISO codes
-                                //     fetchCities(selectedCountryISOCode,
-                                //         selectedStateISOCode);
-                                //   },
-                                //   validationMessages: {
-                                //     'required': (_) => 'State is required',
-                                //   },
-                                // ),
-                                // const SizedBox(
-                                //   height: 12,
-                                // ),
-                                // DigitReactiveDropdown<String>(
-                                //   label: 'District',
-                                //   menuItems: selectedDistrict != null
-                                //       ? [selectedDistrict!]
-                                //       : ['District'],
-                                //   initialValue: districtName,
-                                //   isRequired: true,
-                                //   formControlName: districtKey,
-                                //   valueMapper: (value) => value.toUpperCase(),
-                                //   onChanged: (value) {},
-                                //   validationMessages: {
-                                //     'required': (_) => 'District is required',
-                                //   },
-                                // ),
-                                // const SizedBox(
-                                //   height: 12,
-                                // ),
-                                // DigitReactiveDropdown<String>(
-                                //   label: 'City / Town',
-                                //   menuItems: city,
-                                //   initialValue: cityName,
-                                //   isRequired: true,
-                                //   formControlName: cityKey,
-                                //   valueMapper: (value) => value.toUpperCase(),
-                                //   onChanged: (value) {},
-                                //   validationMessages: {
-                                //     'required': (_) => 'City / Town is required',
-                                //   },
-                                // ),
-                                DigitTextFormField(
-                                    formControlName: localityKey,
-                                    label: 'Locality / Street name / Area',
-                                    isRequired: true,
-                                    onChanged: (value){
-                                      widget.userModel.addressModel.street = value.value.toString();
-                                    },
-                                    validationMessages: {
-                                      'required': (_) =>
-                                          'Locality / Street name / Area is required',
-                                      'minLength': (_) =>
-                                      'Min length should be 2',
-                                      'maxLength': (_) =>
-                                          'Max length should be 128'
-                                    },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
-                                    ]),
-                                const SizedBox(
-                                  height: 12,
-                                ),
-                                DigitTextFormField(
-                                    formControlName: doorNoKey,
-                                    padding: const EdgeInsets.all(0),
-                                    label: 'Door number',
-                                    isRequired: true,
-                                    onChanged: (value){
-                                      widget.userModel.addressModel.doorNo = value.value.toString();
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    validationMessages: {
-                                      'required': (_) =>
-                                          'Door number is required',
-                                      'number': (_) => 'Door number should contain digits 0-9',
-                                      'minLength': (_) =>
-                                      'Min length should be 2',
-                                      'maxLength': (_) =>
-                                          'Max length should be 8'
-                                    },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
-                                    ]),
-                              ]),
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 12,),
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFC7E0F1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.info,
+                                  color: Color(0xFF3498DB),),
+                                const SizedBox(width: 4,),
+                                Text(
+                                  'Move the pin to the desired location',
+                                  style: widget.theme.text12W400()?.apply(color: const Color(0xFF505A5F)),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
+                    ),
+                    Divider(color: Color(0xFFEAECF0), height: 1, thickness: 1,),
+                    Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 25,),
+                            DigitTextFormField(
+                              formControlName: pinCodeKey,
+                              label: 'Pincode',
+                              keyboardType: TextInputType.number,
+                              isRequired: true,
+                              maxLength: 6,
+                              onChanged: (value) {
+                                widget.userModel.addressModel.pincode = value.value.toString();
+                                // if (value.value.length == 6) {
+                                //   _fetchDistrict(value.value);
+                                // }
+                              },
+                              validationMessages: {
+                                'required': (_) => 'Pincode is required',
+                                'maxLength': (_) =>
+                                'Max length should be 6'
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[0-9]")),
+                              ],
+                            ),
+                            DigitTextFormField(
+                              padding: const EdgeInsets.only(top: 0),
+                              formControlName: stateKey,
+                              label: 'State',
+                              keyboardType: TextInputType.text,
+                              isRequired: true,
+                              onChanged: (value) {
+                                widget.userModel.addressModel.state = value.value.toString();
+                                // if (value.value.length == 6) {
+                                //   _fetchDistrict(value.value);
+                                // }
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                              ],
+                              validationMessages: {
+                                'required': (_) => 'State is required',
+                              },
+                            ),
+                            DigitTextFormField(
+                              formControlName: districtKey,
+                              label: 'District',
+                              keyboardType: TextInputType.text,
+                              isRequired: true,
+                              onChanged: (value) {
+                                widget.userModel.addressModel.district = value.value.toString();
+                                // if (value.value.length == 6) {
+                                //   _fetchDistrict(value.value);
+                                // }
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                              ],
+                              validationMessages: {
+                                'required': (_) => 'District is required',
+                              },
+                            ),
+                            DigitTextFormField(
+                              formControlName: cityKey,
+                              label: 'City',
+                              keyboardType: TextInputType.text,
+                              isRequired: true,
+                              onChanged: (value) {
+                                widget.userModel.addressModel.city = value.value.toString();
+                                // if (value.value.length == 6) {
+                                //   _fetchDistrict(value.value);
+                                // }
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                              ],
+                              validationMessages: {
+                                'required': (_) => 'City is required',
+                              },
+                            ),
+                            // DigitReactiveDropdown<String>(
+                            //   label: 'State',
+                            //   menuItems: state,
+                            //   initialValue: stateName,
+                            //   padding: const EdgeInsets.all(0),
+                            //   isRequired: true,
+                            //   formControlName: stateKey,
+                            //   valueMapper: (value) => value.toUpperCase(),
+                            //   onChanged: (value) {
+                            //     selectedStateISOCode = statesData
+                            //         .firstWhere(
+                            //             (state) => state.name == value)
+                            //         .isoCode;
+                            //     // Call fetchCities with selected state and country ISO codes
+                            //     fetchCities(selectedCountryISOCode,
+                            //         selectedStateISOCode);
+                            //   },
+                            //   validationMessages: {
+                            //     'required': (_) => 'State is required',
+                            //   },
+                            // ),
+                            // const SizedBox(
+                            //   height: 12,
+                            // ),
+                            // DigitReactiveDropdown<String>(
+                            //   label: 'District',
+                            //   menuItems: selectedDistrict != null
+                            //       ? [selectedDistrict!]
+                            //       : ['District'],
+                            //   initialValue: districtName,
+                            //   isRequired: true,
+                            //   formControlName: districtKey,
+                            //   valueMapper: (value) => value.toUpperCase(),
+                            //   onChanged: (value) {},
+                            //   validationMessages: {
+                            //     'required': (_) => 'District is required',
+                            //   },
+                            // ),
+                            // const SizedBox(
+                            //   height: 12,
+                            // ),
+                            // DigitReactiveDropdown<String>(
+                            //   label: 'City / Town',
+                            //   menuItems: city,
+                            //   initialValue: cityName,
+                            //   isRequired: true,
+                            //   formControlName: cityKey,
+                            //   valueMapper: (value) => value.toUpperCase(),
+                            //   onChanged: (value) {},
+                            //   validationMessages: {
+                            //     'required': (_) => 'City / Town is required',
+                            //   },
+                            // ),
+                            DigitTextFormField(
+                                formControlName: localityKey,
+                                label: 'Locality / Street name / Area',
+                                isRequired: true,
+                                onChanged: (value){
+                                  widget.userModel.addressModel.street = value.value.toString();
+                                },
+                                validationMessages: {
+                                  'required': (_) =>
+                                  'Locality / Street name / Area is required',
+                                  'minLength': (_) =>
+                                  'Min length should be 2',
+                                  'maxLength': (_) =>
+                                  'Max length should be 128'
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                                ]),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            DigitTextFormField(
+                                formControlName: doorNoKey,
+                                padding: const EdgeInsets.all(0),
+                                label: 'Door number',
+                                isRequired: true,
+                                onChanged: (value){
+                                  widget.userModel.addressModel.doorNo = value.value.toString();
+                                },
+                                keyboardType: TextInputType.number,
+                                validationMessages: {
+                                  'required': (_) =>
+                                  'Door number is required',
+                                  'number': (_) => 'Door number should contain digits 0-9',
+                                  'minLength': (_) =>
+                                  'Min length should be 2',
+                                  'maxLength': (_) =>
+                                  'Max length should be 8'
+                                },
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
+                                ]),
+                          ]),
                     ),
                   ],
                 ),
@@ -543,11 +552,6 @@ class AddressScreenState extends State<AddressScreen> {
     PlaceDetails details = PlaceDetails.fromJson(response.data);
     inspect(details.result!.addressComponents);
     extractAddressComponents(details.result!.addressComponents);
-    markersList.clear();
-    markersList.add(Marker(
-        markerId: MarkerId(p.placeId!),
-        position: LatLng(double.parse(p.lat!), double.parse(p.lng!)),
-        infoWindow: InfoWindow(title: p.description)));
 
     setState(() {
       form.control(pinCodeKey).value = widget.userModel.addressModel.pincode;
@@ -560,8 +564,7 @@ class AddressScreenState extends State<AddressScreen> {
       // city = city;
       // selectedDistrict = selectedDistrict;
     });
-    googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
-        LatLng(double.parse(p.lat!), double.parse(p.lng!)), 14.0));
+    _goToSpecificPosition(LatLng(double.parse(p.lat!), double.parse(p.lng!)), p.description!, p.placeId!);
   }
 
   void extractAddressComponents(List<AddressComponents>? addressComponents) {

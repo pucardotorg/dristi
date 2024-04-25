@@ -56,6 +56,38 @@ class AppTheme{
     );
   }
 
+  ThemeData get mobileTheme {
+    const Border(top: BorderSide());
+
+    return ThemeData(
+      colorScheme: DigitTheme.instance.mobileTheme.colorScheme,
+      useMaterial3: false,
+      scaffoldBackgroundColor: DigitTheme.instance.mobileTheme.colorScheme.background,
+      textTheme: DigitTheme.instance.mobileTypography.textTheme,
+      appBarTheme: const AppBarTheme(elevation: 0),
+      elevatedButtonTheme: elevatedButtonTheme,
+      outlinedButtonTheme: DigitTheme.instance.outlinedButtonTheme,
+      textButtonTheme: DigitTheme.instance.textButtonTheme,
+      cardTheme: DigitTheme.instance.cardTheme,
+      inputDecorationTheme: DigitTheme.instance.inputDecorationTheme,
+      dialogTheme: DigitTheme.instance.dialogTheme,
+    );
+  }
+
+  ElevatedButtonThemeData get elevatedButtonTheme => ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      shape: DigitTheme.instance.buttonBorder,
+      padding: DigitTheme.instance.buttonPadding,
+      backgroundColor: const Color(0xFF007E7E),
+      foregroundColor: DigitTheme.instance.mobileTheme.colorScheme.onSecondary,
+      disabledBackgroundColor: DigitTheme.instance.mobileTheme.colorScheme.secondary.withOpacity(
+        0.5,
+      ),
+      disabledForegroundColor: DigitTheme.instance.mobileTheme.colorScheme.onSecondary,
+      elevation: 0,
+    ),
+  );
+
 }
 
 
