@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.config.Configuration;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.kafka.Producer;
 import org.pucar.repository.AdvocateRepository;
@@ -47,6 +48,8 @@ public class AdvocateServiceTest {
 
     @InjectMocks
     private AdvocateService service;
+    @Mock
+    private Configuration config;
 
     @Test
     void testCreateAdvocateRequest() {
@@ -58,6 +61,7 @@ public class AdvocateServiceTest {
         advocate.setTenantId("tenant1");
         advocate.setIndividualId("individualId");
         request.setAdvocates(Collections.singletonList(advocate));
+        when(config.getAdvocateCreateTopic()).thenReturn("save-advocate-application");
 
         // Execute the method under test
         List<Advocate> result = service.createAdvocate(request);
@@ -105,6 +109,7 @@ public class AdvocateServiceTest {
         request.setAdvocates(Collections.singletonList(advocate));
 
         when(validator.validateApplicationExistence(any())).thenReturn(advocate);
+        when(config.getAdvocateUpdateTopic()).thenReturn("update-advocate-application");
 
         // Execute the method under test
         List<Advocate> result = service.updateAdvocate(request);

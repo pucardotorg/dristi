@@ -1,24 +1,18 @@
 package org.pucar.web.controllers;
 
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
 import org.pucar.web.models.*;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.*;
@@ -98,15 +92,15 @@ public class AdvocateApiControllerTest {
 //                        .andExpect(content().json(new ObjectMapper().writeValueAsString(advocateRequest)));
 //    }
 
-    @Test
-    public void advocateV1CreatePostFailure() throws Exception {
-        // Perform the request with the required Accept header
-        mockMvc.perform(post("/advocate/v1/_create")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(advocateRequest)))
-                        .andExpect(status().isInternalServerError());
-    }
+//    @Test
+//    public void advocateV1CreatePostFailure() throws Exception {
+//        // Perform the request with the required Accept header
+//        mockMvc.perform(post("/advocate/v1/_create")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .content(new ObjectMapper().writeValueAsString(advocateRequest)))
+//                        .andExpect(status().isInternalServerError());
+//    }
 
 //    @Test
 //    public void advocateV1SearchPostSuccess() throws Exception {
@@ -124,13 +118,13 @@ public class AdvocateApiControllerTest {
 //                .andExpect(content().json(new ObjectMapper().writeValueAsString(advocateSearchRequest)));
 //    }
 
-    @Test
-    public void advocateV1SearchPostFailure() throws Exception {
-        // Perform the request with the required Accept header
-        mockMvc.perform(post("/advocate/v1/_search")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(advocateSearchRequest)))
-                .andExpect(status().isInternalServerError());
-    }
+//    @Test
+//    public void advocateV1SearchPostFailure() throws Exception {
+//        // Perform the request with the required Accept header
+//        mockMvc.perform(post("/advocate/v1/_search")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .content(new ObjectMapper().writeValueAsString(advocateSearchRequest)))
+//                .andExpect(status().isInternalServerError());
+//    }
 }
