@@ -16,23 +16,22 @@ import lombok.Builder;
  * CaseCriteria
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T13:54:45.904122+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseCriteria   {
-        @JsonProperty("caseId")
+public class CaseCriteria {
+	@JsonProperty("caseId")
 
-                private String caseId = null;
+	private String caseId = null;
 
-        @JsonProperty("cnrNumber")
+	@JsonProperty("cnrNumber")
 
-                private String cnrNumber = null;
+	private String cnrNumber = null;
 
-        @JsonProperty("filingNumber")
+	@JsonProperty("filingNumber")
 
-                private String filingNumber = null;
-
+	private String filingNumber = null;
 
 }
