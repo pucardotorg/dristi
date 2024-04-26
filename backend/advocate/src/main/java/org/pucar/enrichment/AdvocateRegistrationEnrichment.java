@@ -41,6 +41,9 @@ public class AdvocateRegistrationEnrichment {
                     }
                 }
             }
+            else{
+                throw new CustomException(ENRICHMENT_EXCEPTION,"User info not found!!!");
+            }
         } catch (CustomException e){
             log.error("Custom Exception occurred while Enriching advocate");
             throw e;
@@ -49,6 +52,7 @@ public class AdvocateRegistrationEnrichment {
             // Handle the exception or throw a custom exception
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error advocate in enrichment service: "+ e.getMessage());
         }
+
     }
 
     public void enrichAdvocateApplicationUponUpdate(AdvocateRequest advocateRequest) {

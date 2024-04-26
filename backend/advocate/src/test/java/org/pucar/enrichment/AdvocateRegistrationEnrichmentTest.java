@@ -3,19 +3,19 @@ package org.pucar.enrichment;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.pucar.util.IdgenUtil;
-import org.pucar.util.UserUtil;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,9 +24,6 @@ class AdvocateRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
-
-    @Mock
-    private UserUtil userUtils;
 
     @InjectMocks
     private AdvocateRegistrationEnrichment advocateRegistrationEnrichment;
@@ -96,4 +93,55 @@ class AdvocateRegistrationEnrichmentTest {
         assertEquals("user-uuid-2", advocates.get(0).getAuditDetails().getLastModifiedBy());
         assertNotNull(advocates.get(0).getAuditDetails().getLastModifiedTime());
     }
+
+    @Test
+    public void testEnrichAdvocateRegistration_MissingUserInfo() {
+        // Setup request with missing user info
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        advocateRequest.setAdvocates(Collections.singletonList(new Advocate()));
+        advocateRequest.setRequestInfo(new RequestInfo());
+
+        // Expect exception due to missing user info
+        assertThrows(CustomException.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    public void testEnrichAdvocateRegistration_IdgenUtilException() {
+        // Setup mock request
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        List<Advocate> advocates = new ArrayList<>();
+        Advocate advocate = new Advocate();
+        advocate.setTenantId("tenantId");
+        advocates.add(advocate);
+        advocateRequest.setAdvocates(advocates);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        advocateRequest.setRequestInfo(requestInfo);
+
+        // Mock IdgenUtil to throw exception
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("Mocked Exception"));
+
+        // Expect exception to propagate
+        assertThrows(RuntimeException.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    public void testEnrichAdvocateRegistration_EmptyAdvocateList() {
+        // Setup request with empty advocate list
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        advocateRequest.setRequestInfo(new RequestInfo());
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid");
+        advocateRequest.getRequestInfo().setUserInfo(userInfo);
+        advocateRequest.setAdvocates(new ArrayList<>());
+
+        // Call the method
+        advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest);
+
+        // No assertions needed, method should not throw exceptions
+    }
+
+
 }

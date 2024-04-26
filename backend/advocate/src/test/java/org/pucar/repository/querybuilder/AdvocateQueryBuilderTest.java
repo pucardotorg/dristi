@@ -1,13 +1,14 @@
 package org.pucar.repository.querybuilder;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.pucar.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,6 +19,7 @@ class AdvocateQueryBuilderTest {
     @Mock
     private List<Object> mockPreparedStmtList;
 
+    @InjectMocks
     private AdvocateQueryBuilder advocateQueryBuilder;
 
     @BeforeEach
@@ -62,7 +64,7 @@ class AdvocateQueryBuilderTest {
 
         // Status List
         List<String> statusList = new ArrayList<>();
-        String applicationNumber = new String();
+        String applicationNumber = "";
 
         // Call the method to be tested
         String query = advocateQueryBuilder.getAdvocateSearchQuery(criteriaList, preparedStmtList,statusList, applicationNumber);
@@ -99,4 +101,38 @@ class AdvocateQueryBuilderTest {
         assertEquals(1, preparedStmtList.size());
         assertEquals("%123app%", preparedStmtList.get(0));
     }
+
+    @Test
+    void testGetDocumentSearchQuery_EmptyIds() {
+        // Setup test case with empty ids list
+        List<String> ids = new ArrayList<>();
+
+        // Call the method
+        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, mockPreparedStmtList);
+
+        // Assert the generated query string
+        String expectedQuery = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid  FROM dristi_document doc";
+        assertEquals(expectedQuery, query);
+
+        // Assert the prepared statement list is empty
+        verify(mockPreparedStmtList, never()).add(any());
+    }
+
+    @Test
+    void testGetDocumentSearchQuery_WithIds() {
+        // Setup test case with non-empty ids list
+        List<String> ids = Arrays.asList("1", "2", "3");
+
+        // Call the method
+        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, mockPreparedStmtList);
+
+        // Assert the generated query string
+        String expectedQuery = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid  FROM dristi_document doc WHERE doc.advocateid IN (?,?,?)";
+        assertEquals(expectedQuery, query);
+
+        // Assert the prepared statement list contains ids
+        verify(mockPreparedStmtList, times(1)).addAll(ids);
+
+    }
+
 }
