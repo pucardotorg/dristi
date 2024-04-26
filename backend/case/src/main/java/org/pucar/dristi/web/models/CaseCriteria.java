@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import java.time.LocalDate;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,5 +34,29 @@ public class CaseCriteria {
 	@JsonProperty("filingNumber")
 
 	private String filingNumber = null;
+
+	@JsonProperty("courtCaseNumber")
+
+	private String courtCaseNumber = null;
+
+	@JsonProperty("filingFromDate")
+
+	@Valid
+	private LocalDate filingFromDate = null;
+
+	@JsonProperty("filingToDate")
+
+	@Valid
+	private LocalDate filingToDate = null;
+
+	@JsonProperty("registrationFromDate")
+
+	@Valid
+	private LocalDate registrationFromDate = null;
+
+	@JsonProperty("registrationToDate")
+
+	@Valid
+	private LocalDate registrationToDate = null;
 
 }

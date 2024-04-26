@@ -17,13 +17,15 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class ApplicationExists   {
-        @JsonProperty("cnrNumber")
+        @JsonProperty("filingNumber")
+        private String filingNumber = null;
 
-                private String cnrNumber = null;
+        @JsonProperty("cnrNumber")
+        private String cnrNumber = null;
+
+        @JsonProperty("applicationNumber")
+        private String applicationNumber = null;
 
         @JsonProperty("exists")
-
-                private Boolean exists = null;
-
-
+        private Boolean exists = null;
 }

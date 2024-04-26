@@ -28,134 +28,119 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Hearing   {
-        @JsonProperty("id")
+public class Hearing {
+    @JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+    @Valid
+    private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+    @JsonProperty("tenantId")
+    @NotNull
 
-                private String tenantId = null;
+    private String tenantId = null;
 
-        @JsonProperty("caseIds")
-          @Valid
-                private List<UUID> caseIds = null;
+    @JsonProperty("filingNumber")
 
-        @JsonProperty("cnrNumbers")
+    private List<String> filingNumber = new ArrayList<>();
 
-                private List<String> cnrNumbers = null;
+    @JsonProperty("cnrNumbers")
 
-        @JsonProperty("applicationNumbers")
+    private List<String> cnrNumbers = new ArrayList<>();
 
-                private List<String> applicationNumbers = null;
+    @JsonProperty("applicationNumbers")
 
-        @JsonProperty("hearingType")
-          @NotNull
+    private List<String> applicationNumbers = new ArrayList<>();
 
-                private String hearingType = null;
+    @JsonProperty("hearingType")
+    @NotNull
 
-        @JsonProperty("status")
-          @NotNull
+    private String hearingType = null;
 
-                private Boolean status = null;
+    @JsonProperty("status")
+    @NotNull
 
-        @JsonProperty("startTime")
+    private Boolean status = null;
 
-          @Valid
-                private LocalDate startTime = null;
+    @JsonProperty("startTime")
 
-        @JsonProperty("endTime")
+    @Valid
+    private LocalDate startTime = null;
 
-          @Valid
-                private LocalDate endTime = null;
+    @JsonProperty("endTime")
 
-        @JsonProperty("attendees")
+    @Valid
+    private LocalDate endTime = null;
 
-                private List<Object> attendees = null;
+    @JsonProperty("attendees")
 
-        @JsonProperty("transcript")
+    private List<Object> attendees = new ArrayList<>();
 
-                private List<String> transcript = null;
+    @JsonProperty("transcript")
 
-        @JsonProperty("vcLink")
+    private List<String> transcript = new ArrayList<>();
 
-                private String vcLink = null;
+    @JsonProperty("vcLink")
 
-        @JsonProperty("isActive")
+    private String vcLink = null;
 
-                private Boolean isActive = null;
+    @JsonProperty("isActive")
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+    private Boolean isActive = null;
 
-        @JsonProperty("additionalDetails")
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = new ArrayList<>();
 
-                private String additionalDetails = null;
+    @JsonProperty("additionalDetails")
 
-        @JsonProperty("auditDetails")
+    private String additionalDetails = null;
 
-          @Valid
-                private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
 
-        @JsonProperty("workflow")
+    @Valid
+    private AuditDetails auditDetails = null;
 
-          @Valid
-                private Workflow workflow = null;
+    @JsonProperty("workflow")
 
-        @JsonProperty("notes")
+    @Valid
+    private Workflow workflow = null;
 
-                private String notes = null;
+    @JsonProperty("notes")
+
+    private String notes = null;
 
 
-        public Hearing addCaseIdsItem(UUID caseIdsItem) {
-            if (this.caseIds == null) {
-            this.caseIds = new ArrayList<>();
-            }
-        this.caseIds.add(caseIdsItem);
+    public Hearing addFilingNumberItem(String filingNumberItem) {
+        this.filingNumber.add(filingNumberItem);
         return this;
-        }
+    }
 
-        public Hearing addCnrNumbersItem(String cnrNumbersItem) {
-            if (this.cnrNumbers == null) {
-            this.cnrNumbers = new ArrayList<>();
-            }
+    public Hearing addCnrNumbersItem(String cnrNumbersItem) {
         this.cnrNumbers.add(cnrNumbersItem);
         return this;
-        }
+    }
 
-        public Hearing addApplicationNumbersItem(String applicationNumbersItem) {
-            if (this.applicationNumbers == null) {
-            this.applicationNumbers = new ArrayList<>();
-            }
+    public Hearing addApplicationNumbersItem(String applicationNumbersItem) {
         this.applicationNumbers.add(applicationNumbersItem);
         return this;
-        }
+    }
 
-        public Hearing addAttendeesItem(Object attendeesItem) {
-            if (this.attendees == null) {
+    public Hearing addAttendeesItem(Object attendeesItem) {
+        if (this.attendees == null) {
             this.attendees = new ArrayList<>();
-            }
+        }
         this.attendees.add(attendeesItem);
         return this;
-        }
+    }
 
-        public Hearing addTranscriptItem(String transcriptItem) {
-            if (this.transcript == null) {
-            this.transcript = new ArrayList<>();
-            }
+    public Hearing addTranscriptItem(String transcriptItem) {
         this.transcript.add(transcriptItem);
         return this;
-        }
+    }
 
-        public Hearing addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
+    public Hearing addDocumentsItem(Document documentsItem) {
         this.documents.add(documentsItem);
         return this;
-        }
+    }
 
 }
