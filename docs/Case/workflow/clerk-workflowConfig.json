@@ -1,0 +1,142 @@
+{
+    "BusinessServices": [
+        {
+            "tenantId": "kl",
+            "businessService": "legal_services",
+            "business": "litigant_advocate",
+            "businessServiceSla": null,
+            "states": [
+                {
+                    "sla": null,
+                    "state": "Draft in Progress",
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "Save Draft",
+                            "nextState": "Draft in Progress",
+                            "roles": [
+                                "Litigant",
+                                "Advocate"
+                            ]
+                        },
+                        {
+                            "action": "Submit Case",
+                            "nextState": "Payment Pending",
+                            "roles": [
+                                "Litigant",
+                                "Advocate"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "Payment Pending",
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "Make Payment",
+                            "nextState": "Under Scrutiny",
+                            "roles": [
+                                "Litigant",
+                                "Advocate"
+                            ]
+                        },
+                        {
+                            "action": "Delete Draft",
+                            "nextState": "Draft in Progress",
+                            "roles": [
+                                "Litigant",
+                                "Advocate"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "Under Scrutiny",
+                    "applicationStatus": "Pending Admission",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "Validate",
+                            "nextState": "Pending Admission",
+                            "roles": [
+                                "FSO"
+                            ]
+                        },
+                        {
+                            "action": "Send Back",
+                            "nextState": "Case Re-assigned",
+                            "roles": [
+                                "FSO"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "Pending Admission",
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "Edit Case",
+                            "nextState": "Pending Admission",
+                            "roles": [
+                                "Litigant",
+                                "Advocate"
+                            ]
+                        },
+                        {
+                            "action": "Schedule Admission Hearing",
+                            "nextState": "Admission Hearing Scheduled",
+                            "roles": [
+                                "Judge"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "Admission Hearing Scheduled",
+                    "applicationStatus": "Pending Admission",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "Admit",
+                            "nextState": "Case Admitted",
+                            "roles": [
+                                "Judge"
+                            ]
+                        },
+                        {
+                            "action": "Reject",
+                            "nextState": "Case Dismissed",
+                            "roles": [
+                                "Judge"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
