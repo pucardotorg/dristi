@@ -36,6 +36,8 @@ export const loginSteps = [
         validation: {
           required: true,
           minlength: 1,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          patternType: "Name",
         },
       },
     ],

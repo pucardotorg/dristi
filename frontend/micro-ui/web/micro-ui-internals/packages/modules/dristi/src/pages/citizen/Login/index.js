@@ -67,6 +67,7 @@ const Login = ({ stateCode }) => {
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
+  const userMobileNUmber = Digit.UserService.getUser()?.info.mobileNumber;
   useEffect(() => {
     let errorTimeout;
     if (error) {
@@ -347,7 +348,10 @@ const Login = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp
-              config={{ ...stepItems[4], texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || ""}` } }}
+              config={{
+                ...stepItems[4],
+                texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || userMobileNUmber || ""}` },
+              }}
               onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}
               onSelect={onAadharOtpSelect}

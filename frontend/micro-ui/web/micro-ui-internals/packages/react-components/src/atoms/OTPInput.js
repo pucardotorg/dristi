@@ -18,9 +18,13 @@ const SingleInput = ({ isFocus, onChange, onFocus, value, ...rest }) => {
       onChange={onChange}
       onFocus={onFocus}
       ref={inputRef}
-      type="number"
       value={value ? value : ""}
       {...rest}
+      type="text"
+      pattern="[0-9]*"
+      onInput={(e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+      }}
     />
   );
 };
