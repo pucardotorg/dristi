@@ -92,11 +92,11 @@ public class AdvocateClerkQueryBuilderTest {
         String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList,statusList, applicationNumber);
 
         // Assert the generated query string
-        String e = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE (advc.applicationnumber LIKE ? ) ORDER BY advc.createdtime DESC ";
+        String e = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE (LOWER(advc.applicationNumber) LIKE LOWER(?)) ORDER BY advc.createdtime DESC ";
         assertEquals(e, query);
 
         // Assert the prepared statement list
         assertEquals(1, preparedStmtList.size());
-        assertEquals("%123APP%", preparedStmtList.get(0));
+        assertEquals("%123app%", preparedStmtList.get(0));
     }
 }

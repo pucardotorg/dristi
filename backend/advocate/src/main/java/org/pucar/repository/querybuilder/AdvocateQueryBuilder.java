@@ -97,9 +97,9 @@ public class AdvocateQueryBuilder {
             }
             else if(applicationNumber != null && !applicationNumber.isEmpty()){
                 addClauseIfRequired(query, firstCriteria);
-                query.append("adv.applicationNumber LIKE ?")
+                query.append("LOWER(adv.applicationNumber) LIKE LOWER(?)")
                         .append(")");
-                preparedStmtList.add("%" + applicationNumber + "%");
+                preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
                 firstCriteria = false;
             }
             if (statusList != null && !statusList.isEmpty()) {
