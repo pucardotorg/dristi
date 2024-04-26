@@ -1,25 +1,22 @@
 package org.pucar.dristi.web.models;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
+import org.springframework.validation.annotation.Validated;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.egov.common.contract.models.AuditDetails;
-import org.egov.common.contract.models.Document;
-import org.egov.common.contract.models.Workflow;
-
-import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
 
 /**
  * A task is created as part of an Order. It will always be linked to an order
@@ -31,104 +28,100 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Task   {
-        @JsonProperty("id")
+public class Task {
+    @JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+    @Valid
+    private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+    @JsonProperty("tenantId")
+    @NotNull
 
-                private String tenantId = null;
+    private String tenantId = null;
 
-        @JsonProperty("orderId")
-          @NotNull
+    @JsonProperty("orderId")
+    @NotNull
 
-          @Valid
-                private UUID orderId = null;
+    @Valid
+    private UUID orderId = null;
 
-        @JsonProperty("caseId")
+    @JsonProperty("filingNumber")
 
-          @Valid
-                private UUID caseId = null;
+    private String filingNumber = null;
 
-        @JsonProperty("cnrNumber")
+    @JsonProperty("cnrNumber")
 
-                private String cnrNumber = null;
+    private String cnrNumber = null;
 
-        @JsonProperty("createdDate")
-          @NotNull
+    @JsonProperty("createdDate")
+    @NotNull
 
-          @Valid
-                private LocalDate createdDate = null;
+    @Valid
+    private LocalDate createdDate = null;
 
-        @JsonProperty("dateCloseBy")
+    @JsonProperty("dateCloseBy")
 
-          @Valid
-                private LocalDate dateCloseBy = null;
+    @Valid
+    private LocalDate dateCloseBy = null;
 
-        @JsonProperty("dateClosed")
+    @JsonProperty("dateClosed")
 
-          @Valid
-                private LocalDate dateClosed = null;
+    @Valid
+    private LocalDate dateClosed = null;
 
-        @JsonProperty("taskDescription")
+    @JsonProperty("taskDescription")
 
-                private String taskDescription = null;
+    private String taskDescription = null;
 
-        @JsonProperty("taskType")
-          @NotNull
+    @JsonProperty("taskType")
+    @NotNull
 
-                private String taskType = null;
+    private String taskType = null;
 
-        @JsonProperty("taskDetails")
+    @JsonProperty("taskDetails")
 
-                private Object taskDetails = null;
+    private Object taskDetails = null;
 
-        @JsonProperty("amount")
+    @JsonProperty("amount")
 
-          @Valid
-                private Amount amount = null;
+    @Valid
+    private Amount amount = null;
 
-        @JsonProperty("status")
-          @NotNull
+    @JsonProperty("status")
+    @NotNull
 
-                private String status = null;
+    private String status = null;
 
-        @JsonProperty("assignedTo")
+    @JsonProperty("assignedTo")
 
-                private Object assignedTo = null;
+    private Object assignedTo = null;
 
-        @JsonProperty("isActive")
+    @JsonProperty("isActive")
 
-                private Boolean isActive = null;
+    private Boolean isActive = null;
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = new ArrayList<>();
 
-        @JsonProperty("additionalDetails")
+    @JsonProperty("additionalDetails")
 
-                private String additionalDetails = null;
+    private String additionalDetails = null;
 
-        @JsonProperty("auditDetails")
+    @JsonProperty("auditDetails")
 
-          @Valid
-                private AuditDetails auditDetails = null;
+    @Valid
+    private AuditDetails auditDetails = null;
 
-        @JsonProperty("workflow")
+    @JsonProperty("workflow")
 
-          @Valid
-                private Workflow workflow = null;
+    @Valid
+    private Workflow workflow = null;
 
 
-        public Task addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
+    public Task addDocumentsItem(Document documentsItem) {
         this.documents.add(documentsItem);
         return this;
-        }
+    }
 
 }

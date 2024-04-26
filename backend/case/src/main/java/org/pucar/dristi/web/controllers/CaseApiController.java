@@ -136,10 +136,8 @@ public class CaseApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<WitnessResponse>(objectMapper.readValue(
-						"{  \"requestInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"witnesses\" : [ {    \"caseId\" : \"caseId\",    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"witnessIdentifier\" : \"witnessIdentifier\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"remarks\" : \"remarks\"  }, {    \"caseId\" : \"caseId\",    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"witnessIdentifier\" : \"witnessIdentifier\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"remarks\" : \"remarks\"  } ]}",
-						WitnessResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
 				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		}

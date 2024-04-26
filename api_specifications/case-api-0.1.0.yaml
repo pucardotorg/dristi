@@ -255,7 +255,13 @@ components:
           description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
           minLength: 2
           maxLength: 64
-        caseNumber:
+        courCaseNumber:
+          type: string
+          description: a formatted number which helps identify what is the case type and also has a unique sequence number per court establishment, per court complex. The formatting may vary from state to state. Hence for validation, use regex expressions defined on a per state/tenant basis
+          minLength: 10
+          maxLength: 24
+          example: CC/023443/2024
+        cnrNumber:
           type: string
           description: >-
             This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
@@ -553,7 +559,11 @@ components:
     
     Witness:
       type: object
-      required: [caseId, individualId]
+      required: [individualId]
+      oneOf:
+        - required:
+          - cnrNumber
+          - filingNumber
       properties:
         id:
           type: string
@@ -562,9 +572,11 @@ components:
           minLength: 36
           maxLength: 36
           readOnly: true
-        caseId:
+        filingNumber:
           type: string
-          description: The case UUID for which this individual is a witness.
+          description: The case filing for which this individual is a witness.
+        cnrNumber:
+          type: string
         witnessIdentifier:
           type: string
           description: A field to store a formatted or court assigned number to a witness in a case. Optional field. 
@@ -592,7 +604,7 @@ components:
     CaseRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         cases:
@@ -603,7 +615,7 @@ components:
     CaseResponse:
       type: object
       properties:
-        requestInfo:
+        ResponseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         cases:
@@ -614,7 +626,7 @@ components:
     CaseSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
@@ -625,7 +637,7 @@ components:
     CaseExistsResponse:
       type: object
       properties:
-        requestInfo:
+        ResponseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         criteria:
@@ -642,10 +654,28 @@ components:
           type: string
         filingNumber:
           type: string
+        courtCaseNumber:
+          type: string
+        filingFromDate:
+          type: string
+          format: date
+          description: search cases within filing date range. if only filingFromDate is specified, then cases for this filing date will be retrieved
+        filingToDate:
+          type: string
+          format: date
+        registrationFromDate:
+          type: string
+          format: date
+          description: search cases within registration date range. if only registrationFromDate is specified, then cases for this registration date will be retrieved
+        registrationToDate:
+          type: string
+          format: date
     
     CaseExists:
       type: object
       properties:
+        courtCaseNumber:
+          type: string
         cnrNumber:
           type: string
         filingNumber:
@@ -678,7 +708,7 @@ components:
     WitnessResponse:
       type: object
       properties:
-        requestInfo:
+        ResponseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         witnesses:
@@ -689,7 +719,7 @@ components:
     WitnessSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         searchCriteria:
