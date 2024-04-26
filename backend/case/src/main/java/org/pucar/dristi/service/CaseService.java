@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
@@ -32,7 +33,8 @@ public class CaseService {
 
     @Autowired
     private WorkflowService workflowService;
-
+    @Autowired
+    private Configuration config;
     @Autowired
     private Producer producer;
 
@@ -76,5 +78,44 @@ public class CaseService {
             log.error("Error while fetching to search results");
             throw new CustomException("CASE_SEARCH_EXCEPTION",e.getMessage());
         }
+    }
+
+    public List<CourtCase> updateCase(CaseRequest caseRequest) {
+
+        try {
+
+            // Validate whether the application that is being requested for update indeed exists
+            List<CourtCase> caseList = new ArrayList<>();
+            caseRequest.getCases().forEach(courtCase -> {
+                CourtCase existingApplication;
+                try {
+                    existingApplication = validator.validateApplicationExistence(courtCase);
+                } catch (Exception e) {
+                    log.error("Error validating existing application");
+                    throw new CustomException("CASE_CREATE_EXCEPTION","Error validating existing application: "+ e.getMessage());
+                }
+                existingApplication.setWorkflow(courtCase.getWorkflow());
+                caseList.add(existingApplication);
+            });
+
+            caseRequest.setCases(caseList);
+
+            // Enrich application upon update
+            enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
+
+            workflowService.updateWorkflowStatus(caseRequest);
+
+            producer.push(config.getCaseUpdateTopic(), caseRequest);
+
+            return caseRequest.getCases();
+
+        } catch (CustomException e){
+            log.error("Custom Exception occurred while updating advocate");
+            throw e;
+        } catch (Exception e){
+            log.error("Error occurred while updating advocate");
+            throw new CustomException("CASE_UPDATE_EXCEPTION","Error occurred while updating advocate: " + e.getMessage());
+        }
+
     }
 }

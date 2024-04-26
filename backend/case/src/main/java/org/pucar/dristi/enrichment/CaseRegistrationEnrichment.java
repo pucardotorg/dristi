@@ -4,13 +4,16 @@ package org.pucar.dristi.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,6 +54,19 @@ public class CaseRegistrationEnrichment {
         catch (Exception e) {
             e.printStackTrace();
             log.error("Error enriching case application: {}", e.getMessage());
+        }
+    }
+    public void enrichCaseApplicationUponUpdate(CaseRequest caseRequest) {
+        try {
+            // Enrich lastModifiedTime and lastModifiedBy in case of update
+            for (CourtCase courtCase : caseRequest.getCases()) {
+                courtCase.getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
+                courtCase.getAuditdetails().setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
+            }
+        } catch (Exception e) {
+            log.error("Error enriching advocate application upon update: {}", e.getMessage());
+            // Handle the exception or throw a custom exception
+            throw new CustomException("ENRICHMENT_EXCEPTION","Error in advocate enrichment service during advocate update process: "+ e.getMessage());
         }
     }
 }
