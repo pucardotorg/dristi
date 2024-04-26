@@ -62,5 +62,5 @@ public class ServiceConstants {
 	public static final String QUERY_EXECUTION_FAILED = "QUERY_EXECUTION_FAILED";
 	public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
 	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
-
+	public static final String TEST_EXCEPTION = "TEST_EXCEPTION";
 }

@@ -1,16 +1,22 @@
 package org.pucar.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.CustomException;
+import org.egov.tracer.model.ServiceCallException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.pucar.config.ServiceConstants.TEST_EXCEPTION;
 
 class ServiceRequestRepositoryTest {
 
@@ -43,5 +49,31 @@ class ServiceRequestRepositoryTest {
         assertEquals(expectedResponse, response);
         verify(restTemplate, times(1)).postForObject(anyString(), any(), eq(Map.class));
     }
-
+    @Test()
+    public void testFetchResult_GenericException() {
+        StringBuilder uri = new StringBuilder("https://google.com");
+        Map<String, Object> request = new HashMap<>();
+        request.put("key", "value");
+        when(restTemplate.postForObject(any(String.class), any(), eq(Map.class))).thenThrow(new CustomException(TEST_EXCEPTION, "Mocked Error"));
+        try{
+            serviceRequestRepository.fetchResult(uri, request);
+        }
+        catch (Exception e){
+            assertTrue(e instanceof CustomException);
+            assertEquals("Mocked Error", e.getMessage());
+        }
+    }
+    @Test()
+    public void testFetchResult_HttpClientErrorException() {
+        StringBuilder uri = new StringBuilder("http://mock-service/api/endpoint");
+        Map<String, Object> request = new HashMap<>();
+        request.put("key", "value"); // Replace with your request object class
+        when(restTemplate.postForObject(any(String.class), any(), eq(Map.class))).thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Mocked Error"));
+        try{
+            serviceRequestRepository.fetchResult(uri, request);
+        }
+        catch (Exception e){
+            assertTrue(e instanceof ServiceCallException);
+        }
+    }
 }

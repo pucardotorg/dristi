@@ -11,12 +11,9 @@ import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.pucar.web.models.Advocate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
