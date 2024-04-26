@@ -82,9 +82,9 @@ public class AdvocateClerkQueryBuilder {
             }
             else if(applicationNumber != null && !applicationNumber.isEmpty()){
                 addClauseIfRequired(query, preparedStmtList);
-                query.append("advc.applicationnumber LIKE ? ")
+                query.append("LOWER(advc.applicationNumber) LIKE LOWER(?)")
                         .append(")");
-                preparedStmtList.add("%" + applicationNumber + "%");
+                preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
             }
             if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
                 addClauseIfRequiredForStatus(query, preparedStmtList);
