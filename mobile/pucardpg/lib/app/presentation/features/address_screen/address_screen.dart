@@ -95,13 +95,15 @@ class AddressScreenState extends State<AddressScreen> {
   }
 
   _getCurrentLocation(FormGroup form) async {
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    inspect(position);
-    setState(() {
-      _currentPosition = position;
-    });
-    _getAddressFromLatLng(form);
+    if (widget.userModel.addressModel.longitude == null || widget.userModel.addressModel.longitude == 0) {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      inspect(position);
+      setState(() {
+        _currentPosition = position;
+      });
+      _getAddressFromLatLng(form);
+    }
   }
 
   Future<void> _getAddressFromLatLng(FormGroup form) async {
@@ -474,11 +476,10 @@ class AddressScreenState extends State<AddressScreen> {
                                     validationMessages: {
                                       'required': (_) =>
                                           'Door number is required',
-                                      'number': (_) => 'Door number should contain digits 0-9',
                                       'minLength': (_) =>
                                       'Min length should be 2',
                                       'maxLength': (_) =>
-                                          'Max length should be 8'
+                                          'Max length should be 128'
                                     },
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
@@ -530,9 +531,8 @@ class AddressScreenState extends State<AddressScreen> {
         ]),
         doorNoKey: FormControl<String>(value: widget.userModel.addressModel.doorNo, validators: [
           Validators.required,
-          Validators.number,
           Validators.minLength(2),
-          Validators.maxLength(8)
+          Validators.maxLength(128)
         ]),
       });
 

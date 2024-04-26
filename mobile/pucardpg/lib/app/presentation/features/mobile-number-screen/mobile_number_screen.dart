@@ -128,7 +128,16 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                   children: [
                     Text("Provide Your Mobile Number", style: widget.theme.text32W700RobCon(),),
                     const SizedBox(height: 20,),
-                    Text("Your mobile number will be used to login to the system going forward. We will send you a one-time password on this mobile number", style: widget.theme.text16W400Rob(),),
+                    RichText(
+                      text: TextSpan(
+                        style: widget.theme.text16W400Rob(),
+                        children: <TextSpan>[
+                          TextSpan(text: 'Your mobile number will be used to login to the system going forward. We will send you a '),
+                          TextSpan(text: 'one-time password ', style: const TextStyle(fontWeight: FontWeight.bold)),
+                          TextSpan(text: 'on this mobile number')
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 20,),
                     ReactiveFormBuilder(
                         form: buildForm,
@@ -198,6 +207,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       bool isValidNumber = _validateMobile(form.control(mobileNumberKey).value);
                                       if (!isValidNumber) {
                                         widget.theme.showDigitDialog(true, "Mobile Number is not valid", context);
+
                                         return;
                                       }
                                       widget.registrationLoginBloc.add(RequestOtpEvent(mobileNumber: userModel.mobileNumber!));

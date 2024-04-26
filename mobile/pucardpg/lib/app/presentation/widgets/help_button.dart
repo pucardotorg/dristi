@@ -16,7 +16,8 @@ class DigitHelpButton extends StatelessWidget with AppMixin{
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Help', style: theme.text16W400Rob()?.apply(color: theme.defaultColor,),),
+          Text('Help', style: theme.text16W400Rob()?.apply(
+            color: theme.defaultColor, decoration: TextDecoration.underline),),
           const SizedBox(width: 5,),
           Container(
             width: 20,

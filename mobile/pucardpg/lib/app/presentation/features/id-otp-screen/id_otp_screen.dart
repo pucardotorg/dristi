@@ -110,8 +110,14 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                         inputFormatters: [
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                         ],
-                        maxLength: 1,
+                        maxLength: 2,
                         onChanged: (value) {
+                          if(value.length > 1){
+                            _otpControllers[index].text = value.substring(0,1);
+                            if(index < _otpControllers.length - 1){
+                              _otpControllers[index + 1].text = value.substring(1,2);
+                            }
+                          }
                           if (value.isNotEmpty && index < _otpControllers.length - 1) {
                             FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
                           } else if (value.isEmpty && index > 0) {

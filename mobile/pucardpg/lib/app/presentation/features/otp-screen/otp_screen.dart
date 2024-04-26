@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/foundation.dart';
@@ -133,8 +134,14 @@ class OtpScreenState extends State<OtpScreen> {
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
                           ],
-                          maxLength: 1,
+                          maxLength: 2,
                           onChanged: (value) {
+                            if(value.length > 1){
+                              _otpControllers[index].text = value.substring(0,1);
+                              if(index < _otpControllers.length - 1){
+                                _otpControllers[index + 1].text = value.substring(1,2);
+                              }
+                            }
                             if (value.isNotEmpty && index < _otpControllers.length - 1) {
                               FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
                             } else if (value.isEmpty && index > 0) {
@@ -175,7 +182,7 @@ class OtpScreenState extends State<OtpScreen> {
                         case RequestFailedState:
                           DigitToast.show(context,
                             options: DigitToastOptions(
-                              "sadasdasd",
+                              "Failed",
                               true,
                               widget.theme.theme(),
                             ),
@@ -183,14 +190,17 @@ class OtpScreenState extends State<OtpScreen> {
                           // widget.theme.showDigitDialog(true, "sadasdasd", context);
                           return;
                         case OtpCorrectState:
+                          _makeOTPSuccessToast();
                           Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
                           break;
                         case IndividualSearchSuccessState:
                           List<Individual> listIndividuals =  (state as IndividualSearchSuccessState).individualSearchResponse.individual;
                           if (listIndividuals.isEmpty) {
+                            _makeOTPSuccessToast();
                             Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
                           } else{
                             if (widget.userModel.userType == 'LITIGANT') {
+                              _makeOTPSuccessToast();
                               Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
                             }
                           }
@@ -198,16 +208,20 @@ class OtpScreenState extends State<OtpScreen> {
                         case AdvocateSearchSuccessState:
                           List<Advocate> advocates =  (state as AdvocateSearchSuccessState).advocateSearchResponse.advocates;
                           if (advocates.isEmpty) {
+                            _makeOTPSuccessToast();
                             Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
                           } else {
+                            _makeOTPSuccessToast();
                             Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                           }
                           break;
                         case AdvocateClerkSearchSuccessState:
                           List<Clerk> clerks =  (state as AdvocateClerkSearchSuccessState).advocateClerkSearchResponse.clerks;
                           if (clerks.isEmpty) {
+                            _makeOTPSuccessToast();
                             Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
                           } else {
+                            _makeOTPSuccessToast();
                             Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                           }
                           break;
@@ -239,6 +253,16 @@ class OtpScreenState extends State<OtpScreen> {
         )
     );
 
+  }
+
+  _makeOTPSuccessToast() {
+    DigitToast.show(context,
+      options: DigitToastOptions(
+        "OTP Verified",
+        false,
+        DigitTheme.instance.mobileTheme,
+      ),
+    );
   }
 
 }
