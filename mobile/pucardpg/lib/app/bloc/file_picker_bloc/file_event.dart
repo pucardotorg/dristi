@@ -1,14 +1,13 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 
 abstract class FilePickerEvent {}
 
 class FileEvent extends FilePickerEvent {
-  final MultipartFile multipartFile;
-  final File file;
+  final PlatformFile pickedFile;
   FileEvent({
-    required this.multipartFile,
-    required this.file
+    required this.pickedFile
   });
 }

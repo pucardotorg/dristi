@@ -120,7 +120,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     if (widget.userModel.userType == 'ADVOCATE') {
                       widget.registrationLoginBloc.add(SubmitAdvocateProfileEvent(userModel: widget.userModel));
                     }
-                    if (widget.userModel.userType == 'ADVOCATE CLERK') {
+                    if (widget.userModel.userType == 'ADVOCATE_CLERK') {
                       widget.registrationLoginBloc.add(SubmitAdvocateClerkProfileEvent(userModel: widget.userModel));
                     }
                     if (widget.userModel.userType == 'LITIGANT') {

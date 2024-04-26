@@ -12,6 +12,15 @@ class RequestOtpEvent extends RegistrationLoginEvent {
   });
 }
 
+class ResendOtpEvent extends RegistrationLoginEvent {
+  final String mobileNumber;
+  final String type;
+  ResendOtpEvent({
+    required this.mobileNumber,
+    required this.type,
+  });
+}
+
 class SubmitRegistrationOtpEvent extends RegistrationLoginEvent {
   final String username;
   final String otp;

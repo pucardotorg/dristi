@@ -161,7 +161,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                   'maxLength': (_) =>
                                   'Mobile number should have 10 digits',
                                   'pattern': (_) =>
-                                  'Mobile number is not valid'
+                                  'Invalid Mobile Number'
                                 },
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),

@@ -168,6 +168,10 @@ class OtpScreenState extends State<OtpScreen> {
                           _start = 25;
                         });
                         startTimer();
+                        for(int i=0; i<6; i++){
+                          _otpControllers[i].text = "";
+                        }
+                        widget.registrationLoginBloc.add(ResendOtpEvent(mobileNumber: widget.userModel.mobileNumber!, type: widget.userModel.type!));
                       },
                       child: Text('Resend OTP', style: widget.theme.text16W400Rob()?.apply(color: widget.theme.defaultColor),),
                     ),
@@ -187,8 +191,16 @@ class OtpScreenState extends State<OtpScreen> {
                               widget.theme.theme(),
                             ),
                           );
-                          // widget.theme.showDigitDialog(true, "sadasdasd", context);
                           return;
+                        case ResendOtpGenerationSuccessState:
+                          DigitToast.show(context,
+                            options: DigitToastOptions(
+                              "OTP generated successfully",
+                              false,
+                              DigitTheme.instance.mobileTheme,
+                            ),
+                          );
+                          break;
                         case OtpCorrectState:
                           _makeOTPSuccessToast();
                           Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
@@ -231,6 +243,7 @@ class OtpScreenState extends State<OtpScreen> {
                     },
                     child: DigitElevatedButton(
                         onPressed: () {
+                          FocusScope.of(context).unfocus();
                           String otp = '';
                           _otpControllers.forEach((controller) {
                             otp += controller.text;

@@ -149,7 +149,7 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                       DetailField(heading: 'Bar Registration number',
                           value: (widget.userModel.barRegistrationNumber ?? "")),
                     ],
-                    if (widget.userModel.userType == 'ADVOCATE CLERK') ...[
+                    if (widget.userModel.userType == 'ADVOCATE_CLERK') ...[
                       DetailField(heading: 'State Registration number',
                           value: (widget.userModel.stateRegnNumber ?? "")),
                     ],

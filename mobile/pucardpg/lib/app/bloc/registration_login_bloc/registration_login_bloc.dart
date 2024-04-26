@@ -15,6 +15,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
   RegistrationLoginBloc(this._loginUseCase): super(InitialState()) {
     on<InitialEvent>(initialEvent);
     on<RequestOtpEvent>(requestOtpEvent);
+    on<ResendOtpEvent>(resendOtpEvent);
     on<SubmitRegistrationOtpEvent>(sendRegistrationOtpEvent);
     on<SendLoginOtpEvent>(sendLoginOtpEvent);
     on<SubmitLitigantProfileEvent>(submitLitigantProfile);
@@ -34,20 +35,36 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
 
       emit(LoadingState());
 
-      final dataStateRegister = await _loginUseCase.requestOtp(event.mobileNumber, register);
+      final dataStateRegister = await _loginUseCase.requestOtp(event.mobileNumber, login);
 
       if(dataStateRegister is DataSuccess){
-        emit(OtpGenerationSuccessState(type: register));
+        emit(OtpGenerationSuccessState(type: login));
       }
       if(dataStateRegister is DataFailed){
-        final dataStateLogin = await _loginUseCase.requestOtp(event.mobileNumber, login);
+        final dataStateLogin = await _loginUseCase.requestOtp(event.mobileNumber, register);
         if(dataStateLogin is DataSuccess){
-          emit(OtpGenerationSuccessState(type: login));
+          emit(OtpGenerationSuccessState(type: register));
         }
         if(dataStateLogin is DataFailed){
           emit(RequestFailedState(errorMsg: dataStateLogin.error?.message ?? "",));
         }
       }
+
+  }
+
+  Future<void> resendOtpEvent(ResendOtpEvent event,
+      Emitter<RegistrationLoginState> emit) async {
+
+    emit(LoadingState());
+
+    final dataState = await _loginUseCase.requestOtp(event.mobileNumber, event.type);
+
+    if(dataState is DataSuccess){
+      emit(ResendOtpGenerationSuccessState(type: event.type));
+    }
+    if(dataState is DataFailed){
+      emit(RequestFailedState(errorMsg: dataState.error?.message ?? "",));
+    }
 
   }
 
@@ -107,7 +124,7 @@ class RegistrationLoginBloc extends Bloc<RegistrationLoginEvent, RegistrationLog
               emit(RequestFailedState(errorMsg: "",));
             }
           }
-          if (event.userModel.userType == 'ADVOCATE CLERK') {
+          if (event.userModel.userType == 'ADVOCATE_CLERK') {
             final dataStateSearchAdvocateClerk = await _loginUseCase.searchAdvocateClerk(event.userModel);
             if(dataState is DataSuccess){
               emit(AdvocateClerkSearchSuccessState(advocateClerkSearchResponse: dataStateSearchAdvocateClerk.data!));

@@ -1,10 +1,4 @@
-
-
-
-
-import 'dart:io';
-
-import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
 import 'package:pucardpg/app/data/models/advocate-clerk-search/advocate_clerk_search_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
@@ -30,7 +24,7 @@ abstract class RegistrationLoginRepository {
 
   Future<DataState<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);
 
-  Future<DataState<String>> getFileStore(MultipartFile multipartFile, File file);
+  Future<DataState<String>> getFileStore(PlatformFile pickedFile);
 
   Future<DataState<AuthResponse>> getAuthResponse(String username, String password);
 
@@ -42,5 +36,4 @@ abstract class RegistrationLoginRepository {
 
   Future<DataState<AdvocateClerkSearchResponse>> searchAdvocateClerk(AdvocateClerkSearchRequest advocateClerkSearchRequest);
 
-  Future<DataState<FileUploadResponseModel>> uploadFile(File file);
 }

@@ -97,7 +97,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                           // const SizedBox(height: 20,),
                           RadioListTile(
                             title: Text('Advocate Clerk', style: widget.theme.text16W400Rob(),),
-                            value: 'Advocate Clerk',
+                            value: 'Advocate_Clerk',
                             groupValue: selectedOption,
                             contentPadding: EdgeInsets.zero,
                             onChanged: (value) {
@@ -146,7 +146,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                     else if(widget.userModel.userType == 'ADVOCATE'){
                       widget.registrationLoginBloc.add(SubmitAdvocateIndividualEvent(userModel: widget.userModel));
                     }
-                    else if(widget.userModel.userType == 'ADVOCATE CLERK'){
+                    else if(widget.userModel.userType == 'ADVOCATE_CLERK'){
                       widget.registrationLoginBloc.add(SubmitAdvocateClerkIndividualEvent(userModel: widget.userModel));
                     }
                   },

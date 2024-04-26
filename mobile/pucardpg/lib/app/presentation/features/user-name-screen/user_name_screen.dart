@@ -94,6 +94,9 @@ class UserNameScreenState extends State<UserNameScreen> {
                               formControlName: userNameKey,
                               isRequired: true,
                               onChanged: (val) { widget.userModel.enteredUserName = val.value.toString(); },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                              ],
                               validationMessages: {
                                 'required': (_) => 'Username is required',
                                 'minLength': (_) =>

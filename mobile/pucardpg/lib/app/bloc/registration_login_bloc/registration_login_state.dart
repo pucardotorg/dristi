@@ -16,6 +16,11 @@ class OtpGenerationSuccessState extends RegistrationLoginState {
   OtpGenerationSuccessState({required this.type});
 }
 
+class ResendOtpGenerationSuccessState extends RegistrationLoginState {
+  String type;
+  ResendOtpGenerationSuccessState({required this.type});
+}
+
 class LogoutSuccessState extends RegistrationLoginState {
   ResponseInfoSearch data;
   LogoutSuccessState({required this.data});

@@ -1,10 +1,11 @@
-
-
-import 'dart:developer';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
-import 'package:get/get_connect/http/src/multipart/multipart_file.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 
 import 'package:pucardpg/app/data/data_sources/api_service.dart';
 import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
@@ -13,7 +14,6 @@ import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_re
 import 'package:pucardpg/app/data/models/advocate-search/advocate_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
-import 'package:pucardpg/app/data/models/file-upload-response-model/file_upload_response_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
@@ -21,7 +21,6 @@ import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
-import 'package:retrofit/dio.dart';
 
 class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
 
@@ -179,40 +178,38 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
   }
 
   @override
-  Future<DataState<String>> getFileStore(dio.MultipartFile multipartFile, File file) async {
-    // try {
-    // final httpResponse = await _apiService.getFileStore(module, tenantId);
-    dio.FormData formData = dio.FormData.fromMap({
-      'file': multipartFile,
-      'tenantId': tenantId,
-      'module': module
+  Future<DataState<String>> getFileStore(PlatformFile pickedFile) async {
+
+    var request = MultipartRequest("POST", Uri.parse('$apiBaseURL/filestore/v1/files'));
+
+    var fileName = '${pickedFile.name}.${pickedFile.extension?.toLowerCase()}';
+    MultipartFile multipartFile = MultipartFile.fromBytes(
+        'file', pickedFile.bytes!,
+        contentType: getMediaType(fileName),
+        filename: fileName);
+    request.files.add(multipartFile);
+
+    request.fields['tenantId'] = tenantId;
+    request.fields['module'] = 'module';
+    await request.send().then((response) async {
+      if (response.statusCode == 201) {
+        dynamic respStr = json.decode(await response.stream.bytesToString());
+      }
     });
 
-    inspect(formData);
-
-    final response = await dio.Dio().post(
-        '$apiBaseURL/filestore/v1/files',
-        data: formData,
-        options: dio.Options(headers: {
-          'Content-Type': 'multipart/form-data'
-        },)
-    );
-
-    // if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created) {
     return DataSuccess("");
-    //   } else {
-    //     return DataFailed(
-    //         dio.DioError(
-    //             error: "",
-    //             response: httpResponse.response,
-    //             type: dio.DioErrorType.response,
-    //             requestOptions: httpResponse.response.requestOptions
-    //         )
-    //     );
-    //   }
-    // } on dio.DioError catch(e){
-    //   return DataFailed(e);
-    // }
+
+  }
+
+  MediaType getMediaType(String? path) {
+    if (path == null) return MediaType('', '');
+    String? mimeStr = lookupMimeType(path);
+    var fileType = mimeStr?.split('/');
+    if (fileType != null && fileType.isNotEmpty) {
+      return MediaType(fileType.first, fileType.last);
+    } else {
+      return MediaType('', '');
+    }
   }
 
   @override
@@ -302,29 +299,5 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
       return DataFailed(e);
     }
   }
-
-  Future<DataState<FileUploadResponseModel>> uploadFile(File file) async{
-    try {
-      return DataSuccess(FileUploadResponseModel());
-      // final httpResponse = await _apiService.uploadFile("pg", "DRISTI", file);
-      //
-      // if (httpResponse.response.statusCode == HttpStatus.ok || httpResponse.response.statusCode == HttpStatus.created || httpResponse.response.statusCode == HttpStatus.accepted) {
-      //   return DataSuccess(httpResponse.data);
-      // }
-      // else {
-      //   return DataFailed(
-      //       dio.DioError(
-      //           error: "",
-      //           response: httpResponse.response,
-      //           type: dio.DioErrorType.response,
-      //           requestOptions: httpResponse.response.requestOptions
-      //       )
-      //   );
-      // }
-    } on dio.DioError catch(e){
-      return DataFailed(e);
-    }
-  }
-
 
 }

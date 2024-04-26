@@ -29,6 +29,7 @@ class IdVerificationScreen extends StatefulWidget with AppMixin{
 class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   bool fileSizeExceeded = false;
+  bool extensionError = false;
   late String mobile;
   TextEditingController aadharController = TextEditingController();
   TextEditingController typeOfIdController = TextEditingController();
@@ -57,19 +58,28 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
         final file = File(result!.files.single.path!);
         final fileSize = await file.length(); // Get file size in bytes
         const maxFileSize = 5 * 1024 * 1024; // 5MB in bytes
-        if (fileSize <= maxFileSize) {
-          pickedFile = result!.files.single;
+
+        if (!['pdf', 'jpg', 'png'].contains(result!.files.single.extension)) {
           setState(() {
-            fileName = result!.files.single.name;
-            form.control(aadharKey).value = '';
-            widget.userModel.identifierId = '';
-            fileToDisplay = file;
-            fileSizeExceeded = false;
+            extensionError = true;
           });
         } else {
-          setState(() {
-            fileSizeExceeded = true;
-          });
+          if (fileSize <= maxFileSize) {
+            pickedFile = result!.files.single;
+            setState(() {
+              fileName = result!.files.single.name;
+              form.control(aadharKey).value = '';
+              widget.userModel.identifierId = '';
+              fileToDisplay = file;
+              extensionError = false;
+              fileSizeExceeded = false;
+            });
+          } else {
+            setState(() {
+              extensionError = false;
+              fileSizeExceeded = true;
+            });
+          }
         }
       }
     } catch(e) {
@@ -181,6 +191,11 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                     'File Size Limit Exceeded. Upload a file below 5MB.',
                                     style: TextStyle(color: Colors.red),
                                   ),
+                                if (extensionError) // Show text line in red if file size exceeded
+                                  const Text(
+                                    'Please select a valid file format. Upload documents in the following formats: JPG, PNG or PDF.',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
                               ],
                             ),
                           ),
@@ -247,7 +262,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   FormGroup buildForm() => fb.group(<String, Object>{
     aadharKey : FormControl<String>(
-        value: widget.userModel.individualId,
+        value: widget.userModel.identifierId,
     ),
     typeKey : FormControl<String>(
         value: widget.userModel.identifierType,

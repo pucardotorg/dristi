@@ -144,6 +144,9 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                           _start = 25;
                         });
                         startTimer();
+                        for(int i=0; i<6; i++){
+                          _otpControllers[i].text = "";
+                        }
                       },
                       child: Text('Resend OTP', style: widget.theme.text16W400Rob()?.apply(color: widget.theme.defaultColor),),
                     ),
@@ -151,6 +154,7 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                   const SizedBox(height: 10,),
                   DigitElevatedButton(
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
                         String otp = '';
                         _otpControllers.forEach((controller) {
                           otp += controller.text;

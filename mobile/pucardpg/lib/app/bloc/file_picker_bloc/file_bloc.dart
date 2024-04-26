@@ -18,21 +18,16 @@ class FileBloc extends Bloc<FilePickerEvent, FilePickerState> {
   Future<void> uploadFileEvent(FileEvent event,
       Emitter<FilePickerState> emit) async {
 
-    emit(FileLoadingState());
+      emit(FileLoadingState());
 
-    // final dataState = await _filePickerUseCase.getFileStore(event.multipartFile, event.file);
-    final dataState = await _filePickerUseCase.uploadFile(event.file);
+      final dataState = await _filePickerUseCase.getFileStore(event.pickedFile);
 
-    if(dataState is DataSuccess){
-      // print("success");
-      emit(FileSuccessState());
-    }
-    if(dataState is DataFailed){
-      // print("failed");
-      // print("error is ${dataState.error!.message}" ?? "");
-      emit(FileFailedState(errorMsg: dataState.error?.message ?? "",));
-    }
-
+      if(dataState is DataSuccess){
+        emit(FileSuccessState());
+      }
+      if(dataState is DataFailed){
+        emit(FileFailedState(errorMsg: dataState.error?.message ?? "",));
+      }
   }
 
 

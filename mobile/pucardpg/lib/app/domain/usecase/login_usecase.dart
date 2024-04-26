@@ -92,10 +92,12 @@ class LoginUseCase {
     var dataState = await _registrationLoginRepository.searchAdvocate(advocateSearchRequest);
 
     if (dataState is DataSuccess) {
-      Advocate advocate = dataState.data!.advocates[0];
-      userModel.barRegistrationNumber = advocate.barRegistrationNumber;
-      userModel.fileStore = advocate.documents?[0].fileStore;
-      userModel.documentType = advocate.documents?[0].documentType;
+      if (dataState.data!.advocates.isNotEmpty) {
+        Advocate advocate = dataState.data!.advocates[0];
+        userModel.barRegistrationNumber = advocate.barRegistrationNumber;
+        userModel.fileStore = advocate.documents?[0].fileStore;
+        userModel.documentType = advocate.documents?[0].documentType;
+      }
     }
     return dataState;
   }
@@ -116,10 +118,12 @@ class LoginUseCase {
     var dataState = await _registrationLoginRepository.searchAdvocateClerk(advocateClerkSearchRequest);
 
     if (dataState is DataSuccess) {
-      Clerk clerk = dataState.data!.clerks[0];
-      userModel.stateRegnNumber = clerk.stateRegnNumber;
-      userModel.fileStore = clerk.documents?[0].fileStore;
-      userModel.documentType = clerk.documents?[0].documentType;
+      if (dataState.data!.clerks.isNotEmpty) {
+        Clerk clerk = dataState.data!.clerks[0];
+        userModel.stateRegnNumber = clerk.stateRegnNumber;
+        userModel.fileStore = clerk.documents?[0].fileStore;
+        userModel.documentType = clerk.documents?[0].documentType;
+      }
     }
     return dataState;
   }
