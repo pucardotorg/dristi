@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -472,7 +473,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     onChanged: (value){
                                       widget.userModel.addressModel.doorNo = value.value.toString();
                                     },
-                                    keyboardType: TextInputType.number,
+                                    keyboardType: TextInputType.text,
                                     validationMessages: {
                                       'required': (_) =>
                                           'Door number is required',
@@ -494,8 +495,24 @@ class AddressScreenState extends State<AddressScreen> {
               )),
               DigitElevatedButton(
                   onPressed: () {
+                    FocusScope.of(context).unfocus();
                     form.markAllAsTouched();
                     if (!form.valid) return;
+
+                    if (form.value[pinCodeKey]
+                        .toString()
+                        .isNotEmpty &&
+                        int.parse(form.value[pinCodeKey].toString()) <
+                            100000) {
+                      DigitToast.show(context,
+                        options: DigitToastOptions(
+                          "Enter valid Pincode",
+                          true,
+                          widget.theme.theme(),
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pushNamed(context, '/UserTypeScreen',
                         arguments: widget.userModel);
                   },

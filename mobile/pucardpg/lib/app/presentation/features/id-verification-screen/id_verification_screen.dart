@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_event.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -47,12 +48,18 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
     super.initState();
   }
 
+  bool _validateAadharNumber(String value) {
+    final RegExp mobileRegex = RegExp(r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$', caseSensitive: false);
+    return mobileRegex.hasMatch(value);
+  }
+
   void pickFile(FormGroup form) async {
     try {
       result = await FilePicker.platform.pickFiles(
           type: FileType.custom,
           allowedExtensions: ['pdf', 'jpg', 'png'],
-          allowMultiple: false
+          allowMultiple: false,
+          withData: true,
       );
       if (result != null) {
         final file = File(result!.files.single.path!);
@@ -66,6 +73,9 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
         } else {
           if (fileSize <= maxFileSize) {
             pickedFile = result!.files.single;
+            if (pickedFile != null) {
+              widget.fileBloc.add(FileEvent(pickedFile: pickedFile!));
+            }
             setState(() {
               fileName = result!.files.single.name;
               form.control(aadharKey).value = '';
@@ -229,7 +239,8 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                           );
                           return;
                         }
-                        if ((widget.userModel.identifierType == null || widget.userModel.identifierType!.isEmpty) && widget.userModel.identifierId!.length != 12) {
+                        bool isValidAadharNumber = _validateAadharNumber(form.control(aadharKey).value);
+                        if ((widget.userModel.identifierType == null || widget.userModel.identifierType!.isEmpty) && (widget.userModel.identifierId!.length != 12 || !isValidAadharNumber)) {
                           DigitToast.show(context,
                             options: DigitToastOptions(
                               "Enter a valid aadhar number",
