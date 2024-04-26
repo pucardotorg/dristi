@@ -1,10 +1,11 @@
 import { Header, Card, Loader, Menu, ActionBar, SubmitBar, Modal, CardText, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import DocumentDetailCard from "../../components/DocumentDetailCard";
 import DocViewerWrapper from "./docViewerWrapper";
 import { ReactComponent as LocationOnMapIcon } from "./image/location_onmap.svg";
+import { userTypeOptions } from "../citizen/registration/config";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -58,18 +59,8 @@ const ApplicationDetails = ({ location, match }) => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [message, setMessage] = useState(null);
-  const { data: advocateData, isLoading: isLoading1 } = Digit.Hooks.dristi.useGetIndividualAdvocate(
-    {
-      criteria: [{ individualId }],
-      tenantId,
-    },
-    {},
-    moduleCode,
-    applicationNo || individualId,
-    true
-  );
 
-  const { data: individualData, isLoading: isLoading2 } = Digit.Hooks.dristi.useGetIndividualUser(
+  const { data: individualData, isLoading: isGetUserLoading } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         individualId,
@@ -81,22 +72,41 @@ const ApplicationDetails = ({ location, match }) => {
     Boolean(individualId)
   );
 
-  const { data: documentData, isLoading: isLoading3 } = Digit.Hooks.dristi.useGetDocument(
-    { tenantId, fileStoreIds: "ea07c753-e075-483c-8a82-e6e873ec97c6" },
+  const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+    individualData?.Individual,
+  ]);
+
+  const userTypeDetail = useMemo(() => {
+    return userTypeOptions.find((item) => item.code === userType) || {};
+  }, [userType]);
+
+  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+    {
+      criteria: [{ individualId }],
+      tenantId,
+    },
+    {},
+    moduleCode,
+    userType,
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+  );
+  const searchResult = useMemo(() => {
+    return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+  }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
+  const { data: documentData, isLoading: isGetDocumentLoading } = Digit.Hooks.dristi.useGetDocument(
+    { tenantId, fileStoreIds: searchResult?.[0].documents?.[0]?.fileStore },
     moduleCode,
     applicationNo || individualId,
-    Boolean(individualId)
+    individualId && searchResult
   );
 
   let isMobile = window.Digit.Utils.browser.isMobile();
 
   function takeAction(action) {
-    const advocates = advocateData?.advocates || [];
-    advocates.forEach((advocate) => {
-      advocate.workflow.action = action.toUpperCase();
-    });
-
-    const requestBody = { advocates };
+    const applications = searchResult;
+    applications[0].workflow.action = action.toUpperCase();
+    const requestBody = { [userTypeDetail?.apiDetails?.requestKey]: applications };
     const params = { tenantId };
     Digit.DRISTIService.updateAdvocateService(requestBody, params)
       .then(() => {
@@ -125,7 +135,7 @@ const ApplicationDetails = ({ location, match }) => {
     takeAction("Reject");
   };
 
-  if (isLoading1 || isLoading2 || isLoading3) {
+  if (isSearchLoading || isGetUserLoading || isGetDocumentLoading) {
     return <Loader />;
   }
 
@@ -155,7 +165,7 @@ const ApplicationDetails = ({ location, match }) => {
     { title: "Address", content: address },
   ];
   const barDetails = [
-    { title: "Bar Registration Number", content: advocateData?.advocates?.[0]?.barRegistrationNumber || "N/A" },
+    { title: "Bar Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
     { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={documentData?.fileStoreIds?.[0]?.url}></DocViewerWrapper> },
   ];
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";

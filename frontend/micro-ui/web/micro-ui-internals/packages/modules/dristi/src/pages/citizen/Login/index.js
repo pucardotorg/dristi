@@ -84,36 +84,36 @@ const Login = ({ stateCode }) => {
     };
   }, [error]);
 
-  const routeToAdditionalDetail = async (info) => {
-    const individualDetails = await Digit.DRISTIService.searchIndividualUser(
-      {
-        Individual: {
-          userUuid: [info?.uuid],
-        },
-      },
-      { tenantId: Digit.ULBService.getStateId(), limit: 1000, offset: 0 }
-    );
-    const individualId = individualDetails?.Individual?.[0]?.individualId;
-    const userType = individualDetails?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
-    const userTypeDetails = userTypeOptions.find((item) => item.code === userType);
-    const searchAdvocateClerkData = await Digit.DRISTIService.searchAdvocateClerk(
-      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search",
-      {
-        criteria: [{ individualId }],
-        tenantId: Digit.ULBService.getStateId(),
-      },
-      { tenantId: Digit.ULBService.getStateId() }
-    );
+  // const routeToAdditionalDetail = async (info) => {
+  //   const individualDetails = await Digit.DRISTIService.searchIndividualUser(
+  //     {
+  //       Individual: {
+  //         userUuid: [info?.uuid],
+  //       },
+  //     },
+  //     { tenantId: Digit.ULBService.getStateId(), limit: 1000, offset: 0 }
+  //   );
+  //   const individualId = individualDetails?.Individual?.[0]?.individualId;
+  //   const userType = individualDetails?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
+  //   const userTypeDetails = userTypeOptions.find((item) => item.code === userType);
+  //   const searchAdvocateClerkData = await Digit.DRISTIService.searchAdvocateClerk(
+  //     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search",
+  //     {
+  //       criteria: [{ individualId }],
+  //       tenantId: Digit.ULBService.getStateId(),
+  //     },
+  //     { tenantId: Digit.ULBService.getStateId() }
+  //   );
 
-    if (
-      userType !== "LITIGANT" &&
-      individualId &&
-      Array.isArray(searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey]) &&
-      searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey].length === 0
-    ) {
-      history.push(`/digit-ui/citizen/dristi/home/additional-details`);
-    }
-  };
+  //   if (
+  //     userType !== "LITIGANT" &&
+  //     individualId &&
+  //     Array.isArray(searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey]) &&
+  //     searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey].length === 0
+  //   ) {
+  //     history.push(`/digit-ui/citizen/dristi/home/additional-details`);
+  //   }
+  // };
 
   useEffect(() => {
     if (!user) {
@@ -123,7 +123,7 @@ const Login = ({ stateCode }) => {
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
-    routeToAdditionalDetail(user?.info);
+    // routeToAdditionalDetail(user?.info);
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
       const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
@@ -261,6 +261,8 @@ const Login = ({ stateCode }) => {
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
+      const { otp, ...temp } = params;
+      setParmas(temp);
     }
   };
 

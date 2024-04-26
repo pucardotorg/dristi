@@ -11,13 +11,14 @@ const config = {
     serviceName: "/advocate/advocate/v1/_search",
     requestParam: {},
     requestBody: {
-      criteria: [],
+      applicationNumber: "",
       tenantId: "pg",
+      status: ["INWORKFLOW"],
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.criteria[0]",
+    searchFormJsonPath: "requestBody",
   },
   sections: {
     search: {
@@ -62,7 +63,7 @@ const config = {
           },
           {
             label: "User Name",
-            jsonPath: "additionalDetails.value",
+            jsonPath: "additionalDetails",
             additionalCustomization: true,
           },
           {

@@ -24,7 +24,7 @@ export const userTypeOptions = [
     hasStateRegistrationNo: true,
     isVerified: true,
     apiDetails: {
-      serviceName: "/clerk/v1/_create",
+      serviceName: "/advocate/clerk/v1/_create",
       requestKey: "clerks",
       AdditionalFields: ["stateRegnNumber"],
     },
@@ -202,7 +202,7 @@ export const newConfig = [
                   hasStateRegistrationNo: true,
                   isVerified: true,
                   apiDetails: {
-                    serviceName: "/clerk/v1/_create",
+                    serviceName: "/advocate/clerk/v1/_create",
                     requestKey: "clerks",
                     AdditionalFields: ["stateRegnNumber"],
                   },

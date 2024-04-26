@@ -21,6 +21,11 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
   // };
 
   const onSubmit = (termsAndConditionData) => {
+    if (!termsAndConditionData?.Terms_Conditions) {
+      setShowErrorToast(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      setTimeout(() => setShowErrorToast(null), 1500);
+      return;
+    }
     const data = params?.registrationData;
     setParams({ ...params, ...termsAndConditionData });
     const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
@@ -87,75 +92,6 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
       },
     };
     Digit.DRISTIService.postIndividualService(Individual, tenantId)
-      // .then((individualRes) => {
-      //   if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
-      //     onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
-      //       const requestBody = {
-      //         [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
-      //           {
-      //             tenantId: tenantId,
-      //             individualId: individualRes?.Individual?.individualId,
-      //             isActive: false,
-      //             workflow: {
-      //               action: "REGISTER",
-      //               comments: `Applying for ${data?.clientDetails?.selectUserType?.apiDetails?.requestKey} registration`,
-      //               documents: [
-      //                 {
-      //                   id: null,
-      //                   documentType: document.fileType,
-      //                   fileStore: document.file?.files?.[0]?.fileStoreId,
-      //                   documentUid: "",
-      //                   additionalDetails: {},
-      //                 },
-      //               ],
-      //               assignes: [],
-      //               rating: null,
-      //             },
-      //             documents: [
-      //               {
-      //                 id: null,
-      //                 documentType: document.fileType,
-      //                 fileStore: document.file?.files?.[0]?.fileStoreId,
-      //                 documentUid: "",
-      //                 additionalDetails: {},
-      //               },
-      //             ],
-      //             additionalDetails: {
-      //               username:
-      //                 data?.userDetails?.firstName && data?.userDetails?.lastName
-      //                   ? `${data?.userDetails?.firstName} ${data?.userDetails?.lastName}`
-      //                   : "",
-      //             },
-      //             ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-      //               res[curr] = data?.clientDetails[curr];
-      //               return res;
-      //             }, {}),
-      //           },
-      //         ],
-      //       };
-      //       Digit.DRISTIService.advocateClerkService(data?.clientDetails?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
-      //         roles: [
-      //           {
-      //             name: "Citizen",
-      //             code: "CITIZEN",
-      //             tenantId: tenantId,
-      //           },
-      //           {
-      //             name: "USER_REGISTER",
-      //             code: "USER_REGISTER",
-      //             tenantId: tenantId,
-      //           },
-      //         ],
-      //       })
-      //         .then(() => {
-      //           history.push(`/digit-ui/citizen/dristi/home/response`, "success");
-      //         })
-      //         .catch(() => {
-      //           history.push(`/digit-ui/citizen/dristi/home/response`, "error");
-      //         });
-      //     });
-      //   } else history.push(`/digit-ui/citizen/dristi/home/response`, "success");
-      // })
       .then(() => {
         history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success", createType: data?.clientDetails?.selectUserType?.code });
       })

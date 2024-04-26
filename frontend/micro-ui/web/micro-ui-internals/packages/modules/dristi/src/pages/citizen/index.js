@@ -7,7 +7,6 @@ import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-route
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import ApplicationDetails from "../employee/ApplicationDetails";
-import { Link } from "react-router-dom/cjs/react-router-dom";
 import { userTypeOptions } from "./registration/config";
 
 const App = ({ stateCode, tenantId }) => {

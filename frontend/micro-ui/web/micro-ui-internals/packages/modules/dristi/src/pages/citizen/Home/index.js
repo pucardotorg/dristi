@@ -11,11 +11,13 @@ import {
 import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
 import TakeUserToRegistration from "./TakeUserToRegistration";
 import { userTypeOptions } from "../registration/config";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function CitizenHome({ tenantId }) {
   const Digit = window?.Digit || {};
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
+  const history = useHistory();
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
@@ -56,8 +58,11 @@ function CitizenHome({ tenantId }) {
     return userTypeOptions.find((item) => item.code === userType) || {};
   }, [userType]);
 
+  const searchResult = useMemo(() => {
+    return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+  }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
   const isApprovalPending = useMemo(() => {
-    const searchResult = searchData?.[userTypeDetail?.apiDetails?.requestKey];
     return (
       userType !== "LITIGANT" &&
       Array.isArray(searchResult) &&
@@ -65,7 +70,15 @@ function CitizenHome({ tenantId }) {
       searchResult[0]?.isActive === false &&
       searchResult[0]?.status !== "INACTIVE"
     );
-  }, [searchData, userType, userTypeDetail?.apiDetails?.requestKey]);
+  }, [searchResult, userType]);
+
+  const isAdditionaDetails = useMemo(() => {
+    return userType !== "LITIGANT" && individualId && Array.isArray(searchResult) && searchResult.length === 0;
+  }, [individualId, searchResult, userType]);
+
+  if (isAdditionaDetails) {
+    history.push(`/digit-ui/citizen/dristi/home/additional-details`);
+  }
 
   if (isLoading || isSearchLoading) {
     return <Loader />;

@@ -680,8 +680,7 @@ export const UICustomizations = {
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
         case "User Name":
-          const obj = JSON.parse(value || "{}");
-          return <span>{obj?.username || obj?.name || t("ES_COMMON_NA")}</span>;
+          return <span>{value?.username || value?.name || t("ES_COMMON_NA")}</span>;
         default:
           return t("ES_COMMON_NA");
       }
