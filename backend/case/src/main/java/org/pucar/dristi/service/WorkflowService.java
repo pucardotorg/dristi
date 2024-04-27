@@ -38,7 +38,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(CaseRequest caseRequest) {
         caseRequest.getCases().forEach(courtCase -> {
             try {
-                ProcessInstance processInstance = getProcessInstanceForADV(courtCase, caseRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstance(courtCase, caseRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 courtCase.setStatus(applicationStatus);
@@ -60,7 +60,7 @@ public class WorkflowService {
         }
     }
 
-    private ProcessInstance getProcessInstanceForADV(CourtCase courtCase, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstance(CourtCase courtCase, RequestInfo requestInfo) {
         try {
             Workflow workflow = courtCase.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -82,7 +82,7 @@ public class WorkflowService {
             }
             return processInstance;
         } catch (Exception e) {
-            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
+            log.error("Error getting process instance for CASE: {}", e.getMessage());
             throw new CustomException();
         }
     }
@@ -103,7 +103,7 @@ public class WorkflowService {
     private BusinessService getBusinessService(CourtCase courtCase, RequestInfo requestInfo) {
         try {
             String tenantId = courtCase.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
+            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
             RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
             Object result = repository.fetchResult(url, requestInfoWrapper);
             BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
@@ -129,14 +129,14 @@ public class WorkflowService {
         url.append("&businessIds=").append(businessService);
         return url;
     }
-    public ProcessInstanceRequest getProcessInstanceForAdvocateRegistrationPayment(CaseRequest updateRequest) {
+    public ProcessInstanceRequest getProcessInstanceRegistrationPayment(CaseRequest updateRequest) {
         try {
             CourtCase application = updateRequest.getCases().get(0);
             ProcessInstance process = ProcessInstance.builder()
                     .businessService("ADV")
                     .businessId(application.getFilingNumber())
-                    .comment("Payment for advocate registration processed")
-                    .moduleName("advocate-services")
+                    .comment("Payment for Case registration processed")
+                    .moduleName("cases-services")
                     .tenantId(application.getTenantId())
                     .action("PAY")
                     .build();
@@ -145,7 +145,7 @@ public class WorkflowService {
                     .processInstances(Arrays.asList(process))
                     .build();
         } catch (Exception e) {
-            log.error("Error getting process instance for advocate registration payment: {}", e.getMessage());
+            log.error("Error getting process instance for case registration payment: {}", e.getMessage());
             throw new CustomException();
         }
     }

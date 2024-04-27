@@ -35,7 +35,7 @@ public class CaseService {
         try {
             validator.validateCaseRegistration(body);
             enrichmentUtil.enrichCaseRegistration(body);
-//            workflowService.updateWorkflowStatus(body);
+            workflowService.updateWorkflowStatus(body);
 
             producer.push("save-case-application", body);
             return body.getCases();

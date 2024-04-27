@@ -44,10 +44,14 @@ public class CaseRegistrationEnrichment {
 
                     courtCase.getStatutesAndSections().forEach(statuteSection -> {
                         statuteSection.setId(UUID.randomUUID());
+                        statuteSection.setStrSections(listToString(statuteSection.getSections()));
+                        statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
+                        statuteSection.setAuditdetails(auditDetails);
                     });
 
                     courtCase.getLitigants().forEach(party -> {
                         party.setId(String.valueOf(UUID.randomUUID()));
+                        party.setAuditDetails(auditDetails);
                         if (party.getDocuments()!=null){
                             party.getDocuments().forEach(document -> {
                                 document.setId(String.valueOf(UUID.randomUUID()));
@@ -58,6 +62,7 @@ public class CaseRegistrationEnrichment {
 
                     courtCase.getRepresentatives().forEach(advocateMapping -> {
                         advocateMapping.setId(String.valueOf(UUID.randomUUID()));
+                        advocateMapping.setAuditDetails(auditDetails);
                         if (advocateMapping.getDocuments()!=null){
                             advocateMapping.getDocuments().forEach(document -> {
                                 document.setId(String.valueOf(UUID.randomUUID()));
@@ -67,6 +72,8 @@ public class CaseRegistrationEnrichment {
 
                         advocateMapping.getRepresenting().forEach(party -> {
                             party.setId(String.valueOf(UUID.randomUUID()));
+                            party.setCaseId(courtCase.getId().toString());
+                            party.setAuditDetails(auditDetails);
                             if (party.getDocuments()!=null){
                                 party.getDocuments().forEach(document -> {
                                     document.setId(String.valueOf(UUID.randomUUID()));
@@ -97,5 +104,22 @@ public class CaseRegistrationEnrichment {
             e.printStackTrace();
             log.error("Error enriching case application: {}", e.getMessage());
         }
+    }
+
+    public String listToString(List<String> list){
+        StringBuilder stB = new StringBuilder();
+        boolean isFirst = true;
+        for (String doc : list) {
+            String token = doc;
+            if(isFirst){
+                isFirst = false;
+                stB.append(token);
+            }
+            else{
+                stB.append("|"+token);
+            }
+        }
+
+        return stB.toString();
     }
 }
