@@ -34,17 +34,62 @@ public class CaseRegistrationEnrichment {
                     courtCase.setAuditdetails(auditDetails);
 
                     courtCase.setId(UUID.randomUUID());
-//                    courtCase.setIsActive(false);
-                    courtCase.getDocuments().forEach(document -> {
-                        document.setId(String.valueOf(UUID.randomUUID()));
-                        document.setDocumentUid(document.getId());
+                    courtCase.getLinkedCases().forEach(linkedCase -> {
+                        linkedCase.setId(UUID.randomUUID());
+                        linkedCase.getDocuments().forEach(document -> {
+                            document.setId(String.valueOf(UUID.randomUUID()));
+                            document.setDocumentUid(document.getId());
+                        });
                     });
+
+                    courtCase.getStatutesAndSections().forEach(statuteSection -> {
+                        statuteSection.setId(UUID.randomUUID());
+                    });
+
+                    courtCase.getLitigants().forEach(party -> {
+                        party.setId(String.valueOf(UUID.randomUUID()));
+                        if (party.getDocuments()!=null){
+                            party.getDocuments().forEach(document -> {
+                                document.setId(String.valueOf(UUID.randomUUID()));
+                                document.setDocumentUid(document.getId());
+                            });
+                        }
+                    });
+
+                    courtCase.getRepresentatives().forEach(advocateMapping -> {
+                        advocateMapping.setId(String.valueOf(UUID.randomUUID()));
+                        if (advocateMapping.getDocuments()!=null){
+                            advocateMapping.getDocuments().forEach(document -> {
+                                document.setId(String.valueOf(UUID.randomUUID()));
+                                document.setDocumentUid(document.getId());
+                            });
+                        }
+
+                        advocateMapping.getRepresenting().forEach(party -> {
+                            party.setId(String.valueOf(UUID.randomUUID()));
+                            if (party.getDocuments()!=null){
+                                party.getDocuments().forEach(document -> {
+                                    document.setId(String.valueOf(UUID.randomUUID()));
+                                    document.setDocumentUid(document.getId());
+                                });
+                            }
+                        });
+                    });
+
+//                    courtCase.setIsActive(false);
+                    if (courtCase.getDocuments()!=null){
+                        courtCase.getDocuments().forEach(document -> {
+                            document.setId(String.valueOf(UUID.randomUUID()));
+                            document.setDocumentUid(document.getId());
+                        });
+                    }
 
                     courtCase.setFilingNumber(courtCaseRegistrationIdList.get(index++));
                 }
             }
         }
         catch (CustomException e){
+            e.printStackTrace();
         log.error("Custom Exception occurred while Enriching advocate clerk");
         throw e;
         }

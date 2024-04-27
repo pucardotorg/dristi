@@ -3,6 +3,9 @@ package org.pucar.dristi.web.controllers;
 import java.io.IOException;
 import java.util.List;
 
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.CaseService;
+import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,12 @@ public class CaseApiController {
         private final HttpServletRequest request;
 
 	@Autowired
+	private CaseService caseService;
+
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
+
+	@Autowired
 	public CaseApiController(ObjectMapper objectMapper, HttpServletRequest request) {
 		this.objectMapper = objectMapper;
 		this.request = request;
@@ -39,7 +48,10 @@ public class CaseApiController {
                 public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody CaseRequest body) {
                         String accept = request.getHeader("Accept");
                             if (accept != null && accept.contains("application/json")) {
-                            return new ResponseEntity<CaseResponse>(HttpStatus.CREATED);
+								List<CourtCase> caseList = caseService.registerCaseRequest(body);
+								ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+								CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).requestInfo(responseInfo).build();
+								return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
                             }
 
                         return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
