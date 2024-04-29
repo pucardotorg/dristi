@@ -148,7 +148,10 @@ export const newConfig = [
               type: "text",
               name: "doorNo",
               validation: {
+                title: "ADDRESS_DOOR_NO_INVALID",
+                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
                 isRequired: true,
+                minlength: 2,
               },
               isMandatory: true,
             },

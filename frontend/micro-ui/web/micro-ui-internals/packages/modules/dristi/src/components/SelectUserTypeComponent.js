@@ -132,7 +132,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
                     input.validation &&
-                    !currentValue.match(Digit.Utils.getPattern(input.validation.patternType)) && (
+                    !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
                         <span style={{ color: "#FF0000" }}> {t(input.validation?.title || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>

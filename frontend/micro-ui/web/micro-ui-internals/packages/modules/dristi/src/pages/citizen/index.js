@@ -152,12 +152,16 @@ const App = ({ stateCode, tenantId }) => {
             <Registration stateCode={stateCode} />
           </Route>
           <Route path={`${path}/home/additional-details`}>
-            <AdvocateClerkAdditionalDetail
-              userTypeDetail={userTypeDetail}
-              individualId={individualId}
-              userType={userType}
-              refetch={refetchAdvocateClerk}
-            />
+            <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
+              <AppContainer>
+                <AdvocateClerkAdditionalDetail
+                  userTypeDetail={userTypeDetail}
+                  individualId={individualId}
+                  userType={userType}
+                  refetch={refetchAdvocateClerk}
+                />
+              </AppContainer>
+            </div>
           </Route>
           <Route path={`${path}/home/response`}>
             <Response refetch={refetch} />

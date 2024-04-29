@@ -80,7 +80,9 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, refetch =
           ],
         })
           .then(() => {
-            history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success" });
+            refetch().then(() => {
+              history.push(`/digit-ui/citizen/dristi/home`);
+            });
           })
           .catch(() => {
             history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });

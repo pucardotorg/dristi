@@ -48,7 +48,7 @@ function CitizenHome({ tenantId }) {
       criteria: [{ individualId }],
       tenantId,
     },
-    {},
+    { tenantId },
     moduleCode,
     Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
@@ -72,11 +72,12 @@ function CitizenHome({ tenantId }) {
     );
   }, [searchResult, userType]);
 
-  const isAdditionaDetails = useMemo(() => {
+  const isAdditionalDetails = useMemo(() => {
     return userType !== "LITIGANT" && individualId && Array.isArray(searchResult) && searchResult.length === 0;
   }, [individualId, searchResult, userType]);
 
-  if (isAdditionaDetails) {
+  if (isAdditionalDetails) {
+    debugger;
     history.push(`/digit-ui/citizen/dristi/home/additional-details`);
   }
 
