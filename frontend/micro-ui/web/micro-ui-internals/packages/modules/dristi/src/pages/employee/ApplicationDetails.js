@@ -239,9 +239,9 @@ const ApplicationDetails = ({ location, match }) => {
           actionSaveOnSubmit={handleDelete}
           isDisabled={!reasons}
         >
-          <Card style={{ boxShadow: "none" }}>
-            <CardText>{t(`REASON_FOR_REJECTION`)}</CardText>
-            <TextArea onChange={(e) => setReasons(e.target.value)} style={{ rows: "2" }}></TextArea>
+          <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
+            <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
+            <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
           </Card>
         </Modal>
       )}

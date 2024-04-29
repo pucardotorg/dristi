@@ -20,6 +20,8 @@ const TextArea = (props) => {
         minLength={props.minlength}
         maxLength={props.maxlength}
         autoComplete="off"
+        rows={props.rows}
+        cols={props.cols}
         disabled={props.disabled}
         pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
       ></textarea>
