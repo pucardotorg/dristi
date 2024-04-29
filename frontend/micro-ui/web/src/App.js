@@ -4,7 +4,6 @@ import {
   DigitUI,
   initCoreComponents,
 } from "@egovernments/digit-ui-module-core";
-import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import { UICustomizations } from "./Customisations/UICustomizations";
 import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
@@ -20,7 +19,6 @@ const moduleReducers = (initData) => ({
 const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
-  initUtilitiesComponents();
   initWorkbenchComponents();
   initDRISTIComponents();
 
