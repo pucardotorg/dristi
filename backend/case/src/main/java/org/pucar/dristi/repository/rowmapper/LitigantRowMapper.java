@@ -6,6 +6,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.Party;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -14,17 +15,17 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
-    public List<CourtCase> extractData(ResultSet rs) {
-        Map<String, CourtCase> advocateMap = new LinkedHashMap<>();
+public class LitigantRowMapper implements ResultSetExtractor<List<Party>> {
+    public List<Party> extractData(ResultSet rs) {
+        Map<String, Party> partyMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String uuid = rs.getString("casenumber");
-                CourtCase courtCase = advocateMap.get(uuid);
+                String id = rs.getString("id");
+                Party party = partyMap.get(id);
 
-                if (courtCase == null) {
+                if (party == null) {
                     Long lastModifiedTime = rs.getLong("lastmodifiedtime");
                     if (rs.wasNull()) {
                         lastModifiedTime = null;
@@ -37,31 +38,30 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .lastModifiedBy(rs.getString("lastmodifiedby"))
                             .lastModifiedTime(lastModifiedTime)
                             .build();
-                    courtCase = CourtCase.builder()
-                            .id(UUID.fromString(rs.getString("id")))
-                            .caseNumber(rs.getString("caseNumber"))
+                    party = Party.builder()
+                            .id(rs.getString("id"))
                             .tenantId(rs.getString("tenantid"))
-                            .caseCategory(rs.getString("casecategory"))
-                            .caseDescription(rs.getString("casedescription"))
-                            .courtId(rs.getString("courtid"))
-                            .benchId(rs.getString("benchid"))
-                            .status(rs.getString("status"))
-                            .auditdetails(auditdetails)
+                            .partyCategory(rs.getString("casecategory"))
+                            .individualId(rs.getString("individualid"))
+                            .organisationID(rs.getString("organisationid"))
+                            .partyType(rs.getString("partytype"))
+                            .isActive(Boolean.getBoolean(rs.getString("isactive")))
+                            .auditDetails(auditdetails)
                             .build();
                 }
 
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if(pgObject!=null)
-                    courtCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                    party.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                advocateMap.put(uuid, courtCase);
+                partyMap.put(id, party);
             }
         }
         catch (Exception e){
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
             throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
         }
-        return new ArrayList<>(advocateMap.values());
+        return new ArrayList<>(partyMap.values());
     }
     private UUID toUUID(String toUuid) {
         if(toUuid == null) {

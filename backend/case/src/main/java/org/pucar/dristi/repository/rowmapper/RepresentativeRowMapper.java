@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.web.models.AdvocateMapping;
 import org.pucar.dristi.web.models.CourtCase;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
@@ -14,17 +15,17 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
-    public List<CourtCase> extractData(ResultSet rs) {
-        Map<String, CourtCase> advocateMap = new LinkedHashMap<>();
+public class RepresentativeRowMapper implements ResultSetExtractor<List<AdvocateMapping>> {
+    public List<AdvocateMapping> extractData(ResultSet rs) {
+        Map<String, AdvocateMapping> advocateMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String uuid = rs.getString("casenumber");
-                CourtCase courtCase = advocateMap.get(uuid);
+                AdvocateMapping advocateMapping = advocateMap.get(uuid);
 
-                if (courtCase == null) {
+                if (advocateMapping == null) {
                     Long lastModifiedTime = rs.getLong("lastmodifiedtime");
                     if (rs.wasNull()) {
                         lastModifiedTime = null;
@@ -37,24 +38,19 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .lastModifiedBy(rs.getString("lastmodifiedby"))
                             .lastModifiedTime(lastModifiedTime)
                             .build();
-                    courtCase = CourtCase.builder()
-                            .id(UUID.fromString(rs.getString("id")))
-                            .caseNumber(rs.getString("caseNumber"))
+                    advocateMapping = AdvocateMapping.builder()
+                            .id(rs.getString("id"))
+                            .advocateId(rs.getString("casenumber"))
                             .tenantId(rs.getString("tenantid"))
-                            .caseCategory(rs.getString("casecategory"))
-                            .caseDescription(rs.getString("casedescription"))
-                            .courtId(rs.getString("courtid"))
-                            .benchId(rs.getString("benchid"))
-                            .status(rs.getString("status"))
-                            .auditdetails(auditdetails)
+                            .auditDetails(auditdetails)
                             .build();
                 }
 
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if(pgObject!=null)
-                    courtCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                    advocateMapping.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                advocateMap.put(uuid, courtCase);
+                advocateMap.put(uuid, advocateMapping);
             }
         }
         catch (Exception e){
