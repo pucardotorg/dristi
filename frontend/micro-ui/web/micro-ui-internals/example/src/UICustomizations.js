@@ -663,7 +663,7 @@ export const UICustomizations = {
             </Link>
           );
         case "User Type":
-          return t("Advocate");
+          return row?.applicationNumber?.includes("CLERK") ? t("Clerk") : t("Advocate");
         case "Date Created":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");

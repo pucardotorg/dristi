@@ -106,9 +106,9 @@ const ApplicationDetails = ({ location, match }) => {
   function takeAction(action) {
     const applications = searchResult;
     applications[0].workflow.action = action.toUpperCase();
-    const requestBody = { [userTypeDetail?.apiDetails?.requestKey]: applications };
-    const params = { tenantId };
-    Digit.DRISTIService.updateAdvocateService(requestBody, params)
+    const data = { [userTypeDetail?.apiDetails?.requestKey]: applications };
+    const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/advocate/v1/_update";
+    Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
         setMessage(action === "Approve" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
