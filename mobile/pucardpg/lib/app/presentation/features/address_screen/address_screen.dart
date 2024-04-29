@@ -22,7 +22,6 @@ import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 class AddressScreen extends StatefulWidget with AppMixin {
-
   UserModel userModel = UserModel();
 
   AddressScreen({super.key, required this.userModel});
@@ -42,6 +41,7 @@ class AddressScreenState extends State<AddressScreen> {
   String cityKey = 'city';
   String localityKey = 'locality';
   String doorNoKey = 'doorNo';
+  bool isSubmitting = false;
   // List<String> state = [];
   // List<String> district = ['District'];
   // List<String> city = ['City'];
@@ -96,7 +96,8 @@ class AddressScreenState extends State<AddressScreen> {
   }
 
   _getCurrentLocation(FormGroup form) async {
-    if (widget.userModel.addressModel.longitude == null || widget.userModel.addressModel.longitude == 0) {
+    if (widget.userModel.addressModel.longitude == null ||
+        widget.userModel.addressModel.longitude == 0) {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       inspect(position);
@@ -117,7 +118,8 @@ class AddressScreenState extends State<AddressScreen> {
         widget.userModel.addressModel.state = place.administrativeArea!;
         widget.userModel.addressModel.district = place.subAdministrativeArea!;
         widget.userModel.addressModel.city = place.locality!;
-        widget.userModel.addressModel.street = place.street! + place.subLocality!;
+        widget.userModel.addressModel.street =
+            place.street! + place.subLocality!;
         widget.userModel.addressModel.latitude = _currentPosition.latitude;
         widget.userModel.addressModel.longitude = _currentPosition.longitude;
 
@@ -190,10 +192,7 @@ class AddressScreenState extends State<AddressScreen> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DigitBackButton(),
-                        DigitHelpButton()
-                      ],
+                      children: [DigitBackButton(), DigitHelpButton()],
                     ),
                     DigitCard(
                       padding: const EdgeInsets.all(20.0),
@@ -320,15 +319,15 @@ class AddressScreenState extends State<AddressScreen> {
                                   isRequired: true,
                                   maxLength: 6,
                                   onChanged: (value) {
-                                    widget.userModel.addressModel.pincode = value.value.toString();
+                                    widget.userModel.addressModel.pincode =
+                                        value.value.toString();
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
                                   validationMessages: {
                                     'required': (_) => 'Pincode is required',
-                                    'maxLength': (_) =>
-                                    'Max length should be 6'
+                                    'maxLength': (_) => 'Max length should be 6'
                                   },
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
@@ -342,13 +341,15 @@ class AddressScreenState extends State<AddressScreen> {
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
                                   onChanged: (value) {
-                                    widget.userModel.addressModel.state = value.value.toString();
+                                    widget.userModel.addressModel.state =
+                                        value.value.toString();
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[a-zA-Z]')),
                                   ],
                                   validationMessages: {
                                     'required': (_) => 'State is required',
@@ -360,13 +361,15 @@ class AddressScreenState extends State<AddressScreen> {
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
                                   onChanged: (value) {
-                                    widget.userModel.addressModel.district = value.value.toString();
+                                    widget.userModel.addressModel.district =
+                                        value.value.toString();
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[a-zA-Z]')),
                                   ],
                                   validationMessages: {
                                     'required': (_) => 'District is required',
@@ -378,13 +381,15 @@ class AddressScreenState extends State<AddressScreen> {
                                   keyboardType: TextInputType.text,
                                   isRequired: true,
                                   onChanged: (value) {
-                                    widget.userModel.addressModel.city = value.value.toString();
+                                    widget.userModel.addressModel.city =
+                                        value.value.toString();
                                     // if (value.value.length == 6) {
                                     //   _fetchDistrict(value.value);
                                     // }
                                   },
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z]')),
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[a-zA-Z]')),
                                   ],
                                   validationMessages: {
                                     'required': (_) => 'City is required',
@@ -447,14 +452,15 @@ class AddressScreenState extends State<AddressScreen> {
                                     formControlName: localityKey,
                                     label: 'Locality / Street name / Area',
                                     isRequired: true,
-                                    onChanged: (value){
-                                      widget.userModel.addressModel.street = value.value.toString();
+                                    onChanged: (value) {
+                                      widget.userModel.addressModel.street =
+                                          value.value.toString();
                                     },
                                     validationMessages: {
                                       'required': (_) =>
                                           'Locality / Street name / Area is required',
                                       'minLength': (_) =>
-                                      'Min length should be 2',
+                                          'Min length should be 2',
                                       'maxLength': (_) =>
                                           'Max length should be 128'
                                     },
@@ -470,15 +476,16 @@ class AddressScreenState extends State<AddressScreen> {
                                     padding: const EdgeInsets.all(0),
                                     label: 'Door number',
                                     isRequired: true,
-                                    onChanged: (value){
-                                      widget.userModel.addressModel.doorNo = value.value.toString();
+                                    onChanged: (value) {
+                                      widget.userModel.addressModel.doorNo =
+                                          value.value.toString();
                                     },
                                     keyboardType: TextInputType.text,
                                     validationMessages: {
                                       'required': (_) =>
                                           'Door number is required',
                                       'minLength': (_) =>
-                                      'Min length should be 2',
+                                          'Min length should be 2',
                                       'maxLength': (_) =>
                                           'Max length should be 128'
                                     },
@@ -494,28 +501,30 @@ class AddressScreenState extends State<AddressScreen> {
                 ),
               )),
               DigitElevatedButton(
-                  onPressed: () {
-                    FocusScope.of(context).unfocus();
-                    form.markAllAsTouched();
-                    if (!form.valid) return;
+                  onPressed: isSubmitting
+                      ? null
+                      : () {
+                          FocusScope.of(context).unfocus();
+                          form.markAllAsTouched();
+                          if (!form.valid) return;
 
-                    if (form.value[pinCodeKey]
-                        .toString()
-                        .isNotEmpty &&
-                        int.parse(form.value[pinCodeKey].toString()) <
-                            100000) {
-                      DigitToast.show(context,
-                        options: DigitToastOptions(
-                          "Enter valid Pincode",
-                          true,
-                          widget.theme.theme(),
-                        ),
-                      );
-                      return;
-                    }
-                    Navigator.pushNamed(context, '/UserTypeScreen',
-                        arguments: widget.userModel);
-                  },
+                          if (form.value[pinCodeKey].toString().isNotEmpty &&
+                              int.parse(form.value[pinCodeKey].toString()) <
+                                  100000) {
+                            DigitToast.show(
+                              context,
+                              options: DigitToastOptions(
+                                "Enter valid Pincode",
+                                true,
+                                widget.theme.theme(),
+                              ),
+                            );
+                            return;
+                          }
+                          Navigator.pushNamed(context, '/UserTypeScreen',
+                              arguments: widget.userModel);
+                          isSubmitting = true;
+                        },
                   child: Text(
                     'Next',
                     style: widget.theme.text20W700()?.apply(
@@ -530,27 +539,37 @@ class AddressScreenState extends State<AddressScreen> {
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
-        pinLocationKey:
-            FormControl<String>(value: ''),
+        pinLocationKey: FormControl<String>(value: ''),
         pinCodeKey: FormControl<String>(
             value: widget.userModel.addressModel.pincode,
-            validators: [Validators.required, Validators.maxLength(6), Validators.number]),
+            validators: [
+              Validators.required,
+              Validators.maxLength(6),
+              Validators.number
+            ]),
         stateKey: FormControl<String>(
-            value: widget.userModel.addressModel.state, validators: [Validators.required]),
+            value: widget.userModel.addressModel.state,
+            validators: [Validators.required]),
         districtKey: FormControl<String>(
-            value: widget.userModel.addressModel.district, validators: [Validators.required]),
+            value: widget.userModel.addressModel.district,
+            validators: [Validators.required]),
         cityKey: FormControl<String>(
-            value: widget.userModel.addressModel.city, validators: [Validators.required]),
-        localityKey: FormControl<String>(value: widget.userModel.addressModel.street, validators: [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(128)
-        ]),
-        doorNoKey: FormControl<String>(value: widget.userModel.addressModel.doorNo, validators: [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(128)
-        ]),
+            value: widget.userModel.addressModel.city,
+            validators: [Validators.required]),
+        localityKey: FormControl<String>(
+            value: widget.userModel.addressModel.street,
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.maxLength(128)
+            ]),
+        doorNoKey: FormControl<String>(
+            value: widget.userModel.addressModel.doorNo,
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.maxLength(128)
+            ]),
       });
 
   Future<void> displayPrediction(Prediction p, FormGroup form) async {
@@ -625,7 +644,7 @@ class AddressScreenState extends State<AddressScreen> {
     }
     setState(() {
       widget.userModel.addressModel.state = newStateName;
-      widget.userModel.addressModel.district  = newDistrictName;
+      widget.userModel.addressModel.district = newDistrictName;
       widget.userModel.addressModel.city = newCityName;
       widget.userModel.addressModel.pincode = newPinCode;
       widget.userModel.addressModel.street = newLocality;
