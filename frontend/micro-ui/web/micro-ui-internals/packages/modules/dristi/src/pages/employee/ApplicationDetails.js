@@ -1,4 +1,16 @@
-import { Header, Card, Loader, Menu, ActionBar, SubmitBar, Modal, CardText, Toast } from "@egovernments/digit-ui-react-components";
+import {
+  Header,
+  Card,
+  Loader,
+  Menu,
+  ActionBar,
+  SubmitBar,
+  Modal,
+  CardText,
+  Toast,
+  TextInput,
+  TextArea,
+} from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -59,6 +71,7 @@ const ApplicationDetails = ({ location, match }) => {
   const [displayMenu, setDisplayMenu] = useState(false);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [message, setMessage] = useState(null);
+  const [reasons, setReasons] = useState(null);
 
   const { data: individualData, isLoading: isGetUserLoading } = Digit.Hooks.dristi.useGetIndividualUser(
     {
@@ -108,6 +121,9 @@ const ApplicationDetails = ({ location, match }) => {
     applications[0].workflow.action = action.toUpperCase();
     const data = { [userTypeDetail?.apiDetails?.requestKey]: applications };
     const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/advocate/v1/_update";
+    if (showModal) {
+      applications[0].workflow.comments = reasons;
+    }
     Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
@@ -208,12 +224,16 @@ const ApplicationDetails = ({ location, match }) => {
           headerBarMain={<Heading label={t("Confirm Reject Application")} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           actionCancelLabel={t("Cancel")}
-          actionCancelOnSubmit={() => setShowModal(false)}
+          actionCancelOnSubmit={() => {
+            setShowModal(false);
+          }}
           actionSaveLabel={t("Reject")}
           actionSaveOnSubmit={handleDelete}
+          isDisabled={!reasons}
         >
           <Card style={{ boxShadow: "none" }}>
-            <CardText>{t(`Reject Application due to invalid information`)}</CardText>
+            <CardText>{t(`REASON_FOR_REJECTION`)}</CardText>
+            <TextArea onChange={(e) => setReasons(e.target.value)} style={{ rows: "2" }}></TextArea>
           </Card>
         </Modal>
       )}

@@ -6,24 +6,24 @@ const TextArea = (props) => {
 
   return (
     <React.Fragment>
-    <textarea
-      placeholder={props.placeholder}
-      name={props.name}
-      ref={props.inputRef}
-      style={props.style}
-      id={props.id}
-      value={props.value}
-      onChange={props.onChange}
-      className={`${user_type !== "citizen" ? "employee-card-textarea" : "card-textarea"} ${props.disable && "disabled"} ${
-        props?.className ? props?.className : ""
-      }`}
-      minLength={props.minlength}
-      maxLength={props.maxlength} 
-      autoComplete="off"
-      disabled={props.disabled}
-      pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
-    ></textarea>
-    {  <p className="cell-text">{props.hintText}</p>}
+      <textarea
+        placeholder={props.placeholder}
+        name={props.name}
+        ref={props.inputRef}
+        style={props.style}
+        id={props.id}
+        value={props.value}
+        onChange={props.onChange}
+        className={`${user_type !== "citizen" ? "employee-card-textarea" : "card-textarea"} ${props.disable && "disabled"} ${
+          props?.className ? props?.className : ""
+        }`}
+        minLength={props.minlength}
+        maxLength={props.maxlength}
+        autoComplete="off"
+        disabled={props.disabled}
+        pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
+      ></textarea>
+      {<p className="cell-text">{props.hintText}</p>}
     </React.Fragment>
   );
 };
