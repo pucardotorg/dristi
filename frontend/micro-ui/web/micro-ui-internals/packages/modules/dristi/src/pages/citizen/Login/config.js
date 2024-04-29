@@ -81,6 +81,9 @@ export const loginSteps = [
                   name: "PAN",
                 },
               ],
+              optionsCustomStyle: {
+                top: "40px",
+              },
             },
             {
               label: "Upload ID Proof",
@@ -104,7 +107,8 @@ export const loginSteps = [
                 maxlength: 12,
                 patternType: "AadharNo",
                 pattern: "[0-9]+",
-                title: "AADHAR_NUMBER_INVALID",
+                errMsg: "AADHAR_NUMBER_INVALID",
+                title: "",
               },
               clearFields: { ID_Proof: [], selectIdTypeType: "" },
               clearFieldsType: { ID_Proof: "documentUpload" },

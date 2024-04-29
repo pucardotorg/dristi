@@ -26,7 +26,7 @@ const SelectMobileNumber = ({
       <CheckBox
         onChange={handleRememberMeChange}
         checked={isRememberMe}
-        label={"Remember me"}
+        label={t("Remember me")}
         name={"Checkbox"}
         styles={{ alignItems: "center", textAlign: "center" }}
         labeStyle={{ paddingTop: "10px" }}

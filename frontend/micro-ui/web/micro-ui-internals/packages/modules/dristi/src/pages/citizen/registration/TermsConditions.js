@@ -119,7 +119,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%" }}
       ></FormComposerV2>
-      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      {showErrorToast && <Toast error={true} label={t("ES_COMMON_SELECT_TERMS_AND_CONDITIONS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
 }

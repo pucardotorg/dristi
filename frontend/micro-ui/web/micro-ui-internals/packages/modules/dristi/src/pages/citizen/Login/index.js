@@ -85,37 +85,6 @@ const Login = ({ stateCode }) => {
     };
   }, [error]);
 
-  // const routeToAdditionalDetail = async (info) => {
-  //   const individualDetails = await Digit.DRISTIService.searchIndividualUser(
-  //     {
-  //       Individual: {
-  //         userUuid: [info?.uuid],
-  //       },
-  //     },
-  //     { tenantId: Digit.ULBService.getStateId(), limit: 1000, offset: 0 }
-  //   );
-  //   const individualId = individualDetails?.Individual?.[0]?.individualId;
-  //   const userType = individualDetails?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value;
-  //   const userTypeDetails = userTypeOptions.find((item) => item.code === userType);
-  //   const searchAdvocateClerkData = await Digit.DRISTIService.searchAdvocateClerk(
-  //     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search",
-  //     {
-  //       criteria: [{ individualId }],
-  //       tenantId: Digit.ULBService.getStateId(),
-  //     },
-  //     { tenantId: Digit.ULBService.getStateId() }
-  //   );
-
-  //   if (
-  //     userType !== "LITIGANT" &&
-  //     individualId &&
-  //     Array.isArray(searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey]) &&
-  //     searchAdvocateClerkData[userTypeDetails?.apiDetails?.requestKey].length === 0
-  //   ) {
-  //     history.push(`/digit-ui/citizen/dristi/home/additional-details`);
-  //   }
-  // };
-
   useEffect(() => {
     if (!user) {
       return;

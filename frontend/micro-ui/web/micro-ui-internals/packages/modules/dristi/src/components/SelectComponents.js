@@ -104,7 +104,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                   input.validation &&
                   !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
                     <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.title || "CORE_COMMON_INVALID")}</span>
+                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                     </CardLabelError>
                   )}
               </div>

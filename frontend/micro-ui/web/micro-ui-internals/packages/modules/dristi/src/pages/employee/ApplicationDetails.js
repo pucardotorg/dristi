@@ -151,6 +151,33 @@ const ApplicationDetails = ({ location, match }) => {
     takeAction("Reject");
   };
 
+  const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "";
+  const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "";
+  const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+  const street = individualData?.Individual?.[0]?.address[0]?.street || "";
+  const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+  const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+  const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+  const latitude = useMemo(() => individualData?.Individual?.[0]?.address[0]?.latitude || "", [individualData?.Individual]);
+  const longitude = useMemo(() => individualData?.Individual?.[0]?.address[0]?.longitude || "", [individualData?.Individual]);
+
+  const address = `${addressLine1} ${addressLine2} ${buildingName} ${street} ${landmark} ${city} ${pincode}`.trim();
+
+  const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
+  const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
+  const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
+
+  const fullName = `${givenName} ${otherNames} ${familyName}`.trim();
+
+  const personalData = useMemo(
+    () => [
+      { title: "Name", content: fullName },
+      { title: "Location", content: <LocationContent latitude={latitude} longitude={longitude}></LocationContent> },
+      { title: "Address", content: address },
+    ],
+    [address, fullName, latitude, longitude]
+  );
+
   if (isSearchLoading || isGetUserLoading || isGetDocumentLoading) {
     return <Loader />;
   }
@@ -160,26 +187,7 @@ const ApplicationDetails = ({ location, match }) => {
     { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
     { title: "Aadhar Number", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierId },
   ];
-  const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "";
-  const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "";
-  const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
-  const street = individualData?.Individual?.[0]?.address[0]?.street || "";
-  const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
-  const city = individualData?.Individual?.[0]?.address[0]?.city || "";
-  const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
 
-  const address = `${addressLine1} ${addressLine2} ${buildingName} ${street} ${landmark} ${city} ${pincode}`.trim();
-
-  const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
-  const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
-  const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
-
-  const fullName = `${givenName} ${otherNames} ${familyName}`.trim();
-  const personalData = [
-    { title: "Name", content: fullName },
-    { title: "Location", content: <LocationContent></LocationContent> },
-    { title: "Address", content: address },
-  ];
   const barDetails = [
     { title: "Bar Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
     { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={documentData?.fileStoreIds?.[0]?.url}></DocViewerWrapper> },

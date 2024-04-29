@@ -9,7 +9,7 @@ const Registration = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const { path } = useRouteMatch();
-  const [params, setParams] = useState({ registrationData: { userDetails: { firstName: Digit.UserService.getUser()?.info?.name } } });
+  const [params, setParams] = useState({ registrationData: { userDetails: {} } });
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
