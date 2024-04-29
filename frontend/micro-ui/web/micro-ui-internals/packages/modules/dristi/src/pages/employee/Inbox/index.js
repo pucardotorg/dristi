@@ -210,8 +210,8 @@ const Inbox = ({ tenants, parentRoute }) => {
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
   const [type, setType] = useState({
-    code: "clerk",
-    name: "Clerk",
+    code: "advocate",
+    name: "Advocate",
   });
   const config = useMemo(() => {
     return type.name === "Clerk" ? configClerk : configAdvocate;
