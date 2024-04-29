@@ -7,6 +7,10 @@ import CardLabelError from "../atoms/CardLabelError";
 import TextInput from "../atoms/TextInput";
 import InputCard from "./InputCard";
 
+const labelErrorStyle = {
+  marginTop: "-10px",
+};
+
 const FormStep = ({
   t,
   children,
@@ -41,7 +45,6 @@ const FormStep = ({
       return (
         <React.Fragment key={index}>
           <CardLabel>{t(input.label)}</CardLabel>
-          {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           <div className="field-container" style={{ justifyContent: "left" }}>
             {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
             <TextInput
@@ -59,6 +62,7 @@ const FormStep = ({
               textInputStyle={textInputStyle}
             />
           </div>
+          {errors[input.name] && <CardLabelError style={labelErrorStyle}>{t(input.error)}</CardLabelError>}
         </React.Fragment>
       );
     }
