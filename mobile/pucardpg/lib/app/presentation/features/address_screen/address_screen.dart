@@ -456,6 +456,8 @@ class AddressScreenState extends State<AddressScreen> {
                                       widget.userModel.addressModel.street =
                                           value.value.toString();
                                     },
+                                    minLength: 2,
+                                    maxLength: 128,
                                     validationMessages: {
                                       'required': (_) =>
                                           'Locality / Street name / Area is required',
@@ -468,9 +470,6 @@ class AddressScreenState extends State<AddressScreen> {
                                       FilteringTextInputFormatter.allow(
                                           RegExp("[a-zA-Z0-9 .,\\/\\-_@#\\']"))
                                     ]),
-                                const SizedBox(
-                                  height: 12,
-                                ),
                                 DigitTextFormField(
                                     formControlName: doorNoKey,
                                     padding: const EdgeInsets.all(0),
@@ -481,6 +480,8 @@ class AddressScreenState extends State<AddressScreen> {
                                           value.value.toString();
                                     },
                                     keyboardType: TextInputType.text,
+                                    minLength: 2,
+                                    maxLength: 128,
                                     validationMessages: {
                                       'required': (_) =>
                                           'Door number is required',
@@ -523,7 +524,7 @@ class AddressScreenState extends State<AddressScreen> {
                           }
                           Navigator.pushNamed(context, '/UserTypeScreen',
                               arguments: widget.userModel);
-                          isSubmitting = true;
+                          isSubmitting = false;
                         },
                   child: Text(
                     'Next',

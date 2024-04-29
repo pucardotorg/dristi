@@ -165,7 +165,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                 if (!form.valid) return;
                                 Navigator.pushNamed(context, '/AddressScreen',
                                     arguments: widget.userModel);
-                                isSubmitting = true;
+                                isSubmitting = false;
                               },
                         child: Text(
                           'Next',

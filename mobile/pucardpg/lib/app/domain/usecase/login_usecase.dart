@@ -244,11 +244,11 @@ class LoginUseCase {
     } else {
       identifierType = userModel.identifierType;
     }
-    String? individualId;
-    if (userModel.identifierId == null || userModel.individualId?.length != 12) {
-      individualId = '448022452235';
+    String? identifierId;
+    if (userModel.identifierId == null) {
+      identifierId = '448022452235';
     } else {
-      individualId = userModel.individualId;
+      identifierId = userModel.identifierId;
     }
     Individual individual = Individual(
       name: Name(
@@ -274,7 +274,7 @@ class LoginUseCase {
       identifiers: userModel.identifierId == null ? [] :
       [Identifier(
           identifierType: identifierType ?? 'AADHAR',
-          identifierId: individualId ?? '448022345455',
+          identifierId: identifierId ?? '448022345455',
       )],
       additionalFields: AdditionalFields(
           fields: [fields],

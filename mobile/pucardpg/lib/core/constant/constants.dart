@@ -45,7 +45,7 @@ const Fields advocate = Fields(
 
 const Fields clerk = Fields(
     key: 'userType',
-    value: "ADVOCATE CLERK",
+    value: "ADVOCATE_CLERK",
 );
 
 String? selectedOption;

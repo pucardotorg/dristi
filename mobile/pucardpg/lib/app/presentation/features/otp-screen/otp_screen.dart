@@ -226,7 +226,7 @@ class OtpScreenState extends State<OtpScreen> {
                             DigitToast.show(
                               context,
                               options: DigitToastOptions(
-                                "OTP generated successfully",
+                                "OTP sent successfully",
                                 false,
                                 DigitTheme.instance.mobileTheme,
                               ),
@@ -237,9 +237,9 @@ class OtpScreenState extends State<OtpScreen> {
                           if (isSubmitting) {
                             isSubmitting = false;
                             _makeOTPSuccessToast();
-                            Navigator.pushNamed(
-                                context, '/IdVerificationScreen',
-                                arguments: widget.userModel);
+                            Future.delayed(const Duration(seconds: 1), () {
+                              Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+                            });
                           }
                           break;
                         case IndividualSearchSuccessState:
@@ -251,54 +251,52 @@ class OtpScreenState extends State<OtpScreen> {
                                     .individual;
                             if (listIndividuals.isEmpty) {
                               _makeOTPSuccessToast();
-                              Navigator.pushNamed(context, '/YetToRegister',
-                                  arguments: widget.userModel);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
+                              });
                             } else {
                               if (widget.userModel.userType == 'LITIGANT') {
                                 _makeOTPSuccessToast();
-                                Navigator.pushNamed(context, '/UserHomeScreen',
-                                    arguments: widget.userModel);
+                                Future.delayed(const Duration(seconds: 1), () {
+                                  Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
+                                });
                               }
                             }
                           }
                           break;
                         case AdvocateSearchSuccessState:
-                          if (isSubmitting) {
-                            isSubmitting = false;
                             List<Advocate> advocates =
                                 (state as AdvocateSearchSuccessState)
                                     .advocateSearchResponse
                                     .advocates;
                             if (advocates.isEmpty) {
                               _makeOTPSuccessToast();
-                              Navigator.pushNamed(
-                                  context, '/AdvocateRegistrationScreen',
-                                  arguments: widget.userModel);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
+                              });
                             } else {
                               _makeOTPSuccessToast();
-                              Navigator.pushNamed(context, '/AdvocateHomePage',
-                                  arguments: widget.userModel);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
+                              });
                             }
-                          }
                           break;
                         case AdvocateClerkSearchSuccessState:
-                          if (isSubmitting) {
-                            isSubmitting = false;
                             List<Clerk> clerks =
                                 (state as AdvocateClerkSearchSuccessState)
                                     .advocateClerkSearchResponse
                                     .clerks;
                             if (clerks.isEmpty) {
                               _makeOTPSuccessToast();
-                              Navigator.pushNamed(
-                                  context, '/AdvocateRegistrationScreen',
-                                  arguments: widget.userModel);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
+                              });
                             } else {
                               _makeOTPSuccessToast();
-                              Navigator.pushNamed(context, '/AdvocateHomePage',
-                                  arguments: widget.userModel);
+                              Future.delayed(const Duration(seconds: 1), () {
+                                Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
+                              });
                             }
-                          }
                           break;
                         default:
                           break;

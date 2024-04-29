@@ -9,7 +9,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_bloc.dart';
 import 'package:pucardpg/app/bloc/file_picker_bloc/file_event.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_state.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -72,6 +75,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
           });
         } else {
           if (fileSize <= maxFileSize) {
+            widget.userModel.documentType = result!.files.single.extension;
             pickedFile = result!.files.single;
             if (pickedFile != null) {
               widget.fileBloc.add(FileEvent(pickedFile: pickedFile!));
@@ -79,7 +83,6 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
             setState(() {
               fileName = result!.files.single.name;
               form.control(aadharKey).value = '';
-              widget.userModel.identifierId = '';
               fileToDisplay = file;
               extensionError = false;
               fileSizeExceeded = false;
@@ -160,6 +163,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                   onChanged: (val) {
                                     widget.userModel.identifierType = val;
                                     setState(() {
+                                      fileName = '';
                                       form.control(aadharKey).value = '';
                                       widget.userModel.identifierId = '';
                                     });
@@ -186,12 +190,32 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                     SizedBox(
                                       height: 44,
                                       width: 120,
-                                      child: DigitOutLineButton(
-                                        label: 'Upload',
-                                        onPressed: (){
-                                          pickFile(form);
+                                      child: BlocListener<FileBloc, FilePickerState>(
+                                        bloc: widget.fileBloc,
+                                        listener: (context, state) {
+
+                                          switch (state.runtimeType) {
+                                            case FileFailedState:
+                                              DigitToast.show(context,
+                                                options: DigitToastOptions(
+                                                  "Failed to upload",
+                                                  true,
+                                                  widget.theme.theme(),
+                                                ),
+                                              );
+                                              break;
+                                            case FileSuccessState:
+                                              widget.userModel.identifierId = (state as FileSuccessState).fileStoreId;
+                                              break;
+                                          }
                                         },
-                                      ),
+                                        child: DigitOutLineButton(
+                                          label: 'Upload',
+                                          onPressed: (){
+                                            pickFile(form);
+                                          },
+                                        ),
+                                      )
                                     ),
                                   ],
                                 ),
@@ -255,8 +279,7 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                 || widget.userModel.identifierType!.isEmpty)) {
                           Navigator.pushNamed(context, '/IdOtpScreen', arguments: widget.userModel);
                         }
-                        if ((widget.userModel.identifierId == null || widget.userModel.identifierId!.isEmpty)
-                            && widget.userModel.identifierType!.isNotEmpty) {
+                        if ((widget.userModel.identifierId!.isNotEmpty) && widget.userModel.identifierType!.isNotEmpty) {
                           Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.userModel);
                         }
                       },

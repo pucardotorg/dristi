@@ -14,6 +14,7 @@ import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_re
 import 'package:pucardpg/app/data/models/advocate-search/advocate_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
+import 'package:pucardpg/app/data/models/filestore/filestore_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
@@ -179,26 +180,38 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
 
   @override
   Future<DataState<String>> getFileStore(PlatformFile pickedFile) async {
+    try {
+      var request = MultipartRequest("POST", Uri.parse('$apiBaseURL/filestore/v1/files'));
 
-    var request = MultipartRequest("POST", Uri.parse('$apiBaseURL/filestore/v1/files'));
+      var fileName = '${pickedFile.name}.${pickedFile.extension?.toLowerCase()}';
+      MultipartFile multipartFile = MultipartFile.fromBytes(
+          'file', pickedFile.bytes!,
+          contentType: getMediaType(fileName),
+          filename: fileName);
+      request.files.add(multipartFile);
 
-    var fileName = '${pickedFile.name}.${pickedFile.extension?.toLowerCase()}';
-    MultipartFile multipartFile = MultipartFile.fromBytes(
-        'file', pickedFile.bytes!,
-        contentType: getMediaType(fileName),
-        filename: fileName);
-    request.files.add(multipartFile);
+      request.fields['tenantId'] = tenantId;
+      request.fields['module'] = 'module';
+      var httpResponse = await request.send();
 
-    request.fields['tenantId'] = tenantId;
-    request.fields['module'] = 'module';
-    await request.send().then((response) async {
-      if (response.statusCode == 201) {
-        dynamic respStr = json.decode(await response.stream.bytesToString());
+      if (httpResponse.statusCode == HttpStatus.ok || httpResponse.statusCode == HttpStatus.created || httpResponse.statusCode == HttpStatus.accepted) {
+        Map? respStr = json.decode(await httpResponse.stream.bytesToString());
+        List<dynamic> files = respStr?['files'];
+        return DataSuccess(files[0]['fileStoreId']);
+      } else {
+        dynamic respStr = json.decode(await httpResponse.stream.bytesToString());
+        return DataFailed(
+            dio.DioError(
+                error: "",
+                response: respStr,
+                type: dio.DioErrorType.response,
+                requestOptions: respStr.response.requestOptions
+            )
+        );
       }
-    });
-
-    return DataSuccess("");
-
+    } on dio.DioError catch(e){
+      return DataFailed(e);
+    }
   }
 
   MediaType getMediaType(String? path) {

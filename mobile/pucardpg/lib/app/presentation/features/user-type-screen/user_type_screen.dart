@@ -175,7 +175,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 SubmitAdvocateClerkIndividualEvent(
                                     userModel: widget.userModel));
                           }
-                          isSubmitting = true;
+                          isSubmitting = false;
                         },
                   child: Text(
                     'Next',

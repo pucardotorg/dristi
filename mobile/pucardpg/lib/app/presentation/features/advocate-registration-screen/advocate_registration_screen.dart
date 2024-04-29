@@ -166,12 +166,32 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                 SizedBox(
                                   height: 44,
                                   width: 120,
-                                  child: DigitOutLineButton(
-                                    label: 'Upload',
-                                    onPressed: (){
-                                      pickFile();
-                                    },
-                                  ),
+                                    child: BlocListener<FileBloc, FilePickerState>(
+                                      bloc: widget.fileBloc,
+                                      listener: (context, state) {
+
+                                        switch (state.runtimeType) {
+                                          case FileFailedState:
+                                            DigitToast.show(context,
+                                              options: DigitToastOptions(
+                                                "Failed to upload",
+                                                true,
+                                                widget.theme.theme(),
+                                              ),
+                                            );
+                                            break;
+                                          case FileSuccessState:
+                                            widget.userModel.fileStore = (state as FileSuccessState).fileStoreId;
+                                            break;
+                                        }
+                                      },
+                                      child: DigitOutLineButton(
+                                        label: 'Upload',
+                                        onPressed: (){
+                                          pickFile();
+                                        },
+                                      ),
+                                    ),
                                 ),
                               ],
                             ),
