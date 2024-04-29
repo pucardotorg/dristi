@@ -1,4 +1,3 @@
-
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
@@ -15,20 +14,19 @@ import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 
-class TermsAndConditionsScreen extends StatefulWidget with AppMixin{
-
+class TermsAndConditionsScreen extends StatefulWidget with AppMixin {
   UserModel userModel = UserModel();
 
   TermsAndConditionsScreen({super.key, required this.userModel});
 
   @override
-  TermsAndConditionsScreenState createState() => TermsAndConditionsScreenState();
-
+  TermsAndConditionsScreenState createState() =>
+      TermsAndConditionsScreenState();
 }
 
 class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
-
   bool firstChecked = false;
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -55,27 +53,39 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DigitBackButton(),
-                        DigitHelpButton()
-                      ],
+                      children: [DigitBackButton(), DigitHelpButton()],
                     ),
                     DigitCard(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
-                          const SizedBox(height: 20,),
-                          Text("Terms and Conditions", style: widget.theme.text32W700RobCon()?.apply(),),
-                          const SizedBox(height: 20,),
+                          Text(
+                            "Registration",
+                            style: widget.theme
+                                .text20W400Rob()
+                                ?.apply(fontStyle: FontStyle.italic),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Terms and Conditions",
+                            style: widget.theme.text32W700RobCon()?.apply(),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           DigitCheckboxTile(
                             value: firstChecked,
-                            label: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-                            onChanged: (val){
+                            label:
+                                "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                            onChanged: (val) {
                               setState(() {
                                 firstChecked = !firstChecked;
                               });
@@ -93,47 +103,61 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
             BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
               bloc: widget.registrationLoginBloc,
               listener: (context, state) {
-
                 switch (state.runtimeType) {
                   case RequestFailedState:
-                    widget.theme.showDigitDialog(true, (state as RequestFailedState).errorMsg, context);
+                    widget.theme.showDigitDialog(
+                        true, (state as RequestFailedState).errorMsg, context);
                     break;
                   case LitigantSubmissionSuccessState:
-                    Navigator.pushNamed(context, '/SuccessScreen', arguments: widget.userModel);
+                    Navigator.pushNamed(context, '/SuccessScreen',
+                        arguments: widget.userModel);
                     break;
                   case AdvocateSubmissionSuccessState:
-                    Navigator.pushNamed(context, '/SuccessScreen', arguments: widget.userModel);
+                    Navigator.pushNamed(context, '/SuccessScreen',
+                        arguments: widget.userModel);
                     break;
                   case AdvocateClerkSubmissionSuccessState:
-                    Navigator.pushNamed(context, '/SuccessScreen', arguments: widget.userModel);
+                    Navigator.pushNamed(context, '/SuccessScreen',
+                        arguments: widget.userModel);
                     break;
                   default:
                     break;
                 }
               },
               child: DigitElevatedButton(
-                  onPressed: () {
-                    if (firstChecked == false) {
-                      widget.theme.showDigitDialog(true, "Select all Terms and Conditions", context);
-                      return;
-                    }
-                    if (widget.userModel.userType == 'ADVOCATE') {
-                      widget.registrationLoginBloc.add(SubmitAdvocateProfileEvent(userModel: widget.userModel));
-                    }
-                    if (widget.userModel.userType == 'ADVOCATE_CLERK') {
-                      widget.registrationLoginBloc.add(SubmitAdvocateClerkProfileEvent(userModel: widget.userModel));
-                    }
-                    if (widget.userModel.userType == 'LITIGANT') {
-                      widget.registrationLoginBloc.add(SubmitLitigantProfileEvent(userModel: widget.userModel));
-                    }
-                  },
-                  child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-              ),
+                  onPressed: isSubmitting
+                      ? null
+                      : () {
+                          if (firstChecked == false) {
+                            widget.theme.showDigitDialog(true,
+                                "Select all Terms and Conditions", context);
+                            return;
+                          }
+                          if (widget.userModel.userType == 'ADVOCATE') {
+                            widget.registrationLoginBloc.add(
+                                SubmitAdvocateProfileEvent(
+                                    userModel: widget.userModel));
+                          }
+                          if (widget.userModel.userType == 'ADVOCATE_CLERK') {
+                            widget.registrationLoginBloc.add(
+                                SubmitAdvocateClerkProfileEvent(
+                                    userModel: widget.userModel));
+                          }
+                          if (widget.userModel.userType == 'LITIGANT') {
+                            widget.registrationLoginBloc.add(
+                                SubmitLitigantProfileEvent(
+                                    userModel: widget.userModel));
+                          }
+                          isSubmitting = true;
+                        },
+                  child: Text(
+                    'Submit',
+                    style: widget.theme.text20W700()?.apply(
+                          color: Colors.white,
+                        ),
+                  )),
             )
           ],
-        )
-    );
-
+        ));
   }
-
 }

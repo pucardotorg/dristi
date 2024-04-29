@@ -22,23 +22,22 @@ import 'package:pucardpg/core/constant/constants.dart';
 
 import '../../../domain/entities/litigant_model.dart';
 
-class OtpScreen extends StatefulWidget with AppMixin{
-
+class OtpScreen extends StatefulWidget with AppMixin {
   UserModel userModel = UserModel();
 
   OtpScreen({super.key, required this.userModel});
 
   @override
   OtpScreenState createState() => OtpScreenState();
-
 }
 
 class OtpScreenState extends State<OtpScreen> {
-
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
-  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> _otpControllers =
+      List.generate(6, (index) => TextEditingController());
   late Timer _timer;
   int _start = 25;
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -50,7 +49,7 @@ class OtpScreenState extends State<OtpScreen> {
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
-          (Timer timer) {
+      (Timer timer) {
         if (_start == 0) {
           setState(() {
             timer.cancel();
@@ -105,27 +104,37 @@ class OtpScreenState extends State<OtpScreen> {
         ),
         body: Column(
           children: [
-            const SizedBox(height: 10,),
+            const SizedBox(
+              height: 10,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                DigitBackButton(),
-                DigitHelpButton()
-              ],
+              children: [DigitBackButton(), DigitHelpButton()],
             ),
             DigitCard(
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("OTP Verification", style: widget.theme.text32W700RobCon(),),
-                  const SizedBox(height: 20,),
-                  Text("Enter the OTP sent to + 91 - ${widget.userModel.mobileNumber}", style: widget.theme.text16W400Rob(),),
-                  const SizedBox(height: 20,),
+                  Text(
+                    "OTP Verification",
+                    style: widget.theme.text32W700RobCon(),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Enter the OTP sent to + 91 - ${widget.userModel.mobileNumber}",
+                    style: widget.theme.text16W400Rob(),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: List.generate(
-                      6, (index) => SizedBox(
+                      6,
+                      (index) => SizedBox(
                         width: 40,
                         child: TextField(
                           controller: _otpControllers[index],
@@ -136,16 +145,21 @@ class OtpScreenState extends State<OtpScreen> {
                           ],
                           maxLength: 2,
                           onChanged: (value) {
-                            if(value.length > 1){
-                              _otpControllers[index].text = value.substring(0,1);
-                              if(index < _otpControllers.length - 1){
-                                _otpControllers[index + 1].text = value.substring(1,2);
+                            if (value.length > 1) {
+                              _otpControllers[index].text =
+                                  value.substring(0, 1);
+                              if (index < _otpControllers.length - 1) {
+                                _otpControllers[index + 1].text =
+                                    value.substring(1, 2);
                               }
                             }
-                            if (value.isNotEmpty && index < _otpControllers.length - 1) {
-                              FocusScope.of(context).requestFocus(_focusNodes[index + 1]);
+                            if (value.isNotEmpty &&
+                                index < _otpControllers.length - 1) {
+                              FocusScope.of(context)
+                                  .requestFocus(_focusNodes[index + 1]);
                             } else if (value.isEmpty && index > 0) {
-                              FocusScope.of(context).requestFocus(_focusNodes[index - 1]);
+                              FocusScope.of(context)
+                                  .requestFocus(_focusNodes[index - 1]);
                             }
                           },
                           focusNode: _focusNodes[index],
@@ -159,82 +173,131 @@ class OtpScreenState extends State<OtpScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20,),
-                  _start == 0 ?
-                  Center(
-                    child: GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          _start = 25;
-                        });
-                        startTimer();
-                        for(int i=0; i<6; i++){
-                          _otpControllers[i].text = "";
-                        }
-                        widget.registrationLoginBloc.add(ResendOtpEvent(mobileNumber: widget.userModel.mobileNumber!, type: widget.userModel.type!));
-                      },
-                      child: Text('Resend OTP', style: widget.theme.text16W400Rob()?.apply(color: widget.theme.defaultColor),),
-                    ),
-                  ) : Center(child: Text('Resend OTP in $_start seconds')),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  _start == 0
+                      ? Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _start = 25;
+                              });
+                              startTimer();
+                              for (int i = 0; i < 6; i++) {
+                                _otpControllers[i].text = "";
+                              }
+                              widget.registrationLoginBloc.add(ResendOtpEvent(
+                                  mobileNumber: widget.userModel.mobileNumber!,
+                                  type: widget.userModel.type!));
+                            },
+                            child: Text(
+                              'Resend OTP',
+                              style: widget.theme
+                                  .text16W400Rob()
+                                  ?.apply(color: widget.theme.defaultColor),
+                            ),
+                          ),
+                        )
+                      : Center(child: Text('Resend OTP in $_start seconds')),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
                     bloc: widget.registrationLoginBloc,
                     listener: (context, state) {
-
                       switch (state.runtimeType) {
-
                         case RequestFailedState:
-                          DigitToast.show(context,
-                            options: DigitToastOptions(
-                              "Failed",
-                              true,
-                              widget.theme.theme(),
-                            ),
-                          );
+                          if (isSubmitting) {
+                            isSubmitting = false;
+                            DigitToast.show(
+                              context,
+                              options: DigitToastOptions(
+                                "Failed",
+                                true,
+                                widget.theme.theme(),
+                              ),
+                            );
+                          }
                           return;
                         case ResendOtpGenerationSuccessState:
-                          DigitToast.show(context,
-                            options: DigitToastOptions(
-                              "OTP generated successfully",
-                              false,
-                              DigitTheme.instance.mobileTheme,
-                            ),
-                          );
+                          if (isSubmitting) {
+                            isSubmitting = false;
+                            DigitToast.show(
+                              context,
+                              options: DigitToastOptions(
+                                "OTP generated successfully",
+                                false,
+                                DigitTheme.instance.mobileTheme,
+                              ),
+                            );
+                          }
                           break;
                         case OtpCorrectState:
-                          _makeOTPSuccessToast();
-                          Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
+                          if (isSubmitting) {
+                            isSubmitting = false;
+                            _makeOTPSuccessToast();
+                            Navigator.pushNamed(
+                                context, '/IdVerificationScreen',
+                                arguments: widget.userModel);
+                          }
                           break;
                         case IndividualSearchSuccessState:
-                          List<Individual> listIndividuals =  (state as IndividualSearchSuccessState).individualSearchResponse.individual;
-                          if (listIndividuals.isEmpty) {
-                            _makeOTPSuccessToast();
-                            Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
-                          } else{
-                            if (widget.userModel.userType == 'LITIGANT') {
+                          if (isSubmitting) {
+                            isSubmitting = false;
+                            List<Individual> listIndividuals =
+                                (state as IndividualSearchSuccessState)
+                                    .individualSearchResponse
+                                    .individual;
+                            if (listIndividuals.isEmpty) {
                               _makeOTPSuccessToast();
-                              Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
+                              Navigator.pushNamed(context, '/YetToRegister',
+                                  arguments: widget.userModel);
+                            } else {
+                              if (widget.userModel.userType == 'LITIGANT') {
+                                _makeOTPSuccessToast();
+                                Navigator.pushNamed(context, '/UserHomeScreen',
+                                    arguments: widget.userModel);
+                              }
                             }
                           }
                           break;
                         case AdvocateSearchSuccessState:
-                          List<Advocate> advocates =  (state as AdvocateSearchSuccessState).advocateSearchResponse.advocates;
-                          if (advocates.isEmpty) {
-                            _makeOTPSuccessToast();
-                            Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
-                          } else {
-                            _makeOTPSuccessToast();
-                            Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
+                          if (isSubmitting) {
+                            isSubmitting = false;
+                            List<Advocate> advocates =
+                                (state as AdvocateSearchSuccessState)
+                                    .advocateSearchResponse
+                                    .advocates;
+                            if (advocates.isEmpty) {
+                              _makeOTPSuccessToast();
+                              Navigator.pushNamed(
+                                  context, '/AdvocateRegistrationScreen',
+                                  arguments: widget.userModel);
+                            } else {
+                              _makeOTPSuccessToast();
+                              Navigator.pushNamed(context, '/AdvocateHomePage',
+                                  arguments: widget.userModel);
+                            }
                           }
                           break;
                         case AdvocateClerkSearchSuccessState:
-                          List<Clerk> clerks =  (state as AdvocateClerkSearchSuccessState).advocateClerkSearchResponse.clerks;
-                          if (clerks.isEmpty) {
-                            _makeOTPSuccessToast();
-                            Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
-                          } else {
-                            _makeOTPSuccessToast();
-                            Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
+                          if (isSubmitting) {
+                            isSubmitting = false;
+                            List<Clerk> clerks =
+                                (state as AdvocateClerkSearchSuccessState)
+                                    .advocateClerkSearchResponse
+                                    .clerks;
+                            if (clerks.isEmpty) {
+                              _makeOTPSuccessToast();
+                              Navigator.pushNamed(
+                                  context, '/AdvocateRegistrationScreen',
+                                  arguments: widget.userModel);
+                            } else {
+                              _makeOTPSuccessToast();
+                              Navigator.pushNamed(context, '/AdvocateHomePage',
+                                  arguments: widget.userModel);
+                            }
                           }
                           break;
                         default:
@@ -242,34 +305,49 @@ class OtpScreenState extends State<OtpScreen> {
                       }
                     },
                     child: DigitElevatedButton(
-                        onPressed: () {
-                          FocusScope.of(context).unfocus();
-                          String otp = '';
-                          _otpControllers.forEach((controller) {
-                            otp += controller.text;
-                          });
-                          if (widget.userModel.type == register) {
-                            widget.registrationLoginBloc.add(SubmitRegistrationOtpEvent(username: widget.userModel.mobileNumber!, otp: otp, userModel: widget.userModel));
-                          }
-                          if (widget.userModel.type == login) {
-                            widget.registrationLoginBloc.add(SendLoginOtpEvent(username: widget.userModel.mobileNumber!, password: otp, userModel: widget.userModel));
-                          }
-                        },
-                        child: Text('Submit',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-                    ),
+                        onPressed: isSubmitting
+                            ? null
+                            : () {
+                                FocusScope.of(context).unfocus();
+                                String otp = '';
+                                _otpControllers.forEach((controller) {
+                                  otp += controller.text;
+                                });
+                                if (widget.userModel.type == register) {
+                                  widget.registrationLoginBloc.add(
+                                      SubmitRegistrationOtpEvent(
+                                          username:
+                                              widget.userModel.mobileNumber!,
+                                          otp: otp,
+                                          userModel: widget.userModel));
+                                }
+                                if (widget.userModel.type == login) {
+                                  widget.registrationLoginBloc.add(
+                                      SendLoginOtpEvent(
+                                          username:
+                                              widget.userModel.mobileNumber!,
+                                          password: otp,
+                                          userModel: widget.userModel));
+                                }
+                                isSubmitting = true;
+                              },
+                        child: Text(
+                          'Submit',
+                          style: widget.theme.text20W700()?.apply(
+                                color: Colors.white,
+                              ),
+                        )),
                   )
-
                 ],
               ),
             ),
           ],
-        )
-    );
-
+        ));
   }
 
   _makeOTPSuccessToast() {
-    DigitToast.show(context,
+    DigitToast.show(
+      context,
       options: DigitToastOptions(
         "OTP Verified",
         false,
@@ -277,5 +355,4 @@ class OtpScreenState extends State<OtpScreen> {
       ),
     );
   }
-
 }

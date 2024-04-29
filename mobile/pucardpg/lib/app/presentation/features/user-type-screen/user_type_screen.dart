@@ -1,4 +1,3 @@
-
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
@@ -15,19 +14,17 @@ import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 
-class UserTypeScreen extends StatefulWidget with AppMixin{
-
+class UserTypeScreen extends StatefulWidget with AppMixin {
   UserModel userModel = UserModel();
 
   UserTypeScreen({super.key, required this.userModel});
 
   @override
   UserTypeScreenState createState() => UserTypeScreenState();
-
 }
 
 class UserTypeScreenState extends State<UserTypeScreen> {
-
+  bool isSubmitting = false;
 
   @override
   void initState() {
@@ -54,25 +51,39 @@ class UserTypeScreenState extends State<UserTypeScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(height: 10,),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        DigitBackButton(),
-                        DigitHelpButton()
-                      ],
+                      children: [DigitBackButton(), DigitHelpButton()],
                     ),
                     DigitCard(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
-                          const SizedBox(height: 20,),
-                          Text("Choose your user type", style: widget.theme.text32W700RobCon()?.apply(),),
-                          const SizedBox(height: 20,),
+                          Text(
+                            "Registration",
+                            style: widget.theme
+                                .text20W400Rob()
+                                ?.apply(fontStyle: FontStyle.italic),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Text(
+                            "Choose your user type",
+                            style: widget.theme.text32W700RobCon()?.apply(),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           RadioListTile(
-                            title: Text('Litigant', style: widget.theme.text16W400Rob(),),
+                            title: Text(
+                              'Litigant',
+                              style: widget.theme.text16W400Rob(),
+                            ),
                             value: 'Litigant',
                             groupValue: selectedOption,
                             contentPadding: EdgeInsets.zero,
@@ -84,7 +95,10 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                           ),
                           // const SizedBox(height: 20,),
                           RadioListTile(
-                            title: Text('Advocate', style: widget.theme.text16W400Rob(),),
+                            title: Text(
+                              'Advocate',
+                              style: widget.theme.text16W400Rob(),
+                            ),
                             value: 'Advocate',
                             groupValue: selectedOption,
                             contentPadding: EdgeInsets.zero,
@@ -96,7 +110,10 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                           ),
                           // const SizedBox(height: 20,),
                           RadioListTile(
-                            title: Text('Advocate Clerk', style: widget.theme.text16W400Rob(),),
+                            title: Text(
+                              'Advocate Clerk',
+                              style: widget.theme.text16W400Rob(),
+                            ),
                             value: 'Advocate_Clerk',
                             groupValue: selectedOption,
                             contentPadding: EdgeInsets.zero,
@@ -117,46 +134,57 @@ class UserTypeScreenState extends State<UserTypeScreen> {
             BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
               bloc: widget.registrationLoginBloc,
               listener: (context, state) {
-
                 switch (state.runtimeType) {
                   case LogoutFailedState:
-                    widget.theme.showDigitDialog(true, (state as LogoutFailedState).errorMsg, context);
+                    widget.theme.showDigitDialog(
+                        true, (state as LogoutFailedState).errorMsg, context);
                     break;
                   case LogoutSuccessState:
-                    Navigator.pushNamed(context, '/', arguments: widget.userModel);
+                    Navigator.pushNamed(context, '/',
+                        arguments: widget.userModel);
                     break;
                 }
               },
               child: DigitElevatedButton(
-                  onPressed: () {
-                    widget.userModel.userType = selectedOption?.toUpperCase();
-                    if(selectedOption == null){
-                      DigitToast.show(context,
-                        options: DigitToastOptions(
-                          "Please select a user type.",
-                          true,
-                          widget.theme.theme(),
+                  onPressed: isSubmitting
+                      ? null
+                      : () {
+                          widget.userModel.userType =
+                              selectedOption?.toUpperCase();
+                          if (selectedOption == null) {
+                            DigitToast.show(
+                              context,
+                              options: DigitToastOptions(
+                                "Please select a user type.",
+                                true,
+                                widget.theme.theme(),
+                              ),
+                            );
+                            return;
+                          } else if (widget.userModel.userType == 'LITIGANT') {
+                            Navigator.pushNamed(
+                                context, '/TermsAndConditionsScreen',
+                                arguments: widget.userModel);
+                          } else if (widget.userModel.userType == 'ADVOCATE') {
+                            widget.registrationLoginBloc.add(
+                                SubmitAdvocateIndividualEvent(
+                                    userModel: widget.userModel));
+                          } else if (widget.userModel.userType ==
+                              'ADVOCATE_CLERK') {
+                            widget.registrationLoginBloc.add(
+                                SubmitAdvocateClerkIndividualEvent(
+                                    userModel: widget.userModel));
+                          }
+                          isSubmitting = true;
+                        },
+                  child: Text(
+                    'Next',
+                    style: widget.theme.text20W700()?.apply(
+                          color: Colors.white,
                         ),
-                      );
-                      return;
-                    }
-                    else if(widget.userModel.userType == 'LITIGANT'){
-                      Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
-                    }
-                    else if(widget.userModel.userType == 'ADVOCATE'){
-                      widget.registrationLoginBloc.add(SubmitAdvocateIndividualEvent(userModel: widget.userModel));
-                    }
-                    else if(widget.userModel.userType == 'ADVOCATE_CLERK'){
-                      widget.registrationLoginBloc.add(SubmitAdvocateClerkIndividualEvent(userModel: widget.userModel));
-                    }
-                  },
-                  child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-              ),
+                  )),
             )
           ],
-        )
-    );
-
+        ));
   }
-
 }
