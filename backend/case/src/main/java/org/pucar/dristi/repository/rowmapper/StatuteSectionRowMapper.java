@@ -3,6 +3,7 @@ package org.pucar.dristi.repository.rowmapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.CourtCase;
@@ -15,55 +16,50 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class StatuteSectionRowMapper implements ResultSetExtractor<List<StatuteSection>> {
-    public List<StatuteSection> extractData(ResultSet rs) {
-        Map<String, StatuteSection> statuteSectionMap = new LinkedHashMap<>();
+public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, List<StatuteSection>>> {
+    public Map<UUID, List<StatuteSection>> extractData(ResultSet rs) {
+        Map<UUID, List<StatuteSection>> statuteSectionMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String id = rs.getString("id");
-                StatuteSection statuteSection = statuteSectionMap.get(id);
+                UUID uuid = UUID.fromString(id!=null ? id : "00000000-0000-0000-0000-000000000000");
 
-                if (statuteSection == null) {
-                    Long lastModifiedTime = rs.getLong("lastmodifiedtime");
-                    if (rs.wasNull()) {
-                        lastModifiedTime = null;
-                    }
+                Long lastModifiedTime = rs.getLong("lastmodifiedtime");
 
-
-                    AuditDetails auditdetails = AuditDetails.builder()
-                            .createdBy(rs.getString("createdby"))
-                            .createdTime(rs.getLong("createdtime"))
-                            .lastModifiedBy(rs.getString("lastmodifiedby"))
-                            .lastModifiedTime(lastModifiedTime)
-                            .build();
-                    statuteSection = StatuteSection.builder()
-                            .id(UUID.fromString(rs.getString("id")))
-                            .tenantId(rs.getString("tenantid"))
-                          //  .sections(rs.getString("sections"))
-                            .statute(rs.getString("statute"))
-                            .auditdetails(auditdetails)
-                            .build();
-                }
+                AuditDetails auditdetails = AuditDetails.builder()
+                        .createdBy(rs.getString("createdby"))
+                        .createdTime(rs.getLong("createdtime"))
+                        .lastModifiedBy(rs.getString("lastmodifiedby"))
+                        .lastModifiedTime(lastModifiedTime)
+                        .build();
+                StatuteSection statuteSection = StatuteSection.builder()
+                        .id(UUID.fromString(rs.getString("id")))
+                        .tenantId(rs.getString("tenantid"))
+                        //  .sections(rs.getString("sections"))
+                        .statute(rs.getString("statute"))
+                        .auditdetails(auditdetails)
+                        .build();
 
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
-                if(pgObject!=null)
+                if (pgObject != null)
                     statuteSection.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                statuteSectionMap.put(id, statuteSection);
+                if (statuteSectionMap.containsKey(uuid) ) {
+                    statuteSectionMap.get(uuid).add(statuteSection);
+                }
+                else{
+                    List<StatuteSection> statuteSections = new ArrayList<>();
+                    statuteSections.add(statuteSection);
+                    statuteSectionMap.put(uuid,statuteSections);
+                }
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());
         }
-        return new ArrayList<>(statuteSectionMap.values());
+        return statuteSectionMap;
     }
-    private UUID toUUID(String toUuid) {
-        if(toUuid == null) {
-            return null;
-        }
-        return UUID.fromString(toUuid);
-    }
+
 }
