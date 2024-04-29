@@ -91,9 +91,6 @@ public class AdvocateClerkService {
                 AdvocateClerk existingApplication;
                 try {
                     existingApplication = validator.validateApplicationExistence(advocateClerk);
-                    if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(existingApplication.getStatus())) {
-                        existingApplication.setIsActive(true);
-                    }
                 } catch (Exception e){
                     log.error("Error validating existing application");
                     throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
@@ -107,6 +104,11 @@ public class AdvocateClerkService {
             enrichmentUtil.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest);
 
             workflowService.updateWorkflowStatus(advocateClerkRequest);
+            advocateClerkRequest.getClerks().forEach(advocateClerk -> {
+                if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerk.getStatus())) {
+                    advocateClerk.setIsActive(true);
+                }
+            });
 
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
 

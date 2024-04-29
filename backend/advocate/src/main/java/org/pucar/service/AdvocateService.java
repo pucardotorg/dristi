@@ -100,9 +100,6 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                 Advocate existingApplication;
                 try {
                     existingApplication = validator.validateApplicationExistence(advocate);
-                    if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(existingApplication.getStatus())) {
-                        existingApplication.setIsActive(true);
-                    }
                 } catch (Exception e) {
                     log.error("Error validating existing application");
                     throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
@@ -116,7 +113,11 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
             enrichmentUtil.enrichAdvocateApplicationUponUpdate(advocateRequest);
 
             workflowService.updateWorkflowStatus(advocateRequest);
-
+            advocateRequest.getAdvocates().forEach(advocate -> {
+                if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocate.getStatus())) {
+                    advocate.setIsActive(true);
+                }
+            });
             producer.push(config.getAdvocateUpdateTopic(), advocateRequest);
 
             return advocateRequest.getAdvocates();
