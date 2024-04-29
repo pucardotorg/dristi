@@ -53,7 +53,7 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic, 
           width: "100%",
           height: "100vh",
           backgroundColor: "rgba(0,0,0,.5)",
-          zIndex: "9998",
+          // zIndex: "9998",
         }}
         onClick={onOverlayBodyClick}
       ></div>

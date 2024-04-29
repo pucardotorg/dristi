@@ -240,7 +240,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
 
   return (
     <React.Fragment>
-      <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{ margin: 0, minWidth: 60 }}>
+      <div className="sidebar" ref={sidebarRef} onMouseOver={expandNav} onMouseLeave={collapseNav} style={{ margin: 0, minWidth: 60, zIndex: 9998 }}>
         <div className="new-sidebar show">
           {/* {profileItem} */}
           <div className="drawer-desktop">
