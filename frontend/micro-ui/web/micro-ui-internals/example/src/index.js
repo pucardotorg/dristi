@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { DigitUI, initCoreComponents } from "@egovernments/digit-ui-module-core";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 
 import "@egovernments/digit-ui-css/example/index.css";
 
@@ -46,7 +45,6 @@ const initDigitUI = () => {
   };
   window?.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
-  initWorkbenchComponents();
   initDRISTIComponents();
   const moduleReducers = (initData) => ({});
 

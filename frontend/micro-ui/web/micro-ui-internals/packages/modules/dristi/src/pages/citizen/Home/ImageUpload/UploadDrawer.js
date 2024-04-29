@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { GalleryIcon, RemoveIcon, UploadFile } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 
-function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,showToast}) {
+function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic, showToast }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [file, setFile] = useState("");
   const [error, setError] = useState(null);
   const { t } = useTranslation();
   const selectfile = (e) => setFile(e.target.files[0]);
-  const removeimg = () => {removeProfilePic(); closeDrawer()};
+  const removeimg = () => {
+    removeProfilePic();
+    closeDrawer();
+  };
   const onOverlayBodyClick = () => closeDrawer();
 
   useEffect(() => {
@@ -16,7 +19,7 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,
       setError(null);
       if (file) {
         if (file.size >= 1000000) {
-          showToast("error", t("CORE_COMMON_PROFILE_MAXIMUM_UPLOAD_SIZE_EXCEEDED"))
+          showToast("error", t("CORE_COMMON_PROFILE_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
           setError(t("CORE_COMMON_PROFILE_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
         } else {
           try {
@@ -26,11 +29,11 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,
               setUploadedFile(fileStoreId);
               setProfilePic(fileStoreId);
             } else {
-              showToast("error", t("CORE_COMMON_PROFILE_FILE_UPLOAD_ERROR"))
+              showToast("error", t("CORE_COMMON_PROFILE_FILE_UPLOAD_ERROR"));
               setError(t("CORE_COMMON_PROFILE_FILE_UPLOAD_ERROR"));
             }
           } catch (err) {
-            showToast("error",t("CORE_COMMON_PROFILE_INVALID_FILE_INPUT"))
+            showToast("error", t("CORE_COMMON_PROFILE_INVALID_FILE_INPUT"));
             // setError(t("PT_FILE_UPLOAD_ERROR"));
           }
         }
@@ -50,7 +53,7 @@ function UploadDrawer({ setProfilePic, closeDrawer, userType, removeProfilePic ,
           width: "100%",
           height: "100vh",
           backgroundColor: "rgba(0,0,0,.5)",
-          // zIndex: "9998",
+          zIndex: "9998",
         }}
         onClick={onOverlayBodyClick}
       ></div>

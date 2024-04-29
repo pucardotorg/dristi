@@ -67,7 +67,7 @@ const Login = ({ stateCode }) => {
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
-  const userMobileNUmber = Digit.UserService.getUser()?.info.mobileNumber;
+  const userMobileNUmber = Digit.UserService.getUser()?.info?.mobileNumber;
   useEffect(() => {
     let errorTimeout;
     if (error) {
