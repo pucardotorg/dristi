@@ -49,4 +49,17 @@ export const UploadServices = {
     const res = await Axios(config);
     return res;
   },
+  FilefetchById: async (filesArray, tenantId) => {
+    let tenantInfo = window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE") ? `?tenantId=${tenantId}` : "";
+    var config = {
+      method: "get",
+      url: `${Urls.FileFetchById}${tenantInfo}`,
+      params: {
+        tenantId: tenantId,
+        fileStoreIds: filesArray?.join(","),
+      },
+    };
+    const res = await Axios(config);
+    return res;
+  },
 };

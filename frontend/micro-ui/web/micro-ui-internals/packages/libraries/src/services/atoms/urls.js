@@ -15,6 +15,7 @@ const Urls = {
   FileStore: "/filestore/v1/files",
 
   FileFetch: "/filestore/v1/files/url",
+  FileFetchById: "/filestore/v1/files/id",
   PGR_Create: `/pgr-services/v2/request/_create`,
   pgr_count: `/pgr-services/v2/request/_count`,
 
