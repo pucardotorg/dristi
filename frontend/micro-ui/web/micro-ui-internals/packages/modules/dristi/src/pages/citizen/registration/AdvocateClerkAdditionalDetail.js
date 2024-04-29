@@ -4,7 +4,7 @@ import { advocateClerkConfig } from "./config";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
-function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, refetch = () => {} }) {
+function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individualUser = "", refetch = () => {} }) {
   console.log("use", userTypeDetail);
   const { t } = useTranslation();
   const Digit = window.Digit || {};
@@ -55,8 +55,7 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, refetch =
                 },
               ],
               additionalDetails: {
-                username:
-                  data?.userDetails?.firstName && data?.userDetails?.lastName ? `${data?.userDetails?.firstName} ${data?.userDetails?.lastName}` : "",
+                username: individualUser ? individualUser : "",
               },
               ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
                 res[curr] = data?.clientDetails[curr];

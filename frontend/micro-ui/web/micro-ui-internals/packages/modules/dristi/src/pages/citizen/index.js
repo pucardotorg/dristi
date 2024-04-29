@@ -38,6 +38,7 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+  const individualUser = useMemo(() => `${data?.Individual?.[0]?.name?.givenName} ${data?.Individual?.[0]?.name?.familyName}`, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
 
   const { data: searchData = {}, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
@@ -157,6 +158,7 @@ const App = ({ stateCode, tenantId }) => {
                 <AdvocateClerkAdditionalDetail
                   userTypeDetail={userTypeDetail}
                   individualId={individualId}
+                  individualUser={individualUser}
                   userType={userType}
                   refetch={refetchAdvocateClerk}
                 />
