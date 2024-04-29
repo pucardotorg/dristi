@@ -5,7 +5,6 @@ import {
   initCoreComponents,
 } from "@egovernments/digit-ui-module-core";
 import { UICustomizations } from "./Customisations/UICustomizations";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
 
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
@@ -19,7 +18,6 @@ const moduleReducers = (initData) => ({
 const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
-  initWorkbenchComponents();
   initDRISTIComponents();
 
   window.Digit.Customizations = {
