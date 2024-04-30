@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CustomDropdown, Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Digit = window?.Digit || {};
 const configAdvocate = {
@@ -209,14 +210,10 @@ const Inbox = ({ tenants, parentRoute }) => {
   });
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
-  const [type, setType] = useState({
-    code: "advocate",
-    name: "Advocate",
-  });
-  const config = useMemo(() => {
-    return type.name === "Clerk" ? configClerk : configAdvocate;
-  }, [type.name]);
-
+  const history = useHistory();
+  const urlParams = new URLSearchParams(window.location.search);
+  const type = urlParams.get("type") || "advocate";
+  const defaultType = { code: type, name: type?.charAt(0)?.toUpperCase() + type?.slice(1) };
   const { isLoading } = data;
 
   if (isLoading) {
@@ -252,17 +249,17 @@ const Inbox = ({ tenants, parentRoute }) => {
           <Header>{t("Registration-Requests")}</Header>
           <CustomDropdown
             t={t}
-            value={type}
+            defaulValue={defaultType}
             onChange={(e) => {
-              setType(e);
+              history.push(`?type=${e.code}`);
             }}
             config={dropdownConfig}
           ></CustomDropdown>
         </div>
         <p>{}</p>
         <div className="inbox-search-wrapper">
-          {type.code === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={configClerk}></InboxSearchComposer>}
-          {type.code === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={configAdvocate}></InboxSearchComposer>}
+          {type === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={configClerk}></InboxSearchComposer>}
+          {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={configAdvocate}></InboxSearchComposer>}
         </div>
       </div>
     </React.Fragment>

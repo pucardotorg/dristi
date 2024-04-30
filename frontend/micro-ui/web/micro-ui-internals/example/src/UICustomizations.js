@@ -639,7 +639,11 @@ export const UICustomizations = {
         case "Application No":
           return (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${row.individualId}`}>
+              <Link
+                to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${row.individualId}&type=${
+                  row?.applicationNumber?.includes("CLERK") ? "clerk" : "advocate"
+                }`}
+              >
                 {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -656,7 +660,9 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?individualId=${value}&isAction=true`}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?individualId=${value}&isAction=true&type=${
+                row?.applicationNumber?.includes("CLERK") ? "clerk" : "advocate"
+              }`}
             >
               {" "}
               {t("Verify")}

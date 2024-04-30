@@ -42,14 +42,14 @@ ButtonSelector.propTypes = {
   /**
    * CustomBody
    */
-  ButtonBody: PropTypes.any
+  ButtonBody: PropTypes.any,
 };
 
 ButtonSelector.defaultProps = {
   label: "",
   theme: "",
   onSubmit: undefined,
-  ButtonBody: undefined
+  ButtonBody: undefined,
 };
 
 export default ButtonSelector;
