@@ -35,6 +35,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   @override
   void initState() {
     super.initState();
+    userModel.mobileNumber = AppSharedPreference.getPhoneNumber();
     _getStoragePermission();
   }
 

@@ -153,7 +153,10 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                     );
                     Future.delayed(const Duration(seconds: 2), () {
                       isSubmitting = false;
-                      Navigator.pushNamed(context, '/', arguments: widget.userModel);
+                      Navigator.pushNamedAndRemoveUntil(context,
+                        '/', arguments: widget.userModel,// Replace with your actual route name
+                            (Route route) => false, // This predicate will always return false, clearing the stack
+                      );
                     });
                     break;
                 }
