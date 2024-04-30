@@ -58,6 +58,8 @@ dependencies:
   #make request to api
   retrofit: ^3.0.1
 
+  shared_preferences: ^2.2.3
+
   #Hooks
   #  flutter_hooks: ^0.18.3
 
