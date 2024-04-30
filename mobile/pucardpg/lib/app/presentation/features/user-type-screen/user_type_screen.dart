@@ -26,6 +26,7 @@ class UserTypeScreen extends StatefulWidget with AppMixin {
 
 class UserTypeScreenState extends State<UserTypeScreen> {
   bool isSubmitting = false;
+  String? selectedOption;
 
   @override
   void initState() {
