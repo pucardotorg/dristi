@@ -65,7 +65,7 @@ const IconsObject = {
   BirthIcon: <BirthIcon className="icon" />,
   DeathIcon: <DeathIcon className="icon" />,
   FirenocIcon: <FirenocIcon className="icon" />,
-  HomeIcon: <HomeIcon className="icon" style={{ fill: "#fff" }} />,
+  HomeIcon: <HomeIcon className="icon" styles={{ fill: "#fff" }} />,
   EditPencilIcon: <EditPencilIcon className="icon" />,
   LogoutIcon: <LogoutIcon className="icon" styles={{ fill: "#fff" }} />,
   Phone: <Phone className="icon" style={{ fill: "#fff" }} />,
@@ -153,7 +153,7 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
         {leftIcon}
         <div
           className="menu-label"
-          style={{ color: !(pathname === item?.link || pathname === item?.sidebarURL || pathname.includes(item?.link)) && "#fff" }}
+          style={{ color: (!(pathname === item?.link || pathname === item?.sidebarURL || pathname.includes(item?.link)) && "#fff") || "#fff" }}
         >
           {itemComponent}
         </div>
@@ -247,7 +247,12 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
             {menuItems?.map((item, index) => (
               <div
                 className={`sidebar-list ${
-                  pathname === item?.link || pathname === item?.sidebarURL || pathname.includes(item?.link) ? "active" : ""
+                  pathname === item?.link ||
+                  pathname === item?.sidebarURL ||
+                  (pathname.includes(item?.link) && pathname !== "/digit-ui/citizen/dristi/home/login") ||
+                  (item.type !== "link" && pathname === "/digit-ui/citizen/dristi/home/login")
+                    ? "active"
+                    : ""
                 }`}
                 key={index}
               >
