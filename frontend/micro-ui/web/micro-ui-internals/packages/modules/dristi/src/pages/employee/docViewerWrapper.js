@@ -3,6 +3,7 @@ import React, { Fragment, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { samplePDF } from "./SamplePdfFile";
 import Urls from "../../../../../libraries/src/services/atoms/urls";
+import { useTranslation } from "react-i18next";
 
 const SUPPORTED_FILE_FORMATS = [
   ".pdf",
@@ -25,6 +26,7 @@ const SUPPORTED_FILE_FORMATS = [
 ];
 
 const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
+  const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   const [selectedDocs, setSelectedDocs] = useState([]);
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
@@ -63,7 +65,7 @@ const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
         )}
       </Card>
       <a href={uri} target="_blank" rel="noreferrer" style={{ color: "#505A5F", textDecoration: "none" }}>
-        BAR council ID.pdf
+        {t("DOWNLOAD_BAR_COUNCIL_ID")}
       </a>
     </div>
   );
