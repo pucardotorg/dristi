@@ -26,8 +26,8 @@ public class CaseRegistrationValidator {
         caseRequest.getCases().forEach(courtCase -> {
             if(ObjectUtils.isEmpty(courtCase.getTenantId()))
                 throw new CustomException("EG_BT_APP_ERR", "tenantId is mandatory for creating advocate");
-            if (!individualService.searchIndividual(requestInfo,courtCase.getLitigants().get(0).getIndividualId()))
-                throw new CustomException("INDIVIDUAL_NOT_FOUND","Requested Individual not found or does not exist");
+//            if (!individualService.searchIndividual(requestInfo,courtCase.getLitigants().get(0).getIndividualId()))
+//                throw new CustomException("INDIVIDUAL_NOT_FOUND","Requested Individual not found or does not exist");
         });
     }
     public CourtCase validateApplicationExistence(CourtCase courtCase) {
