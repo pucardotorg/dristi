@@ -38,7 +38,7 @@ const DRISTICard = () => {
         label={"Registration Requests"}
         Icon={<RegistrationRequestIcon />}
         style={{ width: "400px", height: "150px" }}
-        showNumber={clerkData?.clerks?.length + advocateData?.advocates?.length || 35}
+        showNumber={String(clerkData?.clerks?.length + advocateData?.advocates?.length) || 35}
         onClick={() => {
           history.push("/digit-ui/employee/dristi/registration-requests");
         }}

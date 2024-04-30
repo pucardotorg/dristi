@@ -24,7 +24,13 @@ const App = ({ stateCode, tenantId }) => {
 
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-
+  if (isUserLoggedIn && userInfo) {
+    const user = {
+      access_token: token,
+      info: userInfo,
+    };
+    Digit.UserService.setUser(user);
+  }
   const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
