@@ -9,6 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
 import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
+import 'package:pucardpg/app/data/data_sources/shared-preferences/app_shared_preference.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -254,6 +255,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                               return;
                                             }
                                             isSubmitting = true;
+                                            if(rememberMe){
+                                              AppSharedPreference.setPhoneNumber(userModel.mobileNumber!);
+                                            }
                                             widget.registrationLoginBloc.add(
                                                 RequestOtpEvent(
                                                     mobileNumber:
@@ -274,7 +278,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   FormGroup buildForm() => fb.group(<String, Object>{
         mobileNumberKey: FormControl<String>(
-            value: userModel.mobileNumber ?? "",
+            value: AppSharedPreference.getPhoneNumber(),
             validators: [
               Validators.required,
               Validators.number,

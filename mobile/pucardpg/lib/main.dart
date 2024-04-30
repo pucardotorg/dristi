@@ -1,6 +1,7 @@
 import 'package:digit_components/theme/digit_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:pucardpg/app/data/data_sources/shared-preferences/app_shared_preference.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/features/advocate-registration-screen/advocate_registration_screen.dart';
 import 'package:pucardpg/app/presentation/features/home_screen/home_screen.dart';
@@ -14,6 +15,7 @@ import 'injection_container.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
+  await AppSharedPreference.initializeSharedPref();
   runApp(const MyApp());
 }
 
