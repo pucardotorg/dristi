@@ -13,6 +13,7 @@ class FileBloc extends Bloc<FilePickerEvent, FilePickerState> {
 
   FileBloc(this._filePickerUseCase): super(FileInitialState()) {
     on<FileEvent>(uploadFileEvent);
+    on<GetFileEvent>(getFileData);
   }
 
   Future<void> uploadFileEvent(FileEvent event,
@@ -30,7 +31,19 @@ class FileBloc extends Bloc<FilePickerEvent, FilePickerState> {
       }
   }
 
+  Future<void> getFileData(GetFileEvent event,
+      Emitter<FilePickerState> emit) async {
 
+      emit(FileLoadingState());
 
+      final dataState = await _filePickerUseCase.getFileData(event.userModel);
 
+      if(dataState is DataSuccess){
+        emit(GetFileSuccessState());
+      }
+      if(dataState is DataFailed){
+        emit(FileFailedState(errorMsg: dataState.error?.message ?? "",));
+      }
+
+  }
 }

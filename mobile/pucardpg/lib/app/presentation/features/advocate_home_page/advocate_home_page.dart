@@ -4,9 +4,13 @@ import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_bloc.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_event.dart';
+import 'package:pucardpg/app/bloc/file_picker_bloc/file_state.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -66,14 +70,27 @@ class AdvocateHomePageState extends State<AdvocateHomePage> {
                               padding: const EdgeInsets.all(20),
                               child: Center(child: Text("Your application is awaiting approval ......!", style: widget.theme.text16W400Rob(),)),
                             ),
-                            DigitOutlineIconButton(
-                              label: 'View My Application',
-                              onPressed: (){
-                                Navigator.pushNamed(context, '/ViewApplicationScreen', arguments: widget.userModel);
+                            BlocListener<FileBloc, FilePickerState>(
+                              bloc: widget.fileBloc,
+                              listener: (context, state) {
+
+                                switch (state.runtimeType) {
+                                  case FileFailedState:
+                                    break;
+                                  case GetFileSuccessState:
+                                    Navigator.pushNamed(context, '/ViewApplicationScreen', arguments: widget.userModel);
+                                    break;
+                                }
                               },
-                              icon: Icons.settings_applications,
-                              iconColor: DigitTheme.instance.colorScheme.secondary,
-                            ),
+                              child: DigitOutlineIconButton(
+                                label: 'View My Application',
+                                onPressed: (){
+                                  widget.fileBloc.add(GetFileEvent(userModel:  widget.userModel));
+                                },
+                                icon: Icons.settings_applications,
+                                iconColor: DigitTheme.instance.colorScheme.secondary,
+                              ),
+                            )
                             // const SizedBox(height: 20,),
                           ],
                         ),

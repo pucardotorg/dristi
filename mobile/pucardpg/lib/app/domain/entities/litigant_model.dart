@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:typed_data';
 
 class UserModel{
 
@@ -23,6 +24,7 @@ class UserModel{
   String? barRegistrationNumber;
   String? fileStore;
   String? documentType;
+  Uint8List? bytes;
 
   String? individualId;
 
@@ -65,4 +67,14 @@ class AddressModel{
     this.state
   });
 
+}
+
+class FileStoreModel {
+  String? documentType;
+  Uint8List? bytes;
+
+  FileStoreModel({
+    required this.documentType,
+    required this.bytes
+  });
 }

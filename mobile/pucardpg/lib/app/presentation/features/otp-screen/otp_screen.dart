@@ -221,8 +221,6 @@ class OtpScreenState extends State<OtpScreen> {
                           }
                           return;
                         case ResendOtpGenerationSuccessState:
-                          if (isSubmitting) {
-                            isSubmitting = false;
                             DigitToast.show(
                               context,
                               options: DigitToastOptions(
@@ -231,20 +229,18 @@ class OtpScreenState extends State<OtpScreen> {
                                 DigitTheme.instance.mobileTheme,
                               ),
                             );
-                          }
                           break;
                         case OtpCorrectState:
                           if (isSubmitting) {
-                            isSubmitting = false;
                             _makeOTPSuccessToast();
                             Future.delayed(const Duration(seconds: 1), () {
+                              isSubmitting = false;
                               Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
                             });
                           }
                           break;
                         case IndividualSearchSuccessState:
                           if (isSubmitting) {
-                            isSubmitting = false;
                             List<Individual> listIndividuals =
                                 (state as IndividualSearchSuccessState)
                                     .individualSearchResponse
@@ -252,12 +248,14 @@ class OtpScreenState extends State<OtpScreen> {
                             if (listIndividuals.isEmpty) {
                               _makeOTPSuccessToast();
                               Future.delayed(const Duration(seconds: 1), () {
+                                isSubmitting = false;
                                 Navigator.pushNamed(context, '/YetToRegister', arguments: widget.userModel);
                               });
                             } else {
                               if (widget.userModel.userType == 'LITIGANT') {
                                 _makeOTPSuccessToast();
                                 Future.delayed(const Duration(seconds: 1), () {
+                                  isSubmitting = false;
                                   Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
                                 });
                               }
@@ -265,6 +263,7 @@ class OtpScreenState extends State<OtpScreen> {
                           }
                           break;
                         case AdvocateSearchSuccessState:
+                          if (isSubmitting) {
                             List<Advocate> advocates =
                                 (state as AdvocateSearchSuccessState)
                                     .advocateSearchResponse
@@ -272,16 +271,20 @@ class OtpScreenState extends State<OtpScreen> {
                             if (advocates.isEmpty) {
                               _makeOTPSuccessToast();
                               Future.delayed(const Duration(seconds: 1), () {
+                                isSubmitting = false;
                                 Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
                               });
                             } else {
                               _makeOTPSuccessToast();
                               Future.delayed(const Duration(seconds: 1), () {
+                                isSubmitting = false;
                                 Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                               });
                             }
+                          }
                           break;
                         case AdvocateClerkSearchSuccessState:
+                          if (isSubmitting) {
                             List<Clerk> clerks =
                                 (state as AdvocateClerkSearchSuccessState)
                                     .advocateClerkSearchResponse
@@ -289,14 +292,17 @@ class OtpScreenState extends State<OtpScreen> {
                             if (clerks.isEmpty) {
                               _makeOTPSuccessToast();
                               Future.delayed(const Duration(seconds: 1), () {
+                                isSubmitting = false;
                                 Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: widget.userModel);
                               });
                             } else {
                               _makeOTPSuccessToast();
                               Future.delayed(const Duration(seconds: 1), () {
+                                isSubmitting = false;
                                 Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
                               });
                             }
+                          }
                           break;
                         default:
                           break;

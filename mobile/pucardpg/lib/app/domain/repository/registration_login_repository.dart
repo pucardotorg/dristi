@@ -4,12 +4,14 @@ import 'package:pucardpg/app/data/models/advocate-clerk-search/advocate_clerk_se
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/app/data/models/advocate-search/advocate_search_model.dart';
 import 'package:pucardpg/app/data/models/file-upload-response-model/file_upload_response_model.dart';
+import 'package:pucardpg/app/data/models/filestore/filestore_model.dart';
 import 'package:pucardpg/app/data/models/individual-search/individual_search_model.dart';
 import 'package:pucardpg/app/data/models/auth-response/auth_response.dart';
 import 'package:pucardpg/app/data/models/citizen-registration-request/citizen_registration_request.dart';
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
 
 abstract class RegistrationLoginRepository {
@@ -25,6 +27,8 @@ abstract class RegistrationLoginRepository {
   Future<DataState<AdvocateClerkRegistrationResponse>> registerAdvocateClerk(AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest);
 
   Future<DataState<String>> getFileStore(PlatformFile pickedFile);
+
+  Future<DataState<FileStoreModel>> getFileData(String fileStoreId);
 
   Future<DataState<AuthResponse>> getAuthResponse(String username, String password);
 

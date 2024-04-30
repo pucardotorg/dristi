@@ -105,6 +105,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               listener: (context, state) {
                 switch (state.runtimeType) {
                   case RequestFailedState:
+                    isSubmitting = false;
                     widget.theme.showDigitDialog(
                         true, (state as RequestFailedState).errorMsg, context);
                     break;
@@ -128,6 +129,8 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   onPressed: isSubmitting
                       ? null
                       : () {
+
+                          isSubmitting = true;
                           if (firstChecked == false) {
                             widget.theme.showDigitDialog(true,
                                 "Select all Terms and Conditions", context);
@@ -148,7 +151,6 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                 SubmitLitigantProfileEvent(
                                     userModel: widget.userModel));
                           }
-                          isSubmitting = true;
                         },
                   child: Text(
                     'Submit',

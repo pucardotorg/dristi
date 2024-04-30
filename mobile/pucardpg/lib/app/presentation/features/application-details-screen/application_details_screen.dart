@@ -4,12 +4,14 @@ import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:open_file/open_file.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/detail_field.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class ApplicationDetailsScreen extends StatefulWidget with AppMixin{
@@ -158,6 +160,25 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                       'BAR Council ID',
                       style: widget.theme.text16W700Rob(),
                     ),
+                    const SizedBox(height: 20,),
+                    if (widget.userModel.documentType == 'pdf')
+                      Container(
+                          height: 300,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: SfPdfViewer.memory(
+                            widget.userModel.bytes!,
+                            onTap: (pdfDetails) {
+                                // OpenFile.open(fileToDisplay!.path);
+                            },
+                          )
+                      ),
+
+
+                    if (widget.userModel.documentType != 'pdf')
+                      Image.memory(widget.userModel.bytes!)
                   ],
                 ),
               ),

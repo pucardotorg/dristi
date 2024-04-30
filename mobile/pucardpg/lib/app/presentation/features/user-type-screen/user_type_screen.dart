@@ -1,4 +1,5 @@
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -136,12 +137,23 @@ class UserTypeScreenState extends State<UserTypeScreen> {
               listener: (context, state) {
                 switch (state.runtimeType) {
                   case LogoutFailedState:
+                    isSubmitting = false;
                     widget.theme.showDigitDialog(
                         true, (state as LogoutFailedState).errorMsg, context);
                     break;
                   case LogoutSuccessState:
-                    Navigator.pushNamed(context, '/',
-                        arguments: widget.userModel);
+                    DigitToast.show(
+                      context,
+                      options: DigitToastOptions(
+                        "We are redirecting you to login page ...",
+                        false,
+                        DigitTheme.instance.mobileTheme,
+                      ),
+                    );
+                    Future.delayed(const Duration(seconds: 2), () {
+                      isSubmitting = false;
+                      Navigator.pushNamed(context, '/', arguments: widget.userModel);
+                    });
                     break;
                 }
               },
@@ -166,16 +178,17 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 context, '/TermsAndConditionsScreen',
                                 arguments: widget.userModel);
                           } else if (widget.userModel.userType == 'ADVOCATE') {
+                            isSubmitting = true;
                             widget.registrationLoginBloc.add(
                                 SubmitAdvocateIndividualEvent(
                                     userModel: widget.userModel));
                           } else if (widget.userModel.userType ==
                               'ADVOCATE_CLERK') {
+                            isSubmitting = true;
                             widget.registrationLoginBloc.add(
                                 SubmitAdvocateClerkIndividualEvent(
                                     userModel: widget.userModel));
                           }
-                          isSubmitting = false;
                         },
                   child: Text(
                     'Next',

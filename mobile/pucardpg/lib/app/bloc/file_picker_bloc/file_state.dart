@@ -1,3 +1,5 @@
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
+
 abstract class FilePickerState {}
 
 
@@ -14,3 +16,5 @@ class FileFailedState extends FilePickerState {
   String errorMsg;
   FileFailedState({required this.errorMsg});
 }
+
+class GetFileSuccessState extends FilePickerState {}

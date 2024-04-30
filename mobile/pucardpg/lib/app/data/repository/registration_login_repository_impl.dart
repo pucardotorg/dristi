@@ -19,6 +19,7 @@ import 'package:pucardpg/app/data/models/individual-search/individual_search_mod
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/logout-model/logout_model.dart';
 import 'package:pucardpg/app/data/models/otp-models/otp_model.dart';
+import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/domain/repository/registration_login_repository.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 import 'package:pucardpg/core/resources/data_state.dart';
@@ -223,6 +224,23 @@ class RegistrationLoginRepositoryImpl implements RegistrationLoginRepository {
     } else {
       return MediaType('', '');
     }
+  }
+
+
+  @override
+  Future<DataState<FileStoreModel>> getFileData(String fileStoreId) async {
+    var res = await get(Uri.parse('$apiBaseURL/filestore/v1/files/id?tenantId=$tenantId&fileStoreId=$fileStoreId'));
+    // FileStoreResponse apiResponse = FileStoreResponse.fromJson(jsonDecode(res.body));
+    // final response = await get(Uri.parse(apiResponse.fileStoreIds.first.url!));
+    final bytes = res.bodyBytes;
+    final documentType = res.headers['content-type']!.split('/').last;
+    FileStoreModel fileStoreModel = FileStoreModel(documentType: documentType, bytes: bytes);
+    return DataSuccess(fileStoreModel);
+  }
+
+  static String getExtension(String url) {
+    final fileName = url.substring(0, url.indexOf('?')).split('/').last;
+    return fileName.split('.').last;
   }
 
   @override

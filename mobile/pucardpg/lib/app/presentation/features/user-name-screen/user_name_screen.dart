@@ -128,7 +128,7 @@ class UserNameScreenState extends State<UserNameScreen> {
                                             context, '/MobileOtpScreen',
                                             arguments: widget.userModel);
                                         // widget.registrationLoginBloc.add(RequestOtpEvent(mobileNumber: userModel.mobileNumber!));
-                                        isSubmitting = true;
+                                        isSubmitting = false;
                                       },
                                 child: const Text('Submit'))
                           ],
