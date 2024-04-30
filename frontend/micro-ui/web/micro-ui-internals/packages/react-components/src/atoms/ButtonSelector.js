@@ -20,7 +20,7 @@ const ButtonSelector = (props) => {
       disabled={props.isDisabled}
       style={props.style ? props.style : null}
     >
-      <h2 style={{ ...props?.textStyles, ...{ width: "100%" } }}>{props.label}</h2>
+      <h2 style={{ ...props?.textStyles, ...{ width: "100%" }, ...{ color: "green" } }}>{props.label}</h2>
       {props.ButtonBody ? props.ButtonBody : ""}
     </button>
   );
@@ -42,14 +42,14 @@ ButtonSelector.propTypes = {
   /**
    * CustomBody
    */
-  ButtonBody: PropTypes.any
+  ButtonBody: PropTypes.any,
 };
 
 ButtonSelector.defaultProps = {
   label: "",
   theme: "",
   onSubmit: undefined,
-  ButtonBody: undefined
+  ButtonBody: undefined,
 };
 
 export default ButtonSelector;
