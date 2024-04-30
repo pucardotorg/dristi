@@ -5,12 +5,12 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
 function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individualUser = "", refetch = () => {} }) {
-  console.log("use", userTypeDetail);
   const { t } = useTranslation();
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -21,7 +21,85 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
     return { file: fileUploadRes?.data, fileType: fileData.type };
   };
 
+  const validateFormData = (data) => {
+    let isValid = true;
+    advocateClerkConfig.forEach((curr) => {
+      if (!isValid) return;
+      if (!(curr.body[0].key in data) || !data[curr.body[0].key]) {
+        isValid = false;
+      }
+      curr.body[0].populators.inputs.forEach((input) => {
+        if (!isValid) return;
+        if (Array.isArray(input.name)) return;
+        if (
+          input.isDependentOn &&
+          data[curr.body[0].key][input.isDependentOn] &&
+          !Boolean(
+            input.dependentKey[input.isDependentOn].reduce((res, current) => {
+              if (!res) return res;
+              res = data[curr.body[0].key][input.isDependentOn][current];
+              if (
+                Array.isArray(data[curr.body[0].key][input.isDependentOn][current]) &&
+                data[curr.body[0].key][input.isDependentOn][current].length === 0
+              ) {
+                res = false;
+              }
+              return res;
+            }, true)
+          )
+        ) {
+          return;
+        }
+        if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
+          isValid = false;
+        }
+        if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
+          isValid = false;
+        }
+      });
+    });
+    return isValid;
+  };
+  const onFormValueChange = (setValue, formData, formState) => {
+    let isDisabled = false;
+    advocateClerkConfig.forEach((curr) => {
+      if (isDisabled) return;
+      if (!(curr.body[0].key in formData) || !formData[curr.body[0].key]) {
+        return;
+      }
+      curr.body[0].populators.inputs.forEach((input) => {
+        if (isDisabled) return;
+        if (Array.isArray(input.name)) return;
+        if (
+          formData[curr.body[0].key][input.name] &&
+          formData[curr.body[0].key][input.name].length > 0 &&
+          !["documentUpload", "radioButton"].includes(input.type) &&
+          input.validation &&
+          !formData[curr.body[0].key][input.name].match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern)
+        ) {
+          isDisabled = true;
+        }
+        if (Array.isArray(formData[curr.body[0].key][input.name]) && formData[curr.body[0].key][input.name].length === 0) {
+          isDisabled = true;
+        }
+      });
+    });
+    if (isDisabled) {
+      setIsDisabled(isDisabled);
+    } else {
+      setIsDisabled(false);
+    }
+    if (formState?.submitCount) {
+      setIsDisabled(true);
+    }
+  };
+
   const onSubmit = (data) => {
+    if (!validateFormData(data)) {
+      setShowErrorToast(!validateFormData(data));
+      return;
+    }
+
     if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName && individualId) {
       onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
         const requestBody = {
@@ -88,6 +166,7 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
           })
           .finally(() => {
             refetch();
+            setIsDisabled(false);
           });
       });
     }
@@ -104,10 +183,12 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
         onSubmit={(props) => {
           onSubmit(props);
         }}
+        isDisabled={isDisabled}
         label={"CS_COMMON_SUBMIT"}
         headingStyle={{ textAlign: "center" }}
         defaultValues={{ clientDetails: { selectUserType: userTypeDetail } } || {}}
         cardStyle={{ minWidth: "100%" }}
+        onFormValueChange={onFormValueChange}
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>

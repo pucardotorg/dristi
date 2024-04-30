@@ -108,7 +108,6 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       maxFilesAllowed={input.maxFilesAllowed || "1"}
                       extraStyleName={{ padding: "0.5rem" }}
                       customClass={input?.customClass}
-                      customErrorMsg={input?.errorMessage}
                       containerStyles={{ ...input?.containerStyles }}
                       requestSpecifcFileRemoval={removeFile}
                     />

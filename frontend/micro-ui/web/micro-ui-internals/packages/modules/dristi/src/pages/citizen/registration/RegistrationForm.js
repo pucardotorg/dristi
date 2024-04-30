@@ -52,7 +52,6 @@ const RegistrationForm = ({ setParams, params, path }) => {
   };
 
   const onSubmit = (data) => {
-    console.log("data", data);
     if (!validateFormData(data)) {
       setShowErrorToast(!validateFormData(data));
       return;

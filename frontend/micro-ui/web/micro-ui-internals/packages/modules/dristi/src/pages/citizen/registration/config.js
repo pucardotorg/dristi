@@ -258,6 +258,8 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
+                pattern: /^[a-zA-Z0-9/]*$/i,
+                errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
               },
               isMandatory: true,
               isDependentOn: "selectUserType",
@@ -270,6 +272,8 @@ export const advocateClerkConfig = [
               name: "stateRegnNumber",
               validation: {
                 isRequired: true,
+                pattern: /^[a-zA-Z0-9/]*$/i,
+                errMsg: "STATE_REGISTRATION_NUMBER_INVALID",
               },
               isMandatory: true,
               isDependentOn: "selectUserType",

@@ -113,7 +113,13 @@ const EmployeeApp = ({
           <div className={`main ${DSO ? "m-auto" : ""}`}>
             <div className="employee-app-wrapper">
               <ErrorBoundary initData={initData}>
-                <AppModules stateCode={stateCode} userType="employee" modules={modules} appTenants={appTenants} additionalComponent={additionalComponent} />
+                <AppModules
+                  stateCode={stateCode}
+                  userType="employee"
+                  modules={modules}
+                  appTenants={appTenants}
+                  additionalComponent={additionalComponent}
+                />
               </ErrorBoundary>
             </div>
             <div className="employee-home-footer">
