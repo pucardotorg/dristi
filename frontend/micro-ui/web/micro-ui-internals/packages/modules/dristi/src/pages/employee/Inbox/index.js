@@ -199,21 +199,22 @@ const Inbox = ({ tenants, parentRoute }) => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [pageSize, setPageSize] = useState(10);
   const [pageOffset, setPageOffset] = useState(0);
-  const [searchParams, setSearchParams] = useState({
-    eventStatus: [],
-    range: {
-      startDate: null,
-      endDate: new Date(""),
-      title: "",
-    },
-    ulb: tenants?.find((tenant) => tenant?.code === tenantId),
-  });
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type") || "advocate";
   const defaultType = { code: type, name: type?.charAt(0)?.toUpperCase() + type?.slice(1) };
+  const [{ userType }, setSearchParams] = useState({
+    eventStatus: [],
+    range: {
+      startDate: null,
+      endDate: new Date(""),
+      title: "",
+    },
+    userType: defaultType,
+    ulb: tenants?.find((tenant) => tenant?.code === tenantId),
+  });
   const { isLoading } = data;
 
   if (isLoading) {
@@ -252,7 +253,14 @@ const Inbox = ({ tenants, parentRoute }) => {
             defaulValue={defaultType}
             onChange={(e) => {
               history.push(`?type=${e.code}`);
+              setSearchParams((prev) => {
+                return {
+                  ...prev,
+                  userType: e,
+                };
+              });
             }}
+            value={userType}
             config={dropdownConfig}
           ></CustomDropdown>
         </div>
