@@ -99,20 +99,16 @@ const ApplicationDetails = ({ location, match }) => {
       tenantId,
     },
     {},
-    moduleCode,
+    applicationNo + individualId,
     userType,
     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
   const searchResult = useMemo(() => {
     return searchData?.[userTypeDetail?.apiDetails?.requestKey];
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
-
-  const { data: documentData, isLoading: isGetDocumentLoading } = Digit.Hooks.dristi.useGetDocument(
-    { tenantId, fileStoreIds: searchResult?.[0].documents?.[0]?.fileStore },
-    moduleCode,
-    applicationNo || individualId,
-    individualId && searchResult
-  );
+  const fileStoreId = useMemo(() => {
+    return searchResult?.[0].documents?.[0]?.fileStore;
+  }, [searchResult]);
 
   let isMobile = window.Digit.Utils.browser.isMobile();
 
@@ -177,8 +173,18 @@ const ApplicationDetails = ({ location, match }) => {
     ],
     [address, fullName, latitude, longitude]
   );
+  const barDetails = useMemo(() => {
+    return [
+      { title: "Bar Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
+      {
+        title: "Bar Council ID",
+        image: true,
+        content: <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId}></DocViewerWrapper>,
+      },
+    ];
+  }, [fileStoreId, searchResult, tenantId, userTypeDetail?.apiDetails?.AdditionalFields]);
 
-  if (isSearchLoading || isGetUserLoading || isGetDocumentLoading) {
+  if (isSearchLoading || isGetUserLoading) {
     return <Loader />;
   }
 
@@ -188,10 +194,6 @@ const ApplicationDetails = ({ location, match }) => {
     { title: "Aadhar Number", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierId },
   ];
 
-  const barDetails = [
-    { title: "Bar Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
-    { title: "Bar Council ID", image: true, content: <DocViewerWrapper pdfUrl={documentData?.fileStoreIds?.[0]?.url}></DocViewerWrapper> },
-  ];
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
     <div style={{ paddingLeft: "20px" }}>

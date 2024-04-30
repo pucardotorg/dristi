@@ -2,6 +2,7 @@ import { Card, Header, Label, UploadFile } from "@egovernments/digit-ui-react-co
 import React, { Fragment, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { samplePDF } from "./SamplePdfFile";
+import Urls from "../../../../../libraries/src/services/atoms/urls";
 
 const SUPPORTED_FILE_FORMATS = [
   ".pdf",
@@ -23,12 +24,13 @@ const SUPPORTED_FILE_FORMATS = [
   ".xls",
 ];
 
-const DocViewerWrapper = ({ pdfUrl }) => {
+const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   const [selectedDocs, setSelectedDocs] = useState([]);
-
-  const documents = pdfUrl
-    ? [{ uri: samplePDF, fileName: "fileName" }]
+  const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
+  console.debug(uri);
+  const documents = fileStoreId
+    ? [{ uri: uri || samplePDF, fileName: "fileName" }]
     : selectedDocs.map((file) => ({
         uri: window.URL.createObjectURL(file),
         fileName: file?.name || fileName,

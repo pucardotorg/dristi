@@ -66,7 +66,7 @@ export const DRISTIService = {
     }),
   getDocument: (params) =>
     Request({
-      url: Urls.FileFetch,
+      url: Urls.FileFetchById,
       useCache: false,
       method: "GET",
       auth: true,
