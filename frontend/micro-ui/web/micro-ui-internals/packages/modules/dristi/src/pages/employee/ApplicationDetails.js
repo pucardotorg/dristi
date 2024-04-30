@@ -63,7 +63,7 @@ const ApplicationDetails = ({ location, match }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const isAction = urlParams.get("isAction");
   const individualId = urlParams.get("individualId");
-
+  const type = urlParams.get("type") || "advocate";
   const moduleCode = "DRISTI";
   const { t } = useTranslation();
   const history = useHistory();
@@ -124,12 +124,12 @@ const ApplicationDetails = ({ location, match }) => {
       .then(() => {
         setShowModal(false);
         setMessage(action === "Approve" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
-        setTimeout(() => history.push("/digit-ui/employee/dristi/registration-requests"), 2000);
+        setTimeout(() => history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`), 2000);
       })
       .catch(() => {
         setShowModal(false);
         setMessage(t("ES_API_ERROR"));
-        setTimeout(() => history.push("/digit-ui/employee/dristi/registration-requests"), 2000);
+        setTimeout(() => history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`), 2000);
       });
   }
 
@@ -223,7 +223,7 @@ const ApplicationDetails = ({ location, match }) => {
               if (isAction) {
                 setDisplayMenu(!displayMenu);
               } else {
-                history.push("/digit-ui/employee/dristi/registration-requests");
+                history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`);
               }
             }}
           />

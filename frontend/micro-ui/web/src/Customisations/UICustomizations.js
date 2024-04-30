@@ -528,7 +528,13 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link
-                to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${row.individualId}`}
+                to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${
+                  row.individualId
+                }&isAction=true&type=${
+                  row?.applicationNumber?.includes("CLERK")
+                    ? "clerk"
+                    : "advocate"
+                }`}
               >
                 {String(
                   value
@@ -552,7 +558,11 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?individualId=${value}&isAction=true`}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${
+                row.applicationNumber
+              }?individualId=${value}&isAction=true&isAction=true&type=${
+                row?.applicationNumber?.includes("CLERK") ? "clerk" : "advocate"
+              }`}
             >
               {" "}
               {t("Verify")}
