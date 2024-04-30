@@ -62,7 +62,7 @@ const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
           </>
         )}
       </Card>
-      <a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" style={{ color: "#505A5F", textDecoration: "none" }}>
+      <a href={uri} target="_blank" rel="noreferrer" style={{ color: "#505A5F", textDecoration: "none" }}>
         BAR council ID.pdf
       </a>
     </div>

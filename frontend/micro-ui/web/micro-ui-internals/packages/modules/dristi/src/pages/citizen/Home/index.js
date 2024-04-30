@@ -72,12 +72,21 @@ function CitizenHome({ tenantId }) {
     );
   }, [searchResult, userType]);
 
+  const isRejected = useMemo(() => {
+    return (
+      userType !== "LITIGANT" &&
+      Array.isArray(searchResult) &&
+      searchResult.length > 0 &&
+      searchResult[0]?.isActive === false &&
+      searchResult[0]?.status === "INACTIVE"
+    );
+  }, [searchResult, userType]);
+
   const isAdditionalDetails = useMemo(() => {
     return userType !== "LITIGANT" && individualId && Array.isArray(searchResult) && searchResult.length === 0;
   }, [individualId, searchResult, userType]);
 
   if (isAdditionalDetails) {
-    debugger;
     history.push(`/digit-ui/citizen/dristi/home/additional-details`);
   }
 
@@ -89,6 +98,7 @@ function CitizenHome({ tenantId }) {
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
       {individualId &&
         !isApprovalPending &&
+        !isRejected &&
         cardIcons.map((card) => {
           return (
             <CustomCard
@@ -101,8 +111,8 @@ function CitizenHome({ tenantId }) {
             ></CustomCard>
           );
         })}
-      {individualId && isApprovalPending && <ApplicationAwaitingPage individualId={individualId} />}
-      {!individualId && <TakeUserToRegistration />}
+      {individualId && isApprovalPending && !isRejected && <ApplicationAwaitingPage individualId={individualId} />}
+      {(!individualId || isRejected) && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
     </div>
   );
 }

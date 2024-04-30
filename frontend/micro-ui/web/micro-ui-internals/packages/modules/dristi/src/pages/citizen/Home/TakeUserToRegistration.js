@@ -5,7 +5,7 @@ import { useHistory } from "react-router-dom";
 import { ReactComponent as RegisterImage } from "./ImageUpload/image/register.svg";
 import { ReactComponent as RightArrow } from "./ImageUpload/image/arrow_forward.svg";
 
-function TakeUserToRegistration() {
+function TakeUserToRegistration({ message }) {
   const { t } = useTranslation();
   const history = useHistory();
   return (
@@ -24,7 +24,7 @@ function TakeUserToRegistration() {
         <RegisterImage></RegisterImage>
       </div>
       <div style={{ textAlign: "center" }}>
-        <h2> You are yet to register yourself! </h2>
+        <h2> {t(message)} </h2>
       </div>
       <div>
         <Button

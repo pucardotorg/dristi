@@ -64,7 +64,7 @@ const App = ({ stateCode, tenantId }) => {
       show: !hideHomeCrumb.includes(location.pathname),
     },
     {
-      path: `${path}/home/login`,
+      path: !isUserLoggedIn ? `${path}/home/login` : "",
       content: t("ES_COMMON_LOGIN"),
       show: location.pathname.includes("/home/login"),
       isLast: !location.pathname.includes("/login"),
