@@ -169,6 +169,28 @@ serviceMaps:
 
         - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representative_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
           basePath: cases.*.representatives.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.*.representatives.*.documents.*.id
+            - jsonPath: $.cases.*.representatives.*.documents.*.fileStore
+            - jsonPath: $.cases.*.representatives.*.documents.*.documentUid
+            - jsonPath: $.cases.*.representatives.*.documents.*.documentType
+            - jsonPath: $.cases.*.representatives[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.*.representatives.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representing_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: cases.*.representatives.*.representing.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.id
+            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.fileStore
+            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.documentUid
+            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.documentType
+            - jsonPath: $.cases.*.representatives.*.representing[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
     - version: 1.0
       description: Update case details in tables
       fromTopic: update-case-details
@@ -213,30 +235,6 @@ serviceMaps:
             - jsonPath: $.cases.*.representatives.*.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
-
-
-        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representing_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
-          basePath: cases.*.representatives.*.representing.*.documents.*
-          jsonMaps:
-            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.id
-            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.fileStore
-            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.documentUid
-            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.documentType
-            - jsonPath: $.cases.*.representatives.*.representing[*][?({id} in @.documents[*].id)].id
-            - jsonPath: $.cases.*.representatives.*.representing.*.documents.*.additionalDetails
-              type: JSON
-              dbType: JSONB
-            - jsonPath: $.cases.*.linkedCases.*.relationshipType
-            - jsonPath: $.cases.*.linkedCases.*.caseNumber
-            - jsonPath: $.cases.*.linkedCases.*.isActive
-            - jsonPath: $.cases[*][?({id} in @.linkedCases[*].id)].id
-            - jsonPath: $.cases.*.linkedCases.*.caseId
-            - jsonPath: $.cases.*.linkedCases.*.additionalDetails
-              type: JSON
-              dbType: JSONB
-            - jsonPath: $.cases.*.linkedCases.*.auditdetails.lastModifiedBy
-            - jsonPath: $.cases.*.linkedCases.*.auditdetails.lastModifiedTime
-            - jsonPath: $.cases.*.linkedCases.*.id
 
         - query: UPDATE dristi_case_statutes_and_sections SET statutes = ?, sections = ?, subsections = ?, case_id = ?, additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
           basePath: cases.*.statutesAndSections.*
