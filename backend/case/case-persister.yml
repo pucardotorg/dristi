@@ -198,8 +198,8 @@ serviceMaps:
             - jsonPath: $.cases.*.additionalDetails
               type: JSON
               dbType: JSONB
-            - jsonPath: $.cases.*.auditDetails.lastModifiedBy
-            - jsonPath: $.cases.*.auditDetails.lastModifiedTime
+            - jsonPath: $.cases.*.auditdetails.lastModifiedBy
+            - jsonPath: $.cases.*.auditdetails.lastModifiedTime
             - jsonPath: $.cases.*.id
 
         - query: UPDATE dristi_linked_case SET relationshiptype = ?, casenumbers = ?, isactive = ?, case_id = ?, additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
@@ -234,8 +234,8 @@ serviceMaps:
             - jsonPath: $.cases.*.linkedCases.*.additionalDetails
               type: JSON
               dbType: JSONB
-            - jsonPath: $.cases.*.linkedCases.*.auditDetails.lastModifiedBy
-            - jsonPath: $.cases.*.linkedCases.*.auditDetails.lastModifiedTime
+            - jsonPath: $.cases.*.linkedCases.*.auditdetails.lastModifiedBy
+            - jsonPath: $.cases.*.linkedCases.*.auditdetails.lastModifiedTime
             - jsonPath: $.cases.*.linkedCases.*.id
 
         - query: UPDATE dristi_case_statutes_and_sections SET statutes = ?, sections = ?, subsections = ?, case_id = ?, additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;
@@ -249,8 +249,8 @@ serviceMaps:
             - jsonPath: $.cases.*.statutesAndSections.*.additionalDetails
               type: JSON
               dbType: JSONB
-            - jsonPath: $.cases.*.statutesAndSections.*.auditDetails.lastModifiedBy
-            - jsonPath: $.cases.*.statutesAndSections.*.auditDetails.lastModifiedTime
+            - jsonPath: $.cases.*.statutesAndSections.*.auditdetails.lastModifiedBy
+            - jsonPath: $.cases.*.statutesAndSections.*.auditdetails.lastModifiedTime
             - jsonPath: $.cases.*.statutesAndSections.*.id
 
         - query: UPDATE public.dristi_case_litigants SET partycategory = ?, individualid = ?, organisationid = ?, partytype = ?, isactive = ?, case_id = ?, additionaldetails = ?, lastmodifiedby = ?, lastmodifiedtime = ? WHERE id = ?;

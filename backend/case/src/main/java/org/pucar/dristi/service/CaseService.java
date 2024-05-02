@@ -110,11 +110,11 @@ public class CaseService {
             return caseRequest.getCases();
 
         } catch (CustomException e){
-            log.error("Custom Exception occurred while updating advocate");
+            log.error("Custom Exception occurred while updating case");
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while updating advocate");
-            throw new CustomException("CASE_UPDATE_EXCEPTION","Error occurred while updating advocate: " + e.getMessage());
+            log.error("Error occurred while updating case");
+            throw new CustomException("CASE_UPDATE_EXCEPTION","Error occurred while updating case: " + e.getMessage());
         }
 
     }

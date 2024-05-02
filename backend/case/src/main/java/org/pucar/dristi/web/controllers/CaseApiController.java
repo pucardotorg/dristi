@@ -38,11 +38,7 @@ public class CaseApiController {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
-	@Autowired
-	private CaseService caseService;
 
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
 	public CaseApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -56,7 +52,7 @@ public class CaseApiController {
                             if (accept != null && accept.contains("application/json")) {
 								List<CourtCase> caseList = caseService.registerCaseRequest(body);
 								ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-								CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).requestInfo(responseInfo).build();
+								CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
 								return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
                             }
 
@@ -93,7 +89,10 @@ public class CaseApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+				List<CourtCase> caseList = caseService.updateCase(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				CaseResponse caseResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(caseResponse, HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity<CaseResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
