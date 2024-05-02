@@ -31,7 +31,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
     const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
     const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
     const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadhaarNumber;
-    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "ADHAAR";
+    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     let Individual = {
       Individual: {
         tenantId: tenantId,
@@ -96,7 +96,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
         history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success", createType: data?.clientDetails?.selectUserType?.code });
       })
       .catch(() => {
-        history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
+        history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
       })
       .finally(() => {
         setParams({});

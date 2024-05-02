@@ -73,8 +73,8 @@ export const loginSteps = [
               disableFormValidation: false,
               options: [
                 {
-                  code: "ADHAAR",
-                  name: "ADHAAR",
+                  code: "AADHAR",
+                  name: "AADHAR",
                 },
                 {
                   code: "PAN",

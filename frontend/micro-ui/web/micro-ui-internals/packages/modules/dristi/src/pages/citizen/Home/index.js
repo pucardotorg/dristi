@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CustomCard from "../../../components/CustomCard";
 import {
   CaseInProgressIcon,
@@ -20,7 +20,8 @@ function CitizenHome({ tenantId }) {
   const history = useHistory();
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
+  const [isFetching, setIsFetching] = useState(true);
+  const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         userUuid: [userInfo?.uuid],
@@ -31,6 +32,13 @@ function CitizenHome({ tenantId }) {
     "HOME",
     userInfo?.uuid && isUserLoggedIn
   );
+
+  useEffect(() => {
+    refetch().then(() => {
+      setIsFetching(false);
+    });
+  }, []);
+
   const cardIcons = [
     { Icon: <MyHearingsIcon />, label: "File a Case", path: "/digit-ui/employee/citizen/dristi/my-hearings" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -90,7 +98,7 @@ function CitizenHome({ tenantId }) {
     history.push(`/digit-ui/citizen/dristi/home/additional-details`);
   }
 
-  if (isLoading || isSearchLoading) {
+  if (isLoading || isSearchLoading || isFetching) {
     return <Loader />;
   }
 

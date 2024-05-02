@@ -231,7 +231,7 @@ export const termsAndConditionConfig = [
         type: "checkbox",
         key: "Terms_Conditions",
         populators: {
-          title: "I agree to Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+          title: "FIRST_TERMS_AND_CONDITIONS",
           name: "Terms_Conditions",
           styles: { minWidth: "100%" },
           labelStyles: { padding: "8px" },
