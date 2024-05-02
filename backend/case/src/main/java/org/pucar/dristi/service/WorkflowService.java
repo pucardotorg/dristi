@@ -145,7 +145,7 @@ public class WorkflowService {
                     .processInstances(Arrays.asList(process))
                     .build();
         } catch (Exception e) {
-            log.error("Error getting process instance for advocate registration payment: {}", e.getMessage());
+            log.error("Error getting process instance for case registration payment: {}", e.getMessage());
             throw new CustomException();
         }
     }

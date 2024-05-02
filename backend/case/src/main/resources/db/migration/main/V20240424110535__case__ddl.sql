@@ -9,7 +9,6 @@ CREATE TABLE dristi_cases (
                               accessCode varchar(64) NULL,
                               courtId varchar(64) NULL,
                               benchId varchar(64) NULL,
-                              judgeId varchar(64) NULL,
                               filingDate varchar(64) NULL,
                               registrationDate varchar(64) NULL,
                               caseCategory varchar(64) NULL,

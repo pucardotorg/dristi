@@ -48,7 +48,10 @@ public class CaseApiController {
                 public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody CaseRequest body) {
                         String accept = request.getHeader("Accept");
                             if (accept != null && accept.contains("application/json")) {
-                            return new ResponseEntity<CaseResponse>(HttpStatus.CREATED);
+								List<CourtCase> caseList = caseService.registerCaseRequest(body);
+								ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+								CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+								return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
                             }
 
                         return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
