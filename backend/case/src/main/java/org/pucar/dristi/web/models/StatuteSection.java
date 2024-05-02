@@ -54,7 +54,7 @@ public class StatuteSection {
 	private List<String> subsections = null;
 
 	@JsonProperty("additionalDetails")
-	private String additionalDetails = null;
+	private Object additionalDetails = null;
 
 	@JsonProperty("auditdetails")
 	@Valid

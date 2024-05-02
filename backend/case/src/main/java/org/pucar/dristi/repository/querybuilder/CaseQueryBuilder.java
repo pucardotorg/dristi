@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class CaseQueryBuilder {
-    private static final String BASE_CASE_QUERY = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, " +
-            "cases.filingnumber as filingnumber," +
-            " cases.courtid as courtid, cases.benchid as benchid, cases.additionaldetails as additionaldetails, cases.createdby as createdby," +
+    private static final String BASE_CASE_QUERY = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, " +
+            "cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, " +
+            " cases.courtid as courtid, cases.benchid as benchid, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby," +
             " cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_CASES_TABLE = " FROM dristi_cases cases";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY cases.createdtime DESC ";

@@ -44,7 +44,7 @@ public class CaseService {
             enrichmentUtil.enrichCaseRegistration(body);
             workflowService.updateWorkflowStatus(body);
 
-            producer.push("save-advocate-clerk", body);
+            producer.push("save-case-application", body);
             return body.getCases();
         }
         catch (CustomException e){
