@@ -38,9 +38,9 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .lastModifiedTime(lastModifiedTime)
                             .build();
                     courtCase = CourtCase.builder()
+                            .id(UUID.fromString(rs.getString("id")))
                             .caseNumber(rs.getString("caseNumber"))
                             .tenantId(rs.getString("tenantid"))
-                            .id(UUID.fromString(rs.getString("id")))
                             .caseCategory(rs.getString("casecategory"))
                             .caseDescription(rs.getString("casedescription"))
                             .courtId(rs.getString("courtid"))

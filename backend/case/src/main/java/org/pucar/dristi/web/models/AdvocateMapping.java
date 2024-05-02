@@ -27,7 +27,7 @@ import java.util.List;
 public class AdvocateMapping   {
         @JsonProperty("id")
 
-        @Size(min=2,max=64)         private String id = null;
+        @Valid         private String id = null;
 
         @JsonProperty("tenantId")
           @NotNull
