@@ -78,7 +78,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
         String userTypeEmployee = "EMPLOYEE";
 
         try {
-            if (userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
                 Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
                         .findFirst();
