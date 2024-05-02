@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_QUERY_EXCEPTION;
@@ -21,9 +22,10 @@ public class AdvocateQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid ";
     private static final String FROM_ADVOCATES_TABLE = " FROM dristi_advocate adv";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
-    private static final String ORDERBY_CREATEDTIME = " ORDER BY adv.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
 
-    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber) {
+    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
@@ -109,7 +111,12 @@ public class AdvocateQueryBuilder {
                         .append(")");
                 preparedStmtList.addAll(statusList);
             }
-            query.append(ORDERBY_CREATEDTIME);
+            if(isIndividualLoggedInUser.get()){
+                query.append(ORDERBY_CREATEDTIME_DESC);
+            }
+            else {
+                query.append(ORDERBY_CREATEDTIME_ASC);
+            }
 
             return query.toString();
         }

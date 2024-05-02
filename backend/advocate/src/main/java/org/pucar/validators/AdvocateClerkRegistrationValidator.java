@@ -13,7 +13,9 @@ import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
 import static org.pucar.config.ServiceConstants.VALIDATION_EXCEPTION;
@@ -32,12 +34,12 @@ public class AdvocateClerkRegistrationValidator {
         advocateClerkRequest.getClerks().forEach(clerk -> {
             if(ObjectUtils.isEmpty(clerk.getTenantId()) || ObjectUtils.isEmpty(clerk.getIndividualId()))
                 throw new CustomException("ILLEGAL_ARGUMENT_EXCEPTION_CODE", "tenantId and individualId are mandatory for creating advocate clerk");
-            if (!individualService.searchIndividual(requestInfo,clerk.getIndividualId()))
+            if (!individualService.searchIndividual(requestInfo,clerk.getIndividualId(), new HashMap<>()))
                 throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
         });
     }
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
-        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String());
+        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String(), new AtomicReference<>());
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);
     }

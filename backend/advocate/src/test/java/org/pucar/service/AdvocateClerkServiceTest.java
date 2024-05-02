@@ -1,6 +1,7 @@
 package org.pucar.service;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -113,20 +115,24 @@ public class AdvocateClerkServiceTest {
     public void testSearchAdvocateClerkApplications_Success() {
         // Prepare search criteria
         RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setType("CITIZEN");
+        requestInfo.setUserInfo(user);
+//        when(requestInfo.getUserInfo()).thenReturn(user);
         List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
 
         // Mock successful repository call
         List<AdvocateClerk> applications = new ArrayList<>();
-        when(advocateClerkRepository.getApplications(searchCriteria, statusList, applicationNumber)).thenReturn(applications);
+        when(advocateClerkRepository.getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any())).thenReturn(applications);
 
         // Call the method
-        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria, statusList, applicationNumber);
+        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria,statusList,applicationNumber);
 
         // Verify results
         assertEquals(applications, response);
-        verify(advocateClerkRepository, times(1)).getApplications(searchCriteria, statusList, applicationNumber);
+        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any());
         verify(workflowService, times(0)).getWorkflowFromProcessInstance(any()); // No workflows to fetch for empty applications
     }
 
@@ -134,20 +140,26 @@ public class AdvocateClerkServiceTest {
     public void testSearchAdvocateClerkApplications_EmptyResults() {
         // Prepare search criteria
         RequestInfo requestInfo = new RequestInfo();
+        User user = new User();
+        user.setType("CITIZEN");
+        requestInfo.setUserInfo(user);
         List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
+        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria(null, "APP123", null, null);
+        searchCriteria.add(criteria);
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
 
         // Mock successful repository call with empty results
         List<AdvocateClerk> applications = Collections.emptyList();
-        when(advocateClerkRepository.getApplications(searchCriteria, statusList, applicationNumber)).thenReturn(applications);
+        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenReturn(Collections.emptyList());
 
         // Call the method
         List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria, statusList, applicationNumber);
+        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
 
         // Verify results
         assertEquals(applications, response);
-        verify(advocateClerkRepository, times(1)).getApplications(searchCriteria, statusList, applicationNumber);
+        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any());
         verify(workflowService, times(0)).getWorkflowFromProcessInstance(any()); // No workflows to fetch for empty applications
     }
 

@@ -8,6 +8,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.pucar.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION;
@@ -22,9 +23,10 @@ public class AdvocateClerkQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "SELECT doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.clerk_id as clerk_id ";
     private static final String FROM_CLERK_TABLES = " FROM dristi_advocate_clerk advc";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
-    private static final String ORDERBY_CREATEDTIME = " ORDER BY advc.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY advc.createdtime DESC ";
+    private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
 
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber){
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -91,8 +93,12 @@ public class AdvocateClerkQueryBuilder {
                 query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
                 addToPreparedStatement(preparedStmtList, statusList);
             }
-
-            query.append(ORDERBY_CREATEDTIME);
+            if(isIndividualLoggedInUser.get()){
+                query.append(ORDERBY_CREATEDTIME_DESC);
+            }
+            else {
+                query.append(ORDERBY_CREATEDTIME_ASC);
+            }
 
             return query.toString();
         }

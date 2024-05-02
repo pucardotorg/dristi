@@ -2,6 +2,7 @@ package org.pucar.service;
 
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
+
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.config.Configuration;
 import org.pucar.enrichment.AdvocateRegistrationEnrichment;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvocateServiceTest {
@@ -81,18 +85,27 @@ public class AdvocateServiceTest {
     public void testSearchAdvocateApplications() {
         // Setup
         RequestInfo requestInfo = new RequestInfo();
-        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
+        User user = new User();
+        user.setType("CITIZEN");
+        requestInfo.setUserInfo(user);
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria(null, null, "APP123", null);
+        advocateSearchCriteria.add(criteria);
         String applicationNumber = new String();
-        when(advocateRepository.getApplications(any(),anyList(), anyString())).thenReturn(Collections.emptyList());
 
         List<String> statusList = Arrays.asList("APPROVED","PENDING");
+        when(advocateRepository.getApplications(
+                eq(Collections.singletonList(new AdvocateSearchCriteria(null, null, "APP123", null))),
+                eq(Arrays.asList("APPROVED", "PENDING")),
+                eq(""), any()))
+                .thenReturn(Collections.emptyList());
 
         // Invoke
-        List<Advocate> result = service.searchAdvocate(requestInfo, searchCriteria,statusList, applicationNumber);
+        List<Advocate> result = service.searchAdvocate(requestInfo, advocateSearchCriteria,statusList, applicationNumber);
 
         // Verify
         assertEquals(0, result.size());
-        verify(advocateRepository, times(1)).getApplications(searchCriteria,statusList, applicationNumber);
+        verify(advocateRepository, times(1)).getApplications(eq(advocateSearchCriteria), eq(Arrays.asList("APPROVED", "PENDING")), eq(applicationNumber), any());
     }
 
     @Test

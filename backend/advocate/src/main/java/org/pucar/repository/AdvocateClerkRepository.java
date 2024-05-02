@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_EXCEPTION;
 import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_EXCEPTION;
@@ -38,12 +39,12 @@ public class AdvocateClerkRepository {
     @Autowired
     private AdvocateClerkDocumentRowMapper documentRowMapper;
 
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber){
+    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser){
         try {
             List<AdvocateClerk> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber);
+            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser);
             log.info("Final query: " + query);
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
