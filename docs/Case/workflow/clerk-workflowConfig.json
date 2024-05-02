@@ -8,7 +8,7 @@
             "states": [
                 {
                     "sla": null,
-                    "state": "Draft in Progress",
+                    "state": "DRAFT_IN_PROGRESS",
                     "applicationStatus": null,
                     "docUploadRequired": false,
                     "isStartState": true,
@@ -16,16 +16,16 @@
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "Save Draft",
-                            "nextState": "Draft in Progress",
+                            "action": "SAVE_DRAFT",
+                            "nextState": "DRAFT_IN_PROGRESS",
                             "roles": [
                                 "Litigant",
                                 "Advocate"
                             ]
                         },
                         {
-                            "action": "Submit Case",
-                            "nextState": "Payment Pending",
+                            "action": "SUBMIT_CASE",
+                            "nextState": "PAYMENT_PENDING",
                             "roles": [
                                 "Litigant",
                                 "Advocate"
@@ -35,7 +35,7 @@
                 },
                 {
                     "sla": null,
-                    "state": "Payment Pending",
+                    "state": "PAYMENT_PENDING",
                     "applicationStatus": null,
                     "docUploadRequired": false,
                     "isStartState": false,
@@ -43,16 +43,16 @@
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "Make Payment",
-                            "nextState": "Under Scrutiny",
+                            "action": "MAKE_PAYMENT",
+                            "nextState": "UNDER_SCRUTINY",
                             "roles": [
                                 "Litigant",
                                 "Advocate"
                             ]
                         },
                         {
-                            "action": "Delete Draft",
-                            "nextState": "Draft in Progress",
+                            "action": "DELETE_DRAFT",
+                            "nextState": "DRAFT_IN_PROGRESS",
                             "roles": [
                                 "Litigant",
                                 "Advocate"
@@ -62,23 +62,23 @@
                 },
                 {
                     "sla": null,
-                    "state": "Under Scrutiny",
-                    "applicationStatus": "Pending Admission",
+                    "state": "UNDER_SCRUTINY",
+                    "applicationStatus": "PENDING_ADMISSION",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "Validate",
-                            "nextState": "Pending Admission",
+                            "action": "VALIDATE",
+                            "nextState": "PENDING_ADMISSION",
                             "roles": [
                                 "FSO"
                             ]
                         },
                         {
-                            "action": "Send Back",
-                            "nextState": "Case Re-assigned",
+                            "action": "SEND_BACK",
+                            "nextState": "CASE_RE_ASSIGNED",
                             "roles": [
                                 "FSO"
                             ]
@@ -87,7 +87,7 @@
                 },
                 {
                     "sla": null,
-                    "state": "Pending Admission",
+                    "state": "PENDING_ADMISSION",
                     "applicationStatus": null,
                     "docUploadRequired": false,
                     "isStartState": false,
@@ -95,16 +95,16 @@
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "Edit Case",
-                            "nextState": "Pending Admission",
+                            "action": "EDIT_CASE",
+                            "nextState": "PENDING_ADMISSION",
                             "roles": [
                                 "Litigant",
                                 "Advocate"
                             ]
                         },
                         {
-                            "action": "Schedule Admission Hearing",
-                            "nextState": "Admission Hearing Scheduled",
+                            "action": "SCHEDULE_ADMISSION_HEARING",
+                            "nextState": "ADMISSION_HEARING_SCHEDULED",
                             "roles": [
                                 "Judge"
                             ]
@@ -113,23 +113,23 @@
                 },
                 {
                     "sla": null,
-                    "state": "Admission Hearing Scheduled",
-                    "applicationStatus": "Pending Admission",
+                    "state": "ADMISSION_HEARING_SCHEDULED",
+                    "applicationStatus": "PENDING_ADMISSION",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
                     "isStateUpdatable": true,
                     "actions": [
                         {
-                            "action": "Admit",
-                            "nextState": "Case Admitted",
+                            "action": "ADMIT",
+                            "nextState": "CASE_ADMITTED",
                             "roles": [
                                 "Judge"
                             ]
                         },
                         {
-                            "action": "Reject",
-                            "nextState": "Case Dismissed",
+                            "action": "REJECT",
+                            "nextState": "CASE_DISMISSED",
                             "roles": [
                                 "Judge"
                             ]
