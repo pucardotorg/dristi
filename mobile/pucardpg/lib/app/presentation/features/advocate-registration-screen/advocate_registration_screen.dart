@@ -65,6 +65,9 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
           if (fileSize <= maxFileSize) {
             fileName = result!.files.single.name;
             pickedFile = result!.files.single;
+            if (pickedFile != null) {
+              widget.fileBloc.add(FileEvent(pickedFile: pickedFile!));
+            }
             setState(() {
               fileToDisplay = file;
               extensionError = false;
@@ -160,16 +163,35 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                   ),
                                 ),
                                 const SizedBox(width: 10,),
-                                SizedBox(
-                                  height: 44,
-                                  width: 120,
-                                  child: DigitOutLineButton(
-                                    label: 'Upload',
-                                    onPressed: (){
-                                      pickFile();
+                                BlocListener<FileBloc, FilePickerState>(
+                                    bloc: widget.fileBloc,
+                                    listener: (context, state) {
+                                      switch (state.runtimeType) {
+                                        case FileFailedState:
+                                          DigitToast.show(context,
+                                            options: DigitToastOptions(
+                                              "Failed to upload",
+                                              true,
+                                              widget.theme.theme(),
+                                            ),
+                                          );
+                                          break;
+                                        case FileSuccessState:
+                                          widget.userModel.fileStore = (state as FileSuccessState).fileStoreId;
+                                          break;
+                                      }
                                     },
-                                  ),
-                                ),
+                                    child: SizedBox(
+                                      height: 44,
+                                      width: 120,
+                                      child: DigitOutLineButton(
+                                        label: 'Upload',
+                                        onPressed: (){
+                                          pickFile();
+                                        },
+                                      ),
+                                    ),
+                                )
                               ],
                             ),
                             const SizedBox(height: 8,),
@@ -229,26 +251,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                   ),
                 ),
               ),
-              BlocListener<FileBloc, FilePickerState>(
-                bloc: widget.fileBloc,
-                listener: (context, state) {
-                  switch (state.runtimeType) {
-                    case FileFailedState:
-                      DigitToast.show(context,
-                        options: DigitToastOptions(
-                          "Failed to upload",
-                          true,
-                          widget.theme.theme(),
-                        ),
-                      );
-                      break;
-                    case FileSuccessState:
-                      widget.userModel.fileStore = (state as FileSuccessState).fileStoreId;
-                      Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
-                      break;
-                  }
-                },
-                child: DigitElevatedButton(
+              DigitElevatedButton(
                     onPressed: () {
                       FocusScope.of(context).unfocus();
                       if (widget.userModel.userType == 'ADVOCATE') {
@@ -321,13 +324,10 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                           return;
                         }
                       }
-                      if (pickedFile != null) {
-                        widget.fileBloc.add(FileEvent(pickedFile: pickedFile!));
-                      }
+                      Navigator.pushNamed(context, '/TermsAndConditionsScreen', arguments: widget.userModel);
                     },
                     child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                 ),
-              )
             ],
           )
       ),
