@@ -19,6 +19,7 @@ const App = ({ stateCode, tenantId }) => {
   const Response = Digit?.ComponentRegistryService?.getComponent("DRISTICitizenResponse");
   const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
   const AdvocateClerkAdditionalDetail = Digit?.ComponentRegistryService?.getComponent("AdvocateClerkAdditionalDetail");
+  const FileCase = Digit?.ComponentRegistryService?.getComponent("FileCase");
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
 
@@ -149,6 +150,9 @@ const App = ({ stateCode, tenantId }) => {
           </PrivateRoute>
           <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
+          <PrivateRoute path={`${path}/home/file-case`}>
+            <FileCase t={t}></FileCase>
+          </PrivateRoute>
           <Route path={`${path}/home/login`}>
             <Login stateCode={stateCode} />
           </Route>

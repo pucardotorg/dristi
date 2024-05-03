@@ -3,6 +3,7 @@ import CustomCard from "../../../components/CustomCard";
 import {
   CaseInProgressIcon,
   ClosedCasesIcon,
+  FileCaseIcon,
   JoinCaseIcon,
   Loader,
   MyHearingsIcon,
@@ -40,7 +41,7 @@ function CitizenHome({ tenantId }) {
   }, []);
 
   const cardIcons = [
-    { Icon: <MyHearingsIcon />, label: "File a Case", path: "/digit-ui/employee/citizen/dristi/my-hearings" },
+    { Icon: <FileCaseIcon />, label: "File a Case", path: "/digit-ui/citizen/dristi/home/file-case" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
     { Icon: <MyHearingsIcon />, label: "My hearing", path: "/digit-ui/employee/citzen/dristi/my-hearings" },
     { Icon: <JoinCaseIcon />, label: "Join a case", path: "/digit-ui/employee/citizen/dristi/join-case" },
@@ -114,7 +115,9 @@ function CitizenHome({ tenantId }) {
               Icon={card.Icon}
               style={{ width: "400px", height: "150px" }}
               onClick={() => {
-                // history.push(card.path);
+                if (card.label === "File a Case") {
+                  history.push(card.path);
+                }
               }}
             ></CustomCard>
           );
