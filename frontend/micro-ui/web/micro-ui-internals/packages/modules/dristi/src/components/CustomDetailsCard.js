@@ -20,7 +20,7 @@ const CustomDetailsCard = ({ header, subtext, serialNumber, subnote, style }) =>
         </div>
       )}
       <div style={{ width: "90%" }}>
-        {header && <p>{header}</p>}
+        {header && <p style={{ fontWeight: 700 }}>{header}</p>}
         {subtext && <p>{subtext}</p>}
         {subnote && <p>{subnote}</p>}
       </div>
