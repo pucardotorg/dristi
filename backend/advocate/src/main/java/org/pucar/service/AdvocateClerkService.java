@@ -11,12 +11,13 @@ import org.pucar.validators.AdvocateClerkRegistrationValidator;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.AdvocateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.config.ServiceConstants.*;
 
@@ -36,6 +37,9 @@ public class AdvocateClerkService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private IndividualService individualService;
 
     @Autowired
     private Producer producer;
@@ -59,14 +63,35 @@ public class AdvocateClerkService {
         }
     }
     public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList, String applicationNumber) {
+        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
+        Map<String, String> individualUserUUID = new HashMap<>();
+        String userTypeEmployee = "EMPLOYEE";
+
         try {
+            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+                Optional<AdvocateClerkSearchCriteria> firstNonNull = advocateClerkSearchCriteria.stream()
+                        .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
+                        .findFirst();
+
+                firstNonNull.ifPresent(value -> {
+                    if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
+                        if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
+                            isIndividualLoggedInUser.set(true);
+                        }
+                    }
+                });
+            }
+
             // Fetch applications from database according to the given search criteria
             List<AdvocateClerk> applications;
-            applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList, applicationNumber);
+            applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser);
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
-
+            if(isIndividualLoggedInUser.get()) {
+                if (applications.size() > 1)
+                    applications.subList(1, applications.size()).clear();
+            }
             applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             // Otherwise return the found applications
             return applications;

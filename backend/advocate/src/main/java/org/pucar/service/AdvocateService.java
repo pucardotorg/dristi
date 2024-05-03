@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.config.ServiceConstants.*;
 
@@ -33,6 +33,9 @@ public class AdvocateService {
 
     @Autowired
     private WorkflowService workflowService;
+
+    @Autowired
+    private IndividualService individualService;
 
     @Autowired
     private AdvocateRepository advocateRepository;
@@ -70,13 +73,35 @@ public class AdvocateService {
     }
 
 public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber) {
-    try {
+        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
+        Map<String, String> individualUserUUID = new HashMap<>();
+        String userTypeEmployee = "EMPLOYEE";
+
+        try {
+            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+                Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
+                        .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
+                        .findFirst();
+
+                firstNonNull.ifPresent(value -> {
+                    if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
+                        if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
+                            isIndividualLoggedInUser.set(true);
+                        }
+                    }
+                });
+            }
+
         // Fetch applications from database according to the given search criteria
-        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber);
+        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser);
 
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))
             return new ArrayList<>();
+        if(isIndividualLoggedInUser.get()) {
+            if (applications.size() > 1)
+                applications.subList(1, applications.size()).clear();
+        }
         applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
         return applications;
     }

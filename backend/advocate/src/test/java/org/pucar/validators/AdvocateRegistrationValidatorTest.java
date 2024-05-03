@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
+import java.util.HashMap;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvocateRegistrationValidatorTest {
@@ -48,7 +49,7 @@ public class AdvocateRegistrationValidatorTest {
         advocate.setTenantId("validTenantId");
         advocateRequest.setAdvocates(Collections.singletonList(advocate));
 
-        when(individualService.searchIndividual(requestInfo, "validIndividualId")).thenReturn(true);
+        when(individualService.searchIndividual(requestInfo, "validIndividualId", new HashMap<>())).thenReturn(true);
 
         assertDoesNotThrow(() -> validator.validateAdvocateRegistration(advocateRequest));
     }
@@ -60,7 +61,7 @@ public class AdvocateRegistrationValidatorTest {
         advocate.setTenantId("validTenantId");
         advocateRequest.setAdvocates(Collections.singletonList(advocate));
 
-        when(individualService.searchIndividual(requestInfo, "invalidIndividualId")).thenReturn(false);
+        when(individualService.searchIndividual(requestInfo, "invalidIndividualId", new HashMap<>())).thenReturn(false);
 
         assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
     }
