@@ -14,14 +14,14 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Document>>> {
+public class RepresentiveDocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Document>>> {
     public Map<UUID,List<Document>> extractData(ResultSet rs) {
         Map<UUID, List<Document>> documentMap = new LinkedHashMap<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String caseId = rs.getString("case_id");
-                UUID uuid = UUID.fromString(caseId!=null ? caseId : "00000000-0000-0000-0000-000000000000");
+                String representativeId = rs.getString("representative_id");
+                UUID uuid = UUID.fromString(representativeId!=null ? representativeId : "00000000-0000-0000-0000-000000000000");
                 Document document = Document.builder()
                         .id(rs.getString("id"))
                         .documentType(rs.getString("documenttype"))

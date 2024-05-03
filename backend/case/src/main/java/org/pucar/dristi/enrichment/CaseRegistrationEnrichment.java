@@ -96,6 +96,7 @@ public class CaseRegistrationEnrichment {
                     }
 
                     courtCase.setFilingNumber(courtCaseRegistrationIdList.get(index++));
+                    courtCase.setCaseNumber(courtCaseRegistrationIdList.get(index++));
                 }
             }
         }

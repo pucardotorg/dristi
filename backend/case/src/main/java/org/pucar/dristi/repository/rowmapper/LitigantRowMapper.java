@@ -23,7 +23,7 @@ public class LitigantRowMapper implements ResultSetExtractor<Map<UUID, List<Part
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("id");
+                String id = rs.getString("case_id");
                 UUID uuid = UUID.fromString(id != null ? id : "00000000-0000-0000-0000-000000000000");
 
                 Long lastModifiedTime = rs.getLong("lastmodifiedtime");
@@ -37,7 +37,7 @@ public class LitigantRowMapper implements ResultSetExtractor<Map<UUID, List<Part
                 Party party = Party.builder()
                         .id(UUID.fromString(rs.getString("id")))
                         .tenantId(rs.getString("tenantid"))
-                        .partyCategory(rs.getString("casecategory"))
+                        .partyCategory(rs.getString("partycategory"))
                         .individualId(rs.getString("individualid"))
                         .organisationID(rs.getString("organisationid"))
                         .partyType(rs.getString("partytype"))

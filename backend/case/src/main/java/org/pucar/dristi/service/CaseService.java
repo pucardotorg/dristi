@@ -91,6 +91,7 @@ public class CaseService {
                 try {
                     existingApplication = validator.validateApplicationExistence(courtCase);
                 } catch (Exception e) {
+                    e.printStackTrace();
                     log.error("Error validating existing application");
                     throw new CustomException("CASE_CREATE_EXCEPTION","Error validating existing application: "+ e.getMessage());
                 }

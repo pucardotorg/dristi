@@ -23,7 +23,7 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Lis
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("id");
+                String id = rs.getString("case_id");
                 UUID uuid = UUID.fromString(id!=null ? id : "00000000-0000-0000-0000-000000000000");
 
                 Long lastModifiedTime = rs.getLong("lastmodifiedtime");
@@ -37,8 +37,9 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Lis
                 StatuteSection statuteSection = StatuteSection.builder()
                         .id(UUID.fromString(rs.getString("id")))
                         .tenantId(rs.getString("tenantid"))
-                        //  .sections(rs.getString("sections"))
-                        .statute(rs.getString("statute"))
+                        .sections(stringToList(rs.getString("sections")))
+                        .subsections(stringToList(rs.getString("subsections")))
+                        .statute(rs.getString("statutes"))
                         .auditdetails(auditdetails)
                         .build();
 
@@ -60,6 +61,18 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Lis
             throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());
         }
         return statuteSectionMap;
+    }
+
+    public List<String> stringToList(String str){
+        List<String> list = new ArrayList<>();
+        if(str!=null){
+            StringTokenizer st = new StringTokenizer("str","|");
+            while (st.hasMoreTokens()) {
+                list.add(st.nextToken());
+            }
+        }
+
+        return list;
     }
 
 }

@@ -23,7 +23,7 @@ public class RepresentativeRowMapper implements ResultSetExtractor<Map<UUID, Lis
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("casenumber");
+                String id = rs.getString("case_id");
                 UUID uuid = UUID.fromString(id != null ? id : "00000000-0000-0000-0000-000000000000");
 
                 Long lastModifiedTime = rs.getLong("lastmodifiedtime");
@@ -36,8 +36,9 @@ public class RepresentativeRowMapper implements ResultSetExtractor<Map<UUID, Lis
                         .build();
                 AdvocateMapping advocateMapping = AdvocateMapping.builder()
                         .id(rs.getString("id"))
-                        .advocateId(rs.getString("casenumber"))
+                        .advocateId(rs.getString("advocateid"))
                         .tenantId(rs.getString("tenantid"))
+                        .isActive(Boolean.getBoolean(rs.getString("isactive")))
                         .auditDetails(auditdetails)
                         .build();
 

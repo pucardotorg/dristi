@@ -10,6 +10,9 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Component
@@ -39,13 +42,21 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .build();
                     courtCase = CourtCase.builder()
                             .id(UUID.fromString(rs.getString("id")))
-                            .caseNumber(rs.getString("caseNumber"))
                             .tenantId(rs.getString("tenantid"))
-                            .caseCategory(rs.getString("casecategory"))
+                            .resolutionMechanism(rs.getString("resolutionmechanism"))
+                            .caseTitle(rs.getString("casetitle"))
                             .caseDescription(rs.getString("casedescription"))
+                            .filingNumber(rs.getString("filingnumber"))
+                            .caseNumber(rs.getString("caseNumber"))
+                            .accessCode(rs.getString("accesscode"))
                             .courtId(rs.getString("courtid"))
                             .benchId(rs.getString("benchid"))
+                            .filingDate(stringToLocalDate(rs.getString("filingdate")))
+                            .registrationDate(rs.getString("registrationdate"))
+                            .caseCategory(rs.getString("casecategory"))
+                            .natureOfPleading(rs.getString("natureofpleading"))
                             .status(rs.getString("status"))
+                            .remarks(rs.getString("remarks"))
                             .auditdetails(auditdetails)
                             .build();
                 }
@@ -68,5 +79,16 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
             return null;
         }
         return UUID.fromString(toUuid);
+    }
+
+    private LocalDate stringToLocalDate(String str){
+        LocalDate localDate = null;
+        if(str!=null)
+        try {
+            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            localDate = LocalDate.parse(str, pattern);
+        } catch (DateTimeParseException e) {}
+
+        return localDate;
     }
 }

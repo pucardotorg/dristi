@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
-import org.pucar.dristi.web.models.LinkedCase;
+import org.pucar.dristi.web.models.Party;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
@@ -14,21 +14,17 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class LinkedCaseRowMapper implements ResultSetExtractor<Map<UUID, List<LinkedCase>>> {
+public class RepresentingRowMapper implements ResultSetExtractor<Map<UUID, List<Party>>> {
+    public Map<UUID, List<Party>> extractData(ResultSet rs) {
+        Map<UUID, List<Party>> partyMap = new LinkedHashMap<>();
 
-    public Map<UUID, List<LinkedCase>> extractData(ResultSet rs) {
-
-        Map<UUID, List<LinkedCase>> linkedCaseMap = new LinkedHashMap<>();
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("case_id");
+                String id = rs.getString("representative_id");
                 UUID uuid = UUID.fromString(id != null ? id : "00000000-0000-0000-0000-000000000000");
 
                 Long lastModifiedTime = rs.getLong("lastmodifiedtime");
-                if (rs.wasNull()) {
-                    lastModifiedTime = null;
-                }
 
                 AuditDetails auditdetails = AuditDetails.builder()
                         .createdBy(rs.getString("createdby"))
@@ -36,32 +32,34 @@ public class LinkedCaseRowMapper implements ResultSetExtractor<Map<UUID, List<Li
                         .lastModifiedBy(rs.getString("lastmodifiedby"))
                         .lastModifiedTime(lastModifiedTime)
                         .build();
-
-                LinkedCase linkedCase = LinkedCase.builder()
+                Party party = Party.builder()
                         .id(UUID.fromString(rs.getString("id")))
-                        .relationshipType(rs.getString("relationshiptype"))
-                        .caseNumber(rs.getString("casenumbers"))
-                        .isActive(rs.getBoolean("isactive"))
-                        .auditdetails(auditdetails)
+                        .tenantId(rs.getString("tenantid"))
+                        .partyCategory(rs.getString("partycategory"))
+                        .individualId(rs.getString("individualid"))
+                        .organisationID(rs.getString("organisationid"))
+                        .partyType(rs.getString("partytype"))
+                        .isActive(Boolean.getBoolean(rs.getString("isactive")))
+                        .auditDetails(auditdetails)
                         .build();
+
 
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if (pgObject != null)
-                    linkedCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                    party.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                if (linkedCaseMap.containsKey(uuid)) {
-                    linkedCaseMap.get(uuid).add(linkedCase);
+                if (partyMap.containsKey(uuid)) {
+                    partyMap.get(uuid).add(party);
                 } else {
-                    List<LinkedCase> linkedCaseList = new ArrayList<>();
-                    linkedCaseList.add(linkedCase);
-                    linkedCaseMap.put(uuid, linkedCaseList);
+                    List<Party> parties = new ArrayList<>();
+                    parties.add(party);
+                    partyMap.put(uuid, parties);
                 }
-
             }
         } catch (Exception e) {
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
             throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());
         }
-        return linkedCaseMap;
+        return partyMap;
     }
 }
