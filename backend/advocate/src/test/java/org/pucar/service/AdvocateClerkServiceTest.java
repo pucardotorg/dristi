@@ -118,7 +118,6 @@ public class AdvocateClerkServiceTest {
         User user = new User();
         user.setType("CITIZEN");
         requestInfo.setUserInfo(user);
-//        when(requestInfo.getUserInfo()).thenReturn(user);
         List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
@@ -155,7 +154,6 @@ public class AdvocateClerkServiceTest {
 
         // Call the method
         List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria, statusList, applicationNumber);
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
 
         // Verify results
         assertEquals(applications, response);
