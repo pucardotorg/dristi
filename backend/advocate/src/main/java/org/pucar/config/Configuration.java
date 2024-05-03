@@ -109,12 +109,20 @@ public class Configuration {
 	@Value("${advocate.kafka.update.topic}")
 	private String advocateUpdateTopic;
 
-	// Workflow/Business service name
-	@Value("${egov.workflow.businessservice.name}")
-	private String businessServiceName;
+	// Advocate Workflow/Business name
+	@Value("${egov.workflow.advocate.business.name}")
+	private String advocateBusinessName;
 
-	// Workflow/Business Module name
-	@Value("${egov.workflow.businessservice.module}")
-	private String businessServiceModule;
+	// Advocate Workflow/Business Service name
+	@Value("${egov.workflow.advocate.business.service.name}")
+	private String advocateBusinessServiceName;
+
+	// Advocate-clerk Workflow/Business name
+	@Value("${egov.workflow.advocate-clerk.business.name}")
+	private String advocateClerkBusinessName;
+
+	// Advocate Workflow/Business Service name
+	@Value("${egov.workflow.advocate-clerk.business.service.name}")
+	private String advocateClerkBusinessServiceName;
 
 }
