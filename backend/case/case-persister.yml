@@ -193,7 +193,7 @@ serviceMaps:
               dbType: JSONB
     - version: 1.0
       description: Update case details in tables
-      fromTopic: update-case-details
+      fromTopic: update-case-application
       isTransaction: true
       queryMaps:
         - query: |
