@@ -3,6 +3,7 @@ package org.pucar.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.config.Configuration;
 import org.pucar.util.IdgenUtil;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -20,12 +21,14 @@ public class AdvocateRegistrationEnrichment {
 
     @Autowired
     private IdgenUtil idgenUtil;
+    @Autowired
+    private Configuration configuration;
 
 
     public void enrichAdvocateRegistration(AdvocateRequest advocateRequest) {
         try {
             if(advocateRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> advocateRegistrationIdList = idgenUtil.getIdList(advocateRequest.getRequestInfo(), advocateRequest.getRequestInfo().getUserInfo().getTenantId(), "advocate.id", null, advocateRequest.getAdvocates().size());
+                List<String> advocateRegistrationIdList = idgenUtil.getIdList(advocateRequest.getRequestInfo(), advocateRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvocateIdgenIdName(), null, advocateRequest.getAdvocates().size());
                 int index = 0;
                 for (Advocate advocate : advocateRequest.getAdvocates()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
