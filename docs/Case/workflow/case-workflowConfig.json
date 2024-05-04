@@ -128,7 +128,7 @@
                             "action": "SEND_BACK",
                             "nextState": "CASE_RE_ASSIGNED",
                             "roles": [
-                                "CASE_CREATOR"
+                                "CASE_APPROVER"
                             ]
                         },
                         {
