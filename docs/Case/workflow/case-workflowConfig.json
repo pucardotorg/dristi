@@ -9,7 +9,7 @@
                 {
                     "sla": null,
                     "state": "DRAFT_IN_PROGRESS",
-                    "applicationStatus": null,
+                    "applicationStatus": "DRAFT_IN_PROGRESS",
                     "docUploadRequired": false,
                     "isStartState": true,
                     "isTerminateState": false,
@@ -28,13 +28,29 @@
                             "roles": [
                                 "CASE_CREATOR"
                             ]
+                        },
+                        {
+                            "action": "DELETE_DRAFT",
+                            "nextState": "DELETED_DRAFT",
+                            "roles": [
+                                "CASE_CREATOR"
+                            ]
                         }
                     ]
                 },
                 {
                     "sla": null,
+                    "state": "DELETED_DRAFT",
+                    "applicationStatus": "DELETED_DRAFT",
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false
+                },
+                {
+                    "sla": null,
                     "state": "PAYMENT_PENDING",
-                    "applicationStatus": null,
+                    "applicationStatus": "PAYMENT_PENDING",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -46,20 +62,13 @@
                             "roles": [
                                 "CASE_CREATOR"
                             ]
-                        },
-                        {
-                            "action": "DELETE_DRAFT",
-                            "nextState": "DRAFT_IN_PROGRESS",
-                            "roles": [
-                                "CASE_CREATOR"
-                            ]
                         }
                     ]
                 },
                 {
                     "sla": null,
                     "state": "UNDER_SCRUTINY",
-                    "applicationStatus": "PENDING_ADMISSION",
+                    "applicationStatus": "UNDER_SCRUTINY",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -83,8 +92,8 @@
                 },
                 {
                     "sla": null,
-                    "state": "PENDING_ADMISSION",
-                    "applicationStatus": null,
+                    "state": "CASE_RE_ASSIGNED",
+                    "applicationStatus": "CASE_RE_ASSIGNED",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -92,14 +101,39 @@
                     "actions": [
                         {
                             "action": "EDIT_CASE",
-                            "nextState": "PENDING_ADMISSION",
+                            "nextState": "UNDER_SCRUTINY",
+                            "roles": [
+                                "CASE_CREATOR"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
+                    "state": "PENDING_ADMISSION",
+                    "applicationStatus": "PENDING_ADMISSION",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "SCHEDULE_ADMISSION_HEARING",
+                            "nextState": "ADMISSION_HEARING_SCHEDULED",
+                            "roles": [
+                                "CASE_APPROVER"
+                            ]
+                        },
+                        {
+                            "action": "SEND_BACK",
+                            "nextState": "CASE_RE_ASSIGNED",
                             "roles": [
                                 "CASE_CREATOR"
                             ]
                         },
                         {
-                            "action": "SCHEDULE_ADMISSION_HEARING",
-                            "nextState": "ADMISSION_HEARING_SCHEDULED",
+                            "action": "ADMIT",
+                            "nextState": "CASE_ADMITTED",
                             "roles": [
                                 "CASE_APPROVER"
                             ]
@@ -109,7 +143,7 @@
                 {
                     "sla": null,
                     "state": "ADMISSION_HEARING_SCHEDULED",
-                    "applicationStatus": "PENDING_ADMISSION",
+                    "applicationStatus": "ADMISSION_HEARING_SCHEDULED",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -130,6 +164,24 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "sla": null,
+                    "state": "CASE_ADMITTED",
+                    "applicationStatus": "CASE_ADMITTED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false
+                },
+                {
+                    "sla": null,
+                    "state": "CASE_DISMISSED",
+                    "applicationStatus": "CASE_DISMISSED",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false
                 }
             ]
         }
