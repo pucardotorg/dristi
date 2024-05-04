@@ -34,7 +34,7 @@
                 {
                     "sla": null,
                     "state": "DRAFT_IN_PROGRESS",
-                    "applicationStatus": "DRAFT_IN_PROGRESS",
+                    "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -66,7 +66,7 @@
                 {
                     "sla": null,
                     "state": "PAYMENT_PENDING",
-                    "applicationStatus": "PAYMENT_PENDING",
+                    "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -84,7 +84,7 @@
                 {
                     "sla": null,
                     "state": "UNDER_SCRUTINY",
-                    "applicationStatus": "UNDER_SCRUTINY",
+                    "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -109,7 +109,7 @@
                 {
                     "sla": null,
                     "state": "CASE_RE_ASSIGNED",
-                    "applicationStatus": "CASE_RE_ASSIGNED",
+                    "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -127,7 +127,7 @@
                 {
                     "sla": null,
                     "state": "PENDING_ADMISSION",
-                    "applicationStatus": "PENDING_ADMISSION",
+                    "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -159,7 +159,7 @@
                 {
                     "sla": null,
                     "state": "ADMISSION_HEARING_SCHEDULED",
-                    "applicationStatus": "ADMISSION_HEARING_SCHEDULED",
+                    "applicationStatus": "INWORKFLOW",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": false,
@@ -184,7 +184,7 @@
                 {
                     "sla": null,
                     "state": "DELETED_DRAFT",
-                    "applicationStatus": "DELETED_DRAFT",
+                    "applicationStatus": "INACTIVE",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": true,
@@ -193,7 +193,7 @@
                 {
                     "sla": null,
                     "state": "CASE_ADMITTED",
-                    "applicationStatus": "CASE_ADMITTED",
+                    "applicationStatus": "ACTIVE",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": true,
@@ -202,7 +202,7 @@
                 {
                     "sla": null,
                     "state": "CASE_DISMISSED",
-                    "applicationStatus": "CASE_DISMISSED",
+                    "applicationStatus": "INACTIVE",
                     "docUploadRequired": false,
                     "isStartState": false,
                     "isTerminateState": true,
