@@ -8,10 +8,35 @@
             "states": [
                 {
                     "sla": null,
+                    "state": null,
+                    "applicationStatus": null,
+                    "docUploadRequired": false,
+                    "isStartState": true,
+                    "isTerminateState": false,
+                    "isStateUpdatable": true,
+                    "actions": [
+                        {
+                            "action": "SAVE_DRAFT",
+                            "nextState": "DRAFT_IN_PROGRESS",
+                            "roles": [
+                                "CASE_CREATOR"
+                            ]
+                        },
+                        {
+                            "action": "SUBMIT_CASE",
+                            "nextState": "PAYMENT_PENDING",
+                            "roles": [
+                                "CASE_CREATOR"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "sla": null,
                     "state": "DRAFT_IN_PROGRESS",
                     "applicationStatus": "DRAFT_IN_PROGRESS",
                     "docUploadRequired": false,
-                    "isStartState": true,
+                    "isStartState": false,
                     "isTerminateState": false,
                     "isStateUpdatable": true,
                     "actions": [
@@ -37,15 +62,6 @@
                             ]
                         }
                     ]
-                },
-                {
-                    "sla": null,
-                    "state": "DELETED_DRAFT",
-                    "applicationStatus": "DELETED_DRAFT",
-                    "docUploadRequired": false,
-                    "isStartState": true,
-                    "isTerminateState": true,
-                    "isStateUpdatable": false
                 },
                 {
                     "sla": null,
@@ -164,6 +180,15 @@
                             ]
                         }
                     ]
+                },
+                {
+                    "sla": null,
+                    "state": "DELETED_DRAFT",
+                    "applicationStatus": "DELETED_DRAFT",
+                    "docUploadRequired": false,
+                    "isStartState": false,
+                    "isTerminateState": true,
+                    "isStateUpdatable": false
                 },
                 {
                     "sla": null,
