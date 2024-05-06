@@ -38,7 +38,7 @@ public class CaseRepository {
     private LitigantDocumentRowMapper litigantDocumentRowMapper;
 
     @Autowired
-    private RepresentiveDocumentRowMapper representiveDocumentRowMapper;
+    private RepresentiveDocumentRowMapper representativeDocumentRowMapper;
 
     @Autowired
     private RepresentingDocumentRowMapper representingDocumentRowMapper;
@@ -217,9 +217,9 @@ public class CaseRepository {
 
             casesDocumentQuery = "";
             preparedStmtListDoc = new ArrayList<>();
-            casesDocumentQuery = queryBuilder.getRepresentiveDocumentSearchQuery(idsRepresentive, preparedStmtListDoc);
+            casesDocumentQuery = queryBuilder.getRepresentativeDocumentSearchQuery(idsRepresentive, preparedStmtListDoc);
             log.info("Final document query: {}", casesDocumentQuery);
-            Map<UUID, List<Document>> caseRepresentiveDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), representiveDocumentRowMapper);
+            Map<UUID, List<Document>> caseRepresentiveDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), representativeDocumentRowMapper);
             if (caseRepresentiveDocumentMap != null) {
                 courtCaseList.forEach(courtCase -> {
                     if(courtCase.getRepresentatives()!=null){

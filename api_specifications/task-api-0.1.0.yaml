@@ -153,14 +153,14 @@ components:
           minLength: 36
           maxLength: 36
           description: ID of the order, this task is associated with
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
         task:
           $ref: '#/components/schemas/Task'
     TaskResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         task:
           $ref: '#/components/schemas/Task'
@@ -168,7 +168,7 @@ components:
     TaskListResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
@@ -180,21 +180,33 @@ components:
     TaskExistsRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-        order:
-          $ref: '#/components/schemas/TaskExists'
+        taskList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskExists'
     TaskExistsResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        order:
-          $ref: '#/components/schemas/TaskExists'
+        taskList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskExists'
 
     TaskExists:
       type: object
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        taskId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        filingNumber:
+          type: string
         cnrNumber:
           type: string
         exists:
@@ -221,11 +233,8 @@ components:
           minLength: 36
           maxLength: 36
           description: the associated order
-        caseId:
+        filingNumber:
           type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
           description: the associated case
         cnrNumber:
           type: string

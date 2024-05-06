@@ -128,7 +128,7 @@ public class CaseService {
             for(CaseCriteria caseCriteria: caseSearchRequests.getCriteria()){
               boolean notExists = courtCases.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(caseCriteria.getFilingNumber())
                       && c.getCaseNumber().equalsIgnoreCase(caseCriteria.getCnrNumber())).toList().isEmpty();
-              CaseExists caseExists = new CaseExists(caseCriteria.getCnrNumber(), caseCriteria.getFilingNumber(), !notExists);
+              CaseExists caseExists = new CaseExists(caseCriteria.getCourtCaseNumber(),caseCriteria.getCnrNumber(), caseCriteria.getFilingNumber(), !notExists);
               caseExistsList.add(caseExists);
             }
 

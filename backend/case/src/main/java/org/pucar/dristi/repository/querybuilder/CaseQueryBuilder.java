@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CaseQueryBuilder {
     private static final String BASE_CASE_QUERY = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, " +
-            "cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, " +
+            "cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber " +
             " cases.courtid as courtid, cases.benchid as benchid, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby," +
             " cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_CASES_TABLE = " FROM dristi_cases cases";
@@ -80,6 +80,13 @@ public class CaseQueryBuilder {
                         .filter(Objects::nonNull)
                         .toList();
 
+                List<String> courtCaseNumbers = criteriaList.stream()
+                        .filter(criteria -> criteria.getCaseId() == null && criteria.getCnrNumber() == null && criteria.getFilingNumber() == null)
+                        .map(CaseCriteria::getCourtCaseNumber)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+
                 if (!ids.isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
                     query.append("cases.id IN (")
@@ -108,24 +115,36 @@ public class CaseQueryBuilder {
                     firstCriteria = false;
                 }
 
-//                if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(cnrNumbers) || !CollectionUtils.isEmpty(filingNumbers)) {
-//                    query.append(")");
-//                }
+                if (!courtCaseNumbers.isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.courtcasenumber IN (")
+                            .append(courtCaseNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
+                            .append(")");
+                    preparedStmtList.addAll(courtCaseNumbers);
+                    firstCriteria = false;
+                }
+
+                for(CaseCriteria caseCriteria:criteriaList){
+                    if(caseCriteria.getFilingFromDate() != null && caseCriteria.getFilingToDate()!=null){
+                        if(firstCriteria==false)
+                          query.append("OR cases.filingdate BETWEEN "+caseCriteria.getFilingFromDate()+" AND "+caseCriteria.getFilingToDate()+" ");
+                        else{
+                            query.append("WHERE cases.filingdate BETWEEN "+caseCriteria.getFilingFromDate()+" AND "+caseCriteria.getFilingToDate()+" ");
+                        }
+                        firstCriteria =false;
+                    }
+
+                    if(caseCriteria.getRegistrationFromDate() != null && caseCriteria.getRegistrationToDate()!=null){
+                        if(firstCriteria==false)
+                            query.append("OR cases.registrationdate BETWEEN "+caseCriteria.getRegistrationFromDate()+" AND "+caseCriteria.getRegistrationToDate()+" ");
+                        else{
+                            query.append("WHERE cases.registrationdate BETWEEN "+caseCriteria.getRegistrationFromDate()+" AND "+caseCriteria.getRegistrationToDate()+" ");
+                        }
+                        firstCriteria =false;
+                    }
+                }
+
             }
-//            else if(applicationNumber != null && !applicationNumber.isEmpty()){
-//                addClauseIfRequired(query, firstCriteria);
-//                query.append("adv.applicationNumber LIKE ?")
-//                        .append(")");
-//                preparedStmtList.add("%" + applicationNumber + "%");
-//                firstCriteria = false;
-//            }
-//            if (statusList != null && !statusList.isEmpty()) {
-//                addClauseIfRequiredForStatus(query, firstCriteria);
-//                query.append("adv.status IN (")
-//                        .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
-//                        .append(")");
-//                preparedStmtList.addAll(statusList);
-//            }
             query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
@@ -143,14 +162,6 @@ public class CaseQueryBuilder {
             query.append(" OR ");
         }
     }
-
-//    private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
-//        if (isFirstCriteria) {
-//            query.append(" WHERE ");
-//        } else {
-//            query.append(" AND ");
-//        }
-//    }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
@@ -296,12 +307,12 @@ public class CaseQueryBuilder {
         }
     }
 
-    public String getRepresentiveDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+    public String getRepresentativeDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.representive_id IN (")
+                query.append(" WHERE doc.representative_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);
@@ -319,7 +330,7 @@ public class CaseQueryBuilder {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_CASE);
             query.append(FROM_DOCUMENTS_TABLE);
             if (!ids.isEmpty()) {
-                query.append(" WHERE doc.representive_id IN (")
+                query.append(" WHERE doc.representing_id IN (")
                         .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
                         .append(")");
                 preparedStmtList.addAll(ids);

@@ -6,6 +6,7 @@ CREATE TABLE dristi_cases (
                               caseDescription varchar(64) NULL,
                               filingNumber varchar(64) NULL,
                               caseNumber varchar(64) NULL,
+                              courtCaseNumber varchar(64) NULL,
                               accessCode varchar(64) NULL,
                               courtId varchar(64) NULL,
                               benchId varchar(64) NULL,

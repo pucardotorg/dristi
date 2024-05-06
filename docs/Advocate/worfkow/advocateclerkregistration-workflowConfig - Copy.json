@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "advocate",
-      "business": "advocate-services",
+      "businessService": "advocateclerk",
+      "business": "advocateclerk-services",
       "businessServiceSla": 30,
       "states": [
         {
@@ -38,14 +38,14 @@
               "action": "APPROVE",
               "nextState": "REGISTERED",
               "roles": [
-                "ADVOCATE_APPROVER"
+                "ADVOCATECLERK_APPROVER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "ADVOCATE_APPROVER"
+                "ADVOCATECLERK_APPROVER"
               ]
             }
           ]

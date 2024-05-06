@@ -29,115 +29,112 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Order   {
-        @JsonProperty("id")
+public class Order {
+    @JsonProperty("id")
 
-          @Valid
-                private UUID id = null;
+    @Valid
+    private UUID id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+    @JsonProperty("tenantId")
+    @NotNull
 
-                private String tenantId = null;
+    private String tenantId = null;
 
-        @JsonProperty("caseId")
+    @JsonProperty("filingNumber")
 
-          @Valid
-                private UUID caseId = null;
+    private String filingNumber = null;
 
-        @JsonProperty("cnrNumber")
+    @JsonProperty("cnrNumber")
 
-                private String cnrNumber = null;
+    private String cnrNumber = null;
 
-        @JsonProperty("applicationIds")
-          @Valid
-                private List<UUID> applicationIds = null;
+    @JsonProperty("applicationNumber")
 
-        @JsonProperty("hearingNumber")
+    private List<String> applicationNumber = new ArrayList<>();
 
-          @Valid
-                private UUID hearingNumber = null;
+    @JsonProperty("hearingNumber")
 
-        @JsonProperty("orderNumber")
+    @Valid
+    private UUID hearingNumber = null;
 
-        @Size(min=24,max=256)         private String orderNumber = null;
+    @JsonProperty("orderNumber")
 
-        @JsonProperty("createdDate")
-          @NotNull
+    @Size(min = 24, max = 256)
+    private String orderNumber = null;
 
-          @Valid
-                private LocalDate createdDate = null;
+    @JsonProperty("createdDate")
+    @NotNull
 
-        @JsonProperty("issuedBy")
+    @Valid
+    private LocalDate createdDate = null;
 
-                private Object issuedBy = null;
+    @JsonProperty("issuedBy")
 
-        @JsonProperty("orderType")
-          @NotNull
-          @Valid
-                private List<UUID> orderType = new ArrayList<>();
+    private Object issuedBy = null;
 
-        @JsonProperty("orderCategory")
+    @JsonProperty("orderType")
+    @NotNull
+    @Valid
+    private List<UUID> orderType = new ArrayList<>();
 
-                private String orderCategory = null;
+    @JsonProperty("orderCategory")
 
-        @JsonProperty("status")
-          @NotNull
+    private String orderCategory = null;
 
-                private String status = null;
+    @JsonProperty("status")
+    @NotNull
 
-        @JsonProperty("comments")
+    private String status = null;
 
-                private String comments = null;
+    @JsonProperty("comments")
 
-        @JsonProperty("isActive")
-          @NotNull
+    private String comments = null;
 
-                private Boolean isActive = null;
+    @JsonProperty("isActive")
+    @NotNull
 
-        @JsonProperty("statuteSection")
+    private Boolean isActive = null;
 
-          @Valid
-                private StatuteSection statuteSection = null;
+    @JsonProperty("statuteSection")
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+    @Valid
+    private StatuteSection statuteSection = null;
 
-        @JsonProperty("additionalDetails")
+    @JsonProperty("documents")
+    @Valid
+    private List<Document> documents = null;
 
-                private String additionalDetails = null;
+    @JsonProperty("additionalDetails")
 
-        @JsonProperty("auditDetails")
+    private String additionalDetails = null;
 
-          @Valid
-                private AuditDetails auditDetails = null;
+    @JsonProperty("auditDetails")
 
-        @JsonProperty("workflow")
+    @Valid
+    private AuditDetails auditDetails = null;
 
-          @Valid
-                private Workflow workflow = null;
+    @JsonProperty("workflow")
+
+    @Valid
+    private Workflow workflow = null;
 
 
-        public Order addApplicationIdsItem(UUID applicationIdsItem) {
-            if (this.applicationIds == null) {
-            this.applicationIds = new ArrayList<>();
-            }
-        this.applicationIds.add(applicationIdsItem);
+    public Order addApplicationIdsItem(String applicationNumbersItem) {
+        this.applicationNumber.add(applicationNumbersItem);
         return this;
-        }
+    }
 
-        public Order addOrderTypeItem(UUID orderTypeItem) {
+    public Order addOrderTypeItem(UUID orderTypeItem) {
         this.orderType.add(orderTypeItem);
         return this;
-        }
+    }
 
-        public Order addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
+    public Order addDocumentsItem(Document documentsItem) {
+        if (this.documents == null) {
             this.documents = new ArrayList<>();
-            }
+        }
         this.documents.add(documentsItem);
         return this;
-        }
+    }
 
 }
