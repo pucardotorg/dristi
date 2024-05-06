@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pucar.config.Configuration;
 import org.pucar.util.IdgenUtil;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
@@ -23,7 +24,8 @@ class AdvocateClerkRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
-
+    @Mock
+    private Configuration configuration;
     @InjectMocks
     private AdvocateClerkRegistrationEnrichment advocateClerkRegistrationEnrichment;
 
@@ -48,13 +50,13 @@ class AdvocateClerkRegistrationEnrichmentTest {
         requestInfo.getUserInfo().setTenantId("tenantId");
         advocateClerkRequest.setRequestInfo(requestInfo);
         List<String> idList = List.of("C-2021-01-01-001");
-        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenReturn(idList);
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenReturn(idList);
 
         // Call the method to test
         advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest);
 
         // Verify IdgenUtil was called correctly
-        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   "clerk.id",
+        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvocateClerkIdgenIdName(),
                 null, 1);
 
         // Assert that each clerk has been enriched as expected

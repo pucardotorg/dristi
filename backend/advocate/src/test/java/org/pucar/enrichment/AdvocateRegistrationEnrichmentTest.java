@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 
 import org.mockito.MockitoAnnotations;
+import org.pucar.config.Configuration;
 import org.pucar.util.IdgenUtil;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
@@ -24,7 +25,8 @@ class AdvocateRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
-
+    @Mock
+    private Configuration configuration;
     @InjectMocks
     private AdvocateRegistrationEnrichment advocateRegistrationEnrichment;
 
@@ -49,13 +51,13 @@ class AdvocateRegistrationEnrichmentTest {
         requestInfo.getUserInfo().setTenantId("tenantId");
         advocateRequest.setRequestInfo(requestInfo);
         List<String> idList = List.of("P-2021-01-01-001");
-        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenReturn(idList);
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenReturn(idList);
 
         // Call the method to test
         advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest);
 
         // Verify IdgenUtil was called correctly
-        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   "advocate.id",
+        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvocateIdgenIdName(),
                 null, 1);
 
         // Assert that each advocate has been enriched as expected
