@@ -5,6 +5,11 @@ serviceMaps:
       description: Persists advocate details in tables
       fromTopic: save-case-application
       isTransaction: true
+      module: CASE
+      objecIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.cases.*
       queryMaps:
 
         - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber, accesscode, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, isactive, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
@@ -117,8 +122,8 @@ serviceMaps:
             - jsonPath: $.cases.*.representatives.*.representing.*.caseId
             - jsonPath: $.cases.*.representatives.*.representing.*.partyType
             - jsonPath: $.cases.*.representatives.*.representing.*.isActive
-            - jsonPath: $.cases.*.representatives.*.representing.*.caseId
-            # - jsonPath: $.cases[*][?({id} in @.representatives[*].id)].id
+#            - jsonPath: $.cases.*.representatives.*.representing.*.caseId
+            - jsonPath: $.cases.*.representatives[*][?({id} in @.representing[*].id)].id
             - jsonPath: $.cases.*.representatives.*.representing.*.additionalDetails
               type: JSON
               dbType: JSONB
