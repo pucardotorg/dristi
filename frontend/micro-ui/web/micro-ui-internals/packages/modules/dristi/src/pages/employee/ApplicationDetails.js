@@ -93,6 +93,19 @@ const ApplicationDetails = ({ location, match }) => {
     return userTypeOptions.find((item) => item.code === userType) || {};
   }, [userType]);
 
+  const { isLoading: isWorkFlowLoading, data: workFlowDetails } = Digit.Hooks.useWorkflowDetails({
+    tenantId,
+    id: applicationNo,
+    moduleCode,
+    config: {
+      enabled: true,
+      cacheTime: 0,
+    },
+  });
+  const actions = useMemo(() => workFlowDetails?.processInstances?.[0]?.state?.actions?.map((action) => action.action), [
+    workFlowDetails?.processInstances,
+  ]);
+
   const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
@@ -114,7 +127,7 @@ const ApplicationDetails = ({ location, match }) => {
 
   function takeAction(action) {
     const applications = searchResult;
-    applications[0].workflow.action = action.toUpperCase();
+    applications[0].workflow.action = action;
     const data = { [userTypeDetail?.apiDetails?.requestKey]: applications };
     const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/advocate/v1/_update";
     if (showModal) {
@@ -134,17 +147,17 @@ const ApplicationDetails = ({ location, match }) => {
   }
 
   function onActionSelect(action) {
-    if (action === "Approve") {
+    if (action === "APPROVE") {
       takeAction(action);
     }
-    if (action === "Reject") {
+    if (action === "REJECT") {
       setShowModal(true);
     }
     setDisplayMenu(false);
   }
 
-  const handleDelete = () => {
-    takeAction("Reject");
+  const handleDelete = (action) => {
+    takeAction(action);
   };
 
   const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "";
@@ -184,7 +197,7 @@ const ApplicationDetails = ({ location, match }) => {
     ];
   }, [fileStoreId, searchResult, tenantId, userTypeDetail?.apiDetails?.AdditionalFields]);
 
-  if (isSearchLoading || isGetUserLoading) {
+  if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
   }
 
@@ -212,7 +225,7 @@ const ApplicationDetails = ({ location, match }) => {
                 flexDirection: "column",
               }}
               localeKeyPrefix={"BR"}
-              options={["Approve", "Reject"]}
+              options={actions}
               t={t}
               onSelect={onActionSelect}
             />
@@ -238,7 +251,9 @@ const ApplicationDetails = ({ location, match }) => {
             setShowModal(false);
           }}
           actionSaveLabel={t("Reject")}
-          actionSaveOnSubmit={handleDelete}
+          actionSaveOnSubmit={() => {
+            handleDelete("REJECT");
+          }}
           isDisabled={!reasons}
         >
           <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>

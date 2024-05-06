@@ -44,12 +44,6 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
           username: Digit.UserService.getUser()?.info?.userName,
           roles: [
             {
-              code: "USER_REGISTER",
-              name: "USER_REGISTER",
-              description: "USER_REGISTER",
-              tenantId: tenantId,
-            },
-            {
               code: "CITIZEN",
               name: "Citizen",
               tenantId: tenantId,

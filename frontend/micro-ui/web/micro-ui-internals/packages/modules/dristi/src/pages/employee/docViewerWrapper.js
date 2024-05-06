@@ -30,7 +30,6 @@ const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   const [selectedDocs, setSelectedDocs] = useState([]);
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
-  console.debug(uri);
   const documents = fileStoreId
     ? [{ uri: uri || samplePDF, fileName: "fileName" }]
     : selectedDocs.map((file) => ({

@@ -149,11 +149,6 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
               code: "CITIZEN",
               tenantId: tenantId,
             },
-            {
-              name: "USER_REGISTER",
-              code: "USER_REGISTER",
-              tenantId: tenantId,
-            },
           ],
         })
           .then(() => {
