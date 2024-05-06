@@ -45,8 +45,8 @@ public class WorkflowService {
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.getMessage());
-                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
+                log.error("Error updating workflow status: {}", e.toString());
+                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+ e);
             }
         });
     }
@@ -59,8 +59,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error calling workflow: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
+            log.error("Error calling workflow: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
         }
     }
     public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
@@ -73,8 +73,8 @@ public class WorkflowService {
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.getMessage());
-                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
+                log.error("Error updating workflow status: {}", e.toString());
+                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
             }
         });
     }
@@ -102,8 +102,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
+            log.error("Error getting process instance for ADVOCATE: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
         }
     }
     private ProcessInstance getProcessInstanceForADV(Advocate advocate, RequestInfo requestInfo) {
@@ -114,7 +114,7 @@ public class WorkflowService {
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName(config.getAdvocateBusinessName());
             processInstance.setTenantId(advocate.getTenantId());
-            processInstance.setBusinessService(config.getAdvocateClerkBusinessServiceName());
+            processInstance.setBusinessService(config.getAdvocateBusinessServiceName());
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -130,8 +130,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting process instance for ADVOCATE: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+            log.error("Error getting process instance for ADVOCATE: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
@@ -146,8 +146,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting current workflow: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+            log.error("Error getting current workflow: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
     private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {
@@ -163,8 +163,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting business service: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+            log.error("Error getting business service: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
@@ -199,8 +199,8 @@ public class WorkflowService {
         } catch (CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting process instance for advocate registration payment: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+            log.error("Error getting process instance for advocate registration payment: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
 
