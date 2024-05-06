@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, LocationSearch } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import LocationSearch from "./LocationSearch";
 
 const getLocation = (places, code) => {
   let location = null;

@@ -1,13 +1,6 @@
 import React, { useMemo, useState } from "react";
-import {
-  LabelFieldPair,
-  CardLabel,
-  TextInput,
-  CardLabelError,
-  CustomDropdown,
-  MultiUploadWrapper,
-  CitizenInfoLabel,
-} from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, CustomDropdown, CitizenInfoLabel } from "@egovernments/digit-ui-react-components";
+import MultiUploadWrapper from "./MultiUploadWrapper";
 
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control }) => {
   const Digit = window.Digit || {};

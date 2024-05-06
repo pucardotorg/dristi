@@ -1,0 +1,38 @@
+.app-container {
+  @extend .light-background;
+  width: 100%;
+  form {
+    .card {
+      max-width: 960px;
+      h2 {
+        @extend .light-text-color-primary;
+        text-align: left;
+      }
+      .field-container {
+        max-width: 540px;
+      }
+      button {
+        max-width: 244px;
+        .secondary-button-selector {
+          background-color: transparent !important;
+        }
+      }
+      .card-text-button {
+        @extend .light-primary-button;
+        text-align: left;
+      }
+    }
+  }
+}
+.field {
+  .secondary-button-selector {
+    border: 1px solid #007e7e;
+  }
+}
+
+.tertiary-button-selector {
+  background-color: transparent !important;
+}
+
+@media screen and (max-width: 768px) {
+}

@@ -13,10 +13,11 @@ import Login from "./pages/citizen/Login";
 import CitizenResponse from "./pages/citizen/registration/Response";
 import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
 import FileCase from "./pages/citizen/FileCase";
+import VerificationComponent from "./components/VerificationComponent";
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path, url } = useRouteMatch();
-
+  const Digit = window?.Digit || {};
   const moduleCode = "DRISTI";
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
@@ -43,9 +44,11 @@ const componentsToRegister = {
   DRISTICitizenResponse: CitizenResponse,
   AdvocateClerkAdditionalDetail,
   FileCase,
+  VerificationComponent,
 };
 
 export const initDRISTIComponents = () => {
+  const Digit = window?.Digit || {};
   Object.entries(componentsToRegister).forEach(([key, value]) => {
     Digit.ComponentRegistryService.setComponent(key, value);
   });
