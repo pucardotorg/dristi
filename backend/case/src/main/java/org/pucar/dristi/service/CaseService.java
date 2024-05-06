@@ -7,9 +7,7 @@ import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,8 +39,8 @@ public class CaseService {
     public List<CourtCase> registerCaseRequest(CaseRequest body) {
         try {
             validator.validateCaseRegistration(body);
-            enrichmentUtil.enrichCaseRegistration(body);
-            workflowService.updateWorkflowStatus(body);
+           // enrichmentUtil.enrichCaseRegistration(body);
+           // workflowService.updateWorkflowStatus(body);
 
             producer.push("save-case-application", body);
             return body.getCases();
@@ -118,5 +116,35 @@ public class CaseService {
             throw new CustomException("CASE_UPDATE_EXCEPTION","Error occurred while updating case: " + e.getMessage());
         }
 
+    }
+
+    public List<CaseExists> existCases(CaseSearchRequest caseSearchRequests) {
+        try {
+            // Fetch applications from database according to the given search criteria
+            List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
+
+            List<CaseExists> caseExistsList = new ArrayList<>();
+
+            for(CaseCriteria caseCriteria: caseSearchRequests.getCriteria()){
+              boolean notExists = courtCases.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(caseCriteria.getFilingNumber())
+                      && c.getCaseNumber().equalsIgnoreCase(caseCriteria.getCnrNumber())).toList().isEmpty();
+              CaseExists caseExists = new CaseExists(caseCriteria.getCnrNumber(), caseCriteria.getFilingNumber(), !notExists);
+              caseExistsList.add(caseExists);
+            }
+
+            // If no applications are found matching the given criteria, return an empty list
+            if(CollectionUtils.isEmpty(courtCases))
+                return new ArrayList<>();
+            courtCases.forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
+            return caseExistsList;
+        }
+        catch (CustomException e){
+            log.error("Custom Exception occurred while searching");
+            throw e;
+        }
+        catch (Exception e){
+            log.error("Error while fetching to search results");
+            throw new CustomException("CASE_EXIST_EXCEPTION",e.getMessage());
+        }
     }
 }
