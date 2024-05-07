@@ -78,7 +78,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
         String userTypeEmployee = "EMPLOYEE";
 
         try {
-            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria!=null) {
                 Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
                         .findFirst();
@@ -90,6 +90,14 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                         }
                     }
                 });
+                limit = null;
+                offset = null;
+            }
+            else if (userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
+                if(limit == null)
+                    limit = 10;
+                if(offset == null)
+                    offset = 0;
             }
 
         // Fetch applications from database according to the given search criteria

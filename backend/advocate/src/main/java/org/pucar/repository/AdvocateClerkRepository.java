@@ -9,7 +9,6 @@ import org.pucar.repository.rowmapper.AdvocateClerkRowMapper;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -20,7 +19,6 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_EXCEPTION;
-import static org.pucar.config.ServiceConstants.ADVOCATE_SEARCH_EXCEPTION;
 
 
 @Slf4j
@@ -39,12 +37,12 @@ public class AdvocateClerkRepository {
     @Autowired
     private AdvocateClerkDocumentRowMapper documentRowMapper;
 
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser){
+    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
         try {
             List<AdvocateClerk> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser);
+            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
             log.info("Final query: " + query);
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
             if (list != null) {

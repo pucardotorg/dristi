@@ -2,7 +2,6 @@ package org.pucar.web.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
@@ -131,7 +130,7 @@ public class ClerkApiControllerTest {
     public void testClerkV1SearchPost_Success() {
         // Mock AdvocateClerkService response
         List<AdvocateClerk> expectedClerks = Collections.singletonList(new AdvocateClerk());
-        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any()))
+        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any(), any(),any()))
                 .thenReturn(expectedClerks);
 
         // Mock ResponseInfoFactory response
@@ -146,7 +145,7 @@ public class ClerkApiControllerTest {
         clerkApiController.setMockInjects(advocateClerkService, responseInfoFactory);
 
         // Perform POST request
-        ResponseEntity<AdvocateClerkResponse> response = clerkApiController.clerkV1SearchPost(requestBody);
+        ResponseEntity<AdvocateClerkResponse> response = clerkApiController.clerkV1SearchPost(requestBody,1,1);
 
         // Verify response status and content
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -162,7 +161,7 @@ public class ClerkApiControllerTest {
         AdvocateClerkSearchRequest requestBody = new AdvocateClerkSearchRequest();
 
         // Expected validation error
-        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any()))
+        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("Invalid request"));
 
         clerkApiController.setMockInjects(advocateClerkService, responseInfoFactory);

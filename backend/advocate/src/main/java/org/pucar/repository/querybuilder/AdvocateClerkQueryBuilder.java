@@ -26,7 +26,7 @@ public class AdvocateClerkQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY advc.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
 
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser){
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -98,6 +98,12 @@ public class AdvocateClerkQueryBuilder {
             }
             else {
                 query.append(ORDERBY_CREATEDTIME_ASC);
+            }
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
             }
 
             return query.toString();
