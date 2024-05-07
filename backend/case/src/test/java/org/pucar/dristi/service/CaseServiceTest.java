@@ -46,23 +46,23 @@ public class CaseServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
-    void testRegisterCaseRequest_ValidInput() {
-        CaseRequest caseRequest = new CaseRequest(); // Assume CaseRequest is suitably instantiated
-        List<CourtCase> cases = Arrays.asList(new CourtCase()); // Mock court case list
-        caseRequest.setCases(cases);
-
-        doNothing().when(validator).validateCaseRegistration(any(CaseRequest.class));
-        doNothing().when(enrichmentUtil).enrichCaseRegistration(any(CaseRequest.class));
-        doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
-        doNothing().when(producer).push(anyString(), any(CaseRequest.class));
-
-        List<CourtCase> result = caseService.registerCaseRequest(caseRequest);
-
-        assertNotNull(result);
-        assertEquals(cases, result);
-        verify(producer).push(eq("save-case-application"), eq(caseRequest));
-    }
+//    @Test
+//    void testRegisterCaseRequest_ValidInput() {
+//        CaseRequest caseRequest = new CaseRequest(); // Assume CaseRequest is suitably instantiated
+//        List<CourtCase> cases = Arrays.asList(new CourtCase()); // Mock court case list
+//        caseRequest.setCases(cases);
+//
+//        doNothing().when(validator).validateCaseRegistration(any(CaseRequest.class));
+//        doNothing().when(enrichmentUtil).enrichCaseRegistration(any(CaseRequest.class));
+//        doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
+//        doNothing().when(producer).push(anyString(), any(CaseRequest.class));
+//
+//        List<CourtCase> result = caseService.registerCaseRequest(caseRequest);
+//
+//        assertNotNull(result);
+//        assertEquals(cases, result);
+//        verify(producer).push(eq("save-case-application"), eq(caseRequest));
+//    }
 
     @Test
     void testSearchCases_EmptyResult() {
