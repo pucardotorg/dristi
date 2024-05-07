@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
@@ -60,9 +61,12 @@ public class CourtCase {
 	private String caseDescription = null;
 
 	@JsonProperty("filingNumber")
-
 	@Size(min = 2, max = 64)
 	private String filingNumber = null;
+
+	@JsonProperty("courtCaseNumber")
+	@Size(min=10,max=24)
+	private String courCaseNumber = null;
 
 	@JsonProperty("caseNumber")
 
@@ -91,6 +95,7 @@ public class CourtCase {
 	@NotNull
 
 	@Valid
+	@JsonFormat(pattern = "dd-MM-yyyy")
 	private LocalDate filingDate = null;
 
 	@JsonProperty("registrationDate")

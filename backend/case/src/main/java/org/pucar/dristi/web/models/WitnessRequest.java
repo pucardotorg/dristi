@@ -22,7 +22,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class WitnessRequest   {
-        @JsonProperty("requestInfo")
+        @JsonProperty("RequestInfo")
 
           @Valid
                 private RequestInfo requestInfo = null;

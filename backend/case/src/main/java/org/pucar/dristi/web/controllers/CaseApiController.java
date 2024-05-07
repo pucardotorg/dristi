@@ -3,6 +3,10 @@ package org.pucar.dristi.web.controllers;
 import java.io.IOException;
 import java.util.List;
 
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.CaseService;
+import org.pucar.dristi.service.WitnessService;
+import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +31,18 @@ public class CaseApiController {
 
 	private final ObjectMapper objectMapper;
 
-        private final HttpServletRequest request;
+	private final HttpServletRequest request;
+
+	@Autowired
+	private CaseService caseService;
+
+	@Autowired
+	private WitnessService witnessService;
+
+	@Autowired
+	private ResponseInfoFactory responseInfoFactory;
+
+
 
 	@Autowired
 	public CaseApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -39,7 +54,10 @@ public class CaseApiController {
                 public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody CaseRequest body) {
                         String accept = request.getHeader("Accept");
                             if (accept != null && accept.contains("application/json")) {
-                            return new ResponseEntity<CaseResponse>(HttpStatus.CREATED);
+								List<CourtCase> caseList = caseService.registerCaseRequest(body);
+								ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+								CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+								return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
                             }
 
                         return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -63,16 +81,10 @@ public class CaseApiController {
 	@RequestMapping(value = "/case/v1/_search", method = RequestMethod.POST)
 	public ResponseEntity<CaseResponse> caseV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body) {
-		String accept = request.getHeader("Accept");
-		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
-			} catch (Exception e) {
-				return new ResponseEntity<CaseResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-		}
-
-		return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+		List<CourtCase> caseList = caseService.searchCases(body);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+		CaseResponse caseResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(caseResponse, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/case/v1/_update", method = RequestMethod.POST)
@@ -81,7 +93,10 @@ public class CaseApiController {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
 			try {
-				return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+				List<CourtCase> caseList = caseService.updateCase(body);
+				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+				CaseResponse caseResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+				return new ResponseEntity<>(caseResponse, HttpStatus.OK);
 			} catch (Exception e) {
 				return new ResponseEntity<CaseResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
@@ -95,11 +110,10 @@ public class CaseApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
-			} catch (Exception e) {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			List<Witness> witnessesList = witnessService.registerWitnessRequest(body);
+			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+			WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessesList).requestInfo(responseInfo).build();
+			return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -110,11 +124,10 @@ public class CaseApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
-			} catch (Exception e) {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			List<Witness> witnessList = witnessService.searchWitnesses(body);
+			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+			WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessList).requestInfo(responseInfo).build();
+			return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -125,15 +138,11 @@ public class CaseApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<WitnessResponse>(objectMapper.readValue(
-						"{  \"requestInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"witnesses\" : [ {    \"caseId\" : \"caseId\",    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"witnessIdentifier\" : \"witnessIdentifier\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"remarks\" : \"remarks\"  }, {    \"caseId\" : \"caseId\",    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"witnessIdentifier\" : \"witnessIdentifier\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"individualId\" : \"individualId\",    \"isActive\" : true,    \"additionalDetails\" : { },    \"remarks\" : \"remarks\"  } ]}",
-						WitnessResponse.class), HttpStatus.NOT_IMPLEMENTED);
-			} catch (IOException e) {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			List<Witness> witnessList = witnessService.updateWitness(body);
+			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+			WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessList).requestInfo(responseInfo).build();
+			return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
 		}
-
 		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 

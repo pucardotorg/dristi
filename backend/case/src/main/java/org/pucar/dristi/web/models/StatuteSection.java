@@ -54,13 +54,17 @@ public class StatuteSection {
 	private List<String> subsections = null;
 
 	@JsonProperty("additionalDetails")
-
-	private String additionalDetails = null;
+	private Object additionalDetails = null;
 
 	@JsonProperty("auditdetails")
-
 	@Valid
 	private AuditDetails auditdetails = null;
+
+	@JsonProperty("strSections")
+	private String strSections = null;
+
+	@JsonProperty("strSubsections")
+	private String strSubsections = null;
 
 	public StatuteSection addSectionsItem(String sectionsItem) {
 		if (this.sections == null) {
