@@ -38,7 +38,7 @@ public class AdvocateRepositoryTest {
         // Mock data
         List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
         // Add necessary mock behavior for queryBuilder
-        when(queryBuilder.getAdvocateSearchQuery(anyList(), anyList(),anyList(), anyString(), any())).thenReturn("SELECT * FROM advocates WHERE condition = ?");
+        when(queryBuilder.getAdvocateSearchQuery(anyList(), anyList(),anyList(), anyString(), any(),any(),any())).thenReturn("SELECT * FROM advocates WHERE condition = ?");
         // Mock data for jdbcTemplate
         List<Advocate> mockAdvocates = new ArrayList<>();
         Advocate mockAdvocate = new Advocate();
@@ -59,10 +59,10 @@ public class AdvocateRepositoryTest {
 
         // Perform the actual method call
         String applicationNumber = new String();
-        List<Advocate> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>());
+        List<Advocate> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(),1,1);
 
         // Verify that queryBuilder was called with correct arguments
-        verify(queryBuilder).getAdvocateSearchQuery(eq(searchCriteria), anyList(), anyList(), anyString(), any());
+        verify(queryBuilder).getAdvocateSearchQuery(eq(searchCriteria), anyList(), anyList(), anyString(), any(),any(),any());
 
         // Verify that jdbcTemplate was called with correct arguments
         verify(jdbcTemplate).query(anyString(), any(Object[].class), any(AdvocateRowMapper.class));

@@ -68,7 +68,7 @@ class AdvocateQueryBuilderTest {
         String applicationNumber = "";
 
         // Call the method to be tested
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteriaList, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true));
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteriaList, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true),1,1);
 
         // Assert the generated query string
         String e = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status  FROM dristi_advocate adv WHERE (adv.id IN (?) OR adv.barRegistrationNumber IN (?) OR adv.applicationNumber IN (?) OR adv.individualId IN (?)) ORDER BY adv.createdtime DESC ";
@@ -92,7 +92,7 @@ class AdvocateQueryBuilderTest {
         String applicationNumber = "123APP";
 
         // Call the method to be tested
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(null, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true));
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(null, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true),1,1);
 
         // Assert the generated query string
         String e = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status  FROM dristi_advocate adv WHERE (LOWER(adv.applicationNumber) LIKE LOWER(?)) ORDER BY adv.createdtime DESC ";

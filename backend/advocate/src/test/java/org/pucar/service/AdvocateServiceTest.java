@@ -97,15 +97,15 @@ public class AdvocateServiceTest {
         when(advocateRepository.getApplications(
                 eq(Collections.singletonList(new AdvocateSearchCriteria(null, null, "APP123", null))),
                 eq(Arrays.asList("APPROVED", "PENDING")),
-                eq(""), any()))
+                eq(""), any(),any(),any()))
                 .thenReturn(Collections.emptyList());
 
         // Invoke
-        List<Advocate> result = service.searchAdvocate(requestInfo, advocateSearchCriteria,statusList, applicationNumber);
+        List<Advocate> result = service.searchAdvocate(requestInfo, advocateSearchCriteria,statusList, applicationNumber,1,1);
 
         // Verify
         assertEquals(0, result.size());
-        verify(advocateRepository, times(1)).getApplications(eq(advocateSearchCriteria), eq(Arrays.asList("APPROVED", "PENDING")), eq(applicationNumber), any());
+        verify(advocateRepository, times(1)).getApplications(eq(advocateSearchCriteria), eq(Arrays.asList("APPROVED", "PENDING")), eq(applicationNumber), any(),any(),any());
     }
 
     @Test

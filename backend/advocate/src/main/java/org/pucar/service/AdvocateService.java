@@ -72,7 +72,7 @@ public class AdvocateService {
         }
     }
 
-public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber) {
+public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         String userTypeEmployee = "EMPLOYEE";
@@ -93,7 +93,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
             }
 
         // Fetch applications from database according to the given search criteria
-        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser);
+        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
 
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))
