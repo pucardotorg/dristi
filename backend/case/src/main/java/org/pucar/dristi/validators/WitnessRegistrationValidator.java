@@ -33,7 +33,7 @@ public class WitnessRegistrationValidator {
     }
     public Witness validateApplicationExistence(Witness witness) {
         List<Witness> existingApplications = witnessRepository.getApplications(Collections.singletonList(WitnessSearchCriteria.builder().caseId(witness.getCaseId()).build()));
-        if(existingApplications.isEmpty()) throw new CustomException("VALIDATION EXCEPTION","Advocate Application does not exist");
+        if(existingApplications.isEmpty()) throw new CustomException("VALIDATION EXCEPTION","Witness Application does not exist");
         return existingApplications.get(0);
     }
 }

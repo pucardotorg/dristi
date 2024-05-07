@@ -101,4 +101,8 @@ public class Configuration {
 	//Case
 	@Value("${case.kafka.update.topic}")
 	private String caseUpdateTopic;
+
+	@Value("${witness.kafka.update.topic}")
+	private String witnessUpdateTopic;
+
 }

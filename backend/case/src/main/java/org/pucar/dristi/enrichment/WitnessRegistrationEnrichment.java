@@ -52,4 +52,18 @@ public class WitnessRegistrationEnrichment {
             log.error("Error enriching case application: {}", e.getMessage());
         }
     }
+
+    public void enrichWitnessApplicationUponUpdate(WitnessRequest witnessRequest) {
+        try {
+            // Enrich lastModifiedTime and lastModifiedBy in witness of update
+            for (Witness witness : witnessRequest.getWitnesses()) {
+                witness.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+                witness.getAuditDetails().setLastModifiedBy(witnessRequest.getRequestInfo().getUserInfo().getUuid());
+            }
+        } catch (Exception e) {
+            log.error("Error enriching witness application upon update: {}", e.getMessage());
+            // Handle the exception or throw a custom exception
+            throw new CustomException("ENRICHMENT_EXCEPTION","Error in witness enrichment service during witness update process: "+ e.getMessage());
+        }
+    }
 }
