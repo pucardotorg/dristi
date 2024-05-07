@@ -7,7 +7,8 @@ import {
 import { UICustomizations } from "./Customisations/UICustomizations";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
 
-window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
+window.contextPath =
+  window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
 
 const enabledModules = ["DRISTI"];
 
