@@ -76,4 +76,41 @@ public class WitnessService {
             throw new CustomException("CASE_SEARCH_EXCEPTION",e.getMessage());
         }
     }
+
+    public List<Witness> updateWitness(WitnessRequest witnessRequest) {
+
+        try {
+
+            // Validate whether the application that is being requested for update indeed exists
+            List<Witness> witnessList = new ArrayList<>();
+            witnessRequest.getWitnesses().forEach(witness -> {
+                Witness existingApplication;
+                try {
+                    existingApplication = validator.validateApplicationExistence(witness);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("Error validating existing application");
+                    throw new CustomException("WITNESS_CREATE_EXCEPTION","Error validating existing application: "+ e.getMessage());
+                }
+                witnessList.add(existingApplication);
+            });
+
+            witnessRequest.setWitnesses(witnessList);
+
+            // Enrich application upon update
+            enrichmentUtil.enrichWitnessApplicationUponUpdate(witnessRequest);
+
+            producer.push(config.getWitnessUpdateTopic(), witnessRequest);
+
+            return witnessRequest.getWitnesses();
+
+        } catch (CustomException e){
+            log.error("Custom Exception occurred while updating witness");
+            throw e;
+        } catch (Exception e){
+            log.error("Error occurred while updating witness");
+            throw new CustomException("WITNESS_UPDATE_EXCEPTION","Error occurred while updating witness: " + e.getMessage());
+        }
+
+    }
 }
