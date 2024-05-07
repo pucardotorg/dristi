@@ -72,13 +72,13 @@ public class AdvocateService {
         }
     }
 
-public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber) {
+public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         String userTypeEmployee = "EMPLOYEE";
 
         try {
-            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria!=null) {
                 Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
                         .findFirst();
@@ -90,10 +90,18 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                         }
                     }
                 });
+                limit = null;
+                offset = null;
+            }
+            else if (userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
+                if(limit == null)
+                    limit = 10;
+                if(offset == null)
+                    offset = 0;
             }
 
         // Fetch applications from database according to the given search criteria
-        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser);
+        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
 
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))

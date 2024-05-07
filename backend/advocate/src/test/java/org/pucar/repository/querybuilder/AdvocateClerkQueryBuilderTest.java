@@ -69,7 +69,7 @@ public class AdvocateClerkQueryBuilderTest {
         String applicationNumber = "";
 
         // Call the method to be tested
-        String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(criteriaList, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true));
+        String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(criteriaList, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true), null, null);
 
         // Assert the generated query string
         String e = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE ( advc.id IN (  ? )  OR  advc.stateregnnumber IN (  ? )  OR  advc.applicationnumber IN (  ? )  OR  advc.individualid IN (  ? ) ) ORDER BY advc.createdtime DESC ";
@@ -92,7 +92,7 @@ public class AdvocateClerkQueryBuilderTest {
         String applicationNumber = "123APP";
 
         // Call the method to be tested
-        String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true));
+        String query = advocateClerkQueryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true), null, null);
 
         // Assert the generated query string
         String e = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc WHERE (LOWER(advc.applicationNumber) LIKE LOWER(?)) ORDER BY advc.createdtime DESC ";

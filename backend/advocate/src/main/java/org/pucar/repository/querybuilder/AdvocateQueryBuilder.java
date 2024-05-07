@@ -1,5 +1,6 @@
 package org.pucar.repository.querybuilder;
 
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.web.models.AdvocateSearchCriteria;
@@ -25,7 +26,7 @@ public class AdvocateQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
 
-    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser) {
+    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
@@ -116,6 +117,13 @@ public class AdvocateQueryBuilder {
             }
             else {
                 query.append(ORDERBY_CREATEDTIME_ASC);
+            }
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
             }
 
             return query.toString();
