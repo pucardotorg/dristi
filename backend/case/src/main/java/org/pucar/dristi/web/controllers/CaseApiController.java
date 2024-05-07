@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.CaseService;
+import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class CaseApiController {
 
 	@Autowired
 	private CaseService caseService;
+
+	@Autowired
+	private WitnessService witnessService;
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
@@ -106,11 +110,10 @@ public class CaseApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
-			} catch (Exception e) {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			List<Witness> witnessesList = witnessService.registerWitnessRequest(body);
+			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+			WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessesList).requestInfo(responseInfo).build();
+			return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
@@ -121,11 +124,10 @@ public class CaseApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body) {
 		String accept = request.getHeader("Accept");
 		if (accept != null && accept.contains("application/json")) {
-			try {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
-			} catch (Exception e) {
-				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-			}
+			List<Witness> witnessList = witnessService.searchWitnesses(body);
+			ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+			WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessList).requestInfo(responseInfo).build();
+			return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
 		}
 
 		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);

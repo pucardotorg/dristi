@@ -1,0 +1,31 @@
+serviceMaps:
+  serviceName: adv-services
+  mappings:
+    - version: 1.0
+      description: Persists witness details in tables
+      fromTopic: save-witness-application
+      isTransaction: true
+      module: WITNESS
+      objecIdJsonPath: $.id
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.witnesses.*
+      queryMaps:
+
+        - query: INSERT INTO dristi_witness(id, caseid, filingnumber, cnrnumber, witnessidentifier, individualid, remarks, isactive, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: witnesses.*
+          jsonMaps:
+            - jsonPath: $.witnesses.*.id
+            - jsonPath: $.witnesses.*.caseId
+            - jsonPath: $.witnesses.*.filingNumber
+            - jsonPath: $.witnesses.*.cnrNumber
+            - jsonPath: $.witnesses.*.witnessIdentifier
+            - jsonPath: $.witnesses.*.individualId
+            - jsonPath: $.witnesses.*.remarks
+            - jsonPath: $.witnesses.*.isActive
+            - jsonPath: $.witnesses.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.witnesses.*.auditDetails.createdBy
+            - jsonPath: $.witnesses.*.auditDetails.lastModifiedBy
+            - jsonPath: $.witnesses.*.auditDetails.createdTime
+            - jsonPath: $.witnesses.*.auditDetails.lastModifiedTime

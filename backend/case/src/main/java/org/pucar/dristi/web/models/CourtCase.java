@@ -61,9 +61,12 @@ public class CourtCase {
 	private String caseDescription = null;
 
 	@JsonProperty("filingNumber")
-
 	@Size(min = 2, max = 64)
 	private String filingNumber = null;
+
+	@JsonProperty("courtCaseNumber")
+	@Size(min=10,max=24)
+	private String courCaseNumber = null;
 
 	@JsonProperty("caseNumber")
 
