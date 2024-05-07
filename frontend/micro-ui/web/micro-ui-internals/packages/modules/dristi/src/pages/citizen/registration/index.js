@@ -3,6 +3,7 @@ import { AppContainer, Loader } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import RegistrationForm from "./RegistrationForm";
 import TermsConditions from "./TermsConditions";
+import AdvocateClerkAdditionalDetail from "./AdvocateClerkAdditionalDetail";
 
 const Registration = () => {
   const Digit = window.Digit || {};
@@ -41,6 +42,9 @@ const Registration = () => {
         <AppContainer>
           <Route exact path={`${path}`}>
             <RegistrationForm setParams={setParams} params={params} path={path} />
+          </Route>
+          <Route exact path={`${path}/additional-details`}>
+            <AdvocateClerkAdditionalDetail setParams={setParams} params={params} />
           </Route>
           <Route exact path={`${path}/terms-conditions`}>
             <TermsConditions setParams={setParams} params={params} />
