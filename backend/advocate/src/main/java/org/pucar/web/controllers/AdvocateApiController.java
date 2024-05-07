@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.service.AdvocateService;
 import org.pucar.util.ResponseInfoFactory;
-import org.pucar.web.models.Advocate;
-import org.pucar.web.models.AdvocateRequest;
-import org.pucar.web.models.AdvocateResponse;
-import org.pucar.web.models.AdvocateSearchRequest;
+import org.pucar.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,10 +67,10 @@ public class AdvocateApiController {
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body,
 	 		@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
 			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
-
-		List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber() ,limit, offset);
+		Pagination pagination = new Pagination();
+		List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber() ,limit, offset, pagination);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).pagination(pagination).build();
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}
 

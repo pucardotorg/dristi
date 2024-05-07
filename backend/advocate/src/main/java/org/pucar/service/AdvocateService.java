@@ -12,6 +12,7 @@ import org.pucar.validators.AdvocateRegistrationValidator;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateRequest;
 import org.pucar.web.models.AdvocateSearchCriteria;
+import org.pucar.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -72,7 +73,7 @@ public class AdvocateService {
         }
     }
 
-public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
+public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset, Pagination pagination) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         String userTypeEmployee = "EMPLOYEE";
@@ -101,7 +102,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
             }
 
         // Fetch applications from database according to the given search criteria
-        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset, pagination);
 
         // If no applications are found matching the given criteria, return an empty list
         if(CollectionUtils.isEmpty(applications))

@@ -8,6 +8,7 @@ import org.pucar.repository.rowmapper.AdvocateDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateRowMapper;
 import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateSearchCriteria;
+import org.pucar.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -36,14 +37,14 @@ public class AdvocateRepository {
     @Autowired
     private AdvocateDocumentRowMapper advocateDocumentRowMapper;
 
-    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset ) {
+    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset, Pagination pagination) {
 
         try {
             List<Advocate> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String advocateQuery = "";
-            advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+            advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset, pagination);
             log.info("Final advocate list query: {}", advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {

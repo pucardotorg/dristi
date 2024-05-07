@@ -3,7 +3,13 @@ package org.pucar.repository.querybuilder;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.repository.rowmapper.AdvocateRowMapper;
+import org.pucar.web.models.Advocate;
 import org.pucar.web.models.AdvocateSearchCriteria;
+import org.pucar.web.models.Order;
+import org.pucar.web.models.Pagination;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -25,8 +31,13 @@ public class AdvocateQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset) {
+    @Autowired
+    private AdvocateRowMapper rowMapper;
+
+    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset, Pagination pagination) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
@@ -114,16 +125,24 @@ public class AdvocateQueryBuilder {
             }
             if(isIndividualLoggedInUser.get()){
                 query.append(ORDERBY_CREATEDTIME_DESC);
+                pagination.setOrder(Order.DESC);
             }
             else {
                 query.append(ORDERBY_CREATEDTIME_ASC);
+                pagination.setOrder(Order.ASC);
             }
+            List<Advocate> list = jdbcTemplate.query(query.toString(), preparedStmtList.toArray(), rowMapper);
+            Integer totalCount = (list != null) ? list.size() : 0;
+            pagination.setTotalCount(Double.valueOf(totalCount));
+            pagination.setSortBy("createdtime");
 
             // Adding Pagination
             if (limit != null && offset != null) {
                 query.append(" LIMIT ? OFFSET ?");
                 preparedStmtList.add(limit);
                 preparedStmtList.add(offset);
+                pagination.setLimit(Double.valueOf(limit));
+                pagination.setOffSet(Double.valueOf(offset));
             }
 
             return query.toString();
