@@ -1,16 +1,4 @@
-import {
-  Header,
-  Card,
-  Loader,
-  Menu,
-  ActionBar,
-  SubmitBar,
-  Modal,
-  CardText,
-  Toast,
-  TextInput,
-  TextArea,
-} from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, ActionBar, SubmitBar, Modal, CardText, Toast, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -18,6 +6,7 @@ import DocumentDetailCard from "../../components/DocumentDetailCard";
 import DocViewerWrapper from "./docViewerWrapper";
 import { ReactComponent as LocationOnMapIcon } from "./image/location_onmap.svg";
 import { userTypeOptions } from "../citizen/registration/config";
+import Menu from "../../components/Menu";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -59,7 +48,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 };
 
 const ApplicationDetails = ({ location, match }) => {
-  const { id, applicationNo } = useParams();
+  const { applicationNo } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const isAction = urlParams.get("isAction");
   const individualId = urlParams.get("individualId");
@@ -69,11 +58,11 @@ const ApplicationDetails = ({ location, match }) => {
   const history = useHistory();
   const [showModal, setShowModal] = useState(false);
   const [displayMenu, setDisplayMenu] = useState(false);
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [message, setMessage] = useState(null);
   const [reasons, setReasons] = useState(null);
 
-  const { data: individualData, isLoading: isGetUserLoading } = Digit.Hooks.dristi.useGetIndividualUser(
+  const { data: individualData, isLoading: isGetUserLoading } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         individualId,
@@ -93,7 +82,7 @@ const ApplicationDetails = ({ location, match }) => {
     return userTypeOptions.find((item) => item.code === userType) || {};
   }, [userType]);
 
-  const { isLoading: isWorkFlowLoading, data: workFlowDetails } = Digit.Hooks.useWorkflowDetails({
+  const { isLoading: isWorkFlowLoading, data: workFlowDetails } = window?.Digit.Hooks.useWorkflowDetails({
     tenantId,
     id: applicationNo,
     moduleCode,
@@ -106,7 +95,7 @@ const ApplicationDetails = ({ location, match }) => {
     workFlowDetails?.processInstances,
   ]);
 
-  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+  const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
       tenantId,
@@ -123,7 +112,7 @@ const ApplicationDetails = ({ location, match }) => {
     return searchResult?.[0].documents?.[0]?.fileStore;
   }, [searchResult]);
 
-  let isMobile = window.Digit.Utils.browser.isMobile();
+  // let isMobile = window.Digit.Utils.browser.isMobile();
 
   function takeAction(action) {
     const applications = searchResult;
@@ -133,7 +122,7 @@ const ApplicationDetails = ({ location, match }) => {
     if (showModal) {
       applications[0].workflow.comments = reasons;
     }
-    Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
+    window?.Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
         setMessage(action === "Approve" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));

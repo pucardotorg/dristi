@@ -1,16 +1,9 @@
 import React, { useMemo, useState } from "react";
-import {
-  LabelFieldPair,
-  CardLabel,
-  TextInput,
-  CardLabelError,
-  CustomDropdown,
-  MultiUploadWrapper,
-  CitizenInfoLabel,
-} from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, CustomDropdown } from "@egovernments/digit-ui-react-components";
+import MultiUploadWrapper from "./MultiUploadWrapper";
+import CitizenInfoLabel from "./CitizenInfoLabel";
 
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control }) => {
-  const Digit = window.Digit || {};
   const [removeFile, setRemoveFile] = useState();
   const inputs = useMemo(
     () =>
@@ -98,7 +91,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     <MultiUploadWrapper
                       t={t}
                       module="works"
-                      tenantId={Digit.ULBService.getCurrentTenantId()}
+                      tenantId={window?.Digit.ULBService.getCurrentTenantId()}
                       getFormState={(fileData) => getFileStoreData(fileData, input)}
                       showHintBelow={input?.showHintBelow ? true : false}
                       setuploadedstate={formData?.[config.key]?.[input.name] || []}
@@ -131,7 +124,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
                     input.validation &&
-                    !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
+                    !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
                         <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>

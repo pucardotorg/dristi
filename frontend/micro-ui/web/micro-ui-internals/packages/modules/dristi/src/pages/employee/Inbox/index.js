@@ -20,6 +20,7 @@ const configAdvocate = {
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
     searchFormJsonPath: "requestBody",
+    tableFormJsonPath: "requestBody",
   },
   sections: {
     search: {
@@ -197,8 +198,6 @@ const Inbox = ({ tenants, parentRoute }) => {
   const { t } = useTranslation();
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const [pageSize, setPageSize] = useState(10);
-  const [pageOffset, setPageOffset] = useState(0);
   let isMobile = window.Digit.Utils.browser.isMobile();
   const [data, setData] = useState([]);
   const history = useHistory();

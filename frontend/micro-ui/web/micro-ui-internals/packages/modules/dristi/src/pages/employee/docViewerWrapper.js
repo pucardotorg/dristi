@@ -2,8 +2,8 @@ import { Card, Header, Label, UploadFile } from "@egovernments/digit-ui-react-co
 import React, { Fragment, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
 import { samplePDF } from "./SamplePdfFile";
-import Urls from "../../../../../libraries/src/services/atoms/urls";
 import { useTranslation } from "react-i18next";
+import { Urls } from "../../hooks";
 
 const SUPPORTED_FILE_FORMATS = [
   ".pdf",
@@ -26,6 +26,7 @@ const SUPPORTED_FILE_FORMATS = [
 ];
 
 const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
+  const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   const [selectedDocs, setSelectedDocs] = useState([]);

@@ -1,18 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import CustomCard from "../../../components/CustomCard";
-import {
-  CaseInProgressIcon,
-  ClosedCasesIcon,
-  FileCaseIcon,
-  JoinCaseIcon,
-  Loader,
-  MyHearingsIcon,
-  PendingActionsIcon,
-} from "@egovernments/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 import ApplicationAwaitingPage from "./ApplicationAwaitingPage";
 import TakeUserToRegistration from "./TakeUserToRegistration";
 import { userTypeOptions } from "../registration/config";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { CaseInProgressIcon, ClosedCasesIcon, FileCaseIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "../../../icons/svgIndex";
 
 function CitizenHome({ tenantId }) {
   const Digit = window?.Digit || {};

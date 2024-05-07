@@ -1,7 +1,8 @@
-import { AppContainer, CitizenInfoLabel, Close, CloseSvg, DetailsCard, Modal } from "@egovernments/digit-ui-react-components";
+import { AppContainer, Close, CloseSvg, DetailsCard, Modal } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import CustomDetailsCard from "../../../components/CustomDetailsCard";
+import CitizenInfoLabel from "../../../components/CitizenInfoLabel";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();

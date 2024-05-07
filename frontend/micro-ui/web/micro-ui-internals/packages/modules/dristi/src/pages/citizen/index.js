@@ -1,4 +1,4 @@
-import { AppContainer, BreadCrumb, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
@@ -8,6 +8,7 @@ import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import { userTypeOptions } from "./registration/config";
+import BreadCrumb from "../../components/BreadCrumb";
 
 const App = ({ stateCode, tenantId }) => {
   const Digit = window?.Digit || {};
