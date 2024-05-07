@@ -57,7 +57,11 @@ const RegistrationForm = ({ setParams, params, path }) => {
       return;
     }
     setParams({ ...params, registrationData: data });
-    history.push(`${path}/terms-conditions`);
+    if (data?.clientDetails?.selectUserType?.code === "ADVOCATE") {
+      history.push(`${path}/additional-details`);
+    } else {
+      history.push(`${path}/terms-conditions`);
+    }
   };
 
   const closeToast = () => {

@@ -84,14 +84,6 @@ function CitizenHome({ tenantId }) {
     );
   }, [searchResult, userType]);
 
-  const isAdditionalDetails = useMemo(() => {
-    return userType !== "LITIGANT" && individualId && Array.isArray(searchResult) && searchResult.length === 0;
-  }, [individualId, searchResult, userType]);
-
-  if (isAdditionalDetails) {
-    history.push(`/digit-ui/citizen/dristi/home/additional-details`);
-  }
-
   if (isLoading || isSearchLoading || isFetching) {
     return <Loader />;
   }

@@ -44,7 +44,7 @@ const Registration = () => {
             <RegistrationForm setParams={setParams} params={params} path={path} />
           </Route>
           <Route exact path={`${path}/additional-details`}>
-            <AdvocateClerkAdditionalDetail setParams={setParams} params={params} />
+            <AdvocateClerkAdditionalDetail setParams={setParams} params={params} path={path} />
           </Route>
           <Route exact path={`${path}/terms-conditions`}>
             <TermsConditions setParams={setParams} params={params} />

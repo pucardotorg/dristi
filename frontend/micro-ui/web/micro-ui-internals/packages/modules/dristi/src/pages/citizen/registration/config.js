@@ -11,6 +11,7 @@ export const userTypeOptions = [
     showBarDetails: true,
     isVerified: true,
     hasBarRegistrationNo: true,
+    role: "ADVOCATE_ROLE",
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
       requestKey: "advocates",
@@ -23,6 +24,7 @@ export const userTypeOptions = [
     showBarDetails: true,
     hasStateRegistrationNo: true,
     isVerified: true,
+    role: "ADVOCATE_CLERK_ROLE",
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
       requestKey: "clerks",
