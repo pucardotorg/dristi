@@ -42,6 +42,23 @@ public class Configuration {
 	@Value("${egov.idgen.host}")
 	private String idGenHost;
 
+	@Value("${egov.idgen.path}")
+	private String idGenPath;
+
+	// Filestore Config
+	@Value("${egov.filestore.host}")
+	private String fileStoreHost;
+
+	@Value("${egov.filestore.path}")
+	private String fileStorePath;
+
+	// Advocate Config
+	@Value("${egov.advocate.host}")
+	private String advocateHost;
+
+	@Value("${egov.advocate.path}")
+	private String advocatePath;
+
     //Individual Service
     @Value("${egov.individual.host}")
     private String individualHost;
@@ -57,8 +74,6 @@ public class Configuration {
 
     @Value("${egov.individual.update.path}")
     private String individualUpdateEndpoint;
-	@Value("${egov.idgen.path}")
-	private String idGenPath;
 
 	// Workflow Config
 	@Value("${egov.workflow.host}")

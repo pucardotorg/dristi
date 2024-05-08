@@ -77,9 +77,9 @@ paths:
           in: query
           schema:
             type: string
-        - name: caseId
+        - name: filingNumber
           in: query
-          description: Search by list of UUID
+          description: Search by filingNumber
           schema:
             type: string
         - name: tenantId
@@ -90,6 +90,12 @@ paths:
         - name: cnrNumber
           in: query
           description: the cnrNumber of the case whose hearing(s) are being queried
+          required: true
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          description: the applicationNumber of the case whose hearing(s) are being queried
           required: true
           schema:
             type: string
@@ -165,7 +171,7 @@ components:
     HearingRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
         hearing:
           $ref: '#/components/schemas/Hearing'
@@ -174,7 +180,7 @@ components:
     HearingResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         hearing:
           $ref: '#/components/schemas/Hearing'
@@ -183,7 +189,7 @@ components:
     HearingListResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
@@ -195,26 +201,39 @@ components:
             $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearingList response
 
-
     HearingExistsRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-        order:
-          $ref: '#/components/schemas/HearingExists'
+        hearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/HearingExists'
     HearingExistsResponse:
       type: object
       properties:
-        responseInfo:
+        ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        order:
-          $ref: '#/components/schemas/HearingExists'
+        hearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/HearingExists'
 
     HearingExists:
       type: object
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        hearingId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        filingNumber:
+          type: string
         cnrNumber:
+          type: string
+        applicationNumber:
           type: string
         exists:
           type: boolean
@@ -236,13 +255,10 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
-        caseIds:
+        filingNumber:
           type: array
           items:
             type: string
-            format: uuid
-            minLength: 36
-            maxLength: 36
           description: Array of cases for which this hearing is scheduled.
         cnrNumbers:
           type: array
