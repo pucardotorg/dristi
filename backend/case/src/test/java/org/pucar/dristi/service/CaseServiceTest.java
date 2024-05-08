@@ -46,7 +46,7 @@ public class CaseServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test
+@Test
     void testRegisterCaseRequest_ValidInput() {
         CaseRequest caseRequest = new CaseRequest(); // Assume CaseRequest is suitably instantiated
         List<CourtCase> cases = Arrays.asList(new CourtCase()); // Mock court case list
