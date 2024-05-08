@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/bail.json",
+  "$comment": "definition of the schema for issuing a bail. bail date, type, amount, case number etc. will be available in the task object itself",
+  "$version": "0.1.0",
+
+  "bailId": "123 456 7890",
+  "respondentDetails":
+  {
+    "name" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "sting having a max of 100 alphabets. no numbers"
+    },
+    "age" : {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 120,
+      "description": "age in years and will accept decimals so age can be 10.5 meaning 10 years 6 months"
+    },
+    "address": {
+      "type": "string",
+      "pattern": "^.{1,400}$",
+      "description": "sting having a max of 400 characters and matches any character (including newline characters)"
+    },
+    "phone" : {
+      "type": "string",
+      "pattern": "^\\+?[0-9\\-() ]+$"
+    },
+    "gender": {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,16}$",
+      "description": "string value to a max of 16 alphabets",
+      "examples" : ["male", "female","transgender"]
+    }
+  },
+  "caseDetails":
+  {
+    "title": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,512}$",
+      "description": "sting having a max of 512 alphanumeric characters"
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 9999,
+      "description": "year the case was logged"
+    },
+    "judgeName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "sting having a max of 100 alphabets. no numbers"
+    },
+    "courtName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,124}$",
+      "description": "sting having a max of 200 alphanumeric characters"
+    },
+    "courtAddress": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,200}$",
+      "description": "sting having a max of 200 alphanumeric characters"
+    },
+    "courtPhone": {
+      "type": "string",
+      "pattern": "^\\+?[0-9\\-() ]+$"
+    }
+  }
+}
