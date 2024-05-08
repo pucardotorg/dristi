@@ -45,5 +45,9 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+	public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
+	public static final String CREATE_CASE_ERR = "CREATE_CASE_ERR";
+	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
+	public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
 
 }

@@ -38,20 +38,20 @@ public class CaseService {
     @Autowired
     private Producer producer;
 
-    public List<CourtCase> registerCaseRequest(CaseRequest body) {
+    public List<CourtCase> createCase(CaseRequest body) {
         try {
             validator.validateCaseRegistration(body);
             enrichmentUtil.enrichCaseRegistration(body);
-//            workflowService.updateWorkflowStatus(body);
+          //  workflowService.updateWorkflowStatus(body);
 
             producer.push("save-case-application", body);
             return body.getCases();
         }
         catch (CustomException e){
-            log.error("Custom Exception occurred while creating advocate");
+            log.error("Exception occurred while creating case");
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while creating advocate");
+            log.error("Error occurred while creating case");
             throw new CustomException("CASE_CREATE_EXCEPTION",e.getMessage());
         }
 
@@ -71,7 +71,7 @@ public class CaseService {
             return courtCases;
         }
         catch (CustomException e){
-            log.error("Custom Exception occurred while searching");
+            log.error("Exception occurred while searching");
             throw e;
         }
         catch (Exception e){
