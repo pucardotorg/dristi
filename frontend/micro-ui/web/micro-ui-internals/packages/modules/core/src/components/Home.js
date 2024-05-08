@@ -4,6 +4,7 @@ import {
   CitizenHomeCard,
   CitizenInfoLabel,
   FSMIcon,
+  HelpOutlineIcon,
   Loader,
   MCollectIcon,
   OBPSIcon,
@@ -130,6 +131,10 @@ const EmployeeHome = ({ modules, additionalComponent }) => {
   return (
     <>
       <div className="employee-app-container">
+        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "5px" }}>
+          <span style={{ color: "#f47738" }}>Help</span>
+          <HelpOutlineIcon />
+        </div>
         <div className="ground-container moduleCardWrapper gridModuleWrapper">
           {modules.map(({ code }, index) => {
             const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);

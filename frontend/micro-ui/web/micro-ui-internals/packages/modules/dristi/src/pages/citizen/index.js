@@ -65,7 +65,7 @@ const App = ({ stateCode, tenantId }) => {
   }, [userType]);
 
   const hideHomeCrumb = [`${path}/home`];
-  const dristiCrumbs = [
+  const citizenCrumbs = [
     {
       path: isUserLoggedIn ? `${path}/home` : "",
       content: t("ES_COMMON_HOME"),
@@ -138,7 +138,7 @@ const App = ({ stateCode, tenantId }) => {
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <BreadCrumb crumbs={dristiCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
+            <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
             {!hideHomeCrumb.includes(location.pathname) && (
               <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
                 <span style={{ color: "#f47738" }}>Help</span>

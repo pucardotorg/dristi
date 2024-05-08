@@ -25,7 +25,7 @@ const SUPPORTED_FILE_FORMATS = [
   ".xls",
 ];
 
-const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
+const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename }) => {
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
@@ -64,8 +64,21 @@ const DocViewerWrapper = ({ fileStoreId, tenantId }) => {
           </>
         )}
       </Card>
-      <a href={uri} target="_blank" rel="noreferrer" style={{ color: "#505A5F", textDecoration: "none" }}>
-        {t("DOWNLOAD_BAR_COUNCIL_ID")}
+      <a
+        href={uri}
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          display: "flex",
+          color: "#505A5F",
+          textDecoration: "none",
+          width: 250,
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {displayFilename || t("CS_CLICK_TO_DOWNLOAD")}
       </a>
     </div>
   );

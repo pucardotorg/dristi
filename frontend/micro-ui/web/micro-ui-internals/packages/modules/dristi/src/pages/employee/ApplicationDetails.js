@@ -1,5 +1,5 @@
 import { Header, Card, Loader, ActionBar, SubmitBar, Modal, CardText, Toast, TextArea } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import DocumentDetailCard from "../../components/DocumentDetailCard";
@@ -50,7 +50,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 const ApplicationDetails = ({ location, match }) => {
   const { applicationNo } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
-  const isAction = urlParams.get("isAction");
+
   const individualId = urlParams.get("individualId");
   const type = urlParams.get("type") || "advocate";
   const moduleCode = "DRISTI";
@@ -61,7 +61,7 @@ const ApplicationDetails = ({ location, match }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [message, setMessage] = useState(null);
   const [reasons, setReasons] = useState(null);
-
+  const [isAction, setIsAction] = useState(false);
   const { data: individualData, isLoading: isGetUserLoading } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
@@ -77,6 +77,22 @@ const ApplicationDetails = ({ location, match }) => {
   const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
     individualData?.Individual,
   ]);
+
+  const identifierIdDetails = useMemo(
+    () => JSON.parse(individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"),
+    [individualData?.Individual]
+  );
+
+  const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
+    {
+      criteria: [{ individualId }],
+      tenantId,
+    },
+    {},
+    applicationNo + individualId,
+    userType,
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+  );
 
   const userTypeDetail = useMemo(() => {
     return userTypeOptions.find((item) => item.code === userType) || {};
@@ -95,16 +111,6 @@ const ApplicationDetails = ({ location, match }) => {
     workFlowDetails?.processInstances,
   ]);
 
-  const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
-    {
-      criteria: [{ individualId }],
-      tenantId,
-    },
-    {},
-    applicationNo + individualId,
-    userType,
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
-  );
   const searchResult = useMemo(() => {
     return searchData?.[userTypeDetail?.apiDetails?.requestKey];
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
@@ -112,6 +118,9 @@ const ApplicationDetails = ({ location, match }) => {
     return searchResult?.[0].documents?.[0]?.fileStore;
   }, [searchResult]);
 
+  useEffect(() => {
+    setIsAction(searchResult?.[0]?.status === "INWORKFLOW");
+  }, [searchResult]);
   // let isMobile = window.Digit.Utils.browser.isMobile();
 
   function takeAction(action) {
@@ -125,13 +134,13 @@ const ApplicationDetails = ({ location, match }) => {
     window?.Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
-        setMessage(action === "Approve" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
-        setTimeout(() => history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`), 2000);
+        setMessage(action === "APPROVE" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
+        setIsAction(false);
       })
       .catch(() => {
         setShowModal(false);
         setMessage(t("ES_API_ERROR"));
-        setTimeout(() => history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`), 2000);
+        setIsAction(false);
       });
   }
 
@@ -181,20 +190,35 @@ const ApplicationDetails = ({ location, match }) => {
       {
         title: "Bar Council ID",
         image: true,
-        content: <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId}></DocViewerWrapper>,
+        content: (
+          <DocViewerWrapper
+            fileStoreId={fileStoreId}
+            tenantId={tenantId}
+            displayFilename={searchResult?.[0]?.additionalDetails?.filename}
+          ></DocViewerWrapper>
+        ),
       },
     ];
   }, [fileStoreId, searchResult, tenantId, userTypeDetail?.apiDetails?.AdditionalFields]);
 
+  const aadharData = useMemo(() => {
+    return [
+      { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
+      { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
+      {
+        title: identifierIdDetails?.fileStoreId ? "ID Type" : "Aadhar Number",
+        content: identifierIdDetails?.fileStoreId ? (
+          <DocViewerWrapper fileStoreId={identifierIdDetails?.fileStoreId} tenantId={tenantId} displayFilename={identifierIdDetails?.filename} />
+        ) : (
+          individualData?.Individual?.[0]?.identifiers[0]?.identifierId
+        ),
+      },
+    ];
+  }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
+
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
   }
-
-  const aadharData = [
-    { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
-    { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
-    { title: "Aadhar Number", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierId },
-  ];
 
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
@@ -202,7 +226,7 @@ const ApplicationDetails = ({ location, match }) => {
       <Header>{header}</Header>
       <DocumentDetailCard cardData={aadharData} />
       <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
-      <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />
+      {type === "advocate" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
       {applicationNo && (
         <ActionBar>
           {displayMenu && applicationNo ? (

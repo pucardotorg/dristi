@@ -15,9 +15,9 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
     setShowErrorToast(false);
   };
 
-  const onDocumentUpload = async (fileData) => {
+  const onDocumentUpload = async (fileData, filename) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
-    return { file: fileUploadRes?.data, fileType: fileData.type };
+    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
 
   const onSubmit = (termsAndConditionData) => {
@@ -31,6 +31,12 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
     const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
     const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
     const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadhaarNumber;
+    const identifierIdDetails = uploadedDocument
+      ? {
+          fileStoreId: identifierId,
+          filename: uploadedDocument?.filename,
+        }
+      : {};
     const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     let Individual = {
       Individual: {
@@ -92,6 +98,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
             { key: "userType", value: data?.clientDetails?.selectUserType?.code },
             { key: "userTypeDetail", value: JSON.stringify(data?.clientDetails?.selectUserType) },
             { key: "termsAndCondition", value: termsAndConditionData?.Terms_Conditions },
+            { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
           ],
         },
         clientAuditDetails: {},
@@ -106,7 +113,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
           result &&
           data?.clientDetails?.selectUserType?.role === "ADVOCATE_ROLE"
         ) {
-          onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
+          onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file, data?.clientDetails?.barCouncilId[0][0]).then((document) => {
             const requestBody = {
               [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
                 {
@@ -139,6 +146,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
                   ],
                   additionalDetails: {
                     username: data?.userDetails?.firstName + " " + data?.userDetails?.lastName,
+                    filename: document.filename,
                   },
                   ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
                     res[curr] = data?.clientDetails[curr];
