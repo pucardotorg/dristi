@@ -49,6 +49,9 @@ const Registration = () => {
           <Route exact path={`${path}/terms-conditions`}>
             <TermsConditions setParams={setParams} params={params} />
           </Route>
+          <Route exact path={`${path}/additional-details/terms-conditions`}>
+            <TermsConditions setParams={setParams} params={params} />
+          </Route>
         </AppContainer>
       </Switch>
     </div>

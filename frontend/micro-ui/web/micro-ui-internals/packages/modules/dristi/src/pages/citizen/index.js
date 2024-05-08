@@ -96,9 +96,15 @@ const App = ({ stateCode, tenantId }) => {
       isLast: !location.pathname.includes("/registration"),
     },
     {
-      path: isUserLoggedIn ? `${path}/home/additional-details` : "",
+      path: isUserLoggedIn ? `${path}/home/registration/additional-details` : "",
       content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
       show: location.pathname.includes("/home/registration/additional-details"),
+      isLast: !location.pathname.includes("/registration"),
+    },
+    {
+      path: isUserLoggedIn ? `${path}/home/registration/additional-details/terms-conditions` : "",
+      content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
+      show: location.pathname.includes("/home/registration/additional-details/terms-conditions"),
       isLast: !location.pathname.includes("/registration"),
     },
     {
@@ -163,19 +169,6 @@ const App = ({ stateCode, tenantId }) => {
           <Route path={`${path}/home/registration`}>
             <Registration stateCode={stateCode} />
           </Route>
-          {/* <Route path={`${path}/home/additional-details`}>
-            <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
-              <AppContainer>
-                <AdvocateClerkAdditionalDetail
-                  userTypeDetail={userTypeDetail}
-                  individualId={individualId}
-                  individualUser={individualUser}
-                  userType={userType}
-                  refetch={refetchAdvocateClerk}
-                />
-              </AppContainer>
-            </div>
-          </Route> */}
           <Route path={`${path}/home/response`}>
             <Response refetch={refetch} />
           </Route>

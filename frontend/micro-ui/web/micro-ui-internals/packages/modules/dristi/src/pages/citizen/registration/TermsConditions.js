@@ -174,7 +174,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
                 history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
               });
           });
-        } else {
+        } else if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName && result) {
           const requestBody = {
             [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
               {
@@ -233,6 +233,8 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
             .catch(() => {
               history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
             });
+        } else {
+          history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success", createType: "LITIGANT" });
         }
       })
       .catch(() => {

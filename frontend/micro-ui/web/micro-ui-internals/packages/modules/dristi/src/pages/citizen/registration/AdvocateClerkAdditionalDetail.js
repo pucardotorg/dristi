@@ -100,7 +100,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
         },
       },
     });
-    history.push(`${path}/terms-conditions`);
+    history.push(`${path}/additional-details/terms-conditions`);
   };
 
   return (
@@ -115,7 +115,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
           onSubmit(props);
         }}
         isDisabled={isDisabled}
-        label={"CS_COMMON_SUBMIT"}
+        label={"CS_COMMONS_NEXT"}
         headingStyle={{ textAlign: "center" }}
         defaultValues={{ ...params?.registrationData } || {}}
         cardStyle={{ minWidth: "100%" }}
