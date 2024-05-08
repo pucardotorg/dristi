@@ -12,7 +12,7 @@ serviceMaps:
       auditAttributeBasePath: $.cases.*
       queryMaps:
 
-        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber, accesscode, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, isactive, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber,cnrnumber,courtcasenumber accesscode, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, isactive, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: cases.*
           jsonMaps:
             - jsonPath: $.cases.*.id
@@ -22,6 +22,8 @@ serviceMaps:
             - jsonPath: $.cases.*.caseDescription
             - jsonPath: $.cases.*.filingNumber
             - jsonPath: $.cases.*.caseNumber
+            - jsonPath: $.cases.*.cnrNumber
+            - jsonPath: $.cases.*.courtCaseNumber
             - jsonPath: $.cases.*.accessCode
             - jsonPath: $.cases.*.courtId
             - jsonPath: $.cases.*.benchId

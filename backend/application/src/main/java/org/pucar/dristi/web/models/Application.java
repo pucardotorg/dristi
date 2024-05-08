@@ -37,10 +37,9 @@ public class Application   {
 
                 private String tenantId = null;
 
-        @JsonProperty("caseId")
+        @JsonProperty("filingNumber")
 
-          @Valid
-                private UUID caseId = null;
+                private String filingNumber = null;
 
         @JsonProperty("cnrNumber")
 
