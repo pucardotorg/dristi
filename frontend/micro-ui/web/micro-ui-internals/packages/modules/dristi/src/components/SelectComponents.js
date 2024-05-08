@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, LocationSearch } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import LocationSearch from "./LocationSearch";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -102,7 +103,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                 {currentValue &&
                   currentValue.length > 0 &&
                   input.validation &&
-                  !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
+                  !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
                     <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
                       <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                     </CardLabelError>

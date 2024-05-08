@@ -1,7 +1,6 @@
 import { AppContainer } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import CaseType from "./CaseType";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -11,7 +10,7 @@ function FileCase({ t }) {
       <Switch>
         <AppContainer>
           <Route path={`${path}`} exact>
-            <CaseType t={t} />
+            {/* <CaseType t={t} /> */}
           </Route>
         </AppContainer>
       </Switch>
