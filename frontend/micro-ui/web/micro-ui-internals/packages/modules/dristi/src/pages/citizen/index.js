@@ -103,9 +103,9 @@ const App = ({ stateCode, tenantId }) => {
     },
     {
       path: isUserLoggedIn ? `${path}/home/registration/additional-details/terms-conditions` : "",
-      content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
+      content: t("ES_COMMON_USER_TERMS_AND_CONDITIONS"),
       show: location.pathname.includes("/home/registration/additional-details/terms-conditions"),
-      isLast: !location.pathname.includes("/registration"),
+      isLast: true,
     },
     {
       path: isUserLoggedIn ? `${path}/home/registration/terms-conditions` : "",
