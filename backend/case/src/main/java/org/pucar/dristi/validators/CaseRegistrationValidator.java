@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.service.IndividualService;
+import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.CaseCriteria;
@@ -35,6 +36,9 @@ public class CaseRegistrationValidator {
     @Autowired
     private FileStoreUtil fileStoreUtil;
 
+    @Autowired
+    private AdvocateUtil advocateUtil;
+
     public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException{
         RequestInfo requestInfo = caseRequest.getRequestInfo();
 
@@ -53,18 +57,22 @@ public class CaseRegistrationValidator {
             Map<String, Map<String, JSONArray>> mdmsData  = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), "case", createMasterDetails());
 
             if(mdmsData.get("case")==null)
-                throw new CustomException(MDMS_DATA_NOT_FOUND,"mdms data does not exist");
+                throw new CustomException(MDMS_DATA_NOT_FOUND,"MDMS data does not exist");
 
             courtCase.getLitigants().forEach(litigant -> {
                 if(!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
-                    throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
+                    throw new CustomException(INDIVIDUAL_NOT_FOUND,"Invalid complainant details");
             });
 
             courtCase.getDocuments().forEach(document -> {
                 if(!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
-                    throw new CustomException(INVALID_FILESTORE_ID,"Invalid file store ID");
+                    throw new CustomException(INVALID_FILESTORE_ID,"Invalid document details");
             });
 
+            courtCase.getRepresentatives().forEach(rep -> {
+                if(!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
+                    throw new CustomException(INVALID_ADVOCATE_ID,"Invalid advocate details");
+            });
         });
     }
 
