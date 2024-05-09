@@ -37,6 +37,7 @@ public class AdvocateClerkRepository {
     @Autowired
     private AdvocateClerkDocumentRowMapper documentRowMapper;
 
+    //To fetch the advocate clerk applications based on search criteria
     public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
         try {
             List<AdvocateClerk> advocateList = new ArrayList<>();
@@ -66,9 +67,6 @@ public class AdvocateClerkRepository {
                 });
             }
             return advocateList;
-        }
-        catch (CustomException e){
-            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching advocate clerk application list");

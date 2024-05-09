@@ -49,10 +49,6 @@ public class IdgenUtil {
 				response = mapper.convertValue(restRepo.fetchResult(uri, request),
 						IdGenerationResponse.class);
 			}
-			catch (CustomException e) {
-				log.error("Custom Exception occurred in Idgen Utility");
-				throw e;
-			}
 			catch (Exception e) {
 				log.error("Error fetching ID from ID generation service: {}", e.getMessage());
 				throw new CustomException(IDGEN_ERROR, "Error fetching ID from ID generation service");
@@ -64,9 +60,7 @@ public class IdgenUtil {
 				throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
 
 			return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-		} catch (CustomException e){
-			throw e;
-		} catch (Exception e){
+		} 	catch (Exception e){
 			throw new CustomException(IDGEN_ERROR,"ERROR in IDGEN Service");
 		}
 	}

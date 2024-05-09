@@ -63,22 +63,18 @@ public class AdvocateService {
             producer.push(config.getAdvocateCreateTopic(), body);
 
             return body.getAdvocates();
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while creating advocate");
-            throw e;
         } catch (Exception e){
             log.error("Error occurred while creating advocate");
-            throw new CustomException(ADVOCATE_CREATE_EXCEPTION,e.getMessage());
+            throw new CustomException(ADVOCATE_CREATE_EXCEPTION, e.getMessage());
         }
     }
 
 public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
-        String userTypeEmployee = "EMPLOYEE";
 
         try {
-            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria!=null) {
+            if (!EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria!=null) {
                 Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
                         .findFirst();
@@ -93,7 +89,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                 limit = null;
                 offset = null;
             }
-            else if (userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
+            else if (EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
                 if(limit == null)
                     limit = 10;
                 if(offset == null)
@@ -112,10 +108,6 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
         }
         applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
         return applications;
-    }
-    catch (CustomException e){
-        log.error("Custom Exception occurred while searching");
-        throw e;
     }
     catch (Exception e){
         log.error("Error while fetching to search results");
@@ -148,16 +140,13 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
             workflowService.updateWorkflowStatus(advocateRequest);
             advocateRequest.getAdvocates().forEach(advocate -> {
                 if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocate.getStatus())) {
-                    advocate.setIsActive(true);
+                    advocate.setIsActive(true);//setting true once application is approved
                 }
             });
             producer.push(config.getAdvocateUpdateTopic(), advocateRequest);
 
             return advocateRequest.getAdvocates();
 
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while updating advocate");
-            throw e;
         } catch (Exception e){
             log.error("Error occurred while updating advocate");
             throw new CustomException(ADVOCATE_UPDATE_EXCEPTION,"Error occurred while updating advocate: " + e.getMessage());

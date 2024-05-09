@@ -53,9 +53,6 @@ public class AdvocateClerkService {
 
             producer.push(config.getAdvClerkcreateTopic(), body);
             return body.getClerks();
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while creating advocate clerk");
-            throw e;
         } catch (Exception e){
             log.error("Error occurred while creating advocate clerk");
             throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
@@ -64,10 +61,8 @@ public class AdvocateClerkService {
     public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
-        String userTypeEmployee = "EMPLOYEE";
-
         try {
-            if (!userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateClerkSearchCriteria!=null) {
+            if (!EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateClerkSearchCriteria!=null) {
                 Optional<AdvocateClerkSearchCriteria> firstNonNull = advocateClerkSearchCriteria.stream()
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
                         .findFirst();
@@ -84,7 +79,7 @@ public class AdvocateClerkService {
                 offset = null;
             }
             // setting default values for limit and offset only when user type is EMPLOYEE
-            else if (userTypeEmployee.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
+            else if (EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
                 if(limit == null)
                     limit = 10;
                 if(offset == null)
@@ -104,10 +99,6 @@ public class AdvocateClerkService {
             // Otherwise return the found applications
             return applications;
         }
-        catch (CustomException e){
-            log.error("Custom Exception occurred while searching");
-            throw e;
-        }
         catch (Exception e){
             log.error("Error while fetching to search results");
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
@@ -118,7 +109,6 @@ public class AdvocateClerkService {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-
             List<AdvocateClerk> advocateClerkList= new ArrayList<>();
             advocateClerkRequest.getClerks().forEach(advocateClerk -> {
                 AdvocateClerk existingApplication;
@@ -136,19 +126,17 @@ public class AdvocateClerkService {
             // Enrich application upon update
             enrichmentUtil.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest);
 
+            // workflow update
             workflowService.updateWorkflowStatus(advocateClerkRequest);
             advocateClerkRequest.getClerks().forEach(advocateClerk -> {
                 if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerk.getStatus())) {
-                    advocateClerk.setIsActive(true);
+                    advocateClerk.setIsActive(true);//setting true once application is approved
                 }
             });
 
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
 
             return advocateClerkRequest.getClerks();
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while updating advocate clerk");
-            throw e;
         } catch (Exception e){
             log.error("Error occurred while updating advocate clerk");
             throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION,"Error occurred while updating advocate clerk: " + e.getMessage());

@@ -33,53 +33,56 @@ import java.util.List;
 @RequestMapping("")
 public class ClerkApiController {
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	private final HttpServletRequest request;
-	@Autowired
-	private AdvocateClerkService advocateClerkService;
+    private final HttpServletRequest request;
+    @Autowired
+    private AdvocateClerkService advocateClerkService;
 
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
-	@Autowired
-	public ClerkApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
-	public void setMockInjects(AdvocateClerkService advocateClerkService, ResponseInfoFactory responseInfoFactory){
-		this.advocateClerkService = advocateClerkService;
-		this.responseInfoFactory = responseInfoFactory;
-	}
-	@RequestMapping(value = "/clerk/v1/_create", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateClerkResponse> clerkV1CreatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
-				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateClerkRequest(body);
-				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
-				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-	}
+    @Autowired
+    public ClerkApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+    }
 
-	@RequestMapping(value = "/clerk/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateClerkResponse> clerkV1SearchPost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body,
-			@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+    public void setMockInjects(AdvocateClerkService advocateClerkService, ResponseInfoFactory responseInfoFactory) {
+        this.advocateClerkService = advocateClerkService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
-				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber(), limit, offset);
-				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
-				return new ResponseEntity<>(response,HttpStatus.OK);
-	}
+    @RequestMapping(value = "/clerk/v1/_create", method = RequestMethod.POST)
+    public ResponseEntity<AdvocateClerkResponse> clerkV1CreatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 
-	@RequestMapping(value = "/clerk/v1/_update", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateClerkResponse> clerkV1UpdatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
+        List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateClerkRequest(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
+    }
 
-				List<AdvocateClerk> advocateClerkList = advocateClerkService.updateAdvocateClerk(body);
-				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateClerkList).responseInfo(responseInfo).build();
-				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
-	}
+    @RequestMapping(value = "/clerk/v1/_search", method = RequestMethod.POST)
+    public ResponseEntity<AdvocateClerkResponse> clerkV1SearchPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body,
+            @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
+            @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+
+        List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber(), limit, offset);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/clerk/v1/_update", method = RequestMethod.POST)
+    public ResponseEntity<AdvocateClerkResponse> clerkV1UpdatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
+
+        List<AdvocateClerk> advocateClerkList = advocateClerkService.updateAdvocateClerk(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateClerkList).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
+    }
 
 }

@@ -94,19 +94,19 @@ public class Configuration {
 	private String smsNotificationTopic;
 
 	//AvdClerk Var
-	@Value("${advClerk.kafka.create.topic}")
+	@Value("${egov.advClerk.kafka.create.topic}")
 	private String advClerkcreateTopic;
 
 	// Update Advocate Clerk kafka topic
-	@Value("${advClerk.kafka.update.topic}")
+	@Value("${egov.advClerk.kafka.update.topic}")
 	private String advClerkUpdateTopic;
 
 	// Create Advocate kafka topic
-	@Value("${advocate.kafka.create.topic}")
+	@Value("${egov.advocate.kafka.create.topic}")
 	private String advocateCreateTopic;
 
 	// Update Advocate kafka topic
-	@Value("${advocate.kafka.update.topic}")
+	@Value("${egov.advocate.kafka.update.topic}")
 	private String advocateUpdateTopic;
 
 	// Advocate Workflow/Business name

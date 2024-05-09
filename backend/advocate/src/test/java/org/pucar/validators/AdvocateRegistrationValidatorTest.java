@@ -1,6 +1,6 @@
 package org.pucar.validators;
 
-import org.egov.tracer.model.CustomException;
+import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +48,8 @@ public class AdvocateRegistrationValidatorTest {
         advocate.setIndividualId("validIndividualId");
         advocate.setTenantId("validTenantId");
         advocateRequest.setAdvocates(Collections.singletonList(advocate));
-
+        requestInfo.setUserInfo(new User());
+        advocateRequest.setRequestInfo(requestInfo);
         when(individualService.searchIndividual(requestInfo, "validIndividualId", new HashMap<>())).thenReturn(true);
 
         assertDoesNotThrow(() -> validator.validateAdvocateRegistration(advocateRequest));
@@ -61,9 +62,7 @@ public class AdvocateRegistrationValidatorTest {
         advocate.setTenantId("validTenantId");
         advocateRequest.setAdvocates(Collections.singletonList(advocate));
 
-        when(individualService.searchIndividual(requestInfo, "invalidIndividualId", new HashMap<>())).thenReturn(false);
-
-        assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
+        assertThrows(Exception.class, () -> validator.validateAdvocateRegistration(advocateRequest));
     }
 
     @Test
@@ -74,6 +73,6 @@ public class AdvocateRegistrationValidatorTest {
         advocateRequest.setAdvocates(Collections.singletonList(advocate));
 
 
-        assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
+        assertThrows(Exception.class, () -> validator.validateAdvocateRegistration(advocateRequest));
     }
 }

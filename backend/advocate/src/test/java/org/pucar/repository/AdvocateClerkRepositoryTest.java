@@ -93,8 +93,7 @@ public class AdvocateClerkRepositoryTest {
             repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
         } catch (Exception e) {
             // Verify expected exception
-            assertTrue(e instanceof CustomException);
-            assertEquals("Mock test", e.getMessage());
+            assertEquals("Error while fetching advocate clerk application list: Mock test", e.getMessage());
         }
     }
 

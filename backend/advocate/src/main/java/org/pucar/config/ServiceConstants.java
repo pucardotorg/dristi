@@ -32,6 +32,7 @@ public class ServiceConstants {
 	public static final String PWD_EXPIRY_DATE = "pwdExpiryDate";
 	public static final String INVALID_DATE_FORMAT_CODE = "INVALID_DATE_FORMAT";
 	public static final String INVALID_DATE_FORMAT_MESSAGE = "Failed to parse date format in user";
+	public static final String EMPLOYEE_UPPER = "EMPLOYEE";
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";

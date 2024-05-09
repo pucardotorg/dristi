@@ -201,8 +201,7 @@ public class AdvocateClerkServiceTest {
             service.updateAdvocateClerk(request);
         }
         catch (Exception e){
-        assertTrue(e instanceof CustomException);
-        assertEquals("Error validating existing application: Mock test", e.getMessage());
+        assertEquals("Error occurred while updating advocate clerk: Error validating existing application: Mock test", e.getMessage());
         }
     }
 }

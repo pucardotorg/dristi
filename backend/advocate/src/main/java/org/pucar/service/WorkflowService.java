@@ -40,11 +40,9 @@ public class WorkflowService {
             try {
                 ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+                String applicationStatus = callWorkFlow(workflowRequest).getApplicationStatus();
                 advocate.setStatus(applicationStatus);
-            } catch (CustomException e){
-                throw e;
-            } catch (Exception e) {
+            }catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.toString());
                 throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+ e);
             }
@@ -56,9 +54,7 @@ public class WorkflowService {
             Object optional = repository.fetchResult(url, workflowReq);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
+        }  catch (Exception e) {
             log.error("Error calling workflow: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
         }
@@ -70,8 +66,6 @@ public class WorkflowService {
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 advocateClerk.setStatus(applicationStatus);
-            } catch (CustomException e){
-                throw e;
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.toString());
                 throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -99,9 +93,7 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
+        }  catch (Exception e) {
             log.error("Error getting process instance for ADVOCATE: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
         }
@@ -143,8 +135,6 @@ public class WorkflowService {
             if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
                 return response.getProcessInstances().get(0);
             return null;
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
@@ -160,8 +150,6 @@ public class WorkflowService {
             if (CollectionUtils.isEmpty(response.getBusinessServices()))
                 throw new CustomException();
             return response.getBusinessServices().get(0);
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error getting business service: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
@@ -196,9 +184,7 @@ public class WorkflowService {
                     .requestInfo(updateRequest.getRequestInfo())
                     .processInstances(Arrays.asList(process))
                     .build();
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
+        }  catch (Exception e) {
             log.error("Error getting process instance for advocate registration payment: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }

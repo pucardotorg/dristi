@@ -36,6 +36,7 @@ public class AdvocateRepository {
     @Autowired
     private AdvocateDocumentRowMapper advocateDocumentRowMapper;
 
+    //To fetch the advocate applications based on search criteria
     public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset ) {
 
         try {
@@ -69,9 +70,6 @@ public class AdvocateRepository {
             }
 
             return advocateList;
-        }
-        catch (CustomException e){
-            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching advocate application list");

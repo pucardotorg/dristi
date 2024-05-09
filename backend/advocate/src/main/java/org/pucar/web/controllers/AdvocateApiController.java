@@ -34,57 +34,57 @@ import java.util.List;
 @RequestMapping("")
 public class AdvocateApiController {
 
-	private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-	private final HttpServletRequest request;
+    private final HttpServletRequest request;
 
-	@Autowired
-	private AdvocateService advocateService;
+    @Autowired
+    private AdvocateService advocateService;
 
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
 
-	@Autowired
-	public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
-	}
+    @Autowired
+    public AdvocateApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+        this.objectMapper = objectMapper;
+        this.request = request;
+    }
 
-	public void setMockInjects(AdvocateService advocateService, ResponseInfoFactory responseInfoFactory){
-		this.advocateService = advocateService;
-		this.responseInfoFactory = responseInfoFactory;
-	}
+    public void setMockInjects(AdvocateService advocateService, ResponseInfoFactory responseInfoFactory) {
+        this.advocateService = advocateService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
 
-	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the user registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
+    @RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
+    public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the advocate registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 
-		List<Advocate> response = advocateService.createAdvocate(body);
-		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
-		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
-	}
+        List<Advocate> response = advocateService.createAdvocate(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+    }
 
-	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateResponse> advocateV1SearchPost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body,
-	 		@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
-			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+    @RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
+    public ResponseEntity<AdvocateResponse> advocateV1SearchPost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body,
+            @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
+            @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
 
-		List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber() ,limit, offset);
-		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
-		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
-	}
+        List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber(), limit, offset);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+    }
 
-	@RequestMapping(value = "/advocate/v1/_update", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateResponse> advocateV1UpdatePost(
-			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
+    @RequestMapping(value = "/advocate/v1/_update", method = RequestMethod.POST)
+    public ResponseEntity<AdvocateResponse> advocateV1UpdatePost(
+            @Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 
-		List<Advocate> advocateList = advocateService.updateAdvocate(body);
-		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
-		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
-		}
+        List<Advocate> advocateList = advocateService.updateAdvocate(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+    }
 
 }

@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.pucar.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
-import static org.pucar.config.ServiceConstants.VALIDATION_EXCEPTION;
+import static org.pucar.config.ServiceConstants.*;
 
 @Component
 public class AdvocateClerkRegistrationValidator {
@@ -30,7 +29,8 @@ public class AdvocateClerkRegistrationValidator {
 
     public void validateAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) throws CustomException{
         RequestInfo requestInfo = advocateClerkRequest.getRequestInfo();
-
+        if(requestInfo.getUserInfo() == null)
+            throw new CustomException(ENRICHMENT_EXCEPTION,"User info not found!!!");
         advocateClerkRequest.getClerks().forEach(clerk -> {
             if(ObjectUtils.isEmpty(clerk.getTenantId()) || ObjectUtils.isEmpty(clerk.getIndividualId()))
                 throw new CustomException("ILLEGAL_ARGUMENT_EXCEPTION_CODE", "tenantId and individualId are mandatory for creating advocate clerk");
