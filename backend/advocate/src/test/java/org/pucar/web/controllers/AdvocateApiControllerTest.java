@@ -67,7 +67,7 @@ public class AdvocateApiControllerTest {
     public void testAdvocateV1SearchPost_Success() {
         // Mock AdvocateService response
         List<Advocate> expectedAdvocates = Collections.singletonList(new Advocate());
-        when(advocateService.searchAdvocate(any(), any(), any(), any(),any(),any()))
+        when(advocateService.searchAdvocate(any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(expectedAdvocates);
         controller.setMockInjects(advocateService, responseInfoFactory);
 
@@ -170,7 +170,7 @@ public class AdvocateApiControllerTest {
         AdvocateSearchRequest requestBody = new AdvocateSearchRequest();  // Missing required fields
 
         // Expected validation error
-        when(advocateService.searchAdvocate(any(), any(), any(), any(),any(),any())).thenThrow(new IllegalArgumentException("Invalid request"));
+        when(advocateService.searchAdvocate(any(), any(), any(), any(), any(), any(), any())).thenThrow(new IllegalArgumentException("Invalid request"));
 
         controller.setMockInjects(advocateService, responseInfoFactory);
 
@@ -188,7 +188,7 @@ public class AdvocateApiControllerTest {
     public void testAdvocateV1SearchPost_EmptyList() throws Exception {
         // Mock service to return empty list
         List<Advocate> emptyList = Collections.emptyList();
-        when(advocateService.searchAdvocate(any(), any(), any(), any(),any(),any())).thenReturn(emptyList);
+        when(advocateService.searchAdvocate(any(), any(), any(), any(), any(), any(), any())).thenReturn(emptyList);
 
         // Mock ResponseInfoFactory
         ResponseInfo expectedResponseInfo = new ResponseInfo();

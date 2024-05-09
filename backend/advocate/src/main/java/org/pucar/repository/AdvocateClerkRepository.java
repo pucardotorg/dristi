@@ -8,6 +8,7 @@ import org.pucar.repository.rowmapper.AdvocateClerkDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateClerkRowMapper;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -37,14 +38,34 @@ public class AdvocateClerkRepository {
     @Autowired
     private AdvocateClerkDocumentRowMapper documentRowMapper;
 
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset, Pagination pagination){
         try {
             List<AdvocateClerk> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+            String query = queryBuilder.getAdvocateClerkSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset, pagination);
             log.info("Final query: " + query);
             List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+            Integer totalCount = (list != null) ? list.size() : 0;
+
+            //changing query to get total count
+            if (limit != null && offset != null) {
+                int limitIndex = query.toUpperCase().indexOf("LIMIT");
+                if (limitIndex != -1) {
+                    query = query.substring(0, limitIndex).trim();
+                }
+                if (preparedStmtList.size() >= 2) {
+                    // Remove the last element
+                    preparedStmtList.remove(preparedStmtList.size() - 1);
+
+                    // Remove the new last element (which was the second last originally)
+                    preparedStmtList.remove(preparedStmtList.size() - 1);
+                }
+                List<AdvocateClerk> allResults = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+                totalCount = (allResults != null) ? allResults.size() : 0;
+            }
+            pagination.setTotalCount(Double.valueOf(totalCount));
+            pagination.setSortBy("createdtime");
             if (list != null) {
                 advocateList.addAll(list);
             }

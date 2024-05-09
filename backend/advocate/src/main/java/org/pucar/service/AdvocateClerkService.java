@@ -11,6 +11,7 @@ import org.pucar.validators.AdvocateClerkRegistrationValidator;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -61,7 +62,7 @@ public class AdvocateClerkService {
             throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
         }
     }
-    public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
+    public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset, Pagination pagination) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         String userTypeEmployee = "EMPLOYEE";
@@ -92,7 +93,7 @@ public class AdvocateClerkService {
             }
             // Fetch applications from database according to the given search criteria
             List<AdvocateClerk> applications;
-            applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+            applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset, pagination);
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();

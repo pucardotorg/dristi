@@ -7,6 +7,7 @@ import org.pucar.repository.querybuilder.AdvocateQueryBuilder;
 import org.pucar.repository.rowmapper.AdvocateDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateRowMapper;
 import org.pucar.web.models.Advocate;
+import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateSearchCriteria;
 import org.pucar.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +44,30 @@ public class AdvocateRepository {
             List<Advocate> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String advocateQuery = "";
-            advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset, pagination);
-            log.info("Final advocate list query: {}", advocateQuery);
-            List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
+            String query = "";
+            query = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset, pagination);
+            log.info("Final advocate list query: {}", query);
+            List<Advocate> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+            Integer totalCount = (list != null) ? list.size() : 0;
+
+            //changing query to get total count
+            if (limit != null && offset != null) {
+                int limitIndex = query.toUpperCase().indexOf("LIMIT");
+                if (limitIndex != -1) {
+                    query = query.substring(0, limitIndex).trim();
+                }
+                if (preparedStmtList.size() >= 2) {
+                    // Remove the last element
+                    preparedStmtList.remove(preparedStmtList.size() - 1);
+
+                    // Remove the new last element (which was the second last originally)
+                    preparedStmtList.remove(preparedStmtList.size() - 1);
+                }
+                List<Advocate> allResults = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+                totalCount = (allResults != null) ? allResults.size() : 0;
+            }
+            pagination.setTotalCount(Double.valueOf(totalCount));
+            pagination.setSortBy("createdtime");
             if (list != null) {
                 advocateList.addAll(list);
             }

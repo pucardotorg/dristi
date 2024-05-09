@@ -2,7 +2,7 @@ package org.pucar.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
-import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -26,7 +26,7 @@ public class AdvocateClerkQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY advc.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
 
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset, Pagination pagination){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -95,22 +95,30 @@ public class AdvocateClerkQueryBuilder {
             }
             if(isIndividualLoggedInUser.get()){
                 query.append(ORDERBY_CREATEDTIME_DESC);
+                pagination.setOrder(Order.DESC);
             }
             else {
                 query.append(ORDERBY_CREATEDTIME_ASC);
+                pagination.setOrder(Order.ASC);
             }
+//            List<AdvocateClerk> list = jdbcTemplate.query(query.toString(), preparedStmtList.toArray(), rowMapper);
+//            Integer totalCount = (list != null) ? list.size() : 0;
+//            pagination.setTotalCount(Double.valueOf(totalCount));
+//            pagination.setSortBy("createdtime");
             // Adding Pagination
             if (limit != null && offset != null) {
                 query.append(" LIMIT ? OFFSET ?");
                 preparedStmtList.add(limit);
                 preparedStmtList.add(offset);
+                pagination.setLimit(Double.valueOf(limit));
+                pagination.setOffSet(Double.valueOf(offset));
             }
 
             return query.toString();
         }
         catch (Exception e) {
             log.error("Error while building advocate clerk search query");
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate clerk search query: "+ e.getMessage());
         }
     }
 

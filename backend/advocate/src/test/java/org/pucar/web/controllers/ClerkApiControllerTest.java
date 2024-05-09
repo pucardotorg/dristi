@@ -130,7 +130,7 @@ public class ClerkApiControllerTest {
     public void testClerkV1SearchPost_Success() {
         // Mock AdvocateClerkService response
         List<AdvocateClerk> expectedClerks = Collections.singletonList(new AdvocateClerk());
-        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any(), any(),any()))
+        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any(), any(),any(),any()))
                 .thenReturn(expectedClerks);
 
         // Mock ResponseInfoFactory response
@@ -161,7 +161,7 @@ public class ClerkApiControllerTest {
         AdvocateClerkSearchRequest requestBody = new AdvocateClerkSearchRequest();
 
         // Expected validation error
-        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any(), any(), any()))
+        when(advocateClerkService.searchAdvocateClerkApplications(any(), any(), any(), any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("Invalid request"));
 
         clerkApiController.setMockInjects(advocateClerkService, responseInfoFactory);

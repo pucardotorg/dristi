@@ -31,11 +31,6 @@ public class AdvocateQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private AdvocateRowMapper rowMapper;
 
     public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset, Pagination pagination) {
         try {
@@ -131,10 +126,10 @@ public class AdvocateQueryBuilder {
                 query.append(ORDERBY_CREATEDTIME_ASC);
                 pagination.setOrder(Order.ASC);
             }
-            List<Advocate> list = jdbcTemplate.query(query.toString(), preparedStmtList.toArray(), rowMapper);
-            Integer totalCount = (list != null) ? list.size() : 0;
-            pagination.setTotalCount(Double.valueOf(totalCount));
-            pagination.setSortBy("createdtime");
+//            List<Advocate> list = jdbcTemplate.query(query.toString(), preparedStmtList.toArray(), rowMapper);
+//            Integer totalCount = (list != null) ? list.size() : 0;
+//            pagination.setTotalCount(Double.valueOf(totalCount));
+//            pagination.setSortBy("createdtime");
 
             // Adding Pagination
             if (limit != null && offset != null) {

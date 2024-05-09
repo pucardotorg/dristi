@@ -123,14 +123,14 @@ public class AdvocateClerkServiceTest {
 
         // Mock successful repository call
         List<AdvocateClerk> applications = new ArrayList<>();
-        when(advocateClerkRepository.getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any())).thenReturn(applications);
+        when(advocateClerkRepository.getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any(), any())).thenReturn(applications);
 
         // Call the method
-        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria,statusList,applicationNumber, null, null);
+        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria,statusList,applicationNumber, null, null, new Pagination());
 
         // Verify results
         assertEquals(applications, response);
-        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any());
+        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any(), any());
         verify(workflowService, times(0)).getWorkflowFromProcessInstance(any()); // No workflows to fetch for empty applications
     }
 
@@ -149,14 +149,14 @@ public class AdvocateClerkServiceTest {
 
         // Mock successful repository call with empty results
         List<AdvocateClerk> applications = Collections.emptyList();
-        when(advocateClerkRepository.getApplications(any(), any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(advocateClerkRepository.getApplications(any(), any(), any(), any(), any(), any(),any())).thenReturn(Collections.emptyList());
 
         // Call the method
-        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria, statusList, applicationNumber, null, null);
+        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria, statusList, applicationNumber, null, null, new Pagination());
 
         // Verify results
         assertEquals(applications, response);
-        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any());
+        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any(), any());
         verify(workflowService, times(0)).getWorkflowFromProcessInstance(any()); // No workflows to fetch for empty applications
     }
 

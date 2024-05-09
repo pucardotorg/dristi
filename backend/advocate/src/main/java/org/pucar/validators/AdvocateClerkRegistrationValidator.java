@@ -7,6 +7,7 @@ import org.pucar.service.IndividualService;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkRequest;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -39,7 +40,7 @@ public class AdvocateClerkRegistrationValidator {
         });
     }
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
-        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String(), new AtomicReference<>(false), 1,0);
+        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String(), new AtomicReference<>(false), 1,0, new Pagination());
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);
     }

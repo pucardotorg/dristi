@@ -11,6 +11,7 @@ import org.pucar.repository.rowmapper.AdvocateClerkDocumentRowMapper;
 import org.pucar.repository.rowmapper.AdvocateClerkRowMapper;
 import org.pucar.web.models.AdvocateClerk;
 import org.pucar.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.web.models.Pagination;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
@@ -48,8 +49,8 @@ public class AdvocateClerkRepositoryTest {
         List<AdvocateClerkSearchCriteria> searchCriteria = Collections.emptyList();
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
-        repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
-        verify(queryBuilder).getAdvocateClerkSearchQuery(eq(searchCriteria), anyList(), anyList(), anyString(), any(), any(), any());
+        repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null, new Pagination());
+        verify(queryBuilder).getAdvocateClerkSearchQuery(eq(searchCriteria), anyList(), anyList(), anyString(), any(), any(), any(), any());
     }
 
     @Test
@@ -58,9 +59,9 @@ public class AdvocateClerkRepositoryTest {
         List<AdvocateClerk> mockAdvocates = createMockAdvocateClerks(1);
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(), any())).thenReturn("Mocked Query");
+        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(), any(), any())).thenReturn("Mocked Query");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class))).thenReturn(mockAdvocates);
-        List<AdvocateClerk> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
+        List<AdvocateClerk> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null, new Pagination());
         assertEquals(1, result.size());
         assertEquals(null, result.get(0).getDocuments());
     }
@@ -72,9 +73,9 @@ public class AdvocateClerkRepositoryTest {
         List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(), any())).thenThrow(new RuntimeException("Mocked Exception"));
+        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(), any(), any())).thenThrow(new RuntimeException("Mocked Exception"));
         try {
-            repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
+            repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null, new Pagination());
         } catch (Exception e) {
             // Verify expected exception
             assertTrue(e instanceof CustomException);
@@ -87,10 +88,10 @@ public class AdvocateClerkRepositoryTest {
         List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(),any())).thenReturn("Mocked Query");
+        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(),any(), any())).thenReturn("Mocked Query");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class))).thenThrow(new CustomException(TEST_EXCEPTION,"Mock test"));
         try {
-            repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
+            repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null, new Pagination());
         } catch (Exception e) {
             // Verify expected exception
             assertTrue(e instanceof CustomException);
@@ -105,9 +106,9 @@ public class AdvocateClerkRepositoryTest {
         List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
         List<String> statusList = Arrays.asList("APPROVED", "PENDING");
         String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(),any(), any(), any())).thenReturn("Mocked Query");
+        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(),any(), any(), any(), any())).thenReturn("Mocked Query");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class))).thenReturn(Collections.emptyList());
-        List<AdvocateClerk> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false),null, null);
+        List<AdvocateClerk> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false),null, null, new Pagination());
         assertEquals(Collections.emptyList(), result);
     }
 
