@@ -320,7 +320,7 @@ const Login = ({ stateCode }) => {
             <SelectOtp
               config={{
                 ...stepItems[4],
-                texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || userMobileNUmber || ""}` },
+                texts: { ...stepItems[4].texts, cardText: `${stepItems[4].texts.cardText}` },
               }}
               onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}
