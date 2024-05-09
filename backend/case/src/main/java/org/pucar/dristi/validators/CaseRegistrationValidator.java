@@ -39,6 +39,11 @@ public class CaseRegistrationValidator {
     @Autowired
     private AdvocateUtil advocateUtil;
 
+/*  To do validation->
+    1. Validate MDMS data
+    2. Fetch court department info from HRMS
+    3. Validate artifact Ids
+*/
     public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException{
         RequestInfo requestInfo = caseRequest.getRequestInfo();
 
@@ -56,19 +61,23 @@ public class CaseRegistrationValidator {
 
             Map<String, Map<String, JSONArray>> mdmsData  = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), "case", createMasterDetails());
 
+            //Validating tenantId
             if(mdmsData.get("case")==null)
-                throw new CustomException(MDMS_DATA_NOT_FOUND,"MDMS data does not exist");
+                throw new CustomException(MDMS_DATA_NOT_FOUND,"MDMS data does not exist for tenantId "+courtCase.getTenantId());
 
+            //Validating IndividualId
             courtCase.getLitigants().forEach(litigant -> {
                 if(!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
                     throw new CustomException(INDIVIDUAL_NOT_FOUND,"Invalid complainant details");
             });
 
+            //Validating file store
             courtCase.getDocuments().forEach(document -> {
                 if(!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
                     throw new CustomException(INVALID_FILESTORE_ID,"Invalid document details");
             });
 
+            //Validating advocate Id
             courtCase.getRepresentatives().forEach(rep -> {
                 if(!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
                     throw new CustomException(INVALID_ADVOCATE_ID,"Invalid advocate details");
