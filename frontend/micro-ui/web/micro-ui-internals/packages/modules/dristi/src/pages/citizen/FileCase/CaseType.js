@@ -37,7 +37,7 @@ function CaseType({ t }) {
           <ButtonSelector
             label={t("CS_START_FILLING")}
             onSubmit={() => {
-              history.push(`${path}/complaint-details`);
+              history.push(`${path}/respondent-details`);
             }}
           />
         </div>
