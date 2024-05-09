@@ -54,7 +54,11 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
           } else if (data?.SelectUserTypeComponent?.aadharNumber) {
             onAadharChange(data?.SelectUserTypeComponent?.aadharNumber);
           } else {
-            onDocumentUpload(data?.SelectUserTypeComponent?.ID_Proof[0][1]?.file, data?.SelectUserTypeComponent?.selectIdTypeType);
+            onDocumentUpload(
+              data?.SelectUserTypeComponent?.ID_Proof[0][0],
+              data?.SelectUserTypeComponent?.ID_Proof[0][1]?.file,
+              data?.SelectUserTypeComponent?.selectIdTypeType
+            );
           }
           return;
         }}

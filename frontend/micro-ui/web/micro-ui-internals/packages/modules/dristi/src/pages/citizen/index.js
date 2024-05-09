@@ -1,4 +1,4 @@
-import { AppContainer, BreadCrumb, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
@@ -8,6 +8,7 @@ import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import { userTypeOptions } from "./registration/config";
+import BreadCrumb from "../../components/BreadCrumb";
 
 const App = ({ stateCode, tenantId }) => {
   const Digit = window?.Digit || {};
@@ -64,7 +65,7 @@ const App = ({ stateCode, tenantId }) => {
   }, [userType]);
 
   const hideHomeCrumb = [`${path}/home`];
-  const dristiCrumbs = [
+  const citizenCrumbs = [
     {
       path: isUserLoggedIn ? `${path}/home` : "",
       content: t("ES_COMMON_HOME"),
@@ -95,15 +96,15 @@ const App = ({ stateCode, tenantId }) => {
       isLast: !location.pathname.includes("/registration"),
     },
     {
+      path: isUserLoggedIn ? `${path}/home/additional-details` : "",
+      content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
+      show: location.pathname.includes("/home/registration/additional-details"),
+      isLast: !location.pathname.includes("/registration"),
+    },
+    {
       path: isUserLoggedIn ? `${path}/home/registration/terms-conditions` : "",
       content: t("ES_COMMON_USER_TERMS_AND_CONDITIONS"),
       show: location.pathname.includes("/home/registration/terms-conditions"),
-      isLast: true,
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/additional-details` : "",
-      content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
-      show: location.pathname.includes("/home/additional-details"),
       isLast: true,
     },
   ];
@@ -137,7 +138,7 @@ const App = ({ stateCode, tenantId }) => {
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <BreadCrumb crumbs={dristiCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
+            <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
             {!hideHomeCrumb.includes(location.pathname) && (
               <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
                 <span style={{ color: "#f47738" }}>Help</span>
@@ -162,7 +163,7 @@ const App = ({ stateCode, tenantId }) => {
           <Route path={`${path}/home/registration`}>
             <Registration stateCode={stateCode} />
           </Route>
-          <Route path={`${path}/home/additional-details`}>
+          {/* <Route path={`${path}/home/additional-details`}>
             <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
               <AppContainer>
                 <AdvocateClerkAdditionalDetail
@@ -174,7 +175,7 @@ const App = ({ stateCode, tenantId }) => {
                 />
               </AppContainer>
             </div>
-          </Route>
+          </Route> */}
           <Route path={`${path}/home/response`}>
             <Response refetch={refetch} />
           </Route>

@@ -1,7 +1,6 @@
 import { AppContainer } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import CaseType from "./CaseType";
 import DelayApplication from "./DelayApplication";
 
 function FileCase({ t }) {
@@ -12,7 +11,7 @@ function FileCase({ t }) {
       <Switch>
         <AppContainer>
           <Route path={`${path}`} exact>
-            <CaseType t={t} />
+            {/* <CaseType t={t} /> */}
           </Route>
           <Route path={`${path}/delay-application`} exact>
             <DelayApplication t={t} />
