@@ -3,6 +3,7 @@ import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import CaseType from "./CaseType";
 import RespondentDetails from "./RespondentDetails";
+import DelayApplication from "./DelayApplication";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -16,6 +17,9 @@ function FileCase({ t }) {
           </Route>
           <Route path={`${path}/respondent-details`} exact>
             <RespondentDetails />
+          </Route>
+          <Route path={`${path}/delay-application`} exact>
+            <DelayApplication t={t} />
           </Route>
         </AppContainer>
       </Switch>

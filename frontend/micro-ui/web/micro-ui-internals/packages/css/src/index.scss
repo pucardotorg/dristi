@@ -111,6 +111,13 @@
 @import "./components/inboxv2/index.scss";
 @import "./components//sidebar.scss";
 @import "./components/loaderWithGap.scss";
+@import "./dristi/components/customDragDrop.scss";
+@import "./dristi/components/delayApplication.scss";
+@import "./dristi/components/customTextArea.scss";
+@import "./dristi/components/customNote.scss";
+@import "./dristi/components/customUploadButton.scss";
+@import "./dristi/components/customRadioSelector.scss";
+@import "./dristi/components/customErrorTooltip.scss";
 
 .wbh-header-container {
   display: flex !important;
