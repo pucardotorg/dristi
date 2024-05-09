@@ -42,7 +42,7 @@ public class CaseService {
             enrichmentUtil.enrichCaseRegistration(body);
             workflowService.updateWorkflowStatus(body);
 
-            producer.push("save-case-application", body);
+            producer.push(config.getCaseCreateTopic(), body);
             return body.getCases();
         } catch (Exception e){
             log.error("Error occurred while creating case");
@@ -75,21 +75,12 @@ public class CaseService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            List<CourtCase> caseList = new ArrayList<>();
             caseRequest.getCases().forEach(courtCase -> {
-                CourtCase existingApplication;
-                try {
-                    existingApplication = validator.validateApplicationExistence(courtCase, caseRequest.getRequestInfo());
-                } catch (Exception e) {
-                    log.error("Error validating existing application");
-                    throw new CustomException("CASE_CREATE_EXCEPTION","Error validating existing application: "+ e.getMessage());
-                }
-                existingApplication.setWorkflow(courtCase.getWorkflow());
-                caseList.add(existingApplication);
+                if(!validator.validateApplicationExistence(courtCase, caseRequest.getRequestInfo()))
+
+                    throw new CustomException("CASE_CREATE_EXCEPTION","Error validating existing application: ");
+
             });
-
-            caseRequest.setCases(caseList);
-
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
 

@@ -4,6 +4,7 @@ package org.pucar.dristi.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.util.UserUtil;
@@ -23,28 +24,21 @@ public class CaseRegistrationEnrichment {
 
     @Autowired
     private IdgenUtil idgenUtil;
-
+    @Autowired
+    private Configuration config;
     @Autowired
     private UserUtil userUtils;
 
     public void enrichCaseRegistration(CaseRequest caseRequest) {
         try {
             if(caseRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> courtCaseRegistrationIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().get(0).getTenantId(), "case.filing_number", null, caseRequest.getCases().size());
+                List<String> courtCaseRegistrationIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().get(0).getTenantId(), config.getCaseFilingNumber(), null, caseRequest.getCases().size());
                 Integer index = 0;
                 for (CourtCase courtCase : caseRequest.getCases()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                     courtCase.setAuditdetails(auditDetails);
 
                     courtCase.setId(UUID.randomUUID());
-                    courtCase.getLinkedCases().forEach(linkedCase -> {
-                        linkedCase.setId(UUID.randomUUID());
-                        linkedCase.setAuditdetails(auditDetails);
-                        linkedCase.getDocuments().forEach(document -> {
-                            document.setId(String.valueOf(UUID.randomUUID()));
-                            document.setDocumentUid(document.getId());
-                        });
-                    });
 
                     courtCase.getStatutesAndSections().forEach(statuteSection -> {
                         statuteSection.setId(UUID.randomUUID());
@@ -110,6 +104,7 @@ public class CaseRegistrationEnrichment {
         catch (Exception e) {
             e.printStackTrace();
             log.error("Error enriching case application: {}", e.getMessage());
+            throw e;
         }
     }
 
@@ -117,13 +112,12 @@ public class CaseRegistrationEnrichment {
         StringBuilder stB = new StringBuilder();
         boolean isFirst = true;
         for (String doc : list) {
-            String token = doc;
             if(isFirst){
                 isFirst = false;
-                stB.append(token);
+                stB.append(doc);
             }
             else{
-                stB.append("|"+token);
+                stB.append(","+doc);
             }
         }
 
