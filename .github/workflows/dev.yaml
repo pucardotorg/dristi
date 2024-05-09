@@ -22,3 +22,10 @@ jobs:
          docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
          docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
       working-directory: frontend/micro-ui
+    - name: trigger deployment pipeline
+      run: |
+        curl -X POST \
+        -H "Accept: application/vnd.github.v3+json" \
+        -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+        https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+        -d '{"ref":"Dev-0"}'

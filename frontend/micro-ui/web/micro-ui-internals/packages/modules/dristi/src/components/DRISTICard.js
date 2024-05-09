@@ -1,9 +1,11 @@
-import { RegistrationRequestIcon, CasesIcon, Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import CustomCard from "./CustomCard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { CasesIcon, RegistrationRequestIcon } from "../icons/svgIndex";
 
 const DRISTICard = () => {
+  const Digit = window?.Digit || {};
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const requestBody = {

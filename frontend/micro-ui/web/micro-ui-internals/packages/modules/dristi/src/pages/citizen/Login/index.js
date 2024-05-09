@@ -269,9 +269,9 @@ const Login = ({ stateCode }) => {
     Digit.SessionStorage.del("UploadedDocument");
     history.push(`${path}/aadhar-otp`);
   };
-  const onDocumentUpload = async (filedata, IdType) => {
+  const onDocumentUpload = async (filename, filedata, IdType) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
-    Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType });
+    Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
     Digit.SessionStorage.del("aadharNumber");
     history.push(`/digit-ui/citizen/dristi/home/registration`);
   };
@@ -320,7 +320,7 @@ const Login = ({ stateCode }) => {
             <SelectOtp
               config={{
                 ...stepItems[4],
-                texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || userMobileNUmber || ""}` },
+                texts: { ...stepItems[4].texts, cardText: `${stepItems[4].texts.cardText}` },
               }}
               onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}

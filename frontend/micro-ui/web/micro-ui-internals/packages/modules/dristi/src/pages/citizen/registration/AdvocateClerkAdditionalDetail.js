@@ -1,24 +1,18 @@
-import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
-import { advocateClerkConfig } from "./config";
+import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import { advocateClerkConfig } from "./config";
 
-function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individualUser = "", refetch = () => {} }) {
+function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
   const { t } = useTranslation();
   const Digit = window.Digit || {};
-  const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
   const closeToast = () => {
     setShowErrorToast(false);
-  };
-
-  const onDocumentUpload = async (fileData) => {
-    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
-    return { file: fileUploadRes?.data, fileType: fileData.type };
   };
 
   const validateFormData = (data) => {
@@ -89,9 +83,6 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
     } else {
       setIsDisabled(false);
     }
-    if (formState?.submitCount) {
-      setIsDisabled(true);
-    }
   };
 
   const onSubmit = (data) => {
@@ -99,77 +90,17 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
       setShowErrorToast(!validateFormData(data));
       return;
     }
-
-    if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName && individualId) {
-      onDocumentUpload(data?.clientDetails?.barCouncilId[0][1]?.file).then((document) => {
-        const requestBody = {
-          [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
-            {
-              tenantId: tenantId,
-              individualId: individualId,
-              isActive: false,
-              workflow: {
-                action: "REGISTER",
-                comments: `Applying for ${data?.clientDetails?.selectUserType?.apiDetails?.requestKey} registration`,
-                documents: [
-                  {
-                    id: null,
-                    documentType: document.fileType,
-                    fileStore: document.file?.files?.[0]?.fileStoreId,
-                    documentUid: "",
-                    additionalDetails: {},
-                  },
-                ],
-                assignes: [],
-                rating: null,
-              },
-              documents: [
-                {
-                  id: null,
-                  documentType: document.fileType,
-                  fileStore: document.file?.files?.[0]?.fileStoreId,
-                  documentUid: "",
-                  additionalDetails: {},
-                },
-              ],
-              additionalDetails: {
-                username: individualUser ? individualUser : "",
-              },
-              ...data?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                res[curr] = data?.clientDetails[curr];
-                return res;
-              }, {}),
-            },
-          ],
-        };
-        Digit.DRISTIService.advocateClerkService(data?.clientDetails?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
-          roles: [
-            {
-              name: "Citizen",
-              code: "CITIZEN",
-              tenantId: tenantId,
-            },
-            {
-              name: "USER_REGISTER",
-              code: "USER_REGISTER",
-              tenantId: tenantId,
-            },
-          ],
-        })
-          .then(() => {
-            refetch().then(() => {
-              history.push(`/digit-ui/citizen/dristi/home`);
-            });
-          })
-          .catch(() => {
-            history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
-          })
-          .finally(() => {
-            refetch();
-            setIsDisabled(false);
-          });
-      });
-    }
+    setParams({
+      ...params,
+      registrationData: {
+        ...params?.registrationData,
+        clientDetails: {
+          ...params?.registrationData?.clientDetails,
+          ...data?.clientDetails,
+        },
+      },
+    });
+    history.push(`${path}/additional-details/terms-conditions`);
   };
 
   return (
@@ -184,9 +115,9 @@ function AdvocateClerkAdditionalDetail({ userTypeDetail, individualId, individua
           onSubmit(props);
         }}
         isDisabled={isDisabled}
-        label={"CS_COMMON_SUBMIT"}
+        label={"CS_COMMONS_NEXT"}
         headingStyle={{ textAlign: "center" }}
-        defaultValues={{ clientDetails: { selectUserType: userTypeDetail } } || {}}
+        defaultValues={{ ...params?.registrationData } || {}}
         cardStyle={{ minWidth: "100%" }}
         onFormValueChange={onFormValueChange}
       ></FormComposerV2>

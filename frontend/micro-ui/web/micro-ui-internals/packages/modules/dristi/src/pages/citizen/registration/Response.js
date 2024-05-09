@@ -46,7 +46,6 @@ const Response = ({ refetch }) => {
             label={t("GO TO HOME")}
             onSubmit={() => {
               refetch();
-              debugger;
               history.push(`/${window?.contextPath}/citizen/dristi/home`);
             }}
           />

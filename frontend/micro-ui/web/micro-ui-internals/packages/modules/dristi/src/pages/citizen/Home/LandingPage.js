@@ -1,9 +1,11 @@
 import React, { useMemo } from "react";
-import { Loader, Card, RegisterIcon, LoginIcon, Button } from "@egovernments/digit-ui-react-components";
+import { Loader, Card, Button } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
+import { LoginIcon, RegisterIcon } from "../../../icons/svgIndex";
 
 const LandingPage = () => {
+  const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const history = useHistory();
 

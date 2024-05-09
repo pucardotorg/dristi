@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SearchIconSvg } from "@egovernments/digit-ui-react-components";
 import { Loader } from "@googlemaps/js-api-loader";
 
@@ -215,7 +215,7 @@ const mapStyles = [
 ];
 
 const setLocationText = (location, onChange, isPlaceRequired = false) => {
-  const geocoder = new google.maps.Geocoder();
+  const geocoder = new window.google.maps.Geocoder();
   geocoder.geocode(
     {
       location,
@@ -345,6 +345,8 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
 };
 
 const LocationSearch = (props) => {
+  const { setCoordinateData } = props;
+  const [coordinates, setCoordinates] = useState({ lat: 31.6160638, lng: 74.8978579 });
   useEffect(() => {
     async function mapScriptCall() {
       const getLatLng = (position) => {
@@ -353,7 +355,7 @@ const LocationSearch = (props) => {
       const getLatLngError = (error) => {
         let defaultLatLong = {};
         if (props?.isPTDefault) {
-          defaultLatLong = props?.PTdefaultcoord?.defaultConfig || { lat: 31.6160638, lng: 74.8978579 };
+          defaultLatLong = props?.PTdefaultcoord?.defaultConfig || coordinates;
         } else {
           defaultLatLong = {
             lat: 31.6160638,
@@ -376,7 +378,8 @@ const LocationSearch = (props) => {
       loadGoogleMaps(initMaps);
     }
     mapScriptCall();
-  }, []);
+    setCoordinateData({ callback: setCoordinates });
+  }, [coordinates]);
 
   return (
     <div className="map-wrap" style={props?.locationStyle}>

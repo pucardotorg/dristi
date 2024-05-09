@@ -1,5 +1,13 @@
 import {
-  BackButton, CloseSvg, DetailsCard, DownloadBtnCommon, Header, Loader, PopUp, SearchAction, SearchForm
+  BackButton,
+  CloseSvg,
+  DetailsCard,
+  DownloadBtnCommon,
+  Header,
+  Loader,
+  PopUp,
+  SearchAction,
+  SearchForm,
 } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useReducer, useState } from "react";
 import SearchFormFields from "./SearchFields";

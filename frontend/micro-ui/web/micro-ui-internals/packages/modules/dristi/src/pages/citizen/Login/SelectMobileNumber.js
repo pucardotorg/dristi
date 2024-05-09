@@ -1,5 +1,6 @@
-import { CheckBox, FormStep } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import CheckBox from "../../../components/CheckBox";
+import FormStep from "../../../components/FormStep";
 
 const SelectMobileNumber = ({
   t,
@@ -14,7 +15,7 @@ const SelectMobileNumber = ({
 }) => {
   return (
     <FormStep
-      isDisabled={!(mobileNumber.length === 10 && mobileNumber.match(Digit.Utils.getPattern("MobileNo")) && canSubmit)}
+      isDisabled={!(mobileNumber.length === 10 && mobileNumber.match(window?.Digit.Utils.getPattern("MobileNo")) && canSubmit)}
       onSelect={onSelect}
       config={config}
       t={t}
