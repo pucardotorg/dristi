@@ -53,16 +53,17 @@ public class AdvocateClerkService {
 
             producer.push(config.getAdvClerkcreateTopic(), body);
             return body.getClerks();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while creating advocate clerk");
-            throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION, e.getMessage());
         }
     }
+
     public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
         try {
-            if (!EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateClerkSearchCriteria!=null) {
+            if (!EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateClerkSearchCriteria != null) {
                 Optional<AdvocateClerkSearchCriteria> firstNonNull = advocateClerkSearchCriteria.stream()
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId())) // Filter out objects with non-null individualId
                         .findFirst();
@@ -79,10 +80,10 @@ public class AdvocateClerkService {
                 offset = null;
             }
             // setting default values for limit and offset only when user type is EMPLOYEE
-            else if (EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
-                if(limit == null)
+            else if (EMPLOYEE_UPPER.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+                if (limit == null)
                     limit = 10;
-                if(offset == null)
+                if (offset == null)
                     offset = 0;
             }
             // Fetch applications from database according to the given search criteria
@@ -91,17 +92,16 @@ public class AdvocateClerkService {
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
-            if(isIndividualLoggedInUser.get()) {
+            if (isIndividualLoggedInUser.get()) {
                 if (applications.size() > 1)
                     applications.subList(1, applications.size()).clear();
             }
             applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             // Otherwise return the found applications
             return applications;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Error while fetching to search results");
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION, e.getMessage());
         }
     }
 
@@ -109,15 +109,10 @@ public class AdvocateClerkService {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-            List<AdvocateClerk> advocateClerkList= new ArrayList<>();
+            List<AdvocateClerk> advocateClerkList = new ArrayList<>();
             advocateClerkRequest.getClerks().forEach(advocateClerk -> {
                 AdvocateClerk existingApplication;
-                try {
-                    existingApplication = validator.validateApplicationExistence(advocateClerk);
-                } catch (Exception e){
-                    log.error("Error validating existing application");
-                    throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
-                }
+                existingApplication = validator.validateApplicationExistence(advocateClerk);
                 existingApplication.setWorkflow(advocateClerk.getWorkflow());
                 advocateClerkList.add(existingApplication);
             });
@@ -137,9 +132,9 @@ public class AdvocateClerkService {
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
 
             return advocateClerkRequest.getClerks();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while updating advocate clerk");
-            throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION,"Error occurred while updating advocate clerk: " + e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION, "Error occurred while updating advocate clerk: " + e.getMessage());
         }
     }
 }
