@@ -38,7 +38,7 @@ function DelayApplication({ t }) {
 
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ width: "20%" }}> </div>
+      <div style={{ width: "20%", minWidth: "20%" }}> </div>
       <div className="delay-app-parent-container">
         <div className="delay-app-header-div">
           <h1> Delay Application</h1>
