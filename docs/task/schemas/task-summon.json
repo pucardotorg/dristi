@@ -19,7 +19,7 @@
     "name" : {
       "type": "string",
       "pattern": "^[a-zA-Z]{1,100}$",
-      "description": "sting having a max of 100 alphabets. no numbers"
+      "description": "string having a max of 100 alphabets. no numbers"
     },
     "age" : {
       "type": "number",
@@ -30,7 +30,7 @@
     "address": {
       "type": "string",
       "pattern": "^.{1,400}$",
-      "description": "sting having a max of 400 characters and matches any character (including newline characters)"
+      "description": "string having a max of 400 characters and matches any character (including newline characters)"
     },
     "phone" : {
       "type": "string",
@@ -39,7 +39,7 @@
     "gender": {
       "type": "string",
       "pattern": "^[a-zA-Z]{1,16}$",
-      "description": "string value to a max of 16 alphabets",
+      "description": "string having a max of 16 alphabets",
       "examples" : ["male", "female","transgender"]
     }
   },
@@ -48,12 +48,12 @@
     "name" : {
       "type": "string",
       "pattern": "^[a-zA-Z]{1,100}$",
-      "description": "sting having a max of 100 alphabets. no numbers"
+      "description": "string having a max of 100 alphabets. no numbers"
     },
     "address": {
       "type": "string",
       "pattern": "^.{1,400}$",
-      "description": "sting having a max of 400 characters and matches any character (including newline characters)"
+      "description": "string having a max of 400 characters and matches any character (including newline characters)"
     }
   },
   "caseDetails":
@@ -81,7 +81,7 @@
     "courtName": {
       "type": "string",
       "pattern": "^[a-zA-Z0-9]{1,124}$",
-      "description": "sting having a max of 200 alphanumeric characters"
+      "description": "string having a max of 124 alphanumeric characters"
     },
     "courtAddress": {
       "type": "string",
