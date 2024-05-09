@@ -1,36 +1,3 @@
-export const userTypeOptions = [
-  {
-    code: "LITIGANT",
-    name: "LITIGANT",
-    showBarDetails: false,
-    isVerified: false,
-  },
-  {
-    code: "ADVOCATE",
-    name: "ADVOCATE",
-    showBarDetails: true,
-    isVerified: true,
-    hasBarRegistrationNo: true,
-    apiDetails: {
-      serviceName: "/advocate/advocate/v1/_create",
-      requestKey: "advocates",
-      AdditionalFields: ["barRegistrationNumber"],
-    },
-  },
-  {
-    code: "ADVOCATE_CLERK",
-    name: "ADVOCATE CLERK",
-    showBarDetails: true,
-    hasStateRegistrationNo: true,
-    isVerified: true,
-    apiDetails: {
-      serviceName: "/advocate/clerk/v1/_create",
-      requestKey: "clerks",
-      AdditionalFields: ["stateRegnNumber"],
-    },
-  },
-];
-
 export const respondentconfig = [
   {
     head: "CS_RESPONDENT_NAME",
@@ -81,6 +48,25 @@ export const respondentconfig = [
             },
           ],
           validation: {},
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "personalDetailsNote",
+        populators: {
+          inputs: [
+            {
+              infoHeader: "CS_COMMON_NOTE",
+              infoText: "CS_NOTETEXT_RESPONDENT_PERSONAL_DETAILS",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              type: "InfoComponent",
+            },
+          ],
         },
       },
     ],
@@ -197,6 +183,58 @@ export const respondentconfig = [
             },
           ],
           validation: {},
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "addressDetailsNote",
+        populators: {
+          inputs: [
+            {
+              infoHeader: "CS_COMMON_NOTE",
+              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
+              type: "InfoComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "condonationFileUpload",
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "Aadhar",
+              isOptional: "optional",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "Upload .png",
+              maxFileSize: 1024 * 1024 * 1,
+              fileTypes: ["JPG", "PNG"],
+            },
+            {
+              name: "document1",
+              documentHeader: "Aadhar",
+              isOptional: "optional",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "Upload .png",
+              maxFileSize: 1024 * 1024 * 50,
+              fileTypes: ["JPG", "PNG"],
+            },
+          ],
         },
       },
     ],

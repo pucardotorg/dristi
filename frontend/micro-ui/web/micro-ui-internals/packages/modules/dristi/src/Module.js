@@ -16,6 +16,8 @@ import { CustomizedHooks } from "./hooks";
 import { UICustomizations } from "./configs/UICustomizations";
 import CustomInput from "./components/CustomInput";
 import SelectBulkInputs from "./components/SelectBulkInputs";
+import SelectCustomNote from "./components/SelectCustomNote";
+import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -48,6 +50,8 @@ const componentsToRegister = {
   FileCase,
   CustomInput,
   SelectBulkInputs,
+  SelectCustomNote,
+  SelectCustomDragDrop,
 };
 
 const overrideHooks = () => {

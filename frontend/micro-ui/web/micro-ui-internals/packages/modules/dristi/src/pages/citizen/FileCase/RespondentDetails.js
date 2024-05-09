@@ -141,20 +141,8 @@ function RespondentDetails({ path }) {
       },
     ],
   };
-  console.debug("fdasiofj")
 
   return (
-    // <CustomInput
-    //   t={t}
-    //   onChange={handleMobileChange}
-    //   componentInFront={"+91"}
-    //   config={config}
-    //   canAdd={canAdd}
-    //   value={params?.mobileNumber}
-    //   handleAdd={handleAddMobileNumber}
-    //   chipList={params?.mobileNumbers}
-    //   handleRemove={handleDeleteMobileNumber}
-    // />
     <div className="employee-card-wrapper">
       <div className="header-content">
         <Header>{t("CS_COMMON_RESPONDENT_DETAIL")}</Header>

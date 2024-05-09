@@ -2,8 +2,8 @@
 import React from "react";
 import { ReactComponent as InfoToolTipIcon } from "../images/info_tooltip.svg";
 
-const CustomErrorTooltip = ({ message, visible }) => {
-  if (!visible) {
+const CustomErrorTooltip = ({ message, showTooltip }) => {
+  if (!showTooltip) {
     return null;
   }
 
