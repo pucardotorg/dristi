@@ -77,7 +77,16 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
           }
         })
         .catch(() => {
-          onSelect(config.key, { ...formData[config.key], [input]: value });
+          onSelect(config.key, {
+            ...formData[config.key],
+            ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
+              res[curr] = "";
+              if (curr === "pincode") {
+                res[curr] = value;
+              }
+              return res;
+            }, {}),
+          });
         });
       return;
     }

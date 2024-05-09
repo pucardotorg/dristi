@@ -16,6 +16,7 @@ import HowItWorks from "./HowItWorks/howItWorks";
 import Login from "./Login";
 import Search from "./SearchApp";
 import StaticDynamicCard from "./StaticDynamicComponent/StaticDynamicCard";
+import { useGetAccessToken } from "../../hooks/useGetAccessToken";
 
 const getTenants = (codes, tenants) => {
   return tenants.filter((tenant) => codes.map((item) => item.code).includes(tenant.code));

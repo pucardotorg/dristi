@@ -6,6 +6,7 @@ import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import { DRISTIService } from "../services";
 
 export const Urls = {
+  Authenticate: "/user/oauth/token",
   dristi: {
     individual: "/individual/v1/_create",
     searchIndividual: "/individual/v1/_search",

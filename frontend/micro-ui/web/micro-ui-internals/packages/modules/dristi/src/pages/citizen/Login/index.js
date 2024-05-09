@@ -91,6 +91,10 @@ const Login = ({ stateCode }) => {
     }
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
+    if (params.isRememberMe) {
+      localStorage.setItem("refresh-token", user?.refresh_token);
+    }
+    localStorage.setItem("citizen.refresh-token", user?.refresh_token);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     // routeToAdditionalDetail(user?.info);
