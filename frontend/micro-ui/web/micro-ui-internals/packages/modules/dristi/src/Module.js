@@ -15,6 +15,10 @@ import FileCase from "./pages/citizen/FileCase";
 import { CustomizedHooks } from "./hooks";
 import { UICustomizations } from "./configs/UICustomizations";
 import VerificationComponent from "./components/VerificationComponent";
+import CustomInput from "./components/CustomInput";
+import SelectBulkInputs from "./components/SelectBulkInputs";
+import SelectCustomNote from "./components/SelectCustomNote";
+import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -46,6 +50,10 @@ const componentsToRegister = {
   AdvocateClerkAdditionalDetail,
   FileCase,
   VerificationComponent,
+  CustomInput,
+  SelectBulkInputs,
+  SelectCustomNote,
+  SelectCustomDragDrop,
 };
 
 const overrideHooks = () => {
