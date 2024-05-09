@@ -105,22 +105,22 @@ const getCitizenStyles = (value) => {
         whiteSpace: "pre",
       },
       inputStyles: {
-        width: "30%",
-        minHeight: "40px",
-        maxHeight: "42px",
-        top: "5px",
-        left: "420px",
+        width: "80%",
+        height: "2rem !important",
+        opacity: "0.2",
+        marginLeft: "10px",
       },
       buttonStyles: {
         height: "auto",
         minHeight: "40px",
-        width: "100%",
+        width: "40%",
         maxHeight: "40px",
-        margin: "5px",
+        marginTop: "-32px",
         padding: "1px 0px 0px 5px",
-        display: "flex",
+        display: "block",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "red",
       },
       closeIconStyles: {
         width: "20px",
@@ -164,6 +164,9 @@ const UploadFile = (props) => {
     inpRef.current.value = "";
     props.onDelete();
   };
+  const handleReupload = () => {
+    inpRef.current.click();
+  };
 
   const handleEmpty = useCallback(() => {
     if (inpRef.current.files.length <= 0 && prevSate !== null) {
@@ -186,51 +189,53 @@ const UploadFile = (props) => {
   return (
     <Fragment>
       {showHint && <p className="cell-text">{t(props?.hintText)}</p>}
-      <div style={{ display: "flex", maxWidth: "540px" }}>
-        <div
-          className={`upload-file ${user_type === "employee" ? "" : "upload-file-max-width"} ${props.disabled ? " disabled" : ""}`}
-          style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}
-        >
-          <div style={extraStyles ? extraStyles?.containerStyles : null}>
-            {props?.uploadedFiles?.map((file, index) => {
-              const fileDetailsData = file[1];
-              return (
+      <div
+        className="upload-file-div-main"
+        style={{ display: "flex", maxWidth: "540px", gap: "2%", alignItems: "center", justifyContent: "space-between" }}
+      >
+        <div className="upload-file-div-sub" style={{ minWidth: "73%" }}>
+          <div
+            className={`upload-file ${user_type === "employee" ? "" : "upload-file-max-width"} ${props.disabled ? " disabled" : ""}`}
+            style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}
+          >
+            <div style={extraStyles ? extraStyles?.containerStyles : null}>
+              {props?.uploadedFiles?.map((file, index) => {
+                const fileDetailsData = file[1];
+                return (
+                  <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
+                    <RemoveableTag
+                      extraStyles={extraStyles}
+                      key={index}
+                      text={file[0]}
+                      onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)}
+                    />
+                  </div>
+                );
+              })}
+              {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props?.message}</h2>}
+              {!hasFile || props.error ? (
+                <h2 className="file-upload-status">{props.message}</h2>
+              ) : (
                 <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
-                  <RemoveableTag
-                    extraStyles={extraStyles}
-                    key={index}
-                    text={file[0]}
-                    onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)}
-                  />
+                  <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>
+                    <span className="text" style={extraStyles ? extraStyles?.textStyles : null}>
+                      {typeof inpRef.current.files[0]?.name !== "undefined" && !props?.file ? inpRef.current.files[0]?.name : props.file?.name}
+                    </span>
+                    <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
+                      <Close style={props.Multistyle} className="close" />
+                    </span>
+                  </div>
                 </div>
-              );
-            })}
-            {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props?.message}</h2>}
-            {!hasFile || props.error ? (
-              <h2 className="file-upload-status">{props.message}</h2>
-            ) : (
-              <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
-                <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>
-                  <span className="text" style={extraStyles ? extraStyles?.textStyles : null}>
-                    {typeof inpRef.current.files[0]?.name !== "undefined" && !props?.file ? inpRef.current.files[0]?.name : props.file?.name}
-                  </span>
-                  <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
-                    <Close style={props.Multistyle} className="close" />
-                  </span>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+        </div>
+        <div
+          className="upload-file-upload-button-div"
+          style={{ maxWidth: "25%", height: "40px", border: "solid 1px #f47738", display: "flex", alignItems: "center" }}
+        >
           <input
-            className={props.disabled ? "disabled" : "input-mirror-selector-button"}
-            style={extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles }}
-            ref={inpRef}
             type="file"
-            id={props.id || `document-${getRandomId()}`}
-            name="file"
-            multiple={props.multiple}
-            accept={props.accept}
-            disabled={props.disabled}
             onChange={(e) => props.onUpload(e)}
             onClick={(event) => {
               if (props?.disabled) {
@@ -240,16 +245,14 @@ const UploadFile = (props) => {
               const { target = {} } = event || {};
               target.value = "";
             }}
+            ref={inpRef}
+            style={{ opacity: 0, maxWidth: "100%", minHeight: "40px" }}
           />
-        </div>
-        <div style={{ width: "18%", maxWidth: "18%", margin: "0px", maxHeight: "42px", marginLeft: "10px", border: "solid 2px #F47738" }}>
-          <ButtonSelector
-            theme="border"
-            ButtonBody={<ButtonBody t={t} />} // change this prop later.
-            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}), display: "contents" }}
-            textStyles={{ textAlign: "center", margin: "0px", marginTop: "7px" }}
-            type={props.buttonType}
-          />{" "}
+          <span style={{ minWidth: "100%", textAlign: "center", cursor: "pointer" }} onClick={handleReupload}>
+            <span style={{ color: "#f47738" }} className="upload-button-custimised">
+              {t("CS_COMMON_CHOOSE_FILE")}
+            </span>
+          </span>
         </div>
       </div>
       {props.iserror && <p style={{ color: "red" }}>{props.iserror}</p>}

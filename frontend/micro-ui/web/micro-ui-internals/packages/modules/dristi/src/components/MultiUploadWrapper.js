@@ -3,10 +3,8 @@ import UploadFile from "./UploadFile";
 
 const displayError = ({ t, error, name }, customErrorMsg) => (
   <span style={{ display: "flex", flexDirection: "column" }}>
-    <div className="validation-error">{customErrorMsg ? t(customErrorMsg) : t(error)}</div>
-    <div className="validation-error" style={{ marginTop: 0 }}>
-      {customErrorMsg ? "" : `${t("ES_COMMON_DOC_FILENAME")} : ${name} ...`}
-    </div>
+    <div className="validation-error">{customErrorMsg ? t(customErrorMsg) : error}</div>
+    <div className="validation-error" style={{ marginTop: 0 }}></div>
   </span>
 );
 
@@ -35,7 +33,7 @@ const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) 
   if (!files.length || !regex || !maxSize) return [{}, false];
 
   const uploadedFiles = state.length + 1;
-  if (maxFilesAllowed && (uploadedFiles > maxFilesAllowed || files.length > maxFilesAllowed))
+  if (maxFilesAllowed && files.length > maxFilesAllowed)
     return [[{ valid: false, name: files[0]?.name?.substring(0, 15), error: t(`FILE_LIMIT_EXCEEDED`) }], true];
 
   const messages = [];
@@ -80,7 +78,7 @@ const MultiUploadWrapper = ({
     const { files, fileStoreIds } = payload;
     const filesData = Array.from(files);
     const newUploads = filesData?.map((file, index) => [file.name, { file, fileStoreId: fileStoreIds[index] }]);
-    return [...state, ...newUploads];
+    return [...newUploads];
   };
 
   const removeFile = (state, payload) => {

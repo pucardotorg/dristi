@@ -10,6 +10,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -18,6 +19,12 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
   const onDocumentUpload = async (fileData, filename) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
+
+  const onFormValueChange = (setValue, formData, formState) => {
+    if (formState?.submitCount) {
+      setIsDisabled(true);
+    }
   };
 
   const onSubmit = (termsAndConditionData) => {
@@ -174,7 +181,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
                 history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
               });
           });
-        } else {
+        } else if (data?.clientDetails?.selectUserType?.apiDetails && data?.clientDetails?.selectUserType?.apiDetails?.serviceName && result) {
           const requestBody = {
             [data?.clientDetails?.selectUserType?.apiDetails?.requestKey]: [
               {
@@ -233,6 +240,8 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
             .catch(() => {
               history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
             });
+        } else {
+          history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success", createType: "LITIGANT" });
         }
       })
       .catch(() => {
@@ -254,10 +263,12 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
         onSubmit={(props) => {
           onSubmit(props);
         }}
+        isDisabled={isDisabled}
         defaultValues={params?.Terms_Conditions || {}}
         label={"CS_COMMON_SUBMIT"}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%" }}
+        onFormValueChange={onFormValueChange}
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_SELECT_TERMS_AND_CONDITIONS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
