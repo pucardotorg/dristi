@@ -34,6 +34,7 @@ public class AdvocateUtil {
 
 		AdvocateSearchRequest advocateSearchRequest = new AdvocateSearchRequest();
 		advocateSearchRequest.setRequestInfo(requestInfo);
+		advocateSearchRequest.setStatus(List.of("INWORKFLOW"));
 		AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
 		advocateSearchCriteria.setId(advocateId);
 		List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
