@@ -78,10 +78,10 @@ public class CaseRegistrationValidator {
             });
 
             //Validating advocate Id
-            courtCase.getRepresentatives().forEach(rep -> {
-                if(!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
-                    throw new CustomException(INVALID_ADVOCATE_ID,"Invalid advocate details");
-            });
+//            courtCase.getRepresentatives().forEach(rep -> {
+//                if(!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
+//                    throw new CustomException(INVALID_ADVOCATE_ID,"Invalid advocate details");
+//            });
         });
     }
 
