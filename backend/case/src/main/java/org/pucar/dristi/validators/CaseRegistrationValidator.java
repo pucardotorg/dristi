@@ -85,7 +85,7 @@ public class CaseRegistrationValidator {
         });
     }
 
-    public CourtCase validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
+    public Boolean validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
         List<CourtCase> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).build()));
         if(existingApplications.isEmpty()) throw new CustomException("VALIDATION EXCEPTION","Case Application does not exist");
 
@@ -109,7 +109,7 @@ public class CaseRegistrationValidator {
                     throw new CustomException(INVALID_ADVOCATE_ID,"Invalid advocate details");
             });
 
-        return existingApplications.get(0);
+        return !existingApplications.isEmpty();
     }
 
     private List<String> createMasterDetails() {

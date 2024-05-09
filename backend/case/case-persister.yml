@@ -2,8 +2,8 @@ serviceMaps:
   serviceName: adv-services
   mappings:
     - version: 1.0
-      description: Persists advocate details in tables
-      fromTopic: save-case-application
+      description: Persists case details in tables
+      fromTopic: create-case
       isTransaction: true
       module: CASE
       objecIdJsonPath: $.id
@@ -148,17 +148,17 @@ serviceMaps:
               dbType: JSONB
 
 
-        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, linked_case_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
-          basePath: cases.*.linkedCases.*.documents.*
-          jsonMaps:
-            - jsonPath: $.cases.*.linkedCases.*.documents.*.id
-            - jsonPath: $.cases.*.linkedCases.*.documents.*.fileStore
-            - jsonPath: $.cases.*.linkedCases.*.documents.*.documentUid
-            - jsonPath: $.cases.*.linkedCases.*.documents.*.documentType
-            - jsonPath: $.cases.*.linkedCases[*][?({id} in @.documents[*].id)].id
-            - jsonPath: $.cases.*.linkedCases.*.documents.*.additionalDetails
-              type: JSON
-              dbType: JSONB
+#        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, linked_case_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+#          basePath: cases.*.linkedCases.*.documents.*
+#          jsonMaps:
+#            - jsonPath: $.cases.*.linkedCases.*.documents.*.id
+#            - jsonPath: $.cases.*.linkedCases.*.documents.*.fileStore
+#            - jsonPath: $.cases.*.linkedCases.*.documents.*.documentUid
+#            - jsonPath: $.cases.*.linkedCases.*.documents.*.documentType
+#            - jsonPath: $.cases.*.linkedCases[*][?({id} in @.documents[*].id)].id
+#            - jsonPath: $.cases.*.linkedCases.*.documents.*.additionalDetails
+#              type: JSON
+#              dbType: JSONB
 
 
         - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, litigant_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);

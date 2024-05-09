@@ -45,6 +45,10 @@ public class Configuration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
+	@Value("${egov.idgen.caseFilingNumber}")
+	private String caseFilingNumber;
+
+
 	// Filestore Config
 	@Value("${egov.filestore.host}")
 	private String fileStoreHost;
@@ -116,6 +120,9 @@ public class Configuration {
 	//Case
 	@Value("${case.kafka.update.topic}")
 	private String caseUpdateTopic;
+
+	@Value("${case.kafka.create.topic}")
+	private String caseCreateTopic;
 
 	@Value("${witness.kafka.update.topic}")
 	private String witnessUpdateTopic;

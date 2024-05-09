@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import net.minidev.json.JSONArray;
+import org.apache.kafka.common.protocol.types.Field;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -127,8 +128,8 @@ public class CaseRegistrationValidatorTest {
 
         when(caseRepository.getApplications(any())).thenReturn(List.of(courtCase));
 
-        CourtCase result = validator.validateApplicationExistence(courtCase, new RequestInfo());
-        assertNotNull(result);
+        Boolean result = validator.validateApplicationExistence(courtCase, new RequestInfo());
+        assertTrue(result);
     }
 
     @Test

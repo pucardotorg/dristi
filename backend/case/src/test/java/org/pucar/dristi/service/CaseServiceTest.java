@@ -100,7 +100,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Mock a CourtCase object with required fields
         caseRequest.setCases(Arrays.asList(courtCase));
 
-        when(validator.validateApplicationExistence(any(CourtCase.class), any())).thenReturn(courtCase);
+        when(validator.validateApplicationExistence(any(CourtCase.class), any())).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
