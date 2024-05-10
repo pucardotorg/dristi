@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM_ADVOCATE;
+import static org.pucar.dristi.config.ServiceConstants.REGISTERED_STATUS;
 
 @Slf4j
 @Component
@@ -34,7 +35,7 @@ public class AdvocateUtil {
 
 		AdvocateSearchRequest advocateSearchRequest = new AdvocateSearchRequest();
 		advocateSearchRequest.setRequestInfo(requestInfo);
-		advocateSearchRequest.setStatus(List.of("INWORKFLOW"));
+		advocateSearchRequest.setStatus(List.of(REGISTERED_STATUS));
 		AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
 		advocateSearchCriteria.setId(advocateId);
 		List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
