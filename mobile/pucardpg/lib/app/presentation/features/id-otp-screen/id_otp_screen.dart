@@ -136,7 +136,7 @@ class IdOtpScreenState extends State<IdOtpScreen> {
                                     value.substring(1, 2);
                               }
                             }
-                            if (value.isNotEmpty &&
+                            if (value.length > 1 &&
                                 index < _otpControllers.length - 1) {
                               FocusScope.of(context)
                                   .requestFocus(_focusNodes[index + 1]);

@@ -7,8 +7,10 @@ class InitialEvent extends RegistrationLoginEvent {}
 
 class RequestOtpEvent extends RegistrationLoginEvent {
   final String mobileNumber;
+  final String type;
   RequestOtpEvent({
     required this.mobileNumber,
+    required this.type
   });
 }
 
@@ -39,9 +41,9 @@ class SubmitLogoutUserEvent extends RegistrationLoginEvent {
   });
 }
 
-class SubmitLitigantProfileEvent extends RegistrationLoginEvent {
+class SubmitIndividualProfileEvent extends RegistrationLoginEvent {
   UserModel userModel;
-  SubmitLitigantProfileEvent({
+  SubmitIndividualProfileEvent({
     required this.userModel
   });
 }

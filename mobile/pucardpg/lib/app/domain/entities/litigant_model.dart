@@ -1,6 +1,8 @@
 import 'dart:core';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
+
 class UserModel{
 
   int? id;
@@ -16,6 +18,10 @@ class UserModel{
   String? mobileNumber;
   String? identifierType;
   String? identifierId = "";
+  String? idFilename = "";
+  String? idFileStore = "";
+  Uint8List? idBytes = Uint8List.fromList([]);
+  String? idDocumentType = "";
 
   String? type;
   String? userType;
@@ -23,8 +29,9 @@ class UserModel{
   String? stateRegnNumber;
   String? barRegistrationNumber;
   String? fileStore;
+  String? documentFilename = "";
   String? documentType;
-  Uint8List? bytes;
+  Uint8List? documentBytes = Uint8List.fromList([]);
 
   String? individualId;
 

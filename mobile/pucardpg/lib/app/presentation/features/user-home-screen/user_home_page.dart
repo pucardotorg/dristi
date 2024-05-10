@@ -45,6 +45,7 @@ class UserHomeScreenState extends State<UserHomeScreen> {
               icon: const Icon(Icons.menu),
             ),
           ),
+          backgroundColor: Colors.white,
           body: Column(
             children: [
               Expanded(
@@ -52,7 +53,7 @@ class UserHomeScreenState extends State<UserHomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 10,),
+                      const SizedBox(height: 50,),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [

@@ -8,8 +8,10 @@ abstract class FilePickerEvent {}
 
 class FileEvent extends FilePickerEvent {
   final PlatformFile pickedFile;
+  final String type;
   FileEvent({
-    required this.pickedFile
+    required this.pickedFile,
+    required this.type
   });
 }
 

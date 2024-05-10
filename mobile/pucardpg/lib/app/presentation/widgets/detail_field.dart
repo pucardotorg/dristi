@@ -27,6 +27,7 @@ class DetailField extends StatelessWidget with AppMixin {
           child: Text(
             value,
             style: theme.text16W400Rob(),
+            textAlign: TextAlign.end,
           ),
         ),
       ],

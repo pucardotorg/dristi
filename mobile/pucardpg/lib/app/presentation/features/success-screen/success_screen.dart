@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
@@ -37,52 +38,78 @@ class SuccessScreenState extends State<SuccessScreen> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text(""),
-            centerTitle: true,
-            actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-            ],
-            leading: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu),
-            ),
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      if (widget.userModel.userType != 'LITIGANT') ...[
-                        SuccessCard(
-                            heading: "Your registration application has been submitted successfully!",
-                            subHeading: "You will be given access once your application is verified and approved."
-                        )
-                      ],
-                      if (widget.userModel.userType == 'LITIGANT') ...[
-                        SuccessCard(
-                            heading: "Thank you for registering",
-                            subHeading: "You can proceed to file a case or respond to a case."
-                        )
-                      ]
-                      // Expanded(child: Container(),),
-                    ],
+          backgroundColor: Colors.white,
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  successSvg,
+                  width: 112,
+                  height: 112,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Text(
+                  "You’ve been registered successfully!",
+                  style: widget.theme.text20W700()?.apply(),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25, right: 25, top: 5),
+                  child: Text(
+                    "You can now proceed to file a case or join an on-going case",
+                    style: widget.theme.text14W400Rob(),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-              DigitElevatedButton(
-                  onPressed: () {
-                    if(widget.userModel.userType != 'LITIGANT'){
-                    Navigator.pushNamed(context, '/AdvocateHomePage', arguments: widget.userModel);
-                    } else {
-                      Navigator.pushNamed(context, '/UserHomeScreen', arguments: widget.userModel);
-                    }
-                  },
-                  child: Text('Go to Home Page',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
-              ),
-            ],
-          )
+                const SizedBox(
+                  height: 40,
+                ),
+                DigitElevatedButton(
+                    onPressed: () {
+
+                    },
+                    child: Text('File a Case',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                ),
+                Container(
+                  margin: const EdgeInsets.only(
+                    top: kPadding,
+                    bottom: kPadding,
+                  ),
+                  constraints: const BoxConstraints(maxHeight: 50, minHeight: 40),
+                  child: OutlinedButton(
+                    onPressed: () {
+
+                    },
+                    style: OutlinedButton.styleFrom(
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(kPadding / 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Join a Case',
+                            style: widget.theme.text20W700()?.apply(
+                                  color: widget.theme.colorScheme.secondary)
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
       ),
     );
 

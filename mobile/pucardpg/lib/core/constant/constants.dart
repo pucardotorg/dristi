@@ -2,9 +2,6 @@
 import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/app/data/models/role-model/role.dart';
 
-import 'package:country_state_city/utils/state_utils.dart';
-import 'package:pucardpg/app/data/models/state_model/state_model.dart';
-
 const String apiBaseURL = "https://dristi-dev.pucar.org";
 
 const String apiId = "Rainmaker";
@@ -51,3 +48,6 @@ const Fields clerk = Fields(
 const String approvalSvg = 'assets/icons/svg/approval.svg';
 const String digitSvg = 'assets/icons/svg/DIGIT.png';
 const String yetToRegister = 'assets/icons/svg/yet_to_register.svg';
+const String govtIndia = 'assets/icons/png/govt_logo.png';
+const String waitingSvg = 'assets/icons/svg/waiting.svg';
+const String successSvg = 'assets/icons/svg/success.svg';

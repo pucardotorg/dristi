@@ -18,7 +18,7 @@ class FilePickerUseCase {
 
     if (dataState is DataSuccess) {
       userModel.documentType = dataState.data?.documentType;
-      userModel.bytes = dataState.data?.bytes;
+      userModel.documentBytes = dataState.data?.bytes;
     }
     return dataState;
   }

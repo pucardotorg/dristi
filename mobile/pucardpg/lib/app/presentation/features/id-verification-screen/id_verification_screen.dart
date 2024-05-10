@@ -1,23 +1,28 @@
 
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
+import 'package:digit_components/widgets/widgets.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:pucardpg/app/bloc/file_picker_bloc/file_bloc.dart';
 import 'package:pucardpg/app/bloc/file_picker_bloc/file_event.dart';
 import 'package:pucardpg/app/bloc/file_picker_bloc/file_state.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
+import 'package:pucardpg/app/presentation/widgets/page_heading.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:reactive_forms/reactive_forms.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 class IdVerificationScreen extends StatefulWidget with AppMixin{
 
@@ -34,14 +39,13 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   bool fileSizeExceeded = false;
   bool extensionError = false;
-  late String mobile;
-  TextEditingController aadharController = TextEditingController();
   TextEditingController typeOfIdController = TextEditingController();
 
-  String aadharKey = 'aadhar';
   String typeKey = 'type';
 
   String? fileName;
+  String? idFilename;
+  Uint8List? idBytes;
   FilePickerResult? result;
   PlatformFile? pickedFile;
   File? fileToDisplay;
@@ -49,11 +53,6 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
   @override
   void initState() {
     super.initState();
-  }
-
-  bool _validateAadharNumber(String value) {
-    final RegExp mobileRegex = RegExp(r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$', caseSensitive: false);
-    return mobileRegex.hasMatch(value);
   }
 
   void pickFile(FormGroup form) async {
@@ -75,14 +74,15 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
           });
         } else {
           if (fileSize <= maxFileSize) {
-            widget.userModel.documentType = result!.files.single.extension;
+            widget.userModel.idDocumentType = result!.files.single.extension;
             pickedFile = result!.files.single;
+            idFilename = result!.files.single.name;
+            idBytes = result!.files.single.bytes;
             if (pickedFile != null) {
-              widget.fileBloc.add(FileEvent(pickedFile: pickedFile!));
+              widget.fileBloc.add(FileEvent(pickedFile: pickedFile!, type: 'idProof'));
             }
             setState(() {
-              fileName = result!.files.single.name;
-              form.control(aadharKey).value = '';
+              fileName = '1 File Uploaded';
               fileToDisplay = file;
               extensionError = false;
               fileSizeExceeded = false;
@@ -102,71 +102,51 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-          appBar: AppBar(
-            title: const Text(""),
-            centerTitle: true,
-            actions: [
-              IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-            ],
-            leading: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu),
-            ),
-          ),
-          body: ReactiveFormBuilder(
+    return Scaffold(
+        backgroundColor: Colors.white,
+        body: ReactiveFormBuilder(
             form: buildForm,
             builder: (context, form, child) {
               return Column(
                 children: [
+                  const SizedBox(height: 50,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      DigitBackButton(),
+                      DigitHelpButton()],
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          const SizedBox(height: 10,),
-                          DigitCard(
+                          Padding(
                             padding: const EdgeInsets.all(20),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Registration", style: widget.theme.text20W400Rob()?.apply(fontStyle: FontStyle.italic),),
-                                const SizedBox(height: 20,),
-                                Text("ID Verification", style: widget.theme.text32W700RobCon()?.apply(),),
-                                const SizedBox(height: 20,),
-                                Text("Please provide details for registration", style: widget.theme.text16W400Rob(),),
-                                const SizedBox(height: 20,),
-                                DigitTextFormField(
-                                  label: 'Enter aadhar number',
-                                  formControlName: aadharKey,
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 12,
-                                  onChanged: (val) {
-                                    widget.userModel.identifierId = val.value.toString();
-                                    setState(() {
-                                      fileName = '';
-                                      form.control(typeKey).value = '';
-                                      widget.userModel.identifierType = '';
-                                    });
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                                  ],
+                                PageHeading(
+                                  heading: "Upload your ID",
+                                  subHeading: "Please upload a valid government issued ID",
+                                  headingStyle: widget.theme.text24W700(),
+                                  subHeadingStyle: widget.theme.text14W400Rob(),
                                 ),
-                                Center(child: Text("(or)", style: widget.theme.text20W400Rob(),)),
                                 DigitReactiveDropdown(
                                   label: 'Type of ID',
                                   menuItems: ['PAN', 'AADHAR', 'DRIVING LICENSE'],
                                   formControlName: typeKey,
                                   valueMapper: (value) => value.toUpperCase(),
+                                  isRequired: true,
                                   onChanged: (val) {
                                     widget.userModel.identifierType = val;
                                     setState(() {
-                                      fileName = '';
-                                      form.control(aadharKey).value = '';
-                                      widget.userModel.identifierId = '';
+                                      fileName = null;
+                                      pickedFile = null;
+                                      widget.userModel.identifierId = null;
                                     });
+                                  },
+                                  validationMessages: {
+                                    'required': (_) => 'ID is required',
                                   },
                                 ),
                                 const SizedBox(height: 20,),
@@ -188,34 +168,68 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                     ),
                                     const SizedBox(width: 10,),
                                     SizedBox(
-                                      height: 44,
-                                      width: 120,
-                                      child: BlocListener<FileBloc, FilePickerState>(
-                                        bloc: widget.fileBloc,
-                                        listener: (context, state) {
+                                        height: 44,
+                                        width: 120,
+                                        child: BlocListener<FileBloc, FilePickerState>(
+                                          bloc: widget.fileBloc,
+                                          listener: (context, state) {
 
-                                          switch (state.runtimeType) {
-                                            case FileFailedState:
-                                              DigitToast.show(context,
-                                                options: DigitToastOptions(
-                                                  "Failed to upload",
-                                                  true,
-                                                  widget.theme.theme(),
-                                                ),
-                                              );
-                                              break;
-                                            case FileSuccessState:
-                                              widget.userModel.identifierId = (state as FileSuccessState).fileStoreId;
-                                              break;
-                                          }
-                                        },
-                                        child: DigitOutLineButton(
-                                          label: 'Upload',
-                                          onPressed: (){
-                                            pickFile(form);
+                                            switch (state.runtimeType) {
+                                              case FileFailedState:
+                                                DigitToast.show(context,
+                                                  options: DigitToastOptions(
+                                                    "Failed to upload",
+                                                    true,
+                                                    widget.theme.theme(),
+                                                  ),
+                                                );
+                                                break;
+                                              case FileSuccessState:
+                                                widget.userModel.identifierId = (state as FileSuccessState).fileStoreId;
+                                                widget.userModel.idFilename = idFilename;
+                                                widget.userModel.idBytes = idBytes;
+                                                break;
+                                            }
                                           },
-                                        ),
-                                      )
+                                          child: SizedBox(
+                                            height: 44,
+                                            width: 120,
+                                            child: Container(
+                                              constraints: const BoxConstraints(maxHeight: 50, minHeight: 40),
+                                              child: OutlinedButton(
+                                                onPressed: () {
+                                                  pickFile(form);
+                                                },
+                                                style: OutlinedButton.styleFrom(
+                                                  shape: const RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.zero,
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(2),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Flexible(
+                                                          child: Icon(
+                                                            Icons.file_upload,
+                                                            color: widget.theme.colorScheme.secondary,
+                                                          )),
+                                                      const SizedBox(width: 2),
+                                                      Text(
+                                                        "Upload",
+                                                        style: DigitTheme.instance.mobileTheme.textTheme.headlineSmall
+                                                            ?.apply(
+                                                          color: widget.theme.colorScheme.secondary,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        )
                                     ),
                                   ],
                                 ),
@@ -230,101 +244,158 @@ class IdVerificationScreenState extends State<IdVerificationScreen> {
                                     'Please select a valid file format. Upload documents in the following formats: JPG, PNG or PDF.',
                                     style: TextStyle(color: Colors.red),
                                   ),
+                                if (pickedFile != null) ...[
+                                  const SizedBox(height: 20),
+                                  if (pickedFile!.extension == 'pdf')
+                                    Stack(
+                                      children: [
+                                        Container(
+                                          height: 300,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(color: Colors.grey),
+                                              borderRadius:  const BorderRadius.all(Radius.circular(21))
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(20), // Image border
+                                            child: SizedBox(
+                                                child: SfPdfViewer.file(
+                                                  fileToDisplay!,
+                                                  onTap: (pdfDetails) {
+                                                    if (fileToDisplay != null) {
+                                                      OpenFilex.open(fileToDisplay!.path);
+                                                    }
+                                                  },
+                                                )
+                                            ),
+                                          ),
+
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          right: 0,
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                                color: Color(0XFF0B4B66),
+                                                borderRadius:  BorderRadius.only(
+                                                    topRight: Radius.circular(4),
+                                                    bottomLeft: Radius.circular(4)
+                                                )
+                                            ),
+                                            child: IconButton(
+                                              icon: Icon(Icons.close),
+                                              color: Colors.white,
+                                              onPressed: () {
+                                                setState(() {
+                                                  pickedFile = null;
+                                                  fileName = null;
+                                                  widget.userModel.fileStore = null;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  if (pickedFile!.extension != 'pdf')
+                                    GestureDetector(
+                                      child: Stack(
+                                        children: [
+                                          Container(
+                                            height: 300,
+                                            width: 500,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(color: Colors.grey),
+                                                borderRadius:  const BorderRadius.all(Radius.circular(21))
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(20), // Image border
+                                              child: SizedBox.fromSize(
+                                                size: Size.fromRadius(16), // Image radius
+                                                child: Image.file(
+                                                  fileToDisplay!,
+                                                  filterQuality: FilterQuality.high,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          Positioned(
+                                            top: 0,
+                                            right: 0,
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                  color: Color(0XFF0B4B66),
+                                                  borderRadius:  BorderRadius.only(
+                                                      topRight: Radius.circular(4),
+                                                      bottomLeft: Radius.circular(4)
+                                                  )
+                                              ),
+                                              child: IconButton(
+                                                icon: Icon(Icons.close),
+                                                color: Colors.white,
+                                                onPressed: () {
+                                                  setState(() {
+                                                    pickedFile = null;
+                                                    fileName = null;
+                                                    widget.userModel.identifierId = null;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      onTap: () {
+                                        if (pickedFile!.extension != 'pdf') {
+                                          OpenFilex.open(fileToDisplay!.path);
+                                        }
+                                      },
+                                    ),
+                                ],
                               ],
                             ),
                           ),
-                          const DigitInfoCard(title: "Info", description: "Using Aadhar number for Verification will provide a Verified status against your profile."),
-                          // Expanded(child: Container(),),
                         ],
                       ),
                     ),
                   ),
-                  DigitElevatedButton(
-                      onPressed: () {
-                        FocusScope.of(context).unfocus();
-                        if((widget.userModel.identifierId == null || widget.userModel.identifierId!.isEmpty)
-                            && (widget.userModel.identifierType == null || widget.userModel.identifierType!.isEmpty)){
-                          DigitToast.show(context,
-                            options: DigitToastOptions(
-                              "Either adhaar number or ID proof is mandatory.",
-                              true,
-                              widget.theme.theme(),
-                            ),
-                          );
-                          return;
-                        }
-                        if(widget.userModel.identifierType!.isNotEmpty && (fileName == null || fileName!.isEmpty)) {
-                          DigitToast.show(context,
-                            options: DigitToastOptions(
-                              "Please upload ID proof",
-                              true,
-                              widget.theme.theme(),
-                            ),
-                          );
-                          return;
-                        }
-                        bool isValidAadharNumber = _validateAadharNumber(form.control(aadharKey).value);
-                        if ((widget.userModel.identifierType == null || widget.userModel.identifierType!.isEmpty) && (widget.userModel.identifierId!.length != 12 || !isValidAadharNumber)) {
-                          DigitToast.show(context,
-                            options: DigitToastOptions(
-                              "Enter a valid aadhar number",
-                              true,
-                              widget.theme.theme(),
-                            ),
-                          );
-                          return;
-                        }
-                        if (widget.userModel.identifierId!.isNotEmpty
-                            && (widget.userModel.identifierType == null
-                                || widget.userModel.identifierType!.isEmpty)) {
-                          Navigator.pushNamed(context, '/IdOtpScreen', arguments: widget.userModel);
-                        }
-                        if ((widget.userModel.identifierId!.isNotEmpty) && widget.userModel.identifierType!.isNotEmpty) {
-                          Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.userModel);
-                        }
-                      },
-                      child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                  const Divider(height: 0, thickness: 2,),
+                  DigitCard(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                    child: DigitElevatedButton(
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          form.markAllAsTouched();
+                          if (!form.valid) return;
+                          if(widget.userModel.identifierType!.isNotEmpty && (fileName == null || fileName!.isEmpty)) {
+                            DigitToast.show(context,
+                              options: DigitToastOptions(
+                                "Please upload ID proof",
+                                true,
+                                widget.theme.theme(),
+                              ),
+                            );
+                            return;
+                          }
+                          if (widget.userModel.identifierType!.isNotEmpty && fileName!.isNotEmpty) {
+                            Navigator.pushNamed(context, '/UserTypeScreen', arguments: widget.userModel);
+                          }
+                        },
+                        child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                    ),
                   ),
                 ],
               );
             }
-          )
-      ),
+        )
     );
-
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
-    aadharKey : FormControl<String>(
-        value: widget.userModel.identifierId,
-    ),
     typeKey : FormControl<String>(
         value: widget.userModel.identifierType,
+      validators: [Validators.required]
     ),
   });
-
-  Future<bool> _onBackPressed() async {
-    return await DigitDialog.show(
-        context,
-        options: DigitDialogOptions(
-            titleIcon: const Icon(
-              Icons.warning,
-              color: Colors.red,
-            ),
-            titleText: 'Warning',
-            contentText:
-            'Are you sure you want to exit the application?',
-            primaryAction: DigitDialogActions(
-                label: 'Yes',
-                action: (BuildContext context) =>
-                    SystemChannels.platform.invokeMethod('SystemNavigator.pop')
-            ),
-            secondaryAction: DigitDialogActions(
-                label: 'No',
-                action: (BuildContext context) =>
-                    Navigator.of(context).pop(false)
-            ))
-    ) ?? false;
-  }
-
 }

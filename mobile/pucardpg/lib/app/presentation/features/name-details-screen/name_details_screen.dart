@@ -1,5 +1,6 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/digit_card.dart';
+import 'package:digit_components/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
+import 'package:pucardpg/app/presentation/widgets/page_heading.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
@@ -37,52 +39,35 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text(""),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.notifications))
-            ],
-            leading: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu),
-            ),
-          ),
+          backgroundColor: Colors.white,
           body: ReactiveFormBuilder(
               form: buildForm,
               builder: (context, form, child) {
                 return Column(
                   children: [
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        DigitHelpButton()
+                      ],
+                    ),
                     Expanded(
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            DigitCard(
-                              padding: const EdgeInsets.all(20),
+                            Padding(
+                              padding: const EdgeInsets.all(25),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "Registration",
-                                    style: widget.theme
-                                        .text20W400Rob()
-                                        ?.apply(fontStyle: FontStyle.italic),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
-                                  ),
-                                  Text(
-                                    "Enter Your Name",
-                                    style: widget.theme
-                                        .text32W700RobCon()
-                                        ?.apply(),
-                                  ),
-                                  const SizedBox(
-                                    height: 20,
+                                  PageHeading(
+                                    heading: "Enter your name as per official documents",
+                                    subHeading: "This ensures seamless verification to maintain compliance with official records ",
+                                    headingStyle: widget.theme.text24W700(),
+                                    subHeadingStyle: widget.theme.text14W400Rob(),
                                   ),
                                   DigitTextFormField(
                                     label: 'First name',
@@ -107,10 +92,10 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     },
                                   ),
                                   const SizedBox(
-                                    height: 20,
+                                    height: 10,
                                   ),
                                   DigitTextFormField(
-                                    label: 'Middle name',
+                                    label: 'Middle name (optional)',
                                     onChanged: (val) {
                                       widget.userModel.middleName =
                                           val.value.toString();
@@ -124,7 +109,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     ],
                                   ),
                                   const SizedBox(
-                                    height: 20,
+                                    height: 10,
                                   ),
                                   DigitTextFormField(
                                     label: 'Last name',
@@ -156,23 +141,28 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                         ),
                       ),
                     ),
-                    DigitElevatedButton(
-                        onPressed: isSubmitting
-                            ? null
-                            : () {
-                                FocusScope.of(context).unfocus();
-                                form.markAllAsTouched();
-                                if (!form.valid) return;
-                                Navigator.pushNamed(context, '/AddressScreen',
-                                    arguments: widget.userModel);
-                                isSubmitting = false;
-                              },
-                        child: Text(
-                          'Next',
-                          style: widget.theme.text20W700()?.apply(
-                                color: Colors.white,
-                              ),
-                        )),
+                    const Divider(height: 0, thickness: 2,),
+                    DigitCard(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                        child: DigitElevatedButton(
+                            onPressed: isSubmitting
+                                ? null
+                                : () {
+                                    FocusScope.of(context).unfocus();
+                                    form.markAllAsTouched();
+                                    if (!form.valid) return;
+                                    Navigator.pushNamed(context, '/AddressScreen',
+                                        arguments: widget.userModel);
+                                    isSubmitting = false;
+                                  },
+                            child: Text(
+                              'Continue',
+                              style: widget.theme.text20W700()?.apply(
+                                    color: Colors.white,
+                                  ),
+                            )),
+                      ),
+                    // ),
                   ],
                 );
               })),

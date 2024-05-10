@@ -2,8 +2,10 @@ import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_outline_icon_button.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
@@ -40,68 +42,53 @@ class AdvocateHomePageState extends State<AdvocateHomePage> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text(""),
-            centerTitle: true,
-            leading: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu),
-            ),
-          ),
-          body: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20,),
-                      DigitCard(
-                        // padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SvgPicture.asset(
-                              approvalSvg,
-                              width: 340,
-                              height: 200,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Center(child: Text("Your application is awaiting approval ......!", style: widget.theme.text16W400Rob(),)),
-                            ),
-                            BlocListener<FileBloc, FilePickerState>(
-                              bloc: widget.fileBloc,
-                              listener: (context, state) {
-
-                                switch (state.runtimeType) {
-                                  case FileFailedState:
-                                    break;
-                                  case GetFileSuccessState:
-                                    Navigator.pushNamed(context, '/ViewApplicationScreen', arguments: widget.userModel);
-                                    break;
-                                }
-                              },
-                              child: DigitOutlineIconButton(
-                                label: 'View My Application',
-                                onPressed: (){
-                                  widget.fileBloc.add(GetFileEvent(userModel:  widget.userModel));
-                                },
-                                icon: Icons.settings_applications,
-                                iconColor: DigitTheme.instance.colorScheme.secondary,
-                              ),
-                            )
-                            // const SizedBox(height: 20,),
-                          ],
-                        ),
-                      ),
-                      // Expanded(child: Container(),),
-                    ],
+          backgroundColor: Colors.white,
+          body: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  waitingSvg,
+                  width: 112,
+                  height: 112,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+                Text(
+                  'Your registration is waiting approval',
+                  style: widget.theme.text20W700()?.apply(),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 25, right: 25, top: 5),
+                  child: Text(
+                    "Your registration (ID: XXXXXXXXX) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.",
+                    style: widget.theme.text14W400Rob(),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-              ),
-            ],
-          )
+                const SizedBox(
+                  height: 40,
+                ),
+                DigitElevatedButton(
+                    onPressed: (){
+                      Navigator.pushNamed(context, '/ViewApplicationScreen', arguments: widget.userModel);
+                    },
+                    child: Text(
+                      'View My Application',
+                      style: widget.theme.text20W700()?.apply(
+                        color: Colors.white,
+                      ),
+                    )
+                ),
+              ],
+            ),
+          ),
       ),
     );
   }

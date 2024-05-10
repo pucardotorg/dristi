@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
 import 'package:pucardpg/app/data/models/advocate-clerk-search/advocate_clerk_search_model.dart';
 import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
@@ -52,12 +54,29 @@ class LoginUseCase {
     if (dataState is DataSuccess) {
       if (dataState.data!.individual.isNotEmpty) {
         Individual individual = dataState.data!.individual[0];
-        var userTypeField = individual.additionalFields.fields.firstWhere(
+        final userTypeField = individual.additionalFields.fields.firstWhere(
               (field) => field.key == "userType",
           orElse: () => const Fields(key: "", value: ""),
         );
+        final identifierType = individual.identifiers[0].identifierType;
+        final detailField = individual.additionalFields.fields.firstWhere(
+                (field) => field.key == "identifierIdDetails",
+            orElse: () => const Fields(key: "", value: ""),
+        ).value;
+        if (detailField != "") {
+          final identifierIdDetails = jsonDecode(detailField);
+          if (identifierType != 'AADHAR') {
+            userModel.idFilename = identifierIdDetails['filename'];
+            userModel.idFileStore = identifierIdDetails['fileStoreId'];
+          }
+          var dataState1 = await _registrationLoginRepository.getFileData(identifierIdDetails['fileStoreId']);
+          if (dataState1 is DataSuccess) {
+            userModel.idBytes = dataState1.data?.bytes;
+            userModel.idDocumentType = dataState1.data?.documentType;
+          }
+        }
         userModel.individualId = individual.individualId;
-        userModel.identifierType = individual.identifiers[0].identifierType;
+        userModel.identifierType = identifierType;
         userModel.identifierId = individual.identifiers[0].identifierId;
         userModel.firstName = individual.name.givenName;
         userModel.lastName = individual.name.familyName;
@@ -94,9 +113,16 @@ class LoginUseCase {
     if (dataState is DataSuccess) {
       if (dataState.data!.advocates.isNotEmpty) {
         Advocate advocate = dataState.data!.advocates[0];
+        userModel.documentFilename = advocate.additionalDetails?['filename'];
         userModel.barRegistrationNumber = advocate.barRegistrationNumber;
         userModel.fileStore = advocate.documents?[0].fileStore;
-        userModel.documentType = advocate.documents?[0].documentType;
+        var dataState1 = await _registrationLoginRepository.getFileData(advocate.documents![0].fileStore!);
+        if (dataState1 is DataSuccess) {
+          userModel.documentBytes = dataState1.data?.bytes;
+          userModel.documentType = dataState1.data?.documentType;
+        }
+        // userModel.documentType = advocate.documents?[0].documentType;
+        userModel.documentFilename = advocate.additionalDetails?['filename'];
       }
     }
     return dataState;
@@ -117,14 +143,14 @@ class LoginUseCase {
         ));
     var dataState = await _registrationLoginRepository.searchAdvocateClerk(advocateClerkSearchRequest);
 
-    if (dataState is DataSuccess) {
-      if (dataState.data!.clerks.isNotEmpty) {
-        Clerk clerk = dataState.data!.clerks[0];
-        userModel.stateRegnNumber = clerk.stateRegnNumber;
-        userModel.fileStore = clerk.documents?[0].fileStore;
-        userModel.documentType = clerk.documents?[0].documentType;
-      }
-    }
+    // if (dataState is DataSuccess) {
+    //   if (dataState.data!.clerks.isNotEmpty) {
+    //     Clerk clerk = dataState.data!.clerks[0];
+    //     userModel.stateRegnNumber = clerk.stateRegnNumber;
+    //     userModel.fileStore = clerk.documents?[0].fileStore;
+    //     userModel.documentType = clerk.documents?[0].documentType;
+    //   }
+    // }
     return dataState;
   }
 
@@ -157,9 +183,15 @@ class LoginUseCase {
             ]
           ),
           documents: [
-            Document(fileStore: userModel.fileStore)
+            Document(
+                fileStore: userModel.fileStore,
+                documentType: userModel.documentType
+            )
           ],
-          additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
+          additionalDetails: {
+            "username" : userModel.firstName! + userModel.lastName!,
+            "filename" : userModel.documentFilename
+          }
         )
       ]
     );
@@ -191,11 +223,9 @@ class LoginUseCase {
               workflow: Workflow(
                   action: "REGISTER",
                   documents: [
-                    Document(fileStore: userModel.fileStore)
                   ]
               ),
               documents: [
-                Document(fileStore: userModel.fileStore)
               ],
               additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
           )
@@ -204,10 +234,9 @@ class LoginUseCase {
     return _registrationLoginRepository.registerAdvocateClerk(advocateClerkRegistrationRequest);
   }
 
-  Future<DataState<AuthResponse>> createCitizen(String name, String username, String otpReference, UserModel userModel) async {
+  Future<DataState<AuthResponse>> createCitizen(String username, String otpReference, UserModel userModel) async {
     CitizenRegistrationRequest citizenRegistrationRequest = CitizenRegistrationRequest(
         userInfo: UserInfo(
-            name: name,
             username: username,
             otpReference: otpReference
         ),
@@ -236,7 +265,7 @@ class LoginUseCase {
     return dataState;
   }
 
-  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel, Fields fields) {
+  Future<DataState<LitigantResponseModel>> registerLitigant(UserModel userModel) async {
 
     String? identifierType;
     if (userModel.identifierType == null || userModel.identifierType!.isEmpty) {
@@ -277,7 +306,16 @@ class LoginUseCase {
           identifierId: identifierId ?? '448022345455',
       )],
       additionalFields: AdditionalFields(
-          fields: [fields],
+          fields: [Fields(
+            key: 'userType',
+            value: userModel.userType!,
+          ),
+          Fields(
+              key: 'identifierIdDetails',
+              value: userModel.identifierType != 'AADHAR' ? jsonEncode({'fileStoreId' : userModel.identifierId, 'filename': userModel.idFilename})
+                  : jsonEncode({})
+          )
+          ],
       ),
     );
 
@@ -292,8 +330,11 @@ class LoginUseCase {
 
     print(litigantNetworkModel.toJson());
 
-    return _registrationLoginRepository.registerLitigant(litigantNetworkModel);
-
+    var dataState = await _registrationLoginRepository.registerLitigant(litigantNetworkModel);
+    if (dataState is DataSuccess) {
+      userModel.individualId = dataState.data?.individualInfo.individualId;
+    }
+    return dataState;
   }
 
 }

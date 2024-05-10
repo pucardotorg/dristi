@@ -29,7 +29,7 @@ class DigitHelpButton extends StatelessWidget with AppMixin{
                 width: 2,
               ),
             ),
-            child: const Icon(Icons.question_mark, size: 15,),
+            child: Icon(Icons.question_mark, color: theme.defaultColor, size: 15,),
           ),
         ],
       ),

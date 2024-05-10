@@ -24,7 +24,12 @@ class FileBloc extends Bloc<FilePickerEvent, FilePickerState> {
       final dataState = await _filePickerUseCase.getFileStore(event.pickedFile);
 
       if(dataState is DataSuccess){
-        emit(FileSuccessState(fileStoreId: dataState.data!));
+        if (event.type == 'idProof') {
+          emit(FileSuccessState(fileStoreId: dataState.data!));
+        }
+        if (event.type == 'advocate') {
+          emit(DocumentSuccessState(fileStoreId: dataState.data!));
+        }
       }
       if(dataState is DataFailed){
         emit(FileFailedState(errorMsg: dataState.error?.message ?? "",));

@@ -12,6 +12,11 @@ class FileSuccessState extends FilePickerState {
   FileSuccessState({required this.fileStoreId});
 }
 
+class DocumentSuccessState extends FilePickerState {
+  String fileStoreId;
+  DocumentSuccessState({required this.fileStoreId});
+}
+
 class FileFailedState extends FilePickerState {
   String errorMsg;
   FileFailedState({required this.errorMsg});

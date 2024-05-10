@@ -15,15 +15,20 @@ class HomeCard extends StatelessWidget with AppMixin {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 150,
-      child: DigitCard(
+      child: Container(
+        margin: const EdgeInsets.all(6),
         padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey),
+            borderRadius:  const BorderRadius.all(Radius.circular(15))
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               icon,
               size: 40,
-              color: const Color(0xFFF47738),
+              color: theme.colorScheme.secondary,
             ),
             const SizedBox(height: 10,),
             Text(

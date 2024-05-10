@@ -12,6 +12,7 @@ import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_sta
 import 'package:pucardpg/app/domain/entities/litigant_model.dart';
 import 'package:pucardpg/app/presentation/widgets/back_button.dart';
 import 'package:pucardpg/app/presentation/widgets/help_button.dart';
+import 'package:pucardpg/app/presentation/widgets/page_heading.dart';
 import 'package:pucardpg/config/mixin/app_mixin.dart';
 import 'package:pucardpg/core/constant/constants.dart';
 
@@ -36,17 +37,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(""),
-          centerTitle: true,
-          actions: [
-            IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
-          ],
-          leading: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.menu),
-          ),
-        ),
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             Expanded(
@@ -54,37 +45,34 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                 child: Column(
                   children: [
                     const SizedBox(
-                      height: 10,
+                      height: 50,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [DigitBackButton(), DigitHelpButton()],
                     ),
-                    DigitCard(
+                    Padding(
                       padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Registration",
-                            style: widget.theme
-                                .text20W400Rob()
-                                ?.apply(fontStyle: FontStyle.italic),
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            "Choose your user type",
-                            style: widget.theme.text32W700RobCon()?.apply(),
-                          ),
-                          const SizedBox(
-                            height: 20,
+                          PageHeading(
+                            heading: "Tell us a bit about yourself",
+                            subHeading: "This will help us streamline a few things and personalise your experience",
+                            headingStyle: widget.theme.text24W700(),
+                            subHeadingStyle: widget.theme.text14W400Rob(),
                           ),
                           RadioListTile(
-                            title: Text(
-                              'Litigant',
-                              style: widget.theme.text16W400Rob(),
+                            title: Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                'I’m a litigant',
+                                style: widget.theme.text20W700(),
+                              ),
+                            ),
+                            subtitle: Text(
+                              'I have to file a complaint, join a case, or have a complaint against me',
+                              style: widget.theme.text12W400(),
                             ),
                             value: 'Litigant',
                             groupValue: selectedOption,
@@ -94,12 +82,22 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 selectedOption = value;
                               });
                             },
+                            fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
                           ),
-                          // const SizedBox(height: 20,),
+                          const SizedBox(height: 15,),
+                          const Divider(height: 0, thickness: 1,),
+                          const SizedBox(height: 25,),
                           RadioListTile(
-                            title: Text(
-                              'Advocate',
-                              style: widget.theme.text16W400Rob(),
+                            title: Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                'I’m an advocate',
+                                style: widget.theme.text20W700(),
+                              ),
+                            ),
+                            subtitle: Text(
+                              'I’m professionally qualified to plead the cause of another in a court of law',
+                              style: widget.theme.text12W400(),
                             ),
                             value: 'Advocate',
                             groupValue: selectedOption,
@@ -109,12 +107,22 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 selectedOption = value;
                               });
                             },
+                            fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
                           ),
-                          // const SizedBox(height: 20,),
+                          const SizedBox(height: 15,),
+                          const Divider(height: 0, thickness: 1,),
+                          const SizedBox(height: 25,),
                           RadioListTile(
-                            title: Text(
-                              'Advocate Clerk',
-                              style: widget.theme.text16W400Rob(),
+                            title: Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                'I’m an advocate’s clerk',
+                                style: widget.theme.text20W700(),
+                              ),
+                            ),
+                            subtitle: Text(
+                              'I organise the daily workload and administration for a group of advocates ',
+                              style: widget.theme.text12W400(),
                             ),
                             value: 'Advocate_Clerk',
                             groupValue: selectedOption,
@@ -124,7 +132,10 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 selectedOption = value;
                               });
                             },
+                            fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
                           ),
+                          const SizedBox(height: 15,),
+                          const Divider(height: 0, thickness: 1,),
                         ],
                       ),
                     ),
@@ -133,6 +144,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                 ),
               ),
             ),
+            const Divider(height: 0, thickness: 2,),
             BlocListener<RegistrationLoginBloc, RegistrationLoginState>(
               bloc: widget.registrationLoginBloc,
               listener: (context, state) {
@@ -161,45 +173,47 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                     break;
                 }
               },
-              child: DigitElevatedButton(
-                  onPressed: isSubmitting
-                      ? null
-                      : () {
-                          widget.userModel.userType =
-                              selectedOption?.toUpperCase();
-                          if (selectedOption == null) {
-                            DigitToast.show(
-                              context,
-                              options: DigitToastOptions(
-                                "Please select a user type.",
-                                true,
-                                widget.theme.theme(),
-                              ),
-                            );
-                            return;
-                          } else if (widget.userModel.userType == 'LITIGANT') {
-                            Navigator.pushNamed(
-                                context, '/TermsAndConditionsScreen',
-                                arguments: widget.userModel);
-                          } else if (widget.userModel.userType == 'ADVOCATE') {
-                            isSubmitting = true;
-                            widget.registrationLoginBloc.add(
-                                SubmitAdvocateIndividualEvent(
-                                    userModel: widget.userModel));
-                          } else if (widget.userModel.userType ==
-                              'ADVOCATE_CLERK') {
-                            isSubmitting = true;
-                            widget.registrationLoginBloc.add(
-                                SubmitAdvocateClerkIndividualEvent(
-                                    userModel: widget.userModel));
-                          }
-                        },
-                  child: Text(
-                    'Next',
-                    style: widget.theme.text20W700()?.apply(
-                          color: Colors.white,
-                        ),
-                  )),
+              child: DigitCard(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                child: DigitElevatedButton(
+                    onPressed: isSubmitting
+                        ? null
+                        : () {
+                            widget.userModel.userType =
+                                selectedOption?.toUpperCase();
+                            if (selectedOption == null) {
+                              DigitToast.show(
+                                context,
+                                options: DigitToastOptions(
+                                  "Please select a user type.",
+                                  true,
+                                  widget.theme.theme(),
+                                ),
+                              );
+                              return;
+                            } else if (widget.userModel.userType == 'ADVOCATE') {
+                              Navigator.pushNamed(
+                                  context, '/AdvocateRegistrationScreen',
+                                  arguments: widget.userModel);
+                              // widget.registrationLoginBloc.add(
+                              //     SubmitAdvocateIndividualEvent(
+                              //         userModel: widget.userModel));
+                            } else {
+                              Navigator.pushNamed(
+                                  context, '/TermsAndConditionsScreen',
+                                  arguments: widget.userModel);
+                              // widget.registrationLoginBloc.add(
+                              //     SubmitAdvocateClerkIndividualEvent(
+                              //         userModel: widget.userModel));
+                            }
+                          },
+                    child: Text(
+                      'Continue',
+                      style: widget.theme.text20W700()?.apply(
+                            color: Colors.white,
+                          ),
+                    )),
+              ),
             )
           ],
         ));

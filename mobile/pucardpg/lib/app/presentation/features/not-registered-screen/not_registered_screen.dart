@@ -37,45 +37,69 @@ class NotRegisteredScreenState extends State<NotRegisteredScreen> {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
-          appBar: AppBar(
-            title: const Text(""),
-            centerTitle: true,
-            leading: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.menu),
-            ),
-          ),
+          backgroundColor: Colors.white,
           body: Column(
             children: [
+              const SizedBox(height: 50,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  DigitHelpButton()],
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20,),
-                      DigitCard(
-                        // padding: const EdgeInsets.all(20),
+                      const SizedBox(height: 50,),
+                      Padding(
+                        padding: const EdgeInsets.all(15),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             SvgPicture.asset(
                               yetToRegister,
                               width: 340,
                               height: 200,
+                              colorFilter: ColorFilter.mode(widget.theme.colorScheme.secondary, BlendMode.srcIn),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(20),
-                              child: Center(child: Text("Start by creating your account.", style: widget.theme.text16W400Rob(),)),
+                              child: Center(child: Text("Start by creating your account.",
+                                style: widget.theme.text16W400Rob(),)),
                             ),
-                            DigitOutlineIconButton(
-                              label: 'Register',
-                              onPressed: (){
-                                Navigator.pushNamed(context, '/IdVerificationScreen', arguments: widget.userModel);
-                              },
-                              icon: Icons.settings_applications,
-                              iconColor: DigitTheme.instance.colorScheme.secondary,
+                            Container(
+                              constraints: const BoxConstraints(maxHeight: 50, minHeight: 40),
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, '/NameDetailsScreen', arguments: widget.userModel);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.zero,
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Flexible(
+                                          child: Icon(
+                                            Icons.app_registration,
+                                            color: widget.theme.colorScheme.secondary,
+                                          )),
+                                      const SizedBox(width: 2),
+                                      Text(
+                                        "Register",
+                                        style: DigitTheme.instance.mobileTheme.textTheme.headlineSmall
+                                            ?.apply(
+                                          color: widget.theme.colorScheme.secondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
-                            // const SizedBox(height: 20,),
                           ],
                         ),
                       ),

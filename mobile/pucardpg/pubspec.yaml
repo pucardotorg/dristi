@@ -85,12 +85,14 @@ dependencies:
   http_parser: ^4.0.2
   syncfusion_flutter_pdfviewer: ^24.2.8
   permission_handler: ^6.1.1
-  open_file: ^3.3.2
   geolocator: ^9.0.1
   url_launcher: ^6.2.6
   country_state_city: ^0.1.6
   http: ^1.2.0
   flutter_svg: ^2.0.8
+  path_provider: ^2.0.11
+  path: ^1.8.2
+  open_filex: ^4.3.2
 
 dev_dependencies:
   flutter_test:
@@ -117,6 +119,7 @@ flutter:
   assets:
     - ./
     - assets/icons/svg/
+    - assets/icons/png/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
