@@ -1,8 +1,9 @@
-import { ErrorIcon, FileIcon } from "@egovernments/digit-ui-react-components";
+import { Button, ErrorIcon, FileIcon } from "@egovernments/digit-ui-react-components";
 import React from "react";
-import CustomUploadButton from "./CustomUploadButton";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
-function RenderFileCard({ handleChange, fileInputRef, handleReupload, handleDeleteFile, uploadErrorInfo, fileData, t, input }) {
+import { FileUploader } from "react-drag-drop-files";
+import { ReactComponent as UploadFileIcon } from "../images/upload.svg";
+function RenderFileCard({ handleChange, handleDeleteFile, uploadErrorInfo, fileData, t, input }) {
   return (
     <div className={`uploaded-file-div-main upload-${!!uploadErrorInfo ? "error" : "successful"}`}>
       <div className="uploaded-file-div-sub">
@@ -12,7 +13,15 @@ function RenderFileCard({ handleChange, fileInputRef, handleReupload, handleDele
         </div>
         <div className="reupload-or-delete-div">
           <div>
-            <CustomUploadButton t={t} handleChange={handleChange} fileInputRef={fileInputRef} handleReupload={handleReupload} input={input} />
+            <FileUploader
+              handleChange={(data) => {
+                handleChange(data, input);
+              }}
+              name="file"
+              types={input?.fileTypes}
+              children={<Button label={t("CS_COMMON_REUPLOAD_FILE")} icon={<UploadFileIcon></UploadFileIcon>} />}
+              key={input?.name}
+            />
           </div>
           <div
             className="icon delete-uploaded-file"
