@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
@@ -6,11 +6,6 @@ import RenderFileCard from "./RenderFileCard";
 
 function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
   const [uploadErrorInfo, setUploadErrorInfo] = useState({});
-  const fileInputRef = useRef();
-
-  const fileData = useMemo(() => {
-    return formData?.[config?.key] || {};
-  }, [config?.key, formData]);
 
   const inputs = useMemo(
     () =>
@@ -23,6 +18,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           type: "DragDropComponent",
           uploadGuidelines: "Upload .png",
           maxFileSize: 1024 * 1024 * 50,
+          maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],
         },
       ],
@@ -42,33 +38,24 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
   }
 
   const fileValidator = (file, input) => {
-    const fileType = file?.type.split("/")[1].toUpperCase();
-    if (fileType && !input.fileTypes.includes(fileType)) {
-      setUploadErrorInfo({ [input?.name]: "Invalid File Type", ...uploadErrorInfo });
-      return false;
-    }
+    // const fileType = file?.type.split("/")[1].toUpperCase();
+    // if (fileType && !input.fileTypes.includes(fileType)) {
+    //   return { [input?.name]: "Invalid File Type", ...uploadErrorInfo };
+    // }
     if (file.size > input?.maxFileSize) {
-      setUploadErrorInfo({ [input?.name]: "Your file exceeded the 50mb limit.", ...uploadErrorInfo });
-      return false;
+      return { ...uploadErrorInfo, [input?.name]: t(input?.maxFileErrorMessage) };
     }
-    setUploadErrorInfo({ [input?.name]: "", ...uploadErrorInfo });
-    return true;
+    return { ...uploadErrorInfo, [input?.name]: "" };
   };
 
-  const handleChange = (data, input, isReupload = false) => {
-    const file = isReupload ? data.target.files[0] : data;
-    const isFileValid = fileValidator(file, input);
-    if (isFileValid) {
-      setValue(file, input?.name);
-    }
+  const handleChange = (file, input) => {
+    const error = fileValidator(file, input);
+    setUploadErrorInfo(error);
+    setValue(file, input?.name);
   };
 
   const handleDeleteFile = (input) => {
     setValue(null, input?.name);
-  };
-
-  const handleReupload = () => {
-    fileInputRef.current.click();
   };
 
   const dragDropJSX = (
@@ -113,10 +100,8 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
         {currentValue && (
           <RenderFileCard
             fileData={currentValue}
-            fileInputRef={fileInputRef}
             handleChange={handleChange}
             handleDeleteFile={handleDeleteFile}
-            handleReupload={handleReupload}
             t={t}
             uploadErrorInfo={uploadErrorInfo?.[input.name]}
             input={input}
