@@ -11,6 +11,7 @@ import ChangeLanguage from "./components/ChangeLanguage";
 import { useState } from "react";
 import ErrorBoundary from "./components/ErrorBoundaries";
 import getStore from "./redux/store";
+import { useGetAccessToken } from "./hooks/useGetAccessToken";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers, defaultLanding }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
@@ -67,6 +68,13 @@ const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers, defaultLand
 
 export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers, defaultLanding }) => {
   const [privacy, setPrivacy] = useState(Digit.Utils.getPrivacyObject() || {});
+
+  const { isLoading: isGetAccessToken } = useGetAccessToken("refresh-token");
+
+  if (isGetAccessToken) {
+    return <Loader />;
+  }
+
   const userType = Digit.UserService.getType();
   const queryClient = new QueryClient({
     defaultOptions: {

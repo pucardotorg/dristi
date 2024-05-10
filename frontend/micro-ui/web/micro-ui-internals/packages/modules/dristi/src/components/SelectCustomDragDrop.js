@@ -1,12 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
 
 function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
-  const [uploadErrorInfo, setUploadErrorInfo] = useState({});
-
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -20,6 +18,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           maxFileSize: 1024 * 1024 * 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],
+          isMultipleUpload: true,
         },
       ],
     [config?.populators?.inputs]
@@ -42,20 +41,19 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
     // if (fileType && !input.fileTypes.includes(fileType)) {
     //   return { [input?.name]: "Invalid File Type", ...uploadErrorInfo };
     // }
-    if (file.size > input?.maxFileSize) {
-      return { ...uploadErrorInfo, [input?.name]: t(input?.maxFileErrorMessage) };
-    }
-    return { ...uploadErrorInfo, [input?.name]: "" };
+    return file.size > input?.maxFileSize ? t(input?.maxFileErrorMessage) : null;
   };
 
-  const handleChange = (file, input) => {
-    const error = fileValidator(file, input);
-    setUploadErrorInfo(error);
-    setValue(file, input?.name);
+  const handleChange = (file, input, index = Infinity) => {
+    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    currentValue.splice(index, 1, file);
+    setValue(currentValue, input?.name);
   };
 
-  const handleDeleteFile = (input) => {
-    setValue(null, input?.name);
+  const handleDeleteFile = (input, index) => {
+    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    currentValue.splice(index, 1);
+    setValue(currentValue, input?.name);
   };
 
   const dragDropJSX = (
@@ -68,45 +66,46 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
   );
 
   return inputs.map((input) => {
-    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
+    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    let fileErrors = currentValue.map((file) => fileValidator(file, input));
+    const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
     return (
-      <div>
-        {!currentValue && (
-          <div className="drag-drop-visible-main">
-            <div className="drag-drop-heading-main">
-              <div className="drag-drop-heading">
-                <h1> {t(input?.documentHeader)}</h1>
-                {input?.isOptional && <h3> {`(${t(input?.isOptional)})`}</h3>}
-                <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
-              </div>
-              {<p>{t(input?.documentSubText)}</p>}
-            </div>
-            <div className="file-uploader-div-main">
-              <FileUploader
-                handleChange={(data) => {
-                  handleChange(data, input);
-                }}
-                name="file"
-                types={input?.fileTypes}
-                children={dragDropJSX}
-                key={input?.name}
-              />
-            </div>
+      <div className="drag-drop-visible-main">
+        <div className="drag-drop-heading-main">
+          <div className="drag-drop-heading">
+            <h1> {t(input?.documentHeader)}</h1>
+            {input?.isOptional && <h3> {`(${t(input?.isOptional)})`}</h3>}
+            <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
+          </div>
+          {<p>{t(input?.documentSubText)}</p>}
+        </div>
+        {currentValue.map((file, index) => (
+          <RenderFileCard
+            key={`${input?.name}${index}`}
+            index={index}
+            fileData={file}
+            handleChange={handleChange}
+            handleDeleteFile={handleDeleteFile}
+            t={t}
+            uploadErrorInfo={fileErrors[index]}
+            input={input}
+          />
+        ))}
+        {showFileUploader && (
+          <div className="file-uploader-div-main">
+            <FileUploader
+              handleChange={(data) => {
+                handleChange(data, input);
+              }}
+              name="file"
+              types={input?.fileTypes}
+              children={dragDropJSX}
+              key={input?.name}
+            />
             <div className="upload-guidelines-div">
               <p>{t(input?.uploadGuidelines)}</p>
             </div>
           </div>
-        )}
-        {currentValue && (
-          <RenderFileCard
-            fileData={currentValue}
-            handleChange={handleChange}
-            handleDeleteFile={handleDeleteFile}
-            t={t}
-            uploadErrorInfo={uploadErrorInfo?.[input.name]}
-            input={input}
-            key={input?.name}
-          />
         )}
       </div>
     );

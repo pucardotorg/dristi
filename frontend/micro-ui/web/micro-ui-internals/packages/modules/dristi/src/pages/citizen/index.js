@@ -1,5 +1,5 @@
 import { AppContainer, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,6 @@ import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-route
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import ApplicationDetails from "../employee/ApplicationDetails";
-import { userTypeOptions } from "./registration/config";
 import BreadCrumb from "../../components/BreadCrumb";
 
 const App = ({ stateCode, tenantId }) => {
@@ -19,7 +18,6 @@ const App = ({ stateCode, tenantId }) => {
   const Registration = Digit?.ComponentRegistryService?.getComponent("DRISTIRegistration");
   const Response = Digit?.ComponentRegistryService?.getComponent("DRISTICitizenResponse");
   const Login = Digit?.ComponentRegistryService?.getComponent("DRISTILogin");
-  const AdvocateClerkAdditionalDetail = Digit?.ComponentRegistryService?.getComponent("AdvocateClerkAdditionalDetail");
   const FileCase = Digit?.ComponentRegistryService?.getComponent("FileCase");
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
@@ -46,23 +44,6 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
-  const individualUser = useMemo(() => `${data?.Individual?.[0]?.name?.givenName} ${data?.Individual?.[0]?.name?.familyName}`, [data?.Individual]);
-  const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-
-  const { data: searchData = {}, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
-    {
-      criteria: [{ individualId }],
-      tenantId,
-    },
-    { tenantId },
-    moduleCode,
-    Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
-    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
-  );
-
-  const userTypeDetail = useMemo(() => {
-    return userTypeOptions.find((item) => item.code === userType) || {};
-  }, [userType]);
 
   const hideHomeCrumb = [`${path}/home`];
   const citizenCrumbs = [
@@ -135,7 +116,7 @@ const App = ({ stateCode, tenantId }) => {
     history.push(`${path}/home`);
   }
 
-  if (isLoading || isSearchLoading) {
+  if (isLoading) {
     return <Loader />;
   }
 

@@ -224,6 +224,7 @@ export const respondentconfig = [
               maxFileSize: 1024 * 1024 * 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
               fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: false,
             },
           ],
         },
