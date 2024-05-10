@@ -335,7 +335,7 @@ export const newConfig = [
               name: "pincode",
               validation: {
                 minlength: 6,
-                maxlength: 7,
+                maxlength: 6,
                 patternType: "Pincode",
                 pattern: "[0-9]+",
                 max: "9999999",
@@ -351,6 +351,10 @@ export const newConfig = [
               name: "state",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_STATE_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -360,6 +364,10 @@ export const newConfig = [
               name: "district",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
