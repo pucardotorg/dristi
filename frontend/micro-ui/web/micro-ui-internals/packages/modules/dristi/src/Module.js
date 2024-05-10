@@ -19,6 +19,8 @@ import CustomInput from "./components/CustomInput";
 import SelectBulkInputs from "./components/SelectBulkInputs";
 import SelectCustomNote from "./components/SelectCustomNote";
 import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
+import InfoCard from "./components/InfoCard";
+import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -54,6 +56,8 @@ const componentsToRegister = {
   SelectBulkInputs,
   SelectCustomNote,
   SelectCustomDragDrop,
+  InfoCard,
+  VerifyPhoneNumber,
 };
 
 const overrideHooks = () => {

@@ -35,7 +35,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
           href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
           target="_blank"
           rel="noreferrer"
-          style={{ color: "#F47738" }}
+          style={{ color: "#007E7E" }}
         >
           View on map
         </a>

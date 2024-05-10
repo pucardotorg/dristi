@@ -11,7 +11,7 @@ const getRandomId = () => {
 const ButtonBody = ({ t }) => {
   return (
     <div>
-      <h1 style={{ color: "#F47738", fontSize: "16px", fontWeight: "600" }}>{t("CS_COMMON_CHOOSE_FILE")}</h1>
+      <h1 style={{ color: "#007E7E", fontSize: "16px", fontWeight: "600" }}>{t("CS_COMMON_CHOOSE_FILE")}</h1>
     </div>
   );
 };
@@ -245,7 +245,7 @@ const CustomUploadFile = (props) => {
             }}
           />
         </div>
-        <div style={{ width: "18%", maxWidth: "18%", margin: "0px", maxHeight: "42px", marginLeft: "10px", border: "solid 2px #F47738" }}>
+        <div style={{ width: "18%", maxWidth: "18%", margin: "0px", maxHeight: "42px", marginLeft: "10px", border: "solid 2px #007E7E" }}>
           <ButtonSelector
             theme="border"
             ButtonBody={<ButtonBody t={t} />} // change this prop later.

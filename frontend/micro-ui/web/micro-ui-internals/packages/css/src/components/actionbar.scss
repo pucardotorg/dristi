@@ -14,10 +14,10 @@
     box-shadow: rgba(0, 0, 0, 0.14) 0 8px 10px 1px, rgba(0, 0, 0, 0.12) 0 3px 14px 2px, rgba(0, 0, 0, 0.2) 0 5px 5px -3px;
     width: calc(100% - 16px);
     right: 8px;
-  
+
     div {
       @apply h-12 pl-sm py-md text-body-l text-text-primary;
-  
+
       &:hover {
         @apply bg-grey-mid w-full;
       }
@@ -45,10 +45,10 @@
       @apply absolute h-auto bg-white text-left mb-xs z-30;
       width: 240px;
       right: 24px;
-  
+
       div {
         @apply h-12 pl-sm py-md text-body-l text-text-primary;
-  
+
         &:hover {
           @apply bg-grey-mid w-full;
         }
@@ -58,7 +58,6 @@
 }
 
 .action-bar-wrap-registry {
-
   div {
     @apply w-full;
   }
@@ -67,10 +66,10 @@
     box-shadow: rgba(0, 0, 0, 0.14) 0 8px 10px 1px, rgba(0, 0, 0, 0.12) 0 3px 14px 2px, rgba(0, 0, 0, 0.2) 0 5px 5px -3px;
     width: 160px;
     right: 60px;
-  
+
     div {
       @apply h-12 pl-sm py-md text-body-l text-text-primary;
-  
+
       &:hover {
         @apply bg-grey-mid w-full;
       }
@@ -79,13 +78,13 @@
 
   .search-add {
     padding: 12px 16px;
-    color: rgb(244, 119, 56);
+    color: #007e7e;
     display: flex;
     cursor: pointer;
   }
 
   .search-add-icon {
-    background: rgb(244, 119, 56);
+    background: #007e7e;
     border-radius: 50%;
     height: 24px;
     width: 24px;

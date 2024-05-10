@@ -55,7 +55,7 @@ export const loginSteps = [
     body: [
       {
         type: "component",
-        component: "VerificationComponent",
+        component: "SelectUserTypeComponent",
         key: "SelectUserTypeComponent",
         withoutLabel: true,
         populators: {

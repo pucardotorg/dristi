@@ -38,7 +38,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
             <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-              <span style={{ color: "#f47738" }}>Help</span>
+              <span style={{ color: "#007E7E" }}>Help</span>
               <HelpOutlineIcon />
             </span>
           </div>

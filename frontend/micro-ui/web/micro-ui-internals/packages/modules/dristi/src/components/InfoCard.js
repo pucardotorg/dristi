@@ -12,8 +12,6 @@ const RoundedCheck = ({ className, height = "24", width = "24", style = {}, fill
   );
 };
 const InfoCard = (props) => {
-  //if type is "component", then props will come from props?.props.
-  //if the component has props passed directly, then props will be used.
   props = props?.props ? props?.props : props;
   const showInfo = props?.showInfo ? props?.showInfo : true;
 
@@ -29,7 +27,7 @@ const InfoCard = (props) => {
         return WarningIcon;
 
       default:
-        return <React.Fragment></React.Fragment>;
+        return InfoBannerIcon;
     }
   }, [props?.variant]);
 

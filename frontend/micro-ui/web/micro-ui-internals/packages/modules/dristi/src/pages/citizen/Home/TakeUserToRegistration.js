@@ -37,7 +37,7 @@ function TakeUserToRegistration({ message }) {
             maxHeight: "7vh",
             width: "20vw",
             background: "none",
-            color: "#F47738",
+            color: "#007E7E",
             boxShadow: "none",
           }}
         >

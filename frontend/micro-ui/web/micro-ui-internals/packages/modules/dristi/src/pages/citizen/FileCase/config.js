@@ -53,3 +53,206 @@ export const advocateClerkConfig = [
     ],
   },
 ];
+
+export const complainantDetailsConfig = [
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "complainantType",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "COMPLAINANT_TYPE",
+              type: "radioButton",
+              name: "selectUserType",
+              optionsKey: "name",
+              error: "sample required message",
+              clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+              options: [
+                { code: "INDIVIDUAL", name: "INDIVIDUAL" },
+                { code: "REPRESENTATIVE", name: "REPRESENTATIVE" },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "VerificationComponent",
+        key: "complainantId",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "COMPLAINANT_ID",
+              name: "complainantId",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    head: "CS_COMMON_COMPLAINANT_DETAIL",
+    body: [
+      {
+        type: "component",
+        component: "SelectComponents",
+        key: "userDetails",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "FIRST_NAME",
+              type: "text",
+              name: "firstName",
+              validation: {
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                title: "",
+                patternType: "Name",
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "MIDDLE_NAME",
+              type: "text",
+              name: "middleName",
+              validation: {
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
+                title: "",
+              },
+            },
+            {
+              label: "LAST_NAME",
+              type: "text",
+              name: "lastName",
+              validation: {
+                isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
+                patternType: "Name",
+                title: "",
+              },
+              isMandatory: true,
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "VerifyPhoneNumber",
+        key: "complainantId",
+        withoutLabel: true,
+        label: "PHONE_NUMBER",
+        name: "mobileNumber",
+        error: "ERR_HRMS_INVALID_MOB_NO",
+        componentInFront: "+91",
+        validation: {
+          required: true,
+          minLength: 10,
+          maxLength: 10,
+          pattern: /^[6-9]\d{9}$/,
+        },
+        populators: {},
+      },
+    ],
+  },
+  {
+    head: "CS_COMMON_ADDRESS_DETAIL",
+    body: [
+      {
+        type: "component",
+        component: "SelectComponents",
+        key: "addressDetails",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            {
+              label: "PINCODE",
+              type: "text",
+              name: "pincode",
+              validation: {
+                minlength: 6,
+                maxlength: 7,
+                patternType: "Pincode",
+                pattern: "[0-9]+",
+                max: "9999999",
+                errMsg: "ADDRESS_PINCODE_INVALID",
+                isRequired: true,
+                title: "",
+              },
+              isMandatory: true,
+            },
+            {
+              label: "STATE",
+              type: "text",
+              name: "state",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "DISTRICT",
+              type: "text",
+              name: "district",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "CITY/TOWN",
+              type: "text",
+              name: "city",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "LOCALITY",
+              type: "text",
+              name: "locality",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "DOOR_NUMBER",
+              type: "text",
+              name: "doorNo",
+              validation: {
+                errMsg: "ADDRESS_DOOR_NO_INVALID",
+                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
+                isRequired: true,
+                minlength: 2,
+                title: "",
+              },
+              isMandatory: true,
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
+];

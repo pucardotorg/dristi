@@ -9,7 +9,7 @@ const getRandomId = () => {
 const ButtonBody = ({ t }) => {
   return (
     <div>
-      <h1 style={{ color: "#F47738", fontSize: "16px", fontWeight: "600" }}>{t("CS_COMMON_CHOOSE_FILE")}</h1>
+      <h1 style={{ color: "#007E7E", fontSize: "16px", fontWeight: "600" }}>{t("CS_COMMON_CHOOSE_FILE")}</h1>
     </div>
   );
 };
@@ -232,7 +232,7 @@ const UploadFile = (props) => {
         </div>
         <div
           className="upload-file-upload-button-div"
-          style={{ maxWidth: "25%", height: "40px", border: "solid 1px #f47738", display: "flex", alignItems: "center" }}
+          style={{ maxWidth: "25%", height: "40px", border: "solid 1px #007E7E", display: "flex", alignItems: "center" }}
         >
           <input
             type="file"
@@ -249,7 +249,7 @@ const UploadFile = (props) => {
             style={{ opacity: 0, maxWidth: "100%", minHeight: "40px" }}
           />
           <span style={{ minWidth: "100%", textAlign: "center", cursor: "pointer" }} onClick={handleReupload}>
-            <span style={{ color: "#f47738" }} className="upload-button-custimised">
+            <span style={{ color: "#007E7E" }} className="upload-button-custimised">
               {t("CS_COMMON_CHOOSE_FILE")}
             </span>
           </span>

@@ -4,18 +4,45 @@
   form {
     .card {
       max-width: 960px;
-      h2 {
-        @extend .light-text-color-primary;
+      h2.secondary-label-selector {
         text-align: left;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
+      }
+      h2.tertiary-label-selector {
+        text-align: left;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
       }
       .field-container {
         max-width: 540px;
       }
-      button {
-        max-width: 244px;
-        .secondary-button-selector {
-          background-color: transparent !important;
-        }
+      button.secondary-button-selector {
+        width: 200px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        border: 1px solid #007e7e;
+        background-color: transparent !important;
+        box-shadow: none;
+      }
+      button.tertiary-button-selector {
+        width: 200px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        background-color: transparent !important;
+        color: #007e7e;
+        border: none;
+        box-shadow: none;
       }
       .card-text-button {
         @extend .light-primary-button;
@@ -24,10 +51,18 @@
     }
   }
 }
-.field {
-  .secondary-button-selector {
-    border: 1px solid #007e7e;
-  }
+
+.break-line {
+  margin: 0 !important;
+}
+.label-field-pair {
+}
+.button-field {
+  display: flex;
+}
+
+.info-banner-wrap {
+  margin: 0 !important;
 }
 
 .tertiary-button-selector {

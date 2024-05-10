@@ -112,6 +112,8 @@
 @import "./components/inboxv2/index.scss";
 @import "./components//sidebar.scss";
 @import "./components/loaderWithGap.scss";
+
+/* @import "./dristi"; */
 @import "./dristi/components/customDragDrop.scss";
 @import "./dristi/components/delayApplication.scss";
 @import "./dristi/components/customTextArea.scss";
@@ -119,6 +121,7 @@
 @import "./dristi/components/customUploadButton.scss";
 @import "./dristi/components/customRadioSelector.scss";
 @import "./dristi/components/customErrorTooltip.scss";
+@import "./dristi/eFiling.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -137,7 +140,7 @@
     h4 {
       margin: 0px !important;
     }
-    color: #f47738;
+    color: #007e7e;
     display: flex !important;
     align-items: center;
     svg {
