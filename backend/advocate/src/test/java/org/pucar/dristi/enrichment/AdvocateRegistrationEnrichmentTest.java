@@ -57,7 +57,7 @@ class AdvocateRegistrationEnrichmentTest {
         advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest);
 
         // Verify IdgenUtil was called correctly
-        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvocateIdgenIdName(),
+        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvApplicationNumberConfig(),
                 null, 1);
 
         // Assert that each advocate has been enriched as expected

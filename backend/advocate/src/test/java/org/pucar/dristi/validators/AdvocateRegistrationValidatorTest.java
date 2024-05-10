@@ -1,5 +1,6 @@
 package org.pucar.dristi.validators;
 
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ public class AdvocateRegistrationValidatorTest {
     void setUp() {
         advocateRequest = new AdvocateRequest();
         requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(new User());
         advocateRequest.setRequestInfo(requestInfo);
     }
 

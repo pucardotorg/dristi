@@ -56,7 +56,7 @@ class AdvocateClerkRegistrationEnrichmentTest {
         advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest);
 
         // Verify IdgenUtil was called correctly
-        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvocateClerkIdgenIdName(),
+        verify(idgenUtil, times(1)).getIdList(requestInfo, "tenantId",   configuration.getAdvClerkApplicationNumberConfig(),
                 null, 1);
 
         // Assert that each clerk has been enriched as expected
