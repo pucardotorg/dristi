@@ -3,7 +3,7 @@ import React from "react";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { FileUploader } from "react-drag-drop-files";
 import { ReactComponent as UploadFileIcon } from "../images/upload.svg";
-function RenderFileCard({ handleChange, handleDeleteFile, uploadErrorInfo, fileData, t, input }) {
+function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, index, uploadErrorInfo }) {
   return (
     <div className={`uploaded-file-div-main upload-${!!uploadErrorInfo ? "error" : "successful"}`}>
       <div className="uploaded-file-div-sub">
@@ -15,22 +15,22 @@ function RenderFileCard({ handleChange, handleDeleteFile, uploadErrorInfo, fileD
           <div>
             <FileUploader
               handleChange={(data) => {
-                handleChange(data, input);
+                handleChange(data, input, index);
               }}
               name="file"
               types={input?.fileTypes}
-              children={<Button label={t("CS_COMMON_REUPLOAD_FILE")} icon={<UploadFileIcon></UploadFileIcon>} />}
-              key={input?.name}
+              children={<Button label={t("CS_REUPLOAD")} icon={<UploadFileIcon></UploadFileIcon>} />}
+              key={`file ${index}`}
             />
           </div>
           <div
             className="icon delete-uploaded-file"
             onClick={() => {
-              handleDeleteFile(input);
+              handleDeleteFile(input, index);
             }}
           >
             <DeleteFileIcon />
-            <h3> Delete </h3>
+            <h3> {t("Delete")} </h3>
           </div>
         </div>
       </div>
@@ -39,7 +39,7 @@ function RenderFileCard({ handleChange, handleDeleteFile, uploadErrorInfo, fileD
           <div className="upload-error-div-sub">
             <div className="upload-error-icon-container">
               <ErrorIcon />
-              <h2> Uploaded Failed!</h2>
+              <h2> {t("CS_UPLOAD_FAILED")}</h2>
             </div>
             <div className="upload-error-info-div">
               <h1>{uploadErrorInfo}</h1>
