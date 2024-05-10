@@ -34,7 +34,8 @@ public class AdvocateRegistrationValidator {
      */
     public void validateAdvocateRegistration(AdvocateRequest advocateRequest) throws CustomException{
         RequestInfo requestInfo = advocateRequest.getRequestInfo();
-
+         if(requestInfo.getUserInfo() == null)
+            throw new CustomException(VALIDATION_EXCEPTION,"User info not found!!!");
         advocateRequest.getAdvocates().forEach(advocate -> {
             if(ObjectUtils.isEmpty(advocate.getTenantId()) || ObjectUtils.isEmpty(advocate.getIndividualId())){
                 throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and individualId are mandatory for creating advocate");

@@ -25,49 +25,54 @@ public class AdvocateClerkRegistrationEnrichment {
     @Autowired
     private Configuration configuration;
 
+    /**
+     * Enrich the advocate clerk application by setting values in different field
+     *
+     * @param advocateClerkRequest the advocate clerk registration request body
+     */
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
-            if(advocateClerkRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> advocateClerkRegistrationIdList = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvocateClerkIdgenIdName(), null, advocateClerkRequest.getClerks().size());
-                int index = 0;
-                for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
-                    AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-                    advocateClerk.setAuditDetails(auditDetails);
+            List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvApplicationNumberConfig(), null, advocateClerkRequest.getClerks().size());
+            int index = 0;
+            for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
+                AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+                advocateClerk.setAuditDetails(auditDetails);
 
-                    advocateClerk.setId(UUID.randomUUID());
-                    advocateClerk.setIsActive(false);
-                    if(advocateClerk.getDocuments()!=null)
-                        advocateClerk.getDocuments().forEach(document -> {
+                advocateClerk.setId(UUID.randomUUID());
+                //setting false unless the application is approved
+                advocateClerk.setIsActive(false);
+                if (advocateClerk.getDocuments() != null)
+                    advocateClerk.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));
-                        document.setDocumentUid(document.getId());
                     });
 
-                    advocateClerk.setApplicationNumber(advocateClerkRegistrationIdList.get(index++));
-                }
+                //setting generated application number
+                advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(index++));
             }
-            else{
-                throw new CustomException(ENRICHMENT_EXCEPTION,"User info not found!!!");
-            }
-        } catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Custom Exception occurred while Enriching advocate clerk");
             throw e;
         } catch (Exception e) {
             log.error("Error enriching advocate clerk application: {}", e.getMessage());
-            // Handle the exception or throw a custom exception
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service: "+ e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service: " + e.getMessage());
         }
     }
+
+    /**
+     * Enrich the advocate clerk application on update
+     *
+     * @param advocateClerkRequest the advocate registration request body
+     */
     public void enrichAdvocateClerkApplicationUponUpdate(AdvocateClerkRequest advocateClerkRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
-            for(AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()){
+            for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
                 advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
             }
         } catch (Exception e) {
             log.error("Error enriching advocate clerk  application upon update: {}", e.getMessage());
-            // Handle the exception or throw a custom exception
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service during update: "+ e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service during update: " + e.getMessage());
         }
     }
 }

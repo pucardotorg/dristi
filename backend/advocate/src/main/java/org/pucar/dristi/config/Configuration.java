@@ -125,11 +125,11 @@ public class Configuration {
 	@Value("${egov.workflow.advocate-clerk.business.service.name}")
 	private String advocateClerkBusinessServiceName;
 
-	// Advocate Idgen Id name
-	@Value("${egov.idgen.advocate.id.name}")
-	private String advocateIdgenIdName;
+	// Advocate application number Id name
+	@Value("${egov.idgen.advocate.application.number.id.name}")
+	private String advApplicationNumberConfig;
 
-	// Advocate-clerk Idgen Id name
-	@Value("${egov.idgen.advocate-clerk.id.name}")
-	private String advocateClerkIdgenIdName;
+	// Advocate clerk application number Id name
+	@Value("${egov.idgen.advocate.clerk.application.number.id.name}")
+	private String advClerkApplicationNumberConfig;
 }
