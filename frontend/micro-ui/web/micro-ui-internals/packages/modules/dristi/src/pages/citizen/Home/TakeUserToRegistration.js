@@ -29,6 +29,8 @@ function TakeUserToRegistration({ message }) {
       <div>
         <Button
           onButtonClick={() => {
+            sessionStorage.removeItem("Digit.UploadedDocument");
+            sessionStorage.removeItem("Digit.aadharNumber");
             history.push(`/digit-ui/citizen/dristi/home/login/id-verification`);
           }}
           label={t("Register")}

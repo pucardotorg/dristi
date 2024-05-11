@@ -15,7 +15,7 @@ const Registration = () => {
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const { data, isLoading } = Digit.Hooks.dristi.useGetIndividualUser(
+  const { data, isLoading, refetch, isFetching } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         userUuid: [userInfo?.uuid],
@@ -28,7 +28,7 @@ const Registration = () => {
   );
   const individualId = data?.Individual?.[0]?.individualId;
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <Loader />;
   }
 
@@ -47,10 +47,10 @@ const Registration = () => {
             <AdvocateClerkAdditionalDetail setParams={setParams} params={params} path={path} />
           </Route>
           <Route exact path={`${path}/terms-conditions`}>
-            <TermsConditions setParams={setParams} params={params} />
+            <TermsConditions setParams={setParams} params={params} path={path} refetchIndividual={refetch} individualId={individualId} />
           </Route>
           <Route exact path={`${path}/additional-details/terms-conditions`}>
-            <TermsConditions setParams={setParams} params={params} />
+            <TermsConditions setParams={setParams} params={params} path={path} refetchIndividual={refetch} individualId={individualId} />
           </Route>
         </AppContainer>
       </Switch>

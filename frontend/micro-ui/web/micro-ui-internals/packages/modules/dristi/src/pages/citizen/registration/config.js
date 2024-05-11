@@ -499,6 +499,7 @@ export const advocateClerkConfig = [
                 isRequired: true,
               },
               isMandatory: true,
+              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
               isDependentOn: "selectUserType",
               dependentKey: { selectUserType: ["showBarDetails"] },
             },

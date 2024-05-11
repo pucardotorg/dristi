@@ -3,7 +3,7 @@ import { LabelFieldPair, CardLabel, TextInput, CardLabelError, CustomDropdown } 
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import CitizenInfoLabel from "./CitizenInfoLabel";
 
-const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control }) => {
+const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   const [removeFile, setRemoveFile] = useState();
   const inputs = useMemo(
     () =>
@@ -27,8 +27,19 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
           }
         });
       }
+      if (input?.type && input.type === "documentUpload" && value?.length === 0) {
+        return;
+      }
       onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
     } else onSelect(config.key, { ...formData[config.key], [name]: value });
+
+    // if (
+    //   value &&
+    //   typeof value === "string" &&
+    //   !value?.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern)
+    // ) {
+    //   setError(config.key, { ...formData[config.key], [name]: value });
+    // }
   }
   function getFileStoreData(filesData, input) {
     const numberOfFiles = filesData.length;
