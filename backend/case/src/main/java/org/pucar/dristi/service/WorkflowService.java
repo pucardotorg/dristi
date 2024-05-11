@@ -68,7 +68,7 @@ public class WorkflowService {
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName("pucar"); // FIXME
             processInstance.setTenantId(courtCase.getTenantId());
-            processInstance.setBusinessService("advocate"); // FIXME
+            processInstance.setBusinessService("case"); // FIXME
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
