@@ -19,7 +19,7 @@ function FileCase({ t }) {
             <RespondentDetails />
           </Route>
           <Route path={`${path}/delay-application`} exact>
-            <DelayApplication t={t} />
+            <DelayApplication />
           </Route>
         </AppContainer>
       </Switch>
