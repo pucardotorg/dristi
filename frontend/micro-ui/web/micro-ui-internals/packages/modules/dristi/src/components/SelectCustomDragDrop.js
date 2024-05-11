@@ -41,7 +41,8 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
     // if (fileType && !input.fileTypes.includes(fileType)) {
     //   return { [input?.name]: "Invalid File Type", ...uploadErrorInfo };
     // }
-    return file.size > input?.maxFileSize ? t(input?.maxFileErrorMessage) : null;
+    const maxFileSize = input?.maxFileSize * 1024 * 1024;
+    return file.size > maxFileSize ? t(input?.maxFileErrorMessage) : null;
   };
 
   const handleChange = (file, input, index = Infinity) => {
