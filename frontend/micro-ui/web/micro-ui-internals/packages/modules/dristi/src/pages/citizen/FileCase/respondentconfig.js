@@ -1,6 +1,48 @@
 export const respondentconfig = [
   {
+    body: [
+      {
+        type: "radio",
+        key: "respondentType",
+        label: "CS_RESPONDENT_TYPE",
+        isMandatory: true,
+        populators: {
+          label: "SELECT_RESPONDENT_TYPE",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          options: [
+            {
+              code: "INDIVIDUAL",
+              name: "Individual",
+              showCompanyDetails: false,
+              isEnabled: true,
+            },
+            {
+              code: "REPRESENTATIVE",
+              name: "Representative of an Entity",
+              showCompanyDetails: true,
+              isVerified: true,
+              hasBarRegistrationNo: true,
+              isEnabled: true,
+              apiDetails: {
+                serviceName: "/advocate/advocate/v1/_create",
+                requestKey: "advocates",
+                AdditionalFields: ["barRegistrationNumber"],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
     head: "CS_RESPONDENT_NAME",
+    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
     body: [
       {
         type: "component",
@@ -53,6 +95,7 @@ export const respondentconfig = [
     ],
   },
   {
+    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
     body: [
       {
         type: "component",
@@ -72,6 +115,7 @@ export const respondentconfig = [
     ],
   },
   {
+    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
     head: "CS_RESPONDENT_PHONE",
     body: [
       {
@@ -100,6 +144,7 @@ export const respondentconfig = [
     ],
   },
   {
+    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
     head: "CS_RESPONDENT_EMAIL",
     body: [
       {
@@ -125,6 +170,44 @@ export const respondentconfig = [
     ],
   },
   {
+    head: "CS_RESPONDENT_COMPANY_DETAIL",
+    displayOn: ["REPRESENTATIVE"],
+    dependentKey: { respondentType: ["showCompanyDetails"] },
+    body: [
+      {
+        type: "text",
+        key: "company_Name",
+        label: "company_Name",
+        populators: {
+          title: "FIRST_TERMS_AND_CONDITIONS",
+          name: "Terms_Conditions",
+          styles: { minWidth: "100%" },
+          labelStyles: { padding: "8px" },
+          customStyle: { minWidth: "100%" },
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "companyDetailsUpload",
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    displayOn: ["INDIVIDUAL"],
     head: "CS_RESPONDENT_ADDRESS_DETAIL",
     body: [
       {
@@ -188,6 +271,7 @@ export const respondentconfig = [
     ],
   },
   {
+    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
     body: [
       {
         type: "component",
@@ -207,6 +291,7 @@ export const respondentconfig = [
     ],
   },
   {
+    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
     body: [
       {
         type: "component",
@@ -221,86 +306,12 @@ export const respondentconfig = [
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "Upload .png",
-              maxFileSize: 1024 * 1024 * 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PNG", "PDF"],
               isMultipleUpload: false,
             },
           ],
-        },
-      },
-    ],
-  },
-  // {
-  //   body: [
-  //     {
-  //       type: "component",
-  //       component: "SelectUserTypeComponent",
-  //       key: "clientDetails",
-  //       withoutLabel: true,
-  //       populators: {
-  //         inputs: [
-  //           {
-  //             label: "SELECT_USER_TYPE",
-  //             type: "radioButton",
-  //             name: "selectUserType",
-  //             optionsKey: "name",
-  //             error: "sample required message",
-  //             required: false,
-  //             isMandatory: true,
-  //             clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-  //             options: [
-  //               {
-  //                 code: "LITIGANT",
-  //                 name: "LITIGANT",
-  //                 showBarDetails: false,
-  //                 isVerified: false,
-  //               },
-  //               {
-  //                 code: "ADVOCATE",
-  //                 name: "ADVOCATE",
-  //                 showBarDetails: true,
-  //                 isVerified: true,
-  //                 hasBarRegistrationNo: true,
-  //                 apiDetails: {
-  //                   serviceName: "/advocate/advocate/v1/_create",
-  //                   requestKey: "advocates",
-  //                   AdditionalFields: ["barRegistrationNumber"],
-  //                 },
-  //               },
-  //               {
-  //                 code: "ADVOCATE_CLERK",
-  //                 name: "ADVOCATE CLERK",
-  //                 showBarDetails: true,
-  //                 hasStateRegistrationNo: true,
-  //                 isVerified: true,
-  //                 apiDetails: {
-  //                   serviceName: "/advocate/clerk/v1/_create",
-  //                   requestKey: "clerks",
-  //                   AdditionalFields: ["stateRegnNumber"],
-  //                 },
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //     },
-  //   ],
-  // },
-];
-
-export const termsAndConditionConfig = [
-  {
-    body: [
-      {
-        type: "checkbox",
-        key: "Terms_Conditions",
-        populators: {
-          title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
-          styles: { minWidth: "100%" },
-          labelStyles: { padding: "8px" },
-          customStyle: { minWidth: "100%" },
         },
       },
     ],

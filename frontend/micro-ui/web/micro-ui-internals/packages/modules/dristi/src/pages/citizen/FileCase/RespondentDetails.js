@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -6,13 +6,13 @@ import { respondentconfig } from "./respondentconfig";
 
 function RespondentDetails({ path }) {
   const [params, setParmas] = useState({});
-  const [canAdd, setCanAdd] = useState(false);
 
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [formDataVar, setFormData] = useState({});
 
   const validateFormData = (data) => {
     let isValid = true;
@@ -54,6 +54,46 @@ function RespondentDetails({ path }) {
     return isValid;
   };
 
+  const isDependentEnabled = useMemo(() => {
+    let result = false;
+    respondentconfig.forEach((config) => {
+      if (config?.body && Array.isArray(config?.body)) {
+        config?.body?.forEach((bodyItem) => {
+          if (bodyItem?.populators?.isDependent) {
+            result = true;
+          }
+        });
+      }
+    });
+    return result;
+  }, []);
+
+  const modifiedConfig = useMemo(() => {
+    if (!isDependentEnabled) {
+      return respondentconfig;
+    }
+    return respondentconfig.filter((config) => {
+      const dependentKeys = config?.dependentKey;
+      if (!dependentKeys) {
+        return config;
+      }
+      let show = true;
+      for (const key in dependentKeys) {
+        const nameArray = dependentKeys[key];
+        for (const name of nameArray) {
+          console.debug(formDataVar);
+          console.debug(key);
+          console.debug(name);
+          console.debug(formDataVar?.[key]?.[name]);
+          show = show && Boolean(formDataVar?.[key]?.[name]);
+        }
+      }
+      return show && config;
+    });
+  }, [formDataVar, isDependentEnabled]);
+  console.debug(formDataVar);
+  console.debug(modifiedConfig);
+
   const onSubmit = (data) => {
     if (!validateFormData(data)) {
       setShowErrorToast(!validateFormData(data));
@@ -67,79 +107,10 @@ function RespondentDetails({ path }) {
     setShowErrorToast(false);
   };
 
-  const onFormValueChange = (setValue, formData, formState) => {
-    let isDisabled = false;
-    respondentconfig.forEach((curr) => {
-      if (isDisabled) return;
-      if (!(curr.body[0].key in formData) || !formData[curr.body[0].key]) {
-        return;
-      }
-      curr.body[0].populators.inputs.forEach((input) => {
-        if (isDisabled) return;
-        if (Array.isArray(input.name)) return;
-        if (
-          formData[curr.body[0].key][input.name] &&
-          formData[curr.body[0].key][input.name].length > 0 &&
-          !["documentUpload", "radioButton"].includes(input.type) &&
-          input.validation &&
-          !formData[curr.body[0].key][input.name].match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern)
-        ) {
-          isDisabled = true;
-        }
-        if (Array.isArray(formData[curr.body[0].key][input.name]) && formData[curr.body[0].key][input.name].length === 0) {
-          isDisabled = true;
-        }
-      });
-    });
-    if (isDisabled) {
-      setIsDisabled(isDisabled);
-    } else {
-      setIsDisabled(false);
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (JSON.stringify(formData) !== JSON.stringify(formDataVar)) {
+      setFormData(formData);
     }
-  };
-
-  const handleMobileChange = (event) => {
-    const { value } = event.target;
-    setParmas({ ...params, mobileNumber: value });
-    const temp = params?.mobileNumbers || [];
-    if (value.length !== 10 && canAdd) {
-      setCanAdd(false);
-    }
-    if (value.length === 10 && !temp.includes(value)) {
-      setCanAdd(true);
-    }
-  };
-
-  const handleAddMobileNumber = (mobileNumber) => {
-    const temp = params?.mobileNumbers || [];
-    setParmas({ ...params, mobileNumbers: [...temp, mobileNumber], mobileNumber: "" });
-  };
-
-  const handleDeleteMobileNumber = (mobileNumber) => {
-    setParmas({ ...params, mobileNumbers: params?.mobileNumbers.filter((mobile) => mobile !== mobileNumber) });
-  };
-
-  const config = {
-    texts: {
-      header: "CS_LOGIN_PROVIDE_MOBILE_NUMBER",
-      cardText: "CS_LOGIN_TEXT",
-      nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "CS_COMMONS_NEXT",
-    },
-    inputs: [
-      {
-        label: "CORE_COMMON_PHONE_NUMBER",
-        type: "text",
-        name: "mobileNumber",
-        error: "ERR_HRMS_INVALID_MOB_NO",
-        validation: {
-          required: true,
-          minLength: 10,
-          maxLength: 10,
-          pattern: /^[6-9]\d{9}$/,
-        },
-      },
-    ],
   };
 
   return (
@@ -149,7 +120,7 @@ function RespondentDetails({ path }) {
       </div>
       <FormComposerV2
         label={t("CS_COMMONS_NEXT")}
-        config={respondentconfig.map((config) => {
+        config={modifiedConfig.map((config) => {
           return {
             ...config,
             body: config.body.filter((a) => !a.hideInEmployee),
