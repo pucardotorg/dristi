@@ -1,6 +1,6 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -43,12 +43,21 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
     setShowErrorToast(false);
   };
 
+  const onFormValueChange = (setValue, formData, formState, reset, setError) => {};
+
+  if (sessionStorage.getItem("Digit.UploadedDocument") || sessionStorage.getItem("Digit.aadharNumber")) {
+    sessionStorage.removeItem("Digit.UploadedDocument");
+    sessionStorage.removeItem("Digit.aadharNumber");
+    history.push(`/${window.contextPath}/citizen/dristi/home`);
+  }
+
   return (
     <React.Fragment>
       <FormComposerV2
         config={config}
         t={t}
         onSubmit={(data) => {
+          console.log(data);
           if (!validateFormData(data)) {
             setShowErrorToast(!validateFormData(data));
           } else if (data?.SelectUserTypeComponent?.aadharNumber) {
@@ -65,6 +74,7 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
         noBoxShadow
         inline
         label={"Next"}
+        // onFormValueChange={onFormValueChange}
         onSecondayActionClick={() => {}}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}

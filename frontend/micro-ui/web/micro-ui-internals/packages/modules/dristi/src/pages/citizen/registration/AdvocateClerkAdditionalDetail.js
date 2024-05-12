@@ -103,6 +103,10 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
     history.push(`${path}/additional-details/terms-conditions`);
   };
 
+  if (!params?.registrationData || !params?.registrationData?.clientDetails) {
+    history.push(`${path}`);
+  }
+
   return (
     <div className="employee-card-wrapper">
       <div className="header-content">

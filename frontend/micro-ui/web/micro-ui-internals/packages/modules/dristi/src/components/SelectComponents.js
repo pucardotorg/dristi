@@ -32,7 +32,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
   };
 
   function setValue(value, input) {
-    if (input === "pincode") {
+    if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
           if (
@@ -88,6 +88,18 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
             }, {}),
           });
         });
+      return;
+    } else if (input === "pincode") {
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
+          res[curr] = "";
+          if (curr === "pincode") {
+            res[curr] = value;
+          }
+          return res;
+        }, {}),
+      });
       return;
     }
     if (Array.isArray(input)) {

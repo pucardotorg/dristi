@@ -1,18 +1,24 @@
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { termsAndConditionConfig } from "./config";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
-function TermsConditions({ params = {}, setParams = () => {} }) {
+function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndividual }) {
   const { t } = useTranslation();
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [{ setFormError, resetFormState, termsAndConditionFormData }, setState] = useState({
+    setFormError: null,
+    resetFormState: null,
+    termsAndConditionFormData: {},
+  });
 
   const closeToast = () => {
+    resetFormState();
     setShowErrorToast(false);
   };
 
@@ -21,16 +27,26 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
 
-  const onFormValueChange = (setValue, formData, formState) => {
-    if (formState?.submitCount) {
+  const onFormValueChange = (setValue, formData, formState, reset, setError) => {
+    if (formState?.submitCount && !showErrorToast) {
       setIsDisabled(true);
     }
+    if (!setFormError && !resetFormState) {
+      setState((prev) => ({
+        ...prev,
+        setFormError: setError,
+        resetFormState: reset,
+      }));
+    }
   };
-
   const onSubmit = (termsAndConditionData) => {
     if (!termsAndConditionData?.Terms_Conditions) {
       setShowErrorToast(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
-      setTimeout(() => setShowErrorToast(null), 1500);
+      setTimeout(() => {
+        resetFormState();
+        setShowErrorToast(null);
+        // setIsDisabled(false);
+      }, 1500);
       return;
     }
     const data = params?.registrationData;
@@ -252,6 +268,11 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
       });
   };
 
+  if (!params?.registrationData || !params?.registrationData?.clientDetails) {
+    refetchIndividual();
+    history.push(`${path}`);
+  }
+
   return (
     <div className="employee-card-wrapper">
       <div className="header-content">
@@ -264,7 +285,7 @@ function TermsConditions({ params = {}, setParams = () => {} }) {
           onSubmit(props);
         }}
         isDisabled={isDisabled}
-        defaultValues={params?.Terms_Conditions || {}}
+        defaultValues={params?.Terms_Conditions || { Terms_Conditions: null }}
         label={"CS_COMMON_SUBMIT"}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%" }}
