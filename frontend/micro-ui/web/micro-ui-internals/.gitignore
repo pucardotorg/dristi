@@ -9,7 +9,7 @@ build/
 packages/**/dist/
 
 # yarn #
-.yarn
+.yarn 
 .yarnrc.yml
 
 ### Node ###

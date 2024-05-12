@@ -7,7 +7,7 @@ const CustomTextArea = (props) => {
     props.onTextChange(newText);
   };
   return (
-    <div className="custom-text-area-main-div" style={props.style}>
+    <div style={props.style}>
       <div>
         <h2>{props.info}</h2>
       </div>
@@ -27,6 +27,7 @@ const CustomTextArea = (props) => {
           rows={props.rows}
           cols={props.cols}
           disabled={props.disabled}
+          onResize={"none"}
           pattern={props?.validation && props.ValidationRequired ? props?.validation?.pattern : props.pattern}
         ></textarea>
         {<p className="cell-text">{props.hintText}</p>}
