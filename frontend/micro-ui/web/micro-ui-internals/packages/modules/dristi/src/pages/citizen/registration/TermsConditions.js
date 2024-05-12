@@ -12,7 +12,7 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [{ setFormError, resetFormState, termsAndConditionFormData }, setState] = useState({
-    callError: null,
+    setFormError: null,
     resetFormState: null,
     termsAndConditionFormData: {},
   });
