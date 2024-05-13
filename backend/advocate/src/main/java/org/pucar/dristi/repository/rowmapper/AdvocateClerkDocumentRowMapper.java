@@ -41,6 +41,7 @@ public class AdvocateClerkDocumentRowMapper implements ResultSetExtractor<Map<UU
                 if(pgObject!=null)
                     document.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
+                log.info("Document Map Data :: {}",documentMap);
                 if (documentMap.containsKey(uuid) ) {
                     documentMap.get(uuid).add(document);
                 }

@@ -63,21 +63,21 @@ public class AdvocateService {
             producer.push(config.getAdvocateCreateTopic(), body);
 
             return body.getAdvocates();
-        } catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Custom Exception occurred while creating advocate");
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while creating advocate");
-            throw new CustomException(ADVOCATE_CREATE_EXCEPTION,e.getMessage());
+            throw new CustomException(ADVOCATE_CREATE_EXCEPTION, e.getMessage());
         }
     }
 
-public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
+    public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, List<String> statusList, String applicationNumber, Integer limit, Integer offset) {
         AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Map<String, String> individualUserUUID = new HashMap<>();
 
         try {
-            if (!EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria!=null) {
+            if (!EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria != null) {
                 Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
 
                         // Filter out objects with non-null individualId
@@ -85,6 +85,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                         .findFirst();
 
                 firstNonNull.ifPresent(value -> {
+                    log.info("Search Criteria :: {}", value);
                     if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
                         if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
                             isIndividualLoggedInUser.set(true);
@@ -93,36 +94,34 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                 });
                 limit = null;
                 offset = null;
-            }
-            else if (EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType())){
-                if(limit == null)
+            } else if (EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
+                if (limit == null)
                     limit = 10;
-                if(offset == null)
+                if (offset == null)
                     offset = 0;
             }
 
-        // Fetch applications from database according to the given search criteria
-        List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+            // Fetch applications from database according to the given search criteria
+            List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+            log.info("Application size :: {}", applications.size());
 
-        // If no applications are found matching the given criteria, return an empty list
-        if(CollectionUtils.isEmpty(applications))
-            return new ArrayList<>();
-        if(isIndividualLoggedInUser.get()) {
-            if (applications.size() > 1)
-                applications.subList(1, applications.size()).clear();
+            // If no applications are found matching the given criteria, return an empty list
+            if (CollectionUtils.isEmpty(applications))
+                return new ArrayList<>();
+            if (isIndividualLoggedInUser.get()) {
+                if (applications.size() > 1)
+                    applications.subList(1, applications.size()).clear();
+            }
+            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
+            return applications;
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while searching");
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while fetching to search results");
+            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION, e.getMessage());
         }
-        applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
-        return applications;
     }
-    catch (CustomException e){
-        log.error("Custom Exception occurred while searching");
-        throw e;
-    }
-    catch (Exception e){
-        log.error("Error while fetching to search results");
-        throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,e.getMessage());
-    }
-}
 
     public List<Advocate> updateAdvocate(AdvocateRequest advocateRequest) {
 
@@ -136,7 +135,7 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
                     existingApplication = validator.validateApplicationExistence(advocate);
                 } catch (Exception e) {
                     log.error("Error validating existing application");
-                    throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
+                    throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
                 }
                 existingApplication.setWorkflow(advocate.getWorkflow());
                 advocatesList.add(existingApplication);
@@ -157,12 +156,12 @@ public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearc
 
             return advocateRequest.getAdvocates();
 
-        } catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Custom Exception occurred while updating advocate");
             throw e;
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while updating advocate");
-            throw new CustomException(ADVOCATE_UPDATE_EXCEPTION,"Error occurred while updating advocate: " + e.getMessage());
+            throw new CustomException(ADVOCATE_UPDATE_EXCEPTION, "Error occurred while updating advocate: " + e.getMessage());
         }
 
     }

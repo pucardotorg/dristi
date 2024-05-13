@@ -1,5 +1,6 @@
 package org.pucar.dristi.validators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.AdvocateRepository;
@@ -20,6 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
+@Slf4j
 public class AdvocateRegistrationValidator {
     @Autowired
     private IndividualService individualService;
@@ -53,6 +55,7 @@ public class AdvocateRegistrationValidator {
     public Advocate validateApplicationExistence(Advocate advocate) {
         //checking if application exist or not
         List<Advocate> existingApplications = repository.getApplications(Collections.singletonList(AdvocateSearchCriteria.builder().applicationNumber(advocate.getApplicationNumber()).build()), new ArrayList<>(), new String(), new AtomicReference<>(false),1,0);
+        log.info("Existing Applications :: {}", existingApplications);
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate Application does not exist");
         return existingApplications.get(0);
     }

@@ -74,6 +74,7 @@ public class AdvocateClerkService {
                         .findFirst();
 
                 firstNonNull.ifPresent(value -> {
+                    log.info("Search Criteria :: {}", value);
                     if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
                         if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
                             isIndividualLoggedInUser.set(true);
@@ -94,6 +95,8 @@ public class AdvocateClerkService {
             // Fetch applications from database according to the given search criteria
             List<AdvocateClerk> applications;
             applications = advocateClerkRepository.getApplications(advocateClerkSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+
+            log.info("Application size :: {}", applications.size());
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();

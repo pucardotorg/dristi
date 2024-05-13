@@ -33,6 +33,7 @@ public class AdvocateRegistrationEnrichment {
     public void enrichAdvocateRegistration(AdvocateRequest advocateRequest) {
         try {
             List<String> advocateApplicationNumbers = idgenUtil.getIdList(advocateRequest.getRequestInfo(), advocateRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvApplicationNumberConfig(), null, advocateRequest.getAdvocates().size());
+            log.info("Advocate Application Number :: {}",advocateApplicationNumbers);
             int index = 0;
             for (Advocate advocate : advocateRequest.getAdvocates()) {
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();

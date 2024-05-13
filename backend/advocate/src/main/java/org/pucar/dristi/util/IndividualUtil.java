@@ -42,6 +42,7 @@ public class IndividualUtil {
             if(responseMap!=null){
                 Gson gson= new Gson();
                 String jsonString=gson.toJson(responseMap);
+                log.info("Response :: {}", jsonString);
                 JsonObject response = JsonParser.parseString(jsonString).getAsJsonObject();
                 JsonArray individualObject=response.getAsJsonArray("Individual");
                 String userUUID = individualObject.get(0).getAsJsonObject().get("userUuid").getAsString();

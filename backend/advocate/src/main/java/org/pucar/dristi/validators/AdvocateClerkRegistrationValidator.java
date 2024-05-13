@@ -1,5 +1,6 @@
 package org.pucar.dristi.validators;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.AdvocateClerkRepository;
@@ -21,6 +22,7 @@ import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
 import static org.pucar.dristi.config.ServiceConstants.VALIDATION_EXCEPTION;
 
 @Component
+@Slf4j
 public class AdvocateClerkRegistrationValidator {
     @Autowired
     private IndividualService individualService;
@@ -53,6 +55,7 @@ public class AdvocateClerkRegistrationValidator {
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
         //checking if application exist or not
         List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String(), new AtomicReference<>(false), 1,0);
+        log.info("Existing Applications :: {}", existingApplications);
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);
     }
