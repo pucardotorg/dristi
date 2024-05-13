@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+
 @Component
 @Slf4j
 public class CaseRegistrationEnrichment {
@@ -97,14 +99,12 @@ public class CaseRegistrationEnrichment {
             }
         }
         catch (CustomException e){
-            e.printStackTrace();
-        log.error("Custom Exception occurred while Enriching advocate clerk");
+        log.error("Exception occurred while Enriching case");
         throw e;
         }
         catch (Exception e) {
-            e.printStackTrace();
             log.error("Error enriching case application: {}", e.getMessage());
-            throw e;
+            throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
         }
     }
 
@@ -131,9 +131,9 @@ public class CaseRegistrationEnrichment {
                 courtCase.getAuditdetails().setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
             }
         } catch (Exception e) {
-            log.error("Error enriching advocate application upon update: {}", e.getMessage());
+            log.error("Error enriching case application upon update: {}", e.getMessage());
             // Handle the exception or throw a custom exception
-            throw new CustomException("ENRICHMENT_EXCEPTION","Error in advocate enrichment service during advocate update process: "+ e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION,"Error in case enrichment service during case update process: "+ e.getMessage());
         }
     }
 }

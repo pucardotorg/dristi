@@ -15,6 +15,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 
 @Service
 @Slf4j
@@ -46,7 +48,7 @@ public class CaseService {
             return body.getCases();
         } catch (Exception e){
             log.error("Error occurred while creating case");
-            throw new CustomException("CASE_CREATE_EXCEPTION",e.getMessage());
+            throw new CustomException(CREATE_CASE_ERR,e.getMessage());
         }
 
 
@@ -66,20 +68,17 @@ public class CaseService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("CASE_SEARCH_EXCEPTION",e.getMessage());
+            throw new CustomException(SEARCH_CASE_ERR,e.getMessage());
         }
     }
 
     public List<CourtCase> updateCase(CaseRequest caseRequest) {
 
         try {
-
             // Validate whether the application that is being requested for update indeed exists
             caseRequest.getCases().forEach(courtCase -> {
                 if(!validator.validateApplicationExistence(courtCase, caseRequest.getRequestInfo()))
-
-                    throw new CustomException("CASE_CREATE_EXCEPTION","Error validating existing application: ");
-
+                    throw new CustomException(VALIDATION_ERR,"Error validating existing application: ");
             });
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
@@ -90,12 +89,9 @@ public class CaseService {
 
             return caseRequest.getCases();
 
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while updating case");
-            throw e;
-        } catch (Exception e){
+        }catch (Exception e){
             log.error("Error occurred while updating case");
-            throw new CustomException("CASE_UPDATE_EXCEPTION","Error occurred while updating case: " + e.getMessage());
+            throw new CustomException(UPDATE_CASE_ERR,"Error occurred while updating case: " + e.getMessage());
         }
 
     }
@@ -126,7 +122,7 @@ public class CaseService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("CASE_EXIST_EXCEPTION",e.getMessage());
+            throw new CustomException(CASE_EXIST_ERR,e.getMessage());
         }
     }
 }
