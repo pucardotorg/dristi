@@ -78,13 +78,15 @@ public class CaseRegistrationValidatorTest {
         masterList.add("PaymentMode");
         masterList.add("ResolutionMechanism");
 
-        when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
+        // Setting necessary stubbings to lenient
+        lenient().when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
+        lenient().when(individualService.searchIndividual(new RequestInfo(), "123")).thenReturn(true);
+        lenient().when(fileStoreUtil.fileStore("pg","123")).thenReturn(true);
+        lenient().when(advocateUtil.fetchAdvocateDetails(new RequestInfo(), "123")).thenReturn(true);
 
-        when(individualService.searchIndividual(new RequestInfo(), "123")).thenReturn(true);
-        when(fileStoreUtil.fileStore("pg","123")).thenReturn(true);
-        when(advocateUtil.fetchAdvocateDetails(new RequestInfo(), "123")).thenReturn(true);
         assertDoesNotThrow(() -> validator.validateCaseRegistration(request));
     }
+
 
     @Test
     void testValidateCaseRegistration_WithMissingTenantId() {

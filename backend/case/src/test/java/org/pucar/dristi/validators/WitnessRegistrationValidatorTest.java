@@ -1,6 +1,7 @@
 package org.pucar.dristi.validators;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,17 +63,25 @@ public class WitnessRegistrationValidatorTest {
 
 
     @Test
-    public void testValidateApplicationExistence() {
+    public void testValidateApplicationExistence_NonExistingWitness() {
+        // Mock data
+        RequestInfo requestInfo = new RequestInfo();
+
         Witness witness = new Witness();
-        witness.setCaseId("existingCaseId");
+        witness.setCaseId("nonExistingCaseId");
+        witness.setIndividualId("nonExistingIndividualId");
 
-        when(witnessRepository.getApplications(any())).thenReturn(List.of(witness));
+        // Mock repository behavior
+        when(witnessRepository.getApplications(any())).thenReturn(Collections.emptyList());
 
-        Witness result = validator.validateApplicationExistence(witness);
+        // Call the method under test and expect CustomException
+        assertThrows(CustomException.class, () -> {
+            validator.validateApplicationExistence(requestInfo, witness);
+        });
 
-        assert result == witness : "Returned witness should be the same as input";
-
+        // Verify repository method is called
         verify(witnessRepository, times(1)).getApplications(any());
+        verify(individualService, never()).searchIndividual(any(), any()); // Ensure individual service is not called
     }
 }
 

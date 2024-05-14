@@ -1,4 +1,5 @@
 package org.pucar.dristi.service;
+import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -79,14 +80,14 @@ public class WitnessServiceTest {
         List<Witness> witnesses = new ArrayList<>();
         request.setWitnesses(witnesses);
 
-        doReturn(null).when(validator).validateApplicationExistence(any(Witness.class));
+        doReturn(null).when(validator).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
         doNothing().when(enrichmentUtil).enrichWitnessApplicationUponUpdate(request);
         doNothing().when(producer).push(any(String.class), any(WitnessRequest.class));
 
         List<Witness> result = witnessService.updateWitness(request);
 
         Assert.isTrue(result.isEmpty(), "Returned witnesses should be empty");
-        verify(validator, times(witnesses.size())).validateApplicationExistence(any(Witness.class));
+        verify(validator, times(witnesses.size())).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
         verify(enrichmentUtil, times(1)).enrichWitnessApplicationUponUpdate(request);
     }
 

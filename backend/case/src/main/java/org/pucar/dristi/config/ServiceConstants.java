@@ -51,5 +51,7 @@ public class ServiceConstants {
 	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
 	public static final String INVALID_ADVOCATE_ID = "INVALID_ADVOCATE_ID";
 	public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
-	public static final String REGISTERED_STATUS ="REGISTERED";
+	public static final String INWORKFLOW_STATUS ="INWORKFLOW";
+	public static final String INVALID_LINKEDCASE_ID = "INVALID_LINKEDCASE_ID";
+
 }
