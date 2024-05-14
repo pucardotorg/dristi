@@ -117,7 +117,7 @@ export const loginSteps = [
             },
             {
               type: "infoBox",
-              name: "aadharNumber",
+              name: "infoBox",
               bannerLabel: "INFO_BANNER_LABEL",
             },
           ],

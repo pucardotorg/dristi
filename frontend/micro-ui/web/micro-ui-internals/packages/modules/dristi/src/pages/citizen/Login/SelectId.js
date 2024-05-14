@@ -20,19 +20,26 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
             if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
               isValid = false;
             }
+            if ((input?.isMandatory && !(input.name in data[curr.body[0].key])) || !data[curr.body[0].key][input.name]) {
+              isValid = false;
+            }
             return;
           } else {
-            if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
+            if (
+              (input?.isMandatory && !(input.name in data[curr.body[0].key])) ||
+              (!data[curr.body[0].key][input.name] && !input.disableMandatoryFieldFor.some((field) => data[curr.body[0].key][field]))
+            ) {
               isValid = false;
             }
           }
           return;
-        }
-        if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
-          isValid = false;
-        }
-        if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
-          isValid = false;
+        } else {
+          if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
+            isValid = false;
+          }
+          if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
+            isValid = false;
+          }
         }
       });
     });
