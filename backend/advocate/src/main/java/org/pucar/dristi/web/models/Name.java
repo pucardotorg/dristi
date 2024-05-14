@@ -60,7 +60,7 @@ public class Name {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        } else if (!(o instanceof org.egov.common.models.individual.Name)) {
+        } else if (!(o instanceof Name)) {
             return false;
         } else {
             Name other = (Name)o;

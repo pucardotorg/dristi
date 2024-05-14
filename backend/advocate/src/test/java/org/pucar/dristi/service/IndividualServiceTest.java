@@ -2,7 +2,6 @@ package org.pucar.dristi.service;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.models.individual.IndividualResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,7 +46,6 @@ public class IndividualServiceTest {
         Map<String, String> individualUserUUID = new HashMap<>();
 
         // Mock the behavior of dependent components
-        IndividualResponse individualResponse = new IndividualResponse(); // Mock or provide necessary data
         when(configuration.getIndividualHost()).thenReturn("http://example.com");
         when(configuration.getIndividualSearchEndpoint()).thenReturn("/search");
         when(individualUtil.individualCall(any(), any(), any())).thenReturn(true);
