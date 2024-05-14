@@ -13,6 +13,9 @@ import org.springframework.util.ObjectUtils;
 import java.util.Collections;
 import java.util.List;
 
+import static org.pucar.dristi.config.ServiceConstants.INVALID_CASE_ID;
+import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+
 @Component
 public class WitnessRegistrationValidator {
     @Autowired
@@ -26,14 +29,14 @@ public class WitnessRegistrationValidator {
 
         witnessRequest.getWitnesses().forEach(witness -> {
             if(ObjectUtils.isEmpty(witness.getCaseId()))
-                throw new CustomException("EG_BT_APP_ERR", "caseId is mandatory for creating witness");
+                throw new CustomException(INVALID_CASE_ID, "caseId is mandatory for creating witness");
 //            if (!individualService.searchIndividual(requestInfo,courtCase.getLitigants().get(0).getIndividualId()))
 //                throw new CustomException("INDIVIDUAL_NOT_FOUND","Requested Individual not found or does not exist");
         });
     }
     public Witness validateApplicationExistence(Witness witness) {
         List<Witness> existingApplications = witnessRepository.getApplications(Collections.singletonList(WitnessSearchCriteria.builder().caseId(witness.getCaseId()).build()));
-        if(existingApplications.isEmpty()) throw new CustomException("VALIDATION EXCEPTION","Witness Application does not exist");
+        if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_ERR,"Witness Application does not exist");
         return existingApplications.get(0);
     }
 }
