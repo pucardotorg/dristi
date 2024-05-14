@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
+
 @Component
 @Slf4j
 public class WitnessQueryBuilder {
@@ -77,9 +80,9 @@ public class WitnessQueryBuilder {
 
             return query.toString();
         }
-         catch (Exception e) {
-            log.error("Error while building advocate search query");
-            throw new CustomException("ADVOCATE_SEARCH_QUERY_EXCEPTION","Error occurred while building the advocate search query: "+ e.getMessage());
+        catch (Exception e) {
+            log.error("Error while building witness search query");
+            throw new CustomException(WITNESS_SEARCH_QUERY_EXCEPTION,"Error occurred while building the witness search query: "+ e.getMessage());
         }
     }
 

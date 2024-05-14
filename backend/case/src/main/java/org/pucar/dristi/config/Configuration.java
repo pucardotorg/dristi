@@ -124,6 +124,9 @@ public class Configuration {
 	@Value("${case.kafka.create.topic}")
 	private String caseCreateTopic;
 
+	@Value("${witness.kafka.create.topic}")
+	private String witnessCreateTopic;
+
 	@Value("${witness.kafka.update.topic}")
 	private String witnessUpdateTopic;
 
