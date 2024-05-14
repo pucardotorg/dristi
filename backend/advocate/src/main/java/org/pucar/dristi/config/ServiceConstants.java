@@ -35,7 +35,6 @@ public class ServiceConstants {
 	public static final String CITIZEN_UPPER = "CITIZEN";
 	public static final String EMPLOYEE = "EMPLOYEE";
 	public static final String CITIZEN_LOWER = "Citizen";
-	public static final String EMPLOYEE_UPPER = "EMPLOYEE";
 	public static final String USER = "user";
 
 	public static final String PARSING_ERROR = "PARSING ERROR";
