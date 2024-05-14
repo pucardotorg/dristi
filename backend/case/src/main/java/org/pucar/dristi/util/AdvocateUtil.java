@@ -46,6 +46,7 @@ public class AdvocateUtil {
 		try {
 			response = restTemplate.postForObject(uri.toString(), advocateSearchRequest, Map.class);
 			advocateResponse = mapper.convertValue(response, AdvocateResponse.class);
+			log.info("Advocate response :: {}", advocateResponse);
 		} catch (Exception e) {
 			log.error(ERROR_WHILE_FETCHING_FROM_ADVOCATE, e);
 		}

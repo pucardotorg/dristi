@@ -25,6 +25,7 @@ public class IndividualService {
             IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
             individualSearchRequest.setRequestInfo(requestInfo);
             IndividualSearch individualSearch = new IndividualSearch();
+            log.info("Individual Id :: {}", individualId);
             individualSearch.setIndividualId(individualId);
             individualSearchRequest.setIndividual(individualSearch);
 

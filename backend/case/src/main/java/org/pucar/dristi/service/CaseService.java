@@ -20,7 +20,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Service
 @Slf4j
-public class CaseService {
+public class    CaseService {
 
     @Autowired
     private CaseRegistrationValidator validator;
@@ -59,7 +59,7 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
-
+            log.info("Court Case Applications Size :: {}", courtCases.size());
             // If no applications are found matching the given criteria, return an empty list
             if(CollectionUtils.isEmpty(courtCases))
                 return new ArrayList<>();
@@ -100,6 +100,7 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
+            log.info("Court Case Applications Size :: {}", courtCases.size());
 
             List<CaseExists> caseExistsList = new ArrayList<>();
 

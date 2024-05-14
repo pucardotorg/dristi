@@ -42,7 +42,9 @@ public class WorkflowService {
             try {
                 ProcessInstance processInstance = getProcessInstance(courtCase, caseRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
+                log.info("ProcessInstance Request :: {}", workflowRequest);
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+                log.info("Application Status :: {}", applicationStatus);
                 courtCase.setStatus(applicationStatus);
             } catch (CustomException e){
                 throw e;
@@ -56,6 +58,7 @@ public class WorkflowService {
         try {
             StringBuilder url = new StringBuilder(config.getWfHost().concat(config.getWfTransitionPath()));
             Object optional = repository.fetchResult(url, workflowReq);
+            log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
         } catch (CustomException e){

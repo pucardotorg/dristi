@@ -35,6 +35,7 @@ public class CaseRegistrationEnrichment {
         try {
             if(caseRequest.getRequestInfo().getUserInfo() != null) {
                 List<String> courtCaseRegistrationIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().get(0).getTenantId(), config.getCaseFilingNumber(), null, caseRequest.getCases().size());
+                log.info("Court Case Registration Id List :: {}",courtCaseRegistrationIdList);
                 Integer index = 0;
                 for (CourtCase courtCase : caseRequest.getCases()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();

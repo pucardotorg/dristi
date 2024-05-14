@@ -19,13 +19,13 @@ import java.util.*;
 @Slf4j
 public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
     public List<CourtCase> extractData(ResultSet rs) {
-        Map<String, CourtCase> advocateMap = new LinkedHashMap<>();
+        Map<String, CourtCase> caseMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String uuid = rs.getString("casenumber");
-                CourtCase courtCase = advocateMap.get(uuid);
+                CourtCase courtCase = caseMap.get(uuid);
 
                 if (courtCase == null) {
                     Long lastModifiedTime = rs.getLong("lastmodifiedtime");
@@ -65,14 +65,14 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                 if(pgObject!=null)
                     courtCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                advocateMap.put(uuid, courtCase);
+                caseMap.put(uuid, courtCase);
             }
         }
         catch (Exception e){
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
             throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
         }
-        return new ArrayList<>(advocateMap.values());
+        return new ArrayList<>(caseMap.values());
     }
     private UUID toUUID(String toUuid) {
         if(toUuid == null) {
