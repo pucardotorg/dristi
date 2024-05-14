@@ -117,7 +117,29 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                           ),
                           DigitTextFormField(
                             label: 'Mobile No',
-                            prefixText: "+91  ",
+                            prefixIcon: Container(
+                              margin: const EdgeInsets.only(left: 1),
+                              padding: EdgeInsets.zero,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xFFFAFAFA),
+                                  border: Border(right: BorderSide(width: 1), )
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 11,
+                                    left: 10,
+                                    bottom: 11,
+                                    right: 0),
+                                child: Text(
+                                  "+91  ",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: DigitTheme.instance.colorScheme.onBackground,
+                                  ),
+                                ),
+                              ),
+                            ),
                             formControlName: mobileNumberKey,
                             isRequired: true,
                             maxLength: 10,

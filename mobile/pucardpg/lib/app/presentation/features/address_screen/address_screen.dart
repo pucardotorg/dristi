@@ -346,7 +346,7 @@ class AddressScreenState extends State<AddressScreen> {
                                       const SizedBox(width: 4,),
                                       Text(
                                         'Move the pin to the desired location',
-                                        style: widget.theme.text12W400()?.apply(color: const Color(0xFF505A5F)),
+                                        style: widget.theme.text12W400()?.apply(color: widget.theme.lightGrey),
                                       )
                                     ],
                                   ),

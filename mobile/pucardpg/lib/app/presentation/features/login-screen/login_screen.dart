@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:digit_components/digit_components.dart';
+import 'package:digit_components/theme/digit_theme.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -158,7 +160,29 @@ class LoginScreenState extends State<LoginScreen> {
                                 children: <Widget>[
                                   DigitTextFormField(
                                     label: 'Phone No',
-                                    prefixText: "+91  ",
+                                    prefixIcon: Container(
+                                      margin: const EdgeInsets.only(left: 1),
+                                      padding: EdgeInsets.zero,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFFAFAFA),
+                                        border: Border(right: BorderSide(width: 1), )
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 11,
+                                            left: 10,
+                                            bottom: 11,
+                                            right: 0),
+                                        child: Text(
+                                          "+91  ",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400,
+                                            color: DigitTheme.instance.colorScheme.onBackground,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                     formControlName: mobileNumberKey,
                                     isRequired: true,
                                     maxLength: 10,

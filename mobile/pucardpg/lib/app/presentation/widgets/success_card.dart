@@ -43,7 +43,7 @@ class SuccessCard extends StatelessWidget with AppMixin {
                 subHeading,
                 style: theme
                     .text16W400Rob()
-                    ?.apply(color: const Color(0xFF505A5F)),
+                    ?.apply(color: theme.lightGrey),
               ))
         ],
       ),
