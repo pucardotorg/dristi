@@ -162,7 +162,7 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const usertype = row.ProcessInstance.businessService === "advocateclerk" ? "clerk" : "advocate";
       const individualId = row.businessObject.individual.individualId;
-      const applicationNumber = row.businessObject.advocateDetails.applicationNumber;
+      const applicationNumber = row.businessObject?.advocateDetails?.applicationNumber || row.businessObject?.clerkDetails?.applicationNumber;
       switch (key) {
         case "Application No":
           return (
