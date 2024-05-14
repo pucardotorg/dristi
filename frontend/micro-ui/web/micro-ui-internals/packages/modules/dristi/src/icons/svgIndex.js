@@ -163,6 +163,20 @@ const JoinCaseIcon = () => (
   </svg>
 );
 
+const CustomDeleteIcon = () => (
+  <svg width="16" height="19" viewBox="0 0 16 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M3 18.5C2.45 18.5 1.97917 18.3042 1.5875 17.9125C1.19583 17.5208 1 17.05 1 16.5V3.5H0V1.5H5V0.5H11V1.5H16V3.5H15V16.5C15 17.05 14.8042 17.5208 14.4125 17.9125C14.0208 18.3042 13.55 18.5 13 18.5H3ZM13 3.5H3V16.5H13V3.5ZM5 14.5H7V5.5H5V14.5ZM9 14.5H11V5.5H9V14.5Z"
+      fill="#C62326"
+    />
+  </svg>
+);
+const CustomAddIcon = () => (
+  <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.33203 6.16732H0.332031V4.83398H4.33203V0.833984H5.66536V4.83398H9.66536V6.16732H5.66536V10.1673H4.33203V6.16732Z" fill="#007E7E" />
+  </svg>
+);
+
 export {
   RegisterIcon,
   LoginIcon,
@@ -174,4 +188,6 @@ export {
   JoinCaseIcon,
   ClosedCasesIcon,
   PendingActionsIcon,
+  CustomDeleteIcon,
+  CustomAddIcon,
 };

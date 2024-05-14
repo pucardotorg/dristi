@@ -20,12 +20,14 @@ export const respondentconfig = [
               code: "INDIVIDUAL",
               name: "Individual",
               showCompanyDetails: false,
+              commonFields: true,
               isEnabled: true,
             },
             {
               code: "REPRESENTATIVE",
               name: "Representative of an Entity",
               showCompanyDetails: true,
+              commonFields: true,
               isVerified: true,
               hasBarRegistrationNo: true,
               isEnabled: true,
@@ -42,7 +44,7 @@ export const respondentconfig = [
   },
   {
     head: "CS_RESPONDENT_NAME",
-    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
+    dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -95,7 +97,7 @@ export const respondentconfig = [
     ],
   },
   {
-    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
+    dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -115,7 +117,7 @@ export const respondentconfig = [
     ],
   },
   {
-    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
+    dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_PHONE",
     body: [
       {
@@ -144,7 +146,7 @@ export const respondentconfig = [
     ],
   },
   {
-    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
+    dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_EMAIL",
     body: [
       {
@@ -171,7 +173,6 @@ export const respondentconfig = [
   },
   {
     head: "CS_RESPONDENT_COMPANY_DETAIL",
-    displayOn: ["REPRESENTATIVE"],
     dependentKey: { respondentType: ["showCompanyDetails"] },
     body: [
       {
@@ -207,7 +208,7 @@ export const respondentconfig = [
     ],
   },
   {
-    displayOn: ["INDIVIDUAL"],
+    dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_ADDRESS_DETAIL",
     body: [
       {
@@ -271,7 +272,7 @@ export const respondentconfig = [
     ],
   },
   {
-    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
+    dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -291,7 +292,7 @@ export const respondentconfig = [
     ],
   },
   {
-    displayOn: ["INDIVIDUAL", "REPRESENTATIVE"],
+    dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
         type: "component",

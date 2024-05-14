@@ -1,18 +1,18 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { respondentconfig } from "./respondentconfig";
-
+import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 function RespondentDetails({ path }) {
   const [params, setParmas] = useState({});
-
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [formDataVar, setFormData] = useState({});
+  const [formdata, setformdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
+  const isOptional = false;
 
   const validateFormData = (data) => {
     let isValid = true;
@@ -70,29 +70,38 @@ function RespondentDetails({ path }) {
 
   const modifiedConfig = useMemo(() => {
     if (!isDependentEnabled) {
-      return respondentconfig;
+      return formdata.map(() => respondentconfig);
     }
-    return respondentconfig.filter((config) => {
-      const dependentKeys = config?.dependentKey;
-      if (!dependentKeys) {
-        return config;
-      }
-      let show = true;
-      for (const key in dependentKeys) {
-        const nameArray = dependentKeys[key];
-        for (const name of nameArray) {
-          console.debug(formDataVar);
-          console.debug(key);
-          console.debug(name);
-          console.debug(formDataVar?.[key]?.[name]);
-          show = show && Boolean(formDataVar?.[key]?.[name]);
+    return formdata.map(({ data }) => {
+      return respondentconfig.filter((config) => {
+        const dependentKeys = config?.dependentKey;
+        if (!dependentKeys) {
+          return config;
         }
-      }
-      return show && config;
+        let show = true;
+        for (const key in dependentKeys) {
+          const nameArray = dependentKeys[key];
+          for (const name of nameArray) {
+            show = show && Boolean(data?.[key]?.[name]);
+          }
+        }
+        return show && config;
+      });
     });
-  }, [formDataVar, isDependentEnabled]);
-  console.debug(formDataVar);
-  console.debug(modifiedConfig);
+  }, [isDependentEnabled, formdata]);
+
+  const activeForms = useMemo(() => {
+    return formdata.filter((item) => item.isenabled === true).length;
+  }, [formdata]);
+
+  const handleAddForm = () => {
+    setformdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
+  };
+
+  const handleDeleteForm = (index) => {
+    const newArray = formdata.map((item, i) => ({ ...item, isenabled: index === i ? false : item.isenabled, displayindex: i < index ? i : i - 1 }));
+    setformdata(newArray);
+  };
 
   const onSubmit = (data) => {
     if (!validateFormData(data)) {
@@ -107,9 +116,13 @@ function RespondentDetails({ path }) {
     setShowErrorToast(false);
   };
 
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-    if (JSON.stringify(formData) !== JSON.stringify(formDataVar)) {
-      setFormData(formData);
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+    if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+      setformdata(
+        formdata.map((item, i) => {
+          return i === index ? { ...item, data: formData } : item;
+        })
+      );
     }
   };
 
@@ -118,23 +131,54 @@ function RespondentDetails({ path }) {
       <div className="header-content">
         <Header>{t("CS_COMMON_RESPONDENT_DETAIL")}</Header>
       </div>
-      <FormComposerV2
-        label={t("CS_COMMONS_NEXT")}
-        config={modifiedConfig.map((config) => {
-          return {
-            ...config,
-            body: config.body.filter((a) => !a.hideInEmployee),
-          };
-        })}
-        onSubmit={(props) => {
-          // onSubmit(props);
-          console.debug("Vaibhav");
+      {modifiedConfig.map((formConfig, index) => {
+        return formdata[index].isenabled ? (
+          <div>
+            <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
+              <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
+              {(activeForms > 1 || isOptional) && (
+                <span
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    handleDeleteForm(index);
+                  }}
+                >
+                  <CustomDeleteIcon />
+                </span>
+              )}
+            </Card>
+            <FormComposerV2
+              label={t("CS_COMMONS_NEXT")}
+              config={formConfig}
+              onSubmit={(props) => {
+                // onSubmit(props);
+                console.debug("Vaibhav");
+              }}
+              defaultValues={{}}
+              onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+                onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
+              }}
+              cardStyle={{ minWidth: "100%" }}
+              isDisabled={isDisabled}
+            />
+          </div>
+        ) : null;
+      })}
+      <div
+        onClick={handleAddForm}
+        style={{
+          display: "flex",
+          cursor: "pointer",
+          alignItems: "center",
+          justifyContent: "space-around",
+          width: "150px",
+          color: "#007E7E",
         }}
-        defaultValues={params.registrationData || {}}
-        onFormValueChange={onFormValueChange}
-        cardStyle={{ minWidth: "100%" }}
-        isDisabled={isDisabled}
-      />
+      >
+        <CustomAddIcon />
+        <span>Add Respondent</span>
+      </div>
+
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
