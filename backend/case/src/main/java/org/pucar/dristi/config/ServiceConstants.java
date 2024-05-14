@@ -52,4 +52,5 @@ public class ServiceConstants {
 	public static final String INVALID_ADVOCATE_ID = "INVALID_ADVOCATE_ID";
 	public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
 	public static final String REGISTERED_STATUS ="REGISTERED";
+	public static final String INWORKFLOW_STATUS ="INWORKFLOW";
 }
