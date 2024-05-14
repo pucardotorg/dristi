@@ -16,17 +16,19 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+
 @Component
 @Slf4j
 public class WitnessRowMapper implements ResultSetExtractor<List<Witness>> {
     public List<Witness> extractData(ResultSet rs) {
-        Map<String, Witness> advocateMap = new LinkedHashMap<>();
+        Map<String, Witness> witnessMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String uuid = rs.getString("id");
-                Witness witness = advocateMap.get(uuid);
+                Witness witness = witnessMap.get(uuid);
 
                 if (witness == null) {
                     Long lastModifiedTime = rs.getLong("lastmodifiedtime");
@@ -57,13 +59,13 @@ public class WitnessRowMapper implements ResultSetExtractor<List<Witness>> {
                 if(pgObject!=null)
                     witness.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                advocateMap.put(uuid, witness);
+                witnessMap.put(uuid, witness);
             }
         }
         catch (Exception e){
-            log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
+            log.error("Error occurred while processing witness ResultSet: {}", e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing witness ResultSet: "+ e.getMessage());
         }
-        return new ArrayList<>(advocateMap.values());
+        return new ArrayList<>(witnessMap.values());
     }
 }

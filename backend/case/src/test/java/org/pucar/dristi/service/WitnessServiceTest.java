@@ -49,15 +49,15 @@ public class WitnessServiceTest {
         request.setWitnesses(witnesses);
 
         doNothing().when(validator).validateCaseRegistration(request);
-        doNothing().when(enrichmentUtil).enrichCaseRegistration(request);
+        doNothing().when(enrichmentUtil).enrichWitnessRegistration(request);
         doNothing().when(producer).push(any(String.class), any(WitnessRequest.class));
 
         List<Witness> result = witnessService.registerWitnessRequest(request);
 
         Assert.isTrue(result == witnesses, "Returned witnesses should be same as input");
         verify(validator, times(1)).validateCaseRegistration(request);
-        verify(enrichmentUtil, times(1)).enrichCaseRegistration(request);
-        verify(producer, times(1)).push(any(String.class), any(WitnessRequest.class));
+        verify(enrichmentUtil, times(1)).enrichWitnessRegistration(request);
+        verify(producer, times(1)).push(any(), any(WitnessRequest.class));
     }
 
     @Test

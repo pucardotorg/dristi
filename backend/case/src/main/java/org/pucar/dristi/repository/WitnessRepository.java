@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_WITNESS_ERR;
+
 
 @Slf4j
 @Repository
@@ -49,9 +52,8 @@ public class WitnessRepository {
             throw e;
         }
         catch (Exception e){
-            e.printStackTrace();
-            log.error("Error while fetching advocate application list");
-            throw new CustomException("ADVOCATE_SEARCH_EXCEPTION","Error while fetching advocate application list: "+e.getMessage());
+            log.error("Error while fetching witness application list");
+            throw new CustomException(SEARCH_WITNESS_ERR,"Error while fetching witness application list: "+e.getMessage());
         }
     }
 

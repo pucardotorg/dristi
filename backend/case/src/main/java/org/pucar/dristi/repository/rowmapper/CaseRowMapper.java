@@ -15,6 +15,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+
 @Component
 @Slf4j
 public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
@@ -70,7 +72,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
         }
         catch (Exception e){
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing Case ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(caseMap.values());
     }

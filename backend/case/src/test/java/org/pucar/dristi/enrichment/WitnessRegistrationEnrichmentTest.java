@@ -18,7 +18,6 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class WitnessRegistrationEnrichmentTest {
 
@@ -55,7 +54,7 @@ public class WitnessRegistrationEnrichmentTest {
 
 
         // Act
-        witnessRegistrationEnrichment.enrichCaseRegistration(witnessRequest);
+        witnessRegistrationEnrichment.enrichWitnessRegistration(witnessRequest);
 
         // Assert
         for (Witness witness : witnessRequest.getWitnesses()) {
