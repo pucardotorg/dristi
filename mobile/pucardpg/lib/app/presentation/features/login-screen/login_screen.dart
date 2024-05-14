@@ -161,7 +161,7 @@ class LoginScreenState extends State<LoginScreen> {
                                   DigitTextFormField(
                                     label: 'Phone No',
                                     prefixIcon: Container(
-                                      margin: const EdgeInsets.only(left: 1),
+                                      margin: const EdgeInsets.only(left: 1, right: 8),
                                       padding: EdgeInsets.zero,
                                       decoration: const BoxDecoration(
                                         color: Color(0xFFFAFAFA),
