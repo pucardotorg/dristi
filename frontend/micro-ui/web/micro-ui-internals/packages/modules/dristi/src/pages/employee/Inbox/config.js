@@ -1,19 +1,28 @@
-export const configAdvocate = {
+export const newConfigAdvocate = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/advocate/advocate/v1/_search",
+    serviceName: "/inbox/v2/_search",
     requestParam: {},
     requestBody: {
-      applicationNumber: "",
-      tenantId: "pg",
-      status: ["INWORKFLOW"],
+      inbox: {
+        processSearchCriteria: {
+          tenantId: "pg",
+          businessService: ["advocate"],
+          moduleName: "Advocate services",
+        },
+        moduleSearchCriteria: {
+          tenantId: "pg",
+          isActive: false,
+        },
+        tenantId: "pg",
+      },
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody",
-    tableFormJsonPath: "requestParam",
+    searchFormJsonPath: "requestBody.inbox",
+    tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
     search: {
@@ -53,22 +62,21 @@ export const configAdvocate = {
         columns: [
           {
             label: "Application No",
-            jsonPath: "applicationNumber",
+            jsonPath: "businessObject.advocateDetails.applicationNumber",
             additionalCustomization: true,
           },
           {
             label: "User Name",
-            jsonPath: "additionalDetails",
-            additionalCustomization: true,
+            jsonPath: "businessObject.advocateDetails.additionalDetails.username",
           },
           {
             label: "User Type",
-            jsonPath: "usertype",
+            jsonPath: "ProcessInstance.businessService",
             additionalCustomization: true,
           },
           {
             label: "Date Created",
-            jsonPath: "auditDetails.createdTime",
+            jsonPath: "businessObject.auditDetails.createdTime",
             additionalCustomization: true,
           },
           {
@@ -76,11 +84,11 @@ export const configAdvocate = {
             jsonPath: "dueSince",
             additionalCustomization: true,
           },
-          { label: "Action", jsonPath: "individualId", additionalCustomization: true },
+          { label: "Action", jsonPath: "businessObject.individual.individualId", additionalCustomization: true },
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,
-        resultsJsonPath: "advocates",
+        resultsJsonPath: "items",
       },
       children: {},
       show: true,
@@ -89,21 +97,31 @@ export const configAdvocate = {
   additionalSections: {},
 };
 
-export const configClerk = {
+export const newConfigClerk = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
-    serviceName: "/advocate/clerk/v1/_search",
+    serviceName: "/inbox/v2/_search",
     requestParam: {},
     requestBody: {
-      applicationNumber: "",
-      tenantId: "pg",
-      status: ["INWORKFLOW"],
+      inbox: {
+        processSearchCriteria: {
+          tenantId: "pg",
+          businessService: ["advocateclerk"],
+          moduleName: "Advocate Clerk Service",
+        },
+        moduleSearchCriteria: {
+          tenantId: "pg",
+          isActive: false,
+        },
+        tenantId: "pg",
+      },
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody",
+    searchFormJsonPath: "requestBody.inbox",
+    tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
     search: {
@@ -143,22 +161,21 @@ export const configClerk = {
         columns: [
           {
             label: "Application No",
-            jsonPath: "applicationNumber",
+            jsonPath: "businessObject.clerkDetails.applicationNumber",
             additionalCustomization: true,
           },
           {
             label: "User Name",
-            jsonPath: "additionalDetails",
-            additionalCustomization: true,
+            jsonPath: "businessObject.clerkDetails.additionalDetails.username",
           },
           {
             label: "User Type",
-            jsonPath: "usertype",
+            jsonPath: "ProcessInstance.businessService",
             additionalCustomization: true,
           },
           {
             label: "Date Created",
-            jsonPath: "auditDetails.createdTime",
+            jsonPath: "businessObject.auditDetails.createdTime",
             additionalCustomization: true,
           },
           {
@@ -166,11 +183,11 @@ export const configClerk = {
             jsonPath: "dueSince",
             additionalCustomization: true,
           },
-          { label: "Action", jsonPath: "individualId", additionalCustomization: true },
+          { label: "Action", jsonPath: "businessObject.individual.individualId", additionalCustomization: true },
         ],
         enableGlobalSearch: false,
         enableColumnSort: true,
-        resultsJsonPath: "clerks",
+        resultsJsonPath: "items",
       },
       children: {},
       show: true,
@@ -178,6 +195,187 @@ export const configClerk = {
   },
   additionalSections: {},
 };
+
+// export const configAdvocate = {
+//   label: "ES_COMMON_INBOX",
+//   type: "inbox",
+//   apiDetails: {
+//     serviceName: "/advocate/advocate/v1/_search",
+//     requestParam: {},
+//     requestBody: {
+//       applicationNumber: "",
+//       tenantId: "pg",
+//       status: ["INWORKFLOW"],
+//     },
+//     minParametersForSearchForm: 1,
+//     masterName: "commonUiConfig",
+//     moduleName: "registrationRequestsConfig",
+//     searchFormJsonPath: "requestBody",
+//     tableFormJsonPath: "requestParam",
+//   },
+//   sections: {
+//     search: {
+//       uiConfig: {
+//         headerStyle: null,
+//         type: "registration-requests-table-search",
+//         primaryLabel: "ES_COMMON_SEARCH",
+//         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+//         minReqFields: 1,
+//         defaultValues: {
+//           applicationNumber: "",
+//         },
+//         fields: [
+//           {
+//             label: "Application No",
+//             type: "text",
+//             isMandatory: false,
+//             disable: false,
+//             populators: {
+//               name: "applicationNumber",
+//               error: "BR_PATTERN_ERR_MSG",
+//               validation: {
+//                 pattern: {},
+//                 minlength: 2,
+//               },
+//             },
+//           },
+//         ],
+//       },
+//       label: "",
+//       children: {},
+//       show: true,
+//     },
+//     searchResult: {
+//       label: "",
+//       uiConfig: {
+//         columns: [
+//           {
+//             label: "Application No",
+//             jsonPath: "applicationNumber",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "User Name",
+//             jsonPath: "additionalDetails",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "User Type",
+//             jsonPath: "usertype",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "Date Created",
+//             jsonPath: "auditDetails.createdTime",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "Due Since (no of days)",
+//             jsonPath: "dueSince",
+//             additionalCustomization: true,
+//           },
+//           { label: "Action", jsonPath: "individualId", additionalCustomization: true },
+//         ],
+//         enableGlobalSearch: false,
+//         enableColumnSort: true,
+//         resultsJsonPath: "advocates",
+//       },
+//       children: {},
+//       show: true,
+//     },
+//   },
+//   additionalSections: {},
+// };
+
+// export const configClerk = {
+//   label: "ES_COMMON_INBOX",
+//   type: "inbox",
+//   apiDetails: {
+//     serviceName: "/advocate/clerk/v1/_search",
+//     requestParam: {},
+//     requestBody: {
+//       applicationNumber: "",
+//       tenantId: "pg",
+//       status: ["INWORKFLOW"],
+//     },
+//     minParametersForSearchForm: 1,
+//     masterName: "commonUiConfig",
+//     moduleName: "registrationRequestsConfig",
+//     searchFormJsonPath: "requestBody",
+//   },
+//   sections: {
+//     search: {
+//       uiConfig: {
+//         headerStyle: null,
+//         type: "registration-requests-table-search",
+//         primaryLabel: "ES_COMMON_SEARCH",
+//         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+//         minReqFields: 1,
+//         defaultValues: {
+//           applicationNumber: "",
+//         },
+//         fields: [
+//           {
+//             label: "Application No",
+//             type: "text",
+//             isMandatory: false,
+//             disable: false,
+//             populators: {
+//               name: "applicationNumber",
+//               error: "BR_PATTERN_ERR_MSG",
+//               validation: {
+//                 pattern: {},
+//                 minlength: 2,
+//               },
+//             },
+//           },
+//         ],
+//       },
+//       label: "",
+//       children: {},
+//       show: true,
+//     },
+//     searchResult: {
+//       label: "",
+//       uiConfig: {
+//         columns: [
+//           {
+//             label: "Application No",
+//             jsonPath: "applicationNumber",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "User Name",
+//             jsonPath: "additionalDetails",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "User Type",
+//             jsonPath: "usertype",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "Date Created",
+//             jsonPath: "auditDetails.createdTime",
+//             additionalCustomization: true,
+//           },
+//           {
+//             label: "Due Since (no of days)",
+//             jsonPath: "dueSince",
+//             additionalCustomization: true,
+//           },
+//           { label: "Action", jsonPath: "individualId", additionalCustomization: true },
+//         ],
+//         enableGlobalSearch: false,
+//         enableColumnSort: true,
+//         resultsJsonPath: "clerks",
+//       },
+//       children: {},
+//       show: true,
+//     },
+//   },
+//   additionalSections: {},
+// };
 
 export const dropdownConfig = {
   label: "CS_ID_TYPE",
