@@ -108,7 +108,7 @@ const Home = ({
     window.open(obj);
   };
 
-  const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
+  const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e)) || true;
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (

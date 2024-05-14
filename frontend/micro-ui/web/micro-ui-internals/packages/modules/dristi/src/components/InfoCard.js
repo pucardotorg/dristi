@@ -36,10 +36,14 @@ const InfoCard = (props) => {
       {showInfo && (
         <div>
           <Icon fill={props?.fill} styles={props?.iconStyle} />
-          <h2 style={props?.textStyle}>{props?.info}</h2>
+          <h2 style={props?.textStyle} className={props?.headerClassName}>
+            {props?.info}
+          </h2>
         </div>
       )}
-      <p style={props?.textStyle}>{props?.text}</p>
+      <p style={props?.textStyle} className={props?.textClassName}>
+        {props?.text}
+      </p>
     </div>
   );
 };

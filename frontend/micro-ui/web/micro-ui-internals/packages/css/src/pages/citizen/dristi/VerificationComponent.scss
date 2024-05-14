@@ -1,4 +1,4 @@
-.app-container {
+.citizen-form-wrapper .app-container {
   @extend .light-background;
   width: 100%;
   form {
@@ -25,6 +25,9 @@
       .field-container {
         max-width: 540px;
       }
+      button {
+        background-color: #007e7e !important;
+      }
       button.secondary-button-selector {
         width: 200px;
         height: 40px;
@@ -41,6 +44,16 @@
         gap: 4px;
         background-color: transparent !important;
         color: #007e7e;
+        border: none;
+        box-shadow: none;
+      }
+      button.selector-button-primary {
+        width: 100px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        background-color: #007e7e !important;
+        color: #fff;
         border: none;
         box-shadow: none;
       }
@@ -69,5 +82,73 @@
   background-color: transparent !important;
 }
 
-@media screen and (max-width: 768px) {
+.popup-module {
+  width: 480px;
+  margin: 0 auto;
+  @apply bg-white;
+
+  .popup-module-main {
+    @apply px-lg pb-lg;
+  }
+
+  .popup-module-action-bar {
+    gap: 16px;
+    @apply flex flex-row justify-end;
+  }
+}
+
+.form-composer-id-proof-card {
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  margin-bottom: 16px;
+}
+
+.header-wrap {
+  border-bottom: 1px solid lightgrey;
+  margin-bottom: 0;
+}
+
+@screen dt {
+  .header-wrap {
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 0;
+  }
+  .popup-module {
+    width: 588px;
+    margin: auto;
+    @apply bg-white;
+
+    .popup-module-main {
+      @apply px-lg pb-lg;
+      padding: 0px 24px 16px 24px !important;
+    }
+    .popup-module-main {
+      @apply w-full p-sm h-full;
+    }
+
+    .popup-module-action-bar {
+      gap: 16px;
+      @apply flex flex-row justify-end;
+    }
+  }
+  .docviewer-wrapper {
+    margin-left: 0px !important;
+
+    .doc-viewer-card-style {
+      width: fit-content !important;
+    }
+
+    #pdf-controls {
+      display: none !important;
+    }
+  }
+}
+
+.docviewer-wrapper {
+  margin-left: 0px !important;
+
+  #pdf-controls {
+    display: none !important;
+  }
 }
