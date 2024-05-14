@@ -45,8 +45,10 @@ public class IndividualUtil {
                 log.info("Response :: {}", jsonString);
                 JsonObject response = JsonParser.parseString(jsonString).getAsJsonObject();
                 JsonArray individualObject=response.getAsJsonArray("Individual");
-                String userUUID = individualObject.get(0).getAsJsonObject().get("userUuid").getAsString();
-                individualUserUUID.put("userUuid", userUUID);
+                if(!individualObject.isEmpty()) {
+                    String userUUID = individualObject.get(0).getAsJsonObject().get("userUuid").getAsString();
+                    individualUserUUID.put("userUuid", userUUID);
+                }
                 return !individualObject.isEmpty() && individualObject.get(0).getAsJsonObject().get("individualId") != null;
             }
             return false;
