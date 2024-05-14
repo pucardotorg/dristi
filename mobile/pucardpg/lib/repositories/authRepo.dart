@@ -48,7 +48,7 @@ class AuthRepository {
     authClient.options.baseUrl = "https://dristi-qa.pucar.org";
 
     final headers = <String, String>{
-      "content-type": 'application/x-www-form-urlencoded',
+      "content-type": 'application/json',
       "Access-Control-Allow-Origin": "*",
       "authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo=",
     };
@@ -76,7 +76,7 @@ class AuthRepository {
     authClient.options.baseUrl = "https://dristi-qa.pucar.org";
 
     final headers = <String, String>{
-      "content-type": 'application/x-www-form-urlencoded',
+      "content-type": 'application/json',
       "Access-Control-Allow-Origin": "*",
       "authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo=",
     };
@@ -104,7 +104,7 @@ class AuthRepository {
     authClient.options.baseUrl = "https://dristi-qa.pucar.org";
 
     final headers = <String, String>{
-      "content-type": 'application/x-www-form-urlencoded',
+      "content-type": 'application/json',
       "Access-Control-Allow-Origin": "*",
       "authorization": "Basic ZWdvdi11c2VyLWNsaWVudDo=",
     };

@@ -5,6 +5,7 @@ import 'package:pucardpg/pages/authenticated.dart';
 import 'package:pucardpg/pages/home.dart';
 import 'package:pucardpg/pages/lang_selection.dart';
 import 'package:pucardpg/pages/login.dart';
+import 'package:pucardpg/pages/mobile_number_screen.dart';
 import 'package:pucardpg/pages/profile.dart';
 import 'package:pucardpg/pages/project_selection.dart';
 import 'package:pucardpg/pages/unauthenticated.dart';
@@ -20,6 +21,7 @@ class AppRouter extends _$AppRouter {
   List<AutoRoute> get routes => [
         AutoRoute(page: UnauthenticatedRouteWrapper.page, path: '/', children: [
           AutoRoute(page: LoginRoute.page, path: 'login'),
+          AutoRoute(page: MobileNumberRoute.page, path: 'mobile-number'),
           AutoRoute(
               page: SelectLanguageRoute.page, initial: true, path: 'langscreen')
         ]),

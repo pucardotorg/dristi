@@ -53,23 +53,24 @@ class AuthTokenInterceptor extends Interceptor {
       RequestOptions options,
       RequestInterceptorHandler handler,
       ) async {
-    options.data = {
-      ...options.data,
-      "RequestInfo": {
-        ...RequestInfoModel(
-          apiId: options.extra['apiId'] ?? 'Rainmaker',
-          ver: options.extra['ver'] ?? ".01",
-          ts: options.extra['ts'] ?? "",
-          action: options.extra['action'] ?? "_search",
-          did: options.extra['did'] ?? "1",
-          key: options.extra['key'] ?? "",
-          msgId: "",
-          authToken: options.extra['accessToken'],
+    final secureStore = SecureStore();
+    final authToken = await secureStore.getAccessToken();
+
+    if (options.data is Map) {
+      options.data = {
+        ...options.data,
+        "RequestInfo": RequestInfoModel(
+          apiId: RequestInfoData.apiId,
+          ver: RequestInfoData.ver,
+          ts: DateTime.now().millisecondsSinceEpoch,
+          action: options.path.split('/').last,
+          did: RequestInfoData.did,
+          key: RequestInfoData.key,
+          authToken: authToken,
         ).toJson(),
-        "userInfo": options.extra['userInfo']
-      },
-    };
-    super.onRequest(options, handler);
+      };
+    }
+    return super.onRequest(options, handler);
   }
 
   @override

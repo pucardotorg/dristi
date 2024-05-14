@@ -43,6 +43,14 @@ abstract class _$AppRouter extends RootStackRouter {
         ),
       );
     },
+    MobileNumberRoute.name: (routeData) {
+      final args = routeData.argsAs<MobileNumberRouteArgs>(
+          orElse: () => const MobileNumberRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: MobileNumberScreen(key: args.key),
+      );
+    },
     ProfileRoute.name: (routeData) {
       final args = routeData.argsAs<ProfileRouteArgs>(
           orElse: () => const ProfileRouteArgs());
@@ -165,6 +173,35 @@ class LoginRouteArgs {
   @override
   String toString() {
     return 'LoginRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+  }
+}
+
+/// generated route for
+/// [MobileNumberScreen]
+class MobileNumberRoute extends PageRouteInfo<MobileNumberRouteArgs> {
+  MobileNumberRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          MobileNumberRoute.name,
+          args: MobileNumberRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'MobileNumberRoute';
+
+  static const PageInfo<MobileNumberRouteArgs> page =
+      PageInfo<MobileNumberRouteArgs>(name);
+}
+
+class MobileNumberRouteArgs {
+  const MobileNumberRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'MobileNumberRouteArgs{key: $key}';
   }
 }
 

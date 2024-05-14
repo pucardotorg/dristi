@@ -27,6 +27,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_AuthLoginEvent>(_onLogin);
     on<_AuthLogoutEvent>(_onLogout);
     on<_AuthLoadEvent>(_onLoad);
+    on<_SubmitRegistrationOtpEvent>(_onRegistration);
+    on<_RequestOtpEvent>(_requestOtpEvent);
   }
 
   FutureOr<void> _onLogin(

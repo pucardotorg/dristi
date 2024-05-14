@@ -52,7 +52,7 @@ class SelectLanguageScreen extends StatelessWidget {
                     // Define callback function for language submission
                     onLanguageSubmit: () {
                       // Navigate to the LoginRoute upon language submission
-                      context.navigateTo(LoginRoute());
+                      context.navigateTo(MobileNumberRoute());
                     },
                     // Define label for language submission button
                     languageSubmitLabel: AppLocalizations.of(context)
