@@ -26,12 +26,11 @@ class AppRouter extends _$AppRouter {
               page: SelectLanguageRoute.page, initial: true, path: 'langscreen')
         ]),
         AutoRoute(page: AuthenticatedRouteWrapper.page, path: '/', children: [
-          AutoRoute(page: HomeRoute.page, path: 'home'),
+          AutoRoute(page: HomeRoute.page, path: 'home', initial: true),
           AutoRoute(page: ProfileRoute.page, path: 'profile'),
           AutoRoute(
               page: ProjectSelectionRoute.page,
-              path: 'projects',
-              initial: true),
+              path: 'projects',),
         ]),
       ];
 }

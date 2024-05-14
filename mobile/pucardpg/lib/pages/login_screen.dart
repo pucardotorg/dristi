@@ -120,10 +120,10 @@ class LoginScreenState extends State<LoginScreen> {
                         const SizedBox(
                           height: 90,
                         ),
-                        Image.asset(
-                          govtIndia,
-                          height: 100,
-                        ),
+                        // Image.asset(
+                        //   govtIndia,
+                        //   height: 100,
+                        // ),
                         const SizedBox(
                           height: 40,
                         ),
@@ -172,36 +172,58 @@ class LoginScreenState extends State<LoginScreen> {
                                           RegExp(r'[0-9]')),
                                     ],
                                   ),
-                                  BlocListener<RegistrationLoginBloc,
-                                      RegistrationLoginState>(
-                                    bloc: widget.registrationLoginBloc,
+                                  BlocListener<AuthBloc, AuthState>(
+                                    bloc: context.read<AuthBloc>(),
                                     listener: (context, state) {
-                                      switch (state.runtimeType) {
-                                        case RequestOtpFailedState:
+                                      state.maybeWhen(
+                                        orElse: (){},
+                                        requestOtpFailed: (error){
                                           if (isSubmitting) {
                                             isSubmitting = false;
                                             widget.theme.showDigitDialog(
                                                 true,
-                                                (state as RequestOtpFailedState)
-                                                    .errorMsg,
+                                                error,
                                                 context);
                                           }
-                                          break;
-                                        case OtpGenerationSuccessState:
-                                          if (isSubmitting) {
-                                            isSubmitting = false;
-                                            userModel.type =
-                                                (state as OtpGenerationSuccessState)
-                                                    .type;
-                                            if (userModel.type == login) {
-                                              _startTimer();
-                                              showOtpDialog();
-                                            }
+
+                                        },
+                                        otpGenerationSucceed: (type){
+                                          isSubmitting = false;
+                                          userModel.type = type;
+                                          if (userModel.type == "login") {
+                                            _startTimer();
+                                            showOtpDialog();
                                           }
-                                          break;
-                                        default:
-                                          break;
-                                      }
+                                        },
+
+                                      );
+                                      // switch (state.runtimeType) {
+                                      //
+                                      //   case RequestOtpFailedState:
+                                      //     if (isSubmitting) {
+                                      //       isSubmitting = false;
+                                      //       widget.theme.showDigitDialog(
+                                      //           true,
+                                      //           (state as RequestOtpFailedState)
+                                      //               .errorMsg,
+                                      //           context);
+                                      //     }
+                                      //     break;
+                                      //   case OtpGenerationSuccessState:
+                                      //     if (isSubmitting) {
+                                      //       isSubmitting = false;
+                                      //       userModel.type =
+                                      //           (state as OtpGenerationSuccessState)
+                                      //               .type;
+                                      //       if (userModel.type == login) {
+                                      //         _startTimer();
+                                      //         showOtpDialog();
+                                      //       }
+                                      //     }
+                                      //     break;
+                                      //   default:
+                                      //     break;
+                                      // }
                                     },
                                     child: DigitElevatedButton(
                                         onPressed: isSubmitting
@@ -223,10 +245,13 @@ class LoginScreenState extends State<LoginScreen> {
                                             return;
                                           }
                                           isSubmitting = true;
-                                          widget.registrationLoginBloc.add(
-                                              RequestOtpEvent(
-                                                  mobileNumber:
-                                                  userModel.mobileNumber!, type: 'login'));
+                                          context.read<AuthBloc>().add(
+                                            AuthEvent.requestOtp(userModel.mobileNumber!)
+                                          );
+                                          // widget.registrationLoginBloc.add(
+                                          //     RequestOtpEvent(
+                                          //         mobileNumber:
+                                          //         userModel.mobileNumber!, type: 'login'));
                                         },
                                         child: const Text('Sign In')),
                                   )
@@ -448,9 +473,12 @@ class LoginScreenState extends State<LoginScreen> {
                               _otpControllers[i].text = "";
                             }
                             FocusScope.of(context).unfocus();
-                            widget.registrationLoginBloc.add(ResendOtpEvent(
-                                mobileNumber: userModel.mobileNumber!,
-                                type: register));
+                            context.read<AuthBloc>().add(
+                              AuthEvent.resendOtp(userModel.mobileNumber!, "register")
+                            );
+                            // widget.registrationLoginBloc.add(ResendOtpEvent(
+                            //     mobileNumber: userModel.mobileNumber!,
+                            //     type: register));
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(top: 20, bottom: 10),
@@ -485,149 +513,149 @@ class LoginScreenState extends State<LoginScreen> {
                                 child: BlocListener<AuthBloc, AuthState>(
                                   bloc: context.read<AuthBloc>(),
                                   listener: (context, state) {
-                                    switch (state.runtimeType) {
-                                      case RequestFailedState:
-                                        if (isSubmit) {
-                                          isSubmit = false;
-                                          DigitToast.show(
-                                            context,
-                                            options: DigitToastOptions(
-                                              "Failed",
-                                              true,
-                                              widget.theme.theme(),
-                                            ),
-                                          );
-                                        }
-                                        return;
-                                      case ResendOtpGenerationSuccessState:
-                                        DigitToast.show(
-                                          context,
-                                          options: DigitToastOptions(
-                                            "OTP sent successfully",
-                                            false,
-                                            DigitTheme.instance.mobileTheme,
-                                          ),
-                                        );
-                                        break;
-                                      case IndividualSearchSuccessState:
-                                        List<Individual> listIndividuals =
-                                            (state as IndividualSearchSuccessState)
-                                                .individualSearchResponse
-                                                .individual;
-                                        if (listIndividuals.isEmpty) {
-                                          DigitToast.show(
-                                            context,
-                                            options: DigitToastOptions(
-                                              "OTP Verified",
-                                              false,
-                                              DigitTheme.instance.mobileTheme,
-                                            ),
-                                          );
-                                          Future.delayed(const Duration(seconds: 1), () {
-                                            isSubmit = false;
-                                            Navigator.pushNamed(context, '/YetToRegister', arguments: userModel);
-                                          });
-                                        } else {
-                                          if (userModel.userType == 'LITIGANT') {
-                                            DigitToast.show(
-                                              context,
-                                              options: DigitToastOptions(
-                                                "OTP Verified",
-                                                false,
-                                                DigitTheme.instance.mobileTheme,
-                                              ),
-                                            );
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isSubmit = false;
-                                              Navigator.pushNamed(context, '/UserHomeScreen', arguments: userModel);
-                                            });
-                                          }
-                                        }
-                                        break;
-                                      case AdvocateSearchSuccessState:
-                                        List<Advocate> advocates =
-                                            (state as AdvocateSearchSuccessState)
-                                                .advocateSearchResponse
-                                                .advocates;
-                                        // if (advocates.isEmpty) {
-                                        //   DigitToast.show(
-                                        //     context,
-                                        //     options: DigitToastOptions(
-                                        //       "OTP Verified",
-                                        //       false,
-                                        //       DigitTheme.instance.mobileTheme,
-                                        //     ),
-                                        //   );
-                                        //   Future.delayed(const Duration(seconds: 1), () {
-                                        //     isSubmit = false;
-                                        //     Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: userModel);
-                                        //   });
-                                        // }
-                                        if (advocates.isNotEmpty) {
-                                          DigitToast.show(
-                                            context,
-                                            options: DigitToastOptions(
-                                              "OTP Verified",
-                                              false,
-                                              DigitTheme.instance.mobileTheme,
-                                            ),
-                                          );
-                                          if (advocates[0].status != "INACTIVE" && advocates[0].isActive == false) {
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isSubmit = false;
-                                              Navigator.pushNamed(context, '/AdvocateHomePage', arguments: userModel);
-                                            });
-                                          }
-                                          if (advocates[0].status == "INACTIVE" && advocates[0].isActive == false) {
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isSubmit = false;
-                                              Navigator.pushNamed(context, '/NameDetailsScreen', arguments: userModel);
-                                            });
-                                          }
-                                          if (advocates[0].status == "ACTIVE" && advocates[0].isActive == true) {
-                                            Future.delayed(const Duration(seconds: 1), () {
-                                              isSubmit = false;
-                                              Navigator.pushNamed(context, '/UserHomeScreen', arguments: userModel);
-                                            });
-                                          }
-                                        }
-                                        break;
-                                      case AdvocateClerkSearchSuccessState:
-                                        List<Clerk> clerks =
-                                            (state as AdvocateClerkSearchSuccessState)
-                                                .advocateClerkSearchResponse
-                                                .clerks;
-                                        if (clerks.isEmpty) {
-                                          DigitToast.show(
-                                            context,
-                                            options: DigitToastOptions(
-                                              "OTP Verified",
-                                              false,
-                                              DigitTheme.instance.mobileTheme,
-                                            ),
-                                          );
-                                          Future.delayed(const Duration(seconds: 1), () {
-                                            isSubmit = false;
-                                            Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: userModel);
-                                          });
-                                        } else {
-                                          DigitToast.show(
-                                            context,
-                                            options: DigitToastOptions(
-                                              "OTP Verified",
-                                              false,
-                                              DigitTheme.instance.mobileTheme,
-                                            ),
-                                          );
-                                          Future.delayed(const Duration(seconds: 1), () {
-                                            isSubmit = false;
-                                            Navigator.pushNamed(context, '/AdvocateHomePage', arguments: userModel);
-                                          });
-                                        }
-                                        break;
-                                      default:
-                                        break;
-                                    }
+                                    // switch (state.runtimeType) {
+                                    //   case RequestFailedState:
+                                    //     if (isSubmit) {
+                                    //       isSubmit = false;
+                                    //       DigitToast.show(
+                                    //         context,
+                                    //         options: DigitToastOptions(
+                                    //           "Failed",
+                                    //           true,
+                                    //           widget.theme.theme(),
+                                    //         ),
+                                    //       );
+                                    //     }
+                                    //     return;
+                                    //   case ResendOtpGenerationSuccessState:
+                                    //     DigitToast.show(
+                                    //       context,
+                                    //       options: DigitToastOptions(
+                                    //         "OTP sent successfully",
+                                    //         false,
+                                    //         DigitTheme.instance.mobileTheme,
+                                    //       ),
+                                    //     );
+                                    //     break;
+                                    //   case IndividualSearchSuccessState:
+                                    //     List<Individual> listIndividuals =
+                                    //         (state as IndividualSearchSuccessState)
+                                    //             .individualSearchResponse
+                                    //             .individual;
+                                    //     if (listIndividuals.isEmpty) {
+                                    //       DigitToast.show(
+                                    //         context,
+                                    //         options: DigitToastOptions(
+                                    //           "OTP Verified",
+                                    //           false,
+                                    //           DigitTheme.instance.mobileTheme,
+                                    //         ),
+                                    //       );
+                                    //       Future.delayed(const Duration(seconds: 1), () {
+                                    //         isSubmit = false;
+                                    //         Navigator.pushNamed(context, '/YetToRegister', arguments: userModel);
+                                    //       });
+                                    //     } else {
+                                    //       if (userModel.userType == 'LITIGANT') {
+                                    //         DigitToast.show(
+                                    //           context,
+                                    //           options: DigitToastOptions(
+                                    //             "OTP Verified",
+                                    //             false,
+                                    //             DigitTheme.instance.mobileTheme,
+                                    //           ),
+                                    //         );
+                                    //         Future.delayed(const Duration(seconds: 1), () {
+                                    //           isSubmit = false;
+                                    //           Navigator.pushNamed(context, '/UserHomeScreen', arguments: userModel);
+                                    //         });
+                                    //       }
+                                    //     }
+                                    //     break;
+                                    //   case AdvocateSearchSuccessState:
+                                    //     List<Advocate> advocates =
+                                    //         (state as AdvocateSearchSuccessState)
+                                    //             .advocateSearchResponse
+                                    //             .advocates;
+                                    //     // if (advocates.isEmpty) {
+                                    //     //   DigitToast.show(
+                                    //     //     context,
+                                    //     //     options: DigitToastOptions(
+                                    //     //       "OTP Verified",
+                                    //     //       false,
+                                    //     //       DigitTheme.instance.mobileTheme,
+                                    //     //     ),
+                                    //     //   );
+                                    //     //   Future.delayed(const Duration(seconds: 1), () {
+                                    //     //     isSubmit = false;
+                                    //     //     Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: userModel);
+                                    //     //   });
+                                    //     // }
+                                    //     if (advocates.isNotEmpty) {
+                                    //       DigitToast.show(
+                                    //         context,
+                                    //         options: DigitToastOptions(
+                                    //           "OTP Verified",
+                                    //           false,
+                                    //           DigitTheme.instance.mobileTheme,
+                                    //         ),
+                                    //       );
+                                    //       if (advocates[0].status != "INACTIVE" && advocates[0].isActive == false) {
+                                    //         Future.delayed(const Duration(seconds: 1), () {
+                                    //           isSubmit = false;
+                                    //           Navigator.pushNamed(context, '/AdvocateHomePage', arguments: userModel);
+                                    //         });
+                                    //       }
+                                    //       if (advocates[0].status == "INACTIVE" && advocates[0].isActive == false) {
+                                    //         Future.delayed(const Duration(seconds: 1), () {
+                                    //           isSubmit = false;
+                                    //           Navigator.pushNamed(context, '/NameDetailsScreen', arguments: userModel);
+                                    //         });
+                                    //       }
+                                    //       if (advocates[0].status == "ACTIVE" && advocates[0].isActive == true) {
+                                    //         Future.delayed(const Duration(seconds: 1), () {
+                                    //           isSubmit = false;
+                                    //           Navigator.pushNamed(context, '/UserHomeScreen', arguments: userModel);
+                                    //         });
+                                    //       }
+                                    //     }
+                                    //     break;
+                                    //   case AdvocateClerkSearchSuccessState:
+                                    //     List<Clerk> clerks =
+                                    //         (state as AdvocateClerkSearchSuccessState)
+                                    //             .advocateClerkSearchResponse
+                                    //             .clerks;
+                                    //     if (clerks.isEmpty) {
+                                    //       DigitToast.show(
+                                    //         context,
+                                    //         options: DigitToastOptions(
+                                    //           "OTP Verified",
+                                    //           false,
+                                    //           DigitTheme.instance.mobileTheme,
+                                    //         ),
+                                    //       );
+                                    //       Future.delayed(const Duration(seconds: 1), () {
+                                    //         isSubmit = false;
+                                    //         Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: userModel);
+                                    //       });
+                                    //     } else {
+                                    //       DigitToast.show(
+                                    //         context,
+                                    //         options: DigitToastOptions(
+                                    //           "OTP Verified",
+                                    //           false,
+                                    //           DigitTheme.instance.mobileTheme,
+                                    //         ),
+                                    //       );
+                                    //       Future.delayed(const Duration(seconds: 1), () {
+                                    //         isSubmit = false;
+                                    //         Navigator.pushNamed(context, '/AdvocateHomePage', arguments: userModel);
+                                    //       });
+                                    //     }
+                                    //     break;
+                                    //   default:
+                                    //     break;
+                                    // }
                                   },
                                   child: DigitElevatedButton(
                                       onPressed: isSubmit
@@ -649,13 +677,16 @@ class LoginScreenState extends State<LoginScreen> {
                                           );
                                           return;
                                         }
-                                        if (userModel.type == login && otp.length == 6) {
-                                          widget.registrationLoginBloc.add(
-                                              SendLoginOtpEvent(
-                                                  username:
-                                                  userModel.mobileNumber!,
-                                                  password: otp,
-                                                  userModel: userModel));
+                                        if (userModel.type == "login" && otp.length == 6) {
+                                          context.read<AuthBloc>().add(
+                                            AuthEvent.sendLoginOtpEvent(userModel.mobileNumber!, otp, userModel)
+                                          );
+                                          // widget.registrationLoginBloc.add(
+                                          //     SendLoginOtpEvent(
+                                          //         username:
+                                          //         userModel.mobileNumber!,
+                                          //         password: otp,
+                                          //         userModel: userModel));
                                         }
                                         isSubmit = true;
                                       },

@@ -105,11 +105,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       );
 
+      var accessInfo = const AuthResponse(
+        accessToken: "asdsadsadas", tokenType: 'asdsadsadas', refreshToken: 'asdsadsadas', expiresIn: 0, scope: 'tety',
+        userRequest: UserRequest(),
+        responseInfo: ResponseInfo()
+      );
+
+      secureStore.setAccessInfo(accessInfo);
+
       response = await authRepository.createCitizen(
           "/user/citizen/_create",
           citizenRegistrationRequest
       );
       //change to authenticated state now that we have access
+
+      _accesstoken = response.accessToken!;
+      _refreshtoken = response.refreshToken!;
+      _userRequest = response.userRequest!;
+
+      //store accessToken in secure storage
+      secureStore.setAccessToken(_accesstoken);
+
+      //store other access Information in secure storage
+      secureStore.setAccessInfo(response);
+
+      //change to authenticated state now that we have access
+      // emit(AuthState.otpCorrect(
+      //     authResponse: response));
+
+      final actionsWrapper = await authRepository.searchRoleActions({
+        "roleCodes": response.userRequest?.roles?.map((e) => e.code).toList(),
+        "tenantId": envConfig.variables.tenantId,
+        "actionMaster": "actions-test",
+        "enabled": true,
+      });
+
+      //role actions must also be stored in secureStore so that we don't have to make calls for it repeatedly
+      await secureStore.setRoleActions(actionsWrapper);
+
       emit(AuthState.otpCorrect(
           authResponse: response));
 
@@ -181,12 +214,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try{
       final registerResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequestRegister);
-      emit(const AuthState.otpSucceed(type: "register"));
+      emit(const AuthState.otpGenerationSucceed(type: "register"));
     }
     catch(e1){
       try{
         final loginResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequestLogin);
-        emit(const AuthState.otpSucceed(type: "login"));
+        emit(const AuthState.otpGenerationSucceed(type: "login"));
       }
       catch(e2){
         emit(const AuthState.requestFailed(errorMsg: 'failed'));
@@ -228,10 +261,10 @@ class AuthState with _$AuthState {
     required String? refreshtoken,
     required UserRequest? userRequest,
   }) = _AuthenticatedState;
-  const factory AuthState.otpSucceed({
+  const factory AuthState.otpGenerationSucceed({
     required String type,
   }) = _OtpGenerationSuccessState;
-  const factory AuthState.resendOtpSucceed({
+  const factory AuthState.resendOtpGenerationSucceed({
     required String type,
   }) = _ResendOtpGenerationSuccessState;
   const factory AuthState.requestFailed({

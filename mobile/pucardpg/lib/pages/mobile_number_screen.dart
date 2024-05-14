@@ -16,6 +16,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
 import 'package:pucardpg/model/litigant_model.dart';
+import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
 // import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
@@ -167,7 +168,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 error,
                                 context);
                           },
-                          otpSucceed: (type){
+                          otpGenerationSucceed: (type){
                             isSubmitting = false;
                             userModel.type = type;
                             if (userModel.type == "register") {
@@ -175,7 +176,13 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               showOtpDialog();
                             }
                           },
-
+                          unauthenticated: (){
+                            print("unauth");
+                          },
+                          authenticated: (a, b, c) {
+                            AutoRouter.of(context)
+                                .replace(const AuthenticatedRouteWrapper());
+                          },
                       );
                     },
                     child: BlocBuilder<AuthBloc, AuthState>(
@@ -393,8 +400,10 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                             widget.theme.theme(),
                                           ),
                                         );
+                                        AutoRouter.of(context)
+                                            .replace(const AuthenticatedRouteWrapper());
                                       },
-                                      resendOtpSucceed: (type){
+                                      resendOtpGenerationSucceed: (type){
                                         DigitToast.show(
                                           context,
                                           options: DigitToastOptions(
@@ -415,6 +424,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                         );
                                         Future.delayed(const Duration(seconds: 1), () {
                                           isSubmit = false;
+                                          AutoRouter.of(context)
+                                              .replace(const AuthenticatedRouteWrapper());
+                                          // context.navigateTo(HomeRoute());
                                           // Navigator.pushNamed(context, '/NameDetailsScreen', arguments: userModel);
                                         });
                                       }
