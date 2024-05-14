@@ -1,21 +1,38 @@
+export const advocateClerkDropdownData = [
+  {
+    code: "advocate",
+    name: "Advocate",
+    additionalDetails: {
+      businessService: ["advocate"],
+      moduleName: "Advocate services",
+    },
+  },
+  {
+    code: "clerk",
+    name: "Clerk",
+    additionalDetails: {
+      businessService: ["advocateclerk"],
+      moduleName: "Advocate Clerk Service",
+    },
+  },
+];
+
 export const newConfigAdvocate = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
+  customHookName: "dristi.useInboxCustomHook",
   apiDetails: {
     serviceName: "/inbox/v2/_search",
     requestParam: {},
     requestBody: {
       inbox: {
         processSearchCriteria: {
-          tenantId: "pg",
           businessService: ["advocate"],
           moduleName: "Advocate services",
         },
         moduleSearchCriteria: {
-          tenantId: "pg",
           isActive: false,
         },
-        tenantId: "pg",
       },
     },
     minParametersForSearchForm: 1,
@@ -100,27 +117,25 @@ export const newConfigAdvocate = {
 export const newConfigClerk = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
+  customHookName: "dristi.useInboxCustomHook",
   apiDetails: {
     serviceName: "/inbox/v2/_search",
     requestParam: {},
     requestBody: {
       inbox: {
         processSearchCriteria: {
-          tenantId: "pg",
           businessService: ["advocateclerk"],
           moduleName: "Advocate Clerk Service",
         },
         moduleSearchCriteria: {
-          tenantId: "pg",
           isActive: false,
         },
-        tenantId: "pg",
       },
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.inbox",
+    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {

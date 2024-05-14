@@ -159,10 +159,11 @@ export const UICustomizations = {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
-    additionalCustomizations: (row, key, column, value, t, searchResult) => {
-      const usertype = row.ProcessInstance.businessService === "advocateclerk" ? "clerk" : "advocate";
-      const individualId = row.businessObject.individual.individualId;
-      const applicationNumber = row.businessObject?.advocateDetails?.applicationNumber || row.businessObject?.clerkDetails?.applicationNumber;
+    additionalCustomizations: (row = {}, key, column, value, t, searchResult) => {
+      const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
+      const individualId = row?.businessObject?.individual?.individualId;
+      const applicationNumber =
+        row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
       switch (key) {
         case "Application No":
           return (
@@ -200,7 +201,7 @@ export const UICustomizations = {
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
         case "Due Since (no of days)":
-          const createdAt = new Date(row.businessObject.auditDetails.createdTime);
+          const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
           const today = new Date();
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
