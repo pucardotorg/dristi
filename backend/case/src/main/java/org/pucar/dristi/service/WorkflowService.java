@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTION;
+
 @Component
 @Slf4j
 public class WorkflowService {
@@ -40,11 +42,15 @@ public class WorkflowService {
             try {
                 ProcessInstance processInstance = getProcessInstance(courtCase, caseRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
+                log.info("ProcessInstance Request :: {}", workflowRequest);
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+                log.info("Application Status :: {}", applicationStatus);
                 courtCase.setStatus(applicationStatus);
+            } catch (CustomException e){
+                throw e;
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
-                throw new CustomException();
+                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
             }
         });
     }
@@ -52,11 +58,14 @@ public class WorkflowService {
         try {
             StringBuilder url = new StringBuilder(config.getWfHost().concat(config.getWfTransitionPath()));
             Object optional = repository.fetchResult(url, workflowReq);
+            log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
+        } catch (CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
 
@@ -81,9 +90,11 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
+        } catch (CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for CASE: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
@@ -95,9 +106,11 @@ public class WorkflowService {
             if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
                 return response.getProcessInstances().get(0);
             return null;
+        } catch (CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
     private BusinessService getBusinessService(CourtCase courtCase, RequestInfo requestInfo) {
@@ -110,9 +123,11 @@ public class WorkflowService {
             if (CollectionUtils.isEmpty(response.getBusinessServices()))
                 throw new CustomException();
             return response.getBusinessServices().get(0);
+        } catch (CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting business service: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
@@ -144,9 +159,11 @@ public class WorkflowService {
                     .requestInfo(updateRequest.getRequestInfo())
                     .processInstances(Arrays.asList(process))
                     .build();
+        } catch (CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for case registration payment: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
 
