@@ -39,7 +39,7 @@ class _HomeScreenState extends LocalizedState<HomeScreen> {
                             return BlocBuilder<UserBloc, UserState>(
                                 builder: (context, currentUserState) {
                               context.read<UserBloc>().add(UserEvent.searchUser(
-                                  uuid: userRequest!.uuid,
+                                  uuid: userRequest!.uuid!,
                                   actionMap: actionMap));
                               if (currentUserState is UserUserState) {
                                 return const Column(

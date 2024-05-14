@@ -1,5 +1,8 @@
 library i18;
 
+import 'package:pucardpg/model/litigant-registration-model/litigant_registration_model.dart';
+import 'package:pucardpg/model/role-model/role.dart';
+
 const common = Common();
 const login = Login();
 const forgotPassword = ForgotPassword();
@@ -46,6 +49,60 @@ const complaintsDetailsShowcase = ComplaintsDetailsShowcase();
 const complaintsDetailsViewShowcase = ComplaintsDetailsViewShowcase();
 const complaintsInboxShowcase = ComplaintsInboxShowcase();
 const referBeneficiary = ReferBeneficiary();
+const appConstants = AppConstants();
+
+class AppConstants {
+  const AppConstants();
+
+  String get apiBaseURL => "https://dristi-qa.pucar.org";
+
+  String get apiId => "Rainmaker";
+  String get authToken => "c835932f-2ad4-4d05-83d6-49e0b8c59f8a";
+  String get msgId => "1712987382117|en_IN";
+  int get timeStamp => 1712987382117;
+
+  String get tenantId => "pg";
+  String get type => "CITIZEN";
+  String get login => "login";
+
+  String get register => "register";
+
+  int get limit => 1000;
+  int get offset => 0;
+
+  String get individualId => "IND-2024-04-18-000063";
+  String get module => "DRISTI";
+
+  Role get  userRegisterRole => const Role(
+      name: "USER_REGISTER",
+      code: "USER_REGISTER"
+  );
+
+  Role get getcitizenRole => const Role(
+      name: "Citizen",
+      code: "CITIZEN"
+  );
+
+  Fields get litigant => const Fields(
+    key: 'userType',
+    value: "LITIGANT",
+  );
+
+  Fields get advocate => const Fields(
+    key: 'userType',
+    value: "ADVOCATE",
+  );
+
+  Fields get clerk => const Fields(
+    key: 'userType',
+    value: "ADVOCATE_CLERK",
+  );
+
+  String get approvalSvg => 'assets/icons/svg/approval.svg';
+  String get digitSvg => 'assets/icons/svg/DIGIT.png';
+  String get yetToRegister => 'assets/icons/svg/yet_to_register.svg';
+
+}
 
 class Common {
   const Common();

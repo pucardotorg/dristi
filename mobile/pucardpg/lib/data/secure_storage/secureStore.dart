@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pucardpg/model/appconfig/mdmsResponse.dart';
+import 'package:pucardpg/model/auth-response/auth_response.dart';
 import 'package:pucardpg/model/response/responsemodel.dart';
 import 'package:pucardpg/model/role_actions/role_actions_model.dart';
 import 'package:pucardpg/model/serviceRegistry/serviceRegistryModel.dart';
@@ -56,16 +57,16 @@ class SecureStore {
   }
 
   //other auth information
-  Future setAccessInfo(ResponseModel accessInfo) async {
+  Future setAccessInfo(AuthResponse accessInfo) async {
     String jsonAccessInfo = json.encode(accessInfo.toJson());
     await storage.write(key: 'accessInfo', value: jsonAccessInfo);
   }
 
-  Future<ResponseModel?> getAccessInfo() async {
+  Future<AuthResponse?> getAccessInfo() async {
     String? jsonAccessInfo = await storage.read(key: 'accessInfo');
     if (jsonAccessInfo == null) return null;
     try {
-      return ResponseModel.fromJson(json.decode(jsonAccessInfo));
+      return AuthResponse.fromJson(json.decode(jsonAccessInfo));
     } catch (err) {
       print(err);
       rethrow;

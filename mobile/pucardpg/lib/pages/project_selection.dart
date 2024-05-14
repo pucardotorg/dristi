@@ -37,7 +37,7 @@ class _ProjectSelectionPageState
                     BlocBuilder<UserBloc, UserState>(
                       builder: (context, state) {
                         context.read<UserBloc>().add(UserEvent.searchUser(
-                            uuid: userRequest!.uuid, actionMap: actionMap));
+                            uuid: userRequest!.uuid!, actionMap: actionMap));
                         if (state is UserUserState) {
                           final user = state.userModel;
                           context

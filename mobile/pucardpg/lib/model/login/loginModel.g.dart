@@ -9,10 +9,12 @@ part of 'loginModel.dart';
 _$LoginModelImpl _$$LoginModelImplFromJson(Map<String, dynamic> json) =>
     _$LoginModelImpl(
       username: json['username'] as String?,
-      password: json['password'] as String?,
-      tenantId: json['tenantId'] as String?,
-      userType: json['userType'] as String?,
-      grant_type: json['grant_type'] as String?,
+      password: json['password'] as String? ?? "123456",
+      tenantId: json['tenantId'] as String? ?? "pg",
+      userType: json['userType'] as String? ?? "citizen",
+      scope: json['scope'] as String? ?? "read",
+      grantType: json['grant_type'] as String? ?? "password",
+      timeStamp: json['_'] as int? ?? 1713357247536,
     );
 
 Map<String, dynamic> _$$LoginModelImplToJson(_$LoginModelImpl instance) =>
@@ -21,5 +23,7 @@ Map<String, dynamic> _$$LoginModelImplToJson(_$LoginModelImpl instance) =>
       'password': instance.password,
       'tenantId': instance.tenantId,
       'userType': instance.userType,
-      'grant_type': instance.grant_type,
+      'scope': instance.scope,
+      'grant_type': instance.grantType,
+      '_': instance.timeStamp,
     };

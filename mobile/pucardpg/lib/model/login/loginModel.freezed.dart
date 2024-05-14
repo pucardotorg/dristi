@@ -24,7 +24,11 @@ mixin _$LoginModel {
   String? get password => throw _privateConstructorUsedError;
   String? get tenantId => throw _privateConstructorUsedError;
   String? get userType => throw _privateConstructorUsedError;
-  String? get grant_type => throw _privateConstructorUsedError;
+  String? get scope => throw _privateConstructorUsedError;
+  @JsonKey(name: 'grant_type')
+  String get grantType => throw _privateConstructorUsedError;
+  @JsonKey(name: '_')
+  int get timeStamp => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -43,7 +47,9 @@ abstract class $LoginModelCopyWith<$Res> {
       String? password,
       String? tenantId,
       String? userType,
-      String? grant_type});
+      String? scope,
+      @JsonKey(name: 'grant_type') String grantType,
+      @JsonKey(name: '_') int timeStamp});
 }
 
 /// @nodoc
@@ -63,7 +69,9 @@ class _$LoginModelCopyWithImpl<$Res, $Val extends LoginModel>
     Object? password = freezed,
     Object? tenantId = freezed,
     Object? userType = freezed,
-    Object? grant_type = freezed,
+    Object? scope = freezed,
+    Object? grantType = null,
+    Object? timeStamp = null,
   }) {
     return _then(_value.copyWith(
       username: freezed == username
@@ -82,10 +90,18 @@ class _$LoginModelCopyWithImpl<$Res, $Val extends LoginModel>
           ? _value.userType
           : userType // ignore: cast_nullable_to_non_nullable
               as String?,
-      grant_type: freezed == grant_type
-          ? _value.grant_type
-          : grant_type // ignore: cast_nullable_to_non_nullable
+      scope: freezed == scope
+          ? _value.scope
+          : scope // ignore: cast_nullable_to_non_nullable
               as String?,
+      grantType: null == grantType
+          ? _value.grantType
+          : grantType // ignore: cast_nullable_to_non_nullable
+              as String,
+      timeStamp: null == timeStamp
+          ? _value.timeStamp
+          : timeStamp // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -103,7 +119,9 @@ abstract class _$$LoginModelImplCopyWith<$Res>
       String? password,
       String? tenantId,
       String? userType,
-      String? grant_type});
+      String? scope,
+      @JsonKey(name: 'grant_type') String grantType,
+      @JsonKey(name: '_') int timeStamp});
 }
 
 /// @nodoc
@@ -121,7 +139,9 @@ class __$$LoginModelImplCopyWithImpl<$Res>
     Object? password = freezed,
     Object? tenantId = freezed,
     Object? userType = freezed,
-    Object? grant_type = freezed,
+    Object? scope = freezed,
+    Object? grantType = null,
+    Object? timeStamp = null,
   }) {
     return _then(_$LoginModelImpl(
       username: freezed == username
@@ -140,10 +160,18 @@ class __$$LoginModelImplCopyWithImpl<$Res>
           ? _value.userType
           : userType // ignore: cast_nullable_to_non_nullable
               as String?,
-      grant_type: freezed == grant_type
-          ? _value.grant_type
-          : grant_type // ignore: cast_nullable_to_non_nullable
+      scope: freezed == scope
+          ? _value.scope
+          : scope // ignore: cast_nullable_to_non_nullable
               as String?,
+      grantType: null == grantType
+          ? _value.grantType
+          : grantType // ignore: cast_nullable_to_non_nullable
+              as String,
+      timeStamp: null == timeStamp
+          ? _value.timeStamp
+          : timeStamp // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -153,10 +181,12 @@ class __$$LoginModelImplCopyWithImpl<$Res>
 class _$LoginModelImpl implements _LoginModel {
   const _$LoginModelImpl(
       {required this.username,
-      required this.password,
-      required this.tenantId,
-      required this.userType,
-      required this.grant_type});
+      this.password = "123456",
+      this.tenantId = "pg",
+      this.userType = "citizen",
+      this.scope = "read",
+      @JsonKey(name: 'grant_type') this.grantType = "password",
+      @JsonKey(name: '_') this.timeStamp = 1713357247536});
 
   factory _$LoginModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoginModelImplFromJson(json);
@@ -164,17 +194,27 @@ class _$LoginModelImpl implements _LoginModel {
   @override
   final String? username;
   @override
+  @JsonKey()
   final String? password;
   @override
+  @JsonKey()
   final String? tenantId;
   @override
+  @JsonKey()
   final String? userType;
   @override
-  final String? grant_type;
+  @JsonKey()
+  final String? scope;
+  @override
+  @JsonKey(name: 'grant_type')
+  final String grantType;
+  @override
+  @JsonKey(name: '_')
+  final int timeStamp;
 
   @override
   String toString() {
-    return 'LoginModel(username: $username, password: $password, tenantId: $tenantId, userType: $userType, grant_type: $grant_type)';
+    return 'LoginModel(username: $username, password: $password, tenantId: $tenantId, userType: $userType, scope: $scope, grantType: $grantType, timeStamp: $timeStamp)';
   }
 
   @override
@@ -190,14 +230,17 @@ class _$LoginModelImpl implements _LoginModel {
                 other.tenantId == tenantId) &&
             (identical(other.userType, userType) ||
                 other.userType == userType) &&
-            (identical(other.grant_type, grant_type) ||
-                other.grant_type == grant_type));
+            (identical(other.scope, scope) || other.scope == scope) &&
+            (identical(other.grantType, grantType) ||
+                other.grantType == grantType) &&
+            (identical(other.timeStamp, timeStamp) ||
+                other.timeStamp == timeStamp));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, username, password, tenantId, userType, grant_type);
+  int get hashCode => Object.hash(runtimeType, username, password, tenantId,
+      userType, scope, grantType, timeStamp);
 
   @JsonKey(ignore: true)
   @override
@@ -216,10 +259,12 @@ class _$LoginModelImpl implements _LoginModel {
 abstract class _LoginModel implements LoginModel {
   const factory _LoginModel(
       {required final String? username,
-      required final String? password,
-      required final String? tenantId,
-      required final String? userType,
-      required final String? grant_type}) = _$LoginModelImpl;
+      final String? password,
+      final String? tenantId,
+      final String? userType,
+      final String? scope,
+      @JsonKey(name: 'grant_type') final String grantType,
+      @JsonKey(name: '_') final int timeStamp}) = _$LoginModelImpl;
 
   factory _LoginModel.fromJson(Map<String, dynamic> json) =
       _$LoginModelImpl.fromJson;
@@ -233,7 +278,13 @@ abstract class _LoginModel implements LoginModel {
   @override
   String? get userType;
   @override
-  String? get grant_type;
+  String? get scope;
+  @override
+  @JsonKey(name: 'grant_type')
+  String get grantType;
+  @override
+  @JsonKey(name: '_')
+  int get timeStamp;
   @override
   @JsonKey(ignore: true)
   _$$LoginModelImplCopyWith<_$LoginModelImpl> get copyWith =>

@@ -8,10 +8,12 @@ part 'loginModel.g.dart';
 class LoginModel with _$LoginModel {
   const factory LoginModel({
     required String? username,
-    required String? password,
-    required String? tenantId,
-    required String? userType,
-    required String? grant_type,
+    @Default("123456") String? password,
+    @Default("pg") String? tenantId,
+    @Default("citizen") String? userType,
+    @Default("read") String? scope,
+    @JsonKey(name: 'grant_type') @Default("password") String grantType,
+    @JsonKey(name: '_') @Default(1713357247536) int timeStamp
   }) = _LoginModel;
 
   factory LoginModel.fromJson(Map<String, Object?> json) =>
