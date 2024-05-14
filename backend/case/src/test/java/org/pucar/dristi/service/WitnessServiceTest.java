@@ -57,7 +57,7 @@ public class WitnessServiceTest {
         Assert.isTrue(result == witnesses, "Returned witnesses should be same as input");
         verify(validator, times(1)).validateCaseRegistration(request);
         verify(enrichmentUtil, times(1)).enrichWitnessRegistration(request);
-        verify(producer, times(1)).push(any(String.class), any(WitnessRequest.class));
+        verify(producer, times(1)).push(any(), any(WitnessRequest.class));
     }
 
     @Test
