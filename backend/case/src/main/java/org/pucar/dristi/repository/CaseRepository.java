@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_CASE_ERR;
+
 
 @Slf4j
 @Repository
@@ -145,7 +147,7 @@ public class CaseRepository {
             String statueAndSectionQuery = "";
             preparedStmtListDoc = new ArrayList<>();
             statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final statue and sections query: {}", statueAndSectionQuery);
+            log.info("Final statute and sections query: {}", statueAndSectionQuery);
             Map<UUID, List<StatuteSection>> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListDoc.toArray(), statuteSectionRowMapper);
             if (statuteSectionsMap != null) {
                 courtCaseList.forEach(courtCase -> {
@@ -255,9 +257,8 @@ public class CaseRepository {
             throw e;
         }
         catch (Exception e){
-            e.printStackTrace();
-            log.error("Error while fetching advocate application list");
-            throw new CustomException("ADVOCATE_SEARCH_EXCEPTION","Error while fetching advocate application list: "+e.getMessage());
+            log.error("Error while fetching case application list");
+            throw new CustomException(SEARCH_CASE_ERR,"Error while fetching case application list: "+e.getMessage());
         }
     }
 

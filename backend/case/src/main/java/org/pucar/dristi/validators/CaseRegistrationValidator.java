@@ -87,7 +87,7 @@ public class CaseRegistrationValidator {
 
     public Boolean validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
         List<CourtCase> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).build()));
-        if(existingApplications.isEmpty()) throw new CustomException("VALIDATION EXCEPTION","Case Application does not exist");
+        if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_ERR,"Case Application does not exist");
 
             Map<String, Map<String, JSONArray>> mdmsData  = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), "case", createMasterDetails());
 

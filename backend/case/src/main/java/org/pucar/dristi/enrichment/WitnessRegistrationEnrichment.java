@@ -6,15 +6,14 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.util.UserUtil;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
+
+import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @Component
 @Slf4j
@@ -26,7 +25,7 @@ public class WitnessRegistrationEnrichment {
     @Autowired
     private UserUtil userUtils;
 
-    public void enrichCaseRegistration(WitnessRequest witnessRequest) {
+    public void enrichWitnessRegistration(WitnessRequest witnessRequest) {
         try {
             if(witnessRequest.getRequestInfo().getUserInfo() != null) {
                 for (Witness witness : witnessRequest.getWitnesses()) {
@@ -43,13 +42,12 @@ public class WitnessRegistrationEnrichment {
             }
         }
         catch (CustomException e){
-            e.printStackTrace();
-            log.error("Custom Exception occurred while Enriching advocate clerk");
+            log.error("Exception occurred while Enriching witness");
             throw e;
         }
         catch (Exception e) {
-            e.printStackTrace();
-            log.error("Error enriching case application: {}", e.getMessage());
+            log.error("Error enriching witness application: {}", e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
         }
     }
 
@@ -63,7 +61,7 @@ public class WitnessRegistrationEnrichment {
         } catch (Exception e) {
             log.error("Error enriching witness application upon update: {}", e.getMessage());
             // Handle the exception or throw a custom exception
-            throw new CustomException("ENRICHMENT_EXCEPTION","Error in witness enrichment service during witness update process: "+ e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION,"Error in witness enrichment service during witness update process: "+ e.getMessage());
         }
     }
 }
