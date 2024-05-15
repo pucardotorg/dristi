@@ -20,7 +20,7 @@ export const advocateClerkDropdownData = [
 export const newConfigAdvocate = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
-  customHookName: "dristi.useInboxCustomHook",
+  // customHookName: "dristi.useInboxCustomHook",
   apiDetails: {
     serviceName: "/inbox/v2/_search",
     requestParam: {},
@@ -29,10 +29,13 @@ export const newConfigAdvocate = {
         processSearchCriteria: {
           businessService: ["advocate"],
           moduleName: "Advocate services",
+          tenantId: "pg",
         },
         moduleSearchCriteria: {
           isActive: false,
+          tenantId: "pg",
         },
+        tenantId: "pg",
       },
     },
     minParametersForSearchForm: 1,
@@ -117,7 +120,7 @@ export const newConfigAdvocate = {
 export const newConfigClerk = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
-  customHookName: "dristi.useInboxCustomHook",
+  // customHookName: "dristi.useInboxCustomHook",
   apiDetails: {
     serviceName: "/inbox/v2/_search",
     requestParam: {},
@@ -126,10 +129,13 @@ export const newConfigClerk = {
         processSearchCriteria: {
           businessService: ["advocateclerk"],
           moduleName: "Advocate Clerk Service",
+          tenantId: "pg",
         },
         moduleSearchCriteria: {
           isActive: false,
+          tenantId: "pg",
         },
+        tenantId: "pg",
       },
     },
     minParametersForSearchForm: 1,
