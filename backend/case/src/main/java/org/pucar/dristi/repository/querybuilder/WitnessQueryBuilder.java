@@ -57,7 +57,7 @@ public class WitnessQueryBuilder {
 
                 if (!individualIds.isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.individualid IN (")
+                    query.append("witness.individualid IN (")
                             .append(individualIds.stream().map(reg -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(individualIds);
@@ -67,7 +67,7 @@ public class WitnessQueryBuilder {
 
                 if (!includeInactives.isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.filingnumber IN (")
+                    query.append("witness.filingnumber IN (")
                             .append(includeInactives.stream().map(num -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(includeInactives);

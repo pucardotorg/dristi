@@ -58,7 +58,9 @@ public class CaseRegistrationValidator {
                 throw new CustomException(CREATE_CASE_ERR, "statute and sections is mandatory for creating case");
             if(ObjectUtils.isEmpty(courtCase.getLitigants()))
                 throw new CustomException(CREATE_CASE_ERR, "litigants is mandatory for creating case");
-
+            if(ObjectUtils.isEmpty(caseRequest.getRequestInfo().getUserInfo())){
+                throw new CustomException(CREATE_CASE_ERR, "user info is mandatory for creating case");
+            }
             Map<String, Map<String, JSONArray>> mdmsData  = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), "case", createMasterDetails());
 
             //Validating tenantId

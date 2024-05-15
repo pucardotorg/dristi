@@ -33,7 +33,6 @@ public class CaseRegistrationEnrichment {
 
     public void enrichCaseRegistration(CaseRequest caseRequest) {
         try {
-            if(caseRequest.getRequestInfo().getUserInfo() != null) {
                 List<String> courtCaseRegistrationIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().get(0).getTenantId(), config.getCaseFilingNumber(), null, caseRequest.getCases().size());
                 log.info("Court Case Registration Id List :: {}",courtCaseRegistrationIdList);
                 Integer index = 0;
@@ -105,7 +104,6 @@ public class CaseRegistrationEnrichment {
                   //  courtCase.setCourtCaseNumber(courtCase.getCourtCaseNumber());
                   //  courtCase.setCnrNumber(courtCase.getCnrNumber());
                 }
-            }
         }
         catch (CustomException e){
         log.error("Exception occurred while Enriching case");

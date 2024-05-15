@@ -90,6 +90,7 @@ public class    CaseService {
             return caseRequest.getCases();
 
         }catch (Exception e){
+            e.printStackTrace();
             log.error("Error occurred while updating case");
             throw new CustomException(UPDATE_CASE_ERR,"Error occurred while updating case: " + e.getMessage());
         }

@@ -49,6 +49,7 @@ public class WorkflowService {
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
             }
