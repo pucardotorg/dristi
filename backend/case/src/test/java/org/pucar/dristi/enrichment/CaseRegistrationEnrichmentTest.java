@@ -1,58 +1,87 @@
 package org.pucar.dristi.enrichment;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.egov.common.contract.request.RequestInfo;
-import org.junit.jupiter.api.Test;
+import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseRegistrationEnrichmentTest {
+class CaseRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
+
+    @Mock
+    private Configuration config;
 
     @InjectMocks
     private CaseRegistrationEnrichment caseRegistrationEnrichment;
 
     private CaseRequest caseRequest;
-
     private CourtCase courtCase;
+    private RequestInfo requestInfo;
+    private User userInfo;
 
     @BeforeEach
     void setUp() {
-        RequestInfo requestInfo = new RequestInfo();
+        // Initialize RequestInfo with necessary user info
+        requestInfo = new RequestInfo();
+        userInfo = new User();
+        userInfo.setUuid("user-uuid");
+        requestInfo.setUserInfo(userInfo);
 
+        // Create a CaseRequest with a single CourtCase
+        caseRequest = new CaseRequest();
         courtCase = new CourtCase();
-        courtCase.setLinkedCases(Collections.emptyList());
-        courtCase.setLitigants(Collections.emptyList());
-        courtCase.setRepresentatives(Collections.emptyList());
-        courtCase.setFilingNumber("filingNumber1");
-        courtCase.setCaseNumber("caseNumber1");
+        courtCase.setTenantId("tenant-id");
+        courtCase.setLinkedCases(new ArrayList<>());
+        courtCase.setLitigants(new ArrayList<>());
+        courtCase.setRepresentatives(new ArrayList<>());
+        courtCase.setStatutesAndSections(new ArrayList<>());
+        courtCase.setDocuments(new ArrayList<>());
+        caseRequest.setCases(Collections.singletonList(courtCase));
 
-        caseRequest = new CaseRequest(requestInfo, Arrays.asList(courtCase));
+        // Set the request info in the case request
+        caseRequest.setRequestInfo(requestInfo);
     }
 
-//    @Test
-//    void testEnrichCaseRegistration() {
-//
-//        caseRegistrationEnrichment.enrichCaseRegistration(caseRequest);
-//
-//        assertNotNull(courtCase.getLinkedCases());
-//        assertNotNull(courtCase.getLitigants());
-//        assertNotNull(courtCase.getRepresentatives());
-//        assertTrue(courtCase.getFilingNumber().equals("filingNumber1"));
-//        assertTrue(courtCase.getCaseNumber().equals("caseNumber1"));
-//    }
+    @Test
+    void testEnrichCaseRegistration() {
+        // Mock the config to return specific values
+        when(config.getCaseFilingNumber()).thenReturn("caseFilingNumber");
+
+        // Mock the ID generation to return a list of IDs
+        List<String> idList = Collections.singletonList("generated-id");
+        when(idgenUtil.getIdList(any(RequestInfo.class), anyString(), anyString(), any(), anyInt()))
+                .thenReturn(idList);
+
+        // Call the method to test
+        caseRegistrationEnrichment.enrichCaseRegistration(caseRequest);
+
+        // Verify the behavior and assert the results
+        verify(idgenUtil).getIdList(any(RequestInfo.class), eq("tenant-id"), eq("caseFilingNumber"), eq(null), eq(1));
+        assertNotNull(courtCase.getAuditdetails());
+        assertNotNull(courtCase.getLinkedCases());
+        assertNotNull(courtCase.getLitigants());
+        assertNotNull(courtCase.getRepresentatives());
+        assertEquals("generated-id", courtCase.getFilingNumber());
+        assertEquals("generated-id", courtCase.getCaseNumber());
+    }
 }
 

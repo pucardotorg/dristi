@@ -32,7 +32,6 @@ public class CaseRegistrationValidator {
     @Autowired
     private CaseRepository repository;
 
-    CaseService caseService;
     @Autowired
     private MdmsUtil mdmsUtil;
 
@@ -112,8 +111,6 @@ public class CaseRegistrationValidator {
                 caseCriteriaList.add(caseCriteria);
                 caseSearchRequest.setRequestInfo(requestInfo);
                 caseSearchRequest.setCriteria(caseCriteriaList);
-                if (!caseService.searchCases(caseSearchRequest).isEmpty())
-                    throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
             });
         }
         return !existingApplications.isEmpty();
