@@ -36,6 +36,8 @@ public class ServiceConstants {
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
 
+    public static final String CASE_CREATE_EXCEPTION = "CASE_CREATE_EXCEPTION";
+
 	public static final String PARSING_ERROR = "PARSING ERROR";
 	public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
 	public static final String BUSINESS_SERVICE_NOT_FOUND = "BUSINESSSERVICE_NOT_FOUND";
@@ -73,6 +75,8 @@ public class ServiceConstants {
 	public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
 	public static final String REGISTERED_STATUS ="REGISTERED";
 	public static final String INWORKFLOW_STATUS ="INWORKFLOW";
+    public static final String INVALID_LINKEDCASE_ID = "INVALID_LINKEDCASE_ID";
+
 	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
 
 }

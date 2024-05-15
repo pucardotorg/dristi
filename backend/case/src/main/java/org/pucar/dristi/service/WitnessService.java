@@ -86,7 +86,7 @@ public class WitnessService {
             witnessRequest.getWitnesses().forEach(witness -> {
                 Witness existingApplication;
                 try {
-                    existingApplication = validator.validateApplicationExistence(witness);
+                    existingApplication = validator.validateApplicationExistence(witnessRequest.getRequestInfo(),witness);
                 } catch (Exception e) {
                     log.error("Error validating existing application");
                     throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
