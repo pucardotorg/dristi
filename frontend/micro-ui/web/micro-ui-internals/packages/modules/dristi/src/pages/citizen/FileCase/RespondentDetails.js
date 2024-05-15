@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, FormComposerV2, Header, Label, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { respondentconfig } from "./respondentconfig";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
+import Accordion from "../../../components/Accordion";
 function RespondentDetails({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -126,60 +127,86 @@ function RespondentDetails({ path }) {
     }
   };
 
-  return (
-    <div className="employee-card-wrapper">
-      <div className="header-content">
-        <Header>{t("CS_COMMON_RESPONDENT_DETAIL")}</Header>
-      </div>
-      {modifiedConfig.map((formConfig, index) => {
-        return formdata[index].isenabled ? (
-          <div>
-            <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-              <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
-              {(activeForms > 1 || isOptional) && (
-                <span
-                  style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    handleDeleteForm(index);
-                  }}
-                >
-                  <CustomDeleteIcon />
-                </span>
-              )}
-            </Card>
-            <FormComposerV2
-              label={t("CS_COMMONS_NEXT")}
-              config={formConfig}
-              onSubmit={(props) => {
-                // onSubmit(props);
-                console.debug("Vaibhav");
-              }}
-              defaultValues={{}}
-              onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-                onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
-              }}
-              cardStyle={{ minWidth: "100%" }}
-              isDisabled={isDisabled}
-            />
-          </div>
-        ) : null;
-      })}
-      <div
-        onClick={handleAddForm}
-        style={{
-          display: "flex",
-          cursor: "pointer",
-          alignItems: "center",
-          justifyContent: "space-around",
-          width: "150px",
-          color: "#007E7E",
-        }}
-      >
-        <CustomAddIcon />
-        <span>Add Respondent</span>
-      </div>
+  const accordion = [
+    {
+      title: "Vaibhav",
+      children: [
+        { label: "Takale", checked: 0, isCompleted: 1 },
+        { label: "Amane", checked: 1, isCompleted: 0 },
+      ],
+    },
+    {
+      title: "Suresh",
+      children: [
+        { label: "Soren", checked: 1, isCompleted: 1 },
+        { label: "Amane", checked: 1, isCompleted: 1 },
+      ],
+      checked: 0,
+      isCompleted: 0,
+    },
+  ];
 
-      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+  return (
+    <div style={{ display: "flex" }}>
+      <div style={{ width: "10vw", paddingRight: "10px" }}>
+        {accordion.map((item, index) => (
+          <Accordion t={t} count={item.count} title={item.title} onClick={() => {}} key={index} children={item.children} />
+        ))}
+      </div>
+      <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column" }}>
+        <div className="header-content">
+          <Header>{t("CS_COMMON_RESPONDENT_DETAIL")}</Header>
+        </div>
+        {modifiedConfig.map((formConfig, index) => {
+          return formdata[index].isenabled ? (
+            <div>
+              <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
+                <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
+                {(activeForms > 1 || isOptional) && (
+                  <span
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleDeleteForm(index);
+                    }}
+                  >
+                    <CustomDeleteIcon />
+                  </span>
+                )}
+              </Card>
+              <FormComposerV2
+                label={t("CS_COMMONS_NEXT")}
+                config={formConfig}
+                onSubmit={(props) => {
+                  // onSubmit(props);
+                  console.debug("Vaibhav");
+                }}
+                defaultValues={{}}
+                onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+                  onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
+                }}
+                cardStyle={{ minWidth: "100%" }}
+                isDisabled={isDisabled}
+              />
+            </div>
+          ) : null;
+        })}
+        <div
+          onClick={handleAddForm}
+          style={{
+            display: "flex",
+            cursor: "pointer",
+            alignItems: "center",
+            justifyContent: "space-around",
+            width: "150px",
+            color: "#007E7E",
+          }}
+        >
+          <CustomAddIcon />
+          <span>Add Respondent</span>
+        </div>
+
+        {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      </div>
     </div>
   );
 }
