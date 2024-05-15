@@ -18,7 +18,7 @@ paths:
       description: |
         API to register and verify an advocate.
       requestBody:
-        description: Details for the user registration + RequestInfo meta data.
+        description: Details for the advocate registration + RequestInfo meta data.
         content:
           '*/*':
             schema:
@@ -38,6 +38,7 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
   /advocate/v1/_update:
     post:
       tags:
@@ -51,7 +52,7 @@ paths:
               $ref: '#/components/schemas/AdvocateRequest'
         required: true
       responses:
-        '201':
+        '200':
           description: ResponseInfo with advocate data updated successfully
           content:
             '*/*':
@@ -64,7 +65,61 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
-  
+
+  /advocate/v1/status/_search:
+    post:
+      tags:
+        - Advocate
+      summary: search for advocates using the status of their registration
+      parameters:
+        - name: status
+          in: query
+          description: status of advocate registration being searched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ResponseInfo with advocates matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdvocateResponse'
+        '400':
+          description: Advocate search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /advocate/v1/applicationnumber/_search:
+    post:
+      tags:
+        - Advocate
+      summary: search for advocates using the applicationNumber of their registration
+      parameters:
+        - name: applicationNumber
+          in: query
+          description: applicationNumber of advocate registration being searched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ResponseInfo with advocates matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdvocateResponse'
+        '400':
+          description: Advocate search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
   /advocate/v1/_search:
     post:
       tags:
@@ -78,12 +133,12 @@ paths:
               $ref: '#/components/schemas/AdvocateSearchRequest'
         required: true
       responses:
-        '201':
+        '200':
           description: ResponseInfo with advocates matching search criteria
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/AdvocateResponse'
+                $ref: '#/components/schemas/AdvocateListResponse'
         '400':
           description: Advocate search failed. Refer to response body for specifics.
           content:
@@ -92,6 +147,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   
+
   /clerk/v1/_create:
     post:
       tags:
@@ -134,7 +190,7 @@ paths:
               $ref: '#/components/schemas/AdvocateClerkRequest'
         required: true
       responses:
-        '201':
+        '200':
           description: ResponseInfo with advocate data updated successfully
           content:
             '*/*':
@@ -147,7 +203,62 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /clerk/v1/status/_search:
+    post:
+      tags:
+        - AdvocateClerk
+      summary: search for clerks using the status of their registration
+      parameters:
+        - name: status
+          in: query
+          description: status of clerks registration being searched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ResponseInfo with advocates matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdvocateClerkResponse'
+        '400':
+          description: Advocate search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+
+  /clerk/v1/applicationnumber/_search:
+    post:
+      tags:
+        - AdvocateClerk
+      summary: search for clerks using the applicationNumber of their registration
+      parameters:
+        - name: applicationNumber
+          in: query
+          description: applicationNumber of clerks registration being searched
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ResponseInfo with advocates matching search criteria
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AdvocateClerkResponse'
+        '400':
+          description: Advocate search failed. Refer to response body for specifics.
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   
+
   /clerk/v1/_search:
     post:
       tags:
@@ -161,12 +272,12 @@ paths:
               $ref: '#/components/schemas/AdvocateClerkSearchRequest'
         required: true
       responses:
-        '201':
+        '200':
           description: ResponseInfo with advocate clerks matching search criteria
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/AdvocateClerkResponse'
+                $ref: '#/components/schemas/AdvocateClerkListResponse'
         '400':
           description: Advocate clerk search failed. Refer to response body for specifics.
           content:
@@ -175,6 +286,7 @@ paths:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
       
+
 components:
   schemas:
     Advocate:
@@ -246,9 +358,23 @@ components:
           description: >-
             Any extra fields that are not captured as first class fields can be
             stored here as key/value pairs. Implementation specific.
-    
+
+
+    AdvocateSearchRequest:
+      type: object
+      description: advocate search is based on an array of criteria object.
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdvocateSearchCriteria'
+
     AdvocateSearchCriteria:
       type: object
+      description: the fields specified will be used in a logical AND condition
       properties:
         id:
           type: string
@@ -258,7 +384,47 @@ components:
           type: string
         individualId:
           type: string
-    
+        responseList:
+          type: array
+          description: this is an output field and will contain the list of advocates found as per the search criteria
+          items:
+            $ref: '#/components/schemas/Advocate'
+
+    AdvocateRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        advocate:
+            $ref: '#/components/schemas/Advocate'
+
+    AdvocateResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        advocate:
+          $ref: '#/components/schemas/Advocate'
+
+
+    AdvocateListResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        advocates:
+          type: array
+          description: the input search criteria enriched with advocate response list
+          items:
+            $ref: '#/components/schemas/AdvocateSearchCriteria'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+
+
     AdvocateClerk:
       type: object
       required: [tenantId, userId]
@@ -320,36 +486,7 @@ components:
             Any extra fields that are not captured as first class fields can be
             stored here as key/value pairs. Implementation specific.
     
-    AdvocateClerkSearchCriteria:
-      type: object
-      properties:
-        id:
-          type: string
-        applicationNumber:
-          type: string
-        stateRegnNumber:
-          type: string
-        individualId:
-          type: string
-    
-    AdvocateSearchRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        criteria:
-          type: array
-          items:
-            $ref: '#/components/schemas/AdvocateSearchCriteria'
-        status:
-          type: array
-          items:
-            type: string
-            description: list of workflow status ex INWORKFLOW, ACTIVE, INACTIVE
-        applicationNumber:
-          type: string
-          description: search on application number
+
 
     AdvocateClerkSearchRequest:
       type: object
@@ -361,49 +498,44 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdvocateClerkSearchCriteria'
-        status:
-          type: array
-          items:
-            type: string
-            description: list of workflow status ex INWORKFLOW, ACTIVE, INACTIVE
+
+    AdvocateClerkSearchCriteria:
+      type: object
+      description: the fields specified will be used in a logical AND condition
+      properties:
+        id:
+          type: string
         applicationNumber:
           type: string
-          description: search on application number
-    
-    AdvocateRequest:
-      type: object
-      properties:
-        RequestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        advocates:
+        stateRegnNumber:
+          type: string
+        individualId:
+          type: string
+        responseList:
           type: array
+          description: this is an output field and will contain the list of clerks found as per the search criteria
           items:
-            $ref: '#/components/schemas/Advocate'
-    AdvocateResponse:
-      type: object
-      properties:
-        responseInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        advocates:
-          type: array
-          items:
-            $ref: '#/components/schemas/Advocate'
-        pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
+            $ref: '#/components/schemas/AdvocateClerk'
+
     AdvocateClerkRequest:
       type: object
       properties:
         RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        clerks:
-          type: array
-          items:
+        clerk:
             $ref: '#/components/schemas/AdvocateClerk'
+
     AdvocateClerkResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        clerk:
+            $ref: '#/components/schemas/AdvocateClerk'
+
+    AdvocateClerkListResponse:
       type: object
       properties:
         responseInfo:
@@ -411,8 +543,9 @@ components:
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         clerks:
           type: array
+          description: the input search criteria enriched with clerk response list
           items:
-            $ref: '#/components/schemas/AdvocateClerk'
+            $ref: '#/components/schemas/AdvocateClerkSearchCriteria'
         pagination:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
