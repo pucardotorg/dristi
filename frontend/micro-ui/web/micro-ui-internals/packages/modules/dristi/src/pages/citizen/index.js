@@ -76,12 +76,12 @@ const App = ({ stateCode, tenantId }) => {
       show: location.pathname.includes("/home/registration"),
       isLast: !location.pathname.includes("/registration"),
     },
-    {
-      path: isUserLoggedIn ? `${path}/home/registration/additional-details` : "",
-      content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
-      show: location.pathname.includes("/home/registration/additional-details"),
-      isLast: !location.pathname.includes("/registration"),
-    },
+    // {
+    //   path: isUserLoggedIn ? `${path}/home/registration/additional-details` : "",
+    //   content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
+    //   show: location.pathname.includes("/home/registration/additional-details"),
+    //   isLast: !location.pathname.includes("/registration"),
+    // },
     {
       path: isUserLoggedIn ? `${path}/home/registration/additional-details/terms-conditions` : "",
       content: t("ES_COMMON_USER_TERMS_AND_CONDITIONS"),
@@ -101,7 +101,16 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/register/otp`,
     `${path}/home/login/otp`,
     `${path}/home/login`,
-    `${path}/home/login/user-name`,
+    `${path}/home/registration/user-name`,
+    `${path}/home/registration/user-type`,
+    `${path}/home/registration/user-address`,
+    `${path}/home/registration/user-number`,
+    `${path}/home/registration/otp`,
+    `${path}/home/registration/mobile-number`,
+    `${path}/home/registration/id-verification`,
+    `${path}/home/registration/enter-adhaar`,
+    `${path}/home/registration/aadhar-otp`,
+    `${path}/home/registration/additional-details`,
   ];
 
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
@@ -124,10 +133,10 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
+          <div style={{ display: "flex", justifyContent: "align-right", alignItems: "center" }}>
+            {/* <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb> */}
             {!hideHomeCrumb.includes(location.pathname) && (
-              <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+              <span style={{ display: "flex", justifyContent: "align-right", alignItems: "center", gap: "5px" }}>
                 <span style={{ color: "#f47738" }}>Help</span>
                 <HelpOutlineIcon />
               </span>

@@ -40,13 +40,14 @@ const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename }) => {
 
   return (
     <div className="docviewer-wrapper" id="docviewer-id">
-      <Card>
+      <Card className="docViewer-image">
         {documents?.length != 0 && (
           <>
             <DocViewer
+              className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
-              style={{ width: 262, height: 206 }}
+              // style={{ width: 262, height: 206 }}
               config={{
                 header: {
                   disableHeader: true,

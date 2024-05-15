@@ -6,8 +6,8 @@ import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
 import SelectId from "./SelectId";
-import SelectName from "./SelectName";
 import { userTypeOptions } from "../registration/config";
+import SelectName from "./SelectName";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -133,46 +133,39 @@ const Login = ({ stateCode }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
+    console.debug(value);
     setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, "") });
     setIsUserRegistered(true);
   };
 
   const selectMobileNumber = async (mobileNumber) => {
     setCanSubmitNo(false);
+    console.log("Gbvfjifd");
     setParmas({ ...params, ...mobileNumber });
     const data = {
       ...mobileNumber,
       tenantId: stateCode,
       userType: getUserType(),
     };
-    if (isUserRegistered) {
-      const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-      if (!err) {
-        setCanSubmitNo(true);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
-        return;
-      } else {
-        setCanSubmitNo(true);
-        // setError("MOBILE_NUMBER_NOT_REGISTERED");
-        // setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
-        setIsUserRegistered(false);
-        history.replace(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
-      }
+    console.log(isUserRegistered);
+
+    console.log(data, TYPE_LOGIN);
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    if (!err) {
+      setCanSubmitNo(true);
+      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
+      return;
     } else {
-      const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-      if (!err) {
-        setCanSubmitNo(true);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
-        return;
-      } else {
-        setCanSubmitNo(true);
-        // setError("MOBILE_NUMBER_ALREADY_REGISTERED");
-        // setTimeout(() => history.replace(getRedirectionUrl("isRegistered")), 3000);
-      }
+      setCanSubmitNo(true);
+      // setError("MOBILE_NUMBER_NOT_REGISTERED");
+      // setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
+      setIsUserRegistered(false);
+      history.replace(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
     }
   };
 
   const selectName = async (name) => {
+    console.log(name);
     const data = {
       ...params,
       tenantId: stateCode,
@@ -256,6 +249,7 @@ const Login = ({ stateCode }) => {
   };
 
   const sendOtp = async (data) => {
+    console.log(data);
     try {
       const res = await Digit.UserService.sendOtp(data, stateCode);
       return [res, null];
@@ -298,13 +292,14 @@ const Login = ({ stateCode }) => {
               canSubmit={canSubmitNo}
               showRegisterLink={isUserRegistered && !location.state?.role}
               t={t}
-              isRememberMe={params?.isRememberMe || false}
-              handleRememberMeChange={handleRememberMeChange}
             />
           </Route>
           <Route path={`${path}/user-name`}>
             <SelectName t={t} config={stepItems[1]} onSelect={selectName} />
           </Route>
+          {/* <Route path={`${path}/user-type`}>
+            <SelectName t={t} config={stepItems[1]} onSelect={selectName} />
+          </Route> */}
           <Route path={`${path}/otp`}>
             <SelectOtp
               config={{ ...stepItems[2], texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || ""}` } }}
@@ -315,8 +310,10 @@ const Login = ({ stateCode }) => {
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               t={t}
+              // onClick={history.push(`/${path}`)}
             />
           </Route>
+
           <Route path={`${path}/id-verification`}>
             <SelectId t={t} config={[stepItems[3]]} onAadharChange={onAadharChange} onDocumentUpload={onDocumentUpload} />
           </Route>

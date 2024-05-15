@@ -131,7 +131,7 @@ export const newconfigClerk = {
         headerStyle: null,
         type: "registration-requests-table-search",
         primaryLabel: "ES_COMMON_SEARCH",
-        secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
+        // secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
           applicationNumber: "",
