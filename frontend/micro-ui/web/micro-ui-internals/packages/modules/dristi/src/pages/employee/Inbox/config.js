@@ -23,7 +23,7 @@ export const newconfigAdvocate = {
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody",
+    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
@@ -126,7 +126,7 @@ export const newconfigClerk = {
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody",
+    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
