@@ -1,0 +1,26 @@
+.e-filing-card-wrapper {
+  .e-filing-header-content {
+    .e-filing-header-subtext {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: var(--Grey-700, #3d3c3c);
+    }
+  }
+}
+.pt-citizen {
+  padding: 0;
+}
+.employee-card-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.file-case-select-form-section {
+  min-width: 20%;
+}
+
+.file-case-form-section {
+  min-width: 78%;
+}

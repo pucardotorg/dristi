@@ -21,7 +21,7 @@ const Breadcrumb = (props) => {
             </li>
           );
         return (
-          <li key={ci} style={isLast ? { color: "#0B0C0C" } : { color: "#F47738" }} className="bread-crumb--item">
+          <li key={ci} style={isLast ? { color: "#0B0C0C" } : { color: "#007E7E" }} className="bread-crumb--item">
             {isLast || !crumb?.path ? (
               <span style={props?.spanStyle ? { ...props?.spanStyle } : {}}>{crumb.content}</span>
             ) : (

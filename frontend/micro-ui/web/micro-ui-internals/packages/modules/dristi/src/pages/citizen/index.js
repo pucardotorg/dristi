@@ -128,7 +128,7 @@ const App = ({ stateCode, tenantId }) => {
             <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
             {!hideHomeCrumb.includes(location.pathname) && (
               <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-                <span style={{ color: "#f47738" }}>Help</span>
+                <span style={{ color: "#007E7E" }}>Help</span>
                 <HelpOutlineIcon />
               </span>
             )}

@@ -132,7 +132,7 @@ const EmployeeHome = ({ modules, additionalComponent }) => {
     <>
       <div className="employee-app-container">
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "5px" }}>
-          <span style={{ color: "#f47738" }}>Help</span>
+          <span style={{ color: "#007E7E" }}>Help</span>
           <HelpOutlineIcon />
         </div>
         <div className="ground-container moduleCardWrapper gridModuleWrapper">

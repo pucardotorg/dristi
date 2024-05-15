@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState, Fragment, useCallback } from "react";
-import { Close, RemoveableTag, ButtonSelector } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useRef, useState, Fragment } from "react";
+import { ButtonSelector } from "@egovernments/digit-ui-react-components";
+import { Close, UploadIcon } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { RemoveableTag } from "@egovernments/digit-ui-react-components";
 
 const getRandomId = () => {
   return Math.floor((Math.random() || 1) * 139);
@@ -16,10 +18,11 @@ const ButtonBody = ({ t }) => {
 
 const getCitizenStyles = (value) => {
   let citizenStyles = {};
-  if (value === "propertyCreate") {
+  if (value == "propertyCreate") {
     citizenStyles = {
       textStyles: {
         whiteSpace: "nowrap",
+        width: "100%",
         overflow: "hidden",
         textOverflow: "ellipsis",
         width: "80%",
@@ -54,7 +57,7 @@ const getCitizenStyles = (value) => {
         marginTop: "0px",
       },
     };
-  } else if (value === "IP") {
+  } else if (value == "IP") {
     citizenStyles = {
       textStyles: {
         whiteSpace: "nowrap",
@@ -73,7 +76,7 @@ const getCitizenStyles = (value) => {
       buttonStyles: {},
       tagContainerStyles: {},
     };
-  } else if (value === "OBPS") {
+  } else if (value == "OBPS") {
     citizenStyles = {
       containerStyles: {
         display: "flex",
@@ -91,6 +94,7 @@ const getCitizenStyles = (value) => {
       },
       tagStyles: {
         padding: "8px",
+        margin: 0,
         width: "100%",
         margin: "5px",
       },
@@ -105,22 +109,22 @@ const getCitizenStyles = (value) => {
         whiteSpace: "pre",
       },
       inputStyles: {
-        width: "80%",
-        height: "2rem !important",
-        opacity: "0.2",
-        marginLeft: "10px",
+        width: "30%",
+        minHeight: "40px",
+        maxHeight: "42px",
+        top: "5px",
+        left: "420px",
       },
       buttonStyles: {
         height: "auto",
         minHeight: "40px",
-        width: "40%",
+        width: "100%",
         maxHeight: "40px",
-        marginTop: "-32px",
+        margin: "5px",
         padding: "1px 0px 0px 5px",
-        display: "block",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "red",
       },
       closeIconStyles: {
         width: "20px",
@@ -143,13 +147,12 @@ const getCitizenStyles = (value) => {
   return citizenStyles;
 };
 
-const UploadFile = (props) => {
-  const Digit = window?.Digit || {};
+const CustomUploadFile = (props) => {
   const { t } = useTranslation();
   const inpRef = useRef();
   const [hasFile, setHasFile] = useState(false);
   const [prevSate, setprevSate] = useState(null);
-  const user_type = Digit.SessionStorage.get("userType");
+  const user_type = window?.Digit.SessionStorage.get("userType");
   let extraStyles = {};
   const handleChange = () => {
     if (inpRef.current.files[0]) {
@@ -164,23 +167,20 @@ const UploadFile = (props) => {
     inpRef.current.value = "";
     props.onDelete();
   };
-  const handleReupload = () => {
-    inpRef.current.click();
-  };
 
-  const handleEmpty = useCallback(() => {
+  const handleEmpty = () => {
     if (inpRef.current.files.length <= 0 && prevSate !== null) {
       inpRef.current.value = "";
       props.onDelete();
     }
-  }, [prevSate, props]);
+  };
 
   if (props.uploadMessage && inpRef.current.value) {
     handleDelete();
     setHasFile(false);
   }
 
-  useEffect(() => handleEmpty(), [handleEmpty, inpRef?.current?.files]);
+  useEffect(() => handleEmpty(), [inpRef?.current?.files]);
 
   useEffect(() => handleChange(), [props.message]);
 
@@ -189,53 +189,51 @@ const UploadFile = (props) => {
   return (
     <Fragment>
       {showHint && <p className="cell-text">{t(props?.hintText)}</p>}
-      <div
-        className="upload-file-div-main"
-        style={{ display: "flex", maxWidth: "540px", gap: "2%", alignItems: "center", justifyContent: "space-between" }}
-      >
-        <div className="upload-file-div-sub" style={{ minWidth: "73%" }}>
-          <div
-            className={`upload-file ${user_type === "employee" ? "" : "upload-file-max-width"} ${props.disabled ? " disabled" : ""}`}
-            style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}
-          >
-            <div style={extraStyles ? extraStyles?.containerStyles : null}>
-              {props?.uploadedFiles?.map((file, index) => {
-                const fileDetailsData = file[1];
-                return (
-                  <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
-                    <RemoveableTag
-                      extraStyles={extraStyles}
-                      key={index}
-                      text={file[0]}
-                      onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)}
-                    />
-                  </div>
-                );
-              })}
-              {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props?.message}</h2>}
-              {!hasFile || props.error ? (
-                <h2 className="file-upload-status">{props.message}</h2>
-              ) : (
-                <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
-                  <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>
-                    <span className="text" style={extraStyles ? extraStyles?.textStyles : null}>
-                      {typeof inpRef.current.files[0]?.name !== "undefined" && !props?.file ? inpRef.current.files[0]?.name : props.file?.name}
-                    </span>
-                    <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
-                      <Close style={props.Multistyle} className="close" />
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      <div style={{ display: "flex", maxWidth: "540px" }}>
         <div
-          className="upload-file-upload-button-div"
-          style={{ maxWidth: "25%", height: "40px", border: "solid 1px #007E7E", display: "flex", alignItems: "center" }}
+          className={`upload-file ${user_type === "employee" ? "" : "upload-file-max-width"} ${props.disabled ? " disabled" : ""}`}
+          style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}
         >
+          <div style={extraStyles ? extraStyles?.containerStyles : null}>
+            {props?.uploadedFiles?.map((file, index) => {
+              const fileDetailsData = file[1];
+              return (
+                <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
+                  <RemoveableTag
+                    extraStyles={extraStyles}
+                    key={index}
+                    text={file[0]}
+                    onClick={(e) => props?.removeTargetedFile(fileDetailsData, e)}
+                  />
+                </div>
+              );
+            })}
+            {props?.uploadedFiles.length === 0 && <h2 className="file-upload-status">{props?.message}</h2>}
+            {!hasFile || props.error ? (
+              <h2 className="file-upload-status">{props.message}</h2>
+            ) : (
+              <div className="tag-container" style={extraStyles ? extraStyles?.tagContainerStyles : null}>
+                <div className="tag" style={extraStyles ? extraStyles?.tagStyles : null}>
+                  <span className="text" style={extraStyles ? extraStyles?.textStyles : null}>
+                    {typeof inpRef.current.files[0]?.name !== "undefined" && !props?.file ? inpRef.current.files[0]?.name : props.file?.name}
+                  </span>
+                  <span onClick={() => handleDelete()} style={extraStyles ? extraStyles?.closeIconStyles : null}>
+                    <Close style={props.Multistyle} className="close" />
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
           <input
+            className={props.disabled ? "disabled" : "" + "input-mirror-selector-button"}
+            style={extraStyles ? { ...extraStyles?.inputStyles, ...props?.inputStyles } : { ...props?.inputStyles }}
+            ref={inpRef}
             type="file"
+            id={props.id || `document-${getRandomId()}`}
+            name="file"
+            multiple={props.multiple}
+            accept={props.accept}
+            disabled={props.disabled}
             onChange={(e) => props.onUpload(e)}
             onClick={(event) => {
               if (props?.disabled) {
@@ -245,14 +243,16 @@ const UploadFile = (props) => {
               const { target = {} } = event || {};
               target.value = "";
             }}
-            ref={inpRef}
-            style={{ opacity: 0, maxWidth: "100%", minHeight: "40px" }}
           />
-          <span style={{ minWidth: "100%", textAlign: "center", cursor: "pointer" }} onClick={handleReupload}>
-            <span style={{ color: "#007E7E" }} className="upload-button-custimised">
-              {t("CS_COMMON_CHOOSE_FILE")}
-            </span>
-          </span>
+        </div>
+        <div style={{ width: "18%", maxWidth: "18%", margin: "0px", maxHeight: "42px", marginLeft: "10px", border: "solid 2px #007E7E" }}>
+          <ButtonSelector
+            theme="border"
+            ButtonBody={<ButtonBody t={t} />} // change this prop later.
+            style={{ ...(extraStyles ? extraStyles?.buttonStyles : {}), ...(props.disabled ? { display: "none" } : {}), display: "contents" }}
+            textStyles={{ textAlign: "center", margin: "0px", marginTop: "7px" }}
+            type={props.buttonType}
+          />{" "}
         </div>
       </div>
       {props.iserror && <p style={{ color: "red" }}>{props.iserror}</p>}
@@ -261,4 +261,4 @@ const UploadFile = (props) => {
   );
 };
 
-export default UploadFile;
+export default CustomUploadFile;

@@ -177,8 +177,8 @@ export const UICustomizations = {
           return (
             <Link
               style={{
-                border: "1px solid #F47738",
-                color: "#F47738",
+                border: "1px solid #007E7E",
+                color: "#007E7E",
                 padding: "10px",
                 width: "100px",
                 display: "block",

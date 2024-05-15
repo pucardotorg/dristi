@@ -4,6 +4,7 @@ import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-
 import CaseType from "./CaseType";
 import RespondentDetails from "./RespondentDetails";
 import DelayApplication from "./DelayApplication";
+import ComplainantDetails from "./ComplainantDetails";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -20,6 +21,9 @@ function FileCase({ t }) {
           </Route>
           <Route path={`${path}/delay-application`} exact>
             <DelayApplication />
+          </Route>
+          <Route path={`${path}/complainant-details`} exact>
+            <ComplainantDetails t={t} />
           </Route>
         </AppContainer>
       </Switch>

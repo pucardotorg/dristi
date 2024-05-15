@@ -91,14 +91,14 @@
   .digit-search-add {
     padding: 12px 16px;
     @extend .light-primary;
-    color: rgb(244, 119, 56);
+    color: #007e7e;
     display: flex;
     cursor: pointer;
   }
 
   .digit-search-add-icon {
     @extend .light-primary-button;
-    background: rgb(244, 119, 56);
+    background: #007e7e;
     border-radius: 50%;
     height: 24px;
     width: 24px;
