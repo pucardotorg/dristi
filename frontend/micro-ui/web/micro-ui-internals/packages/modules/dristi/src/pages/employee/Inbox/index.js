@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { CustomDropdown, Header, InboxSearchComposer, InboxSearchComposerV2, Loader } from "@egovernments/digit-ui-react-components";
+import { CustomDropdown, Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { dropdownConfig, newConfigAdvocate, newConfigClerk } from "./config";
 
@@ -63,13 +63,7 @@ const Inbox = ({ tenants, parentRoute }) => {
           ></CustomDropdown>
         </div>
         <div className="inbox-search-wrapper">
-          {type === "clerk" && (
-            <InboxSearchComposerV2
-              customStyle={sectionsParentStyle}
-              configs={newConfigClerk}
-              browserSession={[{}, () => {}, {}]}
-            ></InboxSearchComposerV2>
-          )}
+          {type === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newConfigClerk}></InboxSearchComposer>}
           {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newConfigAdvocate}></InboxSearchComposer>}
         </div>
       </div>

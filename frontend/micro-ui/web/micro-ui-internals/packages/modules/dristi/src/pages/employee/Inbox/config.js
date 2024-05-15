@@ -41,7 +41,7 @@ export const newConfigAdvocate = {
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.inbox",
+    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
@@ -54,6 +54,8 @@ export const newConfigAdvocate = {
         minReqFields: 1,
         defaultValues: {
           applicationNumber: "",
+          isActive: false,
+          tenantId: "pg",
         },
         fields: [
           {
@@ -154,6 +156,8 @@ export const newConfigClerk = {
         minReqFields: 1,
         defaultValues: {
           applicationNumber: "",
+          isActive: false,
+          tenantId: "pg",
         },
         fields: [
           {

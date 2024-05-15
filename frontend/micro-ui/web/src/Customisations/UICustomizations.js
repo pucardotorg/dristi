@@ -515,34 +515,20 @@ export const UICustomizations = {
   registrationRequestsConfig: {
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
-        return data[keys.start] && data[keys.end]
-          ? () =>
-              new Date(data[keys.start]).getTime() <=
-              new Date(data[keys.end]).getTime()
-          : true;
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
-    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+    additionalCustomizations: (row = {}, key, column, value, t, searchResult) => {
+      const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
+      const individualId = row?.businessObject?.individual?.individualId;
+      const applicationNumber =
+        row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
       switch (key) {
         case "Application No":
           return (
             <span className="link">
-              <Link
-                to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${
-                  row.individualId
-                }&isAction=true&type=${
-                  row?.applicationNumber?.includes("CLERK")
-                    ? "clerk"
-                    : "advocate"
-                }`}
-              >
-                {String(
-                  value
-                    ? column.translate
-                      ? t(column.prefix ? `${column.prefix}${value}` : value)
-                      : value
-                    : t("ES_COMMON_NA")
-                )}
+              <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${individualId}&type=${usertype}`}>
+                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
@@ -558,20 +544,14 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${
-                row.applicationNumber
-              }?individualId=${value}&isAction=true&isAction=true&type=${
-                row?.applicationNumber?.includes("CLERK") ? "clerk" : "advocate"
-              }`}
+              to={`/digit-ui/employee/dristi/registration-requests/details/${applicationNumber}?individualId=${value}&isAction=true&type=${usertype}`}
             >
               {" "}
               {t("Verify")}
             </Link>
           );
         case "User Type":
-          return row?.applicationNumber?.includes("CLERK")
-            ? t("Clerk")
-            : t("Advocate");
+          return value === "advocateclerk" ? "Clerk" : "Advocate";
         case "Date Created":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
@@ -580,29 +560,15 @@ export const UICustomizations = {
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
         case "Due Since (no of days)":
-          const createdAt = new Date(row.auditDetails.createdTime);
+          const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
           const today = new Date();
-          const formattedcreatedAt = new Date(
-            createdAt.getFullYear(),
-            createdAt.getMonth(),
-            createdAt.getDate()
-          );
-          const formattedToday = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate()
-          );
-          const differenceInTime =
-            formattedToday.getTime() - formattedcreatedAt.getTime();
-          const differenceInDays = Math.ceil(
-            differenceInTime / (1000 * 3600 * 24)
-          );
-          return (
-            <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>
-          );
+          const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
+          const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
+          const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
+          return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
         case "User Name":
-          const obj = JSON.parse(value || "{}");
-          return <span>{obj?.username || obj?.name || t("ES_COMMON_NA")}</span>;
+          return <span>{value?.username || value?.name || t("ES_COMMON_NA")}</span>;
         default:
           return t("ES_COMMON_NA");
       }
