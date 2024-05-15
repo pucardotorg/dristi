@@ -85,7 +85,7 @@ const ApplicationDetails = ({ location, match }) => {
 
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
-      criteria: [{ individualId }],
+      criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
       tenantId,
     },
     {},

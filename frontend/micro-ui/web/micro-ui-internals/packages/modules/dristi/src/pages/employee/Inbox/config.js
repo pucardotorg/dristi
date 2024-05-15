@@ -1,23 +1,4 @@
-export const advocateClerkDropdownData = [
-  {
-    code: "advocate",
-    name: "Advocate",
-    additionalDetails: {
-      businessService: ["advocate"],
-      moduleName: "Advocate services",
-    },
-  },
-  {
-    code: "clerk",
-    name: "Clerk",
-    additionalDetails: {
-      businessService: ["advocateclerk"],
-      moduleName: "Advocate Clerk Service",
-    },
-  },
-];
-
-export const newConfigAdvocate = {
+export const newconfigAdvocate = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   // customHookName: "dristi.useInboxCustomHook",
@@ -32,16 +13,17 @@ export const newConfigAdvocate = {
           tenantId: "pg",
         },
         moduleSearchCriteria: {
-          isActive: false,
           tenantId: "pg",
         },
         tenantId: "pg",
+        limit: 10,
+        offset: 0,
       },
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+    searchFormJsonPath: "requestBody",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
@@ -119,7 +101,7 @@ export const newConfigAdvocate = {
   additionalSections: {},
 };
 
-export const newConfigClerk = {
+export const newconfigClerk = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   // customHookName: "dristi.useInboxCustomHook",
@@ -134,16 +116,17 @@ export const newConfigClerk = {
           tenantId: "pg",
         },
         moduleSearchCriteria: {
-          isActive: false,
           tenantId: "pg",
         },
         tenantId: "pg",
+        limit: 10,
+        offset: 0,
       },
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
     moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+    searchFormJsonPath: "requestBody",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
