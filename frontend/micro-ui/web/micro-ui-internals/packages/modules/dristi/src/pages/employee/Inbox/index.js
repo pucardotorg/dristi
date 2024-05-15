@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { CustomDropdown, Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { configAdvocate, configClerk, dropdownConfig } from "./config";
+import { dropdownConfig, newconfigAdvocate, newconfigClerk } from "./config";
 
 const Digit = window?.Digit || {};
 
@@ -64,8 +64,8 @@ const Inbox = ({ tenants, parentRoute }) => {
         </div>
         <p>{}</p>
         <div className="inbox-search-wrapper">
-          {type === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={configClerk}></InboxSearchComposer>}
-          {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={configAdvocate}></InboxSearchComposer>}
+          {type === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigClerk}></InboxSearchComposer>}
+          {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigAdvocate}></InboxSearchComposer>}
         </div>
       </div>
     </React.Fragment>

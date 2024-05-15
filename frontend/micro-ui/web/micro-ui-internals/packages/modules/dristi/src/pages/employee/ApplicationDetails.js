@@ -85,7 +85,7 @@ const ApplicationDetails = ({ location, match }) => {
 
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
-      criteria: [{ individualId }],
+      criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
       tenantId,
     },
     {},
@@ -115,7 +115,7 @@ const ApplicationDetails = ({ location, match }) => {
     return searchData?.[userTypeDetail?.apiDetails?.requestKey];
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
-    return searchResult?.[0].documents?.[0]?.fileStore;
+    return searchResult?.[0]?.documents?.[0]?.fileStore;
   }, [searchResult]);
 
   useEffect(() => {
