@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: SonarCloud Scan
-        run: mvn sonar:sonar \
+        run: mvn -f backend/adocate sonar:sonar \
          -Dsonar.projectKey=pucardotorg \
          -Dsonar.organization=pucardotorg \
          -Dsonar.host.url=https://sonarcloud.io \
