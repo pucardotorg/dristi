@@ -15,6 +15,7 @@ import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CaseSearchRequest;
 import org.pucar.dristi.web.models.CourtCase;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
@@ -32,6 +33,7 @@ public class CaseRegistrationValidator {
     @Autowired
     private CaseRepository repository;
 
+    CaseService caseService;
     @Autowired
     private MdmsUtil mdmsUtil;
 
@@ -46,6 +48,11 @@ public class CaseRegistrationValidator {
     2. Fetch court department info from HRMS
     3. Validate artifact Ids
 */
+@Autowired
+public void setCaseService(@Lazy CaseService caseService) {
+    this.caseService = caseService;
+}
+
     public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException{
         RequestInfo requestInfo = caseRequest.getRequestInfo();
 
@@ -111,6 +118,8 @@ public class CaseRegistrationValidator {
                 caseCriteriaList.add(caseCriteria);
                 caseSearchRequest.setRequestInfo(requestInfo);
                 caseSearchRequest.setCriteria(caseCriteriaList);
+                if (!caseService.searchCases(caseSearchRequest).isEmpty())
+                    throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
             });
         }
         return !existingApplications.isEmpty();

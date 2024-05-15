@@ -9,6 +9,7 @@ import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -22,7 +23,6 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class    CaseService {
 
-    @Autowired
     private CaseRegistrationValidator validator;
 
     @Autowired
@@ -37,7 +37,10 @@ public class    CaseService {
     private Configuration config;
     @Autowired
     private Producer producer;
-
+    @Autowired
+    public void setValidator(@Lazy CaseRegistrationValidator validator) {
+        this.validator = validator;
+    }
     public List<CourtCase> createCase(CaseRequest body) {
         try {
             validator.validateCaseRegistration(body);
