@@ -12,7 +12,7 @@ jobs:
       uses: actions/checkout@v2
     - uses: sonarsource/sonarqube-scan-action@master
       with:
-          projectBaseDir: frontend/micro-ui/web/micro-ui-internals
+          projectBaseDir: frontend/micro-ui/web
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
