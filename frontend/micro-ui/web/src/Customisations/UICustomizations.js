@@ -518,7 +518,7 @@ export const UICustomizations = {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
-    additionalCustomizations: (row = {}, key, column, value, t, searchResult) => {
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
       const individualId = row?.businessObject?.individual?.individualId;
       const applicationNumber =
@@ -528,7 +528,7 @@ export const UICustomizations = {
           return (
             <span className="link">
               <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${individualId}&type=${usertype}`}>
-                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
@@ -551,7 +551,7 @@ export const UICustomizations = {
             </Link>
           );
         case "User Type":
-          return value === "advocateclerk" ? "Clerk" : "Advocate";
+          return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
         case "Date Created":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
@@ -567,8 +567,6 @@ export const UICustomizations = {
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
-        case "User Name":
-          return <span>{value?.username || value?.name || t("ES_COMMON_NA")}</span>;
         default:
           return t("ES_COMMON_NA");
       }
