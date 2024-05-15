@@ -2,7 +2,7 @@ import { useQuery, useQueryClient } from "react-query";
 
 const useInboxCustomHook = ({ url, params, body, config = {}, plainAccessRequest, changeQueryName = "Random" }) => {
   const client = useQueryClient();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit?.ULBService?.getCurrentTenantId() || "pg";
   // const userType = body?.inbox?.moduleSearchCriteria?.userType || {
   //   code: "advocate",
   //   name: "Advocate",
