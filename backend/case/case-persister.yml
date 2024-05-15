@@ -1,5 +1,5 @@
 serviceMaps:
-  serviceName: adv-services
+  serviceName: case-services
   mappings:
     - version: 1.0
       description: Persists case details in tables
@@ -12,7 +12,7 @@ serviceMaps:
       auditAttributeBasePath: $.cases.*
       queryMaps:
 
-        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber,cnrnumber,courtcasenumber accesscode, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, isactive, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber,cnrnumber,courtcasenumber, accesscode, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, isactive, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: cases.*
           jsonMaps:
             - jsonPath: $.cases.*.id

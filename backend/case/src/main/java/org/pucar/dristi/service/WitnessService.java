@@ -3,12 +3,9 @@ package org.pucar.dristi.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.enrichment.WitnessRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
-import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.repository.WitnessRepository;
-import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.validators.WitnessRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +14,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 
 @Service
@@ -40,17 +39,17 @@ public class WitnessService {
     public List<Witness> registerWitnessRequest(WitnessRequest body) {
         try {
             validator.validateCaseRegistration(body);
-            enrichmentUtil.enrichCaseRegistration(body);
+            enrichmentUtil.enrichWitnessRegistration(body);
 
-            producer.push("save-witness-application", body);
+            producer.push(config.getWitnessCreateTopic(), body);
             return body.getWitnesses();
         }
         catch (CustomException e){
-            log.error("Custom Exception occurred while creating advocate");
+            log.error("Custom Exception occurred while creating witness");
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while creating advocate");
-            throw new CustomException("CASE_CREATE_EXCEPTION",e.getMessage());
+            log.error("Error occurred while creating witness");
+            throw new CustomException(CREATE_WITNESS_ERR,e.getMessage());
         }
 
 
@@ -61,6 +60,7 @@ public class WitnessService {
         try {
             // Fetch applications from database according to the given search criteria
             List<Witness> witnesses = witnessRepository.getApplications(witnessSearchCriteria.getSearchCriteria());
+            log.info("Witness Applications Size :: {}", witnesses.size());
 
             // If no applications are found matching the given criteria, return an empty list
             if(CollectionUtils.isEmpty(witnesses))
@@ -73,7 +73,7 @@ public class WitnessService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("CASE_SEARCH_EXCEPTION",e.getMessage());
+            throw new CustomException(SEARCH_WITNESS_ERR,e.getMessage());
         }
     }
 
@@ -88,9 +88,8 @@ public class WitnessService {
                 try {
                     existingApplication = validator.validateApplicationExistence(witnessRequest.getRequestInfo(),witness);
                 } catch (Exception e) {
-                    e.printStackTrace();
                     log.error("Error validating existing application");
-                    throw new CustomException("WITNESS_CREATE_EXCEPTION","Error validating existing application: "+ e.getMessage());
+                    throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
                 }
                 witnessList.add(existingApplication);
             });
@@ -109,7 +108,7 @@ public class WitnessService {
             throw e;
         } catch (Exception e){
             log.error("Error occurred while updating witness");
-            throw new CustomException("WITNESS_UPDATE_EXCEPTION","Error occurred while updating witness: " + e.getMessage());
+            throw new CustomException(UPDATE_WITNESS_ERR,"Error occurred while updating witness: " + e.getMessage());
         }
 
     }

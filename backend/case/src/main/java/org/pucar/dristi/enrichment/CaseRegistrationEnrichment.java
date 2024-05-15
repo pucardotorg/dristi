@@ -42,6 +42,14 @@ public class CaseRegistrationEnrichment {
                     courtCase.setAuditdetails(auditDetails);
 
                     courtCase.setId(UUID.randomUUID());
+                    courtCase.getLinkedCases().forEach(linkedCase -> {
+                        linkedCase.setId(UUID.randomUUID());
+                        linkedCase.setAuditdetails(auditDetails);
+                        linkedCase.getDocuments().forEach(document -> {
+                            document.setId(String.valueOf(UUID.randomUUID()));
+                            document.setDocumentUid(document.getId());
+                        });
+                    });
 
                     courtCase.getStatutesAndSections().forEach(statuteSection -> {
                         statuteSection.setId(UUID.randomUUID());
