@@ -13,12 +13,11 @@ jobs:
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@master
+        run: mvn -B -f backend/advocate/pom.xml verify sonar:sonar -Dsonar.projectKey=advocate -Dsonar.organization=pucardotord -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        with:
-          projectBaseDir: backend/advocate
+       
         
       # Login to Azure Container Registry
       # - name: Login to Azure Container Registry
