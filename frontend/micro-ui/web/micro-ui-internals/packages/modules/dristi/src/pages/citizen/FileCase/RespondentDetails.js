@@ -2,9 +2,9 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { sideMenuConfig } from "./respondentconfig";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
+import { sideMenuConfig } from "./config";
 function RespondentDetails({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -12,53 +12,13 @@ function RespondentDetails({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [formdata, setformdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
+  const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
   const [accordion, setAccordion] = useState(sideMenuConfig);
-  const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[1]?.pageConfig);
+  const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[0]?.pageConfig);
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
-  }, [pageConfig.formconfig]);
-
-  const validateFormData = (data) => {
-    let isValid = true;
-    formConfig?.forEach((curr) => {
-      if (!isValid) return;
-      if (!(curr.body[0].key in data) || !data[curr.body[0].key]) {
-        isValid = false;
-      }
-      curr.body[0].populators.inputs.forEach((input) => {
-        if (!isValid) return;
-        if (Array.isArray(input.name)) return;
-        if (
-          input.isDependentOn &&
-          data[curr.body[0].key][input.isDependentOn] &&
-          !Boolean(
-            input.dependentKey[input.isDependentOn].reduce((res, current) => {
-              if (!res) return res;
-              res = data[curr.body[0].key][input.isDependentOn][current];
-              if (
-                Array.isArray(data[curr.body[0].key][input.isDependentOn][current]) &&
-                data[curr.body[0].key][input.isDependentOn][current].length === 0
-              ) {
-                res = false;
-              }
-              return res;
-            }, true)
-          )
-        ) {
-          return;
-        }
-        if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
-          isValid = false;
-        }
-        if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
-          isValid = false;
-        }
-      });
-    });
-    return isValid;
-  };
+  }, [pageConfig]);
 
   const isDependentEnabled = useMemo(() => {
     let result = false;
@@ -94,28 +54,19 @@ function RespondentDetails({ path }) {
         return show && config;
       });
     });
-  }, [isDependentEnabled, formdata]);
+  }, [isDependentEnabled, formdata, formConfig]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
   }, [formdata]);
 
   const handleAddForm = () => {
-    setformdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
+    setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };
 
   const handleDeleteForm = (index) => {
     const newArray = formdata.map((item, i) => ({ ...item, isenabled: index === i ? false : item.isenabled, displayindex: i < index ? i : i - 1 }));
-    setformdata(newArray);
-  };
-
-  const onSubmit = (data) => {
-    if (!validateFormData(data)) {
-      setShowErrorToast(!validateFormData(data));
-      return;
-    }
-    setParmas({ ...params, registrationData: data });
-    history.push(`${path}/terms-conditions`);
+    setFormdata(newArray);
   };
 
   const closeToast = () => {
@@ -124,7 +75,7 @@ function RespondentDetails({ path }) {
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
-      setformdata(
+      setFormdata(
         formdata.map((item, i) => {
           return i === index ? { ...item, data: formData } : item;
         })
@@ -158,6 +109,7 @@ function RespondentDetails({ path }) {
       return newAccordion;
     });
     setPageConfig(newPageConfig);
+    setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
   };
 
   return (
@@ -202,7 +154,6 @@ function RespondentDetails({ path }) {
                 label={t("CS_COMMONS_NEXT")}
                 config={config}
                 onSubmit={(props) => {
-                  // onSubmit(props);
                   console.debug("Vaibhav");
                 }}
                 defaultValues={{}}
