@@ -50,10 +50,9 @@ public class UserUtil {
 		else if (uri.toString().contains(configs.getUserCreateEndpoint()))
 			dobFormat = DOB_FORMAT_D_M_Y;
 		try {
-			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+			LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-			return userDetailResponse;
+			return mapper.convertValue(responseMap, UserDetailResponse.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, OBJECTMAPPER_UNABLE_TO_CONVERT);
 		}
@@ -65,8 +64,8 @@ public class UserUtil {
 	 * @param responseMap LinkedHashMap got from user api response
 	 */
 
-	public void parseResponse(LinkedHashMap responseMap, String dobFormat) {
-		List<LinkedHashMap> users = (List<LinkedHashMap>) responseMap.get(USER);
+	public void parseResponse(Map<String, Object> responseMap, String dobFormat) {
+		List<Map<String, Object>> users = (List<Map<String, Object>>) responseMap.get(USER);
 		String format1 = DOB_FORMAT_D_M_Y_H_M_S;
 		if (users != null) {
 			users.forEach(map -> {

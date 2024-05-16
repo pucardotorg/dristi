@@ -33,9 +33,6 @@ import java.util.List;
 @RequestMapping("")
 public class ClerkApiController {
 
-	private final ObjectMapper objectMapper;
-
-	private final HttpServletRequest request;
 	@Autowired
 	private AdvocateClerkService advocateClerkService;
 
@@ -43,8 +40,6 @@ public class ClerkApiController {
 	private ResponseInfoFactory responseInfoFactory;
 	@Autowired
 	public ClerkApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
 	}
 	public void setMockInjects(AdvocateClerkService advocateClerkService, ResponseInfoFactory responseInfoFactory){
 		this.advocateClerkService = advocateClerkService;
