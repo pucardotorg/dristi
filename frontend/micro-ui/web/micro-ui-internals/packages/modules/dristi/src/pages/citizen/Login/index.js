@@ -101,11 +101,11 @@ const Login = ({ stateCode }) => {
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
       const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
-      history.replace(isUserRegistered ? homeUrl : idVerificationUrl, {
+      history.push(isUserRegistered ? homeUrl : idVerificationUrl, {
         redirectBackTo: redirectPath,
       });
     } else {
-      history.replace(redirectPath);
+      history.push(redirectPath);
     }
   }, [user]);
 
@@ -149,20 +149,20 @@ const Login = ({ stateCode }) => {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
       if (!err) {
         setCanSubmitNo(true);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
+        history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
         return;
       } else {
         setCanSubmitNo(true);
         // setError("MOBILE_NUMBER_NOT_REGISTERED");
         // setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
         setIsUserRegistered(false);
-        history.replace(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
+        history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
       }
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
         setCanSubmitNo(true);
-        history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+        history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
         return;
       } else {
         setCanSubmitNo(true);
@@ -184,7 +184,7 @@ const Login = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (res) {
       setCanSubmitName(false);
-      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+      history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
     } else {
       setCanSubmitName(false);
     }
@@ -281,7 +281,7 @@ const Login = ({ stateCode }) => {
   };
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    history.replace(`/${window?.contextPath}/citizen/dristi/home/registration`);
+    history.push(`/${window?.contextPath}/citizen/dristi/home/registration`);
     setCanSubmitAadharOtp(true);
   };
 
@@ -303,7 +303,7 @@ const Login = ({ stateCode }) => {
             />
           </Route>
           <Route path={`${path}/user-name`}>
-            <SelectName t={t} config={stepItems[1]} onSelect={selectName} />
+            <SelectName t={t} config={stepItems[1]} onSelect={selectName} value={params?.name} canSubmit={canSubmitName} />
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp

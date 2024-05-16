@@ -94,18 +94,7 @@ function CitizenHome({ tenantId }) {
         !isApprovalPending &&
         !isRejected &&
         cardIcons.map((card) => {
-          return (
-            <CustomCard
-              label={card.label}
-              Icon={card.Icon}
-              style={{ width: "400px", height: "150px" }}
-              onClick={() => {
-                if (card.label === "File a Case") {
-                  history.push(card.path);
-                }
-              }}
-            ></CustomCard>
-          );
+          return <CustomCard label={card.label} Icon={card.Icon} style={{ width: "400px", height: "150px" }} onClick={() => {}}></CustomCard>;
         })}
       {individualId && isApprovalPending && !isRejected && <ApplicationAwaitingPage individualId={individualId} />}
       {(!individualId || isRejected) && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}

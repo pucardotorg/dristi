@@ -267,7 +267,7 @@ const ApplicationDetails = ({ location, match }) => {
           actionSaveOnSubmit={() => {
             handleDelete("REJECT");
           }}
-          isDisabled={!reasons}
+          isDisabled={!reasons || !reasons.trim()}
         >
           <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
             <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>

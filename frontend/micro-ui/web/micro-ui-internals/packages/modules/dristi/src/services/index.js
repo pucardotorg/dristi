@@ -33,7 +33,7 @@ export const DRISTIService = {
       useCache: false,
       userService: userService,
       data,
-      params: { tenantId },
+      params: { tenantId, limit: 10000 },
       additionInfo,
     }),
   searchIndividualAdvocate: (data, params) =>
