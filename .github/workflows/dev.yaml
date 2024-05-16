@@ -20,8 +20,8 @@ jobs:
           cache: maven
       - name: Build Package
         run: mvn -B clean install -f backend/case
-      - name: SonarCloud Scan
-        run: mvn -f backend/case/pom.xml sonar:sonar
+      - name: Sonarqube Scan
+        run:  mvn sonar:sonar -Dsonar.projectKey=pucardotorg -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectBaseDir=backend/case
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
