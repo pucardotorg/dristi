@@ -23,6 +23,7 @@ import InfoCard from "./components/InfoCard";
 import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
+import SelectComponentsMulti from "./components/SelectComponentsMulti";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -44,6 +45,7 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
 
 const componentsToRegister = {
   SelectComponents,
+  SelectComponentsMulti,
   SelectUserTypeComponent,
   DRISTIModule,
   DRISTIRegistration: Registration,

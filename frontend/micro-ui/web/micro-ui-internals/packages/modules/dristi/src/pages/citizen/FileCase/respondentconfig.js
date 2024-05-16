@@ -213,7 +213,7 @@ export const respondentFromconfig = [
     body: [
       {
         type: "component",
-        component: "SelectComponents",
+        component: "SelectComponentsMulti",
         key: "addressDetails",
         withoutLabel: true,
         error: "sample required message",

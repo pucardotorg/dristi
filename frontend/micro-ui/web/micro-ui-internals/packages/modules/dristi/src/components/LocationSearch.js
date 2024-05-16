@@ -214,7 +214,7 @@ const mapStyles = [
   },
 ];
 
-const setLocationText = (location, onChange, isPlaceRequired = false) => {
+const setLocationText = (location, onChange, isPlaceRequired = false, index) => {
   const geocoder = new window.google.maps.Geocoder();
   geocoder.geocode(
     {
@@ -224,7 +224,7 @@ const setLocationText = (location, onChange, isPlaceRequired = false) => {
       if (status === "OK") {
         if (results[0]) {
           let pincode = GetPinCode(results[0]);
-          const infoWindowContent = document.getElementById("pac-input");
+          const infoWindowContent = document.getElementById("pac-input-" + index);
           infoWindowContent.value = getName(results[0]);
           if (onChange) {
             if (isPlaceRequired) onChange(pincode, results[0], { longitude: location.lng, latitude: location.lat }, infoWindowContent.value);
@@ -236,7 +236,7 @@ const setLocationText = (location, onChange, isPlaceRequired = false) => {
   );
 };
 
-const onMarkerDragged = (marker, onChange, isPlaceRequired = false) => {
+const onMarkerDragged = (marker, onChange, isPlaceRequired = false, index) => {
   if (!marker) return;
   const { latLng } = marker;
   const currLat = latLng.lat();
@@ -245,19 +245,19 @@ const onMarkerDragged = (marker, onChange, isPlaceRequired = false) => {
     lat: currLat,
     lng: currLang,
   };
-  if (isPlaceRequired) setLocationText(location, onChange, true);
-  else setLocationText(location, onChange);
+  if (isPlaceRequired) setLocationText(location, onChange, true, index);
+  else setLocationText(location, onChange, false, index);
 };
 
-const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
-  const map = new window.google.maps.Map(document.getElementById("map"), {
+const initAutocomplete = (onChange, position, isPlaceRequired = false, index) => {
+  const map = new window.google.maps.Map(document.getElementById("map-" + index), {
     center: position,
     zoom: 15,
     mapTypeId: "roadmap",
     styles: mapStyles,
   }); // Create the search box and link it to the UI element.
 
-  const input = document.getElementById("pac-input");
+  const input = document.getElementById("pac-input-" + index);
   updateDefaultBounds(position);
   const options = {
     bounds: defaultBounds,
@@ -284,12 +284,12 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
       clickable: true,
     }),
   ];
-  if (isPlaceRequired) setLocationText(position, onChange, true);
-  else setLocationText(position, onChange);
+  if (isPlaceRequired) setLocationText(position, onChange, true, index);
+  else setLocationText(position, onChange, false, index);
 
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
-  markers[0].addListener("dragend", (marker) => onMarkerDragged(marker, onChange, isPlaceRequired));
+  markers[0].addListener("dragend", (marker) => onMarkerDragged(marker, onChange, isPlaceRequired, index));
   searchBox.addListener("place_changed", () => {
     const place = searchBox.getPlace();
 
@@ -332,7 +332,7 @@ const initAutocomplete = (onChange, position, isPlaceRequired = false) => {
         clickable: true,
       })
     );
-    markers[0].addListener("dragend", (marker) => onMarkerDragged(marker, onChange, isPlaceRequired));
+    markers[0].addListener("dragend", (marker) => onMarkerDragged(marker, onChange, isPlaceRequired, index));
     if (place.geometry.viewport) {
       // Only geocodes have viewport.
       bounds.union(place.geometry.viewport);
@@ -348,9 +348,10 @@ const LocationSearch = (props) => {
   const { setCoordinateData } = props;
   const [coordinates, setCoordinates] = useState({ lat: 31.6160638, lng: 74.8978579 });
   useEffect(() => {
+    console.log("coordinatess", coordinates);
     async function mapScriptCall() {
       const getLatLng = (position) => {
-        initAutocomplete(props.onChange, { lat: position.coords.latitude, lng: position.coords.longitude }, props.isPlaceRequired);
+        initAutocomplete(props.onChange, { lat: position.coords.latitude, lng: position.coords.longitude }, props.isPlaceRequired, props?.index);
       };
       const getLatLngError = (error) => {
         let defaultLatLong = {};
@@ -362,7 +363,7 @@ const LocationSearch = (props) => {
             lng: 74.8978579,
           };
         }
-        initAutocomplete(props.onChange, defaultLatLong, props.isPlaceRequired);
+        initAutocomplete(props.onChange, defaultLatLong, props.isPlaceRequired, props?.index);
       };
 
       const initMaps = () => {
@@ -378,7 +379,7 @@ const LocationSearch = (props) => {
       loadGoogleMaps(initMaps);
     }
     mapScriptCall();
-    setCoordinateData({ callback: setCoordinates });
+    setCoordinateData({ callbackfunc: setCoordinates });
   }, [coordinates]);
 
   return (
@@ -386,9 +387,9 @@ const LocationSearch = (props) => {
       <div className="map-search-bar-wrap">
         {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
         <SearchIconSvg className="map-search-bar-icon" />
-        <input id="pac-input" className="map-search-bar" type="text" placeholder="Search Address" autoComplete="off" />
+        <input id={"pac-input-" + props?.index} className="map-search-bar" type="text" placeholder="Search Address" autoComplete="off" />
       </div>
-      <div id="map" className="map"></div>
+      <div id={"map-" + props?.index} className="map"></div>
     </div>
   );
 };
