@@ -46,6 +46,7 @@ public class WorkflowUtil {
 		try {
 			response = mapper.convertValue(result, BusinessServiceResponse.class);
 		} catch (IllegalArgumentException e) {
+			log.error("Failed to parse business service search result", e);
 			throw new CustomException(PARSING_ERROR, FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH);
 		}
 
