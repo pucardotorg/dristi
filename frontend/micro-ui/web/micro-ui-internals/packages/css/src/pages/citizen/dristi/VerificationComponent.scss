@@ -4,6 +4,15 @@
   form {
     .card {
       max-width: 960px;
+      h2.verification-button-text-modal {
+        text-align: left;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #fff !important;
+      }
       h2.secondary-label-selector {
         text-align: left;
         font-family: Roboto;

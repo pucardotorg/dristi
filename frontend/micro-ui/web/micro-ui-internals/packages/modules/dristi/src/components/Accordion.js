@@ -18,7 +18,11 @@ function Accordion({ t, title, count, onClick, children }) {
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
           {children.map((item) => (
-            <div className="radio-wrap" style={item.checked ? { background: "#E8E8E8", ...radioCardStyle } : radioCardStyle}>
+            <div
+              className="radio-wrap"
+              style={item.checked ? { background: "#E8E8E8", ...radioCardStyle } : radioCardStyle}
+              onClick={() => console.log(item)}
+            >
               {item.isCompleted ? (
                 <CustomCompleteIcon />
               ) : (

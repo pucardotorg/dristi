@@ -5,6 +5,7 @@ import CaseType from "./CaseType";
 import RespondentDetails from "./RespondentDetails";
 import DelayApplication from "./DelayApplication";
 import ComplainantDetails from "./ComplainantDetails";
+import EFilingCases from "./EFilingCases";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -22,8 +23,8 @@ function FileCase({ t }) {
           <Route path={`${path}/delay-application`} exact>
             <DelayApplication />
           </Route>
-          <Route path={`${path}/complainant-details`} exact>
-            <ComplainantDetails t={t} />
+          <Route path={`${path}/case`} exact>
+            <EFilingCases t={t} />
           </Route>
         </AppContainer>
       </Switch>

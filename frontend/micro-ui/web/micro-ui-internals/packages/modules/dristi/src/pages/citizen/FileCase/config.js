@@ -58,23 +58,40 @@ export const complainantDetailsConfig = [
   {
     body: [
       {
-        type: "component",
-        component: "SelectUserTypeComponent",
-        key: "complainantType",
-        withoutLabel: true,
+        type: "radio",
+        key: "respondentType",
+        label: "CS_RESPONDENT_TYPE",
+        isMandatory: true,
         populators: {
-          inputs: [
+          label: "SELECT_RESPONDENT_TYPE",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          options: [
             {
-              label: "COMPLAINANT_TYPE",
-              type: "radioButton",
-              name: "selectUserType",
-              optionsKey: "name",
-              error: "sample required message",
-              clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-              options: [
-                { code: "INDIVIDUAL", name: "INDIVIDUAL" },
-                { code: "REPRESENTATIVE", name: "REPRESENTATIVE" },
-              ],
+              code: "INDIVIDUAL",
+              name: "Individual",
+              showCompanyDetails: false,
+              commonFields: true,
+              isEnabled: true,
+            },
+            {
+              code: "REPRESENTATIVE",
+              name: "Representative of an Entity",
+              showCompanyDetails: true,
+              commonFields: true,
+              isVerified: true,
+              hasBarRegistrationNo: true,
+              isEnabled: true,
+              apiDetails: {
+                serviceName: "/advocate/advocate/v1/_create",
+                requestKey: "advocates",
+                AdditionalFields: ["barRegistrationNumber"],
+              },
             },
           ],
         },
