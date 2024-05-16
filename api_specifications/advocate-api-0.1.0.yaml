@@ -78,6 +78,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId
+          schema:
+            type: string
       responses:
         '200':
           description: ResponseInfo with advocates matching search criteria
@@ -103,6 +108,11 @@ paths:
           in: query
           description: applicationNumber of advocate registration being searched
           required: true
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId
           schema:
             type: string
       responses:
@@ -216,6 +226,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId
+          schema:
+            type: string
       responses:
         '200':
           description: ResponseInfo with advocates matching search criteria
@@ -241,6 +256,11 @@ paths:
           in: query
           description: applicationNumber of clerks registration being searched
           required: true
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId
           schema:
             type: string
       responses:
@@ -367,6 +387,8 @@ components:
         RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
         criteria:
           type: array
           items:
@@ -494,6 +516,8 @@ components:
         RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
         criteria:
           type: array
           items:
