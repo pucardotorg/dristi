@@ -629,6 +629,8 @@ components:
         RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        tenantId:
+          type: string
         criteria:
           type: array
           items:
