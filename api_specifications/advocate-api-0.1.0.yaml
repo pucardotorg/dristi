@@ -81,6 +81,7 @@ paths:
         - name: tenantId
           in: query
           description: Search by tenantId
+          required: true
           schema:
             type: string
       responses:
@@ -113,6 +114,7 @@ paths:
         - name: tenantId
           in: query
           description: Search by tenantId
+          required: true
           schema:
             type: string
       responses:
@@ -229,6 +231,7 @@ paths:
         - name: tenantId
           in: query
           description: Search by tenantId
+          required: true
           schema:
             type: string
       responses:
@@ -261,6 +264,7 @@ paths:
         - name: tenantId
           in: query
           description: Search by tenantId
+          required: true
           schema:
             type: string
       responses:
@@ -427,8 +431,10 @@ components:
         responseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        advocate:
-          $ref: '#/components/schemas/Advocate'
+        advocates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Advocate'
 
 
     AdvocateListResponse:
@@ -556,7 +562,9 @@ components:
         responseInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
-        clerk:
+        clerks:
+          type: array
+          items:
             $ref: '#/components/schemas/AdvocateClerk'
 
     AdvocateClerkListResponse:
