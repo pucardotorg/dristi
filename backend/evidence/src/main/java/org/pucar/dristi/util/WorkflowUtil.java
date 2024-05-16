@@ -122,13 +122,13 @@ public class WorkflowUtil {
 		processInstance.setComment(workflow.getComments());
 
 		if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
-			List<User> users = new ArrayList<>();
-
-			workflow.getAssignes().forEach(uuid -> {
-				User user = new User();
-				user.setUuid(uuid);
-				users.add(user);
-			});
+			List<User> users = workflow.getAssignes().stream()
+			    .map(uuid -> {
+			      User user = new User();
+			      user.setUuid(uuid);
+			      return user;
+			    })
+			    .collect(Collectors.toList());
 
 			processInstance.setAssignes(users);
 		}
