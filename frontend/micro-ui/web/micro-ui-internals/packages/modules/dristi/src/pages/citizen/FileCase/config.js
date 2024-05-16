@@ -605,6 +605,7 @@ export const respondentconfig = {
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_RESPONDENT",
+  formitemName: "Respondent",
 };
 
 const complaintdetailconfig = {
@@ -613,6 +614,173 @@ const complaintdetailconfig = {
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_Complaint",
+  formitemName: "Respondent",
+};
+
+const debtLiabilityFromconfig = [
+  {
+    body: [
+      {
+        type: "dropdown",
+        key: "liabilityNature",
+        label: "Nature of debt / liability for which cheque(s) was/were received (e.g. loan, sales agreement etc)",
+        isMandatory: true,
+        populators: {
+          label: "SELECT_RESPONDENT_TYPE",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          options: [
+            {
+              code: "LOAN",
+              name: "Loan",
+              showAmountCovered: false,
+              isEnabled: true,
+            },
+            {
+              code: "SALES",
+              name: "Sales Agreement",
+              showAmountCovered: true,
+              isVerified: true,
+              hasBarRegistrationNo: true,
+              isEnabled: true,
+              apiDetails: {
+                serviceName: "/advocate/advocate/v1/_create",
+                requestKey: "advocates",
+                AdditionalFields: ["barRegistrationNumber"],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "radio",
+        key: "liabilityType",
+        label: "What was the total amount the cheque(s) covered?",
+        isMandatory: true,
+        populators: {
+          label: "SELECT_RESPONDENT_TYPE",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          options: [
+            {
+              code: "FULL_LIABILITY",
+              name: "Full Liability",
+              showAmountCovered: false,
+              isEnabled: true,
+            },
+            {
+              code: "PARTIAL_LIABILITY",
+              name: "Partial Liability",
+              showAmountCovered: true,
+              isVerified: true,
+              hasBarRegistrationNo: true,
+              isEnabled: true,
+              apiDetails: {
+                serviceName: "/advocate/advocate/v1/_create",
+                requestKey: "advocates",
+                AdditionalFields: ["barRegistrationNumber"],
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { liabilityType: ["showAmountCovered"] },
+    body: [
+      {
+        type: "text",
+        key: "totalAmount",
+        label: "What was the total amount the cheque(s) covered? ",
+        populators: {
+          validation: {},
+          title: "FIRST_TERMS_AND_CONDITIONS",
+          name: "Terms_Conditions",
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "addressDetailsNote",
+        populators: {
+          inputs: [
+            {
+              infoHeader: "CS_COMMON_NOTE",
+              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
+              type: "InfoComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "condonationFileUpload",
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "Aadhar",
+              isOptional: "optional",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "Upload .png",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: false,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "delayApplicationReason",
+        populators: {
+          inputs: [
+            {
+              textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+const debtliabilityconfig = {
+  formconfig: debtLiabilityFromconfig,
+  header: "CS_DEBT_LIABILITY_HEADING",
+  subtext: "CS_DEBT_LIABILITY_SUBTEXT",
+  isOptional: false,
 };
 
 export const sideMenuConfig = [
@@ -621,7 +789,7 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_LITIGENT_DETAILS",
     children: [
-      { label: "CS_COMPLAINT_DETAILS", checked: false, isCompleted: true, isDisabled: false, pageConfig: complaintdetailconfig },
+      { label: "CS_COMPLAINT_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: complaintdetailconfig },
       { label: "CS_RESPONDENT_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: respondentconfig },
     ],
   },
@@ -631,7 +799,7 @@ export const sideMenuConfig = [
     title: "CS_CASE_SPECIFIC_DETAILS",
     children: [
       { label: "CS_CHECK_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: debtliabilityconfig },
       { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
       { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false },
     ],
