@@ -87,7 +87,7 @@ function RespondentDetails({ path }) {
     setAccordion((prevAccordion) => {
       const newAccordion = prevAccordion.map((parent, pIndex) => ({
         ...parent,
-        isOpen: pIndex === index ? !parent.isOpen : parent.isOpen,
+        isOpen: pIndex === index ? !parent.isOpen : false,
       }));
       return newAccordion;
     });
@@ -113,8 +113,8 @@ function RespondentDetails({ path }) {
   };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ width: "12vw" }}>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="file-case-select-form-section">
         {accordion.map((item, index) => (
           <Accordion
             t={t}
@@ -130,60 +130,64 @@ function RespondentDetails({ path }) {
           />
         ))}
       </div>
-      <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column", marginLeft: "40px" }}>
-        <div className="header-content">
-          <Header>{t(pageConfig.header)}</Header>
-        </div>
-        {modifiedFormConfig.map((config, index) => {
-          return formdata[index].isenabled ? (
-            <div>
-              <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-                <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
-                {(activeForms > 1 || pageConfig.isOptional) && (
-                  <span
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      handleDeleteForm(index);
-                    }}
-                  >
-                    <CustomDeleteIcon />
-                  </span>
-                )}
-              </Card>
-              <FormComposerV2
-                label={t("CS_COMMONS_NEXT")}
-                config={config}
-                onSubmit={(props) => {
-                  console.debug("Vaibhav");
-                }}
-                defaultValues={{}}
-                onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-                  onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
-                }}
-                cardStyle={{ minWidth: "100%" }}
-                isDisabled={isDisabled}
-              />
-            </div>
-          ) : null;
-        })}
-        {pageConfig?.addFormText && (
-          <div
-            onClick={handleAddForm}
-            style={{
-              display: "flex",
-              cursor: "pointer",
-              alignItems: "center",
-              justifyContent: "space-around",
-              width: "150px",
-              color: "#007E7E",
-            }}
-          >
-            <CustomAddIcon />
-            <span>{pageConfig.addFormText}</span>
+      <div className="file-case-form-section">
+        <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column", marginLeft: "40px" }}>
+          <div className="header-content">
+            <Header>{t(pageConfig.header)}</Header>
           </div>
-        )}
+          {modifiedFormConfig.map((config, index) => {
+            return formdata[index].isenabled ? (
+              <div>
+                {pageConfig?.addFormText && (
+                  <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
+                    <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
+                    {(activeForms > 1 || pageConfig.isOptional) && (
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleDeleteForm(index);
+                        }}
+                      >
+                        <CustomDeleteIcon />
+                      </span>
+                    )}
+                  </Card>
+                )}
+                <FormComposerV2
+                  label={t("CS_COMMONS_NEXT")}
+                  config={config}
+                  onSubmit={(props) => {
+                    console.debug("Vaibhav");
+                  }}
+                  defaultValues={{}}
+                  onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+                    onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
+                  }}
+                  cardStyle={{ minWidth: "100%" }}
+                  isDisabled={isDisabled}
+                />
+              </div>
+            ) : null;
+          })}
+          {pageConfig?.addFormText && (
+            <div
+              onClick={handleAddForm}
+              style={{
+                display: "flex",
+                cursor: "pointer",
+                alignItems: "center",
+                justifyContent: "space-around",
+                width: "150px",
+                color: "#007E7E",
+              }}
+            >
+              <CustomAddIcon />
+              <span>{pageConfig.addFormText}</span>
+            </div>
+          )}
 
-        {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+        </div>
       </div>
     </div>
   );

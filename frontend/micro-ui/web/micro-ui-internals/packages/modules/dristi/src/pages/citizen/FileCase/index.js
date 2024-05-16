@@ -17,9 +17,9 @@ function FileCase({ t }) {
           <Route path={`${path}`} exact>
             <CaseType t={t} />
           </Route>
-          <Route path={`${path}/respondent-details`} exact>
+          {/* <Route path={`${path}/respondent-details`} exact>
             <RespondentDetails />
-          </Route>
+          </Route> */}
           <Route path={`${path}/delay-application`} exact>
             <DelayApplication />
           </Route>
