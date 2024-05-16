@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, FormComposerV2, Header, Label, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { respondentconfig } from "./respondentconfig";
+import { sideMenuConfig } from "./respondentconfig";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 function RespondentDetails({ path }) {
@@ -13,11 +13,16 @@ function RespondentDetails({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setformdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const isOptional = false;
+  const [accordion, setAccordion] = useState(sideMenuConfig);
+  const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[1]?.pageConfig);
+
+  const formConfig = useMemo(() => {
+    return pageConfig?.formconfig;
+  }, [pageConfig.formconfig]);
 
   const validateFormData = (data) => {
     let isValid = true;
-    respondentconfig.forEach((curr) => {
+    formConfig?.forEach((curr) => {
       if (!isValid) return;
       if (!(curr.body[0].key in data) || !data[curr.body[0].key]) {
         isValid = false;
@@ -57,7 +62,7 @@ function RespondentDetails({ path }) {
 
   const isDependentEnabled = useMemo(() => {
     let result = false;
-    respondentconfig.forEach((config) => {
+    formConfig.forEach((config) => {
       if (config?.body && Array.isArray(config?.body)) {
         config?.body?.forEach((bodyItem) => {
           if (bodyItem?.populators?.isDependent) {
@@ -67,14 +72,14 @@ function RespondentDetails({ path }) {
       }
     });
     return result;
-  }, []);
+  }, [formConfig]);
 
-  const modifiedConfig = useMemo(() => {
+  const modifiedFormConfig = useMemo(() => {
     if (!isDependentEnabled) {
-      return formdata.map(() => respondentconfig);
+      return formdata.map(() => formConfig);
     }
     return formdata.map(({ data }) => {
-      return respondentconfig.filter((config) => {
+      return formConfig.filter((config) => {
         const dependentKeys = config?.dependentKey;
         if (!dependentKeys) {
           return config;
@@ -127,42 +132,62 @@ function RespondentDetails({ path }) {
     }
   };
 
-  const accordion = [
-    {
-      title: "Vaibhav",
-      children: [
-        { label: "Takale", checked: 0, isCompleted: 1 },
-        { label: "Amane", checked: 1, isCompleted: 0 },
-      ],
-    },
-    {
-      title: "Suresh",
-      children: [
-        { label: "Soren", checked: 1, isCompleted: 1 },
-        { label: "Amane", checked: 1, isCompleted: 1 },
-      ],
-      checked: 0,
-      isCompleted: 0,
-    },
-  ];
+  const handleAccordionClick = (index) => {
+    setAccordion((prevAccordion) => {
+      const newAccordion = prevAccordion.map((parent, pIndex) => ({
+        ...parent,
+        isOpen: pIndex === index ? !parent.isOpen : parent.isOpen,
+      }));
+      return newAccordion;
+    });
+  };
+
+  const handlePageChange = (parentIndex, childIndex) => {
+    const newPageConfig = accordion?.[parentIndex]?.children?.[childIndex]?.pageConfig;
+    if (!newPageConfig || accordion?.[parentIndex]?.children?.[childIndex].checked) {
+      return null;
+    }
+    setAccordion((prevAccordion) => {
+      const newAccordion = prevAccordion.map((parent, pIndex) => ({
+        ...parent,
+        children: parent.children.map((child, cIndex) => ({
+          ...child,
+          checked: pIndex === parentIndex && cIndex === childIndex ? 1 : 0,
+        })),
+      }));
+      return newAccordion;
+    });
+    setPageConfig(newPageConfig);
+  };
 
   return (
     <div style={{ display: "flex" }}>
-      <div style={{ width: "10vw", paddingRight: "10px" }}>
+      <div style={{ width: "12vw" }}>
         {accordion.map((item, index) => (
-          <Accordion t={t} count={item.count} title={item.title} onClick={() => {}} key={index} children={item.children} />
+          <Accordion
+            t={t}
+            title={item.title}
+            handlePageChange={handlePageChange}
+            handleAccordionClick={() => {
+              handleAccordionClick(index);
+            }}
+            key={index}
+            children={item.children}
+            parentIndex={index}
+            isOpen={item.isOpen}
+          />
         ))}
       </div>
-      <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column" }}>
+      <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column", marginLeft: "40px" }}>
         <div className="header-content">
-          <Header>{t("CS_COMMON_RESPONDENT_DETAIL")}</Header>
+          <Header>{t(pageConfig.header)}</Header>
         </div>
-        {modifiedConfig.map((formConfig, index) => {
+        {modifiedFormConfig.map((config, index) => {
           return formdata[index].isenabled ? (
             <div>
               <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
                 <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
-                {(activeForms > 1 || isOptional) && (
+                {(activeForms > 1 || pageConfig.isOptional) && (
                   <span
                     style={{ cursor: "pointer" }}
                     onClick={() => {
@@ -175,7 +200,7 @@ function RespondentDetails({ path }) {
               </Card>
               <FormComposerV2
                 label={t("CS_COMMONS_NEXT")}
-                config={formConfig}
+                config={config}
                 onSubmit={(props) => {
                   // onSubmit(props);
                   console.debug("Vaibhav");
@@ -190,20 +215,22 @@ function RespondentDetails({ path }) {
             </div>
           ) : null;
         })}
-        <div
-          onClick={handleAddForm}
-          style={{
-            display: "flex",
-            cursor: "pointer",
-            alignItems: "center",
-            justifyContent: "space-around",
-            width: "150px",
-            color: "#007E7E",
-          }}
-        >
-          <CustomAddIcon />
-          <span>Add Respondent</span>
-        </div>
+        {pageConfig?.addFormText && (
+          <div
+            onClick={handleAddForm}
+            style={{
+              display: "flex",
+              cursor: "pointer",
+              alignItems: "center",
+              justifyContent: "space-around",
+              width: "150px",
+              color: "#007E7E",
+            }}
+          >
+            <CustomAddIcon />
+            <span>{pageConfig.addFormText}</span>
+          </div>
+        )}
 
         {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
       </div>

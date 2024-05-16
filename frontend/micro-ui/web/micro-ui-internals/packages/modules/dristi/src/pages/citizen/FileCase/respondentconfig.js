@@ -1,4 +1,4 @@
-export const respondentconfig = [
+export const respondentFromconfig = [
   {
     body: [
       {
@@ -315,6 +315,58 @@ export const respondentconfig = [
           ],
         },
       },
+    ],
+  },
+];
+
+export const respondentconfig = {
+  formconfig: respondentFromconfig,
+  header: "CS_RESPONDENT_DETAIL_HEADING",
+  subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
+  isOptional: false,
+  addFormText: "ADD_RESPONDENT",
+};
+
+export const sideMenuConfig = [
+  {
+    isOpen: false,
+    isDisabled: false,
+    title: "CS_LITIGENT_DETAILS",
+    children: [
+      { label: "CS_COMPLAINT_DETAILS", checked: false, isCompleted: true, isDisabled: false },
+      { label: "CS_RESPONDENT_DETAILS", checked: false, isCompleted: false, pageConfig: respondentconfig, isDisabled: false },
+    ],
+  },
+  {
+    isOpen: false,
+    isDisabled: false,
+    title: "CS_CASE_SPECIFIC_DETAILS",
+    children: [
+      { label: "CS_CHECK_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false },
+    ],
+    checked: false,
+    isCompleted: 0,
+  },
+  {
+    isOpen: false,
+    isDisabled: false,
+    title: "CS_ADDITIONAL_DETAILS",
+    children: [
+      { label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_PRAYER_SWORN_STATEMENT", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_ADVOCATE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+    ],
+  },
+  {
+    isOpen: false,
+    isDisabled: false,
+    title: "CS_REVIEW_SIGN",
+    children: [
+      { label: "CS_REVIEW_CASE_FILE", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false },
     ],
   },
 ];
