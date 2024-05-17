@@ -226,7 +226,7 @@ const ApplicationDetails = ({ location, match }) => {
       <Header>{header}</Header>
       <DocumentDetailCard cardData={aadharData} />
       <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
-      {type === "advocate" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
+      {type === "advocate" && userType !== "ADVOCATE_CLERK" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
       {applicationNo && (
         <ActionBar>
           {displayMenu && applicationNo ? (

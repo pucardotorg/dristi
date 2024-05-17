@@ -5,7 +5,7 @@ import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
+const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, path, params }) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
@@ -24,6 +24,10 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
 
   if (isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber")) {
     history.push(`/${window.contextPath}/citizen/dristi/home`);
+  }
+
+  if (!isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber") && !params?.mobileNumber) {
+    history.push(path);
   }
 
   if (

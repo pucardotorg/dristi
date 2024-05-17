@@ -280,10 +280,9 @@ export const newConfig = [
               type: "text",
               name: "firstName",
               validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
                 title: "",
-                patternType: "Name",
                 isRequired: true,
               },
               isMandatory: true,
@@ -305,9 +304,8 @@ export const newConfig = [
               name: "lastName",
               validation: {
                 isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
                 title: "",
               },
               isMandatory: true,

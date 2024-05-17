@@ -1,9 +1,9 @@
-import { Dropdown, Hamburger, TopBar as TopBarComponent } from "@egovernments/digit-ui-react-components";
+import { Dropdown, Hamburger } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import ChangeCity from "../ChangeCity";
 import ChangeLanguage from "../ChangeLanguage";
-
+import TopBarComponent from "./TopBarComponent";
 const TextToImg = (props) => (
   <span className="user-img-txt" onClick={props.toggleMenu} title={props.name}>
     {props?.name?.[0]?.toUpperCase()}
@@ -71,13 +71,12 @@ const TopBar = ({
   function onNotificationIconClick() {
     history.push(`/${window?.contextPath}/citizen/engagement/notifications`);
   }
-  
+
   const urlsToDisableNotificationIcon = (pathname) =>
     !!Digit.UserService?.getUser()?.access_token
       ? false
       : [`/${window?.contextPath}/citizen/select-language`, `/${window?.contextPath}/citizen/select-location`].includes(pathname);
 
- 
   if (CITIZEN) {
     return (
       <div>
@@ -92,7 +91,7 @@ const TopBar = ({
           notificationCountLoaded={notificationCountLoaded}
           cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
           onNotificationIconClick={onNotificationIconClick}
-          hideNotificationIconOnSomeUrlsWhenNotLoggedIn={urlsToDisableNotificationIcon(pathname)}
+          hideNotificationIconOnSomeUrlsWhenNotLoggedIn={true}
           changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
         />
       </div>
@@ -101,23 +100,29 @@ const TopBar = ({
   const loggedin = userDetails?.access_token ? true : false;
 
   //checking for custom topbar components
-  const CustomEmployeeTopBar = Digit.ComponentRegistryService?.getComponent("CustomEmployeeTopBar")
+  const CustomEmployeeTopBar = Digit.ComponentRegistryService?.getComponent("CustomEmployeeTopBar");
 
-  if(CustomEmployeeTopBar) {
-    return <CustomEmployeeTopBar {...{t,
-      stateInfo,
-      toggleSidebar,
-      isSidebarOpen,
-      handleLogout,
-      userDetails,
-      CITIZEN,
-      cityDetails,
-      mobileView,
-      userOptions,
-      handleUserDropdownSelection,
-      logoUrl,
-      showLanguageChange,
-      loggedin}} />
+  if (CustomEmployeeTopBar) {
+    return (
+      <CustomEmployeeTopBar
+        {...{
+          t,
+          stateInfo,
+          toggleSidebar,
+          isSidebarOpen,
+          handleLogout,
+          userDetails,
+          CITIZEN,
+          cityDetails,
+          mobileView,
+          userOptions,
+          handleUserDropdownSelection,
+          logoUrl,
+          showLanguageChange,
+          loggedin,
+        }}
+      />
+    );
   }
   return (
     <div className="topbar">
@@ -155,7 +160,7 @@ const TopBar = ({
                   showArrow={true}
                   freeze={true}
                   style={mobileView ? { right: 0 } : {}}
-                  optionCardStyles={{ overflow: "revert",display:"table" }}
+                  optionCardStyles={{ overflow: "revert", display: "table" }}
                   topbarOptionsClassName={"topbarOptionsClassName"}
                   customSelector={
                     profilePic == null ? (

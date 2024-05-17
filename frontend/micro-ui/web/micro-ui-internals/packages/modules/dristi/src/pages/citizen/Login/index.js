@@ -133,7 +133,7 @@ const Login = ({ stateCode }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
-    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, "") });
+    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, ""), name: undefined });
     setIsUserRegistered(true);
   };
 
@@ -158,6 +158,8 @@ const Login = ({ stateCode }) => {
         setIsUserRegistered(false);
         history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
       }
+    } else if (!isUserRegistered && !params.name) {
+      history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
       if (!err) {
@@ -173,13 +175,13 @@ const Login = ({ stateCode }) => {
   };
 
   const selectName = async (name) => {
+    setParmas({ ...params, ...name });
     const data = {
       ...params,
       tenantId: stateCode,
       userType: getUserType(),
       ...name,
     };
-    setParmas({ ...params, ...name });
     setCanSubmitName(true);
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (res) {
@@ -305,7 +307,15 @@ const Login = ({ stateCode }) => {
             />
           </Route>
           <Route path={`${path}/user-name`}>
-            <SelectName t={t} config={stepItems[1]} onSelect={selectName} value={params?.name} canSubmit={canSubmitName} />
+            <SelectName
+              t={t}
+              config={stepItems[1]}
+              onSelect={selectName}
+              value={params?.name}
+              canSubmit={canSubmitName}
+              path={path}
+              params={params}
+            />
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
@@ -317,6 +327,8 @@ const Login = ({ stateCode }) => {
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               t={t}
+              path={path}
+              params={params}
             />
           </Route>
           <Route path={`${path}/id-verification`}>
