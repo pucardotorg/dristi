@@ -113,7 +113,7 @@ function EFilingCases({ path }) {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div style={{ display: "flex", gap: 40 }}>
       <div className="file-case-select-form-section">
         {accordion.map((item, index) => (
           <Accordion
@@ -165,6 +165,7 @@ function EFilingCases({ path }) {
                   }}
                   cardStyle={{ minWidth: "100%" }}
                   isDisabled={isDisabled}
+                  cardClassName={"e-filing-card-form-style"}
                 />
               </div>
             ) : null;

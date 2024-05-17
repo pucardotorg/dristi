@@ -94,6 +94,10 @@ export const complainantDetailsConfig = [
               },
             },
           ],
+          customStyle: {
+            display: "flex",
+            gap: 50,
+          },
         },
       },
     ],
@@ -132,6 +136,7 @@ export const complainantDetailsConfig = [
               label: "FIRST_NAME",
               type: "text",
               name: "firstName",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -145,6 +150,7 @@ export const complainantDetailsConfig = [
               label: "MIDDLE_NAME",
               type: "text",
               name: "middleName",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -156,6 +162,7 @@ export const complainantDetailsConfig = [
               label: "LAST_NAME",
               type: "text",
               name: "lastName",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
@@ -209,6 +216,7 @@ export const complainantDetailsConfig = [
               label: "PINCODE",
               type: "text",
               name: "pincode",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 minlength: 6,
                 maxlength: 7,
@@ -225,6 +233,7 @@ export const complainantDetailsConfig = [
               label: "STATE",
               type: "text",
               name: "state",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -234,6 +243,7 @@ export const complainantDetailsConfig = [
               label: "DISTRICT",
               type: "text",
               name: "district",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -243,6 +253,7 @@ export const complainantDetailsConfig = [
               label: "CITY/TOWN",
               type: "text",
               name: "city",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -252,6 +263,7 @@ export const complainantDetailsConfig = [
               label: "LOCALITY",
               type: "text",
               name: "locality",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -261,6 +273,7 @@ export const complainantDetailsConfig = [
               label: "DOOR_NUMBER",
               type: "text",
               name: "doorNo",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 errMsg: "ADDRESS_DOOR_NO_INVALID",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
