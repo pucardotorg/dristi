@@ -44,6 +44,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
               handleChange(data, input);
             }}
             rows={5}
+            className="custom-textarea-style"
           ></textarea>
         </div>
       </div>
