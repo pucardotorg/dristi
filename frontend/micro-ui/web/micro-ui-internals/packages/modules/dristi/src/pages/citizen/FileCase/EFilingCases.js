@@ -18,7 +18,7 @@ function EFilingCases({ path }) {
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
-  }, [pageConfig]);
+  }, [pageConfig?.formconfig]);
 
   const isDependentEnabled = useMemo(() => {
     let result = false;
@@ -140,8 +140,8 @@ function EFilingCases({ path }) {
               <div>
                 {pageConfig?.addFormText && (
                   <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-                    <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig.isOptional) && (
+                    <h1>{`${pageConfig?.formItemName} ${formdata[index].displayindex + 1}`}</h1>
+                    {(activeForms > 1 || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
