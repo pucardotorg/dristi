@@ -104,6 +104,10 @@
       display: flex;
       align-items: center;
       margin-left: 10px;
+      gap: 4px;
+      * {
+        margin: 0;
+      }
 
       h1 {
         height: 20px;

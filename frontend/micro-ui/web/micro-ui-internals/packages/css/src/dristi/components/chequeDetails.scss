@@ -1,0 +1,28 @@
+.cheque-details,
+.cheque-details .field-container {
+  max-width: unset !important;
+  align-items: flex-start;
+  .text-input-width {
+    max-width: unset;
+  }
+
+  .fullWidth {
+    max-width: unset;
+    width: 100%;
+  }
+
+  .component-in-front {
+    min-width: 40px;
+    line-height: 24px;
+  }
+
+}
+
+.cheque-details {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  > * {
+    width: 100%;
+  }
+}
