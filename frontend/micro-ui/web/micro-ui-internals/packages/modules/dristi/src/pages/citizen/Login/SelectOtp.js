@@ -3,8 +3,10 @@ import React, { Fragment, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
+  const history = useHistory();
   const [timeLeft, setTimeLeft] = useState(30);
   useInterval(
     () => {
@@ -17,6 +19,16 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     onResend();
     setTimeLeft(30);
   };
+
+  if (
+    sessionStorage.getItem("Digit.UploadedDocument") ||
+    (sessionStorage.getItem("Digit.aadharNumber") && sessionStorage.getItem("Digit.isAadharNumberVerified"))
+  ) {
+    sessionStorage.removeItem("Digit.UploadedDocument");
+    sessionStorage.removeItem("Digit.aadharNumber");
+    sessionStorage.removeItem("Digit.isAadharNumberVerified");
+    history.push(`/${window.contextPath}/citizen/dristi/home`);
+  }
 
   if (userType === "employee") {
     return (

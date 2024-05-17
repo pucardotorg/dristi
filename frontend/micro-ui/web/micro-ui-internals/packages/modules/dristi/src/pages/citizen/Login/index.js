@@ -283,6 +283,8 @@ const Login = ({ stateCode }) => {
     setCanSubmitAadharOtp(false);
     history.push(`/${window?.contextPath}/citizen/dristi/home/registration`);
     setCanSubmitAadharOtp(true);
+    Digit.SessionStorage.set("isAadharNumberVerified", true);
+    Digit.SessionStorage.del("UploadedDocument");
   };
 
   return (
