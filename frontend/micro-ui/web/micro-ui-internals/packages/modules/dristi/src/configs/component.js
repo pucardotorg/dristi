@@ -52,3 +52,38 @@ export const idProofVerificationConfig = [
     ],
   },
 ];
+
+export const verifyMobileNoConfig = [
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "SelectUserTypeComponent",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "ENTER_AADHAR_NUMBER",
+              type: "text",
+              name: "aadharNumber",
+              validation: {
+                minlength: 12,
+                maxlength: 12,
+                patternType: "AadharNo",
+                pattern: "[0-9]+",
+                errMsg: "AADHAR_NUMBER_INVALID",
+                title: "",
+              },
+              clearFields: { ID_Proof: [], selectIdTypeType: "" },
+              clearFieldsType: { ID_Proof: "documentUpload" },
+              disableMandatoryFieldFor: ["ID_Proof", "selectIdTypeType"],
+              isMandatory: true,
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
+];

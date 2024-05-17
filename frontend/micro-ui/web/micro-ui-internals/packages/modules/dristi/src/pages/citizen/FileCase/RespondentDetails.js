@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, FormComposerV2, Header, Label, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { respondentconfig } from "./respondentconfig";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
+import { sideMenuConfig } from "./config";
 function RespondentDetails({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -12,52 +12,17 @@ function RespondentDetails({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [formdata, setformdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const isOptional = false;
+  const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
+  const [accordion, setAccordion] = useState(sideMenuConfig);
+  const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[0]?.pageConfig);
 
-  const validateFormData = (data) => {
-    let isValid = true;
-    respondentconfig.forEach((curr) => {
-      if (!isValid) return;
-      if (!(curr.body[0].key in data) || !data[curr.body[0].key]) {
-        isValid = false;
-      }
-      curr.body[0].populators.inputs.forEach((input) => {
-        if (!isValid) return;
-        if (Array.isArray(input.name)) return;
-        if (
-          input.isDependentOn &&
-          data[curr.body[0].key][input.isDependentOn] &&
-          !Boolean(
-            input.dependentKey[input.isDependentOn].reduce((res, current) => {
-              if (!res) return res;
-              res = data[curr.body[0].key][input.isDependentOn][current];
-              if (
-                Array.isArray(data[curr.body[0].key][input.isDependentOn][current]) &&
-                data[curr.body[0].key][input.isDependentOn][current].length === 0
-              ) {
-                res = false;
-              }
-              return res;
-            }, true)
-          )
-        ) {
-          return;
-        }
-        if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
-          isValid = false;
-        }
-        if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
-          isValid = false;
-        }
-      });
-    });
-    return isValid;
-  };
+  const formConfig = useMemo(() => {
+    return pageConfig?.formconfig;
+  }, [pageConfig]);
 
   const isDependentEnabled = useMemo(() => {
     let result = false;
-    respondentconfig.forEach((config) => {
+    formConfig.forEach((config) => {
       if (config?.body && Array.isArray(config?.body)) {
         config?.body?.forEach((bodyItem) => {
           if (bodyItem?.populators?.isDependent) {
@@ -67,14 +32,14 @@ function RespondentDetails({ path }) {
       }
     });
     return result;
-  }, []);
+  }, [formConfig]);
 
-  const modifiedConfig = useMemo(() => {
+  const modifiedFormConfig = useMemo(() => {
     if (!isDependentEnabled) {
-      return formdata.map(() => respondentconfig);
+      return formdata.map(() => formConfig);
     }
     return formdata.map(({ data }) => {
-      return respondentconfig.filter((config) => {
+      return formConfig.filter((config) => {
         const dependentKeys = config?.dependentKey;
         if (!dependentKeys) {
           return config;
@@ -89,28 +54,19 @@ function RespondentDetails({ path }) {
         return show && config;
       });
     });
-  }, [isDependentEnabled, formdata]);
+  }, [isDependentEnabled, formdata, formConfig]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
   }, [formdata]);
 
   const handleAddForm = () => {
-    setformdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
+    setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };
 
   const handleDeleteForm = (index) => {
     const newArray = formdata.map((item, i) => ({ ...item, isenabled: index === i ? false : item.isenabled, displayindex: i < index ? i : i - 1 }));
-    setformdata(newArray);
-  };
-
-  const onSubmit = (data) => {
-    if (!validateFormData(data)) {
-      setShowErrorToast(!validateFormData(data));
-      return;
-    }
-    setParmas({ ...params, registrationData: data });
-    history.push(`${path}/terms-conditions`);
+    setFormdata(newArray);
   };
 
   const closeToast = () => {
@@ -119,7 +75,7 @@ function RespondentDetails({ path }) {
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
-      setformdata(
+      setFormdata(
         formdata.map((item, i) => {
           return i === index ? { ...item, data: formData } : item;
         })
@@ -127,85 +83,111 @@ function RespondentDetails({ path }) {
     }
   };
 
-  const accordion = [
-    {
-      title: "Vaibhav",
-      children: [
-        { label: "Takale", checked: 0, isCompleted: 1 },
-        { label: "Amane", checked: 1, isCompleted: 0 },
-      ],
-    },
-    {
-      title: "Suresh",
-      children: [
-        { label: "Soren", checked: 1, isCompleted: 1 },
-        { label: "Amane", checked: 1, isCompleted: 1 },
-      ],
-      checked: 0,
-      isCompleted: 0,
-    },
-  ];
+  const handleAccordionClick = (index) => {
+    setAccordion((prevAccordion) => {
+      const newAccordion = prevAccordion.map((parent, pIndex) => ({
+        ...parent,
+        isOpen: pIndex === index ? !parent.isOpen : false,
+      }));
+      return newAccordion;
+    });
+  };
+
+  const handlePageChange = (parentIndex, childIndex) => {
+    const newPageConfig = accordion?.[parentIndex]?.children?.[childIndex]?.pageConfig;
+    if (!newPageConfig || accordion?.[parentIndex]?.children?.[childIndex].checked) {
+      return null;
+    }
+    setAccordion((prevAccordion) => {
+      const newAccordion = prevAccordion.map((parent, pIndex) => ({
+        ...parent,
+        children: parent.children.map((child, cIndex) => ({
+          ...child,
+          checked: pIndex === parentIndex && cIndex === childIndex ? 1 : 0,
+        })),
+      }));
+      return newAccordion;
+    });
+    setPageConfig(newPageConfig);
+    setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+  };
 
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ width: "10vw", paddingRight: "10px" }}>
+    <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="file-case-select-form-section">
         {accordion.map((item, index) => (
-          <Accordion t={t} count={item.count} title={item.title} onClick={() => {}} key={index} children={item.children} />
+          <Accordion
+            t={t}
+            title={item.title}
+            handlePageChange={handlePageChange}
+            handleAccordionClick={() => {
+              handleAccordionClick(index);
+            }}
+            key={index}
+            children={item.children}
+            parentIndex={index}
+            isOpen={item.isOpen}
+          />
         ))}
       </div>
-      <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column" }}>
-        <div className="header-content">
-          <Header>{t("CS_COMMON_RESPONDENT_DETAIL")}</Header>
-        </div>
-        {modifiedConfig.map((formConfig, index) => {
-          return formdata[index].isenabled ? (
-            <div>
-              <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-                <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
-                {(activeForms > 1 || isOptional) && (
-                  <span
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      handleDeleteForm(index);
-                    }}
-                  >
-                    <CustomDeleteIcon />
-                  </span>
+      <div className="file-case-form-section">
+        <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column", marginLeft: "40px" }}>
+          <div className="header-content">
+            <Header>{t(pageConfig.header)}</Header>
+          </div>
+          {modifiedFormConfig.map((config, index) => {
+            return formdata[index].isenabled ? (
+              <div>
+                {pageConfig?.addFormText && (
+                  <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
+                    <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
+                    {(activeForms > 1 || pageConfig.isOptional) && (
+                      <span
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleDeleteForm(index);
+                        }}
+                      >
+                        <CustomDeleteIcon />
+                      </span>
+                    )}
+                  </Card>
                 )}
-              </Card>
-              <FormComposerV2
-                label={t("CS_COMMONS_NEXT")}
-                config={formConfig}
-                onSubmit={(props) => {
-                  // onSubmit(props);
-                  console.debug("Vaibhav");
-                }}
-                defaultValues={{}}
-                onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-                  onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
-                }}
-                cardStyle={{ minWidth: "100%" }}
-                isDisabled={isDisabled}
-              />
+                <FormComposerV2
+                  label={t("CS_COMMONS_NEXT")}
+                  config={config}
+                  onSubmit={(props) => {
+                    console.debug("Vaibhav");
+                  }}
+                  defaultValues={{}}
+                  onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+                    onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
+                  }}
+                  cardStyle={{ minWidth: "100%" }}
+                  isDisabled={isDisabled}
+                />
+              </div>
+            ) : null;
+          })}
+          {pageConfig?.addFormText && (
+            <div
+              onClick={handleAddForm}
+              style={{
+                display: "flex",
+                cursor: "pointer",
+                alignItems: "center",
+                justifyContent: "space-around",
+                width: "150px",
+                color: "#007E7E",
+              }}
+            >
+              <CustomAddIcon />
+              <span>{pageConfig.addFormText}</span>
             </div>
-          ) : null;
-        })}
-        <div
-          onClick={handleAddForm}
-          style={{
-            display: "flex",
-            cursor: "pointer",
-            alignItems: "center",
-            justifyContent: "space-around",
-            width: "150px",
-            color: "#007E7E",
-          }}
-        >
-          <CustomAddIcon />
-          <span>Add Respondent</span>
-        </div>
+          )}
 
-        {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+        </div>
       </div>
     </div>
   );

@@ -74,8 +74,8 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">
           <div className="drag-drop-heading">
-            <h1> {t(input?.documentHeader)}</h1>
-            {input?.isOptional && <h3> {`(${t(input?.isOptional)})`}</h3>}
+            <h2 className="card-label">{t(input?.documentHeader)}</h2>
+            {input?.isOptional && <h3>{`(${t(input?.isOptional)})`}</h3>}
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
           {<p>{t(input?.documentSubText)}</p>}
@@ -108,6 +108,27 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             </div>
           </div>
         )}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
+          {input?.downloadTemplateText && t(input?.downloadTemplateText)}
+          {input?.downloadTemplateLink && (
+            <a
+              href={input?.downloadTemplateLink}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "flex",
+                color: "#9E400A",
+                textDecoration: "none",
+                width: 250,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {t("CS__DOWNLOAD_TEMPLATE")}
+            </a>
+          )}
+        </div>
       </div>
     );
   });

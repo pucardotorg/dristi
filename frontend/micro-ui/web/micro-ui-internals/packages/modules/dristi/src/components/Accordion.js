@@ -1,13 +1,11 @@
 import React from "react";
-import { useState } from "react";
 import { CustomArrowDownIcon, CustomArrowUpIcon, CustomCompleteIcon, CustomSchedule } from "../icons/svgIndex";
 
-function Accordion({ t, title, count, onClick, children }) {
-  const [isOpen, setOpen] = useState(false);
-  const radioCardStyle = { padding: "5px", borderRadius: "5px", alignItems: "center", display: "flex" };
+function Accordion({ t, title, handlePageChange, handleAccordionClick, children, parentIndex, isOpen }) {
+  const radioCardStyle = { padding: "5px", borderRadius: "5px", alignItems: "center", display: "flex", cursor: "pointer" };
   return (
-    <div className="accordion-wrapper" onClick={() => onClick(title, count)}>
-      <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
+    <div className="accordion-wrapper">
+      <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={handleAccordionClick}>
         <span>{t(title)}</span>
         <div style={{ gap: "5px", display: "flex", alignItems: "center", justifyContent: "space-around" }}>
           <CustomSchedule />
@@ -17,11 +15,13 @@ function Accordion({ t, title, count, onClick, children }) {
       </div>
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
-          {children.map((item) => (
+          {children.map((item, index) => (
             <div
               className="radio-wrap"
               style={item.checked ? { background: "#E8E8E8", ...radioCardStyle } : radioCardStyle}
-              onClick={() => console.log(item)}
+              onClick={() => {
+                handlePageChange(parentIndex, index);
+              }}
             >
               {item.isCompleted ? (
                 <CustomCompleteIcon />

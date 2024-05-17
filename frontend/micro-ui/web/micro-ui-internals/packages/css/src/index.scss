@@ -116,12 +116,14 @@
 /* @import "./dristi"; */
 @import "./dristi/components/customDragDrop.scss";
 @import "./dristi/components/delayApplication.scss";
+@import "./dristi/components/chequeDetails.scss";
 @import "./dristi/components/customTextArea.scss";
 @import "./dristi/components/customNote.scss";
 @import "./dristi/components/customUploadButton.scss";
 @import "./dristi/components/customRadioSelector.scss";
 @import "./dristi/components/customErrorTooltip.scss";
 @import "./dristi/eFiling.scss";
+@import "./dristi/components/selectUserTypeComponent.scss";
 @import "./dristi/pages/citizen/caseType.scss";
 
 .wbh-header-container {
@@ -689,7 +691,7 @@ input[type="number"] {
   .ws-citizen-wrapper,
   .tl-citizen {
     width: calc(100% - 90px);
-    padding-left: 60px;
+    padding-left: 0px;
     padding-right: 16px;
     margin-top: 1rem;
   }

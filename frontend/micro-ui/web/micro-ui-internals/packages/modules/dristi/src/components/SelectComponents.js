@@ -121,15 +121,12 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-            <LabelFieldPair style={{ width: "100%", display: "flex" }}>
-              <CardLabel className="card-label-smaller">
-                {t(input.label)}
-                {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
-              </CardLabel>
-              <div className="field" style={{ width: "50%" }}>
+            <LabelFieldPair>
+              <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
+              <div className={`field ${input.inputFieldClassName}`}>
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
-                    locationStyle={{ maxWidth: "540px" }}
+                    locationStyle={{ maxWidth: "100%" }}
                     position={formData?.[config.key]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
                     onChange={(pincode, location, coordinates = {}) => {

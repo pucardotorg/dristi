@@ -1,4 +1,7 @@
 .e-filing-card-wrapper {
+  h2 {
+    margin-top: 0;
+  }
   .e-filing-header-content {
     .e-filing-header-subtext {
       font-family: Roboto;
@@ -7,6 +10,23 @@
       line-height: 18.75px;
       text-align: left;
       color: var(--Grey-700, #3d3c3c);
+    }
+  }
+
+  .e-filing-form-container {
+    background-color: white;
+    border: 1px solid var(--Grey-200, #BBBBBD);
+    > h2 {
+      font-weight: 700;
+      font-size: 24px;
+      border-bottom: 1px solid var(--Grey-200, #BBBBBD);
+      padding: 12px 32px;
+      margin: 0;
+    }
+    form .card {
+      margin: 0;
+      box-shadow: none;
+      padding: 24px 32px;
     }
   }
 }
@@ -18,9 +38,17 @@
   justify-content: space-between;
 }
 .file-case-select-form-section {
-  min-width: 20%;
+  width: 100%;
+  max-width: 20%;
 }
 
 .file-case-form-section {
-  min-width: 78%;
+  width: 100%;
+  max-width: 62%;
+}
+
+.e-filing-card-form-style {
+  box-shadow: none;
+  border: 1px solid #bbbbbd;
+  padding: 24px 32px;
 }
