@@ -42,6 +42,9 @@ public class WorkflowService {
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(orderRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 orderRequest.getOrder().setStatus(applicationStatus);
+            } catch (CustomException e) {
+                log.error("Custom exception occured updating workflow status: {}", e.getMessage());
+                throw new CustomException();
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException();
@@ -53,6 +56,10 @@ public class WorkflowService {
             Object optional = repository.fetchResult(url, workflowReq);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
+        }
+        catch (CustomException e) {
+            log.error("Custom exception occured calling workflow status: {}", e.getMessage());
+            throw new CustomException();
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.getMessage());
             throw new CustomException();
@@ -63,7 +70,7 @@ public class WorkflowService {
         try {
             Workflow workflow = order.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
-            processInstance.setBusinessId(order.getFilingNumber());
+            processInstance.setBusinessId("1");
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName("pucar"); // FIXME
             processInstance.setTenantId(order.getTenantId());

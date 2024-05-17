@@ -42,7 +42,7 @@ public class OrderRegistrationEnrichment {
                     });
                 }
 
-                orderRequest.getOrder().setOrderNumber(orderRegistrationIdList.get(0));
+                orderRequest.getOrder().setFilingNumber(orderRegistrationIdList.get(0));
             }
         } catch (
                 CustomException e) {

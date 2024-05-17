@@ -42,16 +42,19 @@ public class OrderRegistrationService {
             validator.validateOrderRegistration(body);
             enrichmentUtil.enrichOrderRegistration(body);
             workflowService.updateWorkflowStatus(body);
-
             producer.push(config.getSaveOrderKafkaTopic(), body);
             return body.getOrder();
-        } catch (Exception e) {
+        }catch (CustomException e) {
+            log.error("Custom Exception occurred while creating order");
+            throw new CustomException("ORDER_CREATE_EXCEPTION", e.getMessage());
+        }
+        catch (Exception e) {
             log.error("Error occurred while creating order");
             throw new CustomException("ORDER_CREATE_EXCEPTION", e.getMessage());
         }
     }
 
-    public List<Order> searchCases(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public List<Order> searchOrder(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
 
         try {
             // Fetch applications from database according to the given search criteria

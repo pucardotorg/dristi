@@ -30,8 +30,8 @@ CREATE TABLE dristi_order_document (
 
 CREATE TABLE dristi_order_statute_section (
                               id varchar(64) NOT NULL PRIMARY KEY,
-                              order_id varchar(64) NOT NULL PRIMARY KEY,
-                              statutes varchar(64)  NULL ,
+                              order_id varchar(64) NOT NULL,
+                              statute varchar(64)  NULL ,
                               sections varchar(64) NULL,
                               strSections varchar(64) NULL,
                               subsections varchar(64)  NULL,

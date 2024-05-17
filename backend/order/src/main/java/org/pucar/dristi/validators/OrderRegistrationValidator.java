@@ -37,20 +37,20 @@ public class OrderRegistrationValidator {
 
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getTenantId()))
             throw new CustomException(CREATE_ORDER_ERR, "tenantId is mandatory for creating order");
-        if (ObjectUtils.isEmpty(orderRequest.getOrder().getHearingNumber()))
-            throw new CustomException(CREATE_ORDER_ERR, "Hearing Number is mandatory for creating order");
+//        if (ObjectUtils.isEmpty(orderRequest.getOrder().getHearingNumber()))
+//            throw new CustomException(CREATE_ORDER_ERR, "Hearing Number is mandatory for creating order");
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getCnrNumber()))
             throw new CustomException(CREATE_ORDER_ERR, "CNR Number is mandatory for creating order");
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
             throw new CustomException(CREATE_ORDER_ERR, "statute and section is mandatory for creating order");
 
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, orderRequest.getOrder().getTenantId(), "case", createMasterDetails());
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, orderRequest.getOrder().getTenantId(), "Order", createMasterDetails());
 
-        if (mdmsData.get("order") == null)
+        if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
 
-        if (!caseUtil.fetchOrderDetails(requestInfo, orderRequest.getOrder().getCnrNumber()))
-            throw new CustomException("INVALID_CNR_NUMBER", "Invalid CNR number");
+//        if (!caseUtil.fetchOrderDetails(requestInfo, orderRequest.getOrder().getCnrNumber()))
+//            throw new CustomException("INVALID_CNR_NUMBER", "Invalid CNR number");
     }
 
     public Order validateApplicationExistence(OrderRequest orderRequest) {
@@ -61,23 +61,24 @@ public class OrderRegistrationValidator {
         if (existingApplications.isEmpty())
             throw new CustomException("VALIDATION EXCEPTION", "Case Application does not exist");
 
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "case", createMasterDetails());
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "Order", createMasterDetails());
 
-        if (mdmsData.get("order") == null)
+        if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
 
-        if (!caseUtil.fetchOrderDetails(requestInfo, order.getCnrNumber()))
-            throw new CustomException("INVALID_CNR_NUMBER", "Invalid CNR number");
+//        if (!caseUtil.fetchOrderDetails(requestInfo, order.getCnrNumber()))
+//            throw new CustomException("INVALID_CNR_NUMBER", "Invalid CNR number");
 
         return existingApplications.get(0);
     }
 
     private List<String> createMasterDetails() {
         List<String> masterList = new ArrayList<>();
-        masterList.add("ComplainantType");
-        masterList.add("CaseCategory");
-        masterList.add("PaymentMode");
-        masterList.add("ResolutionMechanism");
+        masterList.add("ADRChannel");
+        masterList.add("BailType");
+        masterList.add("JudgementHolding");
+        masterList.add("OrderCategory");
+        masterList.add("OrderType");
         return masterList;
     }
 

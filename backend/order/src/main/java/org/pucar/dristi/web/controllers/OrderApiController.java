@@ -91,7 +91,7 @@ public class OrderApiController {
         String accept = request.getHeader("Accept");
         if (accept != null && accept.contains("application/json")) {
             try {
-                List<Order> orders = orderService.searchCases(String.valueOf(applicationNumber),cnrNumber,filingNumber, tenantId, id, status);
+                List<Order> orders = orderService.searchOrder(String.valueOf(applicationNumber),cnrNumber,filingNumber, tenantId, id, status);
              //   ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
                 OrderListResponse orderListResponse = OrderListResponse.builder().totalCount(orders.size()).responseInfo(null).build();
                 return new ResponseEntity<>(orderListResponse, HttpStatus.OK);

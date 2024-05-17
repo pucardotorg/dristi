@@ -54,7 +54,7 @@ public class StatuteSection {
 	@JsonProperty("additionalDetails")
 	private Object additionalDetails = null;
 
-	@JsonProperty("auditdetails")
+	@JsonProperty("auditDetails")
 	@Valid
 	private AuditDetails auditdetails = null;
 
