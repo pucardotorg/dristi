@@ -74,8 +74,8 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">
           <div className="drag-drop-heading">
-            <h1> {t(input?.documentHeader)}</h1>
-            {input?.isOptional && <h3> {`(${t(input?.isOptional)})`}</h3>}
+            <h2 className="card-label">{t(input?.documentHeader)}</h2>
+            {input?.isOptional && <h3>{`(${t(input?.isOptional)})`}</h3>}
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
           {<p>{t(input?.documentSubText)}</p>}
