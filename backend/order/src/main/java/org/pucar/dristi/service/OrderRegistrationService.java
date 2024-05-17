@@ -1,15 +1,14 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.OrderRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.validators.OrderRegistrationValidator;
-import org.pucar.dristi.web.models.Order;
-import org.pucar.dristi.web.models.OrderListResponse;
-import org.pucar.dristi.web.models.OrderRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,7 +40,7 @@ public class OrderRegistrationService {
         try {
             validator.validateOrderRegistration(body);
             enrichmentUtil.enrichOrderRegistration(body);
-            workflowService.updateWorkflowStatus(body);
+          //  workflowService.updateWorkflowStatus(body);
             producer.push(config.getSaveOrderKafkaTopic(), body);
             return body.getOrder();
         }catch (CustomException e) {
@@ -54,7 +53,7 @@ public class OrderRegistrationService {
         }
     }
 
-    public List<Order> searchOrder(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public List<Order> searchOrder(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, RequestInfo requestInfo) {
 
         try {
             // Fetch applications from database according to the given search criteria
@@ -63,7 +62,7 @@ public class OrderRegistrationService {
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
                 return new ArrayList<>();
-          //  orderList.forEach(order -> order.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow())));
+           orderList.forEach(order -> order.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, "order"))));
             return orderList;
         } catch (Exception e) {
             log.error("Error while fetching to search results");
@@ -103,34 +102,27 @@ public class OrderRegistrationService {
         }
 
     }
-//
-//    public List<CaseExists> existCases(CaseSearchRequest caseSearchRequests) {
-//        try {
-//            // Fetch applications from database according to the given search criteria
-//            List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
-//
-//            List<CaseExists> caseExistsList = new ArrayList<>();
-//
-//            for(CaseCriteria caseCriteria: caseSearchRequests.getCriteria()){
-//              boolean notExists = courtCases.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(caseCriteria.getFilingNumber())
-//                      && c.getCaseNumber().equalsIgnoreCase(caseCriteria.getCnrNumber())).toList().isEmpty();
-//              CaseExists caseExists = new CaseExists(caseCriteria.getCourtCaseNumber(),caseCriteria.getCnrNumber(), caseCriteria.getFilingNumber(), !notExists);
-//              caseExistsList.add(caseExists);
-//            }
-//
-//            // If no applications are found matching the given criteria, return an empty list
-//            if(CollectionUtils.isEmpty(courtCases))
-//                return new ArrayList<>();
-//            courtCases.forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
-//            return caseExistsList;
-//        }
-//        catch (CustomException e){
-//            log.error("Custom Exception occurred while searching");
-//            throw e;
-//        }
-//        catch (Exception e){
-//            log.error("Error while fetching to search results");
-//            throw new CustomException("CASE_EXIST_EXCEPTION",e.getMessage());
-//        }
-//    }
+
+    public OrderExists existsOrder(OrderExistsRequest orderExistsRequest) {
+        try {
+            OrderExists orderExists = orderExistsRequest.getOrder();
+
+            // Fetch applications from database according to the given search criteria
+            List<Order> orderList = orderRepository.getApplications(orderExists.getApplicationNumber(), orderExists.getFilingNumber(),
+                    orderExists.getCnrNumber(), orderExistsRequest.getRequestInfo().getUserInfo().getTenantId(), null, null);
+
+            boolean notExists = orderList.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(orderExists.getFilingNumber())
+                      && orderExists.getCnrNumber().equalsIgnoreCase(orderExists.getCnrNumber())).toList().isEmpty();
+
+            return new OrderExists(orderExists.getApplicationNumber(),orderExists.getOrderNumber(),orderExists.getCnrNumber(), orderExists.getFilingNumber(), !notExists);
+        }
+        catch (CustomException e){
+            log.error("Custom Exception occurred while searching");
+            throw e;
+        }
+        catch (Exception e){
+            log.error("Error while fetching to search order results");
+            throw new CustomException("ORDER_EXIST_EXCEPTION",e.getMessage());
+        }
+    }
 }
