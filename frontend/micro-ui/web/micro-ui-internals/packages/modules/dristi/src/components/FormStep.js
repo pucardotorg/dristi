@@ -18,6 +18,7 @@ const FormStep = ({
   onChange,
   isDisabled,
   _defaultValues = {},
+  defaultValue,
   forcedError,
   componentInFront,
   onAdd,
@@ -47,6 +48,7 @@ const FormStep = ({
             <TextInput
               key={index}
               name={input.name}
+              defaultValue={defaultValue}
               value={value}
               onChange={onChange}
               minlength={input.validation.minlength}

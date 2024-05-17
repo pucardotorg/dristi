@@ -35,8 +35,8 @@ export const loginSteps = [
         error: "ERR_HRMS_INVALID_USER_NAME",
         validation: {
           required: true,
-          minlength: 1,
-          pattern: /^(?!\s{0,50}$)[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          minlength: 2,
+          pattern: /^(?!\s{0,50}$)[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
           patternType: "Name",
         },
       },

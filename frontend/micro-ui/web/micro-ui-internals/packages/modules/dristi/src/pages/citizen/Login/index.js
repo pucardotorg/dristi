@@ -133,7 +133,7 @@ const Login = ({ stateCode }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
-    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, ""), name: undefined });
+    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, ""), name: "" });
     setIsUserRegistered(true);
   };
 
@@ -159,6 +159,7 @@ const Login = ({ stateCode }) => {
         history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
       }
     } else if (!isUserRegistered && !params.name) {
+      setCanSubmitNo(true);
       history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
@@ -270,6 +271,11 @@ const Login = ({ stateCode }) => {
     setParmas({ ...params, isRememberMe: !params.isRememberMe });
   };
 
+  const handleNameChange = (e) => {
+    const { value } = e.target;
+    setParmas({ ...params, name: value });
+  };
+
   const onAadharChange = (aadharNumber) => {
     Digit.SessionStorage.set("aadharNumber", aadharNumber);
     Digit.SessionStorage.del("UploadedDocument");
@@ -315,6 +321,7 @@ const Login = ({ stateCode }) => {
               canSubmit={canSubmitName}
               path={path}
               params={params}
+              handleNameChange={handleNameChange}
             />
           </Route>
           <Route path={`${path}/otp`}>
