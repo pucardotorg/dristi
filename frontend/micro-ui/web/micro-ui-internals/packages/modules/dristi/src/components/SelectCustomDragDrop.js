@@ -108,6 +108,27 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             </div>
           </div>
         )}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
+          {input?.downloadTemplateText && t(input?.downloadTemplateText)}
+          {input?.downloadTemplateLink && (
+            <a
+              href={input?.downloadTemplateLink}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "flex",
+                color: "#9E400A",
+                textDecoration: "none",
+                width: 250,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {t("CS__DOWNLOAD_TEMPLATE")}
+            </a>
+          )}
+        </div>
       </div>
     );
   });
