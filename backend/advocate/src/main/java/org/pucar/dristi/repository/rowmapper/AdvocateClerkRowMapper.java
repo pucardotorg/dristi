@@ -25,7 +25,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
      */
     public List<AdvocateClerk> extractData(ResultSet rs) throws CustomException {
         Map<String,AdvocateClerk> advocateClerkApplicationMap = new LinkedHashMap<>();
-        System.out.println(rs);
+        log.debug("ResultSet: {}", rs); // Logging the ResultSet
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
@@ -70,11 +70,6 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
             throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing clerk ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(advocateClerkApplicationMap.values());
-    }
-
-    private void addChildrenToProperty(ResultSet rs, AdvocateClerk advocateClerkApplication)
-    {
-        addDocumentToApplication(rs, advocateClerkApplication);
     }
 
     private void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) {

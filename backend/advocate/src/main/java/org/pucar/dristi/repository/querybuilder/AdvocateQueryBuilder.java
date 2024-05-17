@@ -122,12 +122,8 @@ public class AdvocateQueryBuilder {
                         .append(")");
                 preparedStmtList.addAll(statusList);
             }
-            if(isIndividualLoggedInUser.get()){
-                query.append(ORDERBY_CREATEDTIME_DESC);
-            }
-            else {
-                query.append(ORDERBY_CREATEDTIME_ASC);
-            }
+            query.append(isIndividualLoggedInUser.get() ? ORDERBY_CREATEDTIME_DESC : ORDERBY_CREATEDTIME_ASC);
+
 
             // Adding Pagination
             if (limit != null && offset != null) {

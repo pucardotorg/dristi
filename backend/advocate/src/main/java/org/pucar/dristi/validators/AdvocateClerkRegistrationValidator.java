@@ -54,7 +54,7 @@ public class AdvocateClerkRegistrationValidator {
      */
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
         //checking if application exist or not
-        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), new String(), new AtomicReference<>(false), 1,0);
+        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), "", new AtomicReference<>(false), 1,0);
         log.info("Existing Applications :: {}", existingApplications);
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);

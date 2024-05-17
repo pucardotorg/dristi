@@ -40,89 +40,98 @@ public class AdvocateClerkQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
-            if(criteriaList != null && !criteriaList.isEmpty()) {
-                List<String> ids = criteriaList.stream()
-                        .map(AdvocateClerkSearchCriteria::getId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
 
-                List<String> stateRegnNumber = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null)
-                        .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
+            appendCriteriaToQuery(criteriaList, preparedStmtList, applicationNumber, query);
 
-                List<String> applicationNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
-                        .map(AdvocateClerkSearchCriteria::getApplicationNumber)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-
-                List<String> individualIds = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
-                        .map(AdvocateClerkSearchCriteria::getIndividualId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-
-                if (!CollectionUtils.isEmpty(ids)) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, ids);
-                }
-
-                if (!CollectionUtils.isEmpty(stateRegnNumber)) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, stateRegnNumber);
-                }
-
-                if (!CollectionUtils.isEmpty(applicationNumbers)) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, applicationNumbers);
-                }
-
-                if (!CollectionUtils.isEmpty(individualIds)) {
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, individualIds);
-                }
-
-                if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
-                    query.append(")");
-                }
-            }
-            else if(applicationNumber != null && !applicationNumber.isEmpty()){
-                addClauseIfRequired(query, preparedStmtList);
-                query.append("LOWER(advc.applicationNumber) LIKE LOWER(?)")
-                        .append(")");
-                preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
-            }
             if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
                 addClauseIfRequiredForStatus(query, preparedStmtList);
                 query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
                 addToPreparedStatement(preparedStmtList, statusList);
             }
+
             if(isIndividualLoggedInUser.get()){
                 query.append(ORDERBY_CREATEDTIME_DESC);
-            }
-            else {
+            } else {
                 query.append(ORDERBY_CREATEDTIME_ASC);
             }
-            // Adding Pagination
-            if (limit != null && offset != null) {
-                query.append(" LIMIT ? OFFSET ?");
-                preparedStmtList.add(limit);
-                preparedStmtList.add(offset);
-            }
+
+            appendPagination(query, preparedStmtList, limit, offset);
 
             return query.toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error while building advocate clerk search query");
             throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
         }
     }
+
+    private void appendCriteriaToQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, String applicationNumber, StringBuilder query) {
+        if(criteriaList != null && !criteriaList.isEmpty()) {
+            List<String> ids = criteriaList.stream()
+                    .map(AdvocateClerkSearchCriteria::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            List<String> stateRegnNumber = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null)
+                    .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            List<String> applicationNumbers = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
+                    .map(AdvocateClerkSearchCriteria::getApplicationNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            List<String> individualIds = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
+                    .map(AdvocateClerkSearchCriteria::getIndividualId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            if (!CollectionUtils.isEmpty(ids)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, ids);
+            }
+
+            if (!CollectionUtils.isEmpty(stateRegnNumber)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, stateRegnNumber);
+            }
+
+            if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, applicationNumbers);
+            }
+
+            if (!CollectionUtils.isEmpty(individualIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, individualIds);
+            }
+
+            if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                query.append(")");
+            }
+        } else if(applicationNumber != null && !applicationNumber.isEmpty()){
+            addClauseIfRequired(query, preparedStmtList);
+            query.append("LOWER(advc.applicationNumber) LIKE LOWER(?)").append(")");
+            preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
+        }
+    }
+
+    private void appendPagination(StringBuilder query, List<Object> preparedStmtList, Integer limit, Integer offset) {
+        // Adding Pagination
+        if (limit != null && offset != null) {
+            query.append(" LIMIT ? OFFSET ?");
+            preparedStmtList.add(limit);
+            preparedStmtList.add(offset);
+        }
+    }
+
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){

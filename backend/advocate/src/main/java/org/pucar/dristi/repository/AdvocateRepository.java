@@ -52,8 +52,7 @@ public class AdvocateRepository {
             List<Advocate> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String advocateQuery = "";
-            advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
+            String advocateQuery = queryBuilder.getAdvocateSearchQuery(searchCriteria, preparedStmtList, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
             log.info("Final advocate list query: {}", advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
@@ -68,14 +67,11 @@ public class AdvocateRepository {
                 return advocateList;
             }
 
-            String advocateDocumentQuery = "";
-            advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
+            String advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
             log.info("Final document query: {}", advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
             if (advocateDocumentMap != null) {
-                advocateList.forEach(advocate -> {
-                    advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
-                });
+                advocateList.forEach(advocate -> advocate.setDocuments(advocateDocumentMap.get(advocate.getId())));
             }
 
             return advocateList;
@@ -88,5 +84,6 @@ public class AdvocateRepository {
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
         }
     }
+
 
 }

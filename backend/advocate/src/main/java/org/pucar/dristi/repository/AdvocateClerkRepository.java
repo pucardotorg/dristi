@@ -46,7 +46,7 @@ public class AdvocateClerkRepository {
      * @param offset
      * @return list of clerks found in the DB
      */
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset) {
         try {
             List<AdvocateClerk> advocateList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
@@ -70,18 +70,15 @@ public class AdvocateClerkRepository {
             log.info("Final query Document: {}", advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
             if (advocateDocumentMap != null) {
-                advocateList.forEach(advocate -> {
-                    advocate.setDocuments(advocateDocumentMap.get(advocate.getId()));
-                });
+                advocateList.forEach(advocate -> advocate.setDocuments(advocateDocumentMap.get(advocate.getId())));
             }
             return advocateList;
-        }
-        catch (CustomException e){
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Error while fetching advocate clerk application list");
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION, "Error while fetching advocate clerk application list: " + e.getMessage());
         }
     }
+
 }

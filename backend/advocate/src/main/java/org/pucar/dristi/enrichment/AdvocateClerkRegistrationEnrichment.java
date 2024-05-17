@@ -33,21 +33,19 @@ public class AdvocateClerkRegistrationEnrichment {
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
             List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvApplicationNumberConfig(), null, advocateClerkRequest.getClerks().size());
-            log.info("Advocate Clerk Application Number :: {}",clerkApplicationNumbers);
+            log.info("Advocate Clerk Application Number :: {}", clerkApplicationNumbers);
             int index = 0;
             for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                 advocateClerk.setAuditDetails(auditDetails);
 
                 advocateClerk.setId(UUID.randomUUID());
-                //setting false unless the application is approved
+                // setting false unless the application is approved
                 advocateClerk.setIsActive(false);
                 if (advocateClerk.getDocuments() != null)
-                    advocateClerk.getDocuments().forEach(document -> {
-                        document.setId(String.valueOf(UUID.randomUUID()));
-                    });
+                    advocateClerk.getDocuments().forEach(document -> document.setId(String.valueOf(UUID.randomUUID())));
 
-                //setting generated application number
+                // setting generated application number
                 advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(index++));
             }
         } catch (CustomException e) {

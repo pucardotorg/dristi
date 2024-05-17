@@ -83,37 +83,38 @@ public class AdvocateService {
                         // Filter out objects with non-null individualId
                         .filter(criteria -> Objects.nonNull(criteria.getIndividualId()))
                         .findFirst();
-
                 firstNonNull.ifPresent(value -> {
                     log.info("Search Criteria :: {}", value);
-                    if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
-                        if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
-                            isIndividualLoggedInUser.set(true);
-                        }
+                    if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID) &&
+                            requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
+                        isIndividualLoggedInUser.set(true);
                     }
                 });
                 limit = null;
                 offset = null;
             } else if (EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
-                if (limit == null)
-                    limit = 10;
-                if (offset == null)
-                    offset = 0;
+                if (limit == null) limit = 10;
+                if (offset == null) offset = 0;
             }
+
 
             // Fetch applications from database according to the given search criteria
             List<Advocate> applications = advocateRepository.getApplications(advocateSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
             log.info("Application size :: {}", applications.size());
 
             // If no applications are found matching the given criteria, return an empty list
-            if (CollectionUtils.isEmpty(applications))
+            if (CollectionUtils.isEmpty(applications)) {
                 return new ArrayList<>();
-            if (isIndividualLoggedInUser.get()) {
-                if (applications.size() > 1)
-                    applications.subList(1, applications.size()).clear();
             }
+
+            if (isIndividualLoggedInUser.get() && applications.size() > 1) {
+                applications.subList(1, applications.size()).clear();
+            }
+
             applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
+
             return applications;
+
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;

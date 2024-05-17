@@ -41,7 +41,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(AdvocateRequest advocateRequest) {
         advocateRequest.getAdvocates().forEach(advocate -> {
             try {
-                ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstanceForADV(advocate);
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -76,7 +76,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
         advocateClerkRequest.getClerks().forEach(advocateClerk -> {
             try {
-                ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk);
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -93,10 +93,9 @@ public class WorkflowService {
 
     /** for advocate clerk application process instance
      * @param advocateClerk
-     * @param requestInfo
      * @return payload for workflow service call
      */
-    private ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk) {
         try {
             Workflow workflow = advocateClerk.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -127,10 +126,9 @@ public class WorkflowService {
 
     /** for advocate application process instance
      * @param advocate
-     * @param requestInfo
      * @return payload for workflow service call
      */
-    private ProcessInstance getProcessInstanceForADV(Advocate advocate, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstanceForADV(Advocate advocate) {
         try {
             Workflow workflow = advocate.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -173,30 +171,6 @@ public class WorkflowService {
             log.error("Error getting current workflow: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
-    }
-    private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {
-        try {
-            String tenantId = advocate.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            Object result = repository.fetchResult(url, requestInfoWrapper);
-            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-                throw new CustomException();
-            return response.getBusinessServices().get(0);
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting business service: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
-        }
-    }
-    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=").append(tenantId);
-        url.append("&businessServices=").append(businessService);
-        return url;
     }
     private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
