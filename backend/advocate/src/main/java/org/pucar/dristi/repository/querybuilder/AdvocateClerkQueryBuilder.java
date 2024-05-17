@@ -6,7 +6,6 @@ import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,83 +36,97 @@ public class AdvocateClerkQueryBuilder {
      * @param offset
      * @return query
      */
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset) {
+    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
 
-            if (!CollectionUtils.isEmpty(criteriaList)) {
-                buildCriteriaQuery(criteriaList, query, preparedStmtList);
-            } else if (applicationNumber != null && !applicationNumber.isEmpty()) {
-                addApplicationNumberClause(query, preparedStmtList, applicationNumber);
+            appendCriteriaToQuery(criteriaList, preparedStmtList, applicationNumber, query);
+
+            if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, statusList);
             }
 
-            addStatusClause(query, preparedStmtList, statusList);
+            if(isIndividualLoggedInUser.get()){
+                query.append(ORDERBY_CREATEDTIME_DESC);
+            } else {
+                query.append(ORDERBY_CREATEDTIME_ASC);
+            }
 
-            addOrderByClause(query, isIndividualLoggedInUser);
-
-            addPaginationClause(query, preparedStmtList, limit, offset);
+            appendPagination(query, preparedStmtList, limit, offset);
 
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building advocate clerk search query");
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION, "Error occurred while building the advocate search query: " + e.getMessage());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
-    private void buildCriteriaQuery(List<AdvocateClerkSearchCriteria> criteriaList, StringBuilder query, List<Object> preparedStmtList) {
-        List<String> ids = new ArrayList<>();
-        List<String> stateRegnNumbers = new ArrayList<>();
-        List<String> applicationNumbers = new ArrayList<>();
-        List<String> individualIds = new ArrayList<>();
+    private void appendCriteriaToQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, String applicationNumber, StringBuilder query) {
+        if(criteriaList != null && !criteriaList.isEmpty()) {
+            List<String> ids = criteriaList.stream()
+                    .map(AdvocateClerkSearchCriteria::getId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
 
-        for (AdvocateClerkSearchCriteria criteria : criteriaList) {
-            if (criteria.getId() != null) {
-                ids.add(criteria.getId());
-            } else if (criteria.getStateRegnNumber() != null) {
-                stateRegnNumbers.add(criteria.getStateRegnNumber());
-            } else if (criteria.getApplicationNumber() != null) {
-                applicationNumbers.add(criteria.getApplicationNumber());
-            } else if (criteria.getIndividualId() != null) {
-                individualIds.add(criteria.getIndividualId());
+            List<String> stateRegnNumber = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null)
+                    .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            List<String> applicationNumbers = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
+                    .map(AdvocateClerkSearchCriteria::getApplicationNumber)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            List<String> individualIds = criteriaList.stream()
+                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
+                    .map(AdvocateClerkSearchCriteria::getIndividualId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList());
+
+            if (!CollectionUtils.isEmpty(ids)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, ids);
             }
-        }
 
-        appendCriteriaClause(query, preparedStmtList, "advc.id", ids);
-        appendCriteriaClause(query, preparedStmtList, "advc.stateregnnumber", stateRegnNumbers);
-        appendCriteriaClause(query, preparedStmtList, "advc.applicationnumber", applicationNumbers);
-        appendCriteriaClause(query, preparedStmtList, "advc.individualid", individualIds);
-    }
+            if (!CollectionUtils.isEmpty(stateRegnNumber)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, stateRegnNumber);
+            }
 
-    private void appendCriteriaClause(StringBuilder query, List<Object> preparedStmtList, String columnName, List<String> values) {
-        if (!values.isEmpty()) {
+            if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, applicationNumbers);
+            }
+
+            if (!CollectionUtils.isEmpty(individualIds)) {
+                addClauseIfRequired(query, preparedStmtList);
+                query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
+                addToPreparedStatement(preparedStmtList, individualIds);
+            }
+
+            if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                query.append(")");
+            }
+        } else if(applicationNumber != null && !applicationNumber.isEmpty()){
             addClauseIfRequired(query, preparedStmtList);
-            query.append(columnName).append(" IN (").append(createQuery(values)).append(") ");
-            addToPreparedStatement(preparedStmtList, values);
+            query.append("LOWER(advc.applicationNumber) LIKE LOWER(?)").append(")");
+            preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
         }
     }
 
-    private void addApplicationNumberClause(StringBuilder query, List<Object> preparedStmtList, String applicationNumber) {
-        addClauseIfRequired(query, preparedStmtList);
-        query.append("LOWER(advc.applicationNumber) LIKE LOWER(?) ");
-        preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
-    }
-
-    private void addStatusClause(StringBuilder query, List<Object> preparedStmtList, List<String> statusList) {
-        if (!CollectionUtils.isEmpty(statusList)) {
-            addClauseIfRequiredForStatus(query, preparedStmtList);
-            query.append("advc.status IN (").append(createQuery(statusList)).append(") ");
-            addToPreparedStatement(preparedStmtList, statusList);
-        }
-    }
-
-    private void addOrderByClause(StringBuilder query, AtomicReference<Boolean> isIndividualLoggedInUser) {
-        query.append(isIndividualLoggedInUser.get() ? ORDERBY_CREATEDTIME_DESC : ORDERBY_CREATEDTIME_ASC);
-    }
-
-    private void addPaginationClause(StringBuilder query, List<Object> preparedStmtList, Integer limit, Integer offset) {
+    private void appendPagination(StringBuilder query, List<Object> preparedStmtList, Integer limit, Integer offset) {
+        // Adding Pagination
         if (limit != null && offset != null) {
-            query.append(" LIMIT ? OFFSET ? ");
+            query.append(" LIMIT ? OFFSET ?");
             preparedStmtList.add(limit);
             preparedStmtList.add(offset);
         }
