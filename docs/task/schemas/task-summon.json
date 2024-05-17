@@ -27,19 +27,6 @@
       "maximum": 120,
       "description": "age in years and will accept decimals so age can be 10.5 meaning 10 years 6 months"
     },
-    "address": {
-      "type": "string",
-      "pattern": "^.{1,400}$",
-      "description": "string having a max of 400 characters and matches any character (including newline characters)"
-    },
-    "phone" : {
-      "type": "string",
-      "pattern": "^\\+?[0-9\\-() ]+$"
-    },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
     "gender": {
       "type": "string",
       "enum" : ["male", "female","transgender"]
