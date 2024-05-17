@@ -275,7 +275,7 @@ components:
           description: This field holds information about purpose of hearing. Will also help identify if this is a judicial hearing or an admin related hearing. Master Data ID
           example: admission, trail, judgment, evidence, plea
         status:
-          type: boolean
+          type: string
           description: work flow status
           example: scheduled, in progress, in transcription, closed
         startTime:
