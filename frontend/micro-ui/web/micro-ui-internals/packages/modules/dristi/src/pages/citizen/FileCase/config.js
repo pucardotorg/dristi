@@ -94,6 +94,10 @@ export const complainantDetailsConfig = [
               },
             },
           ],
+          customStyle: {
+            display: "flex",
+            gap: 50,
+          },
         },
       },
     ],
@@ -132,6 +136,7 @@ export const complainantDetailsConfig = [
               label: "FIRST_NAME",
               type: "text",
               name: "firstName",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -145,6 +150,7 @@ export const complainantDetailsConfig = [
               label: "MIDDLE_NAME",
               type: "text",
               name: "middleName",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -156,6 +162,7 @@ export const complainantDetailsConfig = [
               label: "LAST_NAME",
               type: "text",
               name: "lastName",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
@@ -209,6 +216,7 @@ export const complainantDetailsConfig = [
               label: "PINCODE",
               type: "text",
               name: "pincode",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 minlength: 6,
                 maxlength: 7,
@@ -225,6 +233,7 @@ export const complainantDetailsConfig = [
               label: "STATE",
               type: "text",
               name: "state",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -234,6 +243,7 @@ export const complainantDetailsConfig = [
               label: "DISTRICT",
               type: "text",
               name: "district",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -243,6 +253,7 @@ export const complainantDetailsConfig = [
               label: "CITY/TOWN",
               type: "text",
               name: "city",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -252,6 +263,7 @@ export const complainantDetailsConfig = [
               label: "LOCALITY",
               type: "text",
               name: "locality",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
               },
@@ -261,6 +273,7 @@ export const complainantDetailsConfig = [
               label: "DOOR_NUMBER",
               type: "text",
               name: "doorNo",
+              inputFieldClassName: "user-details-form-style",
               validation: {
                 errMsg: "ADDRESS_DOOR_NO_INVALID",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
@@ -605,7 +618,7 @@ export const respondentconfig = {
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_RESPONDENT",
-  formitemName: "Respondent",
+  formItemName: "Respondent",
 };
 
 const complaintdetailconfig = {
@@ -614,7 +627,7 @@ const complaintdetailconfig = {
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_Complaint",
-  formitemName: "Respondent",
+  formItemName: "Complainant",
 };
 
 const debtLiabilityFromconfig = [
@@ -782,6 +795,113 @@ const debtliabilityconfig = {
   subtext: "CS_DEBT_LIABILITY_SUBTEXT",
   isOptional: false,
 };
+const delayApplicationFormConfig = [
+  {
+    body: [
+      {
+        type: "radio",
+        key: "delayApplicationType",
+        label: "CS_DELAY_APPLICATION_TYPE",
+        isMandatory: true,
+        populators: {
+          label: "CS_DELAY_APPLICATION_TYPE",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          options: [
+            {
+              code: "YES",
+              name: "YES",
+              showForm: false,
+              isEnabled: true,
+            },
+            {
+              code: "NO",
+              name: "NO",
+              showForm: true,
+              isVerified: true,
+              hasBarRegistrationNo: true,
+              isEnabled: true,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { delayApplicationType: ["showForm"] },
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "delayApplicationReason",
+        populators: {
+          inputs: [
+            {
+              textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+              type: "TextAreaComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { delayApplicationType: ["showForm"] },
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "addressDetailsNote",
+        populators: {
+          inputs: [
+            {
+              infoHeader: "CS_COMMON_NOTE",
+              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
+              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
+              type: "InfoComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { delayApplicationType: ["showForm"] },
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "condonationFileUpload",
+        populators: {
+          inputs: [
+            {
+              name: "document",
+              documentHeader: "Aadhar",
+              isOptional: "optional",
+              infoTooltipMessage: "Tooltip",
+              type: "DragDropComponent",
+              uploadGuidelines: "Upload .png",
+              maxFileSize: 1024 * 1024 * 5,
+              maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+            },
+          ],
+        },
+      },
+    ],
+  },
+];
+
+const delayApplicationConfig = {
+  formconfig: delayApplicationFormConfig,
+  header: "CS_RESPONDENT_DELAY_APPLICATION_HEADING",
+  subtext: "CS_RESPONDENT_DELAY_APPLICATION_SUBTEXT",
+};
 
 export const sideMenuConfig = [
   {
@@ -801,7 +921,7 @@ export const sideMenuConfig = [
       { label: "CS_CHECK_DETAILS", checked: false, isCompleted: false, isDisabled: false },
       { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: debtliabilityconfig },
       { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false, pageConfig: delayApplicationConfig },
     ],
     checked: false,
     isCompleted: 0,

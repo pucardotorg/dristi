@@ -18,7 +18,7 @@ function EFilingCases({ path }) {
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
-  }, [pageConfig]);
+  }, [pageConfig?.formconfig]);
 
   const isDependentEnabled = useMemo(() => {
     let result = false;
@@ -113,7 +113,7 @@ function EFilingCases({ path }) {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div style={{ display: "flex", gap: 40 }}>
       <div className="file-case-select-form-section">
         {accordion.map((item, index) => (
           <Accordion
@@ -140,8 +140,8 @@ function EFilingCases({ path }) {
               <div>
                 {pageConfig?.addFormText && (
                   <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-                    <h1>{`Respondent ${formdata[index].displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig.isOptional) && (
+                    <h1>{`${pageConfig?.formItemName} ${formdata[index].displayindex + 1}`}</h1>
+                    {(activeForms > 1 || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -165,6 +165,7 @@ function EFilingCases({ path }) {
                   }}
                   cardStyle={{ minWidth: "100%" }}
                   isDisabled={isDisabled}
+                  cardClassName={"e-filing-card-form-style"}
                 />
               </div>
             ) : null;
