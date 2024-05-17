@@ -22,7 +22,6 @@ const AadhaarInput = (props) => {
     };
   }, [focusedInput]);
   const handleChange = (key, value, index) => {
-    // const value = e.target.value;
     const newInputs = [...boxCount];
     newInputs[index] = value;
 
@@ -56,7 +55,6 @@ const AadhaarInput = (props) => {
 
   const handleKeyUp = (index, e) => {
     if (e.key === "Backspace" && index > 0 && boxCount[index] === "") {
-      // If backspace is pressed and the input is empty, focus the previous input
       focusPreviousInput(index - 1);
     }
   };

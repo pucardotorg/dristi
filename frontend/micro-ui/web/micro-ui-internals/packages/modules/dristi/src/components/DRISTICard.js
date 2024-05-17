@@ -38,9 +38,6 @@ const DRISTICard = () => {
     <div style={{ alignContent: "center", width: "100%" }}>
       <Card className="main-card-home">
         <Header className="main-card-header">{"What do you wish to do?"}</Header>
-
-        {/* <Head>{"What do you wish to do?"}</Head> */}
-
         <div className="main-inner-div">
           <CustomCard
             label={"View Registrations"}
@@ -56,7 +53,7 @@ const DRISTICard = () => {
           <CustomCard
             label={"View Cases"}
             subLabel={"Explore cases and support on-going case queries"}
-            buttonLabel={"View Caes"}
+            buttonLabel={"View Cases"}
             Icon={<CasesIcon />}
             className="custom-card-style"
             showNumber={749}

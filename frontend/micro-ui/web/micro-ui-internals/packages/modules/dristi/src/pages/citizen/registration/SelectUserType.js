@@ -3,7 +3,6 @@ import React from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
-  console.log(params);
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
@@ -15,7 +14,6 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
     // const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     const data = params;
     const userTypeSelcted = userType?.selectUserType?.code;
-    console.log(userType?.selectUserType?.code);
     setParams({ ...params, userType });
     let Individual = {
       Individual: {
@@ -94,27 +92,20 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
     });
     if (userTypeSelcted === "LITIGANT") {
       const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
-
-      console.log(data?.name?.firstName, "dfvf");
-
-      console.log(Individual, "INDIIII");
       Digit.DRISTIService.postIndividualService(Individual, tenantId)
         .then(() => {
-          console.log("then1");
           history.push(`/digit-ui/citizen/dristi/home/response`, {
             response: "success",
             createType: data?.userType?.selectUserType?.code,
           });
         })
         .catch(() => {
-          console.log("catch1");
           history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
         })
         .finally(() => {
           setParams({});
         });
     } else {
-      console.log("else");
       history.push(`/digit-ui/citizen/dristi/home/registration/additional-details`);
     }
   };

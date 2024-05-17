@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { LabelFieldPair, CardLabel, CardLabelError, CustomDropdown, CardText, CardHeader, BreakLine } from "@egovernments/digit-ui-react-components";
+import React, { useMemo } from "react";
+import { LabelFieldPair, CardLabelError, CardText, CardHeader } from "@egovernments/digit-ui-react-components";
 import RadioButtons from "./RadioButton";
 
 const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors }) => {
@@ -53,7 +53,6 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors }) => {
 
                 <div className="field" style={{ width: "50%" }}>
                   <RadioButtons
-                    // inputRef={inputRef}
                     style={{ display: "flex", justifyContent: "flex-start", gap: "3rem", ...input.styles }}
                     options={input?.options || []}
                     key={input.name}
@@ -62,7 +61,6 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors }) => {
                     onSelect={(e) => {
                       setValue(e, input.name, input);
                     }}
-                    // disable={disable}
                     selectedOption={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     defaultValue={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     t={t}

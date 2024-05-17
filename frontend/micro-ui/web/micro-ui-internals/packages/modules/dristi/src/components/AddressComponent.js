@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import LocationSearch from "./LocationSearch";
 import Axios from "axios";
 const getLocation = (places, code) => {

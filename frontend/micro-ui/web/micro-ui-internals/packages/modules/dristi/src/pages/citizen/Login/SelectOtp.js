@@ -9,6 +9,7 @@ import { Close } from "@egovernments/digit-ui-svg-components";
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, params }) => {
   const history = useHistory();
   const [timeLeft, setTimeLeft] = useState(30);
+  console.log(params);
   useInterval(
     () => {
       setTimeLeft(timeLeft - 1);
@@ -40,10 +41,11 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       </div>
     );
   };
+
   if (!params?.mobileNumber) {
     history.push("/digit-ui/citizen/dristi/home/login");
   }
-  console.log(userType);
+  // console.log(userType);
   if (userType === "employee") {
     return (
       <Fragment>

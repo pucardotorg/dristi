@@ -11,6 +11,8 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
   const tenantId = Digit.ULBService.getCurrentTenantId();
   console.log(params);
   const closeToast = () => {
@@ -162,6 +164,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
               ],
             })
               .then(() => {
+                setShowSuccess(true);
                 history.push(`/digit-ui/citizen/dristi/home/response`, {
                   response: "success",
                   createType: data?.selectUserType?.code,
@@ -222,6 +225,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
             ],
           })
             .then(() => {
+              setShowSuccess(true);
               history.push(`/digit-ui/citizen/dristi/home/response`, {
                 response: "success",
                 createType: data?.selectUserType?.code,
@@ -236,17 +240,19 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
         history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
       })
       .finally(() => {
+        setShowSuccess(true);
+
+        console.log("FINALLY");
         setParams({});
       });
-    // setParams({
-    //   ...params,
-    //   ...data,
-    // });
-    console.log(params, formData);
+    setParams({
+      ...params,
+      ...formData,
+    });
+    console.log(showSuccess);
     // history.push(`${path}/additional-details/terms-conditions`);
   };
-  console.debug(advocateClerkConfig[0]);
-  if (!params?.Individual) {
+  if (!params?.Individual && showSuccess == false) {
     history.push("/digit-ui/citizen/dristi/home/login");
   }
   return (

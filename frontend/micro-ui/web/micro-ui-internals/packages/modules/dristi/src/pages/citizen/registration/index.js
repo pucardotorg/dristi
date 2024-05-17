@@ -1,29 +1,36 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { AppContainer, Loader } from "@egovernments/digit-ui-react-components";
+import { AppContainer, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
-import RegistrationForm from "./RegistrationForm";
-import TermsConditions from "./TermsConditions";
 import AdvocateClerkAdditionalDetail from "./AdvocateClerkAdditionalDetail";
 import SelectUserType from "./SelectUserType";
 import { newConfig } from "./config";
 import { useTranslation } from "react-i18next";
-import SelectName from "../Login/SelectName";
+import SelectName from "./SelectName";
 import SelectOtp from "../Login/SelectOtp";
 import SelectUserAddress from "./SelectUserAddress";
 import SelectMobileNumber from "../Login/SelectMobileNumber";
 import SelectId from "../Login/SelectId";
 import EnterAdhaar from "./EnterAdhaar";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import { advocateClerkConfig } from "./config";
 
 const TYPE_REGISTER = { type: "register" };
-
+const setCitizenDetail = (userObject, token, tenantId) => {
+  let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
+  localStorage.setItem("Citizen.tenant-id", tenantId);
+  localStorage.setItem("tenant-id", tenantId);
+  localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
+  localStorage.setItem("locale", locale);
+  localStorage.setItem("Citizen.locale", locale);
+  localStorage.setItem("token", token);
+  localStorage.setItem("Citizen.token", token);
+  localStorage.setItem("user-info", JSON.stringify(userObject));
+  localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
+};
 const Registration = ({ stateCode }) => {
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const { path } = useRouteMatch();
-  const [params, setParams] = useState({ registrationData: { userDetails: {} } });
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
@@ -32,57 +39,14 @@ const Registration = ({ stateCode }) => {
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const getUserType = () => Digit.UserService.getType();
-
+  const { t } = useTranslation();
   const location = useLocation();
   const DEFAULT_USER = "digit-user";
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
   const [isOtpValid, setIsOtpValid] = useState(true);
-  const [tokens, setTokens] = useState(null);
-
-  const [errorTO, setErrorTO] = useState(null);
   const searchParams = Digit.Hooks.useQueryParams();
-  const [canSubmitName, setCanSubmitName] = useState(false);
-
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
-  const getFromLocation = (state, searchParams) => {
-    return state?.from || searchParams?.from;
-  };
-  const userMobileNUmber = Digit.UserService.getUser()?.info?.mobileNumber;
-  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
-  const { data, isLoading, refetch, isFetching } = Digit.Hooks.dristi.useGetIndividualUser(
-    {
-      Individual: {
-        userUuid: [userInfo?.uuid],
-      },
-    },
-    { tenantId, limit: 1000, offset: 0 },
-    moduleCode,
-    "",
-    userInfo?.uuid && isUserLoggedIn
-  );
-  const individualId = data?.Individual?.[0]?.individualId;
-
-  if (isLoading || isFetching) {
-    return <Loader />;
-  }
-  const { t } = useTranslation();
-
-  if (Boolean(individualId)) {
-    history.push(`/${window?.contextPath}/citizen/dristi/home`);
-  }
-  const setCitizenDetail = (userObject, token, tenantId) => {
-    let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
-    localStorage.setItem("Citizen.tenant-id", tenantId);
-    localStorage.setItem("tenant-id", tenantId);
-    localStorage.setItem("citizen.userRequestObject", JSON.stringify(userObject));
-    localStorage.setItem("locale", locale);
-    localStorage.setItem("Citizen.locale", locale);
-    localStorage.setItem("token", token);
-    localStorage.setItem("Citizen.token", token);
-    localStorage.setItem("user-info", JSON.stringify(userObject));
-    localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
-  };
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!user) {
@@ -91,15 +55,13 @@ const Registration = ({ stateCode }) => {
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
-    const redirectPath = location.state?.from;
+    const redirectPath = location.state?.from || `${path}/user-name`;
     // routeToAdditionalDetail(user?.info);
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const idVerificationUrl = `${path}/user-name`;
-      history.replace(idVerificationUrl, {
-        redirectBackTo: redirectPath,
-      });
+      history.push(`${path}/user-name`);
     } else {
-      history.replace(redirectPath);
+      history.push(redirectPath);
     }
   }, [user]);
   const stepItems = useMemo(() =>
@@ -114,6 +76,26 @@ const Registration = ({ stateCode }) => {
       [newConfig]
     )
   );
+  const getFromLocation = (state, searchParams) => {
+    return state?.from || searchParams?.from;
+  };
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const { data, isLoading, refetch, isFetching } = Digit.Hooks.dristi.useGetIndividualUser(
+    {
+      Individual: {
+        userUuid: [userInfo?.uuid],
+      },
+    },
+    { tenantId, limit: 1000, offset: 0 },
+    moduleCode,
+    "",
+    userInfo?.uuid && isUserLoggedIn
+  );
+  const individualId = data?.Individual?.[0]?.individualId;
+
+  if (Boolean(individualId)) {
+    history.push(`/${window?.contextPath}/citizen/dristi/home`);
+  }
   const handleAadharOtpChange = (aadharOtp) => {
     setNewParams({ ...newParams, aadharOtp });
   };
@@ -132,6 +114,7 @@ const Registration = ({ stateCode }) => {
       history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
       return;
     } else {
+      setError(t("ES_ERROR_USER_ALREADY_REGISTERED"));
       setCanSubmitNo(true);
     }
   };
@@ -151,6 +134,7 @@ const Registration = ({ stateCode }) => {
         info.tenantId = Digit.ULBService.getStateId();
       }
       setUser({ info, ...tokens });
+      // history.push(`${path}/user-name`)
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
@@ -201,7 +185,6 @@ const Registration = ({ stateCode }) => {
     setCanSubmitAadharOtp(true);
   };
   const handleAddressSave = (address) => {
-    console.log(address);
     setNewParams({ ...newParams, address });
     history.push(`${path}/id-verification`);
   };
@@ -214,18 +197,18 @@ const Registration = ({ stateCode }) => {
     history.push(`/digit-ui/citizen/dristi/home/response`);
   };
 
+  if (isLoading || isFetching) {
+    return <Loader />;
+  }
   console.log(newParams);
   return (
     <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
       <Switch>
         <AppContainer>
-          <Route exact path={`${path}`}>
-            <RegistrationForm setParams={setParams} params={params} path={path} />
-          </Route>
-          <Route exact path={`${path}/additional-details`}>
+          <Route path={`${path}/additional-details`}>
             <AdvocateClerkAdditionalDetail setParams={setNewParams} params={newParams} path={path} config={stepItems[9]} />
           </Route>
-          <Route exact path={`${path}/mobile-number`}>
+          <Route path={`${path}/mobile-number`}>
             <SelectMobileNumber
               onSelect={selectMobileNumber}
               config={stepItems[5]}
@@ -253,10 +236,10 @@ const Registration = ({ stateCode }) => {
               t={t}
             />
           </Route>
-          <Route exact path={`${path}/user-name`}>
+          <Route path={`${path}/user-name`}>
             <SelectName config={stepItems[3]} t={t} onSelect={selectName} params={newParams} history={history} />
           </Route>
-          <Route exact path={`${path}/user-address`}>
+          <Route path={`${path}/user-address`}>
             <SelectUserAddress config={[stepItems[1]]} t={t} params={newParams} onSelect={handleAddressSave} />
           </Route>
           <Route path={`${path}/id-verification`}>
@@ -283,16 +266,11 @@ const Registration = ({ stateCode }) => {
               t={t}
             />
           </Route>
-          <Route exact path={`${path}/user-type`}>
+          <Route path={`${path}/user-type`}>
             <SelectUserType config={[stepItems[2]]} t={t} setParams={setNewParams} params={newParams} onSelect={handleUserTypeSave} />
           </Route>
 
-          <Route exact path={`${path}/terms-conditions`}>
-            <TermsConditions setParams={setParams} params={params} path={path} refetchIndividual={refetch} individualId={individualId} />
-          </Route>
-          <Route exact path={`${path}/additional-details/terms-conditions`}>
-            <TermsConditions setParams={setParams} params={params} path={path} refetchIndividual={refetch} individualId={individualId} />
-          </Route>
+          {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </AppContainer>
       </Switch>
     </div>
