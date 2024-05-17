@@ -1,8 +1,9 @@
-import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair, Modal } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import Button from "./Button";
 import InfoCard from "./InfoCard";
 import { idProofVerificationConfig } from "../configs/component";
+import Modal from "./Modal";
 
 const CloseBtn = (props) => {
   return (
@@ -74,10 +75,11 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
                 actionCancelOnSubmit={() => {}}
-                actionSaveLabel={t("CS_CORE_WEB_PROCEED")}
+                actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {}}
                 formId="modal-action"
                 headerBarMain={<Heading label={t("UPLOAD_ID_PROOF_HEADER")} />}
+                submitTextClassName={"verification-button-text-modal"}
               >
                 <div>
                   <FormComposerV2

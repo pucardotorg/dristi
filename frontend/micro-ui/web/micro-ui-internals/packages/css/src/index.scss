@@ -123,6 +123,7 @@
 @import "./dristi/components/customRadioSelector.scss";
 @import "./dristi/components/customErrorTooltip.scss";
 @import "./dristi/eFiling.scss";
+@import "./dristi/components/selectUserTypeComponent.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -689,7 +690,7 @@ input[type="number"] {
   .ws-citizen-wrapper,
   .tl-citizen {
     width: calc(100% - 90px);
-    padding-left: 60px;
+    padding-left: 0px;
     padding-right: 16px;
     margin-top: 1rem;
   }

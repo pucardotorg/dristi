@@ -203,7 +203,7 @@ export const UICustomizations = {
           const formattedDate = `${day}-${month}-${year}`;
           return <span>{formattedDate}</span>;
         case "Due Since (no of days)":
-          const createdAt = new Date(row.auditDetails.createdTime);
+          const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
           const today = new Date();
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());

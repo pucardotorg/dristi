@@ -3,9 +3,8 @@ import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import CaseType from "./CaseType";
 import ChequeDetails from "./ChequeDetails";
-import ComplainantDetails from "./ComplainantDetails";
 import DelayApplication from "./DelayApplication";
-import RespondentDetails from "./RespondentDetails";
+import EFilingCases from "./EFilingCases";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -17,14 +16,14 @@ function FileCase({ t }) {
           <Route path={`${path}`} exact>
             <CaseType t={t} />
           </Route>
-          <Route path={`${path}/respondent-details`} exact>
+          {/* <Route path={`${path}/respondent-details`} exact>
             <RespondentDetails />
-          </Route>
+          </Route> */}
           <Route path={`${path}/delay-application`} exact>
             <DelayApplication />
           </Route>
-          <Route path={`${path}/complainant-details`} exact>
-            <ComplainantDetails t={t} />
+          <Route path={`${path}/case`} exact>
+            <EFilingCases t={t} />
           </Route>
           <Route path={`${path}/cheque-details`} exact>
             <ChequeDetails />
