@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -26,54 +25,56 @@ public class WitnessQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_WITNESS_QUERY);
             query.append(FROM_WITNESS_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
+
             if(criteriaList != null && !criteriaList.isEmpty()) {
-
-                List<String> ids = criteriaList.stream()
-                        .map(WitnessSearchCriteria::getCaseId)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> individualIds = criteriaList.stream()
-                        .filter(criteria -> criteria.getCaseId() == null)
-                        .map(WitnessSearchCriteria::getIndividualId)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<Boolean> includeInactives = criteriaList.stream()
-                        .filter(criteria -> criteria.getCaseId() == null && criteria.getIndividualId() == null)
-                        .map(WitnessSearchCriteria::getIncludeInactive)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                if (!ids.isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
+                if(criteriaList.stream().anyMatch(criteria -> criteria.getCaseId() != null)) {
+                    addClauseIfRequired(query, true);
                     query.append("witness.caseid IN (")
-                            .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
+                            .append(criteriaList.stream()
+                                    .map(WitnessSearchCriteria::getCaseId)
+                                    .filter(Objects::nonNull)
+                                    .map(id -> "?")
+                                    .collect(Collectors.joining(",")))
                             .append(")");
-                    preparedStmtList.addAll(ids);
-                    firstCriteria = false; // Update firstCriteria flag
+                    preparedStmtList.addAll(criteriaList.stream()
+                            .map(WitnessSearchCriteria::getCaseId)
+                            .filter(Objects::nonNull)
+                            .toList());
                 }
 
-                if (!individualIds.isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
+                if(criteriaList.stream().anyMatch(criteria -> criteria.getIndividualId() != null)) {
+                    addClauseIfRequired(query, true);
                     query.append("witness.individualid IN (")
-                            .append(individualIds.stream().map(reg -> "?").collect(Collectors.joining(",")))
+                            .append(criteriaList.stream()
+                                    .filter(criteria -> criteria.getCaseId() == null)
+                                    .map(WitnessSearchCriteria::getIndividualId)
+                                    .filter(Objects::nonNull)
+                                    .map(reg -> "?")
+                                    .collect(Collectors.joining(",")))
                             .append(")");
-                    preparedStmtList.addAll(individualIds);
-                    firstCriteria = false; // Update firstCriteria flag
-
+                    preparedStmtList.addAll(criteriaList.stream()
+                            .filter(criteria -> criteria.getCaseId() == null)
+                            .map(WitnessSearchCriteria::getIndividualId)
+                            .filter(Objects::nonNull)
+                            .toList());
                 }
 
-                if (!includeInactives.isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
+                if(criteriaList.stream().anyMatch(criteria -> criteria.getCaseId() == null && criteria.getIndividualId() == null)) {
+                    addClauseIfRequired(query, true);
                     query.append("witness.filingnumber IN (")
-                            .append(includeInactives.stream().map(num -> "?").collect(Collectors.joining(",")))
+                            .append(criteriaList.stream()
+                                    .filter(criteria -> criteria.getCaseId() == null && criteria.getIndividualId() == null)
+                                    .map(WitnessSearchCriteria::getIncludeInactive)
+                                    .filter(Objects::nonNull)
+                                    .map(num -> "?")
+                                    .collect(Collectors.joining(",")))
                             .append(")");
-                    preparedStmtList.addAll(includeInactives);
-                    firstCriteria = false;
+                    preparedStmtList.addAll(criteriaList.stream()
+                            .filter(criteria -> criteria.getCaseId() == null && criteria.getIndividualId() == null)
+                            .map(WitnessSearchCriteria::getIncludeInactive)
+                            .filter(Objects::nonNull)
+                            .toList());
                 }
-
             }
 
             query.append(ORDERBY_CREATEDTIME);
@@ -81,10 +82,11 @@ public class WitnessQueryBuilder {
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building witness search query");
-            throw new CustomException(WITNESS_SEARCH_QUERY_EXCEPTION,"Error occurred while building the witness search query: "+ e.getMessage());
+            log.error(WITNESS_QUERY_ERROR);
+            throw new CustomException(WITNESS_SEARCH_QUERY_EXCEPTION,WITNESS_QUERY_ERROR+ e.getMessage());
         }
     }
+
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
@@ -93,12 +95,4 @@ public class WitnessQueryBuilder {
             query.append(" OR ");
         }
     }
-
-//    private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
-//        if (isFirstCriteria) {
-//            query.append(" WHERE ");
-//        } else {
-//            query.append(" AND ");
-//        }
-//    }
 }

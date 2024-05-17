@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class WitnessRegistrationValidatorTest {
+ class WitnessRegistrationValidatorTest {
 
     @Mock
     private IndividualService individualService;
@@ -41,7 +41,7 @@ public class WitnessRegistrationValidatorTest {
     }
 
     @Test
-    public void testValidateCaseRegistration() {
+     void testValidateCaseRegistration() {
         WitnessRequest request = new WitnessRequest();
         request.setRequestInfo(new RequestInfo());
         Witness witnessWithNullCaseId = new Witness();
@@ -63,7 +63,7 @@ public class WitnessRegistrationValidatorTest {
 
 
     @Test
-    public void testValidateApplicationExistence_NonExistingWitness() {
+     void testValidateApplicationExistence_NonExistingWitness() {
         // Mock data
         RequestInfo requestInfo = new RequestInfo();
 

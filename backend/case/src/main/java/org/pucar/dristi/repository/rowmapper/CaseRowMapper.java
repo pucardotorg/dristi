@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.DATE_PARSE_ERROR;
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 @Component
@@ -76,21 +77,19 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
         }
         return new ArrayList<>(caseMap.values());
     }
-    private UUID toUUID(String toUuid) {
-        if(toUuid == null) {
-            return null;
-        }
-        return UUID.fromString(toUuid);
-    }
+
 
     private LocalDate stringToLocalDate(String str){
         LocalDate localDate = null;
-        if(str!=null)
-        try {
-            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            localDate = LocalDate.parse(str, pattern);
-        } catch (DateTimeParseException e) {}
-
+        if(str != null) {
+            try {
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                localDate = LocalDate.parse(str, pattern);
+            } catch (DateTimeParseException e) {
+                log.error(DATE_PARSE_ERROR, str, e.getMessage());
+            }
+        }
         return localDate;
     }
+
 }

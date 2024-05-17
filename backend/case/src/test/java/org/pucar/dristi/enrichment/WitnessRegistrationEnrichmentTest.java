@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
-public class WitnessRegistrationEnrichmentTest {
+ class WitnessRegistrationEnrichmentTest {
 
     @InjectMocks
     private WitnessRegistrationEnrichment witnessRegistrationEnrichment;
@@ -36,7 +36,7 @@ public class WitnessRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichCaseRegistration_Success() {
+     void testEnrichCaseRegistration_Success() {
         // Arrange
         WitnessRequest witnessRequest = new WitnessRequest();
         RequestInfo requestInfo = new RequestInfo();
@@ -68,7 +68,7 @@ public class WitnessRegistrationEnrichmentTest {
     }
 
     @Test
-    public void testEnrichWitnessApplicationUponUpdate_Success() {
+     void testEnrichWitnessApplicationUponUpdate_Success() {
         // Arrange
         WitnessRequest witnessRequest = new WitnessRequest();
         RequestInfo requestInfo = new RequestInfo();

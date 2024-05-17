@@ -40,7 +40,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(CaseRequest caseRequest) {
         caseRequest.getCases().forEach(courtCase -> {
             try {
-                ProcessInstance processInstance = getProcessInstance(courtCase, caseRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstance(courtCase);
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
@@ -70,15 +70,15 @@ public class WorkflowService {
         }
     }
 
-    private ProcessInstance getProcessInstance(CourtCase courtCase, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstance(CourtCase courtCase) {
         try {
             Workflow workflow = courtCase.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
             processInstance.setBusinessId(courtCase.getFilingNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("pucar"); // FIXME
+            processInstance.setModuleName("pucar");
             processInstance.setTenantId(courtCase.getTenantId());
-            processInstance.setBusinessService("case"); // FIXME
+            processInstance.setBusinessService("case");
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -111,23 +111,6 @@ public class WorkflowService {
             throw e;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.getMessage());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
-        }
-    }
-    private BusinessService getBusinessService(CourtCase courtCase, RequestInfo requestInfo) {
-        try {
-            String tenantId = courtCase.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            Object result = repository.fetchResult(url, requestInfoWrapper);
-            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-                throw new CustomException();
-            return response.getBusinessServices().get(0);
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting business service: {}", e.getMessage());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }

@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseServiceTest {
+ class CaseServiceTest {
 
     @Mock
     private CaseRegistrationValidator validator;

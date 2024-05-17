@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
-public class RepresentingDocumentRowMapperTest {
+ class RepresentingDocumentRowMapperTest {
 
     @Mock
     private ResultSet mockResultSet;
@@ -34,7 +34,7 @@ public class RepresentingDocumentRowMapperTest {
     }
 
     @Test
-    public void testExtractData_Success() throws Exception {
+     void testExtractData_Success() throws Exception {
         when(mockResultSet.next()).thenReturn(true, false);
         when(mockResultSet.getString("representing_id")).thenReturn("123e4567-e89b-12d3-a456-426614174000");
         when(mockResultSet.getString("id")).thenReturn("doc1");
@@ -51,7 +51,7 @@ public class RepresentingDocumentRowMapperTest {
     }
 
     @Test
-    public void testExtractData_SQLException() throws Exception {
+     void testExtractData_SQLException() throws Exception {
         when(mockResultSet.next()).thenThrow(new SQLException("Database error"));
 
         assertThrows(CustomException.class, () -> rowMapper.extractData(mockResultSet));

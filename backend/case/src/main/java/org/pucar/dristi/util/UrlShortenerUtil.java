@@ -29,7 +29,6 @@ public class UrlShortenerUtil {
 
 		if (StringUtils.isEmpty(res)) {
 			log.error(URL_SHORTENING_ERROR_CODE, URL_SHORTENING_ERROR_MESSAGE + url);
-			;
 			return url;
 		} else
 			return res;

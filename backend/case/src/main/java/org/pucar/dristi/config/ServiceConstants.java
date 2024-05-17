@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
-
+	private ServiceConstants() {
+	}
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -78,5 +79,25 @@ public class ServiceConstants {
     public static final String INVALID_LINKEDCASE_ID = "INVALID_LINKEDCASE_ID";
 
 	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+	public static final String COURT_CASE_FETCH_ERROR = "Error while fetching court cases: {}";
+	public static final String FINAL_CASE_QUERY = "Final case query: {}";
+	public static final String FINAL_LINKED_CASE_QUERY = "Final linked case query: {}";
+	public static final String FINAL_LITIGANT_QUERY = "Final litigant query: {}";
+	public static final String FINAL_REPRESENTATIVE_QUERY = "Final representative query: {}";
+	public static final String FINAL_REPRESENTATING_QUERY = "Final representing query: {}";
+	public static final String FINAL_DOCUMENT_QUERY = "Final document query: {}";
+	public static final String FINAL_STATUTE_QUERY = "Final statute and sections query: {}";
+	public static final String QUERY_BUILD_ERROR = "Error occurred while building the query: ";
+	public static final String REPRESENTING_QUERY_ERROR = "Error while building representing search query";
+	public static final String REPRESENTATIVE_QUERY_ERROR = "Error while building representatives search query";
+	public static final String DOCUMENT_QUERY_ERROR = "Error while building document search query";
+	public static final String STATUTE_QUERY_ERROR = "Error while building statute section search query";
+	public static final String LITIGANT_QUERY_ERROR = "Error while building litigant search query";
+	public static final String LINKED_CASE_QUERY_ERROR = "Error while building linked case search query";
+	public static final String CASE_QUERY_ERROR = "Error while building case search query";
+	public static final String WITNESS_QUERY_ERROR = "Error while building witness search query";
+	public static final String DATE_PARSE_ERROR = "Error parsing date string: {}";
+	public static final String ACCEPT = "Accept";
+	public static final String APPLICATION_JSON = "application/json";
 
 }
