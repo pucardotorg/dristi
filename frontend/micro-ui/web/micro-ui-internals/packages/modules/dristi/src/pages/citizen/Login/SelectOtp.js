@@ -7,6 +7,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit }) => {
   const history = useHistory();
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(30);
   useInterval(
     () => {
@@ -20,9 +22,13 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     setTimeLeft(30);
   };
 
+  if (isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber")) {
+    history.push(`/${window.contextPath}/citizen/dristi/home`);
+  }
+
   if (
     sessionStorage.getItem("Digit.UploadedDocument") ||
-    (sessionStorage.getItem("Digit.aadharNumber") && sessionStorage.getItem("Digit.isAadharNumberVerified"))
+    (sessionStorage.getItem("Digit.aadharNumber") && sessionStorage.getItem("Digit.isAadharNumberVerified") && isUserLoggedIn)
   ) {
     sessionStorage.removeItem("Digit.UploadedDocument");
     sessionStorage.removeItem("Digit.aadharNumber");
