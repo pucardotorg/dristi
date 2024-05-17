@@ -1,0 +1,79 @@
+serviceMaps:
+  serviceName: application
+  mappings:
+    - version: 1.0
+      description: Persists application details in tables
+      fromTopic: save-application
+      isTransaction: true
+      module: APPLICATION
+      objecIdJsonPath: $.id
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.application.*
+      queryMaps:
+
+        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, statuteSection, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: application.*
+          jsonMaps:
+            - jsonPath: $.application.*.id
+            - jsonPath: $.application.*.tenantId
+            - jsonPath: $.application.*.filingNumber
+            - jsonPath: $.application.*.cnrNumber
+            - jsonPath: $.application.*.referenceId
+            - jsonPath: $.application.*.createdDate
+            - jsonPath: $.application.*.onBehalfOf
+            - jsonPath: $.application.*.applicationType
+            - jsonPath: $.application.*.applicationNumber
+            - jsonPath: $.application.*.issuedBy
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.*.status
+            - jsonPath: $.application.*.comment
+            - jsonPath: $.application.*.isActive
+            - jsonPath: $.application.*.statuteSection
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.*.auditDetails.createdBy
+            - jsonPath: $.application.*.auditDetails.lastModifiedBy
+            - jsonPath: $.application.*.auditDetails.createdTime
+            - jsonPath: $.application.*.auditDetails.lastModifiedTime
+    - version: 1.0
+      description: Update application details in tables
+      fromTopic: update-application
+      isTransaction: true
+      module: APPLICATION
+      objecIdJsonPath: $.id
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.application.*
+      queryMaps:
+        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, statuteSection, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: witnesses.*
+          jsonMaps:
+            - jsonPath: $.application.*.id
+            - jsonPath: $.application.*.tenantId
+            - jsonPath: $.application.*.filingNumber
+            - jsonPath: $.application.*.cnrNumber
+            - jsonPath: $.application.*.referenceId
+            - jsonPath: $.application.*.createdDate
+            - jsonPath: $.application.*.createdBy
+            - jsonPath: $.application.*.onBehalfOf
+            - jsonPath: $.application.*.applicationType
+            - jsonPath: $.application.*.applicationNumber
+            - jsonPath: $.application.*.issuedBy
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.*.status
+            - jsonPath: $.application.*.comment
+            - jsonPath: $.application.*.isActive
+            - jsonPath: $.application.*.statuteSection
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.application.*.auditDetails.createdBy
+            - jsonPath: $.application.*.auditDetails.lastModifiedBy
+            - jsonPath: $.application.*.auditDetails.createdTime
+            - jsonPath: $.application.*.auditDetails.lastModifiedTime
