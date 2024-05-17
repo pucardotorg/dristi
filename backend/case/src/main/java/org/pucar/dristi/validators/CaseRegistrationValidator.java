@@ -54,7 +54,6 @@ public void setCaseService(@Lazy CaseService caseService) {
 }
 
     public void validateCaseRegistration(CaseRequest caseRequest) throws CustomException{
-        RequestInfo requestInfo = caseRequest.getRequestInfo();
 
         caseRequest.getCases().forEach(courtCase -> {
             if(ObjectUtils.isEmpty(courtCase.getTenantId()))
@@ -75,40 +74,78 @@ public void setCaseService(@Lazy CaseService caseService) {
 
     public Boolean validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
         List<CourtCase> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).build()));
-        if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_ERR,"Case Application does not exist");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getTenantId()))
+
+        validateExistingApplications(existingApplications);
+
+        Map<String, Map<String, JSONArray>> mdmsData  = mdmsUtil.fetchMdmsData(requestInfo, existingApplications.get(0).getTenantId(), "case", createMasterDetails());
+        validateMdmsData(mdmsData);
+
+        validateLitigants(courtCase, requestInfo);
+        validateDocuments(courtCase);
+        validateRepresentatives(courtCase, requestInfo);
+        validateLinkedCases(courtCase, requestInfo);
+
+        return !existingApplications.isEmpty();
+    }
+
+    private void validateExistingApplications(List<CourtCase> existingApplications) {
+        if(existingApplications.isEmpty()) {
+            throw new CustomException(VALIDATION_ERR,"Case Application does not exist");
+        }
+        if (ObjectUtils.isEmpty(existingApplications.get(0).getTenantId())) {
             throw new CustomException(CREATE_CASE_ERR, "tenantId is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getFilingDate()))
+        }
+        if (ObjectUtils.isEmpty(existingApplications.get(0).getFilingDate())) {
             throw new CustomException(CREATE_CASE_ERR, "filingDate is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getCaseCategory()))
+        }
+        if (ObjectUtils.isEmpty(existingApplications.get(0).getCaseCategory())) {
             throw new CustomException(CREATE_CASE_ERR, "caseCategory is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getStatutesAndSections()))
+        }
+        if (ObjectUtils.isEmpty(existingApplications.get(0).getStatutesAndSections())) {
             throw new CustomException(CREATE_CASE_ERR, "statute and sections is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getLitigants()))
+        }
+        if (ObjectUtils.isEmpty(existingApplications.get(0).getLitigants())) {
             throw new CustomException(CREATE_CASE_ERR, "litigants is mandatory for creating case");
+        }
+    }
 
-            Map<String, Map<String, JSONArray>> mdmsData  = mdmsUtil.fetchMdmsData(requestInfo, existingApplications.get(0).getTenantId(), "case", createMasterDetails());
+    private void validateMdmsData(Map<String, Map<String, JSONArray>> mdmsData) {
+        if(mdmsData.get("case") == null) {
+            throw new CustomException(MDMS_DATA_NOT_FOUND,"MDMS data does not exist");
+        }
+    }
 
-            if(mdmsData.get("case") == null)
-                throw new CustomException(MDMS_DATA_NOT_FOUND,"MDMS data does not exist");
-            if(!courtCase.getLitigants().isEmpty()) {
-                courtCase.getLitigants().forEach(litigant -> {
-                    if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
-                        throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
-                });
-            }
-            if(courtCase.getDocuments()!= null && !courtCase.getDocuments().isEmpty()) {
-                courtCase.getDocuments().forEach(document -> {
-                    if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
-                        throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
-                });
-            }
-        if(courtCase.getRepresentatives() != null &&!courtCase.getRepresentatives().isEmpty()) {
-            courtCase.getRepresentatives().forEach(rep -> {
-                if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
-                    throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+    private void validateLitigants(CourtCase courtCase, RequestInfo requestInfo) {
+        if(!courtCase.getLitigants().isEmpty()) {
+            courtCase.getLitigants().forEach(litigant -> {
+                if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId())) {
+                    throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                }
             });
         }
+    }
+
+    private void validateDocuments(CourtCase courtCase) {
+        if(courtCase.getDocuments()!= null && !courtCase.getDocuments().isEmpty()) {
+            courtCase.getDocuments().forEach(document -> {
+                if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore())) {
+                    throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                }
+            });
+        }
+    }
+
+    private void validateRepresentatives(CourtCase courtCase, RequestInfo requestInfo) {
+        if(courtCase.getRepresentatives() != null && !courtCase.getRepresentatives().isEmpty()) {
+            courtCase.getRepresentatives().forEach(rep -> {
+                if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId())) {
+                    throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                }
+            });
+        }
+    }
+
+    private void validateLinkedCases(CourtCase courtCase, RequestInfo requestInfo) {
         if(courtCase.getLinkedCases()!= null && !courtCase.getLinkedCases().isEmpty()) {
             courtCase.getLinkedCases().forEach(linkedCase -> {
                 CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
@@ -118,12 +155,13 @@ public void setCaseService(@Lazy CaseService caseService) {
                 caseCriteriaList.add(caseCriteria);
                 caseSearchRequest.setRequestInfo(requestInfo);
                 caseSearchRequest.setCriteria(caseCriteriaList);
-                if (!caseService.searchCases(caseSearchRequest).isEmpty())
+                if (!caseService.searchCases(caseSearchRequest).isEmpty()) {
                     throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
+                }
             });
         }
-        return !existingApplications.isEmpty();
     }
+
 
     private List<String> createMasterDetails() {
         List<String> masterList = new ArrayList<>();

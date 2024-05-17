@@ -12,10 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -53,13 +50,13 @@ public class UserUtil {
 		else if (uri.toString().contains(configs.getUserCreateEndpoint()))
 			dobFormat = DOB_FORMAT_D_M_Y;
 		try {
-			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+			LinkedHashMap<String, Object> responseMap = (LinkedHashMap<String, Object>) serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
-			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
-			return userDetailResponse;
+			return mapper.convertValue(responseMap, UserDetailResponse.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE, OBJECTMAPPER_UNABLE_TO_CONVERT);
 		}
+
 	}
 
 	/**
@@ -69,7 +66,7 @@ public class UserUtil {
 	 */
 
 	public void parseResponse(LinkedHashMap responseMap, String dobFormat) {
-		List<LinkedHashMap> users = (List<LinkedHashMap>) responseMap.get(USER);
+		List<Map<String, Object>> users = (List<Map<String, Object>>) responseMap.get(USER);
 		String format1 = DOB_FORMAT_D_M_Y_H_M_S;
 		if (users != null) {
 			users.forEach(map -> {
@@ -83,6 +80,7 @@ public class UserUtil {
 			});
 		}
 	}
+
 
 	/**
 	 * Converts date to long

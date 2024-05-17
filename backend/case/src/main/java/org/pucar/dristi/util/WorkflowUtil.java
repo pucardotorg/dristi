@@ -149,7 +149,7 @@ public class WorkflowUtil {
 			List<String> userIds = null;
 
 			if (!CollectionUtils.isEmpty(processInstance.getAssignes())) {
-				userIds = processInstance.getAssignes().stream().map(User::getUuid).collect(Collectors.toList());
+				userIds = processInstance.getAssignes().stream().map(User::getUuid).toList();
 			}
 
 			Workflow workflow = Workflow.builder().action(processInstance.getAction()).assignes(userIds)

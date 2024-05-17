@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-public class WitnessRepositoryTest {
+ class WitnessRepositoryTest {
 
     @Mock
     private WitnessQueryBuilder queryBuilder;
@@ -43,7 +43,7 @@ public class WitnessRepositoryTest {
     }
 
     @Test
-    public void testGetApplications() {
+     void testGetApplications() {
         // Mock the behavior of getWitnessesSearchQuery
         List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
         when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");

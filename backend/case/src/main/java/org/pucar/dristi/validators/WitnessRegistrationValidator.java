@@ -40,11 +40,12 @@ public class WitnessRegistrationValidator {
     }
     public Witness validateApplicationExistence(RequestInfo requestInfo ,Witness witness) {
         List<Witness> existingApplications = witnessRepository.getApplications(Collections.singletonList(WitnessSearchCriteria.builder().caseId(witness.getCaseId()).build()));
-        if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_ERR,"Witness Application does not exist");
-         if(ObjectUtils.isEmpty(witness.getCaseId()))
-                throw new CustomException("EG_WT_APP_ERR", "caseId is mandatory for creating witness");
-            if(ObjectUtils.isEmpty(witness.getIndividualId()))
-                throw new CustomException("EG_WT_APP_ERR", "individualId is mandatory for creating witness");
+        if(existingApplications.isEmpty())
+            throw new CustomException(VALIDATION_ERR,"Witness Application does not exist");
+        if(ObjectUtils.isEmpty(witness.getCaseId()))
+            throw new CustomException("EG_WT_APP_ERR", "caseId is mandatory for creating witness");
+        if(ObjectUtils.isEmpty(witness.getIndividualId()))
+            throw new CustomException("EG_WT_APP_ERR", "individualId is mandatory for creating witness");
         if (!individualService.searchIndividual(requestInfo, witness.getIndividualId()))
             throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
         return existingApplications.get(0);

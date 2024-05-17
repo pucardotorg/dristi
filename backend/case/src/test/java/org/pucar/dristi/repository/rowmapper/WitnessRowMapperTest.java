@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class WitnessRowMapperTest {
+ class WitnessRowMapperTest {
 
     @InjectMocks
     private WitnessRowMapper witnessRowMapper;
@@ -33,7 +33,7 @@ public class WitnessRowMapperTest {
     }
 
     @Test
-    public void testExtractData_Success() throws SQLException {
+     void testExtractData_Success() throws SQLException {
         // Arrange
         ResultSet resultSet = mock(ResultSet.class);
 

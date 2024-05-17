@@ -14,7 +14,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class WitnessQueryBuilderTest {
+ class WitnessQueryBuilderTest {
 
     @InjectMocks
     private WitnessQueryBuilder witnessQueryBuilder;
@@ -28,7 +28,7 @@ public class WitnessQueryBuilderTest {
     }
 
     @Test
-    public void testGetWitnessesSearchQuery_CaseIdCriteria() {
+     void testGetWitnessesSearchQuery_CaseIdCriteria() {
         // Arrange
         List<WitnessSearchCriteria> criteriaList = new ArrayList<>();
         criteriaList.add(new WitnessSearchCriteria("12345", null, false));

@@ -31,8 +31,7 @@ public class IndividualService {
 
             StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
             uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(requestInfo.getUserInfo().getTenantId()).append("&includeDeleted=true");
-            Boolean isIndividualValid = individualUtils.individualCall(individualSearchRequest, uri);
-            return isIndividualValid;
+            return individualUtils.individualCall(individualSearchRequest, uri);
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {

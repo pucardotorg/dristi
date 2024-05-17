@@ -20,7 +20,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class WitnessServiceTest {
+ class WitnessServiceTest {
 
     @Mock
     private WitnessRegistrationValidator validator;
@@ -44,7 +44,7 @@ public class WitnessServiceTest {
     }
 
     @Test
-    public void testRegisterWitnessRequest() {
+     void testRegisterWitnessRequest() {
         WitnessRequest request = new WitnessRequest();
         List<Witness> witnesses = new ArrayList<>();
         request.setWitnesses(witnesses);
@@ -62,7 +62,7 @@ public class WitnessServiceTest {
     }
 
     @Test
-    public void testSearchWitnesses() {
+     void testSearchWitnesses() {
         WitnessSearchRequest searchRequest = new WitnessSearchRequest();
 
         doReturn(new ArrayList<>()).when(witnessRepository).getApplications(any());
@@ -75,7 +75,7 @@ public class WitnessServiceTest {
     }
 
     @Test
-    public void testUpdateWitness() {
+     void testUpdateWitness() {
         WitnessRequest request = new WitnessRequest();
         List<Witness> witnesses = new ArrayList<>();
         request.setWitnesses(witnesses);

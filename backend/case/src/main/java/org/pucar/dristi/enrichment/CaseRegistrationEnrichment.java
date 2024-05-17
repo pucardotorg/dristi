@@ -91,7 +91,6 @@ public class CaseRegistrationEnrichment {
                         });
                     });
 
-//                    courtCase.setIsActive(false);
                     if (courtCase.getDocuments()!=null){
                         courtCase.getDocuments().forEach(document -> {
                             document.setId(String.valueOf(UUID.randomUUID()));
@@ -101,8 +100,6 @@ public class CaseRegistrationEnrichment {
 
                     courtCase.setFilingNumber(courtCaseRegistrationIdList.get(index++));
                     courtCase.setCaseNumber(courtCase.getFilingNumber());
-                  //  courtCase.setCourtCaseNumber(courtCase.getCourtCaseNumber());
-                  //  courtCase.setCnrNumber(courtCase.getCnrNumber());
                 }
         }
         catch (CustomException e){

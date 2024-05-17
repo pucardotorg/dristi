@@ -20,10 +20,10 @@ public class FileStoreUtil {
         this.restTemplate = restTemplate;
     }
 
-    public Boolean fileStore(String tenantId,  String FileStoreId) {
+    public Boolean fileStore(String tenantId,  String fileStoreId) {
         try{
             StringBuilder uri = new StringBuilder(configs.getFileStoreHost()).append(configs.getFileStorePath());
-            uri.append("tenantId=").append(tenantId).append("&").append("fileStoreId=").append(FileStoreId);
+            uri.append("tenantId=").append(tenantId).append("&").append("fileStoreId=").append(fileStoreId);
             ResponseEntity<String> responseEntity= restTemplate.getForEntity(uri.toString(), String.class);
             return responseEntity.getStatusCode().equals(HttpStatus.OK);
         }catch (Exception e){

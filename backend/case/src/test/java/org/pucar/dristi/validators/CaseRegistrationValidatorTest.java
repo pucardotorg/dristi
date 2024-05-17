@@ -28,7 +28,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CaseRegistrationValidatorTest {
+ class CaseRegistrationValidatorTest {
 
     @Mock
     private IndividualService individualService;
@@ -160,7 +160,9 @@ public class CaseRegistrationValidatorTest {
 
         when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
 
-        Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
+        Exception exception = assertThrows(CustomException.class, () -> {
+            validator.validateApplicationExistence(courtCase, new RequestInfo());
+        });
     }
 }
 
