@@ -2,6 +2,7 @@
   h2 {
     margin-top: 0;
   }
+
   .e-filing-header-content {
     .e-filing-header-subtext {
       font-family: Roboto;
@@ -23,6 +24,7 @@
       padding: 12px 32px;
       margin: 0;
     }
+
     form .card {
       margin: 0;
       box-shadow: none;
@@ -30,13 +32,19 @@
     }
   }
 }
+
 .pt-citizen {
   width: 100% !important;
   padding: 0px 20px !important;
 }
+
 .employee-card-wrapper {
   display: flex;
   justify-content: space-between;
+}
+.file-case-select-form-section {
+  width: 100%;
+  max-width: 20%;
 }
 
 .file-case-form-section {
@@ -108,4 +116,10 @@
       }
     }
   }
+}
+
+.e-filing-action-bar {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20px;
 }

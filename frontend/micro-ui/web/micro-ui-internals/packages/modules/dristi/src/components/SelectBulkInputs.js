@@ -2,7 +2,8 @@ import { Button, CardLabel, RemoveableTag, TextInput } from "@egovernments/digit
 import React, { useMemo, useState } from "react";
 
 function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
-  const [canAdd, setCanAdd] = useState(false);
+  console.debug(errors);
+  const [enableAdd, setEnableAdd] = useState(false);
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -28,30 +29,29 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
   }
 
   const handleAdd = (value, input) => {
-    const temp = formData[config.key]?.values || [];
-    setValue({ values: [...temp, value], [input.name]: "" }, ["values", [input.name]]);
+    const temp = formData[config.key]?.[input.name] || [];
+    setValue({ textfieldValue: "", [input.name]: [...temp, value] }, [[input.name], "textfieldValue"]);
+    setEnableAdd(false);
   };
 
-  const handleRemove = (value) => {
-    const temp = formData[config.key]?.values || [];
+  const handleRemove = (value, input) => {
+    const temp = formData[config.key]?.[input.name] || [];
     setValue(
       temp.filter((item) => item !== value),
-      "values"
+      input.name
     );
   };
 
-  const chipList = useMemo(() => formData[config.key]?.values || [], [config.key, formData]);
-
   const onChange = (event, input) => {
     const { value } = event.target;
-    const temp = formData[config.key]?.values || [];
+    const temp = formData[config.key]?.[input.name] || [];
     if (
       ((input?.validation?.minLength ? value.length < input?.validation?.minLength : false) ||
         (input?.validation?.maxLength ? value.length > input?.validation?.maxLength : false) ||
         (input?.validation?.pattern ? !input?.validation?.pattern?.test(value) : false)) &&
-      canAdd
+      enableAdd
     ) {
-      setCanAdd(false);
+      setEnableAdd(false);
     }
     if (
       (input?.validation?.minLength ? value.length >= input?.validation?.minLength : true) &&
@@ -59,13 +59,14 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
       (input?.validation?.pattern ? input?.validation?.pattern?.test(value) : true) &&
       !temp.includes(value)
     ) {
-      setCanAdd(true);
+      setEnableAdd(true);
     }
-    setValue(value, input.name);
+    setValue(value, "textfieldValue");
   };
 
   return inputs.map((input) => {
-    let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
+    const currentValue = (formData && formData[config.key] && formData[config.key].textfieldValue) || "";
+    const chipList = (formData && formData[config.key] && formData[config.key][input.name]) || "";
     return (
       <div style={{ width: "100%" }}>
         <CardLabel>{t(input.label)}</CardLabel>
@@ -94,7 +95,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
           <Button
             label={"Add"}
             style={{ alignItems: "center" }}
-            isDisabled={!canAdd}
+            isDisabled={!enableAdd}
             onButtonClick={() => {
               handleAdd(currentValue, input);
             }}
@@ -114,7 +115,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
                     key={index}
                     text={value}
                     onClick={() => {
-                      handleRemove(value);
+                      handleRemove(value, input);
                     }}
                   />
                 );

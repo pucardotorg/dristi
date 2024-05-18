@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import DocumentDetailCard from "../../components/DocumentDetailCard";
 import DocViewerWrapper from "./docViewerWrapper";
-import { ReactComponent as LocationOnMapIcon } from "./image/location_onmap.svg";
+import { ReactComponent as LocationOnMapIcon } from "../../images/location_onmap.svg";
 import { userTypeOptions } from "../citizen/registration/config";
 import Menu from "../../components/Menu";
 
@@ -48,10 +48,10 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 };
 
 const ApplicationDetails = ({ location, match }) => {
-  const { applicationNo } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
 
   const individualId = urlParams.get("individualId");
+  const applicationNo = urlParams.get("applicationNo");
   const type = urlParams.get("type") || "advocate";
   const moduleCode = "DRISTI";
   const { t } = useTranslation();
@@ -85,7 +85,7 @@ const ApplicationDetails = ({ location, match }) => {
 
   const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
-      criteria: [{ individualId }],
+      criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
       tenantId,
     },
     {},
@@ -115,7 +115,7 @@ const ApplicationDetails = ({ location, match }) => {
     return searchData?.[userTypeDetail?.apiDetails?.requestKey];
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
-    return searchResult?.[0].documents?.[0]?.fileStore;
+    return searchResult?.[0]?.documents?.[0]?.fileStore;
   }, [searchResult]);
 
   useEffect(() => {
@@ -226,7 +226,7 @@ const ApplicationDetails = ({ location, match }) => {
       <Header>{header}</Header>
       <DocumentDetailCard cardData={aadharData} />
       <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
-      {type === "advocate" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
+      {type === "advocate" && userType !== "ADVOCATE_CLERK" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
       {applicationNo && (
         <ActionBar>
           {displayMenu && applicationNo ? (
@@ -267,7 +267,7 @@ const ApplicationDetails = ({ location, match }) => {
           actionSaveOnSubmit={() => {
             handleDelete("REJECT");
           }}
-          isDisabled={!reasons}
+          isDisabled={!reasons || !reasons.trim()}
         >
           <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
             <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>

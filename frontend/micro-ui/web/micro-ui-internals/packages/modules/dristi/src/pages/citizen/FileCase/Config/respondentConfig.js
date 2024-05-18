@@ -1,4 +1,4 @@
-export const respondentFromconfig = [
+const respondentFromconfig = [
   {
     body: [
       {
@@ -31,11 +31,6 @@ export const respondentFromconfig = [
               isVerified: true,
               hasBarRegistrationNo: true,
               isEnabled: true,
-              apiDetails: {
-                serviceName: "/advocate/advocate/v1/_create",
-                requestKey: "advocates",
-                AdditionalFields: ["barRegistrationNumber"],
-              },
             },
           ],
         },
@@ -130,6 +125,7 @@ export const respondentFromconfig = [
               label: "CORE_COMMON_PHONE_NUMBER",
               type: "text",
               name: "mobileNumber",
+              isMandatory: true,
               error: "ERR_HRMS_INVALID_MOB_NO",
               componentInFront: "+91",
               validation: {
@@ -137,6 +133,7 @@ export const respondentFromconfig = [
                 minLength: 10,
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
+                isArray: true,
               },
             },
           ],
@@ -158,11 +155,13 @@ export const respondentFromconfig = [
             {
               label: "CORE_COMMON_EMAILS",
               type: "text",
-              name: "mobileNumber",
+              name: "emailId",
+              isMandatory: true,
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
                 pattern: /\S+@\S+\.\S+/,
+                isArray: true,
               },
             },
           ],
@@ -179,6 +178,7 @@ export const respondentFromconfig = [
         type: "text",
         key: "company_Name",
         label: "company_Name",
+        isMandatory: true,
         populators: {
           title: "FIRST_TERMS_AND_CONDITIONS",
           name: "Terms_Conditions",
@@ -194,6 +194,7 @@ export const respondentFromconfig = [
         populators: {
           inputs: [
             {
+              isMandatory: true,
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
               type: "DragDropComponent",
@@ -302,7 +303,7 @@ export const respondentFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Aadhar",
+              documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
               isOptional: "optional",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
@@ -325,48 +326,5 @@ export const respondentconfig = {
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_RESPONDENT",
+  formItemName: "Respondent",
 };
-
-export const sideMenuConfig = [
-  {
-    isOpen: false,
-    isDisabled: false,
-    title: "CS_LITIGENT_DETAILS",
-    children: [
-      { label: "CS_COMPLAINT_DETAILS", checked: false, isCompleted: true, isDisabled: false },
-      { label: "CS_RESPONDENT_DETAILS", checked: false, isCompleted: false, pageConfig: respondentconfig, isDisabled: false },
-    ],
-  },
-  {
-    isOpen: false,
-    isDisabled: false,
-    title: "CS_CASE_SPECIFIC_DETAILS",
-    children: [
-      { label: "CS_CHECK_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false },
-    ],
-    checked: false,
-    isCompleted: 0,
-  },
-  {
-    isOpen: false,
-    isDisabled: false,
-    title: "CS_ADDITIONAL_DETAILS",
-    children: [
-      { label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_PRAYER_SWORN_STATEMENT", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_ADVOCATE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
-    ],
-  },
-  {
-    isOpen: false,
-    isDisabled: false,
-    title: "CS_REVIEW_SIGN",
-    children: [
-      { label: "CS_REVIEW_CASE_FILE", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false },
-    ],
-  },
-];

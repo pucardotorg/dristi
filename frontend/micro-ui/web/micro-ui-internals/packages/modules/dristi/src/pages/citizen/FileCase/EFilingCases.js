@@ -1,12 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
-import { sideMenuConfig } from "./config";
+import { sideMenuConfig } from "./Config";
 import { ReactComponent as InfoIcon } from '../../../icons/info.svg';
-
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -17,6 +16,7 @@ function EFilingCases({ path }) {
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
   const [accordion, setAccordion] = useState(sideMenuConfig);
   const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[0]?.pageConfig);
+  const [{ setFormErrors }, setState] = useState({ setFormErrors: null });
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
@@ -62,6 +62,7 @@ function EFilingCases({ path }) {
     return formdata.filter((item) => item.isenabled === true).length;
   }, [formdata]);
 
+  useEffect(() => { }, []);
   const handleAddForm = () => {
     setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };
@@ -82,6 +83,12 @@ function EFilingCases({ path }) {
           return i === index ? { ...item, data: formData } : item;
         })
       );
+    }
+    if (!setFormErrors) {
+      setState((prev) => ({
+        ...prev,
+        setFormErrors: setError,
+      }));
     }
   };
 
@@ -111,6 +118,49 @@ function EFilingCases({ path }) {
       return newAccordion;
     });
     setPageConfig(newPageConfig);
+    setParmas({ ...params, [pageConfig.key]: formdata });
+    setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+  };
+
+  const validateData = (data) => {
+    let isValid = true;
+    formConfig.forEach((config) => {
+      config?.body?.forEach((body) => {
+        if (body?.type === "component") {
+          body?.populators?.inputs?.forEach((input) => {
+            if (input?.isMandatory) {
+              if (input?.validation) {
+                if (input?.validation?.isArray) {
+                  if (!formdata?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
+                    isValid = false;
+                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                  } else {
+                    setFormErrors(body.key, { [input.name]: "" });
+                  }
+                } else {
+                  if (!formdata?.[body.key]?.[input.name]) {
+                    isValid = false;
+                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                  } else {
+                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                  }
+                }
+              }
+            }
+          });
+        }
+      });
+    });
+    return isValid;
+  };
+
+  const onSubmit = (props) => {
+    if (!validateData(props)) {
+      return null;
+    }
+  };
+  const onSaveDraft = (props) => {
+    setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
   };
 
@@ -156,7 +206,7 @@ function EFilingCases({ path }) {
               <div>
                 {pageConfig?.addFormText && (
                   <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
-                    <h1>{`${pageConfig?.formItemName} ${formdata[index].displayindex + 1}`}</h1>
+                    <h1>{`${pageConfig?.formItemName} ${formdata[index]?.displayindex + 1}`}</h1>
                     {(activeForms > 1 || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
@@ -170,11 +220,10 @@ function EFilingCases({ path }) {
                   </Card>
                 )}
                 <FormComposerV2
-                  label={t("CS_COMMONS_NEXT")}
+                  label={t("CS_COMMON_CONTINUE")}
                   config={config}
-                  onSubmit={(props) => {
-                    console.debug("Vaibhav");
-                  }}
+                  onSubmit={onSubmit}
+                  onSecondayActionClick={onSaveDraft}
                   defaultValues={{}}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
@@ -182,6 +231,9 @@ function EFilingCases({ path }) {
                   cardStyle={{ minWidth: "100%" }}
                   isDisabled={isDisabled}
                   cardClassName={"e-filing-card-form-style"}
+                  secondaryLabel={t("CS_SAVE_DRAFT")}
+                  showSecondaryLabel={true}
+                  actionClassName="e-filing-action-bar"
                 />
               </div>
             ) : null;

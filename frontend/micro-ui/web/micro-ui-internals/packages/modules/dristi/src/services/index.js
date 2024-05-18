@@ -1,4 +1,4 @@
-import { Request } from "../Utils";
+import { Request } from "@egovernments/digit-ui-libraries";
 import { Urls } from "../hooks";
 
 export const DRISTIService = {
@@ -33,7 +33,7 @@ export const DRISTIService = {
       useCache: false,
       userService: userService,
       data,
-      params: { tenantId },
+      params: { tenantId, limit: 10000 },
       additionInfo,
     }),
   searchIndividualAdvocate: (data, params) =>

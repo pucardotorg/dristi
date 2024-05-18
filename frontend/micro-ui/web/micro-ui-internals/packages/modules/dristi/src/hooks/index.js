@@ -4,6 +4,7 @@ import useGetIndividualAdvocate from "./dristi/useGetIndividualAdvocate";
 import useIndividualService from "./dristi/useIndividualService";
 import useGetIndividualUser from "./dristi/useGetIndividualUser";
 import { DRISTIService } from "../services";
+import useInboxCustomHook from "./dristi/useInboxCustomHook";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -23,22 +24,14 @@ const dristi = {
   useGetIndividualAdvocate,
   useIndividualService,
   useGetIndividualUser,
+  useInboxCustomHook,
 };
 
-const contracts = {};
-
 const Hooks = {
-  attendance: {
-    update: () => {},
-  },
   dristi,
-  contracts,
 };
 
 const Utils = {
-  browser: {
-    sample: () => {},
-  },
   dristi: {},
 };
 
