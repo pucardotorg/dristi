@@ -2,9 +2,8 @@ import { AppContainer } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Route, Switch, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import CaseType from "./CaseType";
-import RespondentDetails from "./RespondentDetails";
+import ChequeDetails from "./ChequeDetails";
 import DelayApplication from "./DelayApplication";
-import ComplainantDetails from "./ComplainantDetails";
 import EFilingCases from "./EFilingCases";
 import WitnessDetails from "./WitnessDetails";
 
@@ -29,6 +28,9 @@ function FileCase({ t }) {
           </Route>
           <Route path={`${path}/witness-details`} exact>
             <WitnessDetails />
+          </Route>
+          <Route path={`${path}/cheque-details`} exact>
+            <ChequeDetails />
           </Route>
         </AppContainer>
       </Switch>
