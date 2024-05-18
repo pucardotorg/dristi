@@ -1,4 +1,4 @@
-import { Request } from "../Utils";
+import { Request } from "@egovernments/digit-ui-libraries";
 import { Urls } from "../hooks";
 
 export const DRISTIService = {

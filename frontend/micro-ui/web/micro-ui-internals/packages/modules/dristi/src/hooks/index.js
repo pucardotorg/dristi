@@ -27,20 +27,11 @@ const dristi = {
   useInboxCustomHook,
 };
 
-const contracts = {};
-
 const Hooks = {
-  attendance: {
-    update: () => {},
-  },
   dristi,
-  contracts,
 };
 
 const Utils = {
-  browser: {
-    sample: () => {},
-  },
   dristi: {},
 };
 
