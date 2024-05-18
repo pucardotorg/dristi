@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Button } from "@egovernments/digit-ui-react-components";
 import Axios from "axios";
 import LocationComponent from "./LocationComponent";
+import { ReactComponent as CrossIcon } from "../images/cross.svg";
 
 function generateUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -111,6 +112,13 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
     onSelect(config.key, [...(locationData || []), { id: generateUUID() }]);
   };
 
+  const handleDeleteLocation = (index) => {
+    const currentFormData = structuredClone(locationData);
+    currentFormData.splice(index, 1);
+    setLocationData(currentFormData);
+    onSelect(config.key, currentFormData);
+  };
+
   const onChange = (key, value, index) => {
     // const currentFormData = new Proxy(structuredClone(_locationData), {
     //   set: (target, prop, value, receiver) => {
@@ -135,8 +143,14 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
 
   return (
     <div>
-      {locationData.map((data) => (
+      {locationData.map((data, index) => (
         <div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <h1> {`WITNESS'S_LOCATION ${index}`}</h1>
+            <span onClick={() => handleDeleteLocation(index)} style={locationData.length === 1 ? { display: "none" } : {}}>
+              <CrossIcon></CrossIcon>
+            </span>
+          </div>
           <LocationComponent
             t={t}
             config={selectCompMultiConfig}
@@ -164,7 +178,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       )} */}
       {
         <Button
-          label={"Add"}
+          label={"Add Location"}
           style={{ alignItems: "center" }}
           onButtonClick={() => {
             handleAdd();

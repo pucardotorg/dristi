@@ -120,7 +120,7 @@ function WitnessDetails() {
   // };
 
   return (
-    <div className="employee-card-wrapper">
+    <div>
       <div className="header-content">
         <Header>{`${t("CS_COMMON_WITNESS_DETAIL")} (optional)`}</Header>
       </div>

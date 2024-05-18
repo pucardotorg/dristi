@@ -106,7 +106,6 @@ export const witnessConfig = [
     ],
   },
   {
-    head: "CS_WITNESS_ADDRESS_DETAIL",
     body: [
       {
         type: "component",
@@ -164,6 +163,25 @@ export const witnessConfig = [
             },
           ],
           validation: {},
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "witnessAdditionalDetails",
+        populators: {
+          inputs: [
+            {
+              textAreaHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
+              placeholder: "CS_TEXTAREA_PLACEHOLDER_WITNESS_ADDITIONAL_DETAIL",
+              headerClassName: "dristi-font-bold",
+              type: "TextAreaComponent",
+            },
+          ],
         },
       },
     ],
