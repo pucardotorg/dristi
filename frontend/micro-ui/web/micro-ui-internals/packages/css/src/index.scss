@@ -659,14 +659,16 @@ input[type="number"] {
   }
 }
 
+.citizen-form-wrapper {
+  padding: 0px !important;
+}
+
 @media (min-width: 780px) {
   .citizen-form-wrapper {
     width: calc(100% - 219px);
     display: flex;
     justify-content: center;
     margin-top: 1rem;
-    padding-left: 16px;
-    padding-right: 16px;
   }
 }
 @media (min-width: 780px) {

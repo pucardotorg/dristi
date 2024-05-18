@@ -5,6 +5,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./config";
+import { ReactComponent as InfoIcon } from '../../../icons/info.svg';
+
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -113,23 +115,37 @@ function EFilingCases({ path }) {
   };
 
   return (
-    <div style={{ display: "flex", gap: 40 }}>
-      <div className="file-case-select-form-section">
-        {accordion.map((item, index) => (
-          <Accordion
-            t={t}
-            title={item.title}
-            handlePageChange={handlePageChange}
-            handleAccordionClick={() => {
-              handleAccordionClick(index);
-            }}
-            key={index}
-            children={item.children}
-            parentIndex={index}
-            isOpen={item.isOpen}
-          />
-        ))}
+    <div className="file-case">
+      <div className="file-case-side-stepper">
+        <div className="side-stepper-info">
+          <div className="header">
+            <InfoIcon />
+            <span>You are filing a case</span>
+          </div>
+          <p>
+            Under
+            <span className="act-name"> S-138, Negotiable Instrument Act</span> In
+            <span className="place-name"> Kollam S 138 Special Court</span>
+          </p>
+        </div>
+        <div className="file-case-select-form-section">
+          {accordion.map((item, index) => (
+            <Accordion
+              t={t}
+              title={item.title}
+              handlePageChange={handlePageChange}
+              handleAccordionClick={() => {
+                handleAccordionClick(index);
+              }}
+              key={index}
+              children={item.children}
+              parentIndex={index}
+              isOpen={item.isOpen}
+            />
+          ))}
+        </div>
       </div>
+
       <div className="file-case-form-section">
         <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column", marginLeft: "40px" }}>
           <div className="header-content">
