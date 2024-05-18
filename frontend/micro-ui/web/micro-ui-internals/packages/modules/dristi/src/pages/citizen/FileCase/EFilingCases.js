@@ -4,7 +4,8 @@ import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-reac
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
-import { sideMenuConfig } from "./config";
+import { sideMenuConfig } from "./Config";
+
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};

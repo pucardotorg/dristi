@@ -1,29 +1,34 @@
-export const configRadioOptions = [
-  { name: "respondentDetails", configName: "respondentconfig" },
-  { name: "delayApplication", configName: "delayAppConfig" },
-];
-
-export const delayAppConfig = [
+const delayApplicationFormConfig = [
   {
     body: [
       {
-        type: "component",
-        component: "SelectUserTypeComponent",
-        key: "eligibleForDelayApplicationType",
-        withoutLabel: true,
+        type: "radio",
+        key: "delayApplicationType",
+        label: "CS_DELAY_APPLICATION_TYPE",
+        isMandatory: true,
         populators: {
-          inputs: [
+          label: "CS_DELAY_APPLICATION_TYPE",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
+          options: [
             {
-              label: "ELIGIBLE_FOR_DELAY_APPLICATION_TYPE",
-              type: "radioButton",
-              name: "selectEligibilityType",
-              optionsKey: "name",
-              error: "sample required message",
-              //   clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-              options: [
-                { code: "YES", name: "YES", configName: "de" },
-                { code: "NO", name: "NO" },
-              ],
+              code: "YES",
+              name: "YES",
+              showForm: false,
+              isEnabled: true,
+            },
+            {
+              code: "NO",
+              name: "NO",
+              showForm: true,
+              isVerified: true,
+              hasBarRegistrationNo: true,
+              isEnabled: true,
             },
           ],
         },
@@ -31,6 +36,7 @@ export const delayAppConfig = [
     ],
   },
   {
+    dependentKey: { delayApplicationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -48,6 +54,7 @@ export const delayAppConfig = [
     ],
   },
   {
+    dependentKey: { delayApplicationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -67,6 +74,7 @@ export const delayAppConfig = [
     ],
   },
   {
+    dependentKey: { delayApplicationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -92,7 +100,8 @@ export const delayAppConfig = [
   },
 ];
 
-export const mainConfig = [
-  { configName: "delayAppConfig", value: delayAppConfig },
-  { configName: "respondentconfig", value: delayAppConfig },
-];
+export const delayApplicationConfig = {
+  formconfig: delayApplicationFormConfig,
+  header: "CS_RESPONDENT_DELAY_APPLICATION_HEADING",
+  subtext: "CS_RESPONDENT_DELAY_APPLICATION_SUBTEXT",
+};
