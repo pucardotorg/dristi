@@ -3,7 +3,7 @@ const complainantDetailsFormConfig = [
     body: [
       {
         type: "radio",
-        key: "respondentType",
+        key: "complaintType",
         label: "CS_RESPONDENT_TYPE",
         isMandatory: true,
         populators: {
@@ -47,7 +47,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
+    dependentKey: { complaintType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -66,7 +66,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
+    dependentKey: { complaintType: ["commonFields"] },
     head: "CS_COMMON_COMPLAINANT_DETAIL",
     body: [
       {
@@ -123,7 +123,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
+    dependentKey: { complaintType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -145,7 +145,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
+    dependentKey: { complaintType: ["commonFields"] },
     head: "CS_COMMON_ADDRESS_DETAIL",
     body: [
       {

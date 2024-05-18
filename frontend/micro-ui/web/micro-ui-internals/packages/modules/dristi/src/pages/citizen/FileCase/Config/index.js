@@ -11,8 +11,22 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_LITIGENT_DETAILS",
     children: [
-      { label: "CS_COMPLAINT_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: complaintdetailconfig },
-      { label: "CS_RESPONDENT_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: respondentconfig },
+      {
+        key: "complaintDetails",
+        label: "CS_COMPLAINT_DETAILS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: complaintdetailconfig,
+      },
+      {
+        key: "respondentDetails",
+        label: "CS_RESPONDENT_DETAILS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: respondentconfig,
+      },
     ],
   },
   {

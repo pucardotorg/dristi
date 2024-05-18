@@ -1,4 +1,4 @@
-import { CardLabel, CardLabelError, LabelFieldPair, Modal, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, CloseSvg, FormComposerV2, LabelFieldPair, Modal, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import Button from "./Button";
 import { verifyMobileNoConfig } from "../configs/component";
@@ -76,7 +76,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           }}
         />
       </div>
-      <CardLabelError>{t(errors?.[config?.key]?.[config.key] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}</CardLabelError>
+      <CardLabelError>{t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}</CardLabelError>
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
@@ -93,7 +93,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               config={verifyMobileNoConfig}
               t={t}
               onSubmit={(props) => {
-                onSubmit(props);
+                // onSubmit(props);
               }}
               cardClassName={"form-composer-id-proof-card"}
               // isDisabled={isDisabled}

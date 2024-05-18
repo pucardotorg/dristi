@@ -31,11 +31,6 @@ const respondentFromconfig = [
               isVerified: true,
               hasBarRegistrationNo: true,
               isEnabled: true,
-              apiDetails: {
-                serviceName: "/advocate/advocate/v1/_create",
-                requestKey: "advocates",
-                AdditionalFields: ["barRegistrationNumber"],
-              },
             },
           ],
         },
@@ -130,6 +125,7 @@ const respondentFromconfig = [
               label: "CORE_COMMON_PHONE_NUMBER",
               type: "text",
               name: "mobileNumber",
+              isMandatory: true,
               error: "ERR_HRMS_INVALID_MOB_NO",
               componentInFront: "+91",
               validation: {
@@ -137,6 +133,7 @@ const respondentFromconfig = [
                 minLength: 10,
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
+                isArray: true,
               },
             },
           ],
@@ -158,11 +155,13 @@ const respondentFromconfig = [
             {
               label: "CORE_COMMON_EMAILS",
               type: "text",
-              name: "mobileNumber",
+              name: "emailId",
+              isMandatory: true,
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
                 pattern: /\S+@\S+\.\S+/,
+                isArray: true,
               },
             },
           ],
@@ -179,6 +178,7 @@ const respondentFromconfig = [
         type: "text",
         key: "company_Name",
         label: "company_Name",
+        isMandatory: true,
         populators: {
           title: "FIRST_TERMS_AND_CONDITIONS",
           name: "Terms_Conditions",
@@ -194,6 +194,7 @@ const respondentFromconfig = [
         populators: {
           inputs: [
             {
+              isMandatory: true,
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
               type: "DragDropComponent",
@@ -302,7 +303,7 @@ const respondentFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Aadhar",
+              documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
               isOptional: "optional",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
