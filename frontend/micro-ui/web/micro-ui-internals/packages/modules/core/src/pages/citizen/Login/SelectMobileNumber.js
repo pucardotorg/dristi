@@ -1,5 +1,6 @@
 import { CheckBox, FormStep } from "@egovernments/digit-ui-react-components";
 import React from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectMobileNumber = ({
   t,
@@ -12,6 +13,12 @@ const SelectMobileNumber = ({
   handleRememberMeChange,
   isRememberMe,
 }) => {
+  const history = useHistory();
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
+  if (isUserLoggedIn) {
+    history.push(`/${window.contextPath}/citizen/dristi/home`);
+  }
   return (
     <FormStep
       isDisabled={!(mobileNumber.length === 10 && canSubmit)}

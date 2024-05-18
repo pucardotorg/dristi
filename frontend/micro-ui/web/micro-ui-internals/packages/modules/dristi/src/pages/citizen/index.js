@@ -55,13 +55,25 @@ const App = ({ stateCode, tenantId }) => {
     {
       path: !isUserLoggedIn ? `${path}/home/login` : "",
       content: t("ES_COMMON_LOGIN"),
-      show: location.pathname.includes("/home/login"),
+      show: !isUserLoggedIn && location.pathname.includes("/home/login"),
       isLast: !location.pathname.includes("/login"),
     },
     {
       path: isUserLoggedIn ? `${path}/home/login/user-name` : "",
       content: t("ES_COMMON_USER_NAME"),
       show: location.pathname.includes("/home/login/user-name"),
+      isLast: true,
+    },
+    {
+      path: isUserLoggedIn ? `${path}/home/login/id-verification` : "",
+      content: t("ES_COMMON_ID_VERIFICATION"),
+      show: location.pathname.includes("/home/login/id-verification"),
+      isLast: true,
+    },
+    {
+      path: isUserLoggedIn ? `${path}/home/login/aadhar-otp` : "",
+      content: t("ES_COMMON_ID_VERIFICATION"),
+      show: location.pathname.includes("/home/login/aadhar-otp"),
       isLast: true,
     },
     {

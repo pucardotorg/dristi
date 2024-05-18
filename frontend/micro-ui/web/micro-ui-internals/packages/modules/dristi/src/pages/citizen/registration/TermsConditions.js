@@ -255,15 +255,17 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
             })
             .catch(() => {
               history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
+            })
+            .finally(() => {
+              setParams({});
             });
         } else {
           history.push(`/digit-ui/citizen/dristi/home/response`, { response: "success", createType: "LITIGANT" });
+          setParams({});
         }
       })
       .catch(() => {
         history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
-      })
-      .finally(() => {
         setParams({});
       });
   };

@@ -31,11 +31,21 @@ const Response = ({ refetch }) => {
     <Card style={{ minWidth: "97%", marginLeft: "24px" }}>
       <Banner
         successful={location?.state?.response === "success"}
-        message={location?.state?.response === "success" ? t("USER_REGISTRATION_SUCCESS_MSG") : t("USER_REGISTRATION_FAILURE_MSG")}
+        message={
+          location?.state?.response === "success"
+            ? location?.state?.createType !== "LITIGANT"
+              ? t("USER_REGISTRATION_ADVOCATE_CLERK_SUCCESS_MSG")
+              : t("USER_REGISTRATION_SUCCESS_MSG")
+            : t("USER_REGISTRATION_FAILURE_MSG")
+        }
         style={{ minWidth: "100%" }}
       ></Banner>
       <CardText style={{ margin: 0 }}>
-        {location?.state?.response === "success" ? t("USER_REGISTRATION_BOTTOM_SUCCESS_MSG") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
+        {location?.state?.response === "success"
+          ? location?.state?.createType !== "LITIGANT"
+            ? t("USER_REGISTRATION_ADVOCATE_CLERK_BOTTOM_SUCCESS_MSG")
+            : t("USER_REGISTRATION_BOTTOM_SUCCESS_MSG")
+          : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
       </CardText>
       <ActionBar>
         {

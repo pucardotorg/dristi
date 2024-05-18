@@ -160,16 +160,18 @@ export const UICustomizations = {
       }
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
+      const individualId = row?.businessObject?.individual?.individualId;
+      const applicationNumber =
+        row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
       switch (key) {
         case "Application No":
           return (
             <span className="link">
               <Link
-                to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${row.individualId}&type=${
-                  row?.applicationNumber?.includes("CLERK") ? "clerk" : "advocate"
-                }`}
+                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${value}&individualId=${individualId}&type=${usertype}`}
               >
-                {String(value ? (column.translate ? t(column.prefix ? `${column.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
@@ -185,16 +187,14 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${row.applicationNumber}?individualId=${value}&isAction=true&type=${
-                row?.applicationNumber?.includes("CLERK") ? "clerk" : "advocate"
-              }`}
+              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
             >
               {" "}
               {t("Verify")}
             </Link>
           );
         case "User Type":
-          return row?.applicationNumber?.includes("CLERK") ? t("Clerk") : t("Advocate");
+          return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
         case "Date Created":
           const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
@@ -210,8 +210,6 @@ export const UICustomizations = {
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
-        case "User Name":
-          return <span>{value?.username || value?.name || t("ES_COMMON_NA")}</span>;
         default:
           return t("ES_COMMON_NA");
       }

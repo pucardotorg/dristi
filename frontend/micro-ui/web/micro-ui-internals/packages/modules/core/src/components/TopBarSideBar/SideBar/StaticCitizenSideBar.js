@@ -197,31 +197,6 @@ const StaticCitizenSideBar = ({ linkData, islinkDataLoading }) => {
         icon: "LogoutIcon",
         populators: { onClick: handleLogout },
       },
-      {
-        text: (
-          <React.Fragment>
-            {t("CS_COMMON_HELPLINE")}
-            <div className="telephone" style={{ marginTop: "-10%" }}>
-              {storeData?.tenants.map((i) => {
-                i.code === tenantId ? (
-                  <div className="link">
-                    <a href={`tel:${storeData?.tenants[i].contactNumber}`}>{storeData?.tenants[i].contactNumber}</a>
-                  </div>
-                ) : (
-                  <div className="link">
-                    <a href={`tel:${storeData?.tenants[0].contactNumber}`}>{storeData?.tenants[0].contactNumber}</a>
-                  </div>
-                );
-              })}
-              <div className="link">
-                <a href={`tel:${storeData?.tenants[0].contactNumber}`}>{storeData?.tenants[0].contactNumber}</a>
-              </div>
-            </div>
-          </React.Fragment>
-        ),
-        element: "Helpline",
-        icon: "Phone",
-      },
     ];
   }
   Object.keys(linkData)
