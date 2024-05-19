@@ -58,7 +58,14 @@
   &.open {
     color: black;
     svg {
-      transform: rotate(180deg);
+      transform: rotate(0deg);
+    }
+  }
+  &.open {
+    .reverse-arrow {
+      svg {
+        transform: rotate(180deg);
+      }
     }
   }
   .icon {

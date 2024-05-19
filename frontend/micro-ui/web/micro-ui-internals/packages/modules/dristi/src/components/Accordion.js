@@ -8,8 +8,8 @@ function Accordion({ t, title, handlePageChange, handleAccordionClick, children,
         <span>{`${parentIndex + 1}. ${t(title)}`}</span>
         <div className="icon">
           <CustomSchedule />
-          <span>4m</span>
-          <CustomArrowDownIcon />
+          <span style={{ paddingRight: "8px" }}>4m</span>
+          <span className="reverse-arrow"><CustomArrowDownIcon /></span>
         </div>
       </div>
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
