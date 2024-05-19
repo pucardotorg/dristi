@@ -20,11 +20,6 @@ const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
   initDRISTIComponents();
-
-  window.Digit.Customizations = {
-    PGR: {},
-    commonUiConfig: UICustomizations,
-  };
 };
 
 initLibraries().then(() => {
