@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - dev_backend_advocate_bis
+      - user-registration-flow
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -29,17 +29,12 @@ jobs:
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
-      - name: Build and Push Docker image for advocate
+      - name: Build and Push Docker image for digit-ui
         run: |
-          docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
-          docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
-      - name: Build and Push Docker image for advocate_DB
-        run: |
-          docker build  -t pucar_advocate_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
-           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
-           docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/advocate/src/main/resources/db
+         docker build  -t digit-ui:v1.0.0-${{ github.sha }} -f  web/docker/Dockerfile .
+         docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+         docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+        working-directory: frontend/micro-ui
       - name: trigger deployment pipeline
         run: |
           curl -X POST \
