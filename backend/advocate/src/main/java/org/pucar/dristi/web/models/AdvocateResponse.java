@@ -1,18 +1,16 @@
 package org.pucar.dristi.web.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.common.contract.response.ResponseInfo;
-import org.springframework.validation.annotation.Validated;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.egov.common.contract.response.ResponseInfo;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AdvocateResponse
@@ -24,26 +22,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AdvocateResponse {
-	@JsonProperty("responseInfo")
+        @JsonProperty("responseInfo")
+        @Valid
+        private ResponseInfo responseInfo = null;
 
-	@Valid
-	private ResponseInfo responseInfo = null;
+        @JsonProperty("advocates")
+        @Valid
+        private List<Advocate> advocates = null;
 
-	@JsonProperty("advocates")
-	@Valid
-	private List<Advocate> advocates = null;
 
-	@JsonProperty("pagination")
-
-	@Valid
-	private Pagination pagination = null;
-
-	public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
-		if (this.advocates == null) {
-			this.advocates = new ArrayList<>();
-		}
-		this.advocates.add(advocatesItem);
-		return this;
-	}
+        public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
+            if (this.advocates == null) {
+            this.advocates = new ArrayList<>();
+            }
+        this.advocates.add(advocatesItem);
+        return this;
+        }
 
 }

@@ -23,11 +23,10 @@ import lombok.Builder;
 @Builder
 public class AdvocateClerkRequest {
 	@JsonProperty("RequestInfo")
-
 	@Valid
 	private RequestInfo requestInfo = null;
 
-	@JsonProperty("clerks")
+	@JsonProperty("clerk")
 	@Valid
 	private List<AdvocateClerk> clerks = null;
 

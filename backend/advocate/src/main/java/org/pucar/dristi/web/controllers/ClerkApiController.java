@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.AdvocateClerkService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.AdvocateClerk;
-import org.pucar.dristi.web.models.AdvocateClerkRequest;
-import org.pucar.dristi.web.models.AdvocateClerkResponse;
-import org.pucar.dristi.web.models.AdvocateClerkSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T05:55:27.937918+05:30[Asia/Kolkata]")
@@ -61,15 +59,42 @@ public class ClerkApiController {
 	}
 
 	@RequestMapping(value = "/clerk/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateClerkResponse> clerkV1SearchPost(
+	public ResponseEntity<AdvocateClerkListResponse> clerkV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkSearchRequest body,
 			@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
 			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
 
-				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber(), limit, offset);
+				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getTenantId(), limit, offset);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
+				AdvocateClerkListResponse response = AdvocateClerkListResponse.builder().clerks(body.getCriteria()).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+
+	@RequestMapping(value="/clerk/v1/status/_search", method = RequestMethod.POST)
+	public ResponseEntity<AdvocateClerkResponse> clerkV1StatusSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "status of clerks registration being searched" ,
+			required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "status", required = true) String status,
+			@NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
+			@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
+			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+
+		List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplicationsByStatus(status, tenantId, limit, offset);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
+		AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(response,HttpStatus.OK);
+
+//		return new ResponseEntity<AdvocateClerkListResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
+
+	@RequestMapping(value="/clerk/v1/applicationnumber/_search", method = RequestMethod.POST)
+	public ResponseEntity<AdvocateClerkResponse> clerkV1ApplicationnumberSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "applicationNumber of clerks registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
+		@NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
+		@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
+		@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+
+		List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(applicationNumber, tenantId, limit, offset);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
+		AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/clerk/v1/_update", method = RequestMethod.POST)

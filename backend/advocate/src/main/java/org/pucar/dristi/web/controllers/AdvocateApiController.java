@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import org.egov.common.contract.response.ResponseInfo;
 import org.pucar.dristi.service.AdvocateService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.Advocate;
-import org.pucar.dristi.web.models.AdvocateRequest;
-import org.pucar.dristi.web.models.AdvocateResponse;
-import org.pucar.dristi.web.models.AdvocateSearchRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.List;
 
 
@@ -66,13 +64,37 @@ public class AdvocateApiController {
 	}
 
 	@RequestMapping(value = "/advocate/v1/_search", method = RequestMethod.POST)
-	public ResponseEntity<AdvocateResponse> advocateV1SearchPost(
+	public ResponseEntity<AdvocateListResponse> advocateV1SearchPost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSearchRequest body,
 	 		@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
 			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
 
-		List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getStatus(), body.getApplicationNumber() ,limit, offset);
+		List<Advocate> advocateList = advocateService.searchAdvocate(body.getRequestInfo(), body.getCriteria(), body.getTenantId(), limit, offset);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+		AdvocateListResponse advocateResponse = AdvocateListResponse.builder().advocates(body.getCriteria()).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+	}
+
+	@RequestMapping(value="/advocate/v1/status/_search", method = RequestMethod.POST)
+	public ResponseEntity<AdvocateResponse> advocateV1StatusSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "status of advocate registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "status", required = true) String status,
+																	   @NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
+																	   @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
+																	   @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+
+		List<Advocate> advocateList = advocateService.searchAdvocateByStatus(status, tenantId,limit, offset);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
+		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
+	}
+
+	@RequestMapping(value="/advocate/v1/applicationnumber/_search", method = RequestMethod.POST)
+	public ResponseEntity<AdvocateResponse> advocateV1ApplicationnumberSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "applicationNumber of advocate registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
+																				  @NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
+																				  @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
+																				  @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+
+		List<Advocate> advocateList = advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId,limit, offset);
+		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
 		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}

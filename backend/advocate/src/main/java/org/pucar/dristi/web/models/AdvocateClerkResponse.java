@@ -1,16 +1,16 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.ArrayList;
-import java.util.List;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.Data;
-import lombok.Builder;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AdvocateClerkResponse
@@ -22,26 +22,21 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class AdvocateClerkResponse {
-	@JsonProperty("responseInfo")
+        @JsonProperty("responseInfo")
+        @Valid
+        private ResponseInfo responseInfo = null;
 
-	@Valid
-	private ResponseInfo responseInfo = null;
+        @JsonProperty("clerks")
+        @Valid
+        private List<AdvocateClerk> clerks = null;
 
-	@JsonProperty("clerks")
-	@Valid
-	private List<AdvocateClerk> clerks = null;
 
-	@JsonProperty("pagination")
-
-	@Valid
-	private Pagination pagination = null;
-
-	public AdvocateClerkResponse addClerksItem(AdvocateClerk clerksItem) {
-		if (this.clerks == null) {
-			this.clerks = new ArrayList<>();
-		}
-		this.clerks.add(clerksItem);
-		return this;
-	}
+        public AdvocateClerkResponse addClerksItem(AdvocateClerk clerksItem) {
+            if (this.clerks == null) {
+            this.clerks = new ArrayList<>();
+            }
+        this.clerks.add(clerksItem);
+        return this;
+        }
 
 }

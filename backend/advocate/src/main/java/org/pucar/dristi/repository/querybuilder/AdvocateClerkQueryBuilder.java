@@ -3,6 +3,7 @@ package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -36,79 +37,127 @@ public class AdvocateClerkQueryBuilder {
      * @param offset
      * @return query
      */
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
-            if(criteriaList != null && !criteriaList.isEmpty()) {
-                List<String> ids = criteriaList.stream()
-                        .map(AdvocateClerkSearchCriteria::getId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
+            if(criteria != null) {
 
-                List<String> stateRegnNumber = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null)
-                        .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-
-                List<String> applicationNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
-                        .map(AdvocateClerkSearchCriteria::getApplicationNumber)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-
-                List<String> individualIds = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
-                        .map(AdvocateClerkSearchCriteria::getIndividualId)
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
-
-                if (!CollectionUtils.isEmpty(ids)) {
+                if (criteria.getId()!=null && !criteria.getId().isEmpty()) {
                     addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, ids);
+                    query.append(" advc.id = ? ");
+                    preparedStmtList.add(criteria.getId());
                 }
 
-                if (!CollectionUtils.isEmpty(stateRegnNumber)) {
+                if (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) {
                     addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, stateRegnNumber);
+                    query.append("advc.stateregnnumber = ?");
+                    preparedStmtList.add(criteria.getStateRegnNumber());
                 }
 
-                if (!CollectionUtils.isEmpty(applicationNumbers)) {
+                if (criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()) {
                     addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, applicationNumbers);
+                    query.append("advc.applicationNumber = ?");
+                    preparedStmtList.add(criteria.getApplicationNumber());
                 }
 
-                if (!CollectionUtils.isEmpty(individualIds)) {
+                if (criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
                     addClauseIfRequired(query, preparedStmtList);
-                    query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
-                    addToPreparedStatement(preparedStmtList, individualIds);
+                    query.append("advc.individualId = ?");
+                    preparedStmtList.add(criteria.getIndividualId());
                 }
 
-                if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                if(tenantId != null && !tenantId.isEmpty()){
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append("LOWER(advc.tenant) = LOWER(?)")
+                            .append(")");
+                    preparedStmtList.add(tenantId.toLowerCase());
+                }
+
+                if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
+                        || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
                     query.append(")");
                 }
             }
-            else if(applicationNumber != null && !applicationNumber.isEmpty()){
-                addClauseIfRequired(query, preparedStmtList);
-                query.append("LOWER(advc.applicationNumber) LIKE LOWER(?)")
-                        .append(")");
-                preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
-            }
-            if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
-                addClauseIfRequiredForStatus(query, preparedStmtList);
-                query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, statusList);
-            }
+
             if(isIndividualLoggedInUser.get()){
                 query.append(ORDERBY_CREATEDTIME_DESC);
             }
             else {
                 query.append(ORDERBY_CREATEDTIME_ASC);
             }
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
+            }
+
+            return query.toString();
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate clerk search query");
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+        }
+    }
+
+    public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_CLERK_TABLES);
+
+            if(status != null && !status.isEmpty()){
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append("LOWER(advc.status) = LOWER(?)")
+                        .append(")");
+                preparedStmtList.add(status.toLowerCase());
+            }
+
+            if(tenantId != null && !tenantId.isEmpty()){
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append("LOWER(advc.tenantid) = LOWER(?)");
+//                        .append(")");
+                preparedStmtList.add(tenantId.toLowerCase());
+            }
+
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
+            }
+
+            return query.toString();
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate clerk search query");
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+        }
+    }
+
+    public String getAdvocateClerkSearchQueryByAppNumber(String applicationNumber, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_CLERK_TABLES);
+
+            if(applicationNumber != null && !applicationNumber.isEmpty()){
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append("LOWER(advc.applicationnumber) = LOWER(?)")
+                        .append(")");
+                preparedStmtList.add(applicationNumber.toLowerCase());
+            }
+
+            if(tenantId != null && !tenantId.isEmpty()){
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append("LOWER(advc.tenantid) = LOWER(?)");
+//                        .append(")");
+                preparedStmtList.add(tenantId.toLowerCase());
+            }
+
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
             // Adding Pagination
             if (limit != null && offset != null) {
                 query.append(" LIMIT ? OFFSET ?");
@@ -138,7 +187,7 @@ public class AdvocateClerkQueryBuilder {
 
     private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
-            query.append(" WHERE ");
+            query.append(" WHERE (");
         }else{
             query.append(" AND ");
         }
