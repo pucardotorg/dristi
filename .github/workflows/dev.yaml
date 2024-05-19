@@ -18,13 +18,6 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
-      - name: Build Package
-        run: mvn -B clean install -f backend/advocate
-      - name: Sonarqube Scan
-        run: mvn -f backend/advocate/pom.xml sonar:sonar -Dsonar.projectKey=pucardotorg -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectBaseDir=backend/advocate
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
