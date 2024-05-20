@@ -16,7 +16,7 @@ jobs:
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
       - name: build artifact for case
-        run: mvn -B -f backend/order/pom.xml clean install
+        run: mvn -B -f backend/case/pom.xml clean install
       - name: Build and Push Docker image for order
         run: |
           docker build --build-arg WORK_DIR="backend/order" -t pucar_order:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
