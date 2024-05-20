@@ -1,7 +1,10 @@
-import { ButtonSelector, CitizenInfoLabel, Close, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
+import { ButtonSelector, CitizenInfoLabel, Close, CloseSvg, DownloadIcon } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import CustomDetailsCard from "../../../components/CustomDetailsCard";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import Modal from "../../../components/Modal";
+import Button from "../../../components/Button";
+import { ReactComponent as FileDownload } from '../../../icons/file_download.svg';
 
 function CaseType({ t }) {
   const { path } = useRouteMatch();
@@ -25,21 +28,33 @@ function CaseType({ t }) {
   };
   const Submitbar = () => {
     return (
-      <div style={{ width: "100%", display: "flex", justifyContent: "space-between" }}>
-        <ButtonSelector label={t("CS_COMMON_DOWNLOAD")} />
-        <div style={{ display: "flex", justifyContent: "space-between", gap: "30px" }}>
-          <ButtonSelector
+      <div className="submit-bar-div">
+        <Button
+          icon={<FileDownload />}
+          className="download-button"
+          label={t("CS_COMMON_DOWNLOAD")}
+        />
+        <div className="right-div">
+          <Button
+            className="cancel-button"
             label={t("CS_COMMON_BACK")}
-            onSubmit={() => {
+            onButtonClick={() => {
               setPage(0);
             }}
           />
-          <ButtonSelector
+          <Button
+            className="start-filling-button"
+            label={t("CS_START_FILLING")}
+            onButtonClick={() => {
+              history.push(`${path}/respondent-details`);
+            }}
+          />
+          {/* <ButtonSelector
             label={t("CS_START_FILLING")}
             onSubmit={() => {
               history.push(`${path}/case`);
             }}
-          />
+          /> */}
         </div>
       </div>
     );
@@ -100,7 +115,7 @@ function CaseType({ t }) {
 
   return (
     <Modal
-      headerBarEnd={<CloseBtn onClick={onCancel} isMobileView={true} />}
+      headerBarEnd={<CloseBtn onClick={onCancel} />}
       actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
       actionCancelOnSubmit={onCancel}
       actionSaveLabel={t("CS_CORE_WEB_PROCEED")}
@@ -108,18 +123,18 @@ function CaseType({ t }) {
       actionSaveOnSubmit={onSelect}
       formId="modal-action"
       headerBarMain={<Heading label={page === 0 ? t("CS_SELECT_CASETYPE_HEADER") : t("CS_LIST_DOCUMENTS") + ` (${detailsCardList.length})`} />}
-      style={{ height: "3vh" }}
+      // style={{ height: "3vh" }}
+      className="case-types"
     >
-      <div>
+      <div className="case-types-main-div">
         {detailsCardList.map((item) => (
-          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} style={{ width: "100%" }} />
+          <CustomDetailsCard header={item.header} subtext={item.subtext} subnote={item.subnote} serialNumber={item.serialNumber} />
+
         ))}
       </div>
       {page === 0 && (
         <CitizenInfoLabel
-          style={{ maxWidth: "100%", height: "90px" }}
-          textStyle={{ margin: 8 }}
-          iconStyle={{ margin: 0 }}
+          style={{ maxWidth: "100%", padding: '8px', borderRadius: '4px' }}
           info={t("ES_COMMON_NOTE")}
           text={t("ES_BANNER_LABEL")}
           className="doc-banner"

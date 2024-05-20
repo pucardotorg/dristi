@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, CloseSvg, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
-
+import { ReactComponent as InfoIcon } from '../../../icons/info.svg';
+import Modal from "../../../components/Modal";
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -21,6 +22,14 @@ function EFilingCases({ path }) {
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
   }, [pageConfig?.formconfig]);
+
+  const CloseBtn = (props) => {
+    return (
+      <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+        <CloseSvg />
+      </div>
+    );
+  };
 
   const isDependentEnabled = useMemo(() => {
     let result = false;
@@ -62,7 +71,7 @@ function EFilingCases({ path }) {
     return formdata.filter((item) => item.isenabled === true).length;
   }, [formdata]);
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   const handleAddForm = () => {
     setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };
@@ -120,6 +129,7 @@ function EFilingCases({ path }) {
     setPageConfig(newPageConfig);
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+    setIsOpen(false);
   };
 
   const validateData = (data) => {
@@ -164,34 +174,80 @@ function EFilingCases({ path }) {
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <div style={{ display: "flex", gap: 40 }}>
-      <div className="file-case-select-form-section">
-        {accordion.map((item, index) => (
-          <Accordion
-            t={t}
-            title={item.title}
-            handlePageChange={handlePageChange}
-            handleAccordionClick={() => {
-              handleAccordionClick(index);
-            }}
-            key={index}
-            children={item.children}
-            parentIndex={index}
-            isOpen={item.isOpen}
-          />
-        ))}
+    <div className="file-case">
+      <div className="file-case-side-stepper">
+        <div className="side-stepper-info">
+          <div className="header">
+            <InfoIcon />
+            <span>You are filing a case</span>
+          </div>
+          <p>
+            Under
+            <span className="act-name"> S-138, Negotiable Instrument Act</span> In
+            <span className="place-name"> Kollam S 138 Special Court</span>
+          </p>
+        </div>
+        {isOpen && <Modal
+          headerBarEnd={<CloseBtn onClick={() => { setIsOpen(false) }} />}
+          hideSubmit={true}
+        >
+          <div>
+            {accordion.map((item, index) => (
+              <Accordion
+                t={t}
+                title={item.title}
+                handlePageChange={handlePageChange}
+                handleAccordionClick={() => {
+                  handleAccordionClick(index);
+                }}
+                key={index}
+                children={item.children}
+                parentIndex={index}
+                isOpen={item.isOpen}
+              />
+            ))}
+          </div>
+        </Modal>}
+
+
+
+        <div className="file-case-select-form-section">
+          {accordion.map((item, index) => (
+            <Accordion
+              t={t}
+              title={item.title}
+              handlePageChange={handlePageChange}
+              handleAccordionClick={() => {
+                handleAccordionClick(index);
+              }}
+              key={index}
+              children={item.children}
+              parentIndex={index}
+              isOpen={item.isOpen}
+            />
+          ))}
+        </div>
       </div>
+
       <div className="file-case-form-section">
-        <div className="employee-card-wrapper" style={{ flex: 1, flexDirection: "column", marginLeft: "40px" }}>
+        <div className="employee-card-wrapper">
           <div className="header-content">
-            <Header>{t(pageConfig.header)}</Header>
+            <div className="header-details">
+              <Header>{t(pageConfig.header)}</Header>
+              <div className="header-icon" onClick={() => { setIsOpen(true) }}>
+                <CustomArrowDownIcon />
+              </div>
+            </div>
+            <p>{`Please provide the necessary details about the respondent(s)`}</p>
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
-              <div>
+              <div key={index} className="form-wrapper-d">
                 {pageConfig?.addFormText && (
-                  <Card style={{ minWidth: "100%", display: "flex", justifyContent: "space-between", flexDirection: "row", alignItems: "center" }}>
+                  <div className="form-item-name">
                     <h1>{`${pageConfig?.formItemName} ${formdata[index]?.displayindex + 1}`}</h1>
                     {(activeForms > 1 || pageConfig?.isOptional) && (
                       <span
@@ -203,7 +259,7 @@ function EFilingCases({ path }) {
                         <CustomDeleteIcon />
                       </span>
                     )}
-                  </Card>
+                  </div>
                 )}
                 <FormComposerV2
                   label={t("CS_COMMON_CONTINUE")}
