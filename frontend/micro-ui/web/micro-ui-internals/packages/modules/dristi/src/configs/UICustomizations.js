@@ -169,12 +169,15 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
       const individualId = row?.businessObject?.individual?.individualId;
-      const applicationNumber = row?.businessObject?.advocateDetails?.applicationNumber;
+      const applicationNumber =
+        row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
       switch (key) {
         case "Application No":
           return (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/registration-requests/details/${value}?individualId=${individualId}&type=${usertype}`}>
+              <Link
+                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${value}&individualId=${individualId}&type=${usertype}`}
+              >
                 {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
@@ -191,7 +194,7 @@ export const UICustomizations = {
                 textAlign: "center",
                 textDecoration: "none",
               }}
-              to={`/digit-ui/employee/dristi/registration-requests/details/${applicationNumber}?individualId=${value}&isAction=true&type=${usertype}`}
+              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
             >
               {" "}
               {t("Verify")}

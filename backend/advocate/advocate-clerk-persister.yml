@@ -1,0 +1,50 @@
+serviceMaps:
+  serviceName: advocate-clerk-services
+  mappings:
+    - version: 1.0
+      description: Persists advocate clerk details in tables
+      fromTopic: save-advocate-clerk
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO dristi_advocate_clerk(id, tenantId, applicationNumber,status, individualId, stateRegnNumber,isActive , createdBy, lastModifiedBy, createdTime, lastModifiedTime,additionalDetails) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);
+          basePath: clerks.*
+          jsonMaps:
+            - jsonPath: $.clerks.*.id
+            - jsonPath: $.clerks.*.tenantId
+            - jsonPath: $.clerks.*.applicationNumber
+            - jsonPath: $.clerks.*.status
+            - jsonPath: $.clerks.*.individualId
+            - jsonPath: $.clerks.*.stateRegnNumber
+            - jsonPath: $.clerks.*.isActive
+            - jsonPath: $.clerks.*.auditDetails.createdBy
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
+            - jsonPath: $.clerks.*.auditDetails.createdTime
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
+            - jsonPath: $.clerks.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType ,clerk_id,additionalDetails) VALUES (?,?, ?,?,?,?);
+          basePath: $.clerks.*.documents.*
+          jsonMaps:
+            - jsonPath: $.clerks.*.documents.*.id
+            - jsonPath: $.clerks.*.documents.*.fileStore
+            - jsonPath: $.clerks.*.documents.*.documentUid
+            - jsonPath: $.clerks.*.documents.*.documentType
+            - jsonPath: $.clerks[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.clerks.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+    - version: 1.0
+      description: Update advocate clerk details in tables
+      fromTopic: update-advocate-clerk-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE  dristi_advocate_clerk SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
+          basePath: clerks.*
+          jsonMaps:
+            - jsonPath: $.clerks.*.status
+            - jsonPath: $.clerks.*.isActive
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
+            - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
+            - jsonPath: $.clerks.*.id

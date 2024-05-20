@@ -95,11 +95,11 @@ const Login = ({ stateCode }) => {
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
       const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
-      history.replace(isUserRegistered ? homeUrl : idVerificationUrl, {
+      history.push(isUserRegistered ? homeUrl : idVerificationUrl, {
         redirectBackTo: redirectPath,
       });
     } else {
-      history.replace(redirectPath);
+      history.push(redirectPath);
     }
   }, [user]);
 
@@ -124,7 +124,7 @@ const Login = ({ stateCode }) => {
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
-    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, "") });
+    setParmas({ ...params, mobileNumber: value?.replace(/[^0-9]/g, ""), name: "" });
     setIsUserRegistered(true);
   };
 
@@ -253,6 +253,7 @@ const Login = ({ stateCode }) => {
               canSubmit={canSubmitOtp}
               params={params}
               t={t}
+              path={path}
             />
           </Route>
 

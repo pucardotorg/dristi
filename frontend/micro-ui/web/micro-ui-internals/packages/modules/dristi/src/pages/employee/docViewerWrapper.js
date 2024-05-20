@@ -1,7 +1,6 @@
 import { Card, Header, Label, UploadFile } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useState } from "react";
 import DocViewer, { DocViewerRenderers } from "@cyntler/react-doc-viewer";
-import { samplePDF } from "./SamplePdfFile";
 import { useTranslation } from "react-i18next";
 import { Urls } from "../../hooks";
 
@@ -32,7 +31,7 @@ const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename }) => {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const documents = fileStoreId
-    ? [{ uri: uri || samplePDF, fileName: "fileName" }]
+    ? [{ uri: uri || "", fileName: "fileName" }]
     : selectedDocs.map((file) => ({
         uri: window.URL.createObjectURL(file),
         fileName: file?.name || fileName,

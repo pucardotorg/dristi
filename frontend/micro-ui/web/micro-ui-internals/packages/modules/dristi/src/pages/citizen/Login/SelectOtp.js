@@ -3,11 +3,13 @@ import React, { Fragment, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { Close } from "@egovernments/digit-ui-svg-components";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, params }) => {
+const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, params, path }) => {
   const history = useHistory();
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(30);
   useInterval(
     () => {
@@ -45,6 +47,24 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     history.push("/digit-ui/citizen/dristi/home/login");
   }
   // console.log(userType);
+  // if (isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber")) {
+  //   history.push(`/${window.contextPath}/citizen/dristi/home`);
+  // }
+
+  // if (!isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber") && !params?.mobileNumber) {
+  //   history.push(path);
+  // }
+
+  // if (
+  //   sessionStorage.getItem("Digit.UploadedDocument") ||
+  //   (sessionStorage.getItem("Digit.aadharNumber") && sessionStorage.getItem("Digit.isAadharNumberVerified") && isUserLoggedIn)
+  // ) {
+  //   sessionStorage.removeItem("Digit.UploadedDocument");
+  //   sessionStorage.removeItem("Digit.aadharNumber");
+  //   sessionStorage.removeItem("Digit.isAadharNumberVerified");
+  //   history.push(`/${window.contextPath}/citizen/dristi/home`);
+  // }
+
   if (userType === "employee") {
     return (
       <Fragment>

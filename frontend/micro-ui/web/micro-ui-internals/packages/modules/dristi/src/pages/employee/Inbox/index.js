@@ -62,7 +62,6 @@ const Inbox = ({ tenants, parentRoute }) => {
             config={dropdownConfig}
           ></CustomDropdown>
         </div>
-        <p>{}</p>
         <div className="inbox-search-wrapper">
           {type === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigClerk}></InboxSearchComposer>}
           {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigAdvocate}></InboxSearchComposer>}

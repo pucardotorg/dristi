@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import DocumentDetailCard from "../../components/DocumentDetailCard";
 import DocViewerWrapper from "./docViewerWrapper";
-import { ReactComponent as LocationOnMapIcon } from "./image/location_onmap.svg";
+import { ReactComponent as LocationOnMapIcon } from "../../images/location_onmap.svg";
 import { userTypeOptions } from "../citizen/registration/config";
 import Menu from "../../components/Menu";
 
@@ -48,10 +48,10 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 };
 
 const ApplicationDetails = ({ location, match }) => {
-  const { applicationNo } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
 
   const individualId = urlParams.get("individualId");
+  const applicationNo = urlParams.get("applicationNo");
   const type = urlParams.get("type") || "advocate";
   const moduleCode = "DRISTI";
   const { t } = useTranslation();
@@ -267,7 +267,7 @@ const ApplicationDetails = ({ location, match }) => {
           actionSaveOnSubmit={() => {
             handleDelete("REJECT");
           }}
-          isDisabled={!reasons}
+          isDisabled={!reasons || !reasons.trim()}
           style={{ backgroundColor: "#BB2C2F" }}
         >
           <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>

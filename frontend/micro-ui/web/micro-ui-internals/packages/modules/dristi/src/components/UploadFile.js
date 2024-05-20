@@ -17,64 +17,7 @@ const ButtonBody = ({ t }) => {
 
 const getCitizenStyles = (value) => {
   let citizenStyles = {};
-  if (value === "propertyCreate") {
-    citizenStyles = {
-      textStyles: {
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        width: "80%",
-      },
-      tagStyles: {
-        width: "90%",
-        flexWrap: "nowrap",
-      },
-      inputStyles: {
-        width: "44%",
-        minHeight: "2rem",
-        maxHeight: "3rem",
-        top: "20%",
-      },
-      buttonStyles: {
-        height: "auto",
-        minHeight: "2rem",
-        width: "40%",
-        maxHeight: "3rem",
-      },
-      tagContainerStyles: {
-        width: "60%",
-        display: "flex",
-        marginTop: "0px",
-      },
-      closeIconStyles: {
-        width: "20px",
-        marginTop: "-5px",
-      },
-      containerStyles: {
-        padding: "10px",
-        marginTop: "0px",
-      },
-    };
-  } else if (value === "IP") {
-    citizenStyles = {
-      textStyles: {
-        whiteSpace: "nowrap",
-        maxWidth: "250px",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-      },
-      tagStyles: {
-        marginLeft: "-30px",
-      },
-      inputStyles: {},
-      closeIconStyles: {
-        position: "absolute",
-        marginTop: "-12px",
-      },
-      buttonStyles: {},
-      tagContainerStyles: {},
-    };
-  } else if (value === "OBPS") {
+  if (value === "OBPS") {
     citizenStyles = {
       containerStyles: {
         display: "flex",
