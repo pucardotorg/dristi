@@ -4,6 +4,7 @@ import { complaintdetailconfig } from "./complaindetailsConfig";
 import { debtliabilityconfig } from "./debtLiabilityConfig";
 import { delayApplicationConfig } from "./delayApplicationConfig";
 import { respondentconfig } from "./respondentConfig";
+import { reviewcasefileconfig } from "./reviewcasefileconfig";
 
 export const sideMenuConfig = [
   {
@@ -57,7 +58,7 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_REVIEW_SIGN",
     children: [
-      { label: "CS_REVIEW_CASE_FILE", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_REVIEW_CASE_FILE", checked: false, isCompleted: false, isDisabled: false, pageConfig: reviewcasefileconfig },
       { label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false },
     ],
   },

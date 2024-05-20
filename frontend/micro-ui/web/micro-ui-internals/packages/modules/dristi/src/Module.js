@@ -24,6 +24,7 @@ import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
 import SelectComponentsMulti from "./components/SelectComponentsMulti";
+import SelectReviewAccordion from "./components/SelectReviewAccordion";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -64,6 +65,7 @@ const componentsToRegister = {
   VerifyPhoneNumber,
   SelectCustomTextArea,
   IdProofUploadComponent,
+  SelectReviewAccordion,
 };
 
 const overrideHooks = () => {

@@ -17,19 +17,19 @@ function FileCase({ t }) {
           <Route path={`${path}`} exact>
             <CaseType t={t} />
           </Route>
-          <Route path={`${path}/delay-application`} exact>
+          <Route path={`${path}/delay-application`} >
             <DelayApplication />
           </Route>
-          <Route path={`${path}/case`} exact>
+          <Route path={`${path}/case`} >
             <EFilingCases t={t} />
           </Route>
-          <Route path={`${path}/witness-details`} exact>
+          <Route path={`${path}/witness-details`} >
             <WitnessDetails />
           </Route>
-          <Route path={`${path}/cheque-details`} exact>
+          <Route path={`${path}/cheque-details`} >
             <ChequeDetails />
           </Route>
-        </AppContainer>
+                  </AppContainer>
       </Switch>
     </div>
   );
