@@ -10,12 +10,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-    - uses: sonarsource/sonarqube-scan-action@master
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
       with:
-          projectBaseDir: frontend/micro-ui/web
+        projectBaseDir: frontend/micro-ui/web
       env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+        SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
     # - name: Setup Docker
     #   uses: docker/setup-buildx-action@v1
     # # Login to Azure Container Registry
