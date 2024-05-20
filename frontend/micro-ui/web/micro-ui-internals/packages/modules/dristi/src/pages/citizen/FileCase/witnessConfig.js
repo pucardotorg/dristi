@@ -1,45 +1,6 @@
-const respondentFromconfig = [
-  {
-    body: [
-      {
-        type: "radio",
-        key: "respondentType",
-        label: "CS_RESPONDENT_TYPE",
-        isMandatory: true,
-        populators: {
-          label: "SELECT_RESPONDENT_TYPE",
-          type: "radioButton",
-          optionsKey: "name",
-          error: "sample required message",
-          required: false,
-          isMandatory: true,
-          isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-          options: [
-            {
-              code: "INDIVIDUAL",
-              name: "Individual",
-              showCompanyDetails: false,
-              commonFields: true,
-              isEnabled: true,
-            },
-            {
-              code: "REPRESENTATIVE",
-              name: "Representative of an Entity",
-              showCompanyDetails: true,
-              commonFields: true,
-              isVerified: true,
-              hasBarRegistrationNo: true,
-              isEnabled: true,
-            },
-          ],
-        },
-      },
-    ],
-  },
+export const witnessConfig = [
   {
     head: "CS_RESPONDENT_NAME",
-    dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -92,27 +53,6 @@ const respondentFromconfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomNote",
-        key: "personalDetailsNote",
-        populators: {
-          inputs: [
-            {
-              infoHeader: "CS_COMMON_NOTE",
-              infoText: "CS_NOTETEXT_RESPONDENT_PERSONAL_DETAILS",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
-              type: "InfoComponent",
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_PHONE",
     body: [
       {
@@ -125,7 +65,6 @@ const respondentFromconfig = [
               label: "CORE_COMMON_PHONE_NUMBER",
               type: "text",
               name: "mobileNumber",
-              isMandatory: true,
               error: "ERR_HRMS_INVALID_MOB_NO",
               componentInFront: "+91",
               validation: {
@@ -133,7 +72,6 @@ const respondentFromconfig = [
                 minLength: 10,
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
-                isArray: true,
               },
             },
           ],
@@ -143,7 +81,6 @@ const respondentFromconfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_EMAIL",
     body: [
       {
@@ -155,13 +92,11 @@ const respondentFromconfig = [
             {
               label: "CORE_COMMON_EMAILS",
               type: "text",
-              name: "emailId",
-              isMandatory: true,
+              name: "mobileNumber",
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
                 pattern: /\S+@\S+\.\S+/,
-                isArray: true,
               },
             },
           ],
@@ -171,46 +106,6 @@ const respondentFromconfig = [
     ],
   },
   {
-    head: "CS_RESPONDENT_COMPANY_DETAIL",
-    dependentKey: { respondentType: ["showCompanyDetails"] },
-    body: [
-      {
-        type: "text",
-        key: "company_Name",
-        label: "company_Name",
-        isMandatory: true,
-        populators: {
-          title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
-          styles: { minWidth: "100%" },
-          labelStyles: { padding: "8px" },
-          customStyle: { minWidth: "100%" },
-        },
-      },
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "companyDetailsUpload",
-        populators: {
-          inputs: [
-            {
-              isMandatory: true,
-              name: "document",
-              documentHeader: "COMPANY_DOCUMENT_DETAILS",
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
-              isMultipleUpload: false,
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { respondentType: ["commonFields"] },
-    head: "CS_RESPONDENT_ADDRESS_DETAIL",
     body: [
       {
         type: "component",
@@ -273,45 +168,18 @@ const respondentFromconfig = [
     ],
   },
   {
-    dependentKey: { respondentType: ["commonFields"] },
     body: [
       {
         type: "component",
-        component: "SelectCustomNote",
-        key: "addressDetailsNote",
+        component: "SelectCustomTextArea",
+        key: "witnessAdditionalDetails",
         populators: {
           inputs: [
             {
-              infoHeader: "CS_COMMON_NOTE",
-              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
-              type: "InfoComponent",
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    dependentKey: { respondentType: ["commonFields"] },
-    body: [
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "condonationFileUpload",
-        populators: {
-          inputs: [
-            {
-              name: "document",
-              documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
-              isOptional: "optional",
-              infoTooltipMessage: "Tooltip",
-              type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
-              isMultipleUpload: false,
+              textAreaHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
+              placeholder: "CS_TEXTAREA_PLACEHOLDER_WITNESS_ADDITIONAL_DETAIL",
+              headerClassName: "dristi-font-bold",
+              type: "TextAreaComponent",
             },
           ],
         },
@@ -319,12 +187,3 @@ const respondentFromconfig = [
     ],
   },
 ];
-
-export const respondentconfig = {
-  formconfig: respondentFromconfig,
-  header: "CS_RESPONDENT_DETAIL_HEADING",
-  subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
-  isOptional: false,
-  addFormText: "ADD_RESPONDENT",
-  formItemName: "Respondent",
-};

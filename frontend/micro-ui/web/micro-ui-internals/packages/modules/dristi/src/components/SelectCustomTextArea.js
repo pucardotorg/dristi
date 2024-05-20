@@ -36,7 +36,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
     return (
       <div className="custom-text-area-main-div" style={input?.style}>
         <div>
-          <h1> {t(input?.textAreaHeader)}</h1>
+          <h1 className={`${input?.headerClassName}`}> {t(input?.textAreaHeader)}</h1>
         </div>
         <div>
           <textarea
@@ -45,6 +45,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
             }}
             rows={5}
             className="custom-textarea-style"
+            placeholder={input?.placeholder}
           ></textarea>
         </div>
       </div>

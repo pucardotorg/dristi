@@ -5,6 +5,7 @@ import CaseType from "./CaseType";
 import ChequeDetails from "./ChequeDetails";
 import DelayApplication from "./DelayApplication";
 import EFilingCases from "./EFilingCases";
+import WitnessDetails from "./WitnessDetails";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -21,6 +22,9 @@ function FileCase({ t }) {
           </Route>
           <Route path={`${path}/case`} exact>
             <EFilingCases t={t} />
+          </Route>
+          <Route path={`${path}/witness-details`} exact>
+            <WitnessDetails />
           </Route>
           <Route path={`${path}/cheque-details`} exact>
             <ChequeDetails />
