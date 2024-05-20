@@ -42,3 +42,10 @@ CREATE TABLE dristi_order_statute_section (
                               createdTime int8 NULL,
                               lastModifiedTime int8 NULL
 );
+
+CREATE SEQUENCE seq_dristi_order
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;

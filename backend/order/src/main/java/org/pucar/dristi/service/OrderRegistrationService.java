@@ -40,7 +40,7 @@ public class OrderRegistrationService {
         try {
             validator.validateOrderRegistration(body);
             enrichmentUtil.enrichOrderRegistration(body);
-          //  workflowService.updateWorkflowStatus(body);
+            workflowService.updateWorkflowStatus(body);
             producer.push(config.getSaveOrderKafkaTopic(), body);
             return body.getOrder();
         }catch (CustomException e) {

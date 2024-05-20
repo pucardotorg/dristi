@@ -26,7 +26,7 @@ public class OrderRegistrationEnrichment {
     public void enrichOrderRegistration(OrderRequest orderRequest) {
         try {
             if (orderRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> orderRegistrationIdList = idgenUtil.getIdList(orderRequest.getRequestInfo(), orderRequest.getOrder().getTenantId(), "case.filing_number", null, 1);
+                List<String> orderRegistrationIdList = idgenUtil.getIdList(orderRequest.getRequestInfo(), orderRequest.getOrder().getTenantId(), "order.order_number", null, 1);
                 AuditDetails auditDetails = AuditDetails.builder().createdBy(orderRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(orderRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                 orderRequest.getOrder().setAuditDetails(auditDetails);
 
@@ -42,7 +42,7 @@ public class OrderRegistrationEnrichment {
                     });
                 }
 
-                orderRequest.getOrder().setFilingNumber(orderRegistrationIdList.get(0));
+                orderRequest.getOrder().setOrderNumber(orderRegistrationIdList.get(0));
             }
         } catch (
                 CustomException e) {
@@ -50,24 +50,8 @@ public class OrderRegistrationEnrichment {
             throw e;
         } catch (
                 Exception e) {
-            log.error("Error enriching order application: {}", e.getMessage());
+            log.error("Error enriching order : {}", e.getMessage());
         }
-    }
-
-    public String listToString(List<String> list) {
-        StringBuilder stB = new StringBuilder();
-        boolean isFirst = true;
-        for (String doc : list) {
-            String token = doc;
-            if (isFirst) {
-                isFirst = false;
-                stB.append(token);
-            } else {
-                stB.append("|" + token);
-            }
-        }
-
-        return stB.toString();
     }
 
     public void enrichOrderRegistrationUponUpdate(OrderRequest orderRequest) {
