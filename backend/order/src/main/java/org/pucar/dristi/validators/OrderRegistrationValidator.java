@@ -61,7 +61,7 @@ public class OrderRegistrationValidator {
         if (existingApplications.isEmpty())
             throw new CustomException("VALIDATION EXCEPTION", "Case Application does not exist");
 
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "Order", createMasterDetails());
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "order", createMasterDetails());
 
         if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");

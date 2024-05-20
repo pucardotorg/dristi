@@ -2,6 +2,7 @@ CREATE TABLE dristi_orders (
                               id varchar(64) NOT NULL PRIMARY KEY,
                               tenantId varchar(1000) NOT NULL,
                               hearingNumber varchar(64) NULL,
+                              applicationNumber varchar(64) NULL,
                               orderNumber varchar(64) NULL,
                               filingNumber varchar(64) NULL,
                               cnrNumber varchar(64) NULL,
