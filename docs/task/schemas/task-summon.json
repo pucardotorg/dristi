@@ -93,7 +93,8 @@
       "txnId" : {
         "type": "string",
         "description": "transaction ID for delivery with this specific channel. will be used to track status messages"
-      }
+      },
+
       "address": {
         "type": "string",
         "pattern": "^.{1,400}$",

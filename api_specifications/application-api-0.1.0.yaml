@@ -38,7 +38,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: applicationRequest
 
   /application/v1/update:
@@ -65,7 +65,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: applicationRequest
 
   /application/v1/search:
@@ -125,7 +125,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
   /application/v1/exists:
     post:
@@ -151,7 +151,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -159,7 +159,7 @@ components:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         application:
           $ref: '#/components/schemas/Application'
 
@@ -167,7 +167,7 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         application:
           $ref: '#/components/schemas/Application'
 
@@ -175,21 +175,21 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
-        applicationlist:
+        applicationList:
           type: array
           items:
             $ref: '#/components/schemas/Application'
-      description: This object holds information about the aapplication List response
+      description: This object holds information about the application List response
 
     ApplicationExistsRequest:
       type: object
       properties:
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
-        applicationlist:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        applicationList:
           type: array
           items:
             $ref: '#/components/schemas/ApplicationExists'
@@ -197,15 +197,15 @@ components:
       type: object
       properties:
         responseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
-        applicationlist:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        applicationList:
           type: array
           items:
           $ref: '#/components/schemas/ApplicationExists'
 
     ApplicationExists:
       type: object
-      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple parameters are passed, then it will be a logical AND search
       properties:
         filingNumber:
           type: string
@@ -298,11 +298,11 @@ components:
         documents:
           type: array
           items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store.
         auditDetails:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'

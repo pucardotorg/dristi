@@ -35,7 +35,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: hearingRequest
 
   /hearing/v1/update:
@@ -62,7 +62,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
       x-codegen-request-body-name: hearingRequest
 
   /hearing/v1/search:
@@ -138,7 +138,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
   /hearing/v1/exists:
     post:
@@ -164,7 +164,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -172,7 +172,7 @@ components:
       type: object
       properties:
         RequestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         hearing:
           $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearing request
@@ -181,7 +181,7 @@ components:
       type: object
       properties:
         ResponseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         hearing:
           $ref: '#/components/schemas/Hearing'
       description: This object holds information about the hearing response
@@ -190,7 +190,7 @@ components:
       type: object
       properties:
         ResponseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         TotalCount:
           type: integer
           format: int32
@@ -205,7 +205,7 @@ components:
       type: object
       properties:
         RequestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         hearingList:
           type: array
           items:
@@ -214,7 +214,7 @@ components:
       type: object
       properties:
         ResponseInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         hearingList:
           type: array
           items:
@@ -275,8 +275,8 @@ components:
           description: This field holds information about purpose of hearing. Will also help identify if this is a judicial hearing or an admin related hearing. Master Data ID
           example: admission, trail, judgment, evidence, plea
         status:
-          type: boolean
-          description: work flow status
+          type: string
+          description: workflow state being set as hearing status
           example: scheduled, in progress, in transcription, closed
         startTime:
           type: string
@@ -341,15 +341,15 @@ components:
         documents:
           type: array
           items:
-            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document'
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
 
         additionalDetails:
           type: string
           description: This field is meant to hold any extra information that we want to store for a hearing.
         auditDetails:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
         workflow:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow'
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
         notes:
           type: string
           description: summary notes of the hearing
