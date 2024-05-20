@@ -34,7 +34,7 @@ const Registration = ({ stateCode }) => {
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
-  const [newParams, setNewParams] = useState({});
+  const [newParams, setNewParams] = useState(history.location.state?.newParams || {});
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
@@ -59,7 +59,7 @@ const Registration = ({ stateCode }) => {
     // routeToAdditionalDetail(user?.info);
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const idVerificationUrl = `${path}/user-name`;
-      history.push(`${path}/user-name`);
+      history.push(`${path}/user-name`, { ...(history.location.state || {}), newParams: newParams });
     } else {
       history.push(redirectPath);
     }
@@ -200,7 +200,6 @@ const Registration = ({ stateCode }) => {
   if (isLoading || isFetching) {
     return <Loader />;
   }
-  console.log(newParams);
   return (
     <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
       <Switch>
