@@ -103,4 +103,11 @@ public class Configuration {
     //update order kafka topic
     @Value("${egov.kafka.order.update.topic}")
     private String updateOrderKafkaTopic;
+
+    @Value("${egov.workflow.order.business.name}")
+    private String orderBusinessName;
+
+    // Advocate Workflow/Business Service name
+    @Value("${egov.workflow.order.business.service.name}")
+    private String orderBusinessServiceName;
 }
