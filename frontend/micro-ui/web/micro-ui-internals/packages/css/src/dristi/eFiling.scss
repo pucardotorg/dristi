@@ -38,10 +38,6 @@
   padding: 0px 20px !important;
 }
 
-.employee-card-wrapper {
-  display: flex;
-  justify-content: space-between;
-}
 .file-case-select-form-section {
   width: 100%;
 }
@@ -49,12 +45,205 @@
 .file-case-form-section {
   width: 100%;
   max-width: 62%;
+  padding: 24px 0px 0px 0px;
+  gap: 32px;
+  .employee-card-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    .header-content {
+      .header-details {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        header.h1 {
+          font-family: Roboto;
+          font-size: 40px;
+          font-weight: 700;
+          line-height: 46.88px;
+          text-align: left;
+          color: #0a0a0a;
+          overflow-wrap: break-word;
+          margin: 0px 0px 4px 0px;
+        }
+        svg {
+          display: none;
+        }
+      }
+      p {
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #3d3c3c;
+      }
+    }
+    .form-wrapper-d {
+      margin-top: 32px;
+      border: 1px #bbbbbd solid;
+      .form-item-name {
+        width: 100%;
+        padding: 12px 32px 12px 32px;
+        gap: 20px;
+        border-bottom: 1px #bbbbbd solid !important;
+        border-bottom: 0px;
+        h1 {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .file-case-form-section {
+    max-width: 100%;
+    .employee-card-wrapper {
+      flex-direction: column;
+      .header-content {
+        .header-details {
+          .header-icon {
+            height: 24px;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          header.h1 {
+            font-size: 24px;
+            line-height: 28.13px;
+            width: 90%;
+          }
+          svg {
+            display: inline;
+          }
+        }
+        p {
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
+      .form-item-name {
+        h1 {
+          font-size: 20px;
+          line-height: 23.44px;
+        }
+      }
+    }
+  }
 }
 
 .e-filing-card-form-style {
   box-shadow: none;
-  border: 1px solid #bbbbbd;
+  border-radius: 0px;
   padding: 24px 32px;
+  margin: 0px;
+  .card-section-header {
+    margin-top: 0px;
+  }
+  .label-field-pair:last-child {
+    padding-bottom: 0px;
+  }
+  .label-field-pair {
+    display: flex;
+    align-items: center;
+    gap: 40px !important;
+    padding-bottom: 40px;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+      margin: 0px !important;
+    }
+    .field {
+      width: 100%;
+      .radio-wrap {
+        gap: 24px !important;
+        margin: 0px !important;
+        div {
+          margin: 0px;
+        }
+        label {
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: left;
+          color: #0a0a0a;
+          margin-left: 8px !important;
+        }
+      }
+      .label-field-pair {
+        padding-bottom: 4px;
+      }
+      div {
+        .button-field {
+          padding-top: 20px;
+        }
+        .info-banner-wrap {
+          margin-top: 20px !important;
+        }
+        .label-field-pair:last-child {
+          input {
+            margin-bottom: 0px !important;
+          }
+        }
+        .label-field-pair {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          gap: 4px !important;
+          padding-bottom: 0px;
+          .field {
+            width: 100%;
+            div {
+              justify-content: space-between;
+            }
+            .map {
+              width: 343px;
+              height: 202px;
+            }
+          }
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0a0a0a;
+            margin: 0px !important;
+          }
+          .user-details-form-style {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .e-filing-card-form-style {
+    .label-field-pair {
+      gap: 16px !important;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .map {
+      width: 100%;
+    }
+  }
 }
 
 .file-case {
@@ -112,6 +301,14 @@
       width: 100%;
       .file-case-select-form-section {
         display: none;
+      }
+      .popup-wrap {
+        .popup-module {
+          margin: auto 16px;
+          .header-wrap {
+            height: 56px;
+          }
+        }
       }
     }
   }

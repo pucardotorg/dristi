@@ -3,7 +3,7 @@ import { CustomArrowDownIcon, CustomArrowUpIcon, CustomCompleteIcon, CustomSched
 
 function Accordion({ t, title, handlePageChange, handleAccordionClick, children, parentIndex, isOpen, }) {
   return (
-    <div className="accordion-wrapper">
+    <div key={parentIndex} className="accordion-wrapper">
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={handleAccordionClick}>
         <span>{`${parentIndex + 1}. ${t(title)}`}</span>
         <div className="icon">
