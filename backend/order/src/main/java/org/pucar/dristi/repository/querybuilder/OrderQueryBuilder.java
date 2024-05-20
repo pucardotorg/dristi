@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_QUERY = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, " +
-            "orders.filingnumber as filingnumber, orders.cnrNumber as cnrNumber, " +
+            "orders.filingnumber as filingnumber, orders.cnrNumber as cnrNumber, orders.orderNumber as orderNumber," +
             "orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby," +
             "orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime ";
 
@@ -26,8 +26,8 @@ public class OrderQueryBuilder {
 
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_order_document doc";
 
-    private static final String BASE_STATUTE_SECTION_QUERY = " SELECT stse.id as id, stse.tenantid as tenantid, stse.statutes as statutes, stse.order_id as order_id, " +
-            "stse.sections as sections, stse.subsections as subsections, stse.additionaldetails as additionaldetails, stse.createdby as createdby," +
+    private static final String BASE_STATUTE_SECTION_QUERY = " SELECT stse.id as id, stse.tenantid as tenantid, stse.statute as statute, stse.order_id as order_id, " +
+            "stse.sections as sections, stse.subsections as subsections, stse.strsections as strsections, stse.strsubsections as strsubsections, stse.additionaldetails as additionaldetails, stse.createdby as createdby," +
             " stse.lastmodifiedby as lastmodifiedby, stse.createdtime as createdtime, stse.lastmodifiedtime as lastmodifiedtime ";
 
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_order_statute_section stse";
@@ -41,7 +41,7 @@ public class OrderQueryBuilder {
             if (applicationNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.applicationnumber =")
-                        .append(applicationNumber);
+                        .append("?");
                 preparedStmtList.add(applicationNumber);
                 firstCriteria = false;
             }
@@ -49,7 +49,7 @@ public class OrderQueryBuilder {
             if (cnrNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.cnrNumber = ")
-                        .append(cnrNumber);
+                        .append("?");
                 preparedStmtList.add(cnrNumber);
                 firstCriteria = false;
 
@@ -58,7 +58,7 @@ public class OrderQueryBuilder {
             if (filingNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.filingnumber =")
-                        .append(filingNumber);
+                        .append("?");
                 preparedStmtList.add(filingNumber);
                 firstCriteria = false;
             }
@@ -66,7 +66,7 @@ public class OrderQueryBuilder {
             if (tenantId!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.tenantid =")
-                        .append(tenantId);
+                        .append("?");
                 preparedStmtList.add(tenantId);
                 firstCriteria = false;
             }
@@ -74,7 +74,7 @@ public class OrderQueryBuilder {
             if (id!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.id = ")
-                        .append(id);
+                        .append("?");
                 preparedStmtList.add(id);
                 firstCriteria = false;
 
@@ -83,7 +83,7 @@ public class OrderQueryBuilder {
             if (status!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.status =")
-                        .append(status);
+                        .append("?");
                 preparedStmtList.add(status);
                 firstCriteria = false;
             }
