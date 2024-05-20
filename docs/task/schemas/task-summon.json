@@ -85,11 +85,15 @@
   "$comment": "array of deliveryChannels",
   "deliveryChannels" : [
     {
-      "name" : {
+      "channelName" : {
         "type": "string",
         "pattern": "^[a-zA-Z]{1,32}$",
         "description": "string having a max of 32 alphabets. no numbers"
       },
+      "txnId" : {
+        "type": "string",
+        "description": "transaction ID for delivery with this specific channel. will be used to track status messages"
+      }
       "address": {
         "type": "string",
         "pattern": "^.{1,400}$",
