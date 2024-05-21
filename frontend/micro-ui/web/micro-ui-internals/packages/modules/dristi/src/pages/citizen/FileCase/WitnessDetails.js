@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { witnessConfig } from "./witnessConfig";
+import { witnessConfig } from "./Config/witnessConfig";
 
 function WitnessDetails() {
   const [params, setParmas] = useState({});
