@@ -61,11 +61,14 @@ public class ApplicationValidator {
         if(ObjectUtils.isEmpty(application.getReferenceId())){
             throw new CustomException(UPDATE_APPLICATION_ERR, "referenceId is mandatory for updating application");
         }
+        //TODO REMAINING VALIDATIONS FOR UPDATE APPLICATION
+
         Application existingApplication = repository.getApplications(application.getId(), application.getFilingNumber(),
                 application.getCnrNumber(), application.getTenantId(), null, null);//fixme pass limit and offset
-// TODO get existing application
+
         if(existingApplication == null) {
             throw new CustomException(VALIDATION_ERR, "Application does not exist");
-        }        return existingApplication;
+        }
+        return existingApplication;
     }
 }

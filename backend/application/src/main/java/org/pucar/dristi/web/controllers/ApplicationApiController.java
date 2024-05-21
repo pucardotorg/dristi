@@ -55,7 +55,7 @@ public class ApplicationApiController{
     @RequestMapping(value="/application/v1/create", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new application + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+//        if (accept != null && accept.contains("application/json")) {
                 try {
                     Application application = applicationService.createApplication(body);
                     ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -64,9 +64,9 @@ public class ApplicationApiController{
             } catch (Exception e) {
                 return new ResponseEntity<ApplicationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
+//        }
 
-        return new ResponseEntity<ApplicationResponse>(HttpStatus.NOT_IMPLEMENTED);
+//        return new ResponseEntity<ApplicationResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value="/application/v1/exists", method = RequestMethod.POST)

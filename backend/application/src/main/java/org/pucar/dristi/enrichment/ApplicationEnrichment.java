@@ -11,6 +11,7 @@ import org.pucar.dristi.web.models.ApplicationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
@@ -27,6 +28,7 @@ public class ApplicationEnrichment {
     public void enrichApplication(ApplicationRequest applicationRequest) {
         try {
             if(applicationRequest.getRequestInfo().getUserInfo() != null) {
+                List<String> applicationIdList = idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1);
                 Application application = applicationRequest.getApplication();
                 AuditDetails auditDetails = AuditDetails
                         .builder()
@@ -38,7 +40,7 @@ public class ApplicationEnrichment {
                 application.setAuditDetails(auditDetails);
                 application.setId(UUID.randomUUID());
                 application.setApplicationType(null);//FIXME
-                application.setApplicationNumber(UUID.randomUUID().toString());//FIXME
+                application.setApplicationNumber(applicationIdList.get(0));//FIXME
                 application.setIsActive(false);
 
                 //TODO DO REMAINING ENRICHMENT
@@ -65,5 +67,7 @@ public class ApplicationEnrichment {
                 log.error("Error enriching application upon update: {}", e.getMessage());
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching application upon update: " + e.getMessage());
             }
+        //TODO DO REMAINING ENRICHMENT
+
     }
 }
