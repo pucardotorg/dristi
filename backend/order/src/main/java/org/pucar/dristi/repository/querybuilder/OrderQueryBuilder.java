@@ -22,7 +22,7 @@ public class OrderQueryBuilder {
     private static final String ORDERBY_CREATEDTIME = " ORDER BY orders.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
-            "doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.order_id as order_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
+            "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.order_id as order_id";
 
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_order_document doc";
 

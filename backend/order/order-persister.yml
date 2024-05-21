@@ -38,7 +38,7 @@ serviceMaps:
             - jsonPath: $.order.auditDetails.createdTime
             - jsonPath: $.order.auditDetails.lastModifiedTime
 
-        - query: INSERT INTO dristi_order_document(id, fileStore, documentUid, documentType, order_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_order_document(id, filestore, documentuid, documenttype, order_id, additionaldetails) VALUES (?, ?, ?, ?, ?, ?);
           basePath: order.documents.*
           jsonMaps:
             - jsonPath: $.order.documents.*.id
@@ -50,10 +50,11 @@ serviceMaps:
               type: JSON
               dbType: JSONB
 
-        - query: INSERT INTO dristi_order_statute_section(id, statute, sections, subsections, strsections, strsubsections, order_id, additionalDetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_order_statute_section(id, tenantId, statute, sections, subsections, strsections, strsubsections, order_id, additionalDetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: order.statuteSection
           jsonMaps:
             - jsonPath: $.order.statuteSection.id
+            - jsonPath: $.order.statuteSection.tenantId
             - jsonPath: $.order.statuteSection.statute
             - jsonPath: $.order.statuteSection.sections
               type: JSON

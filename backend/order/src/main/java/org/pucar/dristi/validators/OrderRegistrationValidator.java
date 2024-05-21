@@ -54,10 +54,10 @@ public class OrderRegistrationValidator {
     public Order validateApplicationExistence(OrderRequest orderRequest) {
         Order order = orderRequest.getOrder();
         RequestInfo requestInfo = orderRequest.getRequestInfo();
-        List<Order> existingApplications = repository.getApplications(order.getApplicationNumber().get(0), order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
+        List<Order> existingApplications = repository.getApplications( null, order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
                 String.valueOf(order.getId()), order.getStatus());
         if (existingApplications.isEmpty())
-            throw new CustomException("VALIDATION EXCEPTION", "Case Application does not exist");
+            throw new CustomException("VALIDATION EXCEPTION", "Order does not exist");
 
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "order", createMasterDetails());
 

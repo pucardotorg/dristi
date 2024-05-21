@@ -25,7 +25,7 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String uuid = rs.getString("casenumber");
+                String uuid = rs.getString("id");
                 Order order = orderMap.get(uuid);
 
                 if (order == null) {
@@ -43,11 +43,9 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                     order = Order.builder()
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
-                            .hearingNumber(UUID.fromString(rs.getString("hearingnumber")))
-                            .orderNumber(rs.getString("orderNumber"))
+                            .orderNumber(rs.getString("ordernumber"))
                             .filingNumber(rs.getString("filingnumber"))
                             .status(rs.getString("status"))
-                            .comments(rs.getString("comments"))
                             .auditDetails(auditdetails)
                             .build();
                 }
@@ -60,8 +58,8 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
             }
         }
         catch (Exception e){
-            log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
+            log.error("Error occurred while processing order ResultSet: {}", e.getMessage());
+            throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing order ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(orderMap.values());
     }

@@ -21,8 +21,8 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("case_id");
-                UUID uuid = UUID.fromString(id!=null ? id : "00000000-0000-0000-0000-000000000000");
+                String orderId = rs.getString("order_id");
+                UUID uuid = UUID.fromString(orderId!=null ? orderId : "00000000-0000-0000-0000-000000000000");
 
                 Long lastModifiedTime = rs.getLong("lastmodifiedtime");
 
@@ -37,8 +37,8 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
                         .tenantId(rs.getString("tenantid"))
                         .sections(stringToList(rs.getString("sections")))
                         .subsections(stringToList(rs.getString("subsections")))
-                        .subsections(stringToList(rs.getString("strsubsections")))
-                        .subsections(stringToList(rs.getString("strsections")))
+                        .strSubsections(rs.getString("strsubsections"))
+                        .strSections(rs.getString("strsections"))
                         .statute(rs.getString("statute"))
                         .auditdetails(auditdetails)
                         .build();
