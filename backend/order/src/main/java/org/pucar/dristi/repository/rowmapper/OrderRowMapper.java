@@ -65,21 +65,4 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
         }
         return new ArrayList<>(orderMap.values());
     }
-    private UUID toUUID(String toUuid) {
-        if(toUuid == null) {
-            return null;
-        }
-        return UUID.fromString(toUuid);
-    }
-
-    private LocalDate stringToLocalDate(String str){
-        LocalDate localDate = null;
-        if(str!=null)
-        try {
-            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            localDate = LocalDate.parse(str, pattern);
-        } catch (DateTimeParseException e) {}
-
-        return localDate;
-    }
 }

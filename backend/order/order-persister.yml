@@ -19,7 +19,7 @@ serviceMaps:
             - jsonPath: $.order.tenantId
             - jsonPath: $.order.filingNumber
             - jsonPath: $.order.hearingNumber
-            - jsonPath: $.order.applicationNumber
+            - jsonPath: $.order.applicationNumber[*][?({id} in @.statutesAndSections[*].id)].id
             - jsonPath: $.order.orderNumber
             - jsonPath: $.order.cnrNumber
             - jsonPath: $.order.comments
