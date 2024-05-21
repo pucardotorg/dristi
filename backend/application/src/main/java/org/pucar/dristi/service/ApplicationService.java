@@ -62,7 +62,7 @@ public class ApplicationService {
                     log.error("Error validating existing application");
                     throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
                 }
-                existingApplication.setWorkflow(application.getWorkflow());
+                existingApplication.setWorkflow(application.getWorkflow());// TODO check
                 applicationRequest.setApplication(existingApplication);
 
             // Enrich application upon update
@@ -97,28 +97,6 @@ public class ApplicationService {
 //            } catch (Exception e) {
 //                log.error("Error while fetching to search results");
 //                throw new CustomException("SEARCH_APPLICATION_ERR", e.getMessage());
-//            }
-//        }
-
-//    public Application updateApplication(ApplicationRequest body) {
-//        try {
-//                // Validate whether the application that is being requested for update indeed exists
-//                caseRequest.getCases().forEach(courtCase -> {
-//                    if (!validator.validateApplicationExistence(courtCase, caseRequest.getRequestInfo()))
-//                        throw new CustomException(VALIDATION_ERR, "Error validating existing application: ");
-//                });
-//                // Enrich application upon update
-//                enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
-//
-//                workflowService.updateWorkflowStatus(caseRequest);
-//
-//                producer.push(config.getCaseUpdateTopic(), caseRequest);
-//
-//                return caseRequest.getCases();
-//
-//            } catch (Exception e) {
-//                log.error("Error occurred while updating application");
-//                throw new CustomException("UPDATE_APPLICATION_ERR", "Error occurred while updating application: " + e.getMessage());
 //            }
 //        }
 
