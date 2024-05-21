@@ -28,10 +28,9 @@ public class AdvocateClerkQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
 
     /** To build query using search criteria to search clerks
-     * @param criteriaList
+     * @param criteria
      * @param preparedStmtList
-     * @param statusList
-     * @param applicationNumber
+     * @param tenantId
      * @param isIndividualLoggedInUser
      * @param limit
      * @param offset
