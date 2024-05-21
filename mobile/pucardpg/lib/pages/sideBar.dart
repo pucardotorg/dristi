@@ -38,11 +38,11 @@ class SideBar extends StatelessWidget {
                         return Column(
                           children: [
                             Text(
-                              userRequest!.userName!,
+                              userRequest!.userName ?? "",
                               style: theme.textTheme.displayMedium,
                             ),
                             Text(
-                              userRequest.mobileNumber!,
+                              userRequest.mobileNumber ?? "",
                               style: theme.textTheme.displayMedium,
                             ),
                           ],
@@ -51,11 +51,11 @@ class SideBar extends StatelessWidget {
                 )),
             DigitIconTile(
               title: AppLocalizations.of(context).translate(
-                i18.common.coreCommonHome,
+                i18.common.esCommonHome,
               ),
               icon: Icons.home,
               onPressed: () {
-                AutoRouter.of(context).replace(HomeRoute());
+                // AutoRouter.of(context).replace(HomeRoute());
               },
             ),
             DigitIconTile(
@@ -64,8 +64,6 @@ class SideBar extends StatelessWidget {
               icon: Icons.logout,
               onPressed: () {
                 context.read<AuthBloc>().add(const AuthEvent.logout());
-                AutoRouter.of(context)
-                    .replace(const UnauthenticatedRouteWrapper());
               },
             ),
             SizedBox(
@@ -74,13 +72,13 @@ class SideBar extends StatelessWidget {
                   icon: Icons.language,
                   onPressed: () {},
                   title: AppLocalizations.of(context)
-                      .translate(i18.common.coreCommonlanguage),
+                      .translate(i18.common.csCommonChooseLanguage),
                   content: BlocBuilder<AppInitialization, InitState>(
                       builder: (context, state) => state.maybeWhen(
                             orElse: () => const Text('Could not load'),
                             initialized: (appConfig, serviceReg) {
                               final languages =
-                                  appConfig.appConfig!.appConfig?[0].languages;
+                                  appConfig.mdmsRes?.commonMasters!.stateInfo?[0].languages;
 
                               return BlocBuilder<LocalizationBloc,
                                       LocalizationState>(
@@ -101,23 +99,22 @@ class SideBar extends StatelessWidget {
                                         LocalizationEvent.onSelect(
                                             locale: rowCardValue.value,
                                             moduleList: appConfig
-                                                .appConfig!
-                                                .appConfig?[0]
-                                                .backendInterface));
+                                                .mdmsRes?.commonMasters!.stateInfo?[0]
+                                                .localizationModules));
                                   },
                                 );
                               });
                             },
                           )),
                 )),
-            DigitIconTile(
-              title: AppLocalizations.of(context)
-                  .translate(i18.common.coreCommonProfile),
-              icon: Icons.person,
-              onPressed: () {
-                AutoRouter.of(context).replace(ProfileRoute());
-              },
-            ),
+            // DigitIconTile(
+            //   title: AppLocalizations.of(context)
+            //       .translate(i18.common.coreCommonProfile),
+            //   icon: Icons.person,
+            //   onPressed: () {
+            //     // AutoRouter.of(context).replace(ProfileRoute());
+            //   },
+            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height / 3,
             ),

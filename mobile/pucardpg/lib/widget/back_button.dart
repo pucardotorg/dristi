@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import '../utils/i18_key_constants.dart' as i18;
 
 class DigitBackButton extends StatelessWidget with AppMixin{
 
@@ -16,7 +17,7 @@ class DigitBackButton extends StatelessWidget with AppMixin{
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           const Icon(Icons.arrow_left, color: Colors.black,),
-          Text('Back', style: theme.text16W400Rob(),),
+          Text(i18.common.csCommonBack, style: theme.text16W400Rob(),),
         ],
       ),
     );

@@ -25,8 +25,10 @@ mixin _$LoginModel {
   String? get tenantId => throw _privateConstructorUsedError;
   String? get userType => throw _privateConstructorUsedError;
   String? get scope => throw _privateConstructorUsedError;
+  @JsonKey(name: "refresh_token")
+  String? get refreshToken => throw _privateConstructorUsedError;
   @JsonKey(name: 'grant_type')
-  String get grantType => throw _privateConstructorUsedError;
+  String? get grantType => throw _privateConstructorUsedError;
   @JsonKey(name: '_')
   int get timeStamp => throw _privateConstructorUsedError;
 
@@ -48,7 +50,8 @@ abstract class $LoginModelCopyWith<$Res> {
       String? tenantId,
       String? userType,
       String? scope,
-      @JsonKey(name: 'grant_type') String grantType,
+      @JsonKey(name: "refresh_token") String? refreshToken,
+      @JsonKey(name: 'grant_type') String? grantType,
       @JsonKey(name: '_') int timeStamp});
 }
 
@@ -70,7 +73,8 @@ class _$LoginModelCopyWithImpl<$Res, $Val extends LoginModel>
     Object? tenantId = freezed,
     Object? userType = freezed,
     Object? scope = freezed,
-    Object? grantType = null,
+    Object? refreshToken = freezed,
+    Object? grantType = freezed,
     Object? timeStamp = null,
   }) {
     return _then(_value.copyWith(
@@ -94,10 +98,14 @@ class _$LoginModelCopyWithImpl<$Res, $Val extends LoginModel>
           ? _value.scope
           : scope // ignore: cast_nullable_to_non_nullable
               as String?,
-      grantType: null == grantType
+      refreshToken: freezed == refreshToken
+          ? _value.refreshToken
+          : refreshToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      grantType: freezed == grantType
           ? _value.grantType
           : grantType // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       timeStamp: null == timeStamp
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
@@ -120,7 +128,8 @@ abstract class _$$LoginModelImplCopyWith<$Res>
       String? tenantId,
       String? userType,
       String? scope,
-      @JsonKey(name: 'grant_type') String grantType,
+      @JsonKey(name: "refresh_token") String? refreshToken,
+      @JsonKey(name: 'grant_type') String? grantType,
       @JsonKey(name: '_') int timeStamp});
 }
 
@@ -140,7 +149,8 @@ class __$$LoginModelImplCopyWithImpl<$Res>
     Object? tenantId = freezed,
     Object? userType = freezed,
     Object? scope = freezed,
-    Object? grantType = null,
+    Object? refreshToken = freezed,
+    Object? grantType = freezed,
     Object? timeStamp = null,
   }) {
     return _then(_$LoginModelImpl(
@@ -164,10 +174,14 @@ class __$$LoginModelImplCopyWithImpl<$Res>
           ? _value.scope
           : scope // ignore: cast_nullable_to_non_nullable
               as String?,
-      grantType: null == grantType
+      refreshToken: freezed == refreshToken
+          ? _value.refreshToken
+          : refreshToken // ignore: cast_nullable_to_non_nullable
+              as String?,
+      grantType: freezed == grantType
           ? _value.grantType
           : grantType // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       timeStamp: null == timeStamp
           ? _value.timeStamp
           : timeStamp // ignore: cast_nullable_to_non_nullable
@@ -185,7 +199,8 @@ class _$LoginModelImpl implements _LoginModel {
       this.tenantId = "pg",
       this.userType = "citizen",
       this.scope = "read",
-      @JsonKey(name: 'grant_type') this.grantType = "password",
+      @JsonKey(name: "refresh_token") this.refreshToken,
+      @JsonKey(name: 'grant_type') this.grantType,
       @JsonKey(name: '_') this.timeStamp = 1713357247536});
 
   factory _$LoginModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -206,15 +221,18 @@ class _$LoginModelImpl implements _LoginModel {
   @JsonKey()
   final String? scope;
   @override
+  @JsonKey(name: "refresh_token")
+  final String? refreshToken;
+  @override
   @JsonKey(name: 'grant_type')
-  final String grantType;
+  final String? grantType;
   @override
   @JsonKey(name: '_')
   final int timeStamp;
 
   @override
   String toString() {
-    return 'LoginModel(username: $username, password: $password, tenantId: $tenantId, userType: $userType, scope: $scope, grantType: $grantType, timeStamp: $timeStamp)';
+    return 'LoginModel(username: $username, password: $password, tenantId: $tenantId, userType: $userType, scope: $scope, refreshToken: $refreshToken, grantType: $grantType, timeStamp: $timeStamp)';
   }
 
   @override
@@ -231,6 +249,8 @@ class _$LoginModelImpl implements _LoginModel {
             (identical(other.userType, userType) ||
                 other.userType == userType) &&
             (identical(other.scope, scope) || other.scope == scope) &&
+            (identical(other.refreshToken, refreshToken) ||
+                other.refreshToken == refreshToken) &&
             (identical(other.grantType, grantType) ||
                 other.grantType == grantType) &&
             (identical(other.timeStamp, timeStamp) ||
@@ -240,7 +260,7 @@ class _$LoginModelImpl implements _LoginModel {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, username, password, tenantId,
-      userType, scope, grantType, timeStamp);
+      userType, scope, refreshToken, grantType, timeStamp);
 
   @JsonKey(ignore: true)
   @override
@@ -263,7 +283,8 @@ abstract class _LoginModel implements LoginModel {
       final String? tenantId,
       final String? userType,
       final String? scope,
-      @JsonKey(name: 'grant_type') final String grantType,
+      @JsonKey(name: "refresh_token") final String? refreshToken,
+      @JsonKey(name: 'grant_type') final String? grantType,
       @JsonKey(name: '_') final int timeStamp}) = _$LoginModelImpl;
 
   factory _LoginModel.fromJson(Map<String, dynamic> json) =
@@ -280,8 +301,11 @@ abstract class _LoginModel implements LoginModel {
   @override
   String? get scope;
   @override
+  @JsonKey(name: "refresh_token")
+  String? get refreshToken;
+  @override
   @JsonKey(name: 'grant_type')
-  String get grantType;
+  String? get grantType;
   @override
   @JsonKey(name: '_')
   int get timeStamp;

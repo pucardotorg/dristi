@@ -2,6 +2,7 @@ import 'dart:core';
 import 'dart:typed_data';
 
 class UserModel{
+   UserModel();
 
   int? id;
   String? uuid;
@@ -16,6 +17,10 @@ class UserModel{
   String? mobileNumber;
   String? identifierType;
   String? identifierId = "";
+  String? idFilename = "";
+  String? idFileStore = "";
+  Uint8List? idBytes = Uint8List.fromList([]);
+  String? idDocumentType = "";
 
   String? type;
   String? userType;
@@ -23,23 +28,13 @@ class UserModel{
   String? stateRegnNumber;
   String? barRegistrationNumber;
   String? fileStore;
+  String? documentFilename = "";
   String? documentType;
-  Uint8List? bytes;
+  Uint8List? documentBytes = Uint8List.fromList([]);
 
   String? individualId;
 
   AddressModel addressModel = AddressModel();
-
-  UserModel({
-    this.firstName,
-    this.middleName,
-    this.lastName,
-    this.mobileNumber,
-    this.identifierType,
-    this.identifierId,
-    this.type,
-    this.userType
-  });
 
 }
 

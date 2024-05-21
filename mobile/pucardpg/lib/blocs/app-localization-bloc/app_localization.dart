@@ -21,7 +21,7 @@ class AppLocalizations {
   static final List<Localization> _localizedStrings = <Localization>[];
 
   static LocalizationsDelegate<AppLocalizations> getDelegate(
-          AppConfig config, Isar isar) =>
+      MdmsRes config, Isar isar) =>
       AppLocalizationsDelegate(config, isar);
 
   Future<bool> load() async {

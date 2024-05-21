@@ -36,16 +36,16 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
       //the module name list is essentially a list of all the use cases or modules we need our localizations for
       List<String?> moduleNameList = [];
       if (event.moduleList != null) {
-        for (var list in event.moduleList!.interfaces!) {
-          if (!list.name!.contains(RegExp(r'[A-Z]'))) {
-            moduleNameList.add(list.name);
+        for (var list in event.moduleList!) {
+          if (!list.value!.contains(RegExp(r'[A-Z]'))) {
+            moduleNameList.add(list.value);
           }
         }
       }
       final Map<String, String> queryParam = {
         'locale': event.locale.toString(),
         'module': moduleNameList.join(','),
-        'tenantId': 'mz'
+        'tenantId': 'pg'
         // TODO Need to read this from env file
       };
 
@@ -95,7 +95,7 @@ class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
 @freezed
 class LocalizationEvent with _$LocalizationEvent {
   const factory LocalizationEvent.onSelect(
-      {String? locale, InterfacesList? moduleList}) = _LocaleSelectedEvent;
+      {String? locale, List<Modules>? moduleList}) = _LocaleSelectedEvent;
 }
 
 @freezed

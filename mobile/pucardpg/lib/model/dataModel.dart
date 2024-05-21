@@ -70,18 +70,18 @@ class ClientAuditDetails with ClientAuditDetailsMappable {
         lastModifiedTime = lastModifiedTime ?? createdTime;
 }
 
-@MappableClass()
-abstract class AdditionalFields with AdditionalFieldsMappable {
-  final String schema;
-  final int version;
-  final List<AdditionalField> fields;
-
-  const AdditionalFields({
-    required this.schema,
-    required this.version,
-    this.fields = const [],
-  });
-}
+// @MappableClass()
+// abstract class AdditionalFields with AdditionalFieldsMappable {
+//   final String schema;
+//   final int version;
+//   final List<AdditionalField> fields;
+//
+//   const AdditionalFields({
+//     required this.schema,
+//     required this.version,
+//     this.fields = const [],
+//   });
+// }
 
 @MappableClass(includeSubClasses: [])
 class AdditionalField with AdditionalFieldMappable {

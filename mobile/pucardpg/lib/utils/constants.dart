@@ -55,4 +55,9 @@ class RequestInfoData {
   static String? authToken;
 }
 
+const String approvalSvg = 'assets/icons/svg/approval.svg';
+const String yetToRegister = 'assets/icons/svg/yet_to_register.svg';
+const String govtIndia = 'assets/icons/png/govt_logo.png';
+const String waitingSvg = 'assets/icons/svg/waiting.svg';
+const String successSvg = 'assets/icons/svg/success.svg';
 

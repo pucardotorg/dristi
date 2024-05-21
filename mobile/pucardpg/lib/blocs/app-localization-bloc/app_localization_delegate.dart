@@ -5,7 +5,7 @@ import 'package:pucardpg/model/appconfig/mdmsResponse.dart';
 
 //the aim here is to override methods that are defined by default in the localizations delegate file
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
-  final AppConfig? appConfig;
+  final MdmsRes? appConfig;
   final Isar isar;
 
   const AppLocalizationsDelegate(this.appConfig, this.isar);
@@ -13,7 +13,7 @@ class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   //check from configuration if the language is supported in the app
   @override
   bool isSupported(Locale locale) {
-    return (appConfig!.appConfig?[0].languages)!.map((e) {
+    return (appConfig!.commonMasters?.stateInfo?[0].languages)!.map((e) {
       final results = e.value.split('_');
       if (results.isNotEmpty) return results.first;
       return null;

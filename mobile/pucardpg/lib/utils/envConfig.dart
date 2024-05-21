@@ -90,7 +90,7 @@ class Variables {
 
   static const _baseUrl = EnvEntry(
     'BASE_URL',
-    'https://health-dev.digit.org/',
+    'https://dristi-dev.pucar.org/',
   );
 
   //this is the endpoint for service registry, rest are hard-coded

@@ -12,7 +12,7 @@ class LocalizationRepository {
       Map<String, String> queryParameters) async {
     try {
       final response = await client.post(
-          'https://unified-qa.digit.org/localization/messages/v1/_search',
+          'https://dristi-dev.pucar.org/localization/messages/v1/_search',
           queryParameters: queryParameters,
           data: {});
 

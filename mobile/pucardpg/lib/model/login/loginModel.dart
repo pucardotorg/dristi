@@ -12,7 +12,8 @@ class LoginModel with _$LoginModel {
     @Default("pg") String? tenantId,
     @Default("citizen") String? userType,
     @Default("read") String? scope,
-    @JsonKey(name: 'grant_type') @Default("password") String grantType,
+    @JsonKey(name: "refresh_token") String? refreshToken,
+    @JsonKey(name: 'grant_type') String? grantType,
     @JsonKey(name: '_') @Default(1713357247536) int timeStamp
   }) = _LoginModel;
 

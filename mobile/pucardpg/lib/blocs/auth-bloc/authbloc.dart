@@ -1,89 +1,183 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:pucardpg/data/api_interceptors.dart';
 import 'package:pucardpg/data/secure_storage/secureStore.dart';
+import 'package:pucardpg/model/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
+import 'package:pucardpg/model/advocate-clerk-search/advocate_clerk_search_model.dart';
+import 'package:pucardpg/model/advocate-registration-model/advocate_registration_model.dart';
+import 'package:pucardpg/model/advocate-request-info/advocate_request_info.dart';
+import 'package:pucardpg/model/advocate-search/advocate_search_model.dart';
+import 'package:pucardpg/model/advocate-user-info/advocate_user_info.dart';
 import 'package:pucardpg/model/auth-response/auth_response.dart';
 import 'package:pucardpg/model/citizen-registration-request/citizen_registration_request.dart';
-import 'package:pucardpg/model/individual/individual.dart';
-import 'package:pucardpg/model/dataModel.dart';
+import 'package:pucardpg/model/document-model/document_model.dart';
+import 'package:pucardpg/model/individual-search/individual_search_model.dart';
+import 'package:pucardpg/model/litigant-registration-model/litigant_registration_model.dart';
 import 'package:pucardpg/model/litigant_model.dart';
 import 'package:pucardpg/model/login/loginModel.dart';
 import 'package:pucardpg/model/otp-models/otp_model.dart';
-// import 'package:pucardpg/model/response/responsemodel.dart';
-import 'package:pucardpg/repositories/app_init_Repo.dart';
+import 'package:pucardpg/model/request-info-model/request_info.dart';
+import 'package:pucardpg/model/workflow-model/workflow_model.dart';
 import 'package:pucardpg/repositories/authRepo.dart';
+import 'package:pucardpg/repositories/file_repository.dart';
+import 'package:pucardpg/utils/i18_key_constants.dart';
 
 part 'authbloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
-  late String _accesstoken;
+  late String accesstoken;
   late UserRequest _userRequest;
   late String _refreshtoken;
-  final authRepository = AuthRepository();
+  late AuthResponse _authResponse;
+  final authRepository = AuthRepository(InitClient().init());
+  final fileRepository = FileRepository();
+
+  UserModel userModel = UserModel();
 
   AuthBloc() : super(const AuthState.unauthenticated()) {
-    on<_AuthLoginEvent>(_onLogin);
+    on<_SubmitLoginOtpEvent>(_onLogin);
+    on<_AuthLoginEvent>(_onAuthLogin);
     on<_AuthLogoutEvent>(_onLogout);
     on<_AuthLoadEvent>(_onLoad);
     on<_SubmitRegistrationOtpEvent>(_onRegistration);
     on<_RequestOtpEvent>(_requestOtpEvent);
+    on<_ResendOtpEvent>(resendOtpEvent);
+    on<_SubmitProfileEvent>(submitIndividualProfile);
   }
 
-  FutureOr<void> _onLogin(
+  FutureOr<void> _onAuthLogin(
       _AuthLoginEvent event, Emitter<AuthState> emit) async {
-    AuthResponse response;
     final secureStore = SecureStore();
-    //Send a login request and retrieve the access_token for further requests
+    secureStore.setAccessToken(accesstoken);
+    secureStore.setRefreshToken(_refreshtoken);
+    secureStore.setAccessInfo(_authResponse);
+
+    emit(AuthState.authenticated(
+        accesstoken: accesstoken,
+        refreshtoken: _refreshtoken,
+        userRequest: _userRequest));
+  }
+
+  FutureOr<void> _onLogin(_SubmitLoginOtpEvent event,
+      Emitter<AuthState> emit) async {
+    AuthResponse response;
     try {
-      final loginUrl =
-          event.actionMap?[DataModelType.user]?[ApiOperation.login];
 
       response = await authRepository.validateLogin(
           "/user/oauth/token",
           LoginModel(
-            username: event.username,
+              username: event.username,
+              password: event.password,
+              grantType: 'password'
           )
       );
 
-      _accesstoken = response.accessToken!;
+      _authResponse = response;
+
+      accesstoken = response.accessToken!;
       _refreshtoken = response.refreshToken!;
       _userRequest = response.userRequest!;
+      userModel.authToken = response.accessToken;
+      userModel.id = response.userRequest?.id;
+      userModel.uuid = response.userRequest?.uuid;
+      userModel.username = response.userRequest?.userName;
 
-      //store accessToken in secure storage
-      secureStore.setAccessToken(_accesstoken);
+      IndividualSearchRequest individualSearchRequest = IndividualSearchRequest(
+          requestInfo: RequestInfoSearch(authToken: userModel.authToken!),
+          individual: IndividualSearch(userUuid: [userModel.uuid!]));
 
-      //store other access Information in secure storage
-      secureStore.setAccessInfo(response);
+      final responseSearchIndividual = await authRepository.searchIndividual('/individual/v1/_search?limit=${appConstants.limit}&offset=${appConstants.offset}&tenantId=${appConstants.tenantId}', individualSearchRequest);
+      if (responseSearchIndividual.individual.isEmpty) {
+        emit(AuthState.individualSearchSuccessState(individualSearchResponse: responseSearchIndividual));
+      } else {
+        Individual individual = responseSearchIndividual.individual[0];
+        final userTypeField = individual.additionalFields.fields.firstWhere(
+              (field) => field.key == "userType",
+          orElse: () => const Fields(key: "", value: ""),
+        );
+        final identifierType = individual.identifiers[0].identifierType;
+        final detailField = individual.additionalFields.fields.firstWhere(
+              (field) => field.key == "identifierIdDetails",
+          orElse: () => const Fields(key: "", value: ""),
+        ).value;
+        if (detailField != "") {
+          final identifierIdDetails = jsonDecode(detailField);
+          if (identifierType != 'AADHAR') {
+            userModel.idFilename = identifierIdDetails['filename'];
+            userModel.idFileStore = identifierIdDetails['fileStoreId'];
+            var fileResponse = await fileRepository.getFileData('/filestore/v1/files/id', appConstants.tenantId, identifierIdDetails['fileStoreId']);
+            userModel.idBytes = fileResponse.bytes;
+            userModel.idDocumentType = fileResponse.documentType;
+          }
+        }
+        userModel.individualId = individual.individualId;
+        userModel.identifierType = identifierType;
+        userModel.identifierId = individual.identifiers[0].identifierId;
+        userModel.firstName = individual.name.givenName;
+        userModel.lastName = individual.name.familyName;
+        userModel.userType = userTypeField.value;
+        var address = individual.address[0];
+        userModel.addressModel.doorNo = address.doorNo;
+        userModel.addressModel.city = address.city;
+        userModel.addressModel.pincode = address.pincode;
+        userModel.addressModel.street = address.street;
+        userModel.addressModel.district = address.district;
+        userModel.addressModel.latitude = address.latitude;
+        userModel.addressModel.longitude = address.longitude;
 
-      //change to authenticated state now that we have access
-      emit(AuthState.authenticated(
-          accesstoken: _accesstoken,
-          refreshtoken: _refreshtoken,
-          userRequest: _userRequest));
-
-      final actionsWrapper = await authRepository.searchRoleActions({
-        "roleCodes": response.userRequest?.roles?.map((e) => e.code).toList(),
-        "tenantId": envConfig.variables.tenantId,
-        "actionMaster": "actions-test",
-        "enabled": true,
-      });
-
-      //role actions must also be stored in secureStore so that we don't have to make calls for it repeatedly
-      await secureStore.setRoleActions(actionsWrapper);
-
-      // final individualRemoteRepository = IndividualSearchRemoteRepository();
-
-      // final loggedInIndividual =
-      //     await individualRemoteRepository.searchIndividual(
-      //         IndividualSearchModel(
-      //           userUuid: [response.userRequest!.uuid],
-      //         ),
-      //         event.actionMap);
-
-      // secureStore.setSelectedIndividual(loggedInIndividual.first.id);
+        if (userModel.userType == 'LITIGANT') {
+          emit(AuthState.individualSearchSuccessState(individualSearchResponse: responseSearchIndividual));
+        }
+        if (userModel.userType == 'ADVOCATE') {
+          AdvocateSearchRequest advocateSearchRequest = AdvocateSearchRequest(
+              criteria: [SearchCriteria(individualId: userModel.individualId)],
+              tenantId: appConstants.tenantId,
+              requestInfo: AdvocateRequestInfo(
+                  authToken: userModel.authToken,
+                  userInfo: AdvocateUserInfo(
+                      type: appConstants.type,
+                      tenantId: appConstants.tenantId,
+                      uuid: userModel.uuid,
+                      roles: [appConstants.getCitizenRole]
+                  )
+              ));
+          final responseSearchAdvocate = await authRepository.searchAdvocate('/advocate/advocate/v1/_search', advocateSearchRequest);
+          if (responseSearchAdvocate.advocates.isNotEmpty) {
+            Advocate advocate = responseSearchAdvocate.advocates[0];
+            userModel.documentFilename = advocate.additionalDetails?['filename'];
+            userModel.barRegistrationNumber = advocate.barRegistrationNumber;
+            userModel.fileStore = advocate.documents?[0].fileStore;
+            var fileResponse = await fileRepository.getFileData('/filestore/v1/files/id', appConstants.tenantId, advocate.documents![0].fileStore!);
+            userModel.documentBytes = fileResponse.bytes;
+            userModel.documentType = fileResponse.documentType;
+            // userModel.documentType = advocate.documents?[0].documentType;
+            userModel.documentFilename = advocate.additionalDetails?['filename'];
+          }
+          emit(AuthState.advocateSearchSuccessState(advocateSearchResponse: responseSearchAdvocate));
+        }
+        if (userModel.userType == 'ADVOCATE_CLERK') {
+          AdvocateClerkSearchRequest advocateClerkSearchRequest = AdvocateClerkSearchRequest(
+              criteria: [SearchCriteria(individualId: userModel.individualId)],
+              tenantId: appConstants.tenantId,
+              requestInfo: AdvocateRequestInfo(
+                  authToken: userModel.authToken,
+                  userInfo: AdvocateUserInfo(
+                      type: appConstants.type,
+                      tenantId: appConstants.tenantId,
+                      uuid: userModel.uuid,
+                      roles: [appConstants.getCitizenRole]
+                  )
+              ));
+          final responseSearchAdvocateClerk = await authRepository.searchAdvocateClerk('/advocate/clerk/v1/_search', advocateClerkSearchRequest);
+          emit(AuthState.advocateClerkSearchSuccessState(advocateClerkSearchResponse: responseSearchAdvocateClerk));
+        }
+      }
     } catch (err) {
+      emit(const AuthState.requestFailed(errorMsg: "Login Failed",));
       rethrow;
     }
   }
@@ -91,83 +185,58 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   FutureOr<void> _onRegistration(
       _SubmitRegistrationOtpEvent event, Emitter<AuthState> emit) async {
     AuthResponse response;
-    final secureStore = SecureStore();
-    //Send a login request and retrieve the access_token for further requests
     try {
-      // final loginUrl =
-      // event.actionMap?[DataModelType.user]?[ApiOperation.login];
-
       CitizenRegistrationRequest citizenRegistrationRequest = CitizenRegistrationRequest(
         userInfo: UserInfo(
-            name: event.userModel.enteredUserName ?? "",
             username: event.username,
             otpReference: event.otp
         ),
       );
 
-      var accessInfo = const AuthResponse(
-        accessToken: "asdsadsadas", tokenType: 'asdsadsadas', refreshToken: 'asdsadsadas', expiresIn: 0, scope: 'tety',
-        userRequest: UserRequest(),
-        responseInfo: ResponseInfo()
-      );
-
-      secureStore.setAccessInfo(accessInfo);
-
       response = await authRepository.createCitizen(
           "/user/citizen/_create",
           citizenRegistrationRequest
       );
-      //change to authenticated state now that we have access
 
-      _accesstoken = response.accessToken!;
+      accesstoken = response.accessToken!;
       _refreshtoken = response.refreshToken!;
       _userRequest = response.userRequest!;
-
-      //store accessToken in secure storage
-      secureStore.setAccessToken(_accesstoken);
-
-      //store other access Information in secure storage
-      secureStore.setAccessInfo(response);
-
-      //change to authenticated state now that we have access
-      // emit(AuthState.otpCorrect(
-      //     authResponse: response));
-
-      final actionsWrapper = await authRepository.searchRoleActions({
-        "roleCodes": response.userRequest?.roles?.map((e) => e.code).toList(),
-        "tenantId": envConfig.variables.tenantId,
-        "actionMaster": "actions-test",
-        "enabled": true,
-      });
-
-      //role actions must also be stored in secureStore so that we don't have to make calls for it repeatedly
-      await secureStore.setRoleActions(actionsWrapper);
+      userModel.authToken = response.accessToken;
+      userModel.id = response.userRequest?.id;
+      userModel.uuid = response.userRequest?.uuid;
+      userModel.username = response.userRequest?.userName;
 
       emit(AuthState.otpCorrect(
           authResponse: response));
 
-      // final individualRemoteRepository = IndividualSearchRemoteRepository();
-
-      // final loggedInIndividual =
-      //     await individualRemoteRepository.searchIndividual(
-      //         IndividualSearchModel(
-      //           userUuid: [response.userRequest!.uuid],
-      //         ),
-      //         event.actionMap);
-
-      // secureStore.setSelectedIndividual(loggedInIndividual.first.id);
     } catch (err) {
-      emit(const AuthState.requestOtpFailed(errorMsg: "failed",));
+      emit(const AuthState.requestFailed(errorMsg: "Registration Failed",));
       rethrow;
     }
   }
 
-  FutureOr<void> _onLogout(_AuthLogoutEvent event, Emitter<AuthState> emit) {
+  FutureOr<void> _onLogout(_AuthLogoutEvent event, Emitter<AuthState> emit) async {
     //when we logout, we need the access token to be deleted and invalidated. All the AccessInfo stored locally is now redundant. Delete it.
+    // AuthResponse response;
+    //
+    // response = await authRepository.createCitizen(
+    //     "/user/citizen/_create",
+    //     citizenRegistrationRequest
+    // );
+    //
+    // final dataState = await _loginUseCase.logoutUser(event.authToken);
+    //
+    //   if(dataState is DataSuccess){
+    //       emit(LogoutSuccessState(data: dataState.data!));
+    //   }
+    //   if(dataState is DataFailed){
+    //     emit(LogoutFailedState(data: dataState.data!));
+    //   }
     final secureStore = SecureStore();
     secureStore.deleteAccessToken();
     secureStore.deleteAccessInfo();
     secureStore.deleteSelectedIndividual();
+    userModel = UserModel();
 
     emit(const AuthState.unauthenticated());
   }
@@ -181,12 +250,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     accessInfo = await secureStore.getAccessInfo();
 
     if (accessInfo != null) {
-      _accesstoken = accessInfo.accessToken!;
+      accesstoken = accessInfo.accessToken!;
       _refreshtoken = accessInfo.refreshToken!;
       _userRequest = accessInfo.userRequest!;
 
       emit(AuthState.authenticated(
-          accesstoken: _accesstoken,
+          accesstoken: accesstoken,
           refreshtoken: _refreshtoken,
           userRequest: _userRequest));
     } else {
@@ -195,60 +264,236 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _requestOtpEvent(_RequestOtpEvent event,
+  FutureOr<void> _requestOtpEvent(_RequestOtpEvent event,
       Emitter<AuthState> emit) async {
 
-    OtpRequest otpRequestRegister = OtpRequest(
+    OtpRequest otpRequest = OtpRequest(
         otp: Otp(
             mobileNumber: event.mobileNumber,
-            type: "register"
-        )
-    );
-
-    OtpRequest otpRequestLogin = OtpRequest(
-        otp: Otp(
-            mobileNumber: event.mobileNumber,
-            type: "login"
+            type: event.type
         )
     );
 
     try{
-      final registerResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequestRegister);
-      emit(const AuthState.otpGenerationSucceed(type: "register"));
+      final registerResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequest);
+      emit(AuthState.otpGenerationSucceed(type: event.type));
     }
     catch(e1){
-      try{
-        final loginResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequestLogin);
-        emit(const AuthState.otpGenerationSucceed(type: "login"));
-      }
-      catch(e2){
-        emit(const AuthState.requestFailed(errorMsg: 'failed'));
-      }
+      emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
     }
 
   }
 
+  FutureOr<void> resendOtpEvent(_ResendOtpEvent event,
+      Emitter<AuthState> emit) async {
+
+    OtpRequest otpRequest = OtpRequest(
+        otp: Otp(
+            mobileNumber: event.mobileNumber,
+            type: event.type
+        )
+    );
+
+    try{
+      final registerResponse = await authRepository.requestOtp("/user-otp/v1/_send?tenantId=pg&_=1712987382117", otpRequest);
+      emit(const AuthState.resendOtpGenerationSucceed(type: "register"));
+    }
+    catch(e1) {
+      emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
+    }
+  }
+
+  FutureOr<void> _onRefreshToken(_AuthRefreshTokenEvent event, Emitter<AuthState> emit) async {
+    AuthResponse response;
+    final secureStore = SecureStore();
+    final accessInfo = await secureStore.getAccessInfo();
+    response = await authRepository.validateLogin(
+        "/user/oauth/token",
+        LoginModel(
+          username: accessInfo?.userRequest?.userName,
+          refreshToken: accessInfo?.refreshToken,
+          grantType: 'refresh_token'
+        )
+    );
+
+    accesstoken = response.accessToken!;
+    _refreshtoken = response.refreshToken!;
+    _userRequest = response.userRequest!;
+
+    //store accessToken in secure storage
+    secureStore.setAccessToken(accesstoken);
+    secureStore.setRefreshToken(_refreshtoken);
+
+    //store other access Information in secure storage
+    secureStore.setAccessInfo(response);
+
+    //change to authenticated state now that we have access
+    emit(AuthState.authenticated(
+        accesstoken: accesstoken,
+        refreshtoken: _refreshtoken,
+        userRequest: _userRequest));
+  }
+
+  FutureOr<void> submitIndividualProfile(_SubmitProfileEvent event,
+      Emitter<AuthState> emit) async {
+
+    try{
+      String? identifierType;
+      if (userModel.identifierType == null || userModel.identifierType!.isEmpty) {
+        identifierType = 'AADHAR';
+      } else {
+        identifierType = userModel.identifierType;
+      }
+      String? identifierId;
+      if (userModel.identifierId == null) {
+        identifierId = '448022452235';
+      } else {
+        identifierId = userModel.identifierId;
+      }
+      Individual individual = Individual(
+        name: Name(
+            givenName: userModel.firstName!,
+            familyName: userModel.lastName!
+        ),
+        userDetails: UserDetails(
+          username: userModel.username!,
+          roles: [appConstants.getCitizenRole],
+        ),
+        userUuid: userModel.uuid!,
+        userId: userModel.id!.toString(),
+        mobileNumber: userModel.mobileNumber!,
+        address: [Address(
+            doorNo: userModel.addressModel.doorNo!,
+            latitude: userModel.addressModel.latitude!,
+            longitude: userModel.addressModel.longitude!,
+            city: userModel.addressModel.city!,
+            district: userModel.addressModel.district!,
+            street: userModel.addressModel.street!,
+            pincode: userModel.addressModel.pincode!
+        )],
+        identifiers: userModel.identifierId == null ? [] :
+        [Identifier(
+          identifierType: identifierType ?? 'AADHAR',
+          identifierId: identifierId ?? '448022345455',
+        )],
+        additionalFields: AdditionalFields(
+          fields: [Fields(
+            key: 'userType',
+            value: userModel.userType!,
+          ),
+            Fields(
+                key: 'identifierIdDetails',
+                value: userModel.identifierType != 'AADHAR' ? jsonEncode({'fileStoreId' : userModel.identifierId, 'filename': userModel.idFilename})
+                    : jsonEncode({})
+            )
+          ],
+        ),
+      );
+
+      RequestInfo requestInfo = RequestInfo(
+          authToken: userModel.authToken!
+      );
+
+      LitigantNetworkModel litigantNetworkModel = LitigantNetworkModel(
+        requestInfo: requestInfo,
+        individual: individual,
+      );
+      final registerResponse = await authRepository.registerLitigant("/individual/v1/_create", litigantNetworkModel);
+      userModel.individualId = registerResponse.individualInfo.individualId;
+      if (userModel.userType == 'ADVOCATE') {
+        AdvocateRegistrationRequest advocateRegistrationRequest = AdvocateRegistrationRequest(
+            requestInfo: AdvocateRequestInfo(
+                userInfo: AdvocateUserInfo(
+                    type: appConstants.type,
+                    tenantId: appConstants.tenantId,
+                    roles: [
+                      appConstants.getCitizenRole
+                    ],
+                    uuid: userModel.uuid
+                ),
+                authToken: userModel.authToken
+            ),
+            advocates: [
+              Advocate(
+                  tenantId: appConstants.tenantId,
+                  barRegistrationNumber: userModel.barRegistrationNumber,
+                  individualId: userModel.individualId,
+                  workflow: Workflow(
+                      action: "REGISTER",
+                      documents: [
+                        Document(fileStore: userModel.fileStore)
+                      ]
+                  ),
+                  documents: [
+                    Document(
+                        fileStore: userModel.fileStore,
+                        documentType: userModel.documentType
+                    )
+                  ],
+                  additionalDetails: {
+                    "username" : userModel.firstName! + userModel.lastName!,
+                    "filename" : userModel.documentFilename
+                  }
+              )
+            ]
+        );
+        await authRepository.registerAdvocate('/advocate/advocate/v1/_create', advocateRegistrationRequest);
+      } else if (userModel.userType == 'ADVOCATE_CLERK') {
+        AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest = AdvocateClerkRegistrationRequest(
+            requestInfo: AdvocateRequestInfo(
+                userInfo: AdvocateUserInfo(
+                    type: appConstants.type,
+                    tenantId: appConstants.tenantId,
+                    roles: [
+                      appConstants.getCitizenRole
+                    ],
+                    uuid: userModel.uuid
+                ),
+                authToken: userModel.authToken
+            ),
+            clerks: [
+              Clerk(
+                  tenantId: appConstants.tenantId,
+                  stateRegnNumber: userModel.stateRegnNumber,
+                  individualId: userModel.individualId,
+                  workflow: const Workflow(
+                      action: "REGISTER",
+                      documents: [
+                      ]
+                  ),
+                  documents: [
+                  ],
+                  additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
+              )
+            ]
+        );
+        await authRepository.registerAdvocateClerk('/advocate/clerk/v1/_create', advocateClerkRegistrationRequest);
+      }
+      emit(const AuthState.profileSuccessState());
+    }
+    catch(e1) {
+      emit(const AuthState.profileFailedState(errorMsg: 'Registering Failed'));
+    }
+  }
 }
 
 @freezed
 class AuthEvent with _$AuthEvent {
-  const factory AuthEvent.login(
-          {String? username,
-          String? password,
-          Map<DataModelType, Map<ApiOperation, String>>? actionMap}) =
-      _AuthLoginEvent;
+  const factory AuthEvent.login() = _AuthLoginEvent;
   const factory AuthEvent.logout() = _AuthLogoutEvent;
   const factory AuthEvent.attemptLoad() = _AuthLoadEvent;
-  const factory AuthEvent.requestOtp(String mobileNumber) = _RequestOtpEvent;
+  const factory AuthEvent.requestOtp(String mobileNumber, String type) = _RequestOtpEvent;
   const factory AuthEvent.resendOtp(
       final String mobileNumber, final String type) = _ResendOtpEvent;
+
   const factory AuthEvent.submitRegistrationOtp(
       final String username, final String otp, UserModel userModel) = _SubmitRegistrationOtpEvent;
-  const factory AuthEvent.sendLoginOtpEvent(
-      final String username, final String password, UserModel userModel) = _SendLoginOtpEvent;
+  const factory AuthEvent.submitLoginOtpEvent(
+      final String username, final String password, UserModel userModel) = _SubmitLoginOtpEvent;
   const factory AuthEvent.submitLogoutUser(
       final String authToken) = _SubmitLogoutUserEvent;
-
+  const factory AuthEvent.refreshToken() = _AuthRefreshTokenEvent;
+  const factory AuthEvent.submitProfile() = _SubmitProfileEvent;
 }
 
 @freezed
@@ -280,4 +525,20 @@ class AuthState with _$AuthState {
     required String errorMsg
   }) = _LogoutFailedState;
 
+  const factory AuthState.profileSuccessState() = _ProfileSuccessState;
+  const factory AuthState.profileFailedState({
+    required String errorMsg
+  }) = _ProfileFailedState;
+
+  const factory AuthState.individualSearchSuccessState({
+    required IndividualSearchResponse individualSearchResponse
+  }) = _IndividualSearchSuccessState;
+
+  const factory AuthState.advocateSearchSuccessState({
+    required AdvocateSearchResponse advocateSearchResponse
+  }) = _AdvocateSearchSuccessState;
+
+  const factory AuthState.advocateClerkSearchSuccessState({
+    required AdvocateClerkSearchResponse advocateClerkSearchResponse
+  }) = _AdvocateClerkSearchSuccessState;
 }

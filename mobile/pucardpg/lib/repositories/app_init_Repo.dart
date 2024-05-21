@@ -5,7 +5,6 @@ import 'package:pucardpg/model/appconfig/mdmsRequest.dart';
 import 'package:pucardpg/model/appconfig/mdmsResponse.dart';
 import 'package:pucardpg/model/serviceRegistry/serviceRegistryModel.dart';
 import '../data/remote_client.dart';
-import '../model/request/requestInfo.dart';
 import '../utils/envConfig.dart';
 
 //create an instance of the environmentConfiguration class
@@ -38,7 +37,7 @@ class AppInitRepo {
           data: body, options: Options(headers: headers));
 
       final responseBody = MdmsResponseModel.fromJson(
-        json.decode(response.toString())['MdmsRes'],
+        json.decode(response.toString()),
       );
 
       //storage locally to avoid fetching in future

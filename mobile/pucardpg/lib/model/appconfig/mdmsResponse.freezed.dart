@@ -20,8 +20,8 @@ MdmsResponseModel _$MdmsResponseModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MdmsResponseModel {
-  @JsonKey(name: 'HCM-FIELD-APP-CONFIG')
-  AppConfig? get appConfig => throw _privateConstructorUsedError;
+  @JsonKey(name: 'MdmsRes')
+  MdmsRes? get mdmsRes => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,9 +35,9 @@ abstract class $MdmsResponseModelCopyWith<$Res> {
           MdmsResponseModel value, $Res Function(MdmsResponseModel) then) =
       _$MdmsResponseModelCopyWithImpl<$Res, MdmsResponseModel>;
   @useResult
-  $Res call({@JsonKey(name: 'HCM-FIELD-APP-CONFIG') AppConfig? appConfig});
+  $Res call({@JsonKey(name: 'MdmsRes') MdmsRes? mdmsRes});
 
-  $AppConfigCopyWith<$Res>? get appConfig;
+  $MdmsResCopyWith<$Res>? get mdmsRes;
 }
 
 /// @nodoc
@@ -53,25 +53,25 @@ class _$MdmsResponseModelCopyWithImpl<$Res, $Val extends MdmsResponseModel>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? appConfig = freezed,
+    Object? mdmsRes = freezed,
   }) {
     return _then(_value.copyWith(
-      appConfig: freezed == appConfig
-          ? _value.appConfig
-          : appConfig // ignore: cast_nullable_to_non_nullable
-              as AppConfig?,
+      mdmsRes: freezed == mdmsRes
+          ? _value.mdmsRes
+          : mdmsRes // ignore: cast_nullable_to_non_nullable
+              as MdmsRes?,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $AppConfigCopyWith<$Res>? get appConfig {
-    if (_value.appConfig == null) {
+  $MdmsResCopyWith<$Res>? get mdmsRes {
+    if (_value.mdmsRes == null) {
       return null;
     }
 
-    return $AppConfigCopyWith<$Res>(_value.appConfig!, (value) {
-      return _then(_value.copyWith(appConfig: value) as $Val);
+    return $MdmsResCopyWith<$Res>(_value.mdmsRes!, (value) {
+      return _then(_value.copyWith(mdmsRes: value) as $Val);
     });
   }
 }
@@ -84,10 +84,10 @@ abstract class _$$MdmsResponseModelImplCopyWith<$Res>
       __$$MdmsResponseModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'HCM-FIELD-APP-CONFIG') AppConfig? appConfig});
+  $Res call({@JsonKey(name: 'MdmsRes') MdmsRes? mdmsRes});
 
   @override
-  $AppConfigCopyWith<$Res>? get appConfig;
+  $MdmsResCopyWith<$Res>? get mdmsRes;
 }
 
 /// @nodoc
@@ -101,13 +101,13 @@ class __$$MdmsResponseModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? appConfig = freezed,
+    Object? mdmsRes = freezed,
   }) {
     return _then(_$MdmsResponseModelImpl(
-      appConfig: freezed == appConfig
-          ? _value.appConfig
-          : appConfig // ignore: cast_nullable_to_non_nullable
-              as AppConfig?,
+      mdmsRes: freezed == mdmsRes
+          ? _value.mdmsRes
+          : mdmsRes // ignore: cast_nullable_to_non_nullable
+              as MdmsRes?,
     ));
   }
 }
@@ -116,18 +116,18 @@ class __$$MdmsResponseModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MdmsResponseModelImpl implements _MdmsResponseModel {
   const _$MdmsResponseModelImpl(
-      {@JsonKey(name: 'HCM-FIELD-APP-CONFIG') required this.appConfig});
+      {@JsonKey(name: 'MdmsRes') required this.mdmsRes});
 
   factory _$MdmsResponseModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$MdmsResponseModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'HCM-FIELD-APP-CONFIG')
-  final AppConfig? appConfig;
+  @JsonKey(name: 'MdmsRes')
+  final MdmsRes? mdmsRes;
 
   @override
   String toString() {
-    return 'MdmsResponseModel(appConfig: $appConfig)';
+    return 'MdmsResponseModel(mdmsRes: $mdmsRes)';
   }
 
   @override
@@ -135,13 +135,12 @@ class _$MdmsResponseModelImpl implements _MdmsResponseModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$MdmsResponseModelImpl &&
-            (identical(other.appConfig, appConfig) ||
-                other.appConfig == appConfig));
+            (identical(other.mdmsRes, mdmsRes) || other.mdmsRes == mdmsRes));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, appConfig);
+  int get hashCode => Object.hash(runtimeType, mdmsRes);
 
   @JsonKey(ignore: true)
   @override
@@ -160,48 +159,49 @@ class _$MdmsResponseModelImpl implements _MdmsResponseModel {
 
 abstract class _MdmsResponseModel implements MdmsResponseModel {
   const factory _MdmsResponseModel(
-      {@JsonKey(name: 'HCM-FIELD-APP-CONFIG')
-      required final AppConfig? appConfig}) = _$MdmsResponseModelImpl;
+          {@JsonKey(name: 'MdmsRes') required final MdmsRes? mdmsRes}) =
+      _$MdmsResponseModelImpl;
 
   factory _MdmsResponseModel.fromJson(Map<String, dynamic> json) =
       _$MdmsResponseModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'HCM-FIELD-APP-CONFIG')
-  AppConfig? get appConfig;
+  @JsonKey(name: 'MdmsRes')
+  MdmsRes? get mdmsRes;
   @override
   @JsonKey(ignore: true)
   _$$MdmsResponseModelImplCopyWith<_$MdmsResponseModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
-AppConfig _$AppConfigFromJson(Map<String, dynamic> json) {
-  return _AppConfig.fromJson(json);
+MdmsRes _$MdmsResFromJson(Map<String, dynamic> json) {
+  return _MdmsRes.fromJson(json);
 }
 
 /// @nodoc
-mixin _$AppConfig {
-  @JsonKey(name: 'appConfig')
-  List<AppConfigListItems>? get appConfig => throw _privateConstructorUsedError;
+mixin _$MdmsRes {
+  @JsonKey(name: 'common-masters')
+  CommonMasters? get commonMasters => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $AppConfigCopyWith<AppConfig> get copyWith =>
-      throw _privateConstructorUsedError;
+  $MdmsResCopyWith<MdmsRes> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AppConfigCopyWith<$Res> {
-  factory $AppConfigCopyWith(AppConfig value, $Res Function(AppConfig) then) =
-      _$AppConfigCopyWithImpl<$Res, AppConfig>;
+abstract class $MdmsResCopyWith<$Res> {
+  factory $MdmsResCopyWith(MdmsRes value, $Res Function(MdmsRes) then) =
+      _$MdmsResCopyWithImpl<$Res, MdmsRes>;
   @useResult
-  $Res call({@JsonKey(name: 'appConfig') List<AppConfigListItems>? appConfig});
+  $Res call({@JsonKey(name: 'common-masters') CommonMasters? commonMasters});
+
+  $CommonMastersCopyWith<$Res>? get commonMasters;
 }
 
 /// @nodoc
-class _$AppConfigCopyWithImpl<$Res, $Val extends AppConfig>
-    implements $AppConfigCopyWith<$Res> {
-  _$AppConfigCopyWithImpl(this._value, this._then);
+class _$MdmsResCopyWithImpl<$Res, $Val extends MdmsRes>
+    implements $MdmsResCopyWith<$Res> {
+  _$MdmsResCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -211,163 +211,153 @@ class _$AppConfigCopyWithImpl<$Res, $Val extends AppConfig>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? appConfig = freezed,
+    Object? commonMasters = freezed,
   }) {
     return _then(_value.copyWith(
-      appConfig: freezed == appConfig
-          ? _value.appConfig
-          : appConfig // ignore: cast_nullable_to_non_nullable
-              as List<AppConfigListItems>?,
+      commonMasters: freezed == commonMasters
+          ? _value.commonMasters
+          : commonMasters // ignore: cast_nullable_to_non_nullable
+              as CommonMasters?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $CommonMastersCopyWith<$Res>? get commonMasters {
+    if (_value.commonMasters == null) {
+      return null;
+    }
+
+    return $CommonMastersCopyWith<$Res>(_value.commonMasters!, (value) {
+      return _then(_value.copyWith(commonMasters: value) as $Val);
+    });
   }
 }
 
 /// @nodoc
-abstract class _$$AppConfigImplCopyWith<$Res>
-    implements $AppConfigCopyWith<$Res> {
-  factory _$$AppConfigImplCopyWith(
-          _$AppConfigImpl value, $Res Function(_$AppConfigImpl) then) =
-      __$$AppConfigImplCopyWithImpl<$Res>;
+abstract class _$$MdmsResImplCopyWith<$Res> implements $MdmsResCopyWith<$Res> {
+  factory _$$MdmsResImplCopyWith(
+          _$MdmsResImpl value, $Res Function(_$MdmsResImpl) then) =
+      __$$MdmsResImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'appConfig') List<AppConfigListItems>? appConfig});
+  $Res call({@JsonKey(name: 'common-masters') CommonMasters? commonMasters});
+
+  @override
+  $CommonMastersCopyWith<$Res>? get commonMasters;
 }
 
 /// @nodoc
-class __$$AppConfigImplCopyWithImpl<$Res>
-    extends _$AppConfigCopyWithImpl<$Res, _$AppConfigImpl>
-    implements _$$AppConfigImplCopyWith<$Res> {
-  __$$AppConfigImplCopyWithImpl(
-      _$AppConfigImpl _value, $Res Function(_$AppConfigImpl) _then)
+class __$$MdmsResImplCopyWithImpl<$Res>
+    extends _$MdmsResCopyWithImpl<$Res, _$MdmsResImpl>
+    implements _$$MdmsResImplCopyWith<$Res> {
+  __$$MdmsResImplCopyWithImpl(
+      _$MdmsResImpl _value, $Res Function(_$MdmsResImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? appConfig = freezed,
+    Object? commonMasters = freezed,
   }) {
-    return _then(_$AppConfigImpl(
-      appConfig: freezed == appConfig
-          ? _value._appConfig
-          : appConfig // ignore: cast_nullable_to_non_nullable
-              as List<AppConfigListItems>?,
+    return _then(_$MdmsResImpl(
+      commonMasters: freezed == commonMasters
+          ? _value.commonMasters
+          : commonMasters // ignore: cast_nullable_to_non_nullable
+              as CommonMasters?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AppConfigImpl implements _AppConfig {
-  const _$AppConfigImpl(
-      {@JsonKey(name: 'appConfig')
-      required final List<AppConfigListItems>? appConfig})
-      : _appConfig = appConfig;
+class _$MdmsResImpl implements _MdmsRes {
+  const _$MdmsResImpl(
+      {@JsonKey(name: 'common-masters') required this.commonMasters});
 
-  factory _$AppConfigImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AppConfigImplFromJson(json);
+  factory _$MdmsResImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MdmsResImplFromJson(json);
 
-  final List<AppConfigListItems>? _appConfig;
   @override
-  @JsonKey(name: 'appConfig')
-  List<AppConfigListItems>? get appConfig {
-    final value = _appConfig;
-    if (value == null) return null;
-    if (_appConfig is EqualUnmodifiableListView) return _appConfig;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
+  @JsonKey(name: 'common-masters')
+  final CommonMasters? commonMasters;
 
   @override
   String toString() {
-    return 'AppConfig(appConfig: $appConfig)';
+    return 'MdmsRes(commonMasters: $commonMasters)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AppConfigImpl &&
-            const DeepCollectionEquality()
-                .equals(other._appConfig, _appConfig));
+            other is _$MdmsResImpl &&
+            (identical(other.commonMasters, commonMasters) ||
+                other.commonMasters == commonMasters));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_appConfig));
+  int get hashCode => Object.hash(runtimeType, commonMasters);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AppConfigImplCopyWith<_$AppConfigImpl> get copyWith =>
-      __$$AppConfigImplCopyWithImpl<_$AppConfigImpl>(this, _$identity);
+  _$$MdmsResImplCopyWith<_$MdmsResImpl> get copyWith =>
+      __$$MdmsResImplCopyWithImpl<_$MdmsResImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AppConfigImplToJson(
+    return _$$MdmsResImplToJson(
       this,
     );
   }
 }
 
-abstract class _AppConfig implements AppConfig {
-  const factory _AppConfig(
-      {@JsonKey(name: 'appConfig')
-      required final List<AppConfigListItems>? appConfig}) = _$AppConfigImpl;
+abstract class _MdmsRes implements MdmsRes {
+  const factory _MdmsRes(
+      {@JsonKey(name: 'common-masters')
+      required final CommonMasters? commonMasters}) = _$MdmsResImpl;
 
-  factory _AppConfig.fromJson(Map<String, dynamic> json) =
-      _$AppConfigImpl.fromJson;
+  factory _MdmsRes.fromJson(Map<String, dynamic> json) = _$MdmsResImpl.fromJson;
 
   @override
-  @JsonKey(name: 'appConfig')
-  List<AppConfigListItems>? get appConfig;
+  @JsonKey(name: 'common-masters')
+  CommonMasters? get commonMasters;
   @override
   @JsonKey(ignore: true)
-  _$$AppConfigImplCopyWith<_$AppConfigImpl> get copyWith =>
+  _$$MdmsResImplCopyWith<_$MdmsResImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
-AppConfigListItems _$AppConfigListItemsFromJson(Map<String, dynamic> json) {
-  return _AppConfigListItems.fromJson(json);
+CommonMasters _$CommonMastersFromJson(Map<String, dynamic> json) {
+  return _CommonMasters.fromJson(json);
 }
 
 /// @nodoc
-mixin _$AppConfigListItems {
-  @JsonKey(name: 'TENANT_ID')
-  String? get tenantId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'LANGUAGES')
-  List<Language> get languages => throw _privateConstructorUsedError;
-  @JsonKey(name: 'BACKEND_INTERFACE')
-  InterfacesList? get backendInterface => throw _privateConstructorUsedError;
-  @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-  List<GenderOptions> get genderOptions => throw _privateConstructorUsedError;
+mixin _$CommonMasters {
+  @JsonKey(name: 'StateInfo')
+  List<StateInfo>? get stateInfo => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $AppConfigListItemsCopyWith<AppConfigListItems> get copyWith =>
+  $CommonMastersCopyWith<CommonMasters> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AppConfigListItemsCopyWith<$Res> {
-  factory $AppConfigListItemsCopyWith(
-          AppConfigListItems value, $Res Function(AppConfigListItems) then) =
-      _$AppConfigListItemsCopyWithImpl<$Res, AppConfigListItems>;
+abstract class $CommonMastersCopyWith<$Res> {
+  factory $CommonMastersCopyWith(
+          CommonMasters value, $Res Function(CommonMasters) then) =
+      _$CommonMastersCopyWithImpl<$Res, CommonMasters>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'TENANT_ID') String? tenantId,
-      @JsonKey(name: 'LANGUAGES') List<Language> languages,
-      @JsonKey(name: 'BACKEND_INTERFACE') InterfacesList? backendInterface,
-      @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-      List<GenderOptions> genderOptions});
-
-  $InterfacesListCopyWith<$Res>? get backendInterface;
+  $Res call({@JsonKey(name: 'StateInfo') List<StateInfo>? stateInfo});
 }
 
 /// @nodoc
-class _$AppConfigListItemsCopyWithImpl<$Res, $Val extends AppConfigListItems>
-    implements $AppConfigListItemsCopyWith<$Res> {
-  _$AppConfigListItemsCopyWithImpl(this._value, this._then);
+class _$CommonMastersCopyWithImpl<$Res, $Val extends CommonMasters>
+    implements $CommonMastersCopyWith<$Res> {
+  _$CommonMastersCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -377,395 +367,385 @@ class _$AppConfigListItemsCopyWithImpl<$Res, $Val extends AppConfigListItems>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? tenantId = freezed,
-    Object? languages = null,
-    Object? backendInterface = freezed,
-    Object? genderOptions = null,
+    Object? stateInfo = freezed,
   }) {
     return _then(_value.copyWith(
-      tenantId: freezed == tenantId
-          ? _value.tenantId
-          : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      languages: null == languages
-          ? _value.languages
-          : languages // ignore: cast_nullable_to_non_nullable
-              as List<Language>,
-      backendInterface: freezed == backendInterface
-          ? _value.backendInterface
-          : backendInterface // ignore: cast_nullable_to_non_nullable
-              as InterfacesList?,
-      genderOptions: null == genderOptions
-          ? _value.genderOptions
-          : genderOptions // ignore: cast_nullable_to_non_nullable
-              as List<GenderOptions>,
+      stateInfo: freezed == stateInfo
+          ? _value.stateInfo
+          : stateInfo // ignore: cast_nullable_to_non_nullable
+              as List<StateInfo>?,
     ) as $Val);
   }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $InterfacesListCopyWith<$Res>? get backendInterface {
-    if (_value.backendInterface == null) {
-      return null;
-    }
-
-    return $InterfacesListCopyWith<$Res>(_value.backendInterface!, (value) {
-      return _then(_value.copyWith(backendInterface: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
-abstract class _$$AppConfigListItemsImplCopyWith<$Res>
-    implements $AppConfigListItemsCopyWith<$Res> {
-  factory _$$AppConfigListItemsImplCopyWith(_$AppConfigListItemsImpl value,
-          $Res Function(_$AppConfigListItemsImpl) then) =
-      __$$AppConfigListItemsImplCopyWithImpl<$Res>;
+abstract class _$$CommonMastersImplCopyWith<$Res>
+    implements $CommonMastersCopyWith<$Res> {
+  factory _$$CommonMastersImplCopyWith(
+          _$CommonMastersImpl value, $Res Function(_$CommonMastersImpl) then) =
+      __$$CommonMastersImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'TENANT_ID') String? tenantId,
-      @JsonKey(name: 'LANGUAGES') List<Language> languages,
-      @JsonKey(name: 'BACKEND_INTERFACE') InterfacesList? backendInterface,
-      @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-      List<GenderOptions> genderOptions});
-
-  @override
-  $InterfacesListCopyWith<$Res>? get backendInterface;
+  $Res call({@JsonKey(name: 'StateInfo') List<StateInfo>? stateInfo});
 }
 
 /// @nodoc
-class __$$AppConfigListItemsImplCopyWithImpl<$Res>
-    extends _$AppConfigListItemsCopyWithImpl<$Res, _$AppConfigListItemsImpl>
-    implements _$$AppConfigListItemsImplCopyWith<$Res> {
-  __$$AppConfigListItemsImplCopyWithImpl(_$AppConfigListItemsImpl _value,
-      $Res Function(_$AppConfigListItemsImpl) _then)
+class __$$CommonMastersImplCopyWithImpl<$Res>
+    extends _$CommonMastersCopyWithImpl<$Res, _$CommonMastersImpl>
+    implements _$$CommonMastersImplCopyWith<$Res> {
+  __$$CommonMastersImplCopyWithImpl(
+      _$CommonMastersImpl _value, $Res Function(_$CommonMastersImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? tenantId = freezed,
-    Object? languages = null,
-    Object? backendInterface = freezed,
-    Object? genderOptions = null,
+    Object? stateInfo = freezed,
   }) {
-    return _then(_$AppConfigListItemsImpl(
-      tenantId: freezed == tenantId
-          ? _value.tenantId
-          : tenantId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      languages: null == languages
-          ? _value._languages
-          : languages // ignore: cast_nullable_to_non_nullable
-              as List<Language>,
-      backendInterface: freezed == backendInterface
-          ? _value.backendInterface
-          : backendInterface // ignore: cast_nullable_to_non_nullable
-              as InterfacesList?,
-      genderOptions: null == genderOptions
-          ? _value._genderOptions
-          : genderOptions // ignore: cast_nullable_to_non_nullable
-              as List<GenderOptions>,
+    return _then(_$CommonMastersImpl(
+      stateInfo: freezed == stateInfo
+          ? _value._stateInfo
+          : stateInfo // ignore: cast_nullable_to_non_nullable
+              as List<StateInfo>?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
-class _$AppConfigListItemsImpl implements _AppConfigListItems {
-  const _$AppConfigListItemsImpl(
-      {@JsonKey(name: 'TENANT_ID') required this.tenantId,
-      @JsonKey(name: 'LANGUAGES') required final List<Language> languages,
-      @JsonKey(name: 'BACKEND_INTERFACE') required this.backendInterface,
-      @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-      required final List<GenderOptions> genderOptions})
-      : _languages = languages,
-        _genderOptions = genderOptions;
+class _$CommonMastersImpl implements _CommonMasters {
+  const _$CommonMastersImpl(
+      {@JsonKey(name: 'StateInfo') required final List<StateInfo>? stateInfo})
+      : _stateInfo = stateInfo;
 
-  factory _$AppConfigListItemsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AppConfigListItemsImplFromJson(json);
+  factory _$CommonMastersImpl.fromJson(Map<String, dynamic> json) =>
+      _$$CommonMastersImplFromJson(json);
+
+  final List<StateInfo>? _stateInfo;
+  @override
+  @JsonKey(name: 'StateInfo')
+  List<StateInfo>? get stateInfo {
+    final value = _stateInfo;
+    if (value == null) return null;
+    if (_stateInfo is EqualUnmodifiableListView) return _stateInfo;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
-  @JsonKey(name: 'TENANT_ID')
-  final String? tenantId;
+  String toString() {
+    return 'CommonMasters(stateInfo: $stateInfo)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CommonMastersImpl &&
+            const DeepCollectionEquality()
+                .equals(other._stateInfo, _stateInfo));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_stateInfo));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CommonMastersImplCopyWith<_$CommonMastersImpl> get copyWith =>
+      __$$CommonMastersImplCopyWithImpl<_$CommonMastersImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$CommonMastersImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _CommonMasters implements CommonMasters {
+  const factory _CommonMasters(
+      {@JsonKey(name: 'StateInfo')
+      required final List<StateInfo>? stateInfo}) = _$CommonMastersImpl;
+
+  factory _CommonMasters.fromJson(Map<String, dynamic> json) =
+      _$CommonMastersImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'StateInfo')
+  List<StateInfo>? get stateInfo;
+  @override
+  @JsonKey(ignore: true)
+  _$$CommonMastersImplCopyWith<_$CommonMastersImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+StateInfo _$StateInfoFromJson(Map<String, dynamic> json) {
+  return _StateInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$StateInfo {
+  @JsonKey(name: 'name')
+  String get name => throw _privateConstructorUsedError;
+  @JsonKey(name: 'code')
+  String get code => throw _privateConstructorUsedError;
+  @JsonKey(name: 'languages')
+  List<Language> get languages => throw _privateConstructorUsedError;
+  @JsonKey(name: 'localizationModules')
+  List<Modules> get localizationModules => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $StateInfoCopyWith<StateInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $StateInfoCopyWith<$Res> {
+  factory $StateInfoCopyWith(StateInfo value, $Res Function(StateInfo) then) =
+      _$StateInfoCopyWithImpl<$Res, StateInfo>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'name') String name,
+      @JsonKey(name: 'code') String code,
+      @JsonKey(name: 'languages') List<Language> languages,
+      @JsonKey(name: 'localizationModules') List<Modules> localizationModules});
+}
+
+/// @nodoc
+class _$StateInfoCopyWithImpl<$Res, $Val extends StateInfo>
+    implements $StateInfoCopyWith<$Res> {
+  _$StateInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? code = null,
+    Object? languages = null,
+    Object? localizationModules = null,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      code: null == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String,
+      languages: null == languages
+          ? _value.languages
+          : languages // ignore: cast_nullable_to_non_nullable
+              as List<Language>,
+      localizationModules: null == localizationModules
+          ? _value.localizationModules
+          : localizationModules // ignore: cast_nullable_to_non_nullable
+              as List<Modules>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$StateInfoImplCopyWith<$Res>
+    implements $StateInfoCopyWith<$Res> {
+  factory _$$StateInfoImplCopyWith(
+          _$StateInfoImpl value, $Res Function(_$StateInfoImpl) then) =
+      __$$StateInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'name') String name,
+      @JsonKey(name: 'code') String code,
+      @JsonKey(name: 'languages') List<Language> languages,
+      @JsonKey(name: 'localizationModules') List<Modules> localizationModules});
+}
+
+/// @nodoc
+class __$$StateInfoImplCopyWithImpl<$Res>
+    extends _$StateInfoCopyWithImpl<$Res, _$StateInfoImpl>
+    implements _$$StateInfoImplCopyWith<$Res> {
+  __$$StateInfoImplCopyWithImpl(
+      _$StateInfoImpl _value, $Res Function(_$StateInfoImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? code = null,
+    Object? languages = null,
+    Object? localizationModules = null,
+  }) {
+    return _then(_$StateInfoImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      code: null == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String,
+      languages: null == languages
+          ? _value._languages
+          : languages // ignore: cast_nullable_to_non_nullable
+              as List<Language>,
+      localizationModules: null == localizationModules
+          ? _value._localizationModules
+          : localizationModules // ignore: cast_nullable_to_non_nullable
+              as List<Modules>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$StateInfoImpl implements _StateInfo {
+  _$StateInfoImpl(
+      {@JsonKey(name: 'name') required this.name,
+      @JsonKey(name: 'code') required this.code,
+      @JsonKey(name: 'languages') required final List<Language> languages,
+      @JsonKey(name: 'localizationModules')
+      required final List<Modules> localizationModules})
+      : _languages = languages,
+        _localizationModules = localizationModules;
+
+  factory _$StateInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$StateInfoImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'name')
+  final String name;
+  @override
+  @JsonKey(name: 'code')
+  final String code;
   final List<Language> _languages;
   @override
-  @JsonKey(name: 'LANGUAGES')
+  @JsonKey(name: 'languages')
   List<Language> get languages {
     if (_languages is EqualUnmodifiableListView) return _languages;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_languages);
   }
 
+  final List<Modules> _localizationModules;
   @override
-  @JsonKey(name: 'BACKEND_INTERFACE')
-  final InterfacesList? backendInterface;
-  final List<GenderOptions> _genderOptions;
-  @override
-  @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-  List<GenderOptions> get genderOptions {
-    if (_genderOptions is EqualUnmodifiableListView) return _genderOptions;
+  @JsonKey(name: 'localizationModules')
+  List<Modules> get localizationModules {
+    if (_localizationModules is EqualUnmodifiableListView)
+      return _localizationModules;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_genderOptions);
+    return EqualUnmodifiableListView(_localizationModules);
   }
 
   @override
   String toString() {
-    return 'AppConfigListItems(tenantId: $tenantId, languages: $languages, backendInterface: $backendInterface, genderOptions: $genderOptions)';
+    return 'StateInfo(name: $name, code: $code, languages: $languages, localizationModules: $localizationModules)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AppConfigListItemsImpl &&
-            (identical(other.tenantId, tenantId) ||
-                other.tenantId == tenantId) &&
+            other is _$StateInfoImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.code, code) || other.code == code) &&
             const DeepCollectionEquality()
                 .equals(other._languages, _languages) &&
-            (identical(other.backendInterface, backendInterface) ||
-                other.backendInterface == backendInterface) &&
             const DeepCollectionEquality()
-                .equals(other._genderOptions, _genderOptions));
+                .equals(other._localizationModules, _localizationModules));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      tenantId,
+      name,
+      code,
       const DeepCollectionEquality().hash(_languages),
-      backendInterface,
-      const DeepCollectionEquality().hash(_genderOptions));
+      const DeepCollectionEquality().hash(_localizationModules));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AppConfigListItemsImplCopyWith<_$AppConfigListItemsImpl> get copyWith =>
-      __$$AppConfigListItemsImplCopyWithImpl<_$AppConfigListItemsImpl>(
-          this, _$identity);
+  _$$StateInfoImplCopyWith<_$StateInfoImpl> get copyWith =>
+      __$$StateInfoImplCopyWithImpl<_$StateInfoImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AppConfigListItemsImplToJson(
+    return _$$StateInfoImplToJson(
       this,
     );
   }
 }
 
-abstract class _AppConfigListItems implements AppConfigListItems {
-  const factory _AppConfigListItems(
-          {@JsonKey(name: 'TENANT_ID') required final String? tenantId,
-          @JsonKey(name: 'LANGUAGES') required final List<Language> languages,
-          @JsonKey(name: 'BACKEND_INTERFACE')
-          required final InterfacesList? backendInterface,
-          @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-          required final List<GenderOptions> genderOptions}) =
-      _$AppConfigListItemsImpl;
+abstract class _StateInfo implements StateInfo {
+  factory _StateInfo(
+      {@JsonKey(name: 'name') required final String name,
+      @JsonKey(name: 'code') required final String code,
+      @JsonKey(name: 'languages') required final List<Language> languages,
+      @JsonKey(name: 'localizationModules')
+      required final List<Modules> localizationModules}) = _$StateInfoImpl;
 
-  factory _AppConfigListItems.fromJson(Map<String, dynamic> json) =
-      _$AppConfigListItemsImpl.fromJson;
+  factory _StateInfo.fromJson(Map<String, dynamic> json) =
+      _$StateInfoImpl.fromJson;
 
   @override
-  @JsonKey(name: 'TENANT_ID')
-  String? get tenantId;
-  @override
-  @JsonKey(name: 'LANGUAGES')
-  List<Language> get languages;
-  @override
-  @JsonKey(name: 'BACKEND_INTERFACE')
-  InterfacesList? get backendInterface;
-  @override
-  @JsonKey(name: 'GENDER_OPTIONS_POPULATOR')
-  List<GenderOptions> get genderOptions;
-  @override
-  @JsonKey(ignore: true)
-  _$$AppConfigListItemsImplCopyWith<_$AppConfigListItemsImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-GenderOptions _$GenderOptionsFromJson(Map<String, dynamic> json) {
-  return _GenderOptions.fromJson(json);
-}
-
-/// @nodoc
-mixin _$GenderOptions {
-  String get name => throw _privateConstructorUsedError;
-  String get code => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $GenderOptionsCopyWith<GenderOptions> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $GenderOptionsCopyWith<$Res> {
-  factory $GenderOptionsCopyWith(
-          GenderOptions value, $Res Function(GenderOptions) then) =
-      _$GenderOptionsCopyWithImpl<$Res, GenderOptions>;
-  @useResult
-  $Res call({String name, String code});
-}
-
-/// @nodoc
-class _$GenderOptionsCopyWithImpl<$Res, $Val extends GenderOptions>
-    implements $GenderOptionsCopyWith<$Res> {
-  _$GenderOptionsCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? code = null,
-  }) {
-    return _then(_value.copyWith(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      code: null == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$GenderOptionsImplCopyWith<$Res>
-    implements $GenderOptionsCopyWith<$Res> {
-  factory _$$GenderOptionsImplCopyWith(
-          _$GenderOptionsImpl value, $Res Function(_$GenderOptionsImpl) then) =
-      __$$GenderOptionsImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String name, String code});
-}
-
-/// @nodoc
-class __$$GenderOptionsImplCopyWithImpl<$Res>
-    extends _$GenderOptionsCopyWithImpl<$Res, _$GenderOptionsImpl>
-    implements _$$GenderOptionsImplCopyWith<$Res> {
-  __$$GenderOptionsImplCopyWithImpl(
-      _$GenderOptionsImpl _value, $Res Function(_$GenderOptionsImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? name = null,
-    Object? code = null,
-  }) {
-    return _then(_$GenderOptionsImpl(
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      code: null == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$GenderOptionsImpl implements _GenderOptions {
-  _$GenderOptionsImpl({required this.name, required this.code});
-
-  factory _$GenderOptionsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$GenderOptionsImplFromJson(json);
-
-  @override
-  final String name;
-  @override
-  final String code;
-
-  @override
-  String toString() {
-    return 'GenderOptions(name: $name, code: $code)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$GenderOptionsImpl &&
-            (identical(other.name, name) || other.name == name) &&
-            (identical(other.code, code) || other.code == code));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, name, code);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$GenderOptionsImplCopyWith<_$GenderOptionsImpl> get copyWith =>
-      __$$GenderOptionsImplCopyWithImpl<_$GenderOptionsImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$GenderOptionsImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _GenderOptions implements GenderOptions {
-  factory _GenderOptions(
-      {required final String name,
-      required final String code}) = _$GenderOptionsImpl;
-
-  factory _GenderOptions.fromJson(Map<String, dynamic> json) =
-      _$GenderOptionsImpl.fromJson;
-
-  @override
+  @JsonKey(name: 'name')
   String get name;
   @override
+  @JsonKey(name: 'code')
   String get code;
   @override
+  @JsonKey(name: 'languages')
+  List<Language> get languages;
+  @override
+  @JsonKey(name: 'localizationModules')
+  List<Modules> get localizationModules;
+  @override
   @JsonKey(ignore: true)
-  _$$GenderOptionsImplCopyWith<_$GenderOptionsImpl> get copyWith =>
+  _$$StateInfoImplCopyWith<_$StateInfoImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
-InterfacesList _$InterfacesListFromJson(Map<String, dynamic> json) {
-  return _InterfacesList.fromJson(json);
+Modules _$ModulesFromJson(Map<String, dynamic> json) {
+  return _Modules.fromJson(json);
 }
 
 /// @nodoc
-mixin _$InterfacesList {
-  List<Interfaces>? get interfaces => throw _privateConstructorUsedError;
+mixin _$Modules {
+  @JsonKey(name: 'label')
+  String? get label => throw _privateConstructorUsedError;
+  @JsonKey(name: 'value')
+  String? get value => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $InterfacesListCopyWith<InterfacesList> get copyWith =>
-      throw _privateConstructorUsedError;
+  $ModulesCopyWith<Modules> get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $InterfacesListCopyWith<$Res> {
-  factory $InterfacesListCopyWith(
-          InterfacesList value, $Res Function(InterfacesList) then) =
-      _$InterfacesListCopyWithImpl<$Res, InterfacesList>;
+abstract class $ModulesCopyWith<$Res> {
+  factory $ModulesCopyWith(Modules value, $Res Function(Modules) then) =
+      _$ModulesCopyWithImpl<$Res, Modules>;
   @useResult
-  $Res call({List<Interfaces>? interfaces});
+  $Res call(
+      {@JsonKey(name: 'label') String? label,
+      @JsonKey(name: 'value') String? value});
 }
 
 /// @nodoc
-class _$InterfacesListCopyWithImpl<$Res, $Val extends InterfacesList>
-    implements $InterfacesListCopyWith<$Res> {
-  _$InterfacesListCopyWithImpl(this._value, this._then);
+class _$ModulesCopyWithImpl<$Res, $Val extends Modules>
+    implements $ModulesCopyWith<$Res> {
+  _$ModulesCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -775,204 +755,56 @@ class _$InterfacesListCopyWithImpl<$Res, $Val extends InterfacesList>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? interfaces = freezed,
+    Object? label = freezed,
+    Object? value = freezed,
   }) {
     return _then(_value.copyWith(
-      interfaces: freezed == interfaces
-          ? _value.interfaces
-          : interfaces // ignore: cast_nullable_to_non_nullable
-              as List<Interfaces>?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$InterfacesListImplCopyWith<$Res>
-    implements $InterfacesListCopyWith<$Res> {
-  factory _$$InterfacesListImplCopyWith(_$InterfacesListImpl value,
-          $Res Function(_$InterfacesListImpl) then) =
-      __$$InterfacesListImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({List<Interfaces>? interfaces});
-}
-
-/// @nodoc
-class __$$InterfacesListImplCopyWithImpl<$Res>
-    extends _$InterfacesListCopyWithImpl<$Res, _$InterfacesListImpl>
-    implements _$$InterfacesListImplCopyWith<$Res> {
-  __$$InterfacesListImplCopyWithImpl(
-      _$InterfacesListImpl _value, $Res Function(_$InterfacesListImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? interfaces = freezed,
-  }) {
-    return _then(_$InterfacesListImpl(
-      freezed == interfaces
-          ? _value._interfaces
-          : interfaces // ignore: cast_nullable_to_non_nullable
-              as List<Interfaces>?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$InterfacesListImpl implements _InterfacesList {
-  const _$InterfacesListImpl(final List<Interfaces>? interfaces)
-      : _interfaces = interfaces;
-
-  factory _$InterfacesListImpl.fromJson(Map<String, dynamic> json) =>
-      _$$InterfacesListImplFromJson(json);
-
-  final List<Interfaces>? _interfaces;
-  @override
-  List<Interfaces>? get interfaces {
-    final value = _interfaces;
-    if (value == null) return null;
-    if (_interfaces is EqualUnmodifiableListView) return _interfaces;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  @override
-  String toString() {
-    return 'InterfacesList(interfaces: $interfaces)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$InterfacesListImpl &&
-            const DeepCollectionEquality()
-                .equals(other._interfaces, _interfaces));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_interfaces));
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$InterfacesListImplCopyWith<_$InterfacesListImpl> get copyWith =>
-      __$$InterfacesListImplCopyWithImpl<_$InterfacesListImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$InterfacesListImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _InterfacesList implements InterfacesList {
-  const factory _InterfacesList(final List<Interfaces>? interfaces) =
-      _$InterfacesListImpl;
-
-  factory _InterfacesList.fromJson(Map<String, dynamic> json) =
-      _$InterfacesListImpl.fromJson;
-
-  @override
-  List<Interfaces>? get interfaces;
-  @override
-  @JsonKey(ignore: true)
-  _$$InterfacesListImplCopyWith<_$InterfacesListImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-Interfaces _$InterfacesFromJson(Map<String, dynamic> json) {
-  return _Interfaces.fromJson(json);
-}
-
-/// @nodoc
-mixin _$Interfaces {
-  String? get type => throw _privateConstructorUsedError;
-  String? get name => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $InterfacesCopyWith<Interfaces> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $InterfacesCopyWith<$Res> {
-  factory $InterfacesCopyWith(
-          Interfaces value, $Res Function(Interfaces) then) =
-      _$InterfacesCopyWithImpl<$Res, Interfaces>;
-  @useResult
-  $Res call({String? type, String? name});
-}
-
-/// @nodoc
-class _$InterfacesCopyWithImpl<$Res, $Val extends Interfaces>
-    implements $InterfacesCopyWith<$Res> {
-  _$InterfacesCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? type = freezed,
-    Object? name = freezed,
-  }) {
-    return _then(_value.copyWith(
-      type: freezed == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
+      label: freezed == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
               as String?,
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
 }
 
 /// @nodoc
-abstract class _$$InterfacesImplCopyWith<$Res>
-    implements $InterfacesCopyWith<$Res> {
-  factory _$$InterfacesImplCopyWith(
-          _$InterfacesImpl value, $Res Function(_$InterfacesImpl) then) =
-      __$$InterfacesImplCopyWithImpl<$Res>;
+abstract class _$$ModulesImplCopyWith<$Res> implements $ModulesCopyWith<$Res> {
+  factory _$$ModulesImplCopyWith(
+          _$ModulesImpl value, $Res Function(_$ModulesImpl) then) =
+      __$$ModulesImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? type, String? name});
+  $Res call(
+      {@JsonKey(name: 'label') String? label,
+      @JsonKey(name: 'value') String? value});
 }
 
 /// @nodoc
-class __$$InterfacesImplCopyWithImpl<$Res>
-    extends _$InterfacesCopyWithImpl<$Res, _$InterfacesImpl>
-    implements _$$InterfacesImplCopyWith<$Res> {
-  __$$InterfacesImplCopyWithImpl(
-      _$InterfacesImpl _value, $Res Function(_$InterfacesImpl) _then)
+class __$$ModulesImplCopyWithImpl<$Res>
+    extends _$ModulesCopyWithImpl<$Res, _$ModulesImpl>
+    implements _$$ModulesImplCopyWith<$Res> {
+  __$$ModulesImplCopyWithImpl(
+      _$ModulesImpl _value, $Res Function(_$ModulesImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? type = freezed,
-    Object? name = freezed,
+    Object? label = freezed,
+    Object? value = freezed,
   }) {
-    return _then(_$InterfacesImpl(
-      type: freezed == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
+    return _then(_$ModulesImpl(
+      label: freezed == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
               as String?,
-      name: freezed == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
   }
@@ -980,64 +812,69 @@ class __$$InterfacesImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$InterfacesImpl implements _Interfaces {
-  const _$InterfacesImpl({required this.type, required this.name});
+class _$ModulesImpl implements _Modules {
+  const _$ModulesImpl(
+      {@JsonKey(name: 'label') required this.label,
+      @JsonKey(name: 'value') required this.value});
 
-  factory _$InterfacesImpl.fromJson(Map<String, dynamic> json) =>
-      _$$InterfacesImplFromJson(json);
+  factory _$ModulesImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ModulesImplFromJson(json);
 
   @override
-  final String? type;
+  @JsonKey(name: 'label')
+  final String? label;
   @override
-  final String? name;
+  @JsonKey(name: 'value')
+  final String? value;
 
   @override
   String toString() {
-    return 'Interfaces(type: $type, name: $name)';
+    return 'Modules(label: $label, value: $value)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$InterfacesImpl &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.name, name) || other.name == name));
+            other is _$ModulesImpl &&
+            (identical(other.label, label) || other.label == label) &&
+            (identical(other.value, value) || other.value == value));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, type, name);
+  int get hashCode => Object.hash(runtimeType, label, value);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$InterfacesImplCopyWith<_$InterfacesImpl> get copyWith =>
-      __$$InterfacesImplCopyWithImpl<_$InterfacesImpl>(this, _$identity);
+  _$$ModulesImplCopyWith<_$ModulesImpl> get copyWith =>
+      __$$ModulesImplCopyWithImpl<_$ModulesImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$InterfacesImplToJson(
+    return _$$ModulesImplToJson(
       this,
     );
   }
 }
 
-abstract class _Interfaces implements Interfaces {
-  const factory _Interfaces(
-      {required final String? type,
-      required final String? name}) = _$InterfacesImpl;
+abstract class _Modules implements Modules {
+  const factory _Modules(
+      {@JsonKey(name: 'label') required final String? label,
+      @JsonKey(name: 'value') required final String? value}) = _$ModulesImpl;
 
-  factory _Interfaces.fromJson(Map<String, dynamic> json) =
-      _$InterfacesImpl.fromJson;
+  factory _Modules.fromJson(Map<String, dynamic> json) = _$ModulesImpl.fromJson;
 
   @override
-  String? get type;
+  @JsonKey(name: 'label')
+  String? get label;
   @override
-  String? get name;
+  @JsonKey(name: 'value')
+  String? get value;
   @override
   @JsonKey(ignore: true)
-  _$$InterfacesImplCopyWith<_$InterfacesImpl> get copyWith =>
+  _$$ModulesImplCopyWith<_$ModulesImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1047,7 +884,9 @@ Language _$LanguageFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Language {
+  @JsonKey(name: 'label')
   String get label => throw _privateConstructorUsedError;
+  @JsonKey(name: 'value')
   String get value => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1061,7 +900,9 @@ abstract class $LanguageCopyWith<$Res> {
   factory $LanguageCopyWith(Language value, $Res Function(Language) then) =
       _$LanguageCopyWithImpl<$Res, Language>;
   @useResult
-  $Res call({String label, String value});
+  $Res call(
+      {@JsonKey(name: 'label') String label,
+      @JsonKey(name: 'value') String value});
 }
 
 /// @nodoc
@@ -1101,7 +942,9 @@ abstract class _$$LanguageImplCopyWith<$Res>
       __$$LanguageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String label, String value});
+  $Res call(
+      {@JsonKey(name: 'label') String label,
+      @JsonKey(name: 'value') String value});
 }
 
 /// @nodoc
@@ -1134,14 +977,18 @@ class __$$LanguageImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$LanguageImpl implements _Language {
-  const _$LanguageImpl({required this.label, required this.value});
+  const _$LanguageImpl(
+      {@JsonKey(name: 'label') required this.label,
+      @JsonKey(name: 'value') required this.value});
 
   factory _$LanguageImpl.fromJson(Map<String, dynamic> json) =>
       _$$LanguageImplFromJson(json);
 
   @override
+  @JsonKey(name: 'label')
   final String label;
   @override
+  @JsonKey(name: 'value')
   final String value;
 
   @override
@@ -1178,15 +1025,17 @@ class _$LanguageImpl implements _Language {
 
 abstract class _Language implements Language {
   const factory _Language(
-      {required final String label,
-      required final String value}) = _$LanguageImpl;
+      {@JsonKey(name: 'label') required final String label,
+      @JsonKey(name: 'value') required final String value}) = _$LanguageImpl;
 
   factory _Language.fromJson(Map<String, dynamic> json) =
       _$LanguageImpl.fromJson;
 
   @override
+  @JsonKey(name: 'label')
   String get label;
   @override
+  @JsonKey(name: 'value')
   String get value;
   @override
   @JsonKey(ignore: true)

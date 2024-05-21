@@ -56,6 +56,18 @@ class SecureStore {
     await storage.delete(key: 'accessToken');
   }
 
+  Future setRefreshToken(String? accessToken) async {
+    await storage.write(key: 'refreshToken', value: accessToken);
+  }
+
+  Future<String?> getRefreshToken() async {
+    return await storage.read(key: 'refreshToken');
+  }
+
+  Future deleteRefreshToken() async {
+    await storage.delete(key: 'refreshToken');
+  }
+
   //other auth information
   Future setAccessInfo(AuthResponse accessInfo) async {
     String jsonAccessInfo = json.encode(accessInfo.toJson());

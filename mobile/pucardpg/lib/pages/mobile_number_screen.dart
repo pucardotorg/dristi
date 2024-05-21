@@ -19,18 +19,6 @@ import 'package:pucardpg/model/litigant_model.dart';
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
-// import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_bloc.dart';
-// import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_event.dart';
-// import 'package:pucardpg/app/bloc/registration_login_bloc/registration_login_state.dart';
-// import 'package:pucardpg/app/data/data_sources/shared-preferences/app_shared_preference.dart';
-// import 'package:pucardpg/app/data/models/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
-// import 'package:pucardpg/app/data/models/advocate-registration-model/advocate_registration_model.dart';
-// import 'package:pucardpg/app/data/models/litigant-registration-model/litigant_registration_model.dart';
-// import 'package:pucardpg/app/domain/entities/litigant_model.dart';
-// import 'package:pucardpg/app/presentation/widgets/back_button.dart';
-// import 'package:pucardpg/app/presentation/widgets/help_button.dart';
-// import 'package:pucardpg/config/mixin/app_mixin.dart';
-// import 'package:pucardpg/core/constant/constants.dart';
 import 'package:reactive_forms/reactive_forms.dart';
 
 @RoutePage()
@@ -44,7 +32,6 @@ class MobileNumberScreen extends StatefulWidget with AppMixin {
 class MobileNumberScreenState extends State<MobileNumberScreen> {
   bool isSubmitting = false;
   bool rememberMe = false;
-  UserModel userModel = UserModel();
   String mobileNumberKey = 'mobileNumber';
 
   TextEditingController searchController = TextEditingController();
@@ -57,6 +44,13 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
     super.initState();
     _events = StreamController<int>.broadcast();
     _events.add(25);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _events.close();
+    super.dispose();
   }
 
   Timer? _timer;
@@ -130,7 +124,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                             isRequired: true,
                             maxLength: 10,
                             onChanged: (val) {
-                              userModel.mobileNumber = val.value.toString();
+                              context.read<AuthBloc>().userModel.mobileNumber = val.value.toString();
                             },
                             keyboardType: TextInputType.number,
                             validationMessages: {
@@ -170,18 +164,11 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                           },
                           otpGenerationSucceed: (type){
                             isSubmitting = false;
-                            userModel.type = type;
-                            if (userModel.type == "register") {
+                            context.read<AuthBloc>().userModel.type = type;
+                            if (context.read<AuthBloc>().userModel.type == "register") {
                               _startTimer();
                               showOtpDialog();
                             }
-                          },
-                          unauthenticated: (){
-                            print("unauth");
-                          },
-                          authenticated: (a, b, c) {
-                            AutoRouter.of(context)
-                                .replace(const AuthenticatedRouteWrapper());
                           },
                       );
                     },
@@ -210,7 +197,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 }
                                 isSubmitting = true;
                                 context.read<AuthBloc>().add(
-                                    AuthEvent.requestOtp(userModel.mobileNumber!)
+                                    AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, 'register')
                                 );
                                 // widget.registrationLoginBloc.add(
                                 //     RequestOtpEvent(mobileNumber: userModel.mobileNumber!, type: 'register'));
@@ -280,7 +267,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                       Row(
                         children: [
                           Text(
-                            "Enter the OTP sent to +91******${userModel
+                            "Enter the OTP sent to +91******${context.read<AuthBloc>().userModel
                                 .mobileNumber!.substring(6, 10)}",
                             style: widget.theme.text14W400Rob(),
                           ),
@@ -352,7 +339,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               }
                               FocusScope.of(context).unfocus();
                               context.read<AuthBloc>().add(
-                                  AuthEvent.resendOtp(userModel.mobileNumber!, "register")
+                                  AuthEvent.resendOtp(context.read<AuthBloc>().userModel.mobileNumber!, "register")
                               );
                             },
                             child: Padding(
@@ -400,8 +387,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                             widget.theme.theme(),
                                           ),
                                         );
-                                        AutoRouter.of(context)
-                                            .replace(const AuthenticatedRouteWrapper());
                                       },
                                       resendOtpGenerationSucceed: (type){
                                         DigitToast.show(
@@ -424,54 +409,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                         );
                                         Future.delayed(const Duration(seconds: 1), () {
                                           isSubmit = false;
+                                          Navigator.of(context).pop();
                                           AutoRouter.of(context)
-                                              .replace(const AuthenticatedRouteWrapper());
-                                          // context.navigateTo(HomeRoute());
-                                          // Navigator.pushNamed(context, '/NameDetailsScreen', arguments: userModel);
+                                              .push(NameDetailsRoute());
                                         });
-                                      }
+                                      },
                                   );
-                                  // switch (state.runtimeType) {
-                                  //   case RequestFailedState:
-                                  //     if (isSubmit) {
-                                  //       isSubmit = false;
-                                  //       DigitToast.show(
-                                  //         context,
-                                  //         options: DigitToastOptions(
-                                  //           "Failed",
-                                  //           true,
-                                  //           widget.theme.theme(),
-                                  //         ),
-                                  //       );
-                                  //     }
-                                  //     return;
-                                  //   case ResendOtpGenerationSuccessState:
-                                  //     DigitToast.show(
-                                  //       context,
-                                  //       options: DigitToastOptions(
-                                  //         "OTP sent successfully",
-                                  //         false,
-                                  //         DigitTheme.instance.mobileTheme,
-                                  //       ),
-                                  //     );
-                                  //     break;
-                                  //   case OtpCorrectState:
-                                  //     DigitToast.show(
-                                  //       context,
-                                  //       options: DigitToastOptions(
-                                  //         "OTP Verified",
-                                  //         false,
-                                  //         DigitTheme.instance.mobileTheme,
-                                  //       ),
-                                  //     );
-                                  //     Future.delayed(const Duration(seconds: 1), () {
-                                  //       isSubmit = false;
-                                  //       Navigator.pushNamed(context, '/NameDetailsScreen', arguments: userModel);
-                                  //     });
-                                  //     break;
-                                  //   default:
-                                  //     break;
-                                  // }
                                 },
                                 child: DigitElevatedButton(
                                     onPressed: isSubmit
@@ -493,9 +436,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                         );
                                         return;
                                       }
-                                      if (userModel.type == "register" && otp.length == 6) {
+                                      if (context.read<AuthBloc>().userModel.type == "register" && otp.length == 6) {
                                         context.read<AuthBloc>().add(
-                                          AuthEvent.submitRegistrationOtp(userModel.mobileNumber!, otp, userModel)
+                                          AuthEvent.submitRegistrationOtp(context.read<AuthBloc>().userModel.mobileNumber!, otp, context.read<AuthBloc>().userModel)
                                         );
                                       }
                                       isSubmit = true;

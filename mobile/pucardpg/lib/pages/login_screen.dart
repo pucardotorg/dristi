@@ -1,34 +1,39 @@
 import 'dart:async';
 
+import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
-import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import 'package:pucardpg/model/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
+import 'package:pucardpg/model/advocate-registration-model/advocate_registration_model.dart';
+import 'package:pucardpg/model/litigant-registration-model/litigant_registration_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
+import 'package:pucardpg/routes/routes.dart';
+import 'package:pucardpg/utils/constants.dart';
+import 'package:pucardpg/utils/i18_key_constants.dart';
 
 import 'package:reactive_forms/reactive_forms.dart';
 
-class LoginScreen extends StatefulWidget with AppMixin {
-  LoginScreen({super.key});
+@RoutePage()
+class LoginNumberScreen extends StatefulWidget with AppMixin {
+  LoginNumberScreen({super.key});
 
   @override
-  LoginScreenState createState() => LoginScreenState();
+  LoginNumberScreenState createState() => LoginNumberScreenState();
 }
 
-class LoginScreenState extends State<LoginScreen> {
+class LoginNumberScreenState extends State<LoginNumberScreen> {
   bool isSubmitting = false;
-  UserModel userModel = UserModel();
   String mobileNumberKey = 'mobileNumber';
 
   TextEditingController searchController = TextEditingController();
@@ -42,6 +47,13 @@ class LoginScreenState extends State<LoginScreen> {
     _getStoragePermission();
     _events = StreamController<int>.broadcast();
     _events.add(25);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _events.close();
+    super.dispose();
   }
 
   Timer? _timer;
@@ -104,216 +116,184 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-          backgroundColor: Colors.white,
-          body: Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          height: 90,
-                        ),
-                        // Image.asset(
-                        //   govtIndia,
-                        //   height: 100,
-                        // ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Text(
-                          "Sign In to your account",
-                          style: widget.theme.text32W700RobCon(),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          "Welcome back! Please enter your credentials",
-                          style: widget.theme.text14W400Rob(),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        ReactiveFormBuilder(
-                            form: buildForm,
-                            builder: (context, form, child) {
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                  DigitTextFormField(
-                                    label: 'Phone No',
-                                    prefixText: "+91  ",
-                                    formControlName: mobileNumberKey,
-                                    isRequired: true,
-                                    maxLength: 10,
-                                    onChanged: (val) {
-                                      userModel.mobileNumber = val.value.toString();
-                                    },
-                                    keyboardType: TextInputType.number,
-                                    validationMessages: {
-                                      'required': (_) => 'Mobile number is required',
-                                      'number': (_) =>
-                                      'Mobile number should contain digits 0-9',
-                                      'minLength': (_) =>
-                                      'Mobile number should have 10 digits',
-                                      'maxLength': (_) =>
-                                      'Mobile number should have 10 digits',
-                                      'pattern': (_) => 'Invalid Mobile Number'
-                                    },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'[0-9]')),
-                                    ],
-                                  ),
-                                  BlocListener<AuthBloc, AuthState>(
-                                    bloc: context.read<AuthBloc>(),
-                                    listener: (context, state) {
-                                      state.maybeWhen(
-                                        orElse: (){},
-                                        requestOtpFailed: (error){
-                                          if (isSubmitting) {
-                                            isSubmitting = false;
-                                            widget.theme.showDigitDialog(
-                                                true,
-                                                error,
-                                                context);
-                                          }
-
-                                        },
-                                        otpGenerationSucceed: (type){
-                                          isSubmitting = false;
-                                          userModel.type = type;
-                                          if (userModel.type == "login") {
-                                            _startTimer();
-                                            showOtpDialog();
-                                          }
-                                        },
-
-                                      );
-                                      // switch (state.runtimeType) {
-                                      //
-                                      //   case RequestOtpFailedState:
-                                      //     if (isSubmitting) {
-                                      //       isSubmitting = false;
-                                      //       widget.theme.showDigitDialog(
-                                      //           true,
-                                      //           (state as RequestOtpFailedState)
-                                      //               .errorMsg,
-                                      //           context);
-                                      //     }
-                                      //     break;
-                                      //   case OtpGenerationSuccessState:
-                                      //     if (isSubmitting) {
-                                      //       isSubmitting = false;
-                                      //       userModel.type =
-                                      //           (state as OtpGenerationSuccessState)
-                                      //               .type;
-                                      //       if (userModel.type == login) {
-                                      //         _startTimer();
-                                      //         showOtpDialog();
-                                      //       }
-                                      //     }
-                                      //     break;
-                                      //   default:
-                                      //     break;
-                                      // }
-                                    },
-                                    child: DigitElevatedButton(
-                                        onPressed: isSubmitting
-                                            ? null
-                                            : () {
-                                          FocusScope.of(context).unfocus();
-                                          form.markAllAsTouched();
-                                          if (!form.valid) return;
-                                          bool isValidNumber = _validateMobile(
-                                              form
-                                                  .control(mobileNumberKey)
-                                                  .value);
-                                          if (!isValidNumber) {
-                                            widget.theme.showDigitDialog(
-                                                true,
-                                                "Mobile Number is not valid",
-                                                context);
-
-                                            return;
-                                          }
-                                          isSubmitting = true;
-                                          context.read<AuthBloc>().add(
-                                            AuthEvent.requestOtp(userModel.mobileNumber!)
-                                          );
-                                          // widget.registrationLoginBloc.add(
-                                          //     RequestOtpEvent(
-                                          //         mobileNumber:
-                                          //         userModel.mobileNumber!, type: 'login'));
-                                        },
-                                        child: const Text('Sign In')),
-                                  )
-                                ],
-                              );
-                            }),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        RichText(
-                            text: TextSpan(
-                              style: widget.theme.text16W400Rob(),
-                              children: <TextSpan>[
-                                const TextSpan(
-                                    text:
-                                    "Don't have an account?"),
-                                TextSpan(
-                                  text: '  Register here ',
-                                  style:
-                                  TextStyle(fontWeight: FontWeight.bold, color: widget.theme.defaultColor),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.pushNamed(
-                                          context, '/MobileNumberScreen');
-                                      // showOtpDialog();
-                                    },
+    return Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        height: 90,
+                      ),
+                      Image.asset(
+                        govtIndia,
+                        height: 100,
+                      ),
+                      const SizedBox(
+                        height: 40,
+                      ),
+                      Text(
+                        AppLocalizations.of(context)
+                            .translate(i18.login.csSignInProvideMobileNumber),
+                        textAlign: TextAlign.center,
+                        style: widget.theme.text32W700RobCon(),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        AppLocalizations.of(context)
+                            .translate(i18.login.csWelcome),
+                        style: widget.theme.text14W400Rob(),
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      ReactiveFormBuilder(
+                          form: buildForm,
+                          builder: (context, form, child) {
+                            return Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: <Widget>[
+                                DigitTextFormField(
+                                  label: AppLocalizations.of(context)
+                                      .translate(i18.login.coreCommonPhoneNumber),
+                                  prefixText: "+91  ",
+                                  formControlName: mobileNumberKey,
+                                  isRequired: true,
+                                  maxLength: 10,
+                                  onChanged: (val) {
+                                    context.read<AuthBloc>().userModel.mobileNumber = val.value.toString();
+                                  },
+                                  keyboardType: TextInputType.number,
+                                  validationMessages: {
+                                    'required': (_) => 'Mobile number is required',
+                                    'number': (_) =>
+                                    'Mobile number should contain digits 0-9',
+                                    'minLength': (_) =>
+                                    'Mobile number should have 10 digits',
+                                    'maxLength': (_) =>
+                                    'Mobile number should have 10 digits',
+                                    'pattern': (_) => 'Invalid Mobile Number'
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9]')),
+                                  ],
                                 ),
+                                BlocListener<AuthBloc, AuthState>(
+                                  bloc: context.read<AuthBloc>(),
+                                  listener: (context, state) {
+                                    state.maybeWhen(
+                                      orElse: (){},
+                                      requestOtpFailed: (error){
+                                        isSubmitting = false;
+                                        widget.theme.showDigitDialog(
+                                            true,
+                                            error,
+                                            context);
+                                      },
+                                      otpGenerationSucceed: (type){
+                                        isSubmitting = false;
+                                        context.read<AuthBloc>().userModel.type = type;
+                                        if (context.read<AuthBloc>().userModel.type == "login") {
+                                          _startTimer();
+                                          showOtpDialog();
+                                        }
+                                      },
+
+                                    );
+                                  },
+                                  child: DigitElevatedButton(
+                                      onPressed: isSubmitting
+                                          ? null
+                                          : () {
+                                        FocusScope.of(context).unfocus();
+                                        form.markAllAsTouched();
+                                        if (!form.valid) return;
+                                        bool isValidNumber = _validateMobile(
+                                            form
+                                                .control(mobileNumberKey)
+                                                .value);
+                                        if (!isValidNumber) {
+                                          widget.theme.showDigitDialog(
+                                              true,
+                                              "Mobile Number is not valid",
+                                              context);
+
+                                          return;
+                                        }
+                                        isSubmitting = true;
+                                        context.read<AuthBloc>().add(
+                                            AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, appConstants.login)
+                                        );
+                                      },
+                                      child: const Text('Sign In')),
+                                )
                               ],
-                            )
-                        )
-                      ],
-                    ),
+                            );
+                          }),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      RichText(
+                          text: TextSpan(
+                            style: widget.theme.text16W400Rob(),
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text:
+                                  AppLocalizations.of(context)
+                                      .translate(i18.login.csRegisterAccount)),
+                              TextSpan(
+                                text: ' ${AppLocalizations.of(context)
+                                    .translate(i18.login.csRegisterLink)}',
+                                style:
+                                TextStyle(fontWeight: FontWeight.bold, color: widget.theme.defaultColor),
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    AutoRouter.of(context)
+                                        .push(MobileNumberRoute());
+                                  },
+                              ),
+                            ],
+                          )
+                      )
+                    ],
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: RichText(
-                    text: TextSpan(
-                      style: widget.theme.text14W400Rob(),
-                      children: const <TextSpan>[
-                        TextSpan(
-                            text:
-                            "Powered by"),
-                        TextSpan(
-                          text: ' DRISTI',
-                          style:
-                          TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    )
-                ),
-              )
-            ],
-          )
-      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(30),
+              child: RichText(
+                  text: TextSpan(
+                    style: widget.theme.text14W400Rob(),
+                    children: const <TextSpan>[
+                      TextSpan(
+                          text:
+                          "Powered by"),
+                      TextSpan(
+                        text: ' DRISTI',
+                        style:
+                        TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  )
+              ),
+            )
+          ],
+        )
     );
   }
 
   FormGroup buildForm() => fb.group(<String, Object>{
     mobileNumberKey: FormControl<String>(
-        value: userModel.mobileNumber,
+        value: context.read<AuthBloc>().userModel.mobileNumber,
         validators: [
           Validators.required,
           Validators.number,
@@ -322,32 +302,6 @@ class LoginScreenState extends State<LoginScreen> {
           Validators.pattern(r'^[6789][0-9]{9}$')
         ]),
   });
-
-  // showOtpDialog() {
-  //   DigitDialog.show(context,
-  //       options: DigitDialogOptions(
-  //           titleIcon: const Icon(
-  //             Icons.warning,
-  //             color: Colors.red,
-  //           ),
-  //           titleText: 'Verify Mobile Number',
-  //           contentText: 'Enter the OTP sent to +91 ${userModel.mobileNumber}',
-  //           primaryAction: DigitDialogActions(
-  //             label: 'Confirm',
-  //             action: (BuildContext context) {
-  //               //your_primary_action();
-  //             },
-  //           ),
-  //           secondaryAction: DigitDialogActions(
-  //               label: 'Cancel',
-  //               action: (BuildContext context) => {
-  //
-  //               }
-  //             //your_secondary_action(),
-  //           ),
-  //       )
-  //   );
-  // }
 
   showOtpDialog() {
     showDialog(
@@ -402,7 +356,8 @@ class LoginScreenState extends State<LoginScreen> {
                         Row(
                           children: [
                             Text(
-                              "Enter the OTP sent to +91******${userModel
+                              "${AppLocalizations.of(context).translate(
+                                  i18.common.csLoginOtpText)} +91******${context.read<AuthBloc>().userModel
                                   .mobileNumber!.substring(6, 10)}",
                               style: widget.theme.text14W400Rob(),
                             ),
@@ -474,18 +429,16 @@ class LoginScreenState extends State<LoginScreen> {
                             }
                             FocusScope.of(context).unfocus();
                             context.read<AuthBloc>().add(
-                              AuthEvent.resendOtp(userModel.mobileNumber!, "register")
+                              AuthEvent.resendOtp(context.read<AuthBloc>().userModel.mobileNumber!, appConstants.login)
                             );
-                            // widget.registrationLoginBloc.add(ResendOtpEvent(
-                            //     mobileNumber: userModel.mobileNumber!,
-                            //     type: register));
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(top: 20, bottom: 10),
                             child: Row(
                               children: [
                                 Text(
-                                  'Resend OTP',
+                                  AppLocalizations.of(context).translate(
+                                    i18.common.csResendOtp),
                                   style: widget.theme
                                       .text16W400Rob()
                                       ?.apply(color: widget.theme.defaultColor),
@@ -499,7 +452,8 @@ class LoginScreenState extends State<LoginScreen> {
                           child: Row(
                             children: [
                               Text(
-                                'Resend a new OTP in 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
+                                '${AppLocalizations.of(context).translate(
+                                    i18.common.csResendAnotherOtp)} 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
                                     : snapshot.data! < 10 ? "0${snapshot.data}" : snapshot.data}',
                                 style: widget.theme.text14W400Rob(),),
                             ],
@@ -513,149 +467,151 @@ class LoginScreenState extends State<LoginScreen> {
                                 child: BlocListener<AuthBloc, AuthState>(
                                   bloc: context.read<AuthBloc>(),
                                   listener: (context, state) {
-                                    // switch (state.runtimeType) {
-                                    //   case RequestFailedState:
-                                    //     if (isSubmit) {
-                                    //       isSubmit = false;
-                                    //       DigitToast.show(
-                                    //         context,
-                                    //         options: DigitToastOptions(
-                                    //           "Failed",
-                                    //           true,
-                                    //           widget.theme.theme(),
-                                    //         ),
-                                    //       );
-                                    //     }
-                                    //     return;
-                                    //   case ResendOtpGenerationSuccessState:
-                                    //     DigitToast.show(
-                                    //       context,
-                                    //       options: DigitToastOptions(
-                                    //         "OTP sent successfully",
-                                    //         false,
-                                    //         DigitTheme.instance.mobileTheme,
-                                    //       ),
-                                    //     );
-                                    //     break;
-                                    //   case IndividualSearchSuccessState:
-                                    //     List<Individual> listIndividuals =
-                                    //         (state as IndividualSearchSuccessState)
-                                    //             .individualSearchResponse
-                                    //             .individual;
-                                    //     if (listIndividuals.isEmpty) {
-                                    //       DigitToast.show(
-                                    //         context,
-                                    //         options: DigitToastOptions(
-                                    //           "OTP Verified",
-                                    //           false,
-                                    //           DigitTheme.instance.mobileTheme,
-                                    //         ),
-                                    //       );
-                                    //       Future.delayed(const Duration(seconds: 1), () {
-                                    //         isSubmit = false;
-                                    //         Navigator.pushNamed(context, '/YetToRegister', arguments: userModel);
-                                    //       });
-                                    //     } else {
-                                    //       if (userModel.userType == 'LITIGANT') {
-                                    //         DigitToast.show(
-                                    //           context,
-                                    //           options: DigitToastOptions(
-                                    //             "OTP Verified",
-                                    //             false,
-                                    //             DigitTheme.instance.mobileTheme,
-                                    //           ),
-                                    //         );
-                                    //         Future.delayed(const Duration(seconds: 1), () {
-                                    //           isSubmit = false;
-                                    //           Navigator.pushNamed(context, '/UserHomeScreen', arguments: userModel);
-                                    //         });
-                                    //       }
-                                    //     }
-                                    //     break;
-                                    //   case AdvocateSearchSuccessState:
-                                    //     List<Advocate> advocates =
-                                    //         (state as AdvocateSearchSuccessState)
-                                    //             .advocateSearchResponse
-                                    //             .advocates;
-                                    //     // if (advocates.isEmpty) {
-                                    //     //   DigitToast.show(
-                                    //     //     context,
-                                    //     //     options: DigitToastOptions(
-                                    //     //       "OTP Verified",
-                                    //     //       false,
-                                    //     //       DigitTheme.instance.mobileTheme,
-                                    //     //     ),
-                                    //     //   );
-                                    //     //   Future.delayed(const Duration(seconds: 1), () {
-                                    //     //     isSubmit = false;
-                                    //     //     Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: userModel);
-                                    //     //   });
-                                    //     // }
-                                    //     if (advocates.isNotEmpty) {
-                                    //       DigitToast.show(
-                                    //         context,
-                                    //         options: DigitToastOptions(
-                                    //           "OTP Verified",
-                                    //           false,
-                                    //           DigitTheme.instance.mobileTheme,
-                                    //         ),
-                                    //       );
-                                    //       if (advocates[0].status != "INACTIVE" && advocates[0].isActive == false) {
-                                    //         Future.delayed(const Duration(seconds: 1), () {
-                                    //           isSubmit = false;
-                                    //           Navigator.pushNamed(context, '/AdvocateHomePage', arguments: userModel);
-                                    //         });
-                                    //       }
-                                    //       if (advocates[0].status == "INACTIVE" && advocates[0].isActive == false) {
-                                    //         Future.delayed(const Duration(seconds: 1), () {
-                                    //           isSubmit = false;
-                                    //           Navigator.pushNamed(context, '/NameDetailsScreen', arguments: userModel);
-                                    //         });
-                                    //       }
-                                    //       if (advocates[0].status == "ACTIVE" && advocates[0].isActive == true) {
-                                    //         Future.delayed(const Duration(seconds: 1), () {
-                                    //           isSubmit = false;
-                                    //           Navigator.pushNamed(context, '/UserHomeScreen', arguments: userModel);
-                                    //         });
-                                    //       }
-                                    //     }
-                                    //     break;
-                                    //   case AdvocateClerkSearchSuccessState:
-                                    //     List<Clerk> clerks =
-                                    //         (state as AdvocateClerkSearchSuccessState)
-                                    //             .advocateClerkSearchResponse
-                                    //             .clerks;
-                                    //     if (clerks.isEmpty) {
-                                    //       DigitToast.show(
-                                    //         context,
-                                    //         options: DigitToastOptions(
-                                    //           "OTP Verified",
-                                    //           false,
-                                    //           DigitTheme.instance.mobileTheme,
-                                    //         ),
-                                    //       );
-                                    //       Future.delayed(const Duration(seconds: 1), () {
-                                    //         isSubmit = false;
-                                    //         Navigator.pushNamed(context, '/AdvocateRegistrationScreen', arguments: userModel);
-                                    //       });
-                                    //     } else {
-                                    //       DigitToast.show(
-                                    //         context,
-                                    //         options: DigitToastOptions(
-                                    //           "OTP Verified",
-                                    //           false,
-                                    //           DigitTheme.instance.mobileTheme,
-                                    //         ),
-                                    //       );
-                                    //       Future.delayed(const Duration(seconds: 1), () {
-                                    //         isSubmit = false;
-                                    //         Navigator.pushNamed(context, '/AdvocateHomePage', arguments: userModel);
-                                    //       });
-                                    //     }
-                                    //     break;
-                                    //   default:
-                                    //     break;
-                                    // }
+                                    state.maybeWhen(
+                                        orElse: (){},
+                                        requestFailed: (error) {
+                                          isSubmit = false;
+                                          DigitToast.show(
+                                            context,
+                                            options: DigitToastOptions(
+                                              error,
+                                              true,
+                                              widget.theme.theme(),
+                                            ),
+                                          );
+                                        },
+                                        resendOtpGenerationSucceed: (type) {
+                                          DigitToast.show(
+                                            context,
+                                            options: DigitToastOptions(
+                                              "OTP sent successfully",
+                                              false,
+                                              DigitTheme.instance.mobileTheme,
+                                            ),
+                                          );
+                                        },
+                                        individualSearchSuccessState: (individualSearchResponse) {
+                                          List<Individual> listIndividuals = individualSearchResponse.individual;
+                                          if (listIndividuals.isEmpty) {
+                                            DigitToast.show(
+                                              context,
+                                              options: DigitToastOptions(
+                                                "OTP Verified",
+                                                false,
+                                                DigitTheme.instance.mobileTheme,
+                                              ),
+                                            );
+                                            Future.delayed(const Duration(seconds: 1), () {
+                                              isSubmit = false;
+                                              Navigator.of(context).pop();
+                                              AutoRouter.of(context)
+                                                  .push(NotRegisteredRoute());
+                                            });
+                                          } else {
+                                            if (context.read<AuthBloc>().userModel.userType == 'LITIGANT') {
+                                              DigitToast.show(
+                                                context,
+                                                options: DigitToastOptions(
+                                                  "OTP Verified",
+                                                  false,
+                                                  DigitTheme.instance.mobileTheme,
+                                                ),
+                                              );
+                                              Future.delayed(const Duration(seconds: 2), () {
+                                                isSubmit = false;
+                                                Navigator.of(context).pop();
+                                                context.read<AuthBloc>().add(
+                                                  const AuthEvent.login(),
+                                                );
+                                              });
+                                            }
+                                          }
+                                        },
+                                        advocateSearchSuccessState: (advocateSearchResponse) {
+                                          List<Advocate> advocates = advocateSearchResponse.advocates;
+                                          Advocate advocate = advocates[0];
+                                          if (advocates.isNotEmpty) {
+                                            DigitToast.show(
+                                              context,
+                                              options: DigitToastOptions(
+                                                "OTP Verified",
+                                                false,
+                                                DigitTheme.instance.mobileTheme,
+                                              ),
+                                            );
+                                            if (advocate.status != "INACTIVE" && advocate.isActive == false) {
+                                              Future.delayed(const Duration(seconds: 1), () {
+                                                isSubmit = false;
+                                                Navigator.of(context).pop();
+                                                AutoRouter.of(context)
+                                                    .push(AdvocateSuccessRoute());
+                                              });
+                                            }
+                                            if (advocate.status == "INACTIVE" && advocate.isActive == false) {
+                                              Future.delayed(const Duration(seconds: 1), () {
+                                                isSubmit = false;
+                                                Navigator.of(context).pop();
+                                                AutoRouter.of(context)
+                                                    .push(NameDetailsRoute());
+                                              });
+                                            }
+                                            if (advocate.status == "ACTIVE" && advocate.isActive == true) {
+                                              Future.delayed(const Duration(seconds: 1), () {
+                                                isSubmit = false;
+                                                context.read<AuthBloc>().add(
+                                                  const AuthEvent.login(),
+                                                );
+                                              });
+                                            }
+                                          }
+                                        },
+                                        advocateClerkSearchSuccessState: (advocateClerkSearchResponse) {
+                                          List<Clerk> clerks = advocateClerkSearchResponse.clerks;
+                                          Clerk clerk = clerks[0];
+                                          if (clerks.isNotEmpty) {
+                                            DigitToast.show(
+                                              context,
+                                              options: DigitToastOptions(
+                                                "OTP Verified",
+                                                false,
+                                                DigitTheme.instance.mobileTheme,
+                                              ),
+                                            );
+                                            if (clerk.status != "INACTIVE" && clerk.isActive == false) {
+                                              Future.delayed(const Duration(seconds: 1), () {
+                                                isSubmit = false;
+                                                Navigator.of(context).pop();
+                                                AutoRouter.of(context)
+                                                    .push(AdvocateSuccessRoute());
+                                              });
+                                            }
+                                            if (clerk.status == "INACTIVE" && clerk.isActive == false) {
+                                              Future.delayed(const Duration(seconds: 1), () {
+                                                isSubmit = false;
+                                                Navigator.of(context).pop();
+                                                AutoRouter.of(context)
+                                                    .push(NameDetailsRoute());
+                                              });
+                                            }
+                                            if (clerk.status == "ACTIVE" && clerk.isActive == true) {
+                                              Future.delayed(const Duration(seconds: 1), () {
+                                                isSubmit = false;
+                                                context.read<AuthBloc>().add(
+                                                  const AuthEvent.login(),
+                                                );
+                                              });
+                                            }
+                                          }
+                                        },
+                                        // unauthenticated: (){
+                                        //   print("unauth");
+                                        // },
+                                        // authenticated: (a, b, c) {
+                                        //   // Navigator.of(context).pop();
+                                        //   AutoRouter.of(context)
+                                        //       .replace(const AuthenticatedRouteWrapper());
+                                        // },
+                                    );
                                   },
                                   child: DigitElevatedButton(
                                       onPressed: isSubmit
@@ -677,21 +633,16 @@ class LoginScreenState extends State<LoginScreen> {
                                           );
                                           return;
                                         }
-                                        if (userModel.type == "login" && otp.length == 6) {
+                                        if (context.read<AuthBloc>().userModel.type == "login" && otp.length == 6) {
                                           context.read<AuthBloc>().add(
-                                            AuthEvent.sendLoginOtpEvent(userModel.mobileNumber!, otp, userModel)
+                                            AuthEvent.submitLoginOtpEvent(context.read<AuthBloc>().userModel.mobileNumber!, otp, context.read<AuthBloc>().userModel)
                                           );
-                                          // widget.registrationLoginBloc.add(
-                                          //     SendLoginOtpEvent(
-                                          //         username:
-                                          //         userModel.mobileNumber!,
-                                          //         password: otp,
-                                          //         userModel: userModel));
                                         }
                                         isSubmit = true;
                                       },
                                       child: Text(
-                                        'Verify',
+                                        AppLocalizations.of(context).translate(
+                                        i18.common.verify),
                                         style: widget.theme.text20W700()?.apply(
                                           color: Colors.white,
                                         ),
@@ -706,50 +657,7 @@ class LoginScreenState extends State<LoginScreen> {
                 }
             ),
           );
-
         }
     );
-  }
-
-  // void startTimer() {
-  //   const oneSec = Duration(seconds: 1);
-  //   _timer = Timer.periodic(
-  //     oneSec,
-  //         (Timer timer) {
-  //       if (_start == 0) {
-  //         setState(() {
-  //           timer.cancel();
-  //         });
-  //       } else {
-  //         setState(() {
-  //           _start--;
-  //         });
-  //       }
-  //     },
-  //   );
-  // }
-
-  Future<bool> _onBackPressed() async {
-    return await DigitDialog.show(
-        context,
-        options: DigitDialogOptions(
-            titleIcon: const Icon(
-              Icons.warning,
-              color: Colors.red,
-            ),
-            titleText: 'Warning',
-            contentText:
-            'Are you sure you want to exit the application?',
-            primaryAction: DigitDialogActions(
-                label: 'Yes',
-                action: (BuildContext context) =>
-                    SystemChannels.platform.invokeMethod('SystemNavigator.pop')
-            ),
-            secondaryAction: DigitDialogActions(
-                label: 'No',
-                action: (BuildContext context) =>
-                    Navigator.of(context).pop(false)
-            ))
-    ) ?? false;
   }
 }

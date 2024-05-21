@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/data/secure_storage/secureStore.dart';
@@ -7,33 +6,6 @@ import 'package:pucardpg/utils/constants.dart';
 
 import '../model/request/requestInfo.dart';
 import '../repositories/app_init_Repo.dart';
-
-// class AuthTokenInterceptor extends Interceptor {
-//   @override
-//   Future<dynamic> onRequest(
-//     RequestOptions options,
-//     RequestInterceptorHandler handler,
-//   ) async {
-//     final secureStore = SecureStore();
-//     final authToken = await secureStore.getAccessToken();
-//
-//     if (options.data is Map) {
-//       options.data = {
-//         ...options.data,
-//         "RequestInfo": RequestInfoModel(
-//           apiId: RequestInfoData.apiId,
-//           ver: RequestInfoData.ver,
-//           ts: DateTime.now().millisecondsSinceEpoch,
-//           action: options.path.split('/').last,
-//           did: RequestInfoData.did,
-//           key: RequestInfoData.key,
-//           authToken: authToken,
-//         ).toJson(),
-//       };
-//     }
-//     return super.onRequest(options, handler);
-//   }
-// }
 
 class InitClient {
   Dio init() {
@@ -47,13 +19,13 @@ class InitClient {
 
 class AuthTokenInterceptor extends Interceptor {
   dynamic request;
+  final SecureStore secureStore = SecureStore();
 
   @override
   Future<dynamic> onRequest(
       RequestOptions options,
       RequestInterceptorHandler handler,
       ) async {
-    final secureStore = SecureStore();
     final authToken = await secureStore.getAccessToken();
 
     if (options.data is Map) {
@@ -80,6 +52,10 @@ class AuthTokenInterceptor extends Interceptor {
       scaffoldMessengerKey.currentContext!
           .read<AuthBloc>()
           .add(const AuthEvent.logout());
+    } else if(err.type == DioErrorType.response && err.response?.statusCode == 401) {
+      scaffoldMessengerKey.currentContext!
+          .read<AuthBloc>()
+          .add(const AuthEvent.refreshToken());
     } else {
       handler.next(err);
     }

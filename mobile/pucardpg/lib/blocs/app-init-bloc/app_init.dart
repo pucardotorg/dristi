@@ -27,18 +27,29 @@ class AppInitialization extends Bloc<InitEvent, InitState> {
         //send the request in MdmsRequestModel format
         //take the response in ResponseModel format
         mdmsCriteria: MdmsCriteriaModel(
-          tenantId: 'mz',
+          tenantId: 'pg',
           moduleDetails: [
             MdmsModuleDetailsModel(
-              moduleName: 'HCM-FIELD-APP-CONFIG',
+              moduleName: 'common-masters',
               masterDetails: [
-                MdmsMasterDetailsModel('appConfig'),
+                MdmsMasterDetailsModel('Department'),
+                MdmsMasterDetailsModel('Designation'),
+                MdmsMasterDetailsModel('StateInfo'),
+                MdmsMasterDetailsModel('wfSlaConfig'),
+                MdmsMasterDetailsModel('uiHomePage'),
               ],
             ),
             MdmsModuleDetailsModel(
-              moduleName: 'module-version',
+              moduleName: 'tenant',
               masterDetails: [
-                MdmsMasterDetailsModel('ROW_VERSIONS'),
+                MdmsMasterDetailsModel('tenants'),
+                MdmsMasterDetailsModel('tenants'),
+              ],
+            ),
+            MdmsModuleDetailsModel(
+              moduleName: 'DIGIT-UI',
+              masterDetails: [
+                MdmsMasterDetailsModel('ApiCachingSettings'),
               ],
             ),
           ],

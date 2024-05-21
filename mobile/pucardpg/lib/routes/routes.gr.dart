@@ -15,32 +15,74 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    AadharVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<AadharVerificationRouteArgs>(
+          orElse: () => const AadharVerificationRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AadharVerificationScreen(key: args.key),
+      );
+    },
+    AddressRoute.name: (routeData) {
+      final args = routeData.argsAs<AddressRouteArgs>(
+          orElse: () => const AddressRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AddressScreen(key: args.key),
+      );
+    },
+    AdvocateRegistrationRoute.name: (routeData) {
+      final args = routeData.argsAs<AdvocateRegistrationRouteArgs>(
+          orElse: () => const AdvocateRegistrationRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AdvocateRegistrationScreen(key: args.key),
+      );
+    },
+    AdvocateSuccessRoute.name: (routeData) {
+      final args = routeData.argsAs<AdvocateSuccessRouteArgs>(
+          orElse: () => const AdvocateSuccessRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: AdvocateSuccessScreen(key: args.key),
+      );
+    },
+    ApplicationDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<ApplicationDetailsRouteArgs>(
+          orElse: () => const ApplicationDetailsRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: ApplicationDetailsScreen(key: args.key),
+      );
+    },
     AuthenticatedRouteWrapper.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const AuthenticatedScreenWrapper(),
       );
     },
-    HomeRoute.name: (routeData) {
-      final args =
-          routeData.argsAs<HomeRouteArgs>(orElse: () => const HomeRouteArgs());
+    IdentitySelectionRoute.name: (routeData) {
+      final args = routeData.argsAs<IdentitySelectionRouteArgs>(
+          orElse: () => const IdentitySelectionRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: HomeScreen(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
+        child: IdentitySelectionScreen(key: args.key),
       );
     },
-    LoginRoute.name: (routeData) {
-      final args = routeData.argsAs<LoginRouteArgs>(
-          orElse: () => const LoginRouteArgs());
+    LitigantSuccessRoute.name: (routeData) {
+      final args = routeData.argsAs<LitigantSuccessRouteArgs>(
+          orElse: () => const LitigantSuccessRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: LoginScreen(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
+        child: LitigantSuccessScreen(key: args.key),
+      );
+    },
+    LoginNumberRoute.name: (routeData) {
+      final args = routeData.argsAs<LoginNumberRouteArgs>(
+          orElse: () => const LoginNumberRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: LoginNumberScreen(key: args.key),
       );
     },
     MobileNumberRoute.name: (routeData) {
@@ -51,26 +93,28 @@ abstract class _$AppRouter extends RootStackRouter {
         child: MobileNumberScreen(key: args.key),
       );
     },
-    ProfileRoute.name: (routeData) {
-      final args = routeData.argsAs<ProfileRouteArgs>(
-          orElse: () => const ProfileRouteArgs());
+    NameDetailsRoute.name: (routeData) {
+      final args = routeData.argsAs<NameDetailsRouteArgs>(
+          orElse: () => const NameDetailsRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: ProfileScreen(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
+        child: NameDetailsScreen(key: args.key),
       );
     },
-    ProjectSelectionRoute.name: (routeData) {
-      final args = routeData.argsAs<ProjectSelectionRouteArgs>(
-          orElse: () => const ProjectSelectionRouteArgs());
+    NotRegisteredRoute.name: (routeData) {
+      final args = routeData.argsAs<NotRegisteredRouteArgs>(
+          orElse: () => const NotRegisteredRouteArgs());
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: ProjectSelectionScreen(
-          key: args.key,
-          appLocalizations: args.appLocalizations,
-        ),
+        child: NotRegisteredScreen(key: args.key),
+      );
+    },
+    OtherIdVerificationRoute.name: (routeData) {
+      final args = routeData.argsAs<OtherIdVerificationRouteArgs>(
+          orElse: () => const OtherIdVerificationRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: OtherIdVerificationScreen(key: args.key),
       );
     },
     SelectLanguageRoute.name: (routeData) {
@@ -79,13 +123,185 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SelectLanguageScreen(),
       );
     },
+    TermsAndConditionsRoute.name: (routeData) {
+      final args = routeData.argsAs<TermsAndConditionsRouteArgs>(
+          orElse: () => const TermsAndConditionsRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: TermsAndConditionsScreen(key: args.key),
+      );
+    },
     UnauthenticatedRouteWrapper.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
         child: const UnauthenticatedScreenWrapper(),
       );
     },
+    UserHomeRoute.name: (routeData) {
+      final args = routeData.argsAs<UserHomeRouteArgs>(
+          orElse: () => const UserHomeRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: UserHomeScreen(key: args.key),
+      );
+    },
+    UserTypeRoute.name: (routeData) {
+      final args = routeData.argsAs<UserTypeRouteArgs>(
+          orElse: () => const UserTypeRouteArgs());
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: UserTypeScreen(key: args.key),
+      );
+    },
   };
+}
+
+/// generated route for
+/// [AadharVerificationScreen]
+class AadharVerificationRoute
+    extends PageRouteInfo<AadharVerificationRouteArgs> {
+  AadharVerificationRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AadharVerificationRoute.name,
+          args: AadharVerificationRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'AadharVerificationRoute';
+
+  static const PageInfo<AadharVerificationRouteArgs> page =
+      PageInfo<AadharVerificationRouteArgs>(name);
+}
+
+class AadharVerificationRouteArgs {
+  const AadharVerificationRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'AadharVerificationRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [AddressScreen]
+class AddressRoute extends PageRouteInfo<AddressRouteArgs> {
+  AddressRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AddressRoute.name,
+          args: AddressRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'AddressRoute';
+
+  static const PageInfo<AddressRouteArgs> page =
+      PageInfo<AddressRouteArgs>(name);
+}
+
+class AddressRouteArgs {
+  const AddressRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'AddressRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [AdvocateRegistrationScreen]
+class AdvocateRegistrationRoute
+    extends PageRouteInfo<AdvocateRegistrationRouteArgs> {
+  AdvocateRegistrationRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AdvocateRegistrationRoute.name,
+          args: AdvocateRegistrationRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'AdvocateRegistrationRoute';
+
+  static const PageInfo<AdvocateRegistrationRouteArgs> page =
+      PageInfo<AdvocateRegistrationRouteArgs>(name);
+}
+
+class AdvocateRegistrationRouteArgs {
+  const AdvocateRegistrationRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'AdvocateRegistrationRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [AdvocateSuccessScreen]
+class AdvocateSuccessRoute extends PageRouteInfo<AdvocateSuccessRouteArgs> {
+  AdvocateSuccessRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AdvocateSuccessRoute.name,
+          args: AdvocateSuccessRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'AdvocateSuccessRoute';
+
+  static const PageInfo<AdvocateSuccessRouteArgs> page =
+      PageInfo<AdvocateSuccessRouteArgs>(name);
+}
+
+class AdvocateSuccessRouteArgs {
+  const AdvocateSuccessRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'AdvocateSuccessRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [ApplicationDetailsScreen]
+class ApplicationDetailsRoute
+    extends PageRouteInfo<ApplicationDetailsRouteArgs> {
+  ApplicationDetailsRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          ApplicationDetailsRoute.name,
+          args: ApplicationDetailsRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'ApplicationDetailsRoute';
+
+  static const PageInfo<ApplicationDetailsRouteArgs> page =
+      PageInfo<ApplicationDetailsRouteArgs>(name);
+}
+
+class ApplicationDetailsRouteArgs {
+  const ApplicationDetailsRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ApplicationDetailsRouteArgs{key: $key}';
+  }
 }
 
 /// generated route for
@@ -103,76 +319,89 @@ class AuthenticatedRouteWrapper extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [HomeScreen]
-class HomeRoute extends PageRouteInfo<HomeRouteArgs> {
-  HomeRoute({
+/// [IdentitySelectionScreen]
+class IdentitySelectionRoute extends PageRouteInfo<IdentitySelectionRouteArgs> {
+  IdentitySelectionRoute({
     Key? key,
-    AppLocalizations? appLocalizations,
     List<PageRouteInfo>? children,
   }) : super(
-          HomeRoute.name,
-          args: HomeRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
+          IdentitySelectionRoute.name,
+          args: IdentitySelectionRouteArgs(key: key),
           initialChildren: children,
         );
 
-  static const String name = 'HomeRoute';
+  static const String name = 'IdentitySelectionRoute';
 
-  static const PageInfo<HomeRouteArgs> page = PageInfo<HomeRouteArgs>(name);
+  static const PageInfo<IdentitySelectionRouteArgs> page =
+      PageInfo<IdentitySelectionRouteArgs>(name);
 }
 
-class HomeRouteArgs {
-  const HomeRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
+class IdentitySelectionRouteArgs {
+  const IdentitySelectionRouteArgs({this.key});
 
   final Key? key;
 
-  final AppLocalizations? appLocalizations;
-
   @override
   String toString() {
-    return 'HomeRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+    return 'IdentitySelectionRouteArgs{key: $key}';
   }
 }
 
 /// generated route for
-/// [LoginScreen]
-class LoginRoute extends PageRouteInfo<LoginRouteArgs> {
-  LoginRoute({
+/// [LitigantSuccessScreen]
+class LitigantSuccessRoute extends PageRouteInfo<LitigantSuccessRouteArgs> {
+  LitigantSuccessRoute({
     Key? key,
-    AppLocalizations? appLocalizations,
     List<PageRouteInfo>? children,
   }) : super(
-          LoginRoute.name,
-          args: LoginRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
+          LitigantSuccessRoute.name,
+          args: LitigantSuccessRouteArgs(key: key),
           initialChildren: children,
         );
 
-  static const String name = 'LoginRoute';
+  static const String name = 'LitigantSuccessRoute';
 
-  static const PageInfo<LoginRouteArgs> page = PageInfo<LoginRouteArgs>(name);
+  static const PageInfo<LitigantSuccessRouteArgs> page =
+      PageInfo<LitigantSuccessRouteArgs>(name);
 }
 
-class LoginRouteArgs {
-  const LoginRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
+class LitigantSuccessRouteArgs {
+  const LitigantSuccessRouteArgs({this.key});
 
   final Key? key;
 
-  final AppLocalizations? appLocalizations;
+  @override
+  String toString() {
+    return 'LitigantSuccessRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [LoginNumberScreen]
+class LoginNumberRoute extends PageRouteInfo<LoginNumberRouteArgs> {
+  LoginNumberRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          LoginNumberRoute.name,
+          args: LoginNumberRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'LoginNumberRoute';
+
+  static const PageInfo<LoginNumberRouteArgs> page =
+      PageInfo<LoginNumberRouteArgs>(name);
+}
+
+class LoginNumberRouteArgs {
+  const LoginNumberRouteArgs({this.key});
+
+  final Key? key;
 
   @override
   String toString() {
-    return 'LoginRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+    return 'LoginNumberRouteArgs{key: $key}';
   }
 }
 
@@ -206,78 +435,90 @@ class MobileNumberRouteArgs {
 }
 
 /// generated route for
-/// [ProfileScreen]
-class ProfileRoute extends PageRouteInfo<ProfileRouteArgs> {
-  ProfileRoute({
+/// [NameDetailsScreen]
+class NameDetailsRoute extends PageRouteInfo<NameDetailsRouteArgs> {
+  NameDetailsRoute({
     Key? key,
-    AppLocalizations? appLocalizations,
     List<PageRouteInfo>? children,
   }) : super(
-          ProfileRoute.name,
-          args: ProfileRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
+          NameDetailsRoute.name,
+          args: NameDetailsRouteArgs(key: key),
           initialChildren: children,
         );
 
-  static const String name = 'ProfileRoute';
+  static const String name = 'NameDetailsRoute';
 
-  static const PageInfo<ProfileRouteArgs> page =
-      PageInfo<ProfileRouteArgs>(name);
+  static const PageInfo<NameDetailsRouteArgs> page =
+      PageInfo<NameDetailsRouteArgs>(name);
 }
 
-class ProfileRouteArgs {
-  const ProfileRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
+class NameDetailsRouteArgs {
+  const NameDetailsRouteArgs({this.key});
 
   final Key? key;
 
-  final AppLocalizations? appLocalizations;
-
   @override
   String toString() {
-    return 'ProfileRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+    return 'NameDetailsRouteArgs{key: $key}';
   }
 }
 
 /// generated route for
-/// [ProjectSelectionScreen]
-class ProjectSelectionRoute extends PageRouteInfo<ProjectSelectionRouteArgs> {
-  ProjectSelectionRoute({
+/// [NotRegisteredScreen]
+class NotRegisteredRoute extends PageRouteInfo<NotRegisteredRouteArgs> {
+  NotRegisteredRoute({
     Key? key,
-    AppLocalizations? appLocalizations,
     List<PageRouteInfo>? children,
   }) : super(
-          ProjectSelectionRoute.name,
-          args: ProjectSelectionRouteArgs(
-            key: key,
-            appLocalizations: appLocalizations,
-          ),
+          NotRegisteredRoute.name,
+          args: NotRegisteredRouteArgs(key: key),
           initialChildren: children,
         );
 
-  static const String name = 'ProjectSelectionRoute';
+  static const String name = 'NotRegisteredRoute';
 
-  static const PageInfo<ProjectSelectionRouteArgs> page =
-      PageInfo<ProjectSelectionRouteArgs>(name);
+  static const PageInfo<NotRegisteredRouteArgs> page =
+      PageInfo<NotRegisteredRouteArgs>(name);
 }
 
-class ProjectSelectionRouteArgs {
-  const ProjectSelectionRouteArgs({
-    this.key,
-    this.appLocalizations,
-  });
+class NotRegisteredRouteArgs {
+  const NotRegisteredRouteArgs({this.key});
 
   final Key? key;
 
-  final AppLocalizations? appLocalizations;
+  @override
+  String toString() {
+    return 'NotRegisteredRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [OtherIdVerificationScreen]
+class OtherIdVerificationRoute
+    extends PageRouteInfo<OtherIdVerificationRouteArgs> {
+  OtherIdVerificationRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          OtherIdVerificationRoute.name,
+          args: OtherIdVerificationRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'OtherIdVerificationRoute';
+
+  static const PageInfo<OtherIdVerificationRouteArgs> page =
+      PageInfo<OtherIdVerificationRouteArgs>(name);
+}
+
+class OtherIdVerificationRouteArgs {
+  const OtherIdVerificationRouteArgs({this.key});
+
+  final Key? key;
 
   @override
   String toString() {
-    return 'ProjectSelectionRouteArgs{key: $key, appLocalizations: $appLocalizations}';
+    return 'OtherIdVerificationRouteArgs{key: $key}';
   }
 }
 
@@ -296,6 +537,36 @@ class SelectLanguageRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [TermsAndConditionsScreen]
+class TermsAndConditionsRoute
+    extends PageRouteInfo<TermsAndConditionsRouteArgs> {
+  TermsAndConditionsRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          TermsAndConditionsRoute.name,
+          args: TermsAndConditionsRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'TermsAndConditionsRoute';
+
+  static const PageInfo<TermsAndConditionsRouteArgs> page =
+      PageInfo<TermsAndConditionsRouteArgs>(name);
+}
+
+class TermsAndConditionsRouteArgs {
+  const TermsAndConditionsRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'TermsAndConditionsRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
 /// [UnauthenticatedScreenWrapper]
 class UnauthenticatedRouteWrapper extends PageRouteInfo<void> {
   const UnauthenticatedRouteWrapper({List<PageRouteInfo>? children})
@@ -307,4 +578,62 @@ class UnauthenticatedRouteWrapper extends PageRouteInfo<void> {
   static const String name = 'UnauthenticatedRouteWrapper';
 
   static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [UserHomeScreen]
+class UserHomeRoute extends PageRouteInfo<UserHomeRouteArgs> {
+  UserHomeRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          UserHomeRoute.name,
+          args: UserHomeRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'UserHomeRoute';
+
+  static const PageInfo<UserHomeRouteArgs> page =
+      PageInfo<UserHomeRouteArgs>(name);
+}
+
+class UserHomeRouteArgs {
+  const UserHomeRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'UserHomeRouteArgs{key: $key}';
+  }
+}
+
+/// generated route for
+/// [UserTypeScreen]
+class UserTypeRoute extends PageRouteInfo<UserTypeRouteArgs> {
+  UserTypeRoute({
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          UserTypeRoute.name,
+          args: UserTypeRouteArgs(key: key),
+          initialChildren: children,
+        );
+
+  static const String name = 'UserTypeRoute';
+
+  static const PageInfo<UserTypeRouteArgs> page =
+      PageInfo<UserTypeRouteArgs>(name);
+}
+
+class UserTypeRouteArgs {
+  const UserTypeRouteArgs({this.key});
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'UserTypeRouteArgs{key: $key}';
+  }
 }

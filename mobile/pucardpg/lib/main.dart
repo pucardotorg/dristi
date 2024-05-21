@@ -1,3 +1,4 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:isar/isar.dart';
 import 'package:location/location.dart';
 import 'package:pucardpg/blocs/app-init-bloc/app_init.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
+import 'package:pucardpg/blocs/file-picker-bloc/file_picker.dart';
 import 'package:pucardpg/blocs/localization-bloc/localization.dart';
 import 'package:pucardpg/blocs/project-bloc/project.dart';
 import 'package:pucardpg/data/app_shared_preferences.dart';
@@ -14,6 +16,7 @@ import 'package:pucardpg/data/nosql/localization.dart';
 import 'package:pucardpg/data/remote_client.dart';
 import 'package:pucardpg/model/data_model.init.dart';
 import 'package:pucardpg/routes/routes.dart';
+import 'package:pucardpg/theme/app_themes.dart';
 import 'package:pucardpg/utils/constants.dart';
 import 'package:pucardpg/utils/envConfig.dart';
 import 'blocs/app-localization-bloc/app_localization.dart';
@@ -58,7 +61,7 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  final _approuter = AppRouter();
+  final appRouter = AppRouter();
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -82,6 +85,9 @@ class _MainAppState extends State<MainApp> {
             ),
             BlocProvider(create: (_) {
               return LocationBloc(location: Location());
+            }),
+            BlocProvider(create: (_) {
+              return FileBloc();
             })
           ],
           child: BlocBuilder<AppInitialization, InitState>(
@@ -89,56 +95,70 @@ class _MainAppState extends State<MainApp> {
                 orElse: () => const Center(child: Text('error Initializing')),
                 initialized: (appConfig, serviceRegistryModel) {
                   final initialModuleList =
-                      appConfig.appConfig!.appConfig?[0].backendInterface;
+                      appConfig.mdmsRes?.commonMasters!.stateInfo?[0].localizationModules;
                   final languages =
-                      appConfig.appConfig!.appConfig?[0].languages;
+                      appConfig.mdmsRes?.commonMasters!.stateInfo?[0].languages;
                   var firstLanguage;
-                  firstLanguage = languages?.last.value;
+                  firstLanguage = languages?.first.value;
 
+                  return BlocBuilder<AuthBloc, AuthState>(builder: (context, authState) {
+                    return BlocProvider(
+                        create: (context) => LocalizationBloc(widget.isar)
+                          ..add(LocalizationEvent.onSelect(
+                              locale: firstLanguage,
+                              moduleList: initialModuleList)),
+                        child: BlocBuilder<LocalizationBloc, LocalizationState>(
+                            builder: (context, state) {
+                              final selectedLocale =
+                                  AppSharedPreferences().getSelectedLocale ??
+                                      firstLanguage;
+                              return MaterialApp.router(
+                                debugShowCheckedModeBanner: false,
+                                scaffoldMessengerKey: scaffoldMessengerKey,
+                                theme: AppTheme.instance.mobileTheme,
+                                routerDelegate: AutoRouterDelegate.declarative(
+                                  appRouter,
+                                  navigatorObservers: () => [RouteObserver()],
+                                  routes: (handler) => [ authState.maybeWhen(
+                                    authenticated: (a, b, c) =>
+                                      const AuthenticatedRouteWrapper(),
+                                    unauthenticated: () =>
+                                      const UnauthenticatedRouteWrapper(),
+                                    orElse: () =>
+                                      const UnauthenticatedRouteWrapper(),
+                                  )],
+                                ),
+                                routeInformationParser:
+                                appRouter.defaultRouteParser(),
+                                // Define supported locales based on available languages
+                                supportedLocales: languages != null
+                                    ? languages.map((e) {
+                                  final results = e.value.split('_');
+
+                                  return results.isNotEmpty
+                                      ? Locale(results.first, results.last)
+                                      : firstLanguage;
+                                })
+                                    : [firstLanguage],
+                                // Define localizations delegates
+                                localizationsDelegates: [
+                                  AppLocalizations.getDelegate(
+                                      appConfig.mdmsRes!, widget.isar),
+                                  GlobalWidgetsLocalizations.delegate,
+                                  GlobalCupertinoLocalizations.delegate,
+                                  GlobalMaterialLocalizations.delegate,
+                                ],
+                                // Set the locale for the app
+                                locale: languages != null
+                                    ? Locale(
+                                  selectedLocale!.split("_").first,
+                                  selectedLocale.split("_").last,
+                                )
+                                    : firstLanguage,
+                              );
+                            }));
+                  });
                   // Get the selected locale from shared preferences, or fallback to the default firstLanguage
-                  return BlocProvider(
-                      create: (context) => LocalizationBloc(widget.isar)
-                        ..add(LocalizationEvent.onSelect(
-                            locale: firstLanguage,
-                            moduleList: initialModuleList)),
-                      child: BlocBuilder<LocalizationBloc, LocalizationState>(
-                          builder: (context, state) {
-                            final selectedLocale =
-                                AppSharedPreferences().getSelectedLocale ??
-                                    firstLanguage;
-                            return MaterialApp.router(
-                              scaffoldMessengerKey: scaffoldMessengerKey,
-                              theme: DigitTheme.instance.mobileTheme,
-                              routerDelegate: _approuter.delegate(),
-                              routeInformationParser:
-                              _approuter.defaultRouteParser(),
-                              // Define supported locales based on available languages
-                              supportedLocales: languages != null
-                                  ? languages.map((e) {
-                                final results = e.value.split('_');
-
-                                return results.isNotEmpty
-                                    ? Locale(results.first, results.last)
-                                    : firstLanguage;
-                              })
-                                  : [firstLanguage],
-                              // Define localizations delegates
-                              localizationsDelegates: [
-                                AppLocalizations.getDelegate(
-                                    appConfig.appConfig!, widget.isar),
-                                GlobalWidgetsLocalizations.delegate,
-                                GlobalCupertinoLocalizations.delegate,
-                                GlobalMaterialLocalizations.delegate,
-                              ],
-                              // Set the locale for the app
-                              locale: languages != null
-                                  ? Locale(
-                                selectedLocale!.split("_").first,
-                                selectedLocale.split("_").last,
-                              )
-                                  : firstLanguage,
-                            );
-                          }));
                 }),
           )),
     );
