@@ -19,7 +19,9 @@ serviceMaps:
             - jsonPath: $.order.tenantId
             - jsonPath: $.order.filingNumber
             - jsonPath: $.order.hearingNumber
-            - jsonPath: $.order.applicationNumber[*][?({id} in @.statutesAndSections[*].id)].id
+            - jsonPath: $.order.applicationNumber
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.order.orderNumber
             - jsonPath: $.order.cnrNumber
             - jsonPath: $.order.comments
@@ -54,7 +56,11 @@ serviceMaps:
             - jsonPath: $.order.statuteSection.id
             - jsonPath: $.order.statuteSection.statute
             - jsonPath: $.order.statuteSection.sections
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.order.statuteSection.subsections
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.order.statuteSection.strSections
             - jsonPath: $.order.statuteSection.strSubsections
             - jsonPath: $.order.id
@@ -79,6 +85,8 @@ serviceMaps:
             - jsonPath: $.order.filingNumber
             - jsonPath: $.order.hearingNumber
             - jsonPath: $.order.applicationNumber
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.order.orderNumber
             - jsonPath: $.order.cnrNumber
             - jsonPath: $.order.comments
