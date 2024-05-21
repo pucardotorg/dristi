@@ -3,8 +3,10 @@ import { chequeDetailsConfig } from "./chequedetailsConfig";
 import { complaintdetailconfig } from "./complaindetailsConfig";
 import { debtliabilityconfig } from "./debtLiabilityConfig";
 import { delayApplicationConfig } from "./delayApplicationConfig";
+import { demandNoticeConfig } from "./demandNoticeConfig";
 import { respondentconfig } from "./respondentConfig";
 import { reviewcasefileconfig } from "./reviewcasefileconfig";
+import { witnessConfig } from "./witnessConfig";
 
 export const sideMenuConfig = [
   {
@@ -37,7 +39,7 @@ export const sideMenuConfig = [
     children: [
       { label: "CS_CHEQUE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: chequeDetailsConfig },
       { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: debtliabilityconfig },
-      { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: demandNoticeConfig },
       { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false, pageConfig: delayApplicationConfig },
     ],
     checked: false,
@@ -48,7 +50,7 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_ADDITIONAL_DETAILS",
     children: [
-      { label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false },
+      { label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: witnessConfig },
       { label: "CS_PRAYER_SWORN_STATEMENT", checked: false, isCompleted: false, isDisabled: false },
       { label: "CS_ADVOCATE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: advocateDetailsConfig },
     ],

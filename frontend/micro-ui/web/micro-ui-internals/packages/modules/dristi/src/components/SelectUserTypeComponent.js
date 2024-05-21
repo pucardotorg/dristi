@@ -94,6 +94,22 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       errorStyle={errors?.[input.name]}
                     />
                   )}
+                  {["date"].includes(input?.type) && (
+                    <TextInput
+                      className="field desktop-w-full"
+                      key={input.name}
+                      type={"date"}
+                      value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
+                      onChange={(e) => {
+                        setValue(e.target.value, input.name, input);
+                      }}
+                      disable={input.isDisabled}
+                      style={{ paddingRight: "3px" }}
+                      defaultValue={undefined}
+                      customIcon={input?.customIcon}
+                      {...input.validation}
+                    />
+                  )}
                   {input?.type === "documentUpload" && (
                     <MultiUploadWrapper
                       t={t}

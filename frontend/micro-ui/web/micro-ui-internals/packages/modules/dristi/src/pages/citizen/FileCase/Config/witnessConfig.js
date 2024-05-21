@@ -1,4 +1,4 @@
-export const witnessConfig = [
+const witnessFormConfig = [
   {
     head: "CS_RESPONDENT_NAME",
     body: [
@@ -187,3 +187,12 @@ export const witnessConfig = [
     ],
   },
 ];
+
+export const witnessConfig = {
+  formconfig: witnessFormConfig,
+  header: "CS_WITNESS_DETAIL_HEADING",
+  subtext: "CS_WITNESS_DETAIL_SUBTEXT",
+  isOptional: false,
+  addFormText: "ADD_WITNESS",
+  formItemName: "Witness",
+};
