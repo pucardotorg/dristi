@@ -43,5 +43,9 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+	public static final String EVIDENCE_CREATE_EXCEPTION = "ADVOCATE_CREATE_EXCEPTION";
+	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
+	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+
 
 }

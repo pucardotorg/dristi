@@ -82,4 +82,15 @@ public class Configuration {
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
+
+	// Evidence
+	@Value("${advocate.kafka.create.topic}")
+	private String evidenceCreateTopic;
+
+	// Workflow/Business Module name
+	@Value("${egov.workflow.businessservice.module}")
+	private String businessServiceModule;
+
+	@Value("${egov.workflow.businessservice.name}")
+	private String businessServiceName;
 }
