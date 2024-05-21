@@ -1,19 +1,12 @@
 package org.pucar.dristi.service;
-
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
-
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
@@ -22,15 +15,25 @@ import org.pucar.dristi.validators.AdvocateRegistrationValidator;
 import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Map;
 
-@ExtendWith(MockitoExtension.class)
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
 public class AdvocateServiceTest {
+
+    @InjectMocks
+    private AdvocateService advocateService;
 
     @Mock
     private AdvocateRegistrationValidator validator;
@@ -39,10 +42,10 @@ public class AdvocateServiceTest {
     private AdvocateRegistrationEnrichment enrichmentUtil;
 
     @Mock
-    private IndividualService individualService;
+    private WorkflowService workflowService;
 
     @Mock
-    private WorkflowService workflowService;
+    private IndividualService individualService;
 
     @Mock
     private AdvocateRepository advocateRepository;
@@ -50,91 +53,51 @@ public class AdvocateServiceTest {
     @Mock
     private Producer producer;
 
-    @InjectMocks
-    private AdvocateService service;
     @Mock
     private Configuration config;
 
-//    @Test
-//    void testCreateAdvocateRequest() {
-//        // Prepare the request
-//        AdvocateRequest request = new AdvocateRequest();
-//        RequestInfo requestInfo = new RequestInfo();
-//        request.setRequestInfo(requestInfo);
-//        Advocate advocate = new Advocate();
-//        advocate.setTenantId("tenant1");
-//        advocate.setIndividualId("individualId");
-//        request.setAdvocates(Collections.singletonList(advocate));
-//        when(config.getAdvocateCreateTopic()).thenReturn("save-advocate-application");
-//
-//        // Execute the method under test
-//        List<Advocate> result = service.createAdvocate(request);
-//
-//        // Verify the interactions
-//        verify(validator, times(1)).validateAdvocateRegistration(request);
-//        verify(enrichmentUtil, times(1)).enrichAdvocateRegistration(request);
-//        verify(workflowService, times(1)).updateWorkflowStatus(request);
-//        verify(producer, times(1)).push("save-advocate-application", request);
-//
-//        // Assert the result
-//        assertNotNull(result);
-//        assertEquals("tenant1", result.get(0).getTenantId());
-//    }
-//
-//    @Test
-//    public void testSearchAdvocateApplications() {
-//        // Setup
-//        RequestInfo requestInfo = new RequestInfo();
-//        User user = new User();
-//        user.setType("CITIZEN");
-//        requestInfo.setUserInfo(user);
-//        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
-//        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria(null, null, "APP123", null);
-//        advocateSearchCriteria.add(criteria);
-//        String applicationNumber = new String();
-//
-//        List<String> statusList = Arrays.asList("APPROVED","PENDING");
-//        when(advocateRepository.getApplications(
-//                eq(Collections.singletonList(new AdvocateSearchCriteria(null, null, "APP123", null))),
-//                eq(Arrays.asList("APPROVED", "PENDING")),
-//                eq(""), any(),any(),any()))
-//                .thenReturn(Collections.emptyList());
-//
-//        // Invoke
-//        List<Advocate> result = service.searchAdvocate(requestInfo, advocateSearchCriteria,statusList, applicationNumber,1,1);
-//
-//        // Verify
-//        assertEquals(0, result.size());
-//        verify(advocateRepository, times(1)).getApplications(eq(advocateSearchCriteria), eq(Arrays.asList("APPROVED", "PENDING")), eq(applicationNumber), any(),any(),any());
-//    }
-//
-//    @Test
-//    void testUpdateAdvocateRequest() {
-//        // Prepare the request
-//        AdvocateRequest request = new AdvocateRequest();
-//        RequestInfo requestInfo = new RequestInfo();
-//        request.setRequestInfo(requestInfo);
-//        Advocate advocate = new Advocate();
-//        advocate.setTenantId("tenant1");
-//        advocate.setIndividualId("individualId");
-//        advocate.setWorkflow(new Workflow());
-//        advocate.setStatus("ACTIVE");
-//        request.setAdvocates(Collections.singletonList(advocate));
-//
-//        when(validator.validateApplicationExistence(any())).thenReturn(advocate);
-//        when(config.getAdvocateUpdateTopic()).thenReturn("update-advocate-application");
-//
-//        // Execute the method under test
-//        List<Advocate> result = service.updateAdvocate(request);
-//
-//        // Verify the interactions
-//        verify(validator, times(1)).validateApplicationExistence(request.getAdvocates().get(0));
-//        verify(enrichmentUtil, times(1)).enrichAdvocateApplicationUponUpdate(request);
-//        verify(workflowService, times(1)).updateWorkflowStatus(request);
-//        verify(producer, times(1)).push("update-advocate-application", request);
-//
-//        // Assert the result
-//        assertNotNull(result);
-//        assertEquals("tenant1", result.get(0).getTenantId());
-//    }
+
+
+
+    @Test
+    public void testSearchAdvocateByStatus_Success() {
+        // Setup
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Mock behavior
+        when(advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate() {
+        }));
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByStatus(status, tenantId, limit, offset);
+
+        // Verification
+        assertNotNull(result);
+        // Add more verification as needed
+    }
+
+    @Test
+    public void testSearchAdvocateByApplicationNumber_Success() {
+        // Setup
+        String applicationNumber = "testApplicationNumber";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Mock behavior
+        when(advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate() {
+        }));
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, limit, offset);
+
+        // Verification
+        assertNotNull(result);
+        // Add more verification as needed
+    }
 }
+
+
