@@ -1,0 +1,102 @@
+serviceMaps:
+  serviceName: evidence-services
+  mappings:
+    - version: 1.0
+      description: Persists artifact details in tables
+      fromTopic: save-artifact-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application, hearing, orders, mediaType, artifactType, sourceID, sourceName, createdDate, isActive, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: artifacts.*
+          jsonMaps:
+            - jsonPath: $.artifacts.*.id
+            - jsonPath: $.artifacts.*.tenantId
+            - jsonPath: $.artifacts.*.artifactNumber
+            - jsonPath: $.artifacts.*.evidenceNumber
+            - jsonPath: $.artifacts.*.externalRefNumber
+            - jsonPath: $.artifacts.*.caseId
+            - jsonPath: $.artifacts.*.application
+            - jsonPath: $.artifacts.*.hearing
+            - jsonPath: $.artifacts.*.order
+            - jsonPath: $.artifacts.*.mediaType
+            - jsonPath: $.artifacts.*.artifactType
+            - jsonPath: $.artifacts.*.sourceID
+            - jsonPath: $.artifacts.*.sourceName
+            - jsonPath: $.artifacts.*.createdDate
+            - jsonPath: $.artifacts.*.isActive
+            - jsonPath: $.artifacts.*.status
+            - jsonPath: $.artifacts.*.description
+            - jsonPath: $.artifacts.*.artifactDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifacts.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifacts.*.auditdetails.createdBy
+            - jsonPath: $.artifacts.*.auditdetails.lastModifiedBy
+            - jsonPath: $.artifacts.*.auditdetails.createdTime
+            - jsonPath: $.artifacts.*.auditdetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_evidence_document(id,fileStore,documentUid,documentType,artifactId,additionalDetails) VALUES (?,?, ?, ?, ?, ?);
+          basePath: artifacts.*.file.*
+          jsonMaps:
+            - jsonPath: $.artifacts.*.file.*.id
+            - jsonPath: $.artifacts.*.file.*.fileStore
+            - jsonPath: $.artifacts.*.file.*.documentUid
+            - jsonPath: $.artifacts.*.file.*.documentType
+            - jsonPath: $.artifacts[*][?({id} in @.file[*].id)].id
+            - jsonPath: $.artifacts.*.file.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO evidence_comment(id, tenantId, artifactId, individualId, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: artifacts.*.comments.*
+          jsonMaps:
+            - jsonPath: $.artifacts.*.comments.*.id
+            - jsonPath: $.artifacts.*.comments.*.tenantId
+            - jsonPath: $.artifacts.*.comments.*.artifactId
+            - jsonPath: $.artifacts.*.comments.*.individualId
+            - jsonPath: $.artifacts.*.comments.*.comment
+            - jsonPath: $.artifacts.*.comments.*.isActive
+            - jsonPath: $.artifacts.*.comments.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifacts.*.comments.*.auditdetails.createdBy
+            - jsonPath: $.artifacts.*.comments.*.auditdetails.lastModifiedBy
+            - jsonPath: $.artifacts.*.comments.*.auditdetails.createdTime
+            - jsonPath: $.artifacts.*.comments.*.auditdetails.lastModifiedTime
+
+    - version: 1.0
+      description: Update artifact details in tables
+      fromTopic: update-artifact-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE evidence_artifact SET artifactNumber =?, evidenceNumber =?, externalRefNumber =?, caseId =?, application =?, hearing =?, order =?, mediaType =?, artifactType =?, sourceID =?, sourceName =?, createdDate =?, isActive =?, status =?, description =?, artifactDetails =?, additionalDetails =?, lastModifiedBy =?, lastModifiedTime = ? WHERE id =?;
+          basePath: artifacts.*
+          jsonMaps:
+            - jsonPath: $.artifacts.*.artifactNumber
+            - jsonPath: $.artifacts.*.evidenceNumber
+            - jsonPath: $.artifacts.*.externalRefNumber
+            - jsonPath: $.artifacts.*.caseId
+            - jsonPath: $.artifacts.*.application
+            - jsonPath: $.artifacts.*.hearing
+            - jsonPath: $.artifacts.*.order
+            - jsonPath: $.artifacts.*.mediaType
+            - jsonPath: $.artifacts.*.artifactType
+            - jsonPath: $.artifacts.*.sourceID
+            - jsonPath: $.artifacts.*.sourceName
+            - jsonPath: $.artifacts.*.createdDate
+            - jsonPath: $.artifacts.*.isActive
+            - jsonPath: $.artifacts.*.status
+            - jsonPath: $.artifacts.*.description
+            - jsonPath: $.artifacts.*.artifactDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifacts.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.artifacts.*.auditdetails.lastModifiedBy
+            - jsonPath: $.artifacts.*.auditdetails.lastModifiedTime
+            - jsonPath: $.artifacts.*.id
+
