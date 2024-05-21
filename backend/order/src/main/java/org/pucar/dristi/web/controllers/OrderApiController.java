@@ -50,38 +50,30 @@ public class OrderApiController {
 
     @RequestMapping(value = "/order/v1/create", method = RequestMethod.POST)
     public ResponseEntity<OrderResponse> orderV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new order + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody OrderRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                Order order = orderService.createOrder(body);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
-                OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
-                return new ResponseEntity<>(orderResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false, e.getMessage());
-                OrderResponse orderResponse = OrderResponse.builder().order(null).responseInfo(responseInfo).build();
-                return new ResponseEntity<>(orderResponse,HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            Order order = orderService.createOrder(body);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
+            OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false, e.getMessage());
+            OrderResponse orderResponse = OrderResponse.builder().order(null).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<OrderResponse>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(value = "/order/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<OrderExistsResponse> orderV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the order(S) exists", required = true, schema = @Schema()) @Valid @RequestBody OrderExistsRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                OrderExists order = orderService.existsOrder(body);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
-                OrderExistsResponse orderExistsResponse = OrderExistsResponse.builder().order(order).responseInfo(responseInfo).build();
-                return new ResponseEntity<>(orderExistsResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<OrderExistsResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            OrderExists order = orderService.existsOrder(body);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
+            OrderExistsResponse orderExistsResponse = OrderExistsResponse.builder().order(order).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderExistsResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false, e.getMessage());
+            OrderExistsResponse orderListResponse = OrderExistsResponse.builder().order(null).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderListResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<OrderExistsResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value = "/order/v1/search", method = RequestMethod.POST)
@@ -92,35 +84,30 @@ public class OrderApiController {
                                                                @Parameter(in = ParameterIn.QUERY, description = "tenantId whose order(s) are being searched", schema = @Schema()) @Valid @RequestParam(value = "tenantId", required = false) String tenantId,
                                                                @Parameter(in = ParameterIn.QUERY, description = "the status of the order(s) being searched", schema = @Schema()) @Valid @RequestParam(value = "status", required = false) String status,
                                                                @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody RequestInfo requestInfo) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                List<Order> orders = orderService.searchOrder(String.valueOf(applicationNumber),cnrNumber,filingNumber, tenantId, id, status, requestInfo);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true, HttpStatus.OK.getReasonPhrase());
-                OrderListResponse orderListResponse = OrderListResponse.builder().totalCount(orders.size()).responseInfo(responseInfo).build();
-                return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<OrderListResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            List<Order> orders = orderService.searchOrder(String.valueOf(applicationNumber), cnrNumber, filingNumber, tenantId, id, status, requestInfo);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true, HttpStatus.OK.getReasonPhrase());
+            OrderListResponse orderListResponse = OrderListResponse.builder().totalCount(orders.size()).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false, e.getMessage());
+            OrderListResponse orderListResponse = OrderListResponse.builder().list(null).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderListResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<OrderListResponse>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(value = "/order/v1/update", method = RequestMethod.POST)
     public ResponseEntity<OrderResponse> orderV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update order(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody OrderRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                Order order = orderService.updateOrder(body);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
-                OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
-                return new ResponseEntity<>(orderResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<OrderResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            Order order = orderService.updateOrder(body);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
+            OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false, e.getMessage());
+            OrderResponse orderResponse = OrderResponse.builder().order(null).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(orderResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<OrderResponse>(HttpStatus.BAD_REQUEST);
-
     }
 }
+
