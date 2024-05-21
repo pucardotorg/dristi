@@ -44,13 +44,12 @@ public class OrderRegistrationEnrichment {
 
                 orderRequest.getOrder().setOrderNumber(orderRegistrationIdList.get(0));
             }
-        } catch (
-                CustomException e) {
-            log.error("Custom Exception occurred while enriching order");
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while enriching order : {}", e.getMessage());
             throw e;
-        } catch (
-                Exception e) {
-            log.error("Error enriching order : {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Exception occurred while enriching order : {}", e.getMessage());
+            throw e;
         }
     }
 

@@ -32,7 +32,7 @@ public class OrderQueryBuilder {
 
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_order_statute_section stse";
 
-    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, List<Object> preparedStmtList) {
+    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
@@ -40,51 +40,39 @@ public class OrderQueryBuilder {
 
             if (applicationNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.applicationnumber =")
-                        .append("?");
-                preparedStmtList.add(applicationNumber);
+                query.append("orders.applicationnumber =").append("'").append(applicationNumber).append("'");
                 firstCriteria = false;
             }
 
             if (cnrNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.cnrNumber = ")
-                        .append("?");
-                preparedStmtList.add(cnrNumber);
+                query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
 
             }
 
             if (filingNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.filingnumber =")
-                        .append("?");
-                preparedStmtList.add(filingNumber);
+                query.append("orders.filingnumber =").append("'").append(filingNumber).append("'");
                 firstCriteria = false;
             }
 
             if (tenantId!=null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.tenantid =")
-                        .append("?");
-                preparedStmtList.add(tenantId);
+                query.append("orders.tenantid =").append("'").append(tenantId).append("'");
                 firstCriteria = false;
             }
 
             if (id!=null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.id = ")
-                        .append("?");
-                preparedStmtList.add(id);
+                query.append("orders.id = ").append("'").append(id).append("'");
                 firstCriteria = false;
 
             }
 
             if (status!=null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("orders.status =")
-                        .append("?");
-                preparedStmtList.add(status);
+                query.append("orders.status =").append("'").append(status).append("'");
                 firstCriteria = false;
             }
             query.append(ORDERBY_CREATEDTIME);

@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.service.OrderRegistrationService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
@@ -53,11 +54,13 @@ public class OrderApiController {
         if (accept != null && accept.contains("application/json")) {
             try {
                 Order order = orderService.createOrder(body);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
                 OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(orderResponse, HttpStatus.OK);
             } catch (Exception e) {
-                return new ResponseEntity<OrderResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false, e.getMessage());
+                OrderResponse orderResponse = OrderResponse.builder().order(null).responseInfo(responseInfo).build();
+                return new ResponseEntity<>(orderResponse,HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
@@ -70,7 +73,7 @@ public class OrderApiController {
         if (accept != null && accept.contains("application/json")) {
             try {
                 OrderExists order = orderService.existsOrder(body);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
                 OrderExistsResponse orderExistsResponse = OrderExistsResponse.builder().order(order).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(orderExistsResponse, HttpStatus.OK);
             } catch (Exception e) {
@@ -93,7 +96,7 @@ public class OrderApiController {
         if (accept != null && accept.contains("application/json")) {
             try {
                 List<Order> orders = orderService.searchOrder(String.valueOf(applicationNumber),cnrNumber,filingNumber, tenantId, id, status, requestInfo);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true, HttpStatus.OK.getReasonPhrase());
                 OrderListResponse orderListResponse = OrderListResponse.builder().totalCount(orders.size()).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
             } catch (Exception e) {
@@ -109,7 +112,7 @@ public class OrderApiController {
         if (accept != null && accept.contains("application/json")) {
             try {
                 Order order = orderService.updateOrder(body);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
                 OrderResponse orderResponse = OrderResponse.builder().order(order).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(orderResponse, HttpStatus.OK);
             } catch (Exception e) {

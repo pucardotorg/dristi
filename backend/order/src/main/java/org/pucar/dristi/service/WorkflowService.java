@@ -38,15 +38,15 @@ public class WorkflowService {
 
     public void updateWorkflowStatus(OrderRequest orderRequest) {
             try {
-                ProcessInstance processInstance = getProcessInstance(orderRequest.getOrder(), orderRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstance(orderRequest.getOrder());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(orderRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 orderRequest.getOrder().setStatus(applicationStatus);
             } catch (CustomException e) {
-                log.error("Custom exception occured updating workflow status: {}", e.getMessage());
+                log.error("Custom exception occurred while updating workflow status : {}", e.getMessage());
                 throw new CustomException();
             } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.getMessage());
+                log.error("Exception occurred while updating workflow status : {}", e.getMessage());
                 throw new CustomException();
             }
     }
@@ -66,15 +66,16 @@ public class WorkflowService {
         }
     }
 
-    private ProcessInstance getProcessInstance(Order order, RequestInfo requestInfo) {
+    private ProcessInstance getProcessInstance(Order order) {
         try {
             Workflow workflow = order.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
-            processInstance.setBusinessId("1");
+            processInstance.setBusinessId(order.getOrderNumber());
+            System.out.println(order.getOrderNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("pucar"); // FIXME
+            processInstance.setModuleName(config.getOrderBusinessName());
             processInstance.setTenantId(order.getTenantId());
-            processInstance.setBusinessService("order"); // FIXME
+            processInstance.setBusinessService(config.getOrderBusinessServiceName());
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -106,54 +107,13 @@ public class WorkflowService {
             throw new CustomException();
         }
     }
-    private BusinessService getBusinessService(CourtCase courtCase, RequestInfo requestInfo) {
-        try {
-            String tenantId = courtCase.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            Object result = repository.fetchResult(url, requestInfoWrapper);
-            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-                throw new CustomException();
-            return response.getBusinessServices().get(0);
-        } catch (Exception e) {
-            log.error("Error getting business service: {}", e.getMessage());
-            throw new CustomException();
-        }
-    }
-    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=").append(tenantId);
-        url.append("&businessServices=").append(businessService);
-        return url;
-    }
+
     private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());
         url.append("?tenantId=").append(tenantId);
         url.append("&businessIds=").append(businessService);
         return url;
-    }
-    public ProcessInstanceRequest getProcessInstanceRegistrationPayment(OrderRequest updateRequest) {
-        try {
-            Order application = updateRequest.getOrder();
-            ProcessInstance process = ProcessInstance.builder()
-                    .businessService("ORDER")
-                    .businessId(application.getFilingNumber())
-                    .comment("Payment for Order registration processed")
-                    .moduleName("order-services")
-                    .tenantId(application.getTenantId())
-                    .action("PAY")
-                    .build();
-            return ProcessInstanceRequest.builder()
-                    .requestInfo(updateRequest.getRequestInfo())
-                    .processInstances(Arrays.asList(process))
-                    .build();
-        } catch (Exception e) {
-            log.error("Error getting process instance for order registration payment: {}", e.getMessage());
-            throw new CustomException();
-        }
     }
 
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {

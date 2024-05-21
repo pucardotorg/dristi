@@ -37,8 +37,6 @@ public class OrderRegistrationValidator {
 
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getTenantId()))
             throw new CustomException(CREATE_ORDER_ERR, "tenantId is mandatory for creating order");
-//        if (ObjectUtils.isEmpty(orderRequest.getOrder().getHearingNumber()))
-//            throw new CustomException(CREATE_ORDER_ERR, "Hearing Number is mandatory for creating order");
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getCnrNumber()))
             throw new CustomException(CREATE_ORDER_ERR, "CNR Number is mandatory for creating order");
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
@@ -61,7 +59,7 @@ public class OrderRegistrationValidator {
         if (existingApplications.isEmpty())
             throw new CustomException("VALIDATION EXCEPTION", "Case Application does not exist");
 
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "Order", createMasterDetails());
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "order", createMasterDetails());
 
         if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
