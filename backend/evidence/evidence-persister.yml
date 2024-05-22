@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
 
-        - query: INSERT INTO evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application, hearing, orders, mediaType, artifactType, sourceID, sourceName, createdDate, isActive, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_evidence_artifact(id, tenantId, artifactNumber, evidenceNumber, externalRefNumber, caseId, application, hearing, orders, mediaType, artifactType, sourceID, sourceName, createdDate, isActive, status, description, artifactDetails, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: artifacts.*
           jsonMaps:
             - jsonPath: $.artifacts.*.id
@@ -38,19 +38,19 @@ serviceMaps:
             - jsonPath: $.artifacts.*.auditdetails.createdTime
             - jsonPath: $.artifacts.*.auditdetails.lastModifiedTime
 
-        - query: INSERT INTO dristi_evidence_document(id,fileStore,documentUid,documentType,artifactId,additionalDetails) VALUES (?,?, ?, ?, ?, ?);
-          basePath: artifacts.*.file.*
+        - query: INSERT INTO dristi_evidence_document(id,fileStore,documentUid,documentType,artifactId,additionalDetails) VALUES (?,?, ?, ?, ?,?);
+          basePath: artifacts.*.file
           jsonMaps:
-            - jsonPath: $.artifacts.*.file.*.id
-            - jsonPath: $.artifacts.*.file.*.fileStore
-            - jsonPath: $.artifacts.*.file.*.documentUid
-            - jsonPath: $.artifacts.*.file.*.documentType
-            - jsonPath: $.artifacts[*][?({id} in @.file[*].id)].id
-            - jsonPath: $.artifacts.*.file.*.additionalDetails
+            - jsonPath: $.artifacts.*.file.id
+            - jsonPath: $.artifacts.*.file.fileStore
+            - jsonPath: $.artifacts.*.file.documentUid
+            - jsonPath: $.artifacts.*.file.documentType
+            - jsonPath: $.artifacts.*.id
+            - jsonPath: $.artifacts.*.file.additionalDetails
               type: JSON
               dbType: JSONB
 
-        - query: INSERT INTO evidence_comment(id, tenantId, artifactId, individualId, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_evidence_comment(id, tenantId, artifactId, individualId, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: artifacts.*.comments.*
           jsonMaps:
             - jsonPath: $.artifacts.*.comments.*.id
@@ -72,7 +72,7 @@ serviceMaps:
       fromTopic: update-artifact-application
       isTransaction: true
       queryMaps:
-        - query: UPDATE evidence_artifact SET artifactNumber =?, evidenceNumber =?, externalRefNumber =?, caseId =?, application =?, hearing =?, order =?, mediaType =?, artifactType =?, sourceID =?, sourceName =?, createdDate =?, isActive =?, status =?, description =?, artifactDetails =?, additionalDetails =?, lastModifiedBy =?, lastModifiedTime = ? WHERE id =?;
+        - query: UPDATE dristi_evidence_artifact SET artifactNumber =?, evidenceNumber =?, externalRefNumber =?, caseId =?, application =?, hearing =?, order =?, mediaType =?, artifactType =?, sourceID =?, sourceName =?, createdDate =?, isActive =?, status =?, description =?, artifactDetails =?, additionalDetails =?, lastModifiedBy =?, lastModifiedTime = ? WHERE id =?;
           basePath: artifacts.*
           jsonMaps:
             - jsonPath: $.artifacts.*.artifactNumber

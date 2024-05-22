@@ -1,4 +1,4 @@
-CREATE TABLE evidence_artifact (
+CREATE TABLE dristi_evidence_artifact (
     id VARCHAR(64) NOT NULL PRIMARY KEY,
     tenantId varchar(1000) NOT NULL,
     artifactNumber VARCHAR(64) NULL,
@@ -24,16 +24,15 @@ CREATE TABLE evidence_artifact (
     createdTime int8 NULL,
     lastModifiedTime int8 NULL
 );
-CREATE TABLE dristi_document (
+CREATE TABLE dristi_evidence_document (
     id varchar(64) NOT NULL PRIMARY KEY,
     fileStore varchar(64) NULL,
     documentUid varchar(64)  NULL ,
     documentType varchar(64) NULL,
     artifactId varchar(64)  NULL,
-    clerk_id varchar(64)  NULL,
     additionalDetails JSONB NULL
 );
-CREATE TABLE evidence_comment (
+CREATE TABLE dristi_evidence_comment (
     id VARCHAR(64) NOT NULL PRIMARY KEY,
     tenantId varchar(1000) NOT NULL,
     artifactId varchar(64) NOT NULL ,

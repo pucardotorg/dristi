@@ -84,7 +84,7 @@ public class Configuration {
 	private String smsNotificationTopic;
 
 	// Evidence
-	@Value("${advocate.kafka.create.topic}")
+	@Value("${evidence.kafka.create.topic}")
 	private String evidenceCreateTopic;
 
 	// Workflow/Business Module name
