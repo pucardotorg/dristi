@@ -90,23 +90,23 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-        try {
-            StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
-            query.append(FROM_DOCUMENTS_TABLE);
-            if (!ids.isEmpty()) {
-                query.append(" WHERE doc.advocateid IN (")
-                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(ids);
-            }
-
-            return query.toString();
-        } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
-        }
-    }
+//    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
+//        try {
+//            StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
+//            query.append(FROM_DOCUMENTS_TABLE);
+//            if (!ids.isEmpty()) {
+//                query.append(" WHERE doc.advocateid IN (")
+//                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
+//                        .append(")");
+//                preparedStmtList.addAll(ids);
+//            }
+//
+//            return query.toString();
+//        } catch (Exception e) {
+//            log.error("Error while building document search query");
+//            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+//        }
+//    }
 
 
 }
