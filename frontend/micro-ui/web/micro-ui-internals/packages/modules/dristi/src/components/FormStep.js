@@ -48,7 +48,7 @@ const FormStep = ({
             <TextInput
               key={index}
               name={input.name}
-              defaultValue={defaultValue}
+              defaultValue={defaultValue && defaultValue[input.name]}
               value={value}
               onChange={onChange}
               minlength={input.validation.minlength}

@@ -3,7 +3,13 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import SelectComponents from "./components/SelectComponents";
+import AddressComponent from "./components/AddressComponent";
+
 import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
+import CustomRadioCard from "./components/CustomRadioCard";
+import AdhaarInput from "./components/AdhaarInput";
+import AdvocateDetailComponent from "./components/AdvocateDetailComponent";
+
 import Registration from "./pages/citizen/registration";
 import EmployeeApp from "./pages/employee";
 import DRISTICard from "./components/DRISTICard";
@@ -44,6 +50,10 @@ const componentsToRegister = {
   DRISTICitizenResponse: CitizenResponse,
   AdvocateClerkAdditionalDetail,
   FileCase,
+  CustomRadioCard,
+  AddressComponent,
+  AdhaarInput,
+  AdvocateDetailComponent,
 };
 
 const overrideHooks = () => {

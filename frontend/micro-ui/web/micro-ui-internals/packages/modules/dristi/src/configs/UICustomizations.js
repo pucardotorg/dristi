@@ -159,6 +159,13 @@ export const UICustomizations = {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
     },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Application No") link = ``;
+      });
+      return link;
+    },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
       const individualId = row?.businessObject?.individual?.individualId;
@@ -179,8 +186,8 @@ export const UICustomizations = {
           return (
             <Link
               style={{
-                border: "1px solid #F47738",
-                color: "#F47738",
+                border: "1px solid #007E7E",
+                color: "#007E7E",
                 padding: "10px",
                 width: "100px",
                 display: "block",

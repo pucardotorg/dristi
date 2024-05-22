@@ -134,17 +134,16 @@ const ApplicationDetails = ({ location, match }) => {
     window?.Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
-        setMessage(action === "APPROVE" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
-        setIsAction(false);
+        history.push(`/digit-ui/employee/dristi/registration-requests?actions=${action}`);
       })
       .catch(() => {
         setShowModal(false);
-        setMessage(t("ES_API_ERROR"));
-        setIsAction(false);
+        history.push(`/digit-ui/employee/dristi/registration-requests?actions="ERROR"`);
       });
   }
 
   function onActionSelect(action) {
+    console.log(action);
     if (action === "APPROVE") {
       takeAction(action);
     }
@@ -219,55 +218,55 @@ const ApplicationDetails = ({ location, match }) => {
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
   }
-
+  console.log(actions);
   const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
-    <div style={{ paddingLeft: "20px" }}>
-      <Header>{header}</Header>
-      <DocumentDetailCard cardData={aadharData} />
-      <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
-      {type === "advocate" && userType !== "ADVOCATE_CLERK" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
-      {applicationNo && (
-        <ActionBar>
-          {displayMenu && applicationNo ? (
-            <Menu
-              menuItemStyle={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
-              localeKeyPrefix={"BR"}
-              options={actions}
-              t={t}
-              onSelect={onActionSelect}
-            />
-          ) : null}
+    <Card style={{ paddingLeft: "20px" }}>
+      <Header className="application-header">{header}</Header>
+      <div className="application-card">
+        <DocumentDetailCard cardData={aadharData} />
+        <DocumentDetailCard cardData={personalData} />
+      </div>
+      {type === "advocate" && (
+        <div className="application-bar-info">
+          <DocumentDetailCard cardData={barDetails} />
+        </div>
+      )}
+      {!applicationNo && (
+        <div className="action-button-application">
           <SubmitBar
-            label={isAction ? t("Take_Action") : t("Go_Back_Home")}
+            label={t("Go_Back_Home")}
             onSubmit={() => {
-              if (isAction) {
-                setDisplayMenu(!displayMenu);
-              } else {
-                history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`);
-              }
+              history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`);
             }}
           />
-        </ActionBar>
+        </div>
+      )}
+      {applicationNo && (
+        <div className="action-button-application">
+          {actions.map((option, index) => (
+            <SubmitBar
+              key={index}
+              label={option}
+              style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
+              onSubmit={(data) => {
+                onActionSelect(option);
+              }}
+              className="action-button-width"
+            />
+          ))}
+        </div>
       )}
       {showModal && (
         <Modal
           headerBarMain={<Heading label={t("Confirm Reject Application")} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-          actionCancelLabel={t("Cancel")}
-          actionCancelOnSubmit={() => {
-            setShowModal(false);
-          }}
           actionSaveLabel={t("Reject")}
           actionSaveOnSubmit={() => {
             handleDelete("REJECT");
           }}
           isDisabled={!reasons || !reasons.trim()}
+          style={{ backgroundColor: "#BB2C2F" }}
         >
           <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
             <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
@@ -275,10 +274,7 @@ const ApplicationDetails = ({ location, match }) => {
           </Card>
         </Modal>
       )}
-      {message && (
-        <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")} label={message} onClose={() => setMessage(null)} />
-      )}
-    </div>
+    </Card>
   );
 };
 
