@@ -34,6 +34,10 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
   final List<TextEditingController> _aadharControllers =
   List.generate(3, (index) => TextEditingController());
 
+  List<FocusNode> _otpFocusNodes = List.generate(6, (index) => FocusNode());
+  List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  bool isSubmit = false;
+
   int _counter = 0;
   late StreamController<int> _events;
 
@@ -196,10 +200,6 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
-          final List<TextEditingController> _otpControllers =
-          List.generate(6, (index) => TextEditingController());
-          bool isSubmit = false;
           return AlertDialog(
             titlePadding: EdgeInsets.only(left: 20),
             title: Column(
@@ -217,6 +217,9 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           icon: Icon(Icons.close),
                           color: Colors.white,
                           onPressed: () {
+                            _otpFocusNodes = List.generate(6, (index) => FocusNode());
+                            _otpControllers = List.generate(6, (index) => TextEditingController());
+                            isSubmit = false;
                             _timer?.cancel();
                             _events.close();
                             _events = StreamController<int>.broadcast();

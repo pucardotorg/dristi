@@ -31,6 +31,10 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   bool rememberMe = false;
   String mobileNumberKey = 'mobileNumber';
 
+  List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+  List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  bool isSubmit = false;
+
   TextEditingController searchController = TextEditingController();
 
   int _counter = 0;
@@ -117,7 +121,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                             height: 20,
                           ),
                           DigitTextFormField(
-                            label: 'Mobile No',
+                            label: AppLocalizations.of(context).translate(i18.registerMobile.coreCommonMobileNo),
                             prefixIcon: Container(
                               margin: const EdgeInsets.only(left: 1, right: 8),
                               padding: EdgeInsets.zero,
@@ -239,10 +243,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
-          final List<TextEditingController> _otpControllers =
-          List.generate(6, (index) => TextEditingController());
-          bool isSubmit = false;
           return AlertDialog(
             titlePadding: EdgeInsets.only(left: 20),
             title: Column(
@@ -261,6 +261,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                           color: Colors.white,
                           onPressed: () {
                             isSubmitting = false;
+                            _focusNodes = List.generate(6, (index) => FocusNode());
+                            _otpControllers = List.generate(6, (index) => TextEditingController());
+                            isSubmit = false;
                             _timer?.cancel();
                             _events.close();
                             _events = StreamController<int>.broadcast();

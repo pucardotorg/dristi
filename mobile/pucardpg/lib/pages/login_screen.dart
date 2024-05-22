@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/widgets/atoms/digit_toaster.dart';
+import 'package:digit_components/widgets/molecules/digit_loader.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,10 @@ class LoginNumberScreen extends StatefulWidget with AppMixin {
 class LoginNumberScreenState extends State<LoginNumberScreen> {
   bool isSubmitting = false;
   String mobileNumberKey = 'mobileNumber';
+
+  List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
+  List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  bool isSubmit = false;
 
   TextEditingController searchController = TextEditingController();
 
@@ -332,10 +337,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
         context: context,
         barrierDismissible: false,
         builder: (context) {
-          final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
-          final List<TextEditingController> _otpControllers =
-          List.generate(6, (index) => TextEditingController());
-          bool isSubmit = false;
           return AlertDialog(
             titlePadding: EdgeInsets.only(left: 20),
             title: Column(
@@ -354,6 +355,9 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                           color: Colors.white,
                           onPressed: () {
                             isSubmitting = false;
+                            _focusNodes = List.generate(6, (index) => FocusNode());
+                            _otpControllers = List.generate(6, (index) => TextEditingController());
+                             isSubmit = false;
                             _timer?.cancel();
                             _events.close();
                             _events = StreamController<int>.broadcast();
