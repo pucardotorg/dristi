@@ -245,6 +245,75 @@ const RespondentDetailsIcon = () => (
   </svg>
 );
 
+const ChequeDetailsIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#F8EBE3" />
+    <g clip-path="url(#clip0_553_65682)">
+      <path
+        d="M9 12H11V20H9V12ZM16 12H13C12.45 12 12 12.45 12 13V19C12 19.55 12.45 20 13 20H16C16.55 20 17 19.55 17 19V13C17 12.45 16.55 12 16 12ZM15 18H14V14H15V18ZM22 12H19C18.45 12 18 12.45 18 13V19C18 19.55 18.45 20 19 20H22C22.55 20 23 19.55 23 19V13C23 12.45 22.55 12 22 12ZM21 18H20V14H21V18Z"
+        fill="#9E400A"
+      />
+      <path d="M6 8V24H26V8H6ZM8 22V10H24V22H8Z" fill="#9E400A" />
+    </g>
+    <defs>
+      <clipPath id="clip0_553_65682">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const DebtLiabilityIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#F8EBE3" />
+    <g clip-path="url(#clip0_553_65718)">
+      <path
+        d="M23 18V10C23 8.9 22.1 8 21 8H7C5.9 8 5 8.9 5 10V18C5 19.1 5.9 20 7 20H21C22.1 20 23 19.1 23 18ZM14 17C12.34 17 11 15.66 11 14C11 12.34 12.34 11 14 11C15.66 11 17 12.34 17 14C17 15.66 15.66 17 14 17ZM27 11V22C27 23.1 26.1 24 25 24H8V22H25V11H27Z"
+        fill="#9E400A"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_553_65718">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const DemandDetailsNoticeIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#F8EBE3" />
+    <g clip-path="url(#clip0_553_65740)">
+      <path
+        d="M18 6H10C8.9 6 8.01 6.9 8.01 8L8 24C8 25.1 8.89 26 9.99 26H22C23.1 26 24 25.1 24 24V12L18 6ZM20 22H12V20H20V22ZM20 18H12V16H20V18ZM17 13V7.5L22.5 13H17Z"
+        fill="#9E400A"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_553_65740">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const PrayerSwornIcon = () => (
+  <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect y="0.75" width="32" height="32" rx="4" fill="#F8EBE3" />
+    <g clip-path="url(#clip0_553_65790)">
+      <path
+        d="M23 18.75V10.75C23 9.65 22.1 8.75 21 8.75H7C5.9 8.75 5 9.65 5 10.75V18.75C5 19.85 5.9 20.75 7 20.75H21C22.1 20.75 23 19.85 23 18.75ZM14 17.75C12.34 17.75 11 16.41 11 14.75C11 13.09 12.34 11.75 14 11.75C15.66 11.75 17 13.09 17 14.75C17 16.41 15.66 17.75 14 17.75ZM27 11.75V22.75C27 23.85 26.1 24.75 25 24.75H8V22.75H25V11.75H27Z"
+        fill="#9E400A"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_553_65790">
+        <rect width="24" height="24" fill="white" transform="translate(4 4.75)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 export {
   RegisterIcon,
   LoginIcon,
@@ -265,4 +334,8 @@ export {
   CloseIcon,
   ComplaintDetailsIcon,
   RespondentDetailsIcon,
+  ChequeDetailsIcon,
+  DebtLiabilityIcon,
+  DemandDetailsNoticeIcon,
+  PrayerSwornIcon,
 };

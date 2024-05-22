@@ -1,11 +1,10 @@
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { RespondentDetailsIcon } from "../icons/svgIndex";
+import { ChequeDetailsIcon, DebtLiabilityIcon, DemandDetailsNoticeIcon, PrayerSwornIcon, RespondentDetailsIcon } from "../icons/svgIndex";
 import CustomReviewCard from "./CustomReviewCard";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const [isOpen, setOpen] = useState(true);
-  console.debug(config);
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -17,13 +16,26 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       ],
     [config?.populators?.inputs]
   );
-  console.debug(inputs);
   const Icon = ({ icon }) => {
     switch (icon) {
       case "RespondentDetailsIcon":
-        return RespondentDetailsIcon;
+        return <RespondentDetailsIcon />;
+      case "ComplainantDetailsIcon":
+        return <RespondentDetailsIcon />;
+      case "ChequeDetailsIcon":
+        return <ChequeDetailsIcon />;
+      case "DebtLiabilityIcon":
+        return <DebtLiabilityIcon />;
+      case "DemandDetailsNoticeIcon":
+        return <DemandDetailsNoticeIcon />;
+      case "PrayerSwornIcon":
+        return <PrayerSwornIcon />;
+      case "WitnessDetailsIcon":
+        return <RespondentDetailsIcon />;
+      case "AdvocateDetailsIcon":
+        return <DemandDetailsNoticeIcon />;
       default:
-        return RespondentDetailsIcon;
+        return <RespondentDetailsIcon />;
     }
   };
 
@@ -43,10 +55,19 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
           {inputs.map((input) => (
-            <div>
+            <div style={{ paddingTop: "20px" }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-                  <Icon icon={"RespondentDetailsIcon"} />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start",
+                    gap: "20px",
+                    paddingTop: "10px",
+                    paddingBottom: "10px",
+                  }}
+                >
+                  {input?.icon && <Icon icon={input?.icon} />}
                   {input?.label}
                 </div>
                 <EditPencilIcon />

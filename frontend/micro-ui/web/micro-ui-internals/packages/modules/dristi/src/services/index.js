@@ -56,7 +56,7 @@ export const DRISTIService = {
     Request({
       url: Urls.dristi.caseCreate,
       useCache: false,
-      userService: false,
+      userService: true,
       data,
       params: { tenantId },
     }),
