@@ -241,7 +241,7 @@ function EFilingCases({ path }) {
                 <CustomArrowDownIcon />
               </div>
             </div>
-            <p>{`Please provide the necessary details about the respondent(s)`}</p>
+            <p>{t(pageConfig.subtext || "Please provide the necessary details")}</p>
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
@@ -272,7 +272,7 @@ function EFilingCases({ path }) {
                   }}
                   cardStyle={{ minWidth: "100%" }}
                   isDisabled={isDisabled}
-                  cardClassName={"e-filing-card-form-style"}
+                  cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"

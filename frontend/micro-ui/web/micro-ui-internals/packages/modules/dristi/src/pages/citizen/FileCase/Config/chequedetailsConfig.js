@@ -184,4 +184,5 @@ export const chequeDetailsConfig = {
   isOptional: false,
   addFormText: "ADD_CHEQUE",
   formItemName: "Cheque",
+  className: "cheque"
 };
