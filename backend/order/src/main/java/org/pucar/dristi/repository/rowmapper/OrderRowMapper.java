@@ -44,6 +44,7 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
                             .orderNumber(rs.getString("ordernumber"))
+                            .orderNumber(rs.getString("hearingnumber"))
                             .filingNumber(rs.getString("filingnumber"))
                             .status(rs.getString("status"))
                             .auditDetails(auditdetails)

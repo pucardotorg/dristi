@@ -63,9 +63,7 @@ class OrderQueryBuilderTest {
         List<String> ids = Collections.emptyList();
         List<Object> preparedStmtList = Collections.emptyList();
 
-        String expectedQuery = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
-                "doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.order_id as order_id, doc.representative_id as representative_id, doc.representing_id as representing_id  FROM dristi_order_document doc";
-
+        String expectedQuery ="SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore,doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.order_id as order_id FROM dristi_order_document doc";
         String actualQuery = orderQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);

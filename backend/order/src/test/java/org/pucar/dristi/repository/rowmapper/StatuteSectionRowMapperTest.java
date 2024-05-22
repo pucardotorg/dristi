@@ -30,7 +30,7 @@ class StatuteSectionRowMapperTest {
     @Test
     void testExtractData() throws Exception {
         when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getString("case_id")).thenReturn("123e4567-e89b-12d3-a456-556642440000");
+        when(resultSet.getString("order_id")).thenReturn("123e4567-e89b-12d3-a456-556642440000");
         when(resultSet.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440001");
         when(resultSet.getString("tenantid")).thenReturn("tenant-123");
         when(resultSet.getString("sections")).thenReturn("section1|section2");

@@ -34,14 +34,14 @@ class DocumentRowMapperTest {
     @Test
     void testExtractData() throws Exception {
         when(rs.next()).thenReturn(true).thenReturn(false);
-        when(rs.getString("case_id")).thenReturn("d290f1ee-6c54-4b01-90e6-d701748f0851");
+        when(rs.getString("order_id")).thenReturn("d290f1ee-6c54-4b01-90e6-d701748f0851");
         when(rs.getString("id")).thenReturn("doc123");
         when(rs.getString("documenttype")).thenReturn("Type1");
         when(rs.getString("filestore")).thenReturn("FileStore1");
         when(rs.getString("documentuid")).thenReturn("DocUID1");
 
         PGobject pgObject = mock(PGobject.class);
-        when(rs.getObject("docadditionaldetails")).thenReturn(pgObject);
+        when(rs.getObject("additionaldetails")).thenReturn(pgObject);
         when(pgObject.getValue()).thenReturn("{\"key\":\"value\"}");
 
         Map<UUID, List<Document>> documents = rowMapper.extractData(rs);
@@ -53,7 +53,7 @@ class DocumentRowMapperTest {
         assertEquals("doc123", doc.getId());
         assertNotNull(doc.getAdditionalDetails());
 
-        verify(rs, times(1)).getString("case_id");
+        verify(rs, times(1)).getString("order_id");
         verify(pgObject, times(1)).getValue();
     }
 }

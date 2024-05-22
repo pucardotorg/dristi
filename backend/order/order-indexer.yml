@@ -1,0 +1,88 @@
+ServiceMaps:
+  serviceName: order services
+  version: 1.0.0
+  mappings:
+    - topic: save-order-application
+      configKey: INDEX
+      indexes:
+        - name: order-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.order
+          customJsonMapping:
+            indexMapping: {"Data":{"orderDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.orderDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.orderDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.orderDetails.applicationNumber
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.orderDetails.filingNumber
+              - inJsonPath: $.hearingNumber
+                outJsonPath: $.Data.orderDetails.hearingNumber
+              - inJsonPath: $.orderNumber
+                outJsonPath: $.Data.orderDetails.orderNumber
+              - inJsonPath: $.cnrNumber
+                outJsonPath: $.Data.orderDetails.cnrNumber
+              - inJsonPath: $.status
+                outJsonPath: $.Data.orderDetails.status
+              - inJsonPath: $.issuedBy
+                outJsonPath: $.Data.orderDetails.issuedBy
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.orderDetails.isActive
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.orderDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.orderDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.orderDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.orderDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.orderDetails.additionalDetails
+    - topic: update-order-application
+      configKey: INDEX
+      indexes:
+        - name: order-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.order
+          customJsonMapping:
+            indexMapping: {"Data":{"orderDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.orderDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.orderDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.orderDetails.applicationNumber
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.orderDetails.filingNumber
+              - inJsonPath: $.hearingNumber
+                outJsonPath: $.Data.orderDetails.hearingNumber
+              - inJsonPath: $.orderNumber
+                outJsonPath: $.Data.orderDetails.orderNumber
+              - inJsonPath: $.cnrNumber
+                outJsonPath: $.Data.orderDetails.cnrNumber
+              - inJsonPath: $.status
+                outJsonPath: $.Data.orderDetails.status
+              - inJsonPath: $.issuedBy
+                outJsonPath: $.Data.orderDetails.issuedBy
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.orderDetails.isActive
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.orderDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.orderDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.orderDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.orderDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.orderDetails.additionalDetails

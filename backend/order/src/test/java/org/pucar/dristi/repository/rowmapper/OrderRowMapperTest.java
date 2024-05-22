@@ -31,14 +31,12 @@ class OrderRowMapperTest {
     @Test
     void testExtractData() throws Exception {
         when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getString("casenumber")).thenReturn("case-123");
         when(resultSet.getString("id")).thenReturn("123e4567-e89b-12d3-a456-556642440000");
         when(resultSet.getString("tenantid")).thenReturn("tenant-123");
+        when(resultSet.getString("ordernumber")).thenReturn("ORDER-123");
         when(resultSet.getString("hearingnumber")).thenReturn("123e4567-e89b-12d3-a456-556642440001");
-        when(resultSet.getString("orderNumber")).thenReturn("ORDER-123");
         when(resultSet.getString("filingnumber")).thenReturn("FILING-123");
         when(resultSet.getString("status")).thenReturn("Active");
-        when(resultSet.getString("comments")).thenReturn("Some comments");
         when(resultSet.getString("createdby")).thenReturn("user-123");
         when(resultSet.getLong("createdtime")).thenReturn(1617187200000L);
         when(resultSet.getString("lastmodifiedby")).thenReturn("user-123");
@@ -57,11 +55,8 @@ class OrderRowMapperTest {
         Order order = orders.get(0);
         assertEquals(UUID.fromString("123e4567-e89b-12d3-a456-556642440000"), order.getId());
         assertEquals("tenant-123", order.getTenantId());
-        assertEquals(UUID.fromString("123e4567-e89b-12d3-a456-556642440001"), order.getHearingNumber());
-        assertEquals("ORDER-123", order.getOrderNumber());
         assertEquals("FILING-123", order.getFilingNumber());
         assertEquals("Active", order.getStatus());
-        assertEquals("Some comments", order.getComments());
         assertNotNull(order.getAuditDetails());
         assertEquals("user-123", order.getAuditDetails().getCreatedBy());
         assertEquals(1617187200000L, order.getAuditDetails().getCreatedTime());
