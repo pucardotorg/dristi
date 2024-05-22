@@ -204,26 +204,12 @@ const complainantDetailsFormConfig = [
               isMandatory: true,
             },
             {
-              label: "LOCALITY",
+              label: "ADDRESS",
               type: "text",
               name: "locality",
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
-              },
-              isMandatory: true,
-            },
-            {
-              label: "DOOR_NUMBER",
-              type: "text",
-              name: "doorNo",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                errMsg: "ADDRESS_DOOR_NO_INVALID",
-                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
-                isRequired: true,
-                minlength: 2,
-                title: "",
               },
               isMandatory: true,
             },

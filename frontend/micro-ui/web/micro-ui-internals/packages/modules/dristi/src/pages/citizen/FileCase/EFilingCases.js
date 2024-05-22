@@ -71,7 +71,6 @@ function EFilingCases({ path }) {
     return formdata.filter((item) => item.isenabled === true).length;
   }, [formdata]);
 
-  useEffect(() => { }, []);
   const handleAddForm = () => {
     setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };

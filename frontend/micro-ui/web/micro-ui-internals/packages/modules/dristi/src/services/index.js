@@ -52,4 +52,12 @@ export const DRISTIService = {
       data,
       params,
     }),
+  caseCreateService: (data, tenantId) =>
+    Request({
+      url: Urls.dristi.caseCreate,
+      useCache: false,
+      userService: false,
+      data,
+      params: { tenantId },
+    }),
 };

@@ -4,11 +4,20 @@ import CustomDetailsCard from "../../../components/CustomDetailsCard";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import Modal from "../../../components/Modal";
 import Button from "../../../components/Button";
-import { ReactComponent as FileDownload } from '../../../icons/file_download.svg';
+import { ReactComponent as FileDownload } from "../../../icons/file_download.svg";
+import { DRISTIService } from "../../../services";
+
+const formatDate = (date) => {
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+};
 
 function CaseType({ t }) {
   const { path } = useRouteMatch();
   const history = useHistory();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
   const onCancel = () => {
     history.push("/digit-ui/citizen/dristi/home");
@@ -46,7 +55,51 @@ function CaseType({ t }) {
             className="start-filling-button"
             label={t("CS_START_FILLING")}
             onButtonClick={() => {
-              history.push(`${path}/respondent-details`);
+              history.push(`${path}/case`);
+              const cases = [
+                {
+                  tenantId,
+                  resolutionMechanism: "COURT",
+                  caseDescription: "Case description",
+                  linkedCases: [],
+                  filingDate: formatDate(new Date()),
+                  caseDetails: {},
+                  caseCategory: "CRIMINAL",
+                  statutesAndSections: [
+                    {
+                      tenantId,
+                      statute: "Statute",
+                      sections: ["Negotiable Insruments Act", "02."],
+                      subsections: ["138", "03."],
+                    },
+                  ],
+                  litigants: [],
+                  representatives: [],
+                  documents: [
+                    {
+                      documentType: null,
+                      fileStore: null,
+                      documentUid: "",
+                      additionalDetails: {},
+                    },
+                  ],
+                  workflow: {
+                    action: "SAVE_DRAFT",
+                    comments: null,
+                    assignes: null,
+                    documents: [
+                      {
+                        documentType: null,
+                        fileStore: null,
+                        documentUid: null,
+                        additionalDetails: null,
+                      },
+                    ],
+                  },
+                  additionalDetails: {},
+                },
+              ];
+              DRISTIService.caseCreateService({ cases, tenantId });
             }}
           />
           {/* <ButtonSelector
@@ -128,13 +181,12 @@ function CaseType({ t }) {
     >
       <div className="case-types-main-div">
         {detailsCardList.map((item) => (
-          <CustomDetailsCard header={item.header} subtext={item.subtext} subnote={item.subnote} serialNumber={item.serialNumber} />
-
+          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} style={{ width: "100%" }} />
         ))}
       </div>
       {page === 0 && (
         <CitizenInfoLabel
-          style={{ maxWidth: "100%", padding: '8px', borderRadius: '4px' }}
+          style={{ maxWidth: "100%", padding: "8px", borderRadius: "4px" }}
           info={t("ES_COMMON_NOTE")}
           text={t("ES_BANNER_LABEL")}
           className="doc-banner"

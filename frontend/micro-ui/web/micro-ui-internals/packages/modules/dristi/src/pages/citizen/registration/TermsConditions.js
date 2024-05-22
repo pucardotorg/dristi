@@ -78,11 +78,11 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
                   name: "Citizen",
                   tenantId: tenantId,
                 },
-                {
-                  code: data?.clientDetails?.selectUserType?.role,
-                  name: data?.clientDetails?.selectUserType?.role,
+                ...data?.clientDetails?.selectUserType?.role?.map((role) => ({
+                  code: role,
+                  name: role,
                   tenantId: tenantId,
-                },
+                })),
               ]
             : [
                 {
