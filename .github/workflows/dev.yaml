@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - dev_backend_advocate_bis
+      - develop-workflow
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -18,32 +18,26 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
-      - name: Build Package
-        run: mvn -B clean install -f backend/advocate
-      - name: Sonarqube Scan
-        run: mvn -f backend/advocate/pom.xml sonar:sonar -Dsonar.projectKey=pucardotorg -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.projectBaseDir=backend/advocate
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze advocate
         env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      # Login to Azure Container Registry
-      - name: Login to Azure Container Registry
-        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate
 
-      - name: Build and Push Docker image for advocate
-        run: |
-          docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
-          docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
-      - name: Build and Push Docker image for advocate_DB
-        run: |
-          docker build  -t pucar_advocate_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
-           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
-           docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/advocate/src/main/resources/db
-      - name: trigger deployment pipeline
-        run: |
-          curl -X POST \
-          -H "Accept: application/vnd.github.v3+json" \
-          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
-          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
-          -d '{"ref":"Dev-0"}'
+      - name: Build and analyze case
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case
