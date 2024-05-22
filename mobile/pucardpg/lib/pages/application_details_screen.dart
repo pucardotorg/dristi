@@ -5,9 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/detail_field.dart';
 import 'package:pucardpg/widget/display_image.dart';
@@ -26,12 +27,6 @@ class ApplicationDetailsScreen extends StatefulWidget with AppMixin{
 }
 
 class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
-
-  late String mobile;
-  String firstNameKey = 'firstName';
-  String middleNameKey = 'middleName';
-  String lastNameKey = 'lastName';
-  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -69,7 +64,9 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("My Application", style: widget.theme.text24W700()?.apply(),),
+                          Text(AppLocalizations.of(context).
+                            translate(i18.applicationDetails.csMyApplication),
+                            style: widget.theme.text24W700()?.apply(),),
                           const SizedBox(height: 30,),
                           Container(
                             padding: const EdgeInsets.all(20),
@@ -80,35 +77,39 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                DetailField(heading: 'Mobile number', value: '+91 ${context.read<AuthBloc>().userModel.mobileNumber ?? ""}'),
+                                DetailField(heading: AppLocalizations.of(context).
+                                  translate(i18.applicationDetails.csMobileNumber),
+                                  value: '+91 ${context.read<AuthBloc>().userModel.mobileNumber ?? ""}'),
                                 const SizedBox(height: 20,),
-                                DetailField(heading: 'ID type', value: context.read<AuthBloc>().userModel.identifierType ?? ""),
+                                DetailField(heading: AppLocalizations.of(context).
+                                  translate(i18.applicationDetails.csIdType),
+                                  value: context.read<AuthBloc>().userModel.identifierType ?? ""),
                                 const SizedBox(height: 20,),
-                                if (context.read<AuthBloc>().userModel.identifierType == 'AADHAR')
-                                  DetailField(heading: '${context.read<AuthBloc>().userModel.identifierType} number', value: context.read<AuthBloc>().userModel.identifierId ?? ""),
-                                if (context.read<AuthBloc>().userModel.identifierType != 'AADHAR') ...[
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          'ID Proof',
-                                          style: widget.theme.text16W700Rob(),
-                                        ),
-                                      ),
-                                      const Expanded(
-                                        flex: 1,
-                                        child: Text(
-                                          "",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+
+                                if (context.read<AuthBloc>().userModel.idVerificationType == 'AADHAR')
+                                  DetailField(heading: AppLocalizations.of(context).
+                                    translate(i18.applicationDetails.csAadharNumber),
+                                    value: context.read<AuthBloc>().userModel.identifierId ?? ""),
+
+                                if (context.read<AuthBloc>().userModel.idVerificationType != 'AADHAR') ...[
+                                  DetailField(heading: AppLocalizations.of(context).
+                                  translate(i18.applicationDetails.csIdProof),
+                                      value: context.read<AuthBloc>().userModel.idFilename ?? ""),
                                   const SizedBox(height: 10,),
                                   if (context.read<AuthBloc>().userModel.idDocumentType == 'pdf')
-                                    DisplayPdf(filename: context.read<AuthBloc>().userModel.idFilename!, bytes: context.read<AuthBloc>().userModel.idBytes!),
+                                    DisplayPdf(
+                                      filename: context.read<AuthBloc>().userModel.idFilename!,
+                                      bytes: context.read<AuthBloc>().userModel.idBytes!,
+                                      height: 100,
+                                      width: 100,
+                                    ),
                                   if (context.read<AuthBloc>().userModel.idDocumentType != 'pdf')
-                                    DisplayImage(filename: context.read<AuthBloc>().userModel.idFilename!, bytes: context.read<AuthBloc>().userModel.idBytes!),
+                                    DisplayImage(
+                                      filename: context.read<AuthBloc>().userModel.idFilename!,
+                                      bytes: context.read<AuthBloc>().userModel.idBytes!,
+                                      height: 100,
+                                      width: 100,
+                                    ),
                                 ],
                               ],
                             ),
@@ -123,7 +124,9 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                DetailField(heading: 'Name', value: (context.read<AuthBloc>().userModel.firstName ?? "") + (context.read<AuthBloc>().userModel.lastName ?? "")),
+                                DetailField(heading: AppLocalizations.of(context).
+                                  translate(i18.applicationDetails.csName),
+                                  value: (context.read<AuthBloc>().userModel.firstName ?? "") + (context.read<AuthBloc>().userModel.lastName ?? "")),
                                 const SizedBox(height: 20,),
                                 Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +134,8 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                                     Expanded(
                                       flex: 1,
                                       child: Text(
-                                        'Location',
+                                        AppLocalizations.of(context).
+                                        translate(i18.applicationDetails.csLocation),
                                         style: widget.theme.text16W700Rob(),
                                       ),
                                     ),
@@ -144,7 +148,8 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
-                                              Text('View On Map',
+                                              Text(AppLocalizations.of(context).
+                                                translate(i18.applicationDetails.csViewOnMap),
                                                 style: widget.theme.text16W400Rob()?.apply(color: const Color(0xFFF47738), decoration: TextDecoration.underline),
                                               ),
                                               const Icon(
@@ -163,7 +168,8 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                                     Expanded(
                                       flex: 1,
                                       child: Text(
-                                        'Address',
+                                        AppLocalizations.of(context).
+                                        translate(i18.applicationDetails.address),
                                         style: widget.theme.text16W700Rob(),
                                       ),
                                     ),
@@ -192,13 +198,6 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                                     ),
                                   ],
                                 ),
-                                // DetailField(heading: 'Address', value: (widget.userModel.addressModel.doorNo ?? "") +
-                                //     (widget.userModel.addressModel.street ?? "") +
-                                //     (widget.userModel.addressModel.city ?? "") +
-                                //     (widget.userModel.addressModel.district ?? "") +
-                                //     (widget.userModel.addressModel.state ?? "") +
-                                //     (widget.userModel.addressModel.pincode ?? "")
-                                // )
                               ],
                             ),
                           ),
@@ -213,20 +212,29 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  DetailField(heading: 'Bar Registration number',
-                                      value: (context.read<AuthBloc>().userModel.barRegistrationNumber ?? "")),
+                                  DetailField(heading: AppLocalizations.of(context).
+                                    translate(i18.applicationDetails.csBarNo),
+                                    value: (context.read<AuthBloc>().userModel.barRegistrationNumber ?? "")),
                                   const SizedBox(height: 20,),
-                                  Text(
-                                    'BAR Council ID',
-                                    style: widget.theme.text16W700Rob(),
-                                  ),
+                                  DetailField(heading: AppLocalizations.of(context).
+                                    translate(i18.applicationDetails.csBarCouncilId),
+                                    value: context.read<AuthBloc>().userModel.documentFilename ?? ""),
                                   const SizedBox(height: 20,),
                                   if (context.read<AuthBloc>().userModel.documentType == 'pdf')
-                                    DisplayPdf(filename: context.read<AuthBloc>().userModel.documentFilename!, bytes: context.read<AuthBloc>().userModel.documentBytes!),
-
+                                    DisplayPdf(
+                                      filename: context.read<AuthBloc>().userModel.documentFilename!,
+                                      bytes: context.read<AuthBloc>().userModel.documentBytes!,
+                                      height: 100,
+                                      width: 100,
+                                    ),
 
                                   if (context.read<AuthBloc>().userModel.documentType != 'pdf')
-                                    DisplayImage(filename: context.read<AuthBloc>().userModel.documentFilename!, bytes: context.read<AuthBloc>().userModel.documentBytes!),
+                                    DisplayImage(
+                                      filename: context.read<AuthBloc>().userModel.documentFilename!,
+                                      bytes: context.read<AuthBloc>().userModel.documentBytes!,
+                                      height: 100,
+                                      width: 100,
+                                    ),
                                 ],
                               ),
                             ),
@@ -245,7 +253,9 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                 onPressed: () {
 
                 },
-                child: Text('Continue',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                child: Text(AppLocalizations.of(context).
+                translate(i18.common.coreCommonContinue),
+                  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
             ),
           ),
         ],

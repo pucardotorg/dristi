@@ -9,13 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
@@ -104,14 +101,16 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                             height: 10,
                           ),
                           Text(
-                            "Please enter your mobile number",
+                            AppLocalizations.of(context).
+                              translate(i18.registerMobile.csEnterMobile),
                             style: widget.theme.text24W700(),
                           ),
                           const SizedBox(
                             height: 20,
                           ),
                           Text(
-                            "You will use this as your log in. We will send you an OTP to verify",
+                            AppLocalizations.of(context).
+                            translate(i18.registerMobile.csEnterMobileSubText),
                             style: widget.theme.text14W400Rob(),
                           ),
                           const SizedBox(
@@ -119,7 +118,29 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                           ),
                           DigitTextFormField(
                             label: 'Mobile No',
-                            prefixText: "+91  ",
+                            prefixIcon: Container(
+                              margin: const EdgeInsets.only(left: 1, right: 8),
+                              padding: EdgeInsets.zero,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xFFFAFAFA),
+                                  border: Border(right: BorderSide(width: 1), )
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 11,
+                                    left: 10,
+                                    bottom: 11,
+                                    right: 0),
+                                child: Text(
+                                  "+91  ",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: DigitTheme.instance.colorScheme.onBackground,
+                                  ),
+                                ),
+                              ),
+                            ),
                             formControlName: mobileNumberKey,
                             isRequired: true,
                             maxLength: 10,
@@ -199,10 +220,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 context.read<AuthBloc>().add(
                                     AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, 'register')
                                 );
-                                // widget.registrationLoginBloc.add(
-                                //     RequestOtpEvent(mobileNumber: userModel.mobileNumber!, type: 'register'));
                               },
-                              child: const Text('Get OTP')),
+                              child: Text(AppLocalizations.of(context).translate(
+                                i18.common.coreCommonGetOtp))),
                         );
                       }
                     ),
@@ -240,6 +260,11 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                           icon: Icon(Icons.close),
                           color: Colors.white,
                           onPressed: () {
+                            isSubmitting = false;
+                            _timer?.cancel();
+                            _events.close();
+                            _events = StreamController<int>.broadcast();
+                            _events.add(25);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -248,9 +273,13 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                   ),
                   Row(
                     children: [
-                      Text(
-                        "Verify your Aadhaar",
-                        style: widget.theme.text24W700(),
+                      Container(
+                        margin: const EdgeInsets.only(right: 10, top: 10),
+                        child: Text(
+                          AppLocalizations.of(context).translate(
+                              i18.registerMobile.csVerifyMobile),
+                          style: widget.theme.text24W700(),
+                        ),
                       ),
                     ],
                   ),
@@ -267,7 +296,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                       Row(
                         children: [
                           Text(
-                            "Enter the OTP sent to +91******${context.read<AuthBloc>().userModel
+                            "${AppLocalizations.of(context).translate(
+                                i18.common.csLoginOtpText)} +91******${context.read<AuthBloc>().userModel
                                 .mobileNumber!.substring(6, 10)}",
                             style: widget.theme.text14W400Rob(),
                           ),
@@ -347,7 +377,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               child: Row(
                                 children: [
                                   Text(
-                                    'Resend OTP',
+                                    AppLocalizations.of(context).translate(
+                                        i18.common.csResendOtp),
                                     style: widget.theme
                                         .text16W400Rob()
                                         ?.apply(color: widget.theme.defaultColor),
@@ -361,7 +392,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                         child: Row(
                           children: [
                             Text(
-                              'Resend a new OTP in 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
+                              '${AppLocalizations.of(context).translate(
+                                  i18.common.csResendAnotherOtp)} 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
                                   : snapshot.data! < 10 ? "0${snapshot.data}" : snapshot.data}',
                               style: widget.theme.text14W400Rob(),),
                           ],
@@ -444,7 +476,8 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       isSubmit = true;
                                     },
                                     child: Text(
-                                      'Verify',
+                                      AppLocalizations.of(context).translate(
+                                          i18.common.verify),
                                       style: widget.theme.text20W700()?.apply(
                                         color: Colors.white,
                                       ),

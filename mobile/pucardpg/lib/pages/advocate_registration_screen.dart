@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -15,10 +14,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/blocs/file-picker-bloc/file_picker.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import 'package:pucardpg/widget/display_image.dart';
+import 'package:pucardpg/widget/display_pdf.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
@@ -39,9 +41,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
 
   bool fileSizeExceeded = false;
   bool extensionError = false;
-  String? fileName;
-  String? documentFilename;
-  Uint8List? documentBytes;
+  bool isEnable = true;
   FilePickerResult? result;
   PlatformFile? pickedFile;
   File? fileToDisplay;
@@ -71,10 +71,9 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
         } else {
           if (fileSize <= maxFileSize) {
             context.read<AuthBloc>().userModel.documentType = result!.files.single.extension;
-            fileName = '1 File Uploaded';
             pickedFile = result!.files.single;
-            documentFilename = result!.files.single.name;
-            documentBytes = result!.files.single.bytes;
+            context.read<AuthBloc>().userModel.documentFilename = result!.files.single.name;
+            context.read<AuthBloc>().userModel.documentBytes = result!.files.single.bytes;
             if (pickedFile != null) {
               context.read<FileBloc>().add(FileEvent.upload(pickedFile: pickedFile!, type: 'bar'));
             }
@@ -121,13 +120,14 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           PageHeading(
-                            heading: 'Advocate Verification',
-                            subHeading: 'To ensure the authenticity of your profile, please provide the following details for us to verify',
+                            heading: AppLocalizations.of(context).translate(i18.advocateVerification.coreAdvocateVerification),
+                            subHeading: AppLocalizations.of(context).translate(i18.advocateVerification.coreAdvocateVerificationText),
                             headingStyle: widget.theme.text24W700(),
                             subHeadingStyle: widget.theme.text14W400Rob(),
                           ),
                           DigitTextField(
-                            label: 'BAR registration number',
+                            label: AppLocalizations.of(context).translate(i18.advocateVerification.barRegistrationNumber),
+                            controller: TextEditingController(text: context.read<AuthBloc>().userModel.barRegistrationNumber ?? ''),
                             isRequired: true,
                             onChange: (val) {
                               context.read<AuthBloc>().userModel.barRegistrationNumber = val;
@@ -144,11 +144,11 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                             children: [
                               Expanded(
                                 child: DigitTextField(
-                                  label: 'Upload BAR council ID',
-                                  controller: TextEditingController(text: fileName ?? ''),
+                                  label: AppLocalizations.of(context).translate(i18.advocateVerification.barCouncilId),
+                                  controller: TextEditingController(text: context.read<AuthBloc>().userModel.documentFilename ?? ''),
                                   isRequired: true,
                                   readOnly: true,
-                                  hintText: 'No File selected',
+                                  hintText: AppLocalizations.of(context).translate(i18.common.csNoFileSelected),
                                   onChange: (val) { },
                                 ),
                               ),
@@ -158,6 +158,11 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                 listener: (context, state) {
                                   state.maybeWhen(
                                     orElse: (){},
+                                    initial: () {
+                                      setState(() {
+                                        isEnable = false;
+                                      });
+                                    },
                                     barFailed: (error){
                                       DigitToast.show(context,
                                         options: DigitToastOptions(
@@ -168,9 +173,10 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                       );
                                     },
                                     uploadBarSuccess: (fileStoreId) {
+                                      setState(() {
+                                        isEnable = true;
+                                      });
                                       context.read<AuthBloc>().userModel.fileStore = fileStoreId;
-                                      context.read<AuthBloc>().userModel.documentFilename = documentFilename;
-                                      context.read<AuthBloc>().userModel.documentBytes = documentBytes;
                                     }
                                   );
                                 },
@@ -200,7 +206,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                                 )),
                                             const SizedBox(width: 2),
                                             Text(
-                                              "Upload",
+                                            AppLocalizations.of(context).translate(i18.common.csCommonChooseFile),
                                               style: DigitTheme.instance.mobileTheme.textTheme.headlineSmall
                                                   ?.apply(
                                                 color: widget.theme.colorScheme.secondary,
@@ -217,41 +223,25 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                           ),
                           const SizedBox(height: 8,),
                           if (fileSizeExceeded) // Show text line in red if file size exceeded
-                            const Text(
-                              'File Size Limit Exceeded. Upload a file below 5MB.',
+                            Text(
+                              AppLocalizations.of(context).translate(i18.common.fileSizeExceeded),
                               style: TextStyle(color: Colors.red),
                             ),
                           if (extensionError) // Show text line in red if file size exceeded
-                            const Text(
-                              'Please select a valid file format. Upload documents in the following formats: JPG, PNG or PDF.',
+                            Text(
+                              AppLocalizations.of(context).translate(i18.common.notSupportedFileType),
                               style: TextStyle(color: Colors.red),
                             ),
-                          if (pickedFile != null) ...[
+                          if (isEnable == true && context.read<AuthBloc>().userModel.documentBytes != null) ...[
                             const SizedBox(height: 20),
-                            if (pickedFile!.extension == 'pdf')
+                            if (context.read<AuthBloc>().userModel.documentType == 'pdf')
                               Stack(
                                 children: [
-                                  Container(
+                                  DisplayPdf(
+                                    filename: context.read<AuthBloc>().userModel.documentFilename!,
+                                    bytes: context.read<AuthBloc>().userModel.documentBytes!,
                                     height: 300,
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius:  const BorderRadius.all(Radius.circular(21))
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20), // Image border
-                                      child: SizedBox(
-                                          child: SfPdfViewer.file(
-                                            fileToDisplay!,
-                                            onTap: (pdfDetails) {
-                                              if (fileToDisplay != null) {
-                                                OpenFilex.open(fileToDisplay!.path);
-                                              }
-                                            },
-                                          )
-                                      ),
-                                    ),
-
+                                    width: null,
                                   ),
                                   Positioned(
                                     top: 0,
@@ -269,9 +259,11 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                         color: Colors.white,
                                         onPressed: () {
                                           setState(() {
-                                            pickedFile = null;
-                                            fileName = null;
-                                            context.read<AuthBloc>().userModel.fileStore = null;
+                                            setState(() {
+                                              context.read<AuthBloc>().userModel.documentBytes = null;
+                                              context.read<AuthBloc>().userModel.documentFilename = null;
+                                              context.read<AuthBloc>().userModel.fileStore = null;
+                                            });
                                           });
                                         },
                                       ),
@@ -279,28 +271,15 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                   ),
                                 ],
                               ),
-                            if (pickedFile!.extension != 'pdf')
+                            if (context.read<AuthBloc>().userModel.documentType != 'pdf')
                               GestureDetector(
                                 child: Stack(
                                   children: [
-                                    Container(
-                                      height: 300,
-                                      width: 500,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(color: Colors.grey),
-                                          borderRadius:  const BorderRadius.all(Radius.circular(21))
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(20), // Image border
-                                        child: SizedBox.fromSize(
-                                          size: Size.fromRadius(16), // Image radius
-                                          child: Image.file(
-                                            fileToDisplay!,
-                                            filterQuality: FilterQuality.high,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
+                                    DisplayImage(
+                                        filename: context.read<AuthBloc>().userModel.documentFilename!,
+                                        bytes: context.read<AuthBloc>().userModel.documentBytes!,
+                                        height: 300,
+                                        width: 500,
                                     ),
                                     Positioned(
                                       top: 0,
@@ -318,8 +297,8 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                           color: Colors.white,
                                           onPressed: () {
                                             setState(() {
-                                              pickedFile = null;
-                                              fileName = null;
+                                              context.read<AuthBloc>().userModel.documentBytes = null;
+                                              context.read<AuthBloc>().userModel.documentFilename = null;
                                               context.read<AuthBloc>().userModel.fileStore = null;
                                             });
                                           },
@@ -329,7 +308,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                   ],
                                 ),
                                 onTap: () {
-                                  if (pickedFile!.extension != 'pdf') {
+                                  if (context.read<AuthBloc>().userModel.documentType != 'pdf') {
                                     OpenFilex.open(fileToDisplay!.path);
                                   }
                                 },
@@ -347,11 +326,12 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
             DigitCard(
               padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
               child: DigitElevatedButton(
-                  onPressed: () {
+                  onPressed: isEnable
+                      ? () {
                     FocusScope.of(context).unfocus();
                     if (context.read<AuthBloc>().userModel.userType == 'ADVOCATE') {
                       if((context.read<AuthBloc>().userModel.barRegistrationNumber == null || context.read<AuthBloc>().userModel.barRegistrationNumber!.isEmpty)
-                          && (fileName == null || fileName!.isEmpty)) {
+                          && (context.read<AuthBloc>().userModel.documentFilename == null || context.read<AuthBloc>().userModel.documentFilename!.isEmpty)) {
                         DigitToast.show(context,
                           options: DigitToastOptions(
                             "Please fill the details",
@@ -362,7 +342,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                         return;
                       }
                       if((context.read<AuthBloc>().userModel.barRegistrationNumber == null || context.read<AuthBloc>().userModel.barRegistrationNumber!.isEmpty)
-                          && (fileName != null || fileName!.isNotEmpty)) {
+                          && (context.read<AuthBloc>().userModel.documentFilename != null || context.read<AuthBloc>().userModel.documentFilename!.isNotEmpty)) {
                         DigitToast.show(context,
                           options: DigitToastOptions(
                             "Please fill the BAR registration number",
@@ -373,7 +353,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                         return;
                       }
                       if((context.read<AuthBloc>().userModel.barRegistrationNumber != null || context.read<AuthBloc>().userModel.barRegistrationNumber!.isNotEmpty)
-                          && (fileName == null || fileName!.isEmpty)) {
+                          && (context.read<AuthBloc>().userModel.documentFilename == null || context.read<AuthBloc>().userModel.documentFilename!.isEmpty)) {
                         DigitToast.show(context,
                           options: DigitToastOptions(
                             "Please upload the BAR council ID",
@@ -386,8 +366,9 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                     }
                     AutoRouter.of(context)
                         .push(TermsAndConditionsRoute());
-                    },
-                  child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                    } : null,
+                  child: Text(AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
+                    style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
               ),
             ),
           ],

@@ -1950,6 +1950,7 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -1974,6 +1975,7 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -1997,6 +1999,7 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2021,6 +2024,7 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -2044,6 +2048,7 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2066,6 +2071,7 @@ mixin _$AuthState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2144,6 +2150,7 @@ class _$ErrorStateImpl implements _ErrorState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -2171,6 +2178,7 @@ class _$ErrorStateImpl implements _ErrorState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2197,6 +2205,7 @@ class _$ErrorStateImpl implements _ErrorState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2227,6 +2236,7 @@ class _$ErrorStateImpl implements _ErrorState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -2253,6 +2263,7 @@ class _$ErrorStateImpl implements _ErrorState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2278,6 +2289,7 @@ class _$ErrorStateImpl implements _ErrorState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2306,6 +2318,215 @@ class _$ErrorStateImpl implements _ErrorState {
 
 abstract class _ErrorState implements AuthState {
   const factory _ErrorState() = _$ErrorStateImpl;
+}
+
+/// @nodoc
+abstract class _$$InitialStateImplCopyWith<$Res> {
+  factory _$$InitialStateImplCopyWith(
+          _$InitialStateImpl value, $Res Function(_$InitialStateImpl) then) =
+      __$$InitialStateImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$InitialStateImplCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$InitialStateImpl>
+    implements _$$InitialStateImplCopyWith<$Res> {
+  __$$InitialStateImplCopyWithImpl(
+      _$InitialStateImpl _value, $Res Function(_$InitialStateImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$InitialStateImpl implements _InitialState {
+  const _$InitialStateImpl();
+
+  @override
+  String toString() {
+    return 'AuthState.initial()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$InitialStateImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() error,
+    required TResult Function() initial,
+    required TResult Function() unauthenticated,
+    required TResult Function(
+            String accesstoken, String? refreshtoken, UserRequest? userRequest)
+        authenticated,
+    required TResult Function(String type) otpGenerationSucceed,
+    required TResult Function(String type) resendOtpGenerationSucceed,
+    required TResult Function(String errorMsg) requestFailed,
+    required TResult Function(AuthResponse authResponse) otpCorrect,
+    required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) logoutFailedState,
+    required TResult Function() profileSuccessState,
+    required TResult Function(String errorMsg) profileFailedState,
+    required TResult Function(IndividualSearchResponse individualSearchResponse)
+        individualSearchSuccessState,
+    required TResult Function(AdvocateSearchResponse advocateSearchResponse)
+        advocateSearchSuccessState,
+    required TResult Function(
+            AdvocateClerkSearchResponse advocateClerkSearchResponse)
+        advocateClerkSearchSuccessState,
+  }) {
+    return initial();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? error,
+    TResult? Function()? initial,
+    TResult? Function()? unauthenticated,
+    TResult? Function(
+            String accesstoken, String? refreshtoken, UserRequest? userRequest)?
+        authenticated,
+    TResult? Function(String type)? otpGenerationSucceed,
+    TResult? Function(String type)? resendOtpGenerationSucceed,
+    TResult? Function(String errorMsg)? requestFailed,
+    TResult? Function(AuthResponse authResponse)? otpCorrect,
+    TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? logoutFailedState,
+    TResult? Function()? profileSuccessState,
+    TResult? Function(String errorMsg)? profileFailedState,
+    TResult? Function(IndividualSearchResponse individualSearchResponse)?
+        individualSearchSuccessState,
+    TResult? Function(AdvocateSearchResponse advocateSearchResponse)?
+        advocateSearchSuccessState,
+    TResult? Function(AdvocateClerkSearchResponse advocateClerkSearchResponse)?
+        advocateClerkSearchSuccessState,
+  }) {
+    return initial?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? error,
+    TResult Function()? initial,
+    TResult Function()? unauthenticated,
+    TResult Function(
+            String accesstoken, String? refreshtoken, UserRequest? userRequest)?
+        authenticated,
+    TResult Function(String type)? otpGenerationSucceed,
+    TResult Function(String type)? resendOtpGenerationSucceed,
+    TResult Function(String errorMsg)? requestFailed,
+    TResult Function(AuthResponse authResponse)? otpCorrect,
+    TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? logoutFailedState,
+    TResult Function()? profileSuccessState,
+    TResult Function(String errorMsg)? profileFailedState,
+    TResult Function(IndividualSearchResponse individualSearchResponse)?
+        individualSearchSuccessState,
+    TResult Function(AdvocateSearchResponse advocateSearchResponse)?
+        advocateSearchSuccessState,
+    TResult Function(AdvocateClerkSearchResponse advocateClerkSearchResponse)?
+        advocateClerkSearchSuccessState,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
+    required TResult Function(_UnauthenticatedState value) unauthenticated,
+    required TResult Function(_AuthenticatedState value) authenticated,
+    required TResult Function(_OtpGenerationSuccessState value)
+        otpGenerationSucceed,
+    required TResult Function(_ResendOtpGenerationSuccessState value)
+        resendOtpGenerationSucceed,
+    required TResult Function(_RequestFailedState value) requestFailed,
+    required TResult Function(_OtpCorrectState value) otpCorrect,
+    required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_LogoutFailedState value) logoutFailedState,
+    required TResult Function(_ProfileSuccessState value) profileSuccessState,
+    required TResult Function(_ProfileFailedState value) profileFailedState,
+    required TResult Function(_IndividualSearchSuccessState value)
+        individualSearchSuccessState,
+    required TResult Function(_AdvocateSearchSuccessState value)
+        advocateSearchSuccessState,
+    required TResult Function(_AdvocateClerkSearchSuccessState value)
+        advocateClerkSearchSuccessState,
+  }) {
+    return initial(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
+    TResult? Function(_UnauthenticatedState value)? unauthenticated,
+    TResult? Function(_AuthenticatedState value)? authenticated,
+    TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
+    TResult? Function(_ResendOtpGenerationSuccessState value)?
+        resendOtpGenerationSucceed,
+    TResult? Function(_RequestFailedState value)? requestFailed,
+    TResult? Function(_OtpCorrectState value)? otpCorrect,
+    TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_LogoutFailedState value)? logoutFailedState,
+    TResult? Function(_ProfileSuccessState value)? profileSuccessState,
+    TResult? Function(_ProfileFailedState value)? profileFailedState,
+    TResult? Function(_IndividualSearchSuccessState value)?
+        individualSearchSuccessState,
+    TResult? Function(_AdvocateSearchSuccessState value)?
+        advocateSearchSuccessState,
+    TResult? Function(_AdvocateClerkSearchSuccessState value)?
+        advocateClerkSearchSuccessState,
+  }) {
+    return initial?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
+    TResult Function(_UnauthenticatedState value)? unauthenticated,
+    TResult Function(_AuthenticatedState value)? authenticated,
+    TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
+    TResult Function(_ResendOtpGenerationSuccessState value)?
+        resendOtpGenerationSucceed,
+    TResult Function(_RequestFailedState value)? requestFailed,
+    TResult Function(_OtpCorrectState value)? otpCorrect,
+    TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_LogoutFailedState value)? logoutFailedState,
+    TResult Function(_ProfileSuccessState value)? profileSuccessState,
+    TResult Function(_ProfileFailedState value)? profileFailedState,
+    TResult Function(_IndividualSearchSuccessState value)?
+        individualSearchSuccessState,
+    TResult Function(_AdvocateSearchSuccessState value)?
+        advocateSearchSuccessState,
+    TResult Function(_AdvocateClerkSearchSuccessState value)?
+        advocateClerkSearchSuccessState,
+    required TResult orElse(),
+  }) {
+    if (initial != null) {
+      return initial(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _InitialState implements AuthState {
+  const factory _InitialState() = _$InitialStateImpl;
 }
 
 /// @nodoc
@@ -2348,6 +2569,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -2375,6 +2597,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2401,6 +2624,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2431,6 +2655,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -2457,6 +2682,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2482,6 +2708,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2616,6 +2843,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -2643,6 +2871,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2669,6 +2898,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2699,6 +2929,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -2725,6 +2956,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2750,6 +2982,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2858,6 +3091,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -2885,6 +3119,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2911,6 +3146,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -2941,6 +3177,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -2967,6 +3204,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -2992,6 +3230,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3098,6 +3337,7 @@ class _$ResendOtpGenerationSuccessStateImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -3125,6 +3365,7 @@ class _$ResendOtpGenerationSuccessStateImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3151,6 +3392,7 @@ class _$ResendOtpGenerationSuccessStateImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3181,6 +3423,7 @@ class _$ResendOtpGenerationSuccessStateImpl
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -3207,6 +3450,7 @@ class _$ResendOtpGenerationSuccessStateImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3232,6 +3476,7 @@ class _$ResendOtpGenerationSuccessStateImpl
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3336,6 +3581,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -3363,6 +3609,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3389,6 +3636,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3419,6 +3667,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -3445,6 +3694,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3470,6 +3720,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3583,6 +3834,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -3610,6 +3862,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3636,6 +3889,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3666,6 +3920,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -3692,6 +3947,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3717,6 +3973,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3821,6 +4078,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -3848,6 +4106,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3874,6 +4133,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -3904,6 +4164,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -3930,6 +4191,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -3955,6 +4217,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4058,6 +4321,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -4085,6 +4349,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4111,6 +4376,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4141,6 +4407,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -4167,6 +4434,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4192,6 +4460,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4268,6 +4537,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -4295,6 +4565,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4321,6 +4592,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4351,6 +4623,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -4377,6 +4650,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4402,6 +4676,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4499,6 +4774,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -4526,6 +4802,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4552,6 +4829,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4582,6 +4860,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -4608,6 +4887,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4633,6 +4913,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4753,6 +5034,7 @@ class _$IndividualSearchSuccessStateImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -4780,6 +5062,7 @@ class _$IndividualSearchSuccessStateImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4806,6 +5089,7 @@ class _$IndividualSearchSuccessStateImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -4836,6 +5120,7 @@ class _$IndividualSearchSuccessStateImpl
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -4862,6 +5147,7 @@ class _$IndividualSearchSuccessStateImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -4887,6 +5173,7 @@ class _$IndividualSearchSuccessStateImpl
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -5006,6 +5293,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -5033,6 +5321,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -5059,6 +5348,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -5089,6 +5379,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -5115,6 +5406,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -5140,6 +5432,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -5262,6 +5555,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() error,
+    required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)
@@ -5289,6 +5583,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? error,
+    TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -5315,6 +5610,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? error,
+    TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
             String accesstoken, String? refreshtoken, UserRequest? userRequest)?
@@ -5345,6 +5641,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
     required TResult Function(_UnauthenticatedState value) unauthenticated,
     required TResult Function(_AuthenticatedState value) authenticated,
     required TResult Function(_OtpGenerationSuccessState value)
@@ -5371,6 +5668,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
     TResult? Function(_UnauthenticatedState value)? unauthenticated,
     TResult? Function(_AuthenticatedState value)? authenticated,
     TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
@@ -5396,6 +5694,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
     TResult Function(_UnauthenticatedState value)? unauthenticated,
     TResult Function(_AuthenticatedState value)? authenticated,
     TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,

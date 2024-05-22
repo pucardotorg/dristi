@@ -10,9 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
@@ -95,8 +96,8 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           PageHeading(
-                            heading: "Enter your Aadhaar Number",
-                            subHeading: "Please enter your 12 digit Aadhaar number ",
+                            heading: AppLocalizations.of(context).translate(i18.idVerification.csEnterAadhar),
+                            subHeading: AppLocalizations.of(context).translate(i18.idVerification.csEnterAadharText),
                             headingStyle: widget.theme.text24W700(),
                             subHeadingStyle: widget.theme.text14W400Rob(),
                           ),
@@ -180,7 +181,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                     _startTimer();
                   },
                   child: Text(
-                    'Continue',
+                    AppLocalizations.of(context).translate(i18.common.coreCommonGetOtp),
                     style: widget.theme.text20W700()?.apply(
                       color: Colors.white,
                     ),
@@ -216,6 +217,10 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           icon: Icon(Icons.close),
                           color: Colors.white,
                           onPressed: () {
+                            _timer?.cancel();
+                            _events.close();
+                            _events = StreamController<int>.broadcast();
+                            _events.add(25);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -224,9 +229,13 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                   ),
                   Row(
                     children: [
-                      Text(
-                        "Verify your Aadhaar",
-                        style: widget.theme.text24W700(),
+                      Container(
+                        margin: const EdgeInsets.only(right: 10, top: 10),
+                        child: Text(
+                          AppLocalizations.of(context).translate(
+                              i18.idVerification.csVerifyAadhar),
+                          style: widget.theme.text24W700(),
+                        ),
                       ),
                     ],
                   ),
@@ -243,7 +252,8 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                         Row(
                           children: [
                             Text(
-                              "Enter the OTP sent to +91******${context.read<AuthBloc>().userModel.mobileNumber!.substring(6, 10)}",
+                              "${AppLocalizations.of(context).translate(
+                                  i18.common.csLoginOtpText)} +91******${context.read<AuthBloc>().userModel.mobileNumber!.substring(6, 10)}",
                               style: widget.theme.text14W400Rob(),
                             ),
                           ],
@@ -319,7 +329,8 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Resend OTP',
+                                  AppLocalizations.of(context).translate(
+                                      i18.common.csResendOtp),
                                   style: widget.theme
                                       .text16W400Rob()
                                       ?.apply(color: widget.theme.defaultColor),
@@ -333,7 +344,8 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           child: Row(
                             children: [
                               Text(
-                                'Resend a new OTP in 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
+                                '${AppLocalizations.of(context).translate(
+                                    i18.common.csResendAnotherOtp)} 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
                                     : snapshot.data! < 10 ? "0${snapshot.data}" : snapshot.data}',
                                 style: widget.theme.text14W400Rob(),),
                             ],
@@ -370,7 +382,8 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                                     // isSubmit = true;
                                   },
                                   child: Text(
-                                    'Verify',
+                                    AppLocalizations.of(context).translate(
+                                        i18.common.verify),
                                     style: widget.theme.text20W700()?.apply(
                                       color: Colors.white,
                                     ),

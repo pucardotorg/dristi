@@ -163,7 +163,29 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                 DigitTextFormField(
                                   label: AppLocalizations.of(context)
                                       .translate(i18.login.coreCommonPhoneNumber),
-                                  prefixText: "+91  ",
+                                  prefixIcon: Container(
+                                    margin: const EdgeInsets.only(left: 1, right: 8),
+                                    padding: EdgeInsets.zero,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xFFFAFAFA),
+                                        border: Border(right: BorderSide(width: 1), )
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 11,
+                                          left: 10,
+                                          bottom: 11,
+                                          right: 0),
+                                      child: Text(
+                                        "+91  ",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w400,
+                                          color: DigitTheme.instance.colorScheme.onBackground,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                   formControlName: mobileNumberKey,
                                   isRequired: true,
                                   maxLength: 10,
@@ -233,7 +255,9 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                             AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, appConstants.login)
                                         );
                                       },
-                                      child: const Text('Sign In')),
+                                      child: Text(
+                                          AppLocalizations.of(context)
+                                              .translate(i18.login.csSignInNext))),
                                 )
                               ],
                             );
@@ -329,6 +353,11 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                           icon: Icon(Icons.close),
                           color: Colors.white,
                           onPressed: () {
+                            isSubmitting = false;
+                            _timer?.cancel();
+                            _events.close();
+                            _events = StreamController<int>.broadcast();
+                            _events.add(25);
                             Navigator.of(context).pop();
                           },
                         ),
@@ -337,9 +366,13 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                   ),
                   Row(
                     children: [
-                      Text(
-                        "Verify your Aadhaar",
-                        style: widget.theme.text24W700(),
+                      Container(
+                        margin: const EdgeInsets.only(right: 10, top: 10),
+                        child: Text(
+                          AppLocalizations.of(context).translate(
+                            i18.registerMobile.csVerifyMobile),
+                          style: widget.theme.text24W700(),
+                        ),
                       ),
                     ],
                   ),
@@ -603,14 +636,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                             }
                                           }
                                         },
-                                        // unauthenticated: (){
-                                        //   print("unauth");
-                                        // },
-                                        // authenticated: (a, b, c) {
-                                        //   // Navigator.of(context).pop();
-                                        //   AutoRouter.of(context)
-                                        //       .replace(const AuthenticatedRouteWrapper());
-                                        // },
                                     );
                                   },
                                   child: DigitElevatedButton(
@@ -638,6 +663,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                             AuthEvent.submitLoginOtpEvent(context.read<AuthBloc>().userModel.mobileNumber!, otp, context.read<AuthBloc>().userModel)
                                           );
                                         }
+                                        isSubmitting = false;
                                         isSubmit = true;
                                       },
                                       child: Text(

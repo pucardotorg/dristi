@@ -20,6 +20,7 @@ class FileBloc extends Bloc<FileEvent, FileState> {
   Future<void> uploadFileEvent(_FileUploadEvent event,
       Emitter<FileState> emit) async {
 
+    emit(const FileState.initial());
     try {
       final response = await fileRepository.uploadFile("/filestore/v1/files", event.pickedFile!);
       if (event.type == 'id') {

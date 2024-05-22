@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/utils/constants.dart';
+import '../utils/i18_key_constants.dart' as i18;
 
 @RoutePage()
 class AdvocateSuccessScreen extends StatefulWidget with AppMixin{
@@ -46,7 +48,8 @@ class AdvocateSuccessScreenState extends State<AdvocateSuccessScreen> {
                 height: 25,
               ),
               Text(
-                'Your registration is waiting approval',
+                AppLocalizations.of(context)
+                    .translate(i18.success.advocateSuccessText),
                 style: widget.theme.text20W700()?.apply(),
                 textAlign: TextAlign.center,
               ),
@@ -56,7 +59,8 @@ class AdvocateSuccessScreenState extends State<AdvocateSuccessScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25, top: 5),
                 child: Text(
-                  "Your registration (ID: XXXXXXXXX) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.",
+                  AppLocalizations.of(context)
+                      .translate(i18.success.advocateSuccessSubText),
                   style: widget.theme.text14W400Rob(),
                   textAlign: TextAlign.center,
                 ),
@@ -70,7 +74,8 @@ class AdvocateSuccessScreenState extends State<AdvocateSuccessScreen> {
                         .push(ApplicationDetailsRoute());
                     },
                   child: Text(
-                    'View My Application',
+                    AppLocalizations.of(context)
+                        .translate(i18.success.viewMyApplication),
                     style: widget.theme.text20W700()?.apply(
                       color: Colors.white,
                     ),

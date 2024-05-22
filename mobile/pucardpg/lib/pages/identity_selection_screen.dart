@@ -5,8 +5,11 @@ import 'package:digit_components/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
+import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
@@ -55,8 +58,8 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           PageHeading(
-                            heading: "Verify your Identity",
-                            subHeading: "Before diving in, we'll need to verify your identity for account setup ",
+                            heading: AppLocalizations.of(context).translate(i18.idVerification.csVerifyIdentity),
+                            subHeading: AppLocalizations.of(context).translate(i18.idVerification.csVerifyIdentitySubText),
                             headingStyle: widget.theme.text24W700(),
                             subHeadingStyle: widget.theme.text14W400Rob(),
                           ),
@@ -73,12 +76,12 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                               title: Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Text(
-                                  'Aadhaar (Recommended)',
+                                  AppLocalizations.of(context).translate(i18.idVerification.csAadhar),
                                   style: widget.theme.text20W700(),
                                 ),
                               ),
                               subtitle: Text(
-                                'An instant verification that will provide a verified status against your profile',
+                                AppLocalizations.of(context).translate(i18.idVerification.csAadharSubText),
                                 style: widget.theme.text12W400(),
                               ),
                               value: 'AADHAR',
@@ -107,12 +110,12 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                               title: Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Text(
-                                  'Other ID',
+                                  AppLocalizations.of(context).translate(i18.idVerification.csOther),
                                   style: widget.theme.text20W700(),
                                 ),
                               ),
                               subtitle: Text(
-                                'Manual verification by uploading government ID',
+                                AppLocalizations.of(context).translate(i18.idVerification.csOtherSubText),
                                 style: widget.theme.text12W400(),
                               ),
                               value: 'OTHER',
@@ -143,15 +146,17 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
               child: DigitElevatedButton(
                   onPressed: () {
                     if (selectedOption == 'AADHAR') {
+                      context.read<AuthBloc>().userModel.idVerificationType = 'AADHAR';
                       AutoRouter.of(context)
                           .push(AadharVerificationRoute());
                     } else if (selectedOption == 'OTHER') {
+                      context.read<AuthBloc>().userModel.idVerificationType = 'OTHER';
                       AutoRouter.of(context)
                           .push(OtherIdVerificationRoute());
                     }
                   },
                   child: Text(
-                    'Continue',
+                    AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
                     style: widget.theme.text20W700()?.apply(
                       color: Colors.white,
                     ),

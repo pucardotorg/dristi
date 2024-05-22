@@ -11,9 +11,13 @@ class DisplayImage extends StatelessWidget with AppMixin{
 
   String filename;
   Uint8List bytes;
+  double? height;
+  double? width;
   DisplayImage({super.key,
     required this.filename,
-    required this.bytes
+    required this.bytes,
+    required this.height,
+    required this.width
   });
 
   @override
@@ -23,11 +27,11 @@ class DisplayImage extends StatelessWidget with AppMixin{
       children: [
         GestureDetector(
           child: Container(
-            height: 200,
-            width: 200,
+            height: height,
+            width: width,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey),
-                borderRadius:  const BorderRadius.all(Radius.circular(21))
+                borderRadius:  const BorderRadius.all(Radius.circular(20))
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20), // Image border
@@ -45,12 +49,6 @@ class DisplayImage extends StatelessWidget with AppMixin{
             saveAndLaunchFile(bytes, filename);
           },
         ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-              filename,
-          ),
-        )
       ],
     );
   }

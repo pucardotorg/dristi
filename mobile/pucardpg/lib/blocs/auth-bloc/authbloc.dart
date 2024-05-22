@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -51,6 +52,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   FutureOr<void> _onAuthLogin(
       _AuthLoginEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthState.initial());
     final secureStore = SecureStore();
     secureStore.setAccessToken(accesstoken);
     secureStore.setRefreshToken(_refreshtoken);
@@ -66,7 +68,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       Emitter<AuthState> emit) async {
     AuthResponse response;
     try {
-
+      emit(const AuthState.initial());
       response = await authRepository.validateLogin(
           "/user/oauth/token",
           LoginModel(
@@ -99,14 +101,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               (field) => field.key == "userType",
           orElse: () => const Fields(key: "", value: ""),
         );
+        final idVerificationTypeField = individual.additionalFields.fields.firstWhere(
+              (field) => field.key == "idVerificationType",
+          orElse: () => const Fields(key: "", value: ""),
+        );
         final identifierType = individual.identifiers[0].identifierType;
         final detailField = individual.additionalFields.fields.firstWhere(
               (field) => field.key == "identifierIdDetails",
           orElse: () => const Fields(key: "", value: ""),
         ).value;
+        userModel.idVerificationType == idVerificationTypeField.value;
         if (detailField != "") {
           final identifierIdDetails = jsonDecode(detailField);
-          if (identifierType != 'AADHAR') {
+          if (userModel.idVerificationType != 'AADHAR') {
             userModel.idFilename = identifierIdDetails['filename'];
             userModel.idFileStore = identifierIdDetails['fileStoreId'];
             var fileResponse = await fileRepository.getFileData('/filestore/v1/files/id', appConstants.tenantId, identifierIdDetails['fileStoreId']);
@@ -186,6 +193,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _SubmitRegistrationOtpEvent event, Emitter<AuthState> emit) async {
     AuthResponse response;
     try {
+      emit(const AuthState.initial());
+
       CitizenRegistrationRequest citizenRegistrationRequest = CitizenRegistrationRequest(
         userInfo: UserInfo(
             username: event.username,
@@ -232,6 +241,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     //   if(dataState is DataFailed){
     //     emit(LogoutFailedState(data: dataState.data!));
     //   }
+    emit(const AuthState.initial());
+
     final secureStore = SecureStore();
     secureStore.deleteAccessToken();
     secureStore.deleteAccessInfo();
@@ -243,6 +254,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   Future<FutureOr<void>> _onLoad(
       _AuthLoadEvent event, Emitter<AuthState> emit) async {
+
+    emit(const AuthState.initial());
     final secureStore = SecureStore();
 
     //first attempt to get the accessToken from local secure storage, if successful, the user need not go through the login page again
@@ -267,6 +280,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   FutureOr<void> _requestOtpEvent(_RequestOtpEvent event,
       Emitter<AuthState> emit) async {
 
+    emit(const AuthState.initial());
+
     OtpRequest otpRequest = OtpRequest(
         otp: Otp(
             mobileNumber: event.mobileNumber,
@@ -287,6 +302,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   FutureOr<void> resendOtpEvent(_ResendOtpEvent event,
       Emitter<AuthState> emit) async {
 
+    emit(const AuthState.initial());
+
     OtpRequest otpRequest = OtpRequest(
         otp: Otp(
             mobileNumber: event.mobileNumber,
@@ -304,6 +321,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _onRefreshToken(_AuthRefreshTokenEvent event, Emitter<AuthState> emit) async {
+    emit(const AuthState.initial());
+
     AuthResponse response;
     final secureStore = SecureStore();
     final accessInfo = await secureStore.getAccessInfo();
@@ -338,6 +357,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       Emitter<AuthState> emit) async {
 
     try{
+      emit(const AuthState.initial());
+
       String? identifierType;
       if (userModel.identifierType == null || userModel.identifierType!.isEmpty) {
         identifierType = 'AADHAR';
@@ -382,8 +403,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             value: userModel.userType!,
           ),
             Fields(
+              key: 'idVerificationType',
+              value: userModel.idVerificationType!,
+            ),
+            Fields(
                 key: 'identifierIdDetails',
-                value: userModel.identifierType != 'AADHAR' ? jsonEncode({'fileStoreId' : userModel.identifierId, 'filename': userModel.idFilename})
+                value: userModel.idVerificationType != 'AADHAR' ? jsonEncode({'fileStoreId' : userModel.identifierId, 'filename': userModel.idFilename})
                     : jsonEncode({})
             )
           ],
@@ -500,6 +525,7 @@ class AuthEvent with _$AuthEvent {
 class AuthState with _$AuthState {
 
   const factory AuthState.error() = _ErrorState;
+  const factory AuthState.initial() = _InitialState;
   const factory AuthState.unauthenticated() = _UnauthenticatedState;
   const factory AuthState.authenticated({
     required String accesstoken,

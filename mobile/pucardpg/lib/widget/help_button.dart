@@ -1,5 +1,6 @@
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 
-import 'package:digit_components/theme/colors.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:flutter/material.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
 
@@ -16,7 +17,9 @@ class DigitHelpButton extends StatelessWidget with AppMixin{
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text('Help', style: theme.text16W400Rob()?.apply(
+          Text(AppLocalizations.of(context).translate(
+              i18.common.csCommonHelp),
+            style: theme.text16W400Rob()?.apply(
             color: theme.defaultColor, decoration: TextDecoration.underline),),
           const SizedBox(width: 5,),
           Container(

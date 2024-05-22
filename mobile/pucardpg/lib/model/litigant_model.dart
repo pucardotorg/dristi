@@ -14,8 +14,10 @@ class UserModel{
   String? middleName;
   String? lastName;
 
+  String? idVerificationType;
+
   String? mobileNumber;
-  String? identifierType;
+  String? identifierType = "";
   String? identifierId = "";
   String? idFilename = "";
   String? idFileStore = "";

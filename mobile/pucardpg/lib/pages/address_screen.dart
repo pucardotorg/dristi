@@ -16,9 +16,10 @@ import 'package:google_places_flutter/model/place_details.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/model/pin-address-model/pin_address_model.dart';
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
@@ -231,7 +232,7 @@ class AddressScreenState extends State<AddressScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Enter Your address",
+                                    AppLocalizations.of(context).translate(i18.address.csEnterAddress),
                                     style: widget.theme.text24W700()?.apply(),
                                   ),
                                   const SizedBox(
@@ -240,8 +241,8 @@ class AddressScreenState extends State<AddressScreen> {
                                   GooglePlaceAutoCompleteTextField(
                                     textEditingController: controller,
                                     googleAPIKey: kGoogleApiKey,
-                                    inputDecoration: const InputDecoration(
-                                      hintText: "Search for a building, street, or area",
+                                    inputDecoration: InputDecoration(
+                                      hintText: AppLocalizations.of(context).translate(i18.address.csSearchPlaceMap),
                                       border: InputBorder.none,
                                       enabledBorder: InputBorder.none,
                                     ),
@@ -345,7 +346,7 @@ class AddressScreenState extends State<AddressScreen> {
                                             color: Color(0xFF3498DB),size: 12.0),
                                         const SizedBox(width: 4,),
                                         Text(
-                                          'Move the pin to the desired location',
+                                          AppLocalizations.of(context).translate(i18.address.csMovePinInfo),
                                           style: widget.theme.text12W400()?.apply(color: widget.theme.lightGrey),
                                         )
                                       ],
@@ -366,7 +367,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     DigitTextFormField(
                                       padding: const EdgeInsets.only(top: 0),
                                       formControlName: pinCodeKey,
-                                      label: 'Pincode',
+                                      label: AppLocalizations.of(context).translate(i18.address.pincode),
                                       keyboardType: TextInputType.number,
                                       isRequired: true,
                                       maxLength: 6,
@@ -389,7 +390,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     DigitTextFormField(
                                       padding: const EdgeInsets.only(top: 0),
                                       formControlName: stateKey,
-                                      label: 'State',
+                                      label: AppLocalizations.of(context).translate(i18.address.state),
                                       keyboardType: TextInputType.text,
                                       isRequired: true,
                                       onChanged: (value) {
@@ -409,7 +410,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     ),
                                     DigitTextFormField(
                                       formControlName: districtKey,
-                                      label: 'District',
+                                      label: AppLocalizations.of(context).translate(i18.address.district),
                                       keyboardType: TextInputType.text,
                                       isRequired: true,
                                       onChanged: (value) {
@@ -429,7 +430,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     ),
                                     DigitTextFormField(
                                       formControlName: cityKey,
-                                      label: 'City',
+                                      label: AppLocalizations.of(context).translate(i18.address.cityTown),
                                       keyboardType: TextInputType.text,
                                       isRequired: true,
                                       onChanged: (value) {
@@ -502,7 +503,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     // ),
                                     DigitTextFormField(
                                         formControlName: localityKey,
-                                        label: 'Locality / Street name / Area',
+                                        label: AppLocalizations.of(context).translate(i18.address.localityStreet),
                                         isRequired: true,
                                         onChanged: (value) {
                                           context.read<AuthBloc>().userModel.addressModel.street =
@@ -525,7 +526,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     DigitTextFormField(
                                         formControlName: doorNoKey,
                                         padding: const EdgeInsets.all(0),
-                                        label: 'Door number',
+                                        label: AppLocalizations.of(context).translate(i18.address.buildingDoorNo),
                                         isRequired: true,
                                         onChanged: (value) {
                                           context.read<AuthBloc>().userModel.addressModel.doorNo =
@@ -579,7 +580,7 @@ class AddressScreenState extends State<AddressScreen> {
                     isSubmitting = false;
                   },
                   child: Text(
-                    'Next',
+                    AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
                     style: widget.theme.text20W700()?.apply(
                       color: Colors.white,
                     ),

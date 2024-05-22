@@ -14,10 +14,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:open_filex/open_filex.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/blocs/file-picker-bloc/file_picker.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import 'package:pucardpg/widget/display_image.dart';
+import 'package:pucardpg/widget/display_pdf.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/help_button.dart';
@@ -39,13 +42,8 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
 
   bool fileSizeExceeded = false;
   bool extensionError = false;
-  TextEditingController typeOfIdController = TextEditingController();
-
   String typeKey = 'type';
-
-  String? fileName;
-  String? idFilename;
-  Uint8List? idBytes;
+  bool isEnable = true;
   FilePickerResult? result;
   PlatformFile? pickedFile;
   File? fileToDisplay;
@@ -76,13 +74,12 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
           if (fileSize <= maxFileSize) {
             context.read<AuthBloc>().userModel.idDocumentType = result!.files.single.extension;
             pickedFile = result!.files.single;
-            idFilename = result!.files.single.name;
-            idBytes = result!.files.single.bytes;
+            context.read<AuthBloc>().userModel.idFilename = result!.files.single.name;
+            context.read<AuthBloc>().userModel.idBytes = result!.files.single.bytes;
             if (pickedFile != null) {
               context.read<FileBloc>().add(FileEvent.upload(pickedFile: pickedFile!, type: 'id'));
             }
             setState(() {
-              fileName = '1 File Uploaded';
               fileToDisplay = file;
               extensionError = false;
               fileSizeExceeded = false;
@@ -126,13 +123,13 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 PageHeading(
-                                  heading: "Upload your ID",
-                                  subHeading: "Please upload a valid government issued ID",
+                                  heading: AppLocalizations.of(context).translate(i18.idVerification.csUploadId),
+                                  subHeading: AppLocalizations.of(context).translate(i18.idVerification.csUploadIdText),
                                   headingStyle: widget.theme.text24W700(),
                                   subHeadingStyle: widget.theme.text14W400Rob(),
                                 ),
                                 DigitReactiveDropdown(
-                                  label: 'Type of ID',
+                                  label: AppLocalizations.of(context).translate(i18.idVerification.csTypeOfId),
                                   menuItems: ['PAN', 'AADHAR', 'DRIVING LICENSE'],
                                   formControlName: typeKey,
                                   valueMapper: (value) => value.toUpperCase(),
@@ -140,8 +137,8 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                   onChanged: (val) {
                                     context.read<AuthBloc>().userModel.identifierType = val;
                                     setState(() {
-                                      fileName = null;
-                                      pickedFile = null;
+                                      context.read<AuthBloc>().userModel.idBytes = null;
+                                      context.read<AuthBloc>().userModel.idFilename = null;
                                       context.read<AuthBloc>().userModel.identifierId = null;
                                     });
                                   },
@@ -155,15 +152,15 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                   children: [
                                     Expanded(
                                       child: DigitTextField(
-                                        label: 'Upload ID proof',
-                                        controller: TextEditingController(text: fileName ?? ''),
+                                        label: AppLocalizations.of(context).translate(i18.idVerification.csUploadProof),
+                                        controller: TextEditingController(text: context.read<AuthBloc>().userModel.idFilename ?? ''),
                                         onChange: (val) {
                                           // setState(() {
                                           //
                                           // });
                                         },
                                         readOnly: true,
-                                        hintText: 'No File selected',
+                                        hintText: AppLocalizations.of(context).translate(i18.common.csNoFileSelected),
                                       ),
                                     ),
                                     const SizedBox(width: 10,),
@@ -175,6 +172,11 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                           listener: (context, state) {
                                             state.maybeWhen(
                                                 orElse: (){},
+                                                initial: () {
+                                                  setState(() {
+                                                    isEnable = false;
+                                                  });
+                                                },
                                                 idFailed: (error){
                                                   DigitToast.show(context,
                                                     options: DigitToastOptions(
@@ -185,9 +187,10 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                                   );
                                                 },
                                                 uploadIdSuccess: (fileStoreId) {
+                                                  setState(() {
+                                                    isEnable = true;
+                                                  });
                                                   context.read<AuthBloc>().userModel.identifierId = fileStoreId;
-                                                  context.read<AuthBloc>().userModel.idFilename = idFilename;
-                                                  context.read<AuthBloc>().userModel.idBytes = idBytes;
                                                 }
                                             );
                                           },
@@ -217,7 +220,7 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                                           )),
                                                       const SizedBox(width: 2),
                                                       Text(
-                                                        "Upload",
+                                                        AppLocalizations.of(context).translate(i18.common.csCommonChooseFile),
                                                         style: DigitTheme.instance.mobileTheme.textTheme.headlineSmall
                                                             ?.apply(
                                                           color: widget.theme.colorScheme.secondary,
@@ -235,41 +238,25 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                 ),
                                 const SizedBox(height: 8,),
                                 if (fileSizeExceeded) // Show text line in red if file size exceeded
-                                  const Text(
-                                    'File Size Limit Exceeded. Upload a file below 5MB.',
+                                  Text(
+                                    AppLocalizations.of(context).translate(i18.common.fileSizeExceeded),
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 if (extensionError) // Show text line in red if file size exceeded
-                                  const Text(
-                                    'Please select a valid file format. Upload documents in the following formats: JPG, PNG or PDF.',
+                                  Text(
+                                    AppLocalizations.of(context).translate(i18.common.notSupportedFileType),
                                     style: TextStyle(color: Colors.red),
                                   ),
-                                if (pickedFile != null) ...[
+                                if (isEnable == true && context.read<AuthBloc>().userModel.idBytes != null) ...[
                                   const SizedBox(height: 20),
-                                  if (pickedFile!.extension == 'pdf')
+                                  if (context.read<AuthBloc>().userModel.idDocumentType == 'pdf')
                                     Stack(
                                       children: [
-                                        Container(
+                                        DisplayPdf(
+                                          filename: context.read<AuthBloc>().userModel.idFilename!,
+                                          bytes: context.read<AuthBloc>().userModel.idBytes!,
                                           height: 300,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(color: Colors.grey),
-                                              borderRadius:  const BorderRadius.all(Radius.circular(21))
-                                          ),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(20), // Image border
-                                            child: SizedBox(
-                                                child: SfPdfViewer.file(
-                                                  fileToDisplay!,
-                                                  onTap: (pdfDetails) {
-                                                    if (fileToDisplay != null) {
-                                                      OpenFilex.open(fileToDisplay!.path);
-                                                    }
-                                                  },
-                                                )
-                                            ),
-                                          ),
-
+                                          width: null,
                                         ),
                                         Positioned(
                                           top: 0,
@@ -287,9 +274,9 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                               color: Colors.white,
                                               onPressed: () {
                                                 setState(() {
-                                                  pickedFile = null;
-                                                  fileName = null;
-                                                  context.read<AuthBloc>().userModel.fileStore = null;
+                                                  context.read<AuthBloc>().userModel.idBytes = null;
+                                                  context.read<AuthBloc>().userModel.idFilename = null;
+                                                  context.read<AuthBloc>().userModel.identifierId = null;
                                                 });
                                               },
                                             ),
@@ -297,28 +284,15 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                         ),
                                       ],
                                     ),
-                                  if (pickedFile!.extension != 'pdf')
+                                  if (context.read<AuthBloc>().userModel.idDocumentType != 'pdf')
                                     GestureDetector(
                                       child: Stack(
                                         children: [
-                                          Container(
+                                          DisplayImage(
+                                            filename: context.read<AuthBloc>().userModel.idFilename!,
+                                            bytes: context.read<AuthBloc>().userModel.idBytes!,
                                             height: 300,
                                             width: 500,
-                                            decoration: BoxDecoration(
-                                                border: Border.all(color: Colors.grey),
-                                                borderRadius:  const BorderRadius.all(Radius.circular(21))
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(20), // Image border
-                                              child: SizedBox.fromSize(
-                                                size: Size.fromRadius(16), // Image radius
-                                                child: Image.file(
-                                                  fileToDisplay!,
-                                                  filterQuality: FilterQuality.high,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
                                           ),
                                           Positioned(
                                             top: 0,
@@ -336,8 +310,8 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                                 color: Colors.white,
                                                 onPressed: () {
                                                   setState(() {
-                                                    pickedFile = null;
-                                                    fileName = null;
+                                                    context.read<AuthBloc>().userModel.idBytes = null;
+                                                    context.read<AuthBloc>().userModel.idFilename = null;
                                                     context.read<AuthBloc>().userModel.identifierId = null;
                                                   });
                                                 },
@@ -347,7 +321,7 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                         ],
                                       ),
                                       onTap: () {
-                                        if (pickedFile!.extension != 'pdf') {
+                                        if (context.read<AuthBloc>().userModel.idDocumentType != 'pdf') {
                                           OpenFilex.open(fileToDisplay!.path);
                                         }
                                       },
@@ -364,11 +338,12 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                   DigitCard(
                     padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
                     child: DigitElevatedButton(
-                        onPressed: () {
+                        onPressed: isEnable
+                            ? () {
                           FocusScope.of(context).unfocus();
                           form.markAllAsTouched();
                           if (!form.valid) return;
-                          if(context.read<AuthBloc>().userModel.identifierType!.isNotEmpty && (fileName == null || fileName!.isEmpty)) {
+                          if(context.read<AuthBloc>().userModel.identifierType!.isNotEmpty && (context.read<AuthBloc>().userModel.idFilename == null || context.read<AuthBloc>().userModel.idFilename!.isEmpty)) {
                             DigitToast.show(context,
                               options: DigitToastOptions(
                                 "Please upload ID proof",
@@ -378,12 +353,13 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                             );
                             return;
                           }
-                          if (context.read<AuthBloc>().userModel.identifierType!.isNotEmpty && fileName!.isNotEmpty) {
+                          if (context.read<AuthBloc>().userModel.identifierType!.isNotEmpty && context.read<AuthBloc>().userModel.idFilename!.isNotEmpty) {
                             AutoRouter.of(context)
                                 .push(UserTypeRoute());
                           }
-                        },
-                        child: Text('Next',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                        } : null,
+                        child: Text(AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
+                          style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
                     ),
                   ),
                 ],

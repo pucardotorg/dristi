@@ -7,9 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/help_button.dart';
 import 'package:pucardpg/widget/page_heading.dart';
@@ -68,13 +69,13 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   PageHeading(
-                                    heading: "Enter your name as per official documents",
-                                    subHeading: "This ensures seamless verification to maintain compliance with official records ",
+                                    heading: AppLocalizations.of(context).translate(i18.userDetails.csEnterName),
+                                    subHeading: AppLocalizations.of(context).translate(i18.userDetails.csEnterNameSubText),
                                     headingStyle: widget.theme.text24W700(),
                                     subHeadingStyle: widget.theme.text14W400Rob(),
                                   ),
                                   DigitTextFormField(
-                                    label: 'First name',
+                                    label: AppLocalizations.of(context).translate(i18.userDetails.coreCommonFirstName),
                                     formControlName: firstNameKey,
                                     isRequired: true,
                                     onChanged: (val) {
@@ -99,7 +100,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     height: 10,
                                   ),
                                   DigitTextFormField(
-                                    label: 'Middle name (optional)',
+                                    label: AppLocalizations.of(context).translate(i18.userDetails.coreCommonMiddleName),
                                     onChanged: (val) {
                                       context.read<AuthBloc>().userModel.middleName =
                                           val.value.toString();
@@ -116,7 +117,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     height: 10,
                                   ),
                                   DigitTextFormField(
-                                    label: 'Last name',
+                                    label: AppLocalizations.of(context).translate(i18.userDetails.coreCommonLastName),
                                     formControlName: lastNameKey,
                                     onChanged: (val) {
                                       context.read<AuthBloc>().userModel.lastName =
@@ -160,7 +161,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                             isSubmitting = false;
                           },
                           child: Text(
-                            'Continue',
+                            AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
                             style: widget.theme.text20W700()?.apply(
                               color: Colors.white,
                             ),

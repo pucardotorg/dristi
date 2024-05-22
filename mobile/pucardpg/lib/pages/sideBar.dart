@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:pucardpg/blocs/app-init-bloc/app_init.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/blocs/localization-bloc/localization.dart';
-import 'package:pucardpg/routes/routes.dart';
 import '../utils/i18_key_constants.dart' as i18;
 
 class SideBar extends StatelessWidget {

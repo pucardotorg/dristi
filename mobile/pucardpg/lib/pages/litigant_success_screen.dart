@@ -1,7 +1,8 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/widgets/digit_card.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +50,8 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
                 height: 25,
               ),
               Text(
-                "You’ve been registered successfully!",
+                AppLocalizations.of(context)
+                    .translate(i18.success.csRegisterSuccess),
                 style: widget.theme.text20W700()?.apply(),
                 textAlign: TextAlign.center,
               ),
@@ -59,7 +61,8 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 25, right: 25, top: 5),
                 child: Text(
-                  "You can now proceed to file a case or join an on-going case",
+                  AppLocalizations.of(context)
+                      .translate(i18.success.csRegisterSuccessSubText),
                   style: widget.theme.text14W400Rob(),
                   textAlign: TextAlign.center,
                 ),
@@ -71,7 +74,9 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
                   onPressed: () {
 
                   },
-                  child: Text('File a Case',  style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                  child: Text(AppLocalizations.of(context)
+                      .translate(i18.success.fileACase),
+                    style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
               ),
               Container(
                 margin: const EdgeInsets.only(
@@ -94,7 +99,8 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                            'Join a Case',
+                            AppLocalizations.of(context)
+                                .translate(i18.success.joinACase),
                             style: widget.theme.text20W700()?.apply(
                                 color: widget.theme.colorScheme.secondary)
                         ),

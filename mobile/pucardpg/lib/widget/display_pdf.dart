@@ -11,9 +11,13 @@ class DisplayPdf extends StatelessWidget with AppMixin{
 
   String filename;
   Uint8List bytes;
+  double? height;
+  double? width;
   DisplayPdf({super.key,
     required this.filename,
-    required this.bytes
+    required this.bytes,
+    required this.height,
+    required this.width
   });
 
   @override
@@ -22,12 +26,12 @@ class DisplayPdf extends StatelessWidget with AppMixin{
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: 200,
-          width: 200,
+          height: height,
+          width: width,
           alignment: Alignment.center,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
-              borderRadius:  const BorderRadius.all(Radius.circular(15))
+              borderRadius:  const BorderRadius.all(Radius.circular(20))
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20), // Image border
@@ -41,12 +45,6 @@ class DisplayPdf extends StatelessWidget with AppMixin{
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: Text(
-            filename,
-          ),
-        )
       ],
     );
   }

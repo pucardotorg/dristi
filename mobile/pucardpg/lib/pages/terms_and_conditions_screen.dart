@@ -4,12 +4,12 @@ import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
-import 'package:pucardpg/model/litigant_model.dart';
+import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/checkbox_tile.dart';
@@ -62,14 +62,17 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           PageHeading(
-                            heading: "Terms and Conditions",
-                            subHeading: "Before diving in, we'll need to verify your identity for account setup",
+                            heading: AppLocalizations.of(context)
+                                .translate(i18.terms.esCommonUserTermsAndConditions),
+                            subHeading: AppLocalizations.of(context)
+                                .translate(i18.idVerification.csVerifyIdentitySubText),
                             headingStyle: widget.theme.text24W700(),
                             subHeadingStyle: widget.theme.text14W400Rob(),
                           ),
                           CheckboxTile(
                             value: firstChecked,
-                            label: "By using this app, you agree to abide by our community guidelines, fostering a respectful and inclusive environment for all users",
+                            label: AppLocalizations.of(context)
+                                .translate(i18.terms.firstTermsAndConditions),
                             onChanged: (val) {
                               setState(() {
                                 firstChecked = !firstChecked;
@@ -81,7 +84,8 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                           const SizedBox(height: 25,),
                           CheckboxTile(
                             value: secondChecked,
-                            label: "Your privacy is paramount. Rest assured, your data is securely handled and never shared with third parties without your consent",
+                            label: AppLocalizations.of(context)
+                                .translate(i18.terms.secondTermsAndConditions),
                             onChanged: (val) {
                               setState(() {
                                 secondChecked = !secondChecked;
@@ -93,7 +97,8 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                           const SizedBox(height: 25,),
                           CheckboxTile(
                             value: thirdChecked,
-                            label: "Please refrain from engaging in any unlawful activities while using our app, ensuring a safe and compliant platform for everyone",
+                            label: AppLocalizations.of(context)
+                                .translate(i18.terms.thirdTermsAndConditions),
                             onChanged: (val) {
                               setState(() {
                                 thirdChecked = !thirdChecked;
@@ -105,7 +110,8 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                           const SizedBox(height: 25,),
                           CheckboxTile(
                             value: fourthChecked,
-                            label: "We reserve the right to modify our services and terms at any time, keeping you informed of any updates through our communication channels",
+                            label: AppLocalizations.of(context)
+                                .translate(i18.terms.fourthTermsAndConditions),
                             onChanged: (val) {
                               setState(() {
                                 fourthChecked = !fourthChecked;
@@ -151,29 +157,6 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     }
                   }
                 );
-
-                // switch (state.runtimeType) {
-                //
-                //   case RequestFailedState:
-                //     isSubmitting = false;
-                //     widget.theme.showDigitDialog(
-                //         true, (state as RequestFailedState).errorMsg, context);
-                //     break;
-                //   case LitigantSubmissionSuccessState:
-                //     // Navigator.pushNamed(context, '/SuccessScreen',
-                //     //     arguments: userModel);
-                //     break;
-                //   case AdvocateSubmissionSuccessState:
-                //     // Navigator.pushNamed(context, '/AdvocateHomePage',
-                //     //     arguments: userModel);
-                //     break;
-                //   case AdvocateClerkSubmissionSuccessState:
-                //     // Navigator.pushNamed(context, '/AdvocateHomePage',
-                //     //     arguments: userModel);
-                //     break;
-                //   default:
-                //     break;
-                // }
               },
               child: DigitCard(
                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
@@ -193,7 +176,8 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       );
                     },
                     child: Text(
-                      'Continue',
+                      AppLocalizations.of(context)
+                          .translate(i18.common.coreCommonContinue),
                       style: widget.theme.text20W700()?.apply(
                         color: Colors.white,
                       ),
