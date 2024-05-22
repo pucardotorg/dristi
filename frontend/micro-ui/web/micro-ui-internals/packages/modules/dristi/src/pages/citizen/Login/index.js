@@ -27,7 +27,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
 function getRedirectionUrl(status) {
   switch (status) {
     case "isNotRegistered":
-      return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      return `/${window?.contextPath}/citizen/dristi/home/registration/user-name`;
     case "isNotApproved":
       return `/${window?.contextPath}/citizen/dristi/home/isNotApproved`;
     case "isApproved":
@@ -37,7 +37,7 @@ function getRedirectionUrl(status) {
     case "isRegistered":
       return `/${window?.contextPath}/citizen/dristi/home/login`;
     default:
-      return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      return `/${window?.contextPath}/citizen/dristi/home/registration/user-name`;
   }
 }
 
@@ -94,7 +94,7 @@ const Login = ({ stateCode }) => {
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
-      const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/registration/user-name`;
       history.push(isUserRegistered ? homeUrl : idVerificationUrl, {
         redirectBackTo: redirectPath,
       });

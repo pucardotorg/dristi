@@ -111,7 +111,7 @@ const Registration = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (!err) {
       setCanSubmitNo(true);
-      history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+      history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
       return;
     } else {
       setError(t("ES_ERROR_USER_ALREADY_REGISTERED"));
@@ -147,7 +147,7 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
-    history.replace(`${path}/aadhar-otp`);
+    history.push(`${path}/aadhar-otp`);
   };
   const resendOtp = async () => {
     const { mobileNumber } = newParams;
@@ -176,12 +176,12 @@ const Registration = ({ stateCode }) => {
   };
   const selectName = async (name) => {
     setNewParams({ ...newParams, name });
-    history.replace(`${path}/user-address`);
+    history.push(`${path}/user-address`);
   };
 
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    history.replace(`${path}/user-type`);
+    history.push(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
   const handleAddressSave = (address) => {
@@ -217,6 +217,8 @@ const Registration = ({ stateCode }) => {
               isRegister={true}
               t={t}
               path={path}
+              isUserLoggedIn={isUserLoggedIn}
+              history={history}
             />
           </Route>
           <Route path={`${path}/otp`}>
@@ -236,7 +238,15 @@ const Registration = ({ stateCode }) => {
             />
           </Route>
           <Route path={`${path}/user-name`}>
-            <SelectName config={stepItems[3]} t={t} onSelect={selectName} params={newParams} history={history} />
+            <SelectName
+              config={stepItems[3]}
+              t={t}
+              onSelect={selectName}
+              params={newParams}
+              history={history}
+              value={newParams?.name}
+              isUserLoggedIn={isUserLoggedIn}
+            />
           </Route>
           <Route path={`${path}/user-address`}>
             <SelectUserAddress config={[stepItems[1]]} t={t} params={newParams} onSelect={handleAddressSave} />

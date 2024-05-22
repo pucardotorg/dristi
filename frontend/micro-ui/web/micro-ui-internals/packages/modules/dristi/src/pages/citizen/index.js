@@ -1,4 +1,4 @@
-import { AppContainer, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { AppContainer, BackButton, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React, { useMemo } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
@@ -146,13 +146,7 @@ const App = ({ stateCode, tenantId }) => {
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
           <div style={{ display: "flex", justifyContent: "align-right", alignItems: "center" }}>
-            {/* <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb> */}
-            {!hideHomeCrumb.includes(location.pathname) && (
-              <span style={{ display: "flex", justifyContent: "align-right", alignItems: "center", gap: "5px" }}>
-                <span style={{ color: "#f47738" }}>Help</span>
-                <HelpOutlineIcon />
-              </span>
-            )}
+            <BackButton />
           </div>
           <PrivateRoute exact path={`${path}/home`}>
             <CitizenHome tenantId={tenantId} />

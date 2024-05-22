@@ -134,13 +134,11 @@ const ApplicationDetails = ({ location, match }) => {
     window?.Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
-        setMessage(action === "APPROVE" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
-        setIsAction(false);
+        history.push(`/digit-ui/employee/dristi/registration-requests?actions=${action}`);
       })
       .catch(() => {
         setShowModal(false);
-        setMessage(t("ES_API_ERROR"));
-        setIsAction(false);
+        history.push(`/digit-ui/employee/dristi/registration-requests?actions="ERROR"`);
       });
   }
 
@@ -275,9 +273,6 @@ const ApplicationDetails = ({ location, match }) => {
             <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
           </Card>
         </Modal>
-      )}
-      {message && (
-        <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")} label={message} onClose={() => setMessage(null)} />
       )}
     </Card>
   );
