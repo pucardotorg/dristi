@@ -44,10 +44,10 @@ public class WorkflowService {
                 orderRequest.getOrder().setStatus(applicationStatus);
             } catch (CustomException e) {
                 log.error("Custom exception occurred while updating workflow status : {}", e.getMessage());
-                throw new CustomException();
+                throw e;
             } catch (Exception e) {
                 log.error("Exception occurred while updating workflow status : {}", e.getMessage());
-                throw new CustomException();
+                throw new CustomException("UPDATE_WORKFLOW_EXCEPTION", e.getMessage());
             }
     }
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
@@ -58,11 +58,11 @@ public class WorkflowService {
             return response.getProcessInstances().get(0).getState();
         }
         catch (CustomException e) {
-            log.error("Custom exception occured calling workflow status: {}", e.getMessage());
-            throw new CustomException();
+            log.error("Custom exception occurred calling workflow status: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException("CALL_WORKFLOW_EXCEPTION", e.getMessage());
         }
     }
 
@@ -71,7 +71,6 @@ public class WorkflowService {
             Workflow workflow = order.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
             processInstance.setBusinessId(order.getOrderNumber());
-            System.out.println(order.getOrderNumber());
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName(config.getOrderBusinessName());
             processInstance.setTenantId(order.getTenantId());
@@ -90,7 +89,7 @@ public class WorkflowService {
             return processInstance;
         } catch (Exception e) {
             log.error("Error getting process instance for CASE: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException("GET_PROCESS_INSTANCE_EXCEPTION", e.getMessage());
         }
     }
     public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
@@ -104,7 +103,7 @@ public class WorkflowService {
             return null;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.getMessage());
-            throw new CustomException();
+            throw new CustomException("GET_WORKFLOW_EXCEPTION", e.getMessage());
         }
     }
 

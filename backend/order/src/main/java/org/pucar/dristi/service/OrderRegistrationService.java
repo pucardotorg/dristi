@@ -45,7 +45,7 @@ public class OrderRegistrationService {
             return body.getOrder();
         }catch (CustomException e) {
             log.error("Custom Exception occurred while creating order");
-            throw new CustomException("ORDER_CREATE_EXCEPTION", e.getMessage());
+            throw e;
         }
         catch (Exception e) {
             log.error("Error occurred while creating order");

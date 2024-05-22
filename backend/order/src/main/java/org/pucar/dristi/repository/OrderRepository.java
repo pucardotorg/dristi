@@ -40,6 +40,7 @@ public class OrderRepository {
 
         try {
             List<Order> orderList = new ArrayList<>();
+            List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String orderQuery = "";
             orderQuery = queryBuilder.getOrderSearchQuery(applicationNumber,cnrNumber,filingNumber, tenantId, id, status);
@@ -59,20 +60,23 @@ public class OrderRepository {
             }
 
             String statueAndSectionQuery = "";
-            preparedStmtListDoc = new ArrayList<>();
-            statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListDoc);
+            preparedStmtListSt = new ArrayList<>();
+            statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt);
             log.info("Final statue and sections query: {}", statueAndSectionQuery);
-            Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListDoc.toArray(), statuteSectionRowMapper);
+            Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), statuteSectionRowMapper);
+            log.info("DB statute sections map :: {}", statuteSectionsMap);
             if (statuteSectionsMap != null) {
-                orderList.forEach(st -> {
-                    st.setStatuteSection(statuteSectionsMap.get(st.getId()));
+                orderList.forEach(order -> {
+                    order.setStatuteSection(statuteSectionsMap.get(order.getId()));
                 });
             }
 
             String documentQuery = "";
+            preparedStmtListDoc = new ArrayList<>();
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
             log.info("Final document query: {}", documentQuery);
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+            log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
                 orderList.forEach(order -> {
                     order.setDocuments(documentMap.get(order.getId()));

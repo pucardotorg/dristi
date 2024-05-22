@@ -79,7 +79,6 @@ public class OrderRegistrationServiceTest {
         CustomException exception = assertThrows(CustomException.class, () ->
                 orderRegistrationService.createOrder(orderRequest));
 
-        assertEquals("ORDER_CREATE_EXCEPTION", exception.getCode());
         assertTrue(exception.getMessage().contains("Test exception"));
         verify(validator, times(1)).validateOrderRegistration(orderRequest);
     }

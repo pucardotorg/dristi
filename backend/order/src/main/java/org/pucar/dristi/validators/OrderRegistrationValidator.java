@@ -1,5 +1,6 @@
 package org.pucar.dristi.validators;
 
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -22,6 +23,7 @@ import static org.pucar.dristi.config.ServiceConstants.CREATE_ORDER_ERR;
 import static org.pucar.dristi.config.ServiceConstants.MDMS_DATA_NOT_FOUND;
 
 @Component
+@Slf4j
 public class OrderRegistrationValidator {
     @Autowired
     private OrderRepository repository;
@@ -56,10 +58,11 @@ public class OrderRegistrationValidator {
         RequestInfo requestInfo = orderRequest.getRequestInfo();
         List<Order> existingApplications = repository.getApplications( null, order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
                 String.valueOf(order.getId()), order.getStatus());
+        log.info("Existing application :: {}", existingApplications.size());
         if (existingApplications.isEmpty())
             throw new CustomException("VALIDATION EXCEPTION", "Order does not exist");
 
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "order", createMasterDetails());
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "Order", createMasterDetails());
 
         if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");

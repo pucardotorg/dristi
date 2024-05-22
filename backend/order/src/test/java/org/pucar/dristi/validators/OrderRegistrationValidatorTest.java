@@ -98,7 +98,7 @@ public class OrderRegistrationValidatorTest {
         // Mock MDMS data
         Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
         mdmsData.put("Order", new HashMap<>());
-        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("order"), anyList())).thenReturn(mdmsData);
+        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("Order"), anyList())).thenReturn(mdmsData);
 
         // Perform validation
         assertDoesNotThrow(() -> validator.validateApplicationExistence(orderRequest));
