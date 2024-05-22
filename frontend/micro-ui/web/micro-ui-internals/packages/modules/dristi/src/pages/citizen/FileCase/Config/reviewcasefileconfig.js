@@ -11,6 +11,7 @@ const reviewCaseFileFormConfig = [
           inputs: [
             {
               label: "CS_COMPLAINT_DETAILS",
+              icon: "ComplainantDetailsIcon",
               config: [
                 { type: "title", value: "name" },
                 { type: "phonenumber", label: "Phone Number", value: "phone" },
@@ -21,6 +22,7 @@ const reviewCaseFileFormConfig = [
             },
             {
               label: "CS_RESPONDENT_DETAILS",
+              icon: "RespondentDetailsIcon",
               config: [
                 { type: "title", value: "name" },
                 { type: "phonenumber", label: "Phone Number", value: "phone" },
@@ -42,6 +44,7 @@ const reviewCaseFileFormConfig = [
           inputs: [
             {
               label: "CS_CHECKQUE_DETAILS",
+              icon: "ChequeDetailsIcon",
               config: [
                 { type: "title", value: "checkno" },
                 { type: "amount", label: "Cheque Amount", value: "amount" },
@@ -80,6 +83,7 @@ const reviewCaseFileFormConfig = [
             },
             {
               label: "CS_DEBT_LIABILITY_DETAILS",
+              icon: "DebtLiabilityIcon",
               config: [
                 { type: "text", label: "Nature of Debt/Liability", value: "nature" },
                 { type: "text", label: "Cheque Recieved for", value: "receivedfor" },
@@ -89,6 +93,7 @@ const reviewCaseFileFormConfig = [
             },
             {
               label: "CS_DEMAND_NOTICE_DETAILS",
+              icon: "DemandDetailsNoticeIcon",
               config: [
                 { type: "text", label: "Mode of Dispatch", value: "dispatch" },
                 { type: "text", label: "Dispatched on", value: "dispatchon" },
@@ -112,6 +117,7 @@ const reviewCaseFileFormConfig = [
           inputs: [
             {
               label: "CS_WITNESS_DETAILS",
+              icon: "WitnessDetailsIcon",
               config: [
                 { type: "title", value: "name" },
                 { type: "phonenumber", label: "Phone Number", value: "phone" },
@@ -124,6 +130,7 @@ const reviewCaseFileFormConfig = [
             },
             {
               label: "CS_PRAYER_SWORN_DETAILS",
+              icon: "PrayerSwornIcon",
               config: [
                 { type: "text", label: "Prayer of Relief", value: "prayer" },
                 { type: "address", label: "Address", value: "address" },
@@ -137,6 +144,7 @@ const reviewCaseFileFormConfig = [
             },
             {
               label: "CS_ADVOCATE_DETAILS",
+              icon: "AdvocateDetailsIcon",
               config: [
                 { type: "title", value: "name" },
                 { type: "text", label: "BAR Registraion", value: "bar" },
