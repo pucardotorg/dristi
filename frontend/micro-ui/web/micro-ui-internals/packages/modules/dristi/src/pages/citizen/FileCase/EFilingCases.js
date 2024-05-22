@@ -282,6 +282,7 @@ function EFilingCases({ path }) {
           {pageConfig?.addFormText && (
             <div
               onClick={handleAddForm}
+              className="add-new-form"
               style={{
                 display: "flex",
                 cursor: "pointer",

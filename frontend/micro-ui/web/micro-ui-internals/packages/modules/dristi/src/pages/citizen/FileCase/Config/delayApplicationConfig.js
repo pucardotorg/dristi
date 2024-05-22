@@ -42,11 +42,13 @@ const delayApplicationFormConfig = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "delayApplicationReason",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
               textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
               type: "TextAreaComponent",
+              headerClassName: "text-area-header"
             },
           ],
         },
@@ -60,6 +62,7 @@ const delayApplicationFormConfig = [
         type: "component",
         component: "SelectCustomNote",
         key: "addressDetailsNote",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -80,6 +83,7 @@ const delayApplicationFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "condonationFileUpload",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -104,4 +108,5 @@ export const delayApplicationConfig = {
   formconfig: delayApplicationFormConfig,
   header: "CS_RESPONDENT_DELAY_APPLICATION_HEADING",
   subtext: "CS_RESPONDENT_DELAY_APPLICATION_SUBTEXT",
+  className: "delay-application",
 };

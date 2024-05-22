@@ -6,6 +6,7 @@ const demandNoticeFormConfig = [
         component: "SelectUserTypeComponent",
         key: "SelectUserTypeComponent",
         isMandatory: true,
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -64,6 +65,7 @@ const demandNoticeFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "SelectCustomDragDrop",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -87,6 +89,7 @@ const demandNoticeFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "SelectCustomDragDrop",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -355,4 +358,5 @@ export const demandNoticeConfig = {
   isOptional: false,
   addFormText: "ADD_DEMAND_NOTICE",
   formItemName: "Respondent",
+  className: "demand-notice",
 };

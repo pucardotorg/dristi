@@ -101,4 +101,5 @@ export const advocateDetailsConfig = {
   formconfig: advocateDetailsFormConfig,
   header: "CS_ADVOCATE_DETAILS_HEADING",
   subtext: "CS_ADVOCATE_DETAILS_SUBTEXT",
+  className: "advocate-detail"
 };
