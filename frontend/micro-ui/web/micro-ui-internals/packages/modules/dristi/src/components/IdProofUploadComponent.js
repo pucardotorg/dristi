@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, CustomDropdown } from "@egovernments/digit-ui-react-components";
 import MultiUploadWrapper from "./MultiUploadWrapper";
-import CitizenInfoLabel from "./CitizenInfoLabel";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
 const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {

@@ -14,6 +14,7 @@ export const Urls = {
     searchIndividualAdvocate: "/advocate/advocate/v1/_search",
     searchIndividualClerk: "/advocate/clerk/v1/_search",
     updateAdvocateDetails: "/advocate/advocate/v1/_update",
+    caseCreate: "/case/case/v1/_create",
   },
   FileFetchById: "/filestore/v1/files/id",
 };

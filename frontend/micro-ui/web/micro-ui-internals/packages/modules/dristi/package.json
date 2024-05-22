@@ -22,7 +22,6 @@
     "@egovernments/digit-ui-react-components": "1.8.1-beta.11",
     "@egovernments/digit-ui-components": "0.0.1-beta.3",
     "@egovernments/digit-ui-libraries": "1.8.1-beta.2",
-    "@cyntler/react-doc-viewer": "1.10.3",
     "@react-pdf/renderer": "^3.4.2",
     "jsonpath": "^1.1.1",
     "lodash": "4.17.21",
