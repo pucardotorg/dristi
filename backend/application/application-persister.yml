@@ -11,7 +11,7 @@ serviceMaps:
       auditAttributeBasePath: $.application
       queryMaps:
 
-        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, appcreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: application
           jsonMaps:
             - jsonPath: $.application.id
@@ -83,7 +83,7 @@ serviceMaps:
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.application
       queryMaps:
-        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, appcreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, statuteSection, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, statuteSection, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: application
           jsonMaps:
             - jsonPath: $.application.id
@@ -92,7 +92,7 @@ serviceMaps:
             - jsonPath: $.application.cnrNumber
             - jsonPath: $.application.referenceId
             - jsonPath: $.application.createdDate
-            - jsonPath: $.application.appcreatedBy
+            - jsonPath: $.application.createdBy
             - jsonPath: $.application.onBehalfOf
             - jsonPath: $.application.applicationType
             - jsonPath: $.application.applicationNumber

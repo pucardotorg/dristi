@@ -5,7 +5,7 @@ CREATE TABLE dristi_application (
                                     cnrNumber varchar(64)  NULL ,
                                     referenceId varchar(64)  NULL ,
                                     createdDate varchar(64) NOT NULL,
-                                    appcreatedBy varchar(64) NULL,
+                                    applicationCreatedBy varchar(64) NULL,
                                     onBehalfOf JSONB  NULL,
                                     applicationType JSONB NOT NULL,
                                     applicationNumber varchar(64)  NULL,
