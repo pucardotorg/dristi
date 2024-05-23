@@ -121,6 +121,10 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
+    final phoneNo = t.translate(i18.login.coreCommonPhoneNumber);
+    final signIn = t.translate(i18.login.csSignInNext);
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: Column(
@@ -166,8 +170,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 DigitTextFormField(
-                                  label: AppLocalizations.of(context)
-                                      .translate(i18.login.coreCommonPhoneNumber),
+                                  label: phoneNo,
                                   prefixIcon: Container(
                                     margin: const EdgeInsets.only(left: 1, right: 8),
                                     padding: EdgeInsets.zero,
@@ -260,9 +263,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                             AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, appConstants.login)
                                         );
                                       },
-                                      child: Text(
-                                          AppLocalizations.of(context)
-                                              .translate(i18.login.csSignInNext))),
+                                      child: Text(signIn)),
                                 )
                               ],
                             );
@@ -333,6 +334,13 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
   });
 
   showOtpDialog() {
+    var t = AppLocalizations.of(context);
+    final verifyMobile = t.translate(i18.registerMobile.csVerifyMobile);
+    final csLoginOtpText = t.translate(i18.common.csLoginOtpText);
+    final resendOtp = t.translate(i18.common.csResendOtp);
+    final resendOtpText = t.translate(i18.common.csResendAnotherOtp);
+    final verify = t.translate(i18.common.verify);
+
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -373,8 +381,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                       Container(
                         margin: const EdgeInsets.only(right: 10, top: 10),
                         child: Text(
-                          AppLocalizations.of(context).translate(
-                            i18.registerMobile.csVerifyMobile),
+                          verifyMobile,
                           style: widget.theme.text24W700(),
                         ),
                       ),
@@ -393,8 +400,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                         Row(
                           children: [
                             Text(
-                              "${AppLocalizations.of(context).translate(
-                                  i18.common.csLoginOtpText)} +91******${context.read<AuthBloc>().userModel
+                              "$csLoginOtpText +91******${context.read<AuthBloc>().userModel
                                   .mobileNumber!.substring(6, 10)}",
                               style: widget.theme.text14W400Rob(),
                             ),
@@ -474,8 +480,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  AppLocalizations.of(context).translate(
-                                    i18.common.csResendOtp),
+                                  resendOtp,
                                   style: widget.theme
                                       .text16W400Rob()
                                       ?.apply(color: widget.theme.defaultColor),
@@ -489,8 +494,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                           child: Row(
                             children: [
                               Text(
-                                '${AppLocalizations.of(context).translate(
-                                    i18.common.csResendAnotherOtp)} 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
+                                '$resendOtpText 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
                                     : snapshot.data! < 10 ? "0${snapshot.data}" : snapshot.data}',
                                 style: widget.theme.text14W400Rob(),),
                             ],
@@ -671,8 +675,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                         isSubmit = true;
                                       },
                                       child: Text(
-                                        AppLocalizations.of(context).translate(
-                                        i18.common.verify),
+                                        verify,
                                         style: widget.theme.text20W700()?.apply(
                                           color: Colors.white,
                                         ),

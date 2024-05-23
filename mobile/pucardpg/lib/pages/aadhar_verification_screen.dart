@@ -196,6 +196,13 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
   }
 
   showOtpDialog() {
+    var t = AppLocalizations.of(context);
+    final verifyAadhar = t.translate(i18.idVerification.csVerifyAadhar);
+    final csLoginOtpText = t.translate(i18.common.csLoginOtpText);
+    final resendOtp = t.translate(i18.common.csResendOtp);
+    final resendOtpText = t.translate(i18.common.csResendAnotherOtp);
+    final verify = t.translate(i18.common.verify);
+
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -235,8 +242,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                       Container(
                         margin: const EdgeInsets.only(right: 10, top: 10),
                         child: Text(
-                          AppLocalizations.of(context).translate(
-                              i18.idVerification.csVerifyAadhar),
+                          verifyAadhar,
                           style: widget.theme.text24W700(),
                         ),
                       ),
@@ -255,8 +261,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                         Row(
                           children: [
                             Text(
-                              "${AppLocalizations.of(context).translate(
-                                  i18.common.csLoginOtpText)} +91******${context.read<AuthBloc>().userModel.mobileNumber!.substring(6, 10)}",
+                              "$csLoginOtpText +91******${context.read<AuthBloc>().userModel.mobileNumber!.substring(6, 10)}",
                               style: widget.theme.text14W400Rob(),
                             ),
                           ],
@@ -332,8 +337,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  AppLocalizations.of(context).translate(
-                                      i18.common.csResendOtp),
+                                  resendOtp,
                                   style: widget.theme
                                       .text16W400Rob()
                                       ?.apply(color: widget.theme.defaultColor),
@@ -347,8 +351,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           child: Row(
                             children: [
                               Text(
-                                '${AppLocalizations.of(context).translate(
-                                    i18.common.csResendAnotherOtp)} 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
+                                '$resendOtpText 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
                                     : snapshot.data! < 10 ? "0${snapshot.data}" : snapshot.data}',
                                 style: widget.theme.text14W400Rob(),),
                             ],
@@ -385,8 +388,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                                     // isSubmit = true;
                                   },
                                   child: Text(
-                                    AppLocalizations.of(context).translate(
-                                        i18.common.verify),
+                                    verify,
                                     style: widget.theme.text20W700()?.apply(
                                       color: Colors.white,
                                     ),

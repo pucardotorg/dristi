@@ -78,6 +78,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
+    final mobileNo = t.translate(i18.registerMobile.coreCommonMobileNo);
+    final getOtp = t.translate(i18.common.coreCommonGetOtp);
     return Scaffold(
           backgroundColor: Colors.white,
           body: ReactiveFormBuilder(
@@ -121,7 +124,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                             height: 20,
                           ),
                           DigitTextFormField(
-                            label: AppLocalizations.of(context).translate(i18.registerMobile.coreCommonMobileNo),
+                            label: mobileNo,
                             prefixIcon: Container(
                               margin: const EdgeInsets.only(left: 1, right: 8),
                               padding: EdgeInsets.zero,
@@ -225,8 +228,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                     AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, 'register')
                                 );
                               },
-                              child: Text(AppLocalizations.of(context).translate(
-                                i18.common.coreCommonGetOtp))),
+                              child: Text(getOtp)),
                         );
                       }
                     ),
@@ -239,6 +241,12 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
   }
 
   showOtpDialog() {
+    var t = AppLocalizations.of(context);
+    final verifyMobile = t.translate(i18.registerMobile.csVerifyMobile);
+    final csLoginOtpText = t.translate(i18.common.csLoginOtpText);
+    final resendOtp = t.translate(i18.common.csResendOtp);
+    final resendOtpText = t.translate(i18.common.csResendAnotherOtp);
+    final verify = t.translate(i18.common.verify);
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -279,8 +287,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                       Container(
                         margin: const EdgeInsets.only(right: 10, top: 10),
                         child: Text(
-                          AppLocalizations.of(context).translate(
-                              i18.registerMobile.csVerifyMobile),
+                          verifyMobile,
                           style: widget.theme.text24W700(),
                         ),
                       ),
@@ -299,8 +306,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                       Row(
                         children: [
                           Text(
-                            "${AppLocalizations.of(context).translate(
-                                i18.common.csLoginOtpText)} +91******${context.read<AuthBloc>().userModel
+                            "$csLoginOtpText +91******${context.read<AuthBloc>().userModel
                                 .mobileNumber!.substring(6, 10)}",
                             style: widget.theme.text14W400Rob(),
                           ),
@@ -380,8 +386,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               child: Row(
                                 children: [
                                   Text(
-                                    AppLocalizations.of(context).translate(
-                                        i18.common.csResendOtp),
+                                    resendOtp,
                                     style: widget.theme
                                         .text16W400Rob()
                                         ?.apply(color: widget.theme.defaultColor),
@@ -395,8 +400,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                         child: Row(
                           children: [
                             Text(
-                              '${AppLocalizations.of(context).translate(
-                                  i18.common.csResendAnotherOtp)} 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
+                              '$resendOtpText 0:${(snapshot.data == 0) || (snapshot.data == null) ? 25
                                   : snapshot.data! < 10 ? "0${snapshot.data}" : snapshot.data}',
                               style: widget.theme.text14W400Rob(),),
                           ],
@@ -479,8 +483,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       isSubmit = true;
                                     },
                                     child: Text(
-                                      AppLocalizations.of(context).translate(
-                                          i18.common.verify),
+                                      verify,
                                       style: widget.theme.text20W700()?.apply(
                                         color: Colors.white,
                                       ),
