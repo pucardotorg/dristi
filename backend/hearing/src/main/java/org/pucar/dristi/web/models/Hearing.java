@@ -13,7 +13,6 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -58,22 +57,26 @@ public class Hearing {
 
     @JsonProperty("status")
     @NotNull
-
-    private Boolean status = null;
+// Hearing workflow state,
+    private String status = null;
 
     @JsonProperty("startTime")
 
     @Valid
-    private LocalDate startTime = null;
+    private Long startTime = null;
 
     @JsonProperty("endTime")
 
     @Valid
-    private LocalDate endTime = null;
+    private Long endTime = null;
+
+    @JsonProperty("presidedBy")
+
+    private PresidedBy presidedBy = null;
 
     @JsonProperty("attendees")
 
-    private List<Object> attendees = new ArrayList<>();
+    private List<Attendee> attendees = new ArrayList<>();
 
     @JsonProperty("transcript")
 
@@ -93,7 +96,7 @@ public class Hearing {
 
     @JsonProperty("additionalDetails")
 
-    private String additionalDetails = null;
+    private Object additionalDetails = null;
 
     @JsonProperty("auditDetails")
 
@@ -125,7 +128,7 @@ public class Hearing {
         return this;
     }
 
-    public Hearing addAttendeesItem(Object attendeesItem) {
+    public Hearing addAttendeesItem(Attendee attendeesItem) {
         if (this.attendees == null) {
             this.attendees = new ArrayList<>();
         }

@@ -29,7 +29,7 @@ public class HearingRequest   {
         @JsonProperty("hearing")
 
           @Valid
-                private Hearing hearing = null;
+                private Hearing hearing = new Hearing();
 
 
 }

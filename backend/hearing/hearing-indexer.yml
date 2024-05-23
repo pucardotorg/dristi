@@ -1,0 +1,96 @@
+ServiceMaps:
+  serviceName: hearing service
+  version: 1.0.0
+  mappings:
+    - topic: create-hearing-application
+      configKey: INDEX
+      indexes:
+        - name: hearing-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          customJsonMapping:
+            indexMapping: {"Data":{"hearing":{},"history":{ },"auditDetails":{"createdBy":"","lastModifiedBy":"","createdTime":"","lastModifiedTime":""},"currentProcessInstance":{}}}
+            fieldMapping:
+              - inJsonPath: $.hearing
+                outJsonPath: $.Data.hearing
+              - inJsonPath: $.hearing.auditDetails.createdBy
+                outJsonPath: $.Data.auditDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.auditDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.auditDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.auditDetails.lastModifiedTime
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.hearing.id,tenantId=$.hearing.tenantId
+                apiRequest: { "RequestInfo": { "apiId": "","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pg","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pg" } ] } } }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+
+    - topic: update-hearing-request
+      configKey: INDEX
+      indexes:
+        - name: hearing-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.hearing
+          customJsonMapping:
+            indexMapping: { "Data": { "advocateDetails": { "id": "","tenantId": "","applicationNumber": "","barRegistrationNumber": "","advocateType": "","individualId": "","organisationID": "","isActive":,"auditDetails": { },"additionalDetails": { } },"history": { },"individual": { } ,"auditDetails":{"createdBy":"","lastModifiedBy":"","createdTime":"","lastModifiedTime":""},"currentProcessInstance":{} } }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.hearing.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.hearing.tenantId
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.hearing.filingNumber
+              - inJsonPath: $.cnrNumbers
+                outJsonPath: $.Data.hearing.cnrNumbers
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.hearing.applicationNumber
+              - inJsonPath: $.hearingType
+                outJsonPath: $.Data.hearing.hearingType
+              - inJsonPath: $.status
+                outJsonPath: $.Data.hearing.status
+              - inJsonPath: $.startTime
+                outJsonPath: $.Data.hearing.startTime
+              - inJsonPath: $.endTime
+                outJsonPath: $.Data.hearing.endTime
+              - inJsonPath: $.attendees
+                outJsonPath: $.Data.hearing.attendees
+              - inJsonPath: $.transcript
+                outJsonPath: $.Data.hearing.transcript
+              - inJsonPath: $.vcLink
+                outJsonPath: $.Data.hearing.vcLink
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.hearing.isActive
+              - inJsonPath: $.notes
+                outJsonPath: $.Data.hearing.notes
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.auditDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.auditDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.auditDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.auditDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.hearing.additionalDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.applicationNumber,tenantId=$.tenantId
+                apiRequest: { "RequestInfo": { "apiId": "","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pg","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pg" } ] } } }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+
+
