@@ -135,6 +135,17 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: (){},
+                  error: () {
+                    isSubmitting = false;
+                    DigitToast.show(
+                      context,
+                      options: DigitToastOptions(
+                        "Try Again",
+                        true,
+                        widget.theme.theme(),
+                      ),
+                    );
+                  },
                   profileFailedState: (error) {
                     isSubmitting = false;
                     DigitToast.show(

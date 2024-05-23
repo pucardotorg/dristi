@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
@@ -47,15 +49,43 @@ class AuthTokenInterceptor extends Interceptor {
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
-    // ignore: no-empty-block
+
     if (err.type == DioErrorType.response && err.response?.statusCode == 500) {
       scaffoldMessengerKey.currentContext!
           .read<AuthBloc>()
           .add(const AuthEvent.logout());
-    } else if(err.type == DioErrorType.response && err.response?.statusCode == 401) {
-      scaffoldMessengerKey.currentContext!
-          .read<AuthBloc>()
-          .add(const AuthEvent.refreshToken());
+    }
+    else if(err.type == DioErrorType.response && err.response?.statusCode == 401) {
+      final response = err.response;
+      if (response?.data != null) {
+        final Map<String, dynamic> responseData = json.decode(response?.data);
+
+        // Check for the InvalidAccessTokenException error code
+        if (responseData['Errors'] != null) {
+          for (var error in responseData['Errors']) {
+
+            try {
+              final messageString = error['message']!;
+              final messageStartIndex = messageString.indexOf('{');
+              final messageEndIndex = messageString.lastIndexOf('}') + 1;
+              final messageSubstring = messageString.substring(messageStartIndex, messageEndIndex);
+
+              final mainResponse = json.decode(messageSubstring);
+              for (var error in mainResponse['Errors']) {
+                if (error['code'] == 'InvalidAccessTokenException') {
+                  // Trigger the refresh token action
+                  scaffoldMessengerKey.currentContext!
+                      .read<AuthBloc>()
+                      .add(const AuthEvent.refreshToken());
+                  break;
+                }
+              }
+            } catch (e1) {
+              handler.next(err);
+            }
+          }
+        }
+      }
     } else {
       handler.next(err);
     }

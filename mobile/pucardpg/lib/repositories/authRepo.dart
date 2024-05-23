@@ -104,6 +104,31 @@ class AuthRepository {
     }
   }
 
+  Future<ResponseInfoSearch> logout(String url, String? accessToken) async {
+
+    _client.options.baseUrl = appConstants.apiBaseURL;
+
+    final headers = <String, String>{
+      "content-type": 'application/json',
+      "Access-Control-Allow-Origin": "*",
+      "Accept": 'application/json'
+    };
+
+    try {
+      final response = await _client.post(url,
+          queryParameters: {
+            "tenantId": appConstants.tenantId,
+            "_": appConstants.timeStamp
+          },
+          data: {'access_token': accessToken}, options: Options(headers: headers));
+      final responseBody = ResponseInfoSearch.fromJson(response.data);
+
+      return responseBody;
+    } catch (err) {
+      rethrow;
+    }
+  }
+
   Future<AuthResponse> createCitizen(String url, CitizenRegistrationRequest citizenRegistrationRequest) async {
     final formData = citizenRegistrationRequest.toJson();
 
@@ -136,8 +161,8 @@ class AuthRepository {
     try {
       final formData = litigantNetworkModel.toJson();
 
-      final authClient = Dio();
-      authClient.options.baseUrl = appConstants.apiBaseURL;
+      // final authClient = Dio();
+      _client.options.baseUrl = appConstants.apiBaseURL;
 
       final headers = <String, String>{
         "content-type": 'application/json',
@@ -145,12 +170,12 @@ class AuthRepository {
         "Accept": 'application/json'
       };
 
-      final response = await authClient.post(url,
+      final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
       final responseBody = LitigantResponseModel.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
-      authClient.close();
+      // authClient.close();
 
       return responseBody;
     } catch(e){
@@ -162,8 +187,8 @@ class AuthRepository {
     try {
       final formData = advocateRegistrationRequest.toJson();
 
-      final authClient = Dio();
-      authClient.options.baseUrl = appConstants.apiBaseURL;
+      // final authClient = Dio();
+      _client.options.baseUrl = appConstants.apiBaseURL;
 
       final headers = <String, String>{
         "content-type": 'application/json',
@@ -171,12 +196,12 @@ class AuthRepository {
         "Accept": 'application/json'
       };
 
-      final response = await authClient.post(url,
+      final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
       final responseBody = AdvocateRegistrationResponse.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
-      authClient.close();
+      // authClient.close();
 
       return responseBody;
     } catch(e){
@@ -189,8 +214,8 @@ class AuthRepository {
     try {
       final formData = advocateClerkRegistrationRequest.toJson();
 
-      final authClient = Dio();
-      authClient.options.baseUrl = appConstants.apiBaseURL;
+      // final authClient = Dio();
+      _client.options.baseUrl = appConstants.apiBaseURL;
 
       final headers = <String, String>{
         "content-type": 'application/json',
@@ -198,12 +223,12 @@ class AuthRepository {
         "Accept": 'application/json'
       };
 
-      final response = await authClient.post(url,
+      final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
       final responseBody = AdvocateClerkRegistrationResponse.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
-      authClient.close();
+      // authClient.close();
 
       return responseBody;
     } catch(e){
@@ -215,8 +240,8 @@ class AuthRepository {
     try {
       final formData = individualSearchRequest.toJson();
 
-      final authClient = Dio();
-      authClient.options.baseUrl = appConstants.apiBaseURL;
+      // final authClient = Dio();
+      _client.options.baseUrl = appConstants.apiBaseURL;
 
       final headers = <String, String>{
         "content-type": 'application/json',
@@ -224,12 +249,12 @@ class AuthRepository {
         "Accept": 'application/json'
       };
 
-      final response = await authClient.post(url,
+      final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
       final responseBody = IndividualSearchResponse.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
-      authClient.close();
+      // authClient.close();
 
       return responseBody;
     } catch(e){
@@ -242,8 +267,8 @@ class AuthRepository {
     try {
       final formData = advocateSearchRequest.toJson();
 
-      final authClient = Dio();
-      authClient.options.baseUrl = appConstants.apiBaseURL;
+      // final authClient = Dio();
+      _client.options.baseUrl = appConstants.apiBaseURL;
 
       final headers = <String, String>{
         "content-type": 'application/json',
@@ -251,12 +276,12 @@ class AuthRepository {
         "Accept": 'application/json'
       };
 
-      final response = await authClient.post(url,
+      final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
       final responseBody = AdvocateSearchResponse.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
-      authClient.close();
+      // authClient.close();
 
       return responseBody;
 
@@ -270,8 +295,8 @@ class AuthRepository {
     try {
       final formData = advocateClerkSearchRequest.toJson();
 
-      final authClient = Dio();
-      authClient.options.baseUrl = appConstants.apiBaseURL;
+      // final authClient = Dio();
+      _client.options.baseUrl = appConstants.apiBaseURL;
 
       final headers = <String, String>{
         "content-type": 'application/json',
@@ -279,12 +304,12 @@ class AuthRepository {
         "Accept": 'application/json'
       };
 
-      final response = await authClient.post(url,
+      final response = await _client.post(url,
           data: formData, options: Options(headers: headers));
       final responseBody = AdvocateClerkSearchResponse.fromJson(response.data);
 
       //close this client so it doesnt interfere with other instances of DioClient
-      authClient.close();
+      // authClient.close();
 
       return responseBody;
 

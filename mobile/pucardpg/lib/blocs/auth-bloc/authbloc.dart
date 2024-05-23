@@ -44,6 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_AuthLoginEvent>(_onAuthLogin);
     on<_AuthLogoutEvent>(_onLogout);
     on<_AuthLoadEvent>(_onLoad);
+    on<_AuthRefreshTokenEvent>(_onRefreshToken);
     on<_SubmitRegistrationOtpEvent>(_onRegistration);
     on<_RequestOtpEvent>(_requestOtpEvent);
     on<_ResendOtpEvent>(resendOtpEvent);
@@ -66,6 +67,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   FutureOr<void> _onLogin(_SubmitLoginOtpEvent event,
       Emitter<AuthState> emit) async {
+    final secureStore = SecureStore();
+
     AuthResponse response;
     try {
       emit(const AuthState.initial());
@@ -87,6 +90,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       userModel.id = response.userRequest?.id;
       userModel.uuid = response.userRequest?.uuid;
       userModel.username = response.userRequest?.userName;
+      secureStore.setAccessToken(accesstoken);
+      secureStore.setRefreshToken(_refreshtoken);
 
       IndividualSearchRequest individualSearchRequest = IndividualSearchRequest(
           requestInfo: RequestInfoSearch(authToken: userModel.authToken!),
@@ -110,7 +115,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               (field) => field.key == "identifierIdDetails",
           orElse: () => const Fields(key: "", value: ""),
         ).value;
-        userModel.idVerificationType == idVerificationTypeField.value;
+        userModel.idVerificationType = idVerificationTypeField.value;
         if (detailField != "") {
           final identifierIdDetails = jsonDecode(detailField);
           if (userModel.idVerificationType != 'AADHAR') {
@@ -194,6 +199,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthResponse response;
     try {
       emit(const AuthState.initial());
+      final secureStore = SecureStore();
 
       CitizenRegistrationRequest citizenRegistrationRequest = CitizenRegistrationRequest(
         userInfo: UserInfo(
@@ -214,7 +220,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       userModel.id = response.userRequest?.id;
       userModel.uuid = response.userRequest?.uuid;
       userModel.username = response.userRequest?.userName;
-
+      secureStore.setAccessToken(accesstoken);
+      secureStore.setRefreshToken(_refreshtoken);
       emit(AuthState.otpCorrect(
           authResponse: response));
 
@@ -225,31 +232,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   FutureOr<void> _onLogout(_AuthLogoutEvent event, Emitter<AuthState> emit) async {
-    //when we logout, we need the access token to be deleted and invalidated. All the AccessInfo stored locally is now redundant. Delete it.
-    // AuthResponse response;
-    //
-    // response = await authRepository.createCitizen(
-    //     "/user/citizen/_create",
-    //     citizenRegistrationRequest
-    // );
-    //
-    // final dataState = await _loginUseCase.logoutUser(event.authToken);
-    //
-    //   if(dataState is DataSuccess){
-    //       emit(LogoutSuccessState(data: dataState.data!));
-    //   }
-    //   if(dataState is DataFailed){
-    //     emit(LogoutFailedState(data: dataState.data!));
-    //   }
     emit(const AuthState.initial());
+    try {
+      final secureStore = SecureStore();
 
-    final secureStore = SecureStore();
-    secureStore.deleteAccessToken();
-    secureStore.deleteAccessInfo();
-    secureStore.deleteSelectedIndividual();
-    userModel = UserModel();
+      final response = await authRepository.logout("/user/_logout", await secureStore.getAccessToken());
+      if (response.status == "Logout successfully") {
+        secureStore.deleteAccessToken();
+        secureStore.deleteAccessInfo();
+        secureStore.deleteSelectedIndividual();
+        userModel = UserModel();
 
-    emit(const AuthState.unauthenticated());
+        emit(const AuthState.unauthenticated());
+      }
+    } catch (e1) {
+      emit(const AuthState.initial());
+    }
   }
 
   Future<FutureOr<void>> _onLoad(
@@ -325,12 +323,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     AuthResponse response;
     final secureStore = SecureStore();
-    final accessInfo = await secureStore.getAccessInfo();
     response = await authRepository.validateLogin(
         "/user/oauth/token",
         LoginModel(
-          username: accessInfo?.userRequest?.userName,
-          refreshToken: accessInfo?.refreshToken,
+          username: _userRequest.userName,
+          refreshToken: await secureStore.getRefreshToken(),
           grantType: 'refresh_token'
         )
     );
@@ -347,10 +344,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     secureStore.setAccessInfo(response);
 
     //change to authenticated state now that we have access
-    emit(AuthState.authenticated(
-        accesstoken: accesstoken,
-        refreshtoken: _refreshtoken,
-        userRequest: _userRequest));
+    emit(AuthState.error());
   }
 
   FutureOr<void> submitIndividualProfile(_SubmitProfileEvent event,
