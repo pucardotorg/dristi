@@ -57,12 +57,12 @@ public class OrderRegistrationService {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(applicationNumber,cnrNumber,filingNumber, tenantId, id, status);
+            List<Order> orderList = orderRepository.getApplications(cnrNumber,filingNumber, tenantId, id, status).stream().filter(o->o.getApplicationNumber().contains(applicationNumber)).toList();
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
                 return new ArrayList<>();
-           orderList.forEach(order -> order.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, "order"))));
+           orderList.forEach(order -> order.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, order.getOrderNumber()))));
             return orderList;
         } catch (Exception e) {
             log.error("Error while fetching to search results");
@@ -108,7 +108,7 @@ public class OrderRegistrationService {
             OrderExists orderExists = orderExistsRequest.getOrder();
 
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(orderExists.getApplicationNumber(), orderExists.getFilingNumber(),
+            List<Order> orderList = orderRepository.getApplications(orderExists.getFilingNumber(),
                     orderExists.getCnrNumber(), orderExistsRequest.getRequestInfo().getUserInfo().getTenantId(), null, null);
 
             boolean notExists = orderList.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(orderExists.getFilingNumber())

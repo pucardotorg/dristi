@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_QUERY = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, " +
-            "orders.filingnumber as filingnumber, orders.cnrNumber as cnrNumber, orders.orderNumber as orderNumber," +
+            "orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber," +
             "orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby," +
             "orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime ";
 
@@ -32,17 +32,11 @@ public class OrderQueryBuilder {
 
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_order_statute_section stse";
 
-    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public String getOrderSearchQuery(String cnrNumber, String filingNumber, String tenantId, String id, String status) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
-
-            if (applicationNumber!=null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("orders.applicationnumber =").append("'").append(applicationNumber).append("'");
-                firstCriteria = false;
-            }
 
             if (cnrNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);

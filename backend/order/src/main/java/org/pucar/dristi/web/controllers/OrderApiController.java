@@ -77,7 +77,7 @@ public class OrderApiController {
     }
 
     @RequestMapping(value = "/order/v1/search", method = RequestMethod.POST)
-    public ResponseEntity<OrderListResponse> orderV1SearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "the applicationNumber whose order(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "applicationNumber", required = true) UUID applicationNumber,
+    public ResponseEntity<OrderListResponse> orderV1SearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "the applicationNumber whose order(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
                                                                @NotNull @Parameter(in = ParameterIn.QUERY, description = "the filingNumber of the case whose order(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "filingNumber", required = true) String filingNumber,
                                                                @NotNull @Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose order(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "cnrNumber", required = true) String cnrNumber,
                                                                @Parameter(in = ParameterIn.QUERY, description = "id of the order being searched", schema = @Schema()) @Valid @RequestParam(value = "id", required = false) String id,
@@ -87,7 +87,7 @@ public class OrderApiController {
         try {
             List<Order> orders = orderService.searchOrder(String.valueOf(applicationNumber), cnrNumber, filingNumber, tenantId, id, status, requestInfo);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true, HttpStatus.OK.getReasonPhrase());
-            OrderListResponse orderListResponse = OrderListResponse.builder().totalCount(orders.size()).responseInfo(responseInfo).build();
+            OrderListResponse orderListResponse = OrderListResponse.builder().list(orders).totalCount(orders.size()).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
         } catch (Exception e) {
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false, e.getMessage());

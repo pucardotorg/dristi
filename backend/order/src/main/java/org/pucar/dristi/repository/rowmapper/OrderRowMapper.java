@@ -50,10 +50,13 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .auditDetails(auditdetails)
                             .build();
                 }
+                PGobject pgObject1 = (PGobject) rs.getObject("applicationnumber");
+                if(pgObject1!=null)
+                    order.setApplicationNumber(objectMapper.readValue(pgObject1.getValue(),List.class));
 
-                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
-                if(pgObject!=null)
-                    order.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                PGobject pgObject2 = (PGobject) rs.getObject("additionalDetails");
+                if(pgObject2!=null)
+                    order.setAdditionalDetails(objectMapper.readTree(pgObject2.getValue()));
 
                 orderMap.put(uuid, order);
             }

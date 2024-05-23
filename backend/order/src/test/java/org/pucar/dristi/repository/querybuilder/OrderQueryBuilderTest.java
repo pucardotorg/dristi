@@ -27,13 +27,9 @@ class OrderQueryBuilderTest {
         String id = "ID-123";
         String status = "Active";
 
-        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, " +
-                "orders.filingnumber as filingnumber, orders.cnrNumber as cnrNumber, orders.orderNumber as orderNumber," +
-                "orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby," +
-                "orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime " +
-                " FROM dristi_orders orders WHERE orders.applicationnumber ='APP-123' OR orders.cnrNumber = 'CNR-123' OR orders.filingnumber ='FN-123' OR orders.tenantid ='tenant-123' OR orders.id = 'ID-123' OR orders.status ='Active' ORDER BY orders.createdtime DESC ";
+        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.cnrNumber = 'CNR-123' OR orders.filingnumber ='FN-123' OR orders.tenantid ='tenant-123' OR orders.id = 'ID-123' OR orders.status ='Active' ORDER BY orders.createdtime DESC ";
 
-        String actualQuery = orderQueryBuilder.getOrderSearchQuery(applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
+        String actualQuery = orderQueryBuilder.getOrderSearchQuery(cnrNumber, filingNumber, tenantId, id, status);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -47,13 +43,9 @@ class OrderQueryBuilderTest {
         String id = null;
         String status = "Active";
 
-        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, " +
-                "orders.filingnumber as filingnumber, orders.cnrNumber as cnrNumber, orders.orderNumber as orderNumber," +
-                "orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby," +
-                "orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime " +
-                " FROM dristi_orders orders WHERE orders.filingnumber ='FN-123' OR orders.tenantid ='tenant-123' OR orders.status ='Active' ORDER BY orders.createdtime DESC ";
+        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.filingnumber ='FN-123' OR orders.tenantid ='tenant-123' OR orders.status ='Active' ORDER BY orders.createdtime DESC ";
 
-        String actualQuery = orderQueryBuilder.getOrderSearchQuery(applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
+        String actualQuery = orderQueryBuilder.getOrderSearchQuery(cnrNumber, filingNumber, tenantId, id, status);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -88,7 +80,7 @@ class OrderQueryBuilderTest {
     @Test
     void testGetOrderSearchQueryException() {
         try {
-            orderQueryBuilder.getOrderSearchQuery(null, null, null, null, null, null);
+            orderQueryBuilder.getOrderSearchQuery(null, null, null, null, null);
         } catch (CustomException e) {
             assertEquals("ORDER_SEARCH_QUERY_EXCEPTION", e.getCode());
         }
