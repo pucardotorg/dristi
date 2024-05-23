@@ -1960,6 +1960,7 @@ mixin _$AuthState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -1985,6 +1986,7 @@ mixin _$AuthState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -2009,6 +2011,7 @@ mixin _$AuthState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -2034,6 +2037,8 @@ mixin _$AuthState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -2057,6 +2062,8 @@ mixin _$AuthState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -2080,6 +2087,8 @@ mixin _$AuthState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -2160,6 +2169,7 @@ class _$ErrorStateImpl implements _ErrorState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -2188,6 +2198,7 @@ class _$ErrorStateImpl implements _ErrorState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -2215,6 +2226,7 @@ class _$ErrorStateImpl implements _ErrorState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -2246,6 +2258,8 @@ class _$ErrorStateImpl implements _ErrorState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -2272,6 +2286,8 @@ class _$ErrorStateImpl implements _ErrorState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -2298,6 +2314,8 @@ class _$ErrorStateImpl implements _ErrorState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -2369,6 +2387,7 @@ class _$InitialStateImpl implements _InitialState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -2397,6 +2416,7 @@ class _$InitialStateImpl implements _InitialState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -2424,6 +2444,7 @@ class _$InitialStateImpl implements _InitialState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -2455,6 +2476,8 @@ class _$InitialStateImpl implements _InitialState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -2481,6 +2504,8 @@ class _$InitialStateImpl implements _InitialState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -2507,6 +2532,8 @@ class _$InitialStateImpl implements _InitialState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -2579,6 +2606,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -2607,6 +2635,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -2634,6 +2663,7 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -2665,6 +2695,8 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -2691,6 +2723,8 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -2717,6 +2751,8 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -2853,6 +2889,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -2881,6 +2918,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -2908,6 +2946,7 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -2939,6 +2978,8 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -2965,6 +3006,8 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -2991,6 +3034,8 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -3101,6 +3146,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -3129,6 +3175,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -3156,6 +3203,7 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -3187,6 +3235,8 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -3213,6 +3263,8 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -3239,6 +3291,8 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -3347,6 +3401,7 @@ class _$ResendOtpGenerationSuccessStateImpl
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -3375,6 +3430,7 @@ class _$ResendOtpGenerationSuccessStateImpl
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -3402,6 +3458,7 @@ class _$ResendOtpGenerationSuccessStateImpl
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -3433,6 +3490,8 @@ class _$ResendOtpGenerationSuccessStateImpl
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -3459,6 +3518,8 @@ class _$ResendOtpGenerationSuccessStateImpl
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -3485,6 +3546,8 @@ class _$ResendOtpGenerationSuccessStateImpl
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -3591,6 +3654,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -3619,6 +3683,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -3646,6 +3711,7 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -3677,6 +3743,8 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -3703,6 +3771,8 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -3729,6 +3799,8 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -3844,6 +3916,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -3872,6 +3945,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -3899,6 +3973,7 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -3930,6 +4005,8 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -3956,6 +4033,8 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -3982,6 +4061,8 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -4088,6 +4169,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -4116,6 +4198,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -4143,6 +4226,7 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -4174,6 +4258,8 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -4200,6 +4286,8 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -4226,6 +4314,8 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -4251,6 +4341,265 @@ abstract class _RequestOtpFailedState implements AuthState {
   String get errorMsg;
   @JsonKey(ignore: true)
   _$$RequestOtpFailedStateImplCopyWith<_$RequestOtpFailedStateImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$RegistrationRequestOtpFailedStateImplCopyWith<$Res> {
+  factory _$$RegistrationRequestOtpFailedStateImplCopyWith(
+          _$RegistrationRequestOtpFailedStateImpl value,
+          $Res Function(_$RegistrationRequestOtpFailedStateImpl) then) =
+      __$$RegistrationRequestOtpFailedStateImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String errorMsg});
+}
+
+/// @nodoc
+class __$$RegistrationRequestOtpFailedStateImplCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res,
+        _$RegistrationRequestOtpFailedStateImpl>
+    implements _$$RegistrationRequestOtpFailedStateImplCopyWith<$Res> {
+  __$$RegistrationRequestOtpFailedStateImplCopyWithImpl(
+      _$RegistrationRequestOtpFailedStateImpl _value,
+      $Res Function(_$RegistrationRequestOtpFailedStateImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? errorMsg = null,
+  }) {
+    return _then(_$RegistrationRequestOtpFailedStateImpl(
+      errorMsg: null == errorMsg
+          ? _value.errorMsg
+          : errorMsg // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$RegistrationRequestOtpFailedStateImpl
+    implements _RegistrationRequestOtpFailedState {
+  const _$RegistrationRequestOtpFailedStateImpl({required this.errorMsg});
+
+  @override
+  final String errorMsg;
+
+  @override
+  String toString() {
+    return 'AuthState.registrationRequestOtpFailed(errorMsg: $errorMsg)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RegistrationRequestOtpFailedStateImpl &&
+            (identical(other.errorMsg, errorMsg) ||
+                other.errorMsg == errorMsg));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, errorMsg);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RegistrationRequestOtpFailedStateImplCopyWith<
+          _$RegistrationRequestOtpFailedStateImpl>
+      get copyWith => __$$RegistrationRequestOtpFailedStateImplCopyWithImpl<
+          _$RegistrationRequestOtpFailedStateImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() error,
+    required TResult Function() initial,
+    required TResult Function() unauthenticated,
+    required TResult Function(
+            String accesstoken, String? refreshtoken, UserRequest? userRequest)
+        authenticated,
+    required TResult Function(String type) otpGenerationSucceed,
+    required TResult Function(String type) resendOtpGenerationSucceed,
+    required TResult Function(String errorMsg) requestFailed,
+    required TResult Function(AuthResponse authResponse) otpCorrect,
+    required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
+    required TResult Function(String errorMsg) logoutFailedState,
+    required TResult Function() profileSuccessState,
+    required TResult Function(String errorMsg) profileFailedState,
+    required TResult Function(IndividualSearchResponse individualSearchResponse)
+        individualSearchSuccessState,
+    required TResult Function(AdvocateSearchResponse advocateSearchResponse)
+        advocateSearchSuccessState,
+    required TResult Function(
+            AdvocateClerkSearchResponse advocateClerkSearchResponse)
+        advocateClerkSearchSuccessState,
+  }) {
+    return registrationRequestOtpFailed(errorMsg);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? error,
+    TResult? Function()? initial,
+    TResult? Function()? unauthenticated,
+    TResult? Function(
+            String accesstoken, String? refreshtoken, UserRequest? userRequest)?
+        authenticated,
+    TResult? Function(String type)? otpGenerationSucceed,
+    TResult? Function(String type)? resendOtpGenerationSucceed,
+    TResult? Function(String errorMsg)? requestFailed,
+    TResult? Function(AuthResponse authResponse)? otpCorrect,
+    TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
+    TResult? Function(String errorMsg)? logoutFailedState,
+    TResult? Function()? profileSuccessState,
+    TResult? Function(String errorMsg)? profileFailedState,
+    TResult? Function(IndividualSearchResponse individualSearchResponse)?
+        individualSearchSuccessState,
+    TResult? Function(AdvocateSearchResponse advocateSearchResponse)?
+        advocateSearchSuccessState,
+    TResult? Function(AdvocateClerkSearchResponse advocateClerkSearchResponse)?
+        advocateClerkSearchSuccessState,
+  }) {
+    return registrationRequestOtpFailed?.call(errorMsg);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? error,
+    TResult Function()? initial,
+    TResult Function()? unauthenticated,
+    TResult Function(
+            String accesstoken, String? refreshtoken, UserRequest? userRequest)?
+        authenticated,
+    TResult Function(String type)? otpGenerationSucceed,
+    TResult Function(String type)? resendOtpGenerationSucceed,
+    TResult Function(String errorMsg)? requestFailed,
+    TResult Function(AuthResponse authResponse)? otpCorrect,
+    TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
+    TResult Function(String errorMsg)? logoutFailedState,
+    TResult Function()? profileSuccessState,
+    TResult Function(String errorMsg)? profileFailedState,
+    TResult Function(IndividualSearchResponse individualSearchResponse)?
+        individualSearchSuccessState,
+    TResult Function(AdvocateSearchResponse advocateSearchResponse)?
+        advocateSearchSuccessState,
+    TResult Function(AdvocateClerkSearchResponse advocateClerkSearchResponse)?
+        advocateClerkSearchSuccessState,
+    required TResult orElse(),
+  }) {
+    if (registrationRequestOtpFailed != null) {
+      return registrationRequestOtpFailed(errorMsg);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_ErrorState value) error,
+    required TResult Function(_InitialState value) initial,
+    required TResult Function(_UnauthenticatedState value) unauthenticated,
+    required TResult Function(_AuthenticatedState value) authenticated,
+    required TResult Function(_OtpGenerationSuccessState value)
+        otpGenerationSucceed,
+    required TResult Function(_ResendOtpGenerationSuccessState value)
+        resendOtpGenerationSucceed,
+    required TResult Function(_RequestFailedState value) requestFailed,
+    required TResult Function(_OtpCorrectState value) otpCorrect,
+    required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
+    required TResult Function(_LogoutFailedState value) logoutFailedState,
+    required TResult Function(_ProfileSuccessState value) profileSuccessState,
+    required TResult Function(_ProfileFailedState value) profileFailedState,
+    required TResult Function(_IndividualSearchSuccessState value)
+        individualSearchSuccessState,
+    required TResult Function(_AdvocateSearchSuccessState value)
+        advocateSearchSuccessState,
+    required TResult Function(_AdvocateClerkSearchSuccessState value)
+        advocateClerkSearchSuccessState,
+  }) {
+    return registrationRequestOtpFailed(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_ErrorState value)? error,
+    TResult? Function(_InitialState value)? initial,
+    TResult? Function(_UnauthenticatedState value)? unauthenticated,
+    TResult? Function(_AuthenticatedState value)? authenticated,
+    TResult? Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
+    TResult? Function(_ResendOtpGenerationSuccessState value)?
+        resendOtpGenerationSucceed,
+    TResult? Function(_RequestFailedState value)? requestFailed,
+    TResult? Function(_OtpCorrectState value)? otpCorrect,
+    TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
+    TResult? Function(_LogoutFailedState value)? logoutFailedState,
+    TResult? Function(_ProfileSuccessState value)? profileSuccessState,
+    TResult? Function(_ProfileFailedState value)? profileFailedState,
+    TResult? Function(_IndividualSearchSuccessState value)?
+        individualSearchSuccessState,
+    TResult? Function(_AdvocateSearchSuccessState value)?
+        advocateSearchSuccessState,
+    TResult? Function(_AdvocateClerkSearchSuccessState value)?
+        advocateClerkSearchSuccessState,
+  }) {
+    return registrationRequestOtpFailed?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_ErrorState value)? error,
+    TResult Function(_InitialState value)? initial,
+    TResult Function(_UnauthenticatedState value)? unauthenticated,
+    TResult Function(_AuthenticatedState value)? authenticated,
+    TResult Function(_OtpGenerationSuccessState value)? otpGenerationSucceed,
+    TResult Function(_ResendOtpGenerationSuccessState value)?
+        resendOtpGenerationSucceed,
+    TResult Function(_RequestFailedState value)? requestFailed,
+    TResult Function(_OtpCorrectState value)? otpCorrect,
+    TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
+    TResult Function(_LogoutFailedState value)? logoutFailedState,
+    TResult Function(_ProfileSuccessState value)? profileSuccessState,
+    TResult Function(_ProfileFailedState value)? profileFailedState,
+    TResult Function(_IndividualSearchSuccessState value)?
+        individualSearchSuccessState,
+    TResult Function(_AdvocateSearchSuccessState value)?
+        advocateSearchSuccessState,
+    TResult Function(_AdvocateClerkSearchSuccessState value)?
+        advocateClerkSearchSuccessState,
+    required TResult orElse(),
+  }) {
+    if (registrationRequestOtpFailed != null) {
+      return registrationRequestOtpFailed(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _RegistrationRequestOtpFailedState implements AuthState {
+  const factory _RegistrationRequestOtpFailedState(
+          {required final String errorMsg}) =
+      _$RegistrationRequestOtpFailedStateImpl;
+
+  String get errorMsg;
+  @JsonKey(ignore: true)
+  _$$RegistrationRequestOtpFailedStateImplCopyWith<
+          _$RegistrationRequestOtpFailedStateImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -4331,6 +4680,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -4359,6 +4709,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -4386,6 +4737,7 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -4417,6 +4769,8 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -4443,6 +4797,8 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -4469,6 +4825,8 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -4547,6 +4905,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -4575,6 +4934,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -4602,6 +4962,7 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -4633,6 +4994,8 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -4659,6 +5022,8 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -4685,6 +5050,8 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -4784,6 +5151,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -4812,6 +5180,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -4839,6 +5208,7 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -4870,6 +5240,8 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -4896,6 +5268,8 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -4922,6 +5296,8 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -5044,6 +5420,7 @@ class _$IndividualSearchSuccessStateImpl
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -5072,6 +5449,7 @@ class _$IndividualSearchSuccessStateImpl
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -5099,6 +5477,7 @@ class _$IndividualSearchSuccessStateImpl
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -5130,6 +5509,8 @@ class _$IndividualSearchSuccessStateImpl
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -5156,6 +5537,8 @@ class _$IndividualSearchSuccessStateImpl
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -5182,6 +5565,8 @@ class _$IndividualSearchSuccessStateImpl
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -5303,6 +5688,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -5331,6 +5717,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -5358,6 +5745,7 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -5389,6 +5777,8 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -5415,6 +5805,8 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -5441,6 +5833,8 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,
@@ -5565,6 +5959,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
     required TResult Function(String errorMsg) requestFailed,
     required TResult Function(AuthResponse authResponse) otpCorrect,
     required TResult Function(String errorMsg) requestOtpFailed,
+    required TResult Function(String errorMsg) registrationRequestOtpFailed,
     required TResult Function(String errorMsg) logoutFailedState,
     required TResult Function() profileSuccessState,
     required TResult Function(String errorMsg) profileFailedState,
@@ -5593,6 +5988,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
     TResult? Function(String errorMsg)? requestFailed,
     TResult? Function(AuthResponse authResponse)? otpCorrect,
     TResult? Function(String errorMsg)? requestOtpFailed,
+    TResult? Function(String errorMsg)? registrationRequestOtpFailed,
     TResult? Function(String errorMsg)? logoutFailedState,
     TResult? Function()? profileSuccessState,
     TResult? Function(String errorMsg)? profileFailedState,
@@ -5620,6 +6016,7 @@ class _$AdvocateClerkSearchSuccessStateImpl
     TResult Function(String errorMsg)? requestFailed,
     TResult Function(AuthResponse authResponse)? otpCorrect,
     TResult Function(String errorMsg)? requestOtpFailed,
+    TResult Function(String errorMsg)? registrationRequestOtpFailed,
     TResult Function(String errorMsg)? logoutFailedState,
     TResult Function()? profileSuccessState,
     TResult Function(String errorMsg)? profileFailedState,
@@ -5651,6 +6048,8 @@ class _$AdvocateClerkSearchSuccessStateImpl
     required TResult Function(_RequestFailedState value) requestFailed,
     required TResult Function(_OtpCorrectState value) otpCorrect,
     required TResult Function(_RequestOtpFailedState value) requestOtpFailed,
+    required TResult Function(_RegistrationRequestOtpFailedState value)
+        registrationRequestOtpFailed,
     required TResult Function(_LogoutFailedState value) logoutFailedState,
     required TResult Function(_ProfileSuccessState value) profileSuccessState,
     required TResult Function(_ProfileFailedState value) profileFailedState,
@@ -5677,6 +6076,8 @@ class _$AdvocateClerkSearchSuccessStateImpl
     TResult? Function(_RequestFailedState value)? requestFailed,
     TResult? Function(_OtpCorrectState value)? otpCorrect,
     TResult? Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult? Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult? Function(_LogoutFailedState value)? logoutFailedState,
     TResult? Function(_ProfileSuccessState value)? profileSuccessState,
     TResult? Function(_ProfileFailedState value)? profileFailedState,
@@ -5703,6 +6104,8 @@ class _$AdvocateClerkSearchSuccessStateImpl
     TResult Function(_RequestFailedState value)? requestFailed,
     TResult Function(_OtpCorrectState value)? otpCorrect,
     TResult Function(_RequestOtpFailedState value)? requestOtpFailed,
+    TResult Function(_RegistrationRequestOtpFailedState value)?
+        registrationRequestOtpFailed,
     TResult Function(_LogoutFailedState value)? logoutFailedState,
     TResult Function(_ProfileSuccessState value)? profileSuccessState,
     TResult Function(_ProfileFailedState value)? profileFailedState,

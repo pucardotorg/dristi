@@ -292,7 +292,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthState.otpGenerationSucceed(type: event.type));
     }
     catch(e1){
-      emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
+      if (event.type == 'login') {
+        emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
+      }
+      if (event.type == 'register') {
+        emit(const AuthState.registrationRequestOtpFailed(errorMsg: 'Request Otp Failed'));
+      }
     }
 
   }
@@ -314,8 +319,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(const AuthState.resendOtpGenerationSucceed(type: "register"));
     }
     catch(e1) {
-      emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
-    }
+      if (event.type == 'login') {
+        emit(const AuthState.requestOtpFailed(errorMsg: 'Request Otp Failed'));
+      }
+      if (event.type == 'register') {
+        emit(const AuthState.registrationRequestOtpFailed(errorMsg: 'Request Otp Failed'));
+      }    }
   }
 
   FutureOr<void> _onRefreshToken(_AuthRefreshTokenEvent event, Emitter<AuthState> emit) async {
@@ -541,6 +550,9 @@ class AuthState with _$AuthState {
   const factory AuthState.requestOtpFailed({
     required String errorMsg
   }) = _RequestOtpFailedState;
+  const factory AuthState.registrationRequestOtpFailed({
+    required String errorMsg,
+  }) = _RegistrationRequestOtpFailedState;
   const factory AuthState.logoutFailedState({
     required String errorMsg
   }) = _LogoutFailedState;

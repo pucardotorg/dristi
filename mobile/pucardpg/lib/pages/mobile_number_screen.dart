@@ -180,7 +180,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                     listener: (context, state) {
                       state.maybeWhen(
                           orElse: (){},
-                          requestOtpFailed: (error){
+                          registrationRequestOtpFailed: (error){
                             isSubmitting = false;
                             widget.theme.showDigitDialog(
                                 true,
