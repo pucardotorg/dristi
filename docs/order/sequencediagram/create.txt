@@ -8,6 +8,23 @@ Order->Case: Validate caseId
 Case-->Order: return true/false
 Order->UI: Return 400 : if caseId invalid
 
+alt if ordertype = summons/bail/warrant
+    Order->Task: Create Task
+    Task->Task: enrich taskId, orderId, caseId
+    Task->Order: Return 201 : new Task created
+    Order->Task: Update Task with Summons/Bail/Warrant details
+    Task->Order: Task updated
+else
+    loop for each Party
+        loop for each order type
+            loop for each document type
+            Order->Task: Create Task
+            Task->Task: enrich taskId, orderId, caseId
+            end
+        end
+    end
+end
+
 Order->Workflow: get Order status
 Workflow-->Order: return Order status 'Drafted"
 
