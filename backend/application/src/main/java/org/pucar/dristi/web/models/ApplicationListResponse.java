@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ApplicationListResponse   {
-        @JsonProperty("responseInfo")
+        @JsonProperty("ResponseInfo")
 
           @Valid
                 private ResponseInfo responseInfo = null;
