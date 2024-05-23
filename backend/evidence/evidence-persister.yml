@@ -55,7 +55,7 @@ serviceMaps:
           jsonMaps:
             - jsonPath: $.artifacts.*.comments.*.id
             - jsonPath: $.artifacts.*.comments.*.tenantId
-            - jsonPath: $.artifacts.*.comments.*.artifactId
+            - jsonPath: $.artifacts[*][?({id} in @.comments[*].id)].id
             - jsonPath: $.artifacts.*.comments.*.individualId
             - jsonPath: $.artifacts.*.comments.*.comment
             - jsonPath: $.artifacts.*.comments.*.isActive
