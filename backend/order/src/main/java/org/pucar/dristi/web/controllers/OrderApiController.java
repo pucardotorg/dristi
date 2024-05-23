@@ -48,6 +48,11 @@ public class OrderApiController {
         this.request = request;
     }
 
+    public void setMockInjects(OrderRegistrationService orderService, ResponseInfoFactory responseInfoFactory){
+        this.orderService = orderService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
+
     @RequestMapping(value = "/order/v1/create", method = RequestMethod.POST)
     public ResponseEntity<OrderResponse> orderV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new order + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody OrderRequest body) {
         try {
@@ -85,7 +90,7 @@ public class OrderApiController {
                                                                @Parameter(in = ParameterIn.QUERY, description = "the status of the order(s) being searched", schema = @Schema()) @Valid @RequestParam(value = "status", required = false) String status,
                                                                @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody RequestInfo requestInfo) {
         try {
-            List<Order> orders = orderService.searchOrder(String.valueOf(applicationNumber), cnrNumber, filingNumber, tenantId, id, status, requestInfo);
+            List<Order> orders = orderService.searchOrder(applicationNumber, cnrNumber, filingNumber, tenantId, id, status, requestInfo);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true, HttpStatus.OK.getReasonPhrase());
             OrderListResponse orderListResponse = OrderListResponse.builder().list(orders).totalCount(orders.size()).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
