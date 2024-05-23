@@ -5,6 +5,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Artifact;
+import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.EvidenceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,9 @@ public class EvidenceEnrichment {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
                     artifact.setAuditdetails(auditDetails);
                     artifact.setId(UUID.randomUUID());
+                    for (Comment comment : artifact.getComments()) {
+                        comment.setId(UUID.randomUUID());
+                    }
                     artifact.setIsActive(false);
                     artifact.setArtifactNumber(aetifactRegistrationIdList.get(index++));
                     if(artifact.getFile()!=null){
