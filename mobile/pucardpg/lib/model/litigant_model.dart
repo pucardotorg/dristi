@@ -19,9 +19,9 @@ class UserModel{
   String? mobileNumber;
   String? identifierType = "";
   String? identifierId = "";
-  String? idFilename = "";
+  String? idFilename;
   String? idFileStore = "";
-  Uint8List? idBytes = Uint8List.fromList([]);
+  Uint8List? idBytes;
   String? idDocumentType = "";
 
   String? type;
@@ -30,9 +30,9 @@ class UserModel{
   String? stateRegnNumber;
   String? barRegistrationNumber;
   String? fileStore;
-  String? documentFilename = "";
+  String? documentFilename;
   String? documentType;
-  Uint8List? documentBytes = Uint8List.fromList([]);
+  Uint8List? documentBytes;
 
   String? individualId;
 
