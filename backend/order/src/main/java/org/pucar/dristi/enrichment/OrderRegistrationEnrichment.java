@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,9 +18,6 @@ public class OrderRegistrationEnrichment {
 
     @Autowired
     private IdgenUtil idgenUtil;
-
-    @Autowired
-    private UserUtil userUtils;
 
     public void enrichOrderRegistration(OrderRequest orderRequest) {
         try {

@@ -7,6 +7,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.OrderRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.OrderRepository;
+import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.OrderRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,24 @@ public class OrderRegistrationService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private WorkflowService workflowService;
+    private WorkflowUtil workflowUtil;
+
     @Autowired
     private Configuration config;
+
     @Autowired
     private Producer producer;
 
     public Order createOrder(OrderRequest body) {
         try {
             validator.validateOrderRegistration(body);
+
             enrichmentUtil.enrichOrderRegistration(body);
-            workflowService.updateWorkflowStatus(body);
+
+            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
+
             producer.push(config.getSaveOrderKafkaTopic(), body);
+
             return body.getOrder();
         }catch (CustomException e) {
             log.error("Custom Exception occurred while creating order");
@@ -62,36 +69,39 @@ public class OrderRegistrationService {
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
                 return new ArrayList<>();
-           orderList.forEach(order -> order.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, order.getOrderNumber()))));
+
+            orderList.forEach(order -> order.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, tenantId, order.getOrderNumber()))));
+
             return orderList;
+
         } catch (Exception e) {
             log.error("Error while fetching to search results");
             throw new CustomException("CASE_SEARCH_EXCEPTION", e.getMessage());
         }
     }
 
-    public Order updateOrder(OrderRequest orderRequest) {
+    public Order updateOrder(OrderRequest body) {
 
         try {
 
             // Validate whether the application that is being requested for update indeed exists
             Order existingApplication;
             try {
-                existingApplication = validator.validateApplicationExistence(orderRequest);
+                existingApplication = validator.validateApplicationExistence(body);
             } catch (Exception e) {
                 log.error("Error validating existing application");
                 throw new CustomException("ORDER_UPDATE_EXCEPTION", "Error validating existing application: " + e.getMessage());
             }
-            existingApplication.setWorkflow(orderRequest.getOrder().getWorkflow());
+            existingApplication.setWorkflow(body.getOrder().getWorkflow());
 
             // Enrich application upon update
-            enrichmentUtil.enrichOrderRegistrationUponUpdate(orderRequest);
+            enrichmentUtil.enrichOrderRegistrationUponUpdate(body);
 
-            workflowService.updateWorkflowStatus(orderRequest);
+            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
 
-            producer.push(config.getUpdateOrderKafkaTopic(), orderRequest);
+            producer.push(config.getUpdateOrderKafkaTopic(), body);
 
-            return orderRequest.getOrder();
+            return body.getOrder();
 
         } catch (CustomException e) {
             log.error("Custom Exception occurred while updating order");

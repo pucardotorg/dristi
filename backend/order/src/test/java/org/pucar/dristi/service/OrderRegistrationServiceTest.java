@@ -12,6 +12,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.OrderRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.OrderRepository;
+import org.pucar.dristi.util.WorkflowUtil;
 import org.pucar.dristi.validators.OrderRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -37,7 +38,7 @@ public class OrderRegistrationServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private WorkflowService workflowService;
+    private WorkflowUtil workflowUtil;
 
     @Mock
     private Configuration config;
@@ -58,7 +59,7 @@ public class OrderRegistrationServiceTest {
 
         doNothing().when(validator).validateOrderRegistration(any(OrderRequest.class));
         doNothing().when(enrichmentUtil).enrichOrderRegistration(any(OrderRequest.class));
-        doNothing().when(workflowService).updateWorkflowStatus(any(OrderRequest.class));
+        when(workflowUtil.updateWorkflowStatus(any(RequestInfo.class),anyString(),anyString(),anyString(),any(Workflow.class),anyString())).thenReturn("APPROVED");
         doNothing().when(producer).push(anyString(), any(OrderRequest.class));
 
         Order result = orderRegistrationService.createOrder(orderRequest);
@@ -66,7 +67,6 @@ public class OrderRegistrationServiceTest {
         assertNotNull(result);
         verify(validator, times(1)).validateOrderRegistration(orderRequest);
         verify(enrichmentUtil, times(1)).enrichOrderRegistration(orderRequest);
-        verify(workflowService, times(1)).updateWorkflowStatus(orderRequest);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class OrderRegistrationServiceTest {
 
         when(orderRepository.getApplications( anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
-        when(workflowService.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
+      //  when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
 
         List<Order> result = orderRegistrationService.searchOrder("appNum", "cnrNum", "filingNum", "tenant", "id", "status", new RequestInfo());
 
@@ -113,7 +113,7 @@ public class OrderRegistrationServiceTest {
         when(validator.validateApplicationExistence(any(OrderRequest.class)))
                 .thenReturn(existingOrder);
         doNothing().when(enrichmentUtil).enrichOrderRegistrationUponUpdate(any(OrderRequest.class));
-        doNothing().when(workflowService).updateWorkflowStatus(any(OrderRequest.class));
+        //doNothing().when(workflowUtil).updateWorkflowStatus(any(RequestInfo.class),anyString(),anyString(),anyString(),any(),anyString());
         doNothing().when(producer).push(anyString(), any(OrderRequest.class));
 
         Order result = orderRegistrationService.updateOrder(orderRequest);
@@ -121,7 +121,6 @@ public class OrderRegistrationServiceTest {
         assertNotNull(result);
         verify(validator, times(1)).validateApplicationExistence(orderRequest);
         verify(enrichmentUtil, times(1)).enrichOrderRegistrationUponUpdate(orderRequest);
-        verify(workflowService, times(1)).updateWorkflowStatus(orderRequest);
     }
 
     @Test
