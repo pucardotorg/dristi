@@ -26,7 +26,7 @@ else
 end
 
 Order->Workflow: get Order status
-Workflow-->Order: return Order status 'Drafted"
+Workflow-->Order: return Order status 'Drafted'
 
 Order->Order: enrich orderId
 Order->UI: Return 201 : new Order created
