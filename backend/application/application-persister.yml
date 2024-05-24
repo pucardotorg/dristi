@@ -52,10 +52,11 @@ serviceMaps:
               type: JSON
               dbType: JSONB
 
-        - query: INSERT INTO dristi_application_statute_section(id, statute, sections, subsections, strsections, strsubsections, application_id, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application_statute_section(id, tenantid, statute, sections, subsections, strsections, strsubsections, application_id, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: application.statuteSection
           jsonMaps:
             - jsonPath: $.application.statuteSection.id
+            - jsonPath: $.application.statuteSection.tenantId
             - jsonPath: $.application.statuteSection.statute
             - jsonPath: $.application.statuteSection.sections
               type: JSON
@@ -83,7 +84,7 @@ serviceMaps:
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.application
       queryMaps:
-        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, statuteSection, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application (id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, filingNumber = EXCLUDED.filingNumber, cnrNumber = EXCLUDED.cnrNumber, referenceId = EXCLUDED.referenceId, createdDate = EXCLUDED.createdDate, applicationCreatedBy = EXCLUDED.applicationCreatedBy, onBehalfOf = EXCLUDED.onBehalfOf, applicationType = EXCLUDED.applicationType, applicationNumber = EXCLUDED.applicationNumber, issuedBy = EXCLUDED.issuedBy, status = EXCLUDED.status, comment = EXCLUDED.comment, isActive = EXCLUDED.isActive, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
           basePath: application
           jsonMaps:
             - jsonPath: $.application.id
@@ -94,7 +95,11 @@ serviceMaps:
             - jsonPath: $.application.createdDate
             - jsonPath: $.application.createdBy
             - jsonPath: $.application.onBehalfOf
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.application.applicationType
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.application.applicationNumber
             - jsonPath: $.application.issuedBy
               type: JSON
@@ -102,9 +107,6 @@ serviceMaps:
             - jsonPath: $.application.status
             - jsonPath: $.application.comment
             - jsonPath: $.application.isActive
-            - jsonPath: $.application.statuteSection
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.application.additionalDetails
             - jsonPath: $.application.auditDetails.createdBy
             - jsonPath: $.application.auditDetails.lastModifiedBy

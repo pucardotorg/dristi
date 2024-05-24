@@ -63,12 +63,11 @@ public class ApplicationService {
                     throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
                 }
                 existingApplication.setWorkflow(application.getWorkflow());// TODO check
-                applicationRequest.setApplication(existingApplication);
 
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
 
-            workflowService.updateWorkflowStatus(applicationRequest);
+//            workflowService.updateWorkflowStatus(applicationRequest);
 
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 

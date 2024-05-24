@@ -99,8 +99,8 @@ public class ApplicationApiController{
 
     @RequestMapping(value="/application/v1/update", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update application(s) + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+//        String accept = request.getHeader("Accept");
+//        if (accept != null && accept.contains("application/json")) {
             try {
                 Application application = applicationService.updateApplication(body);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -109,9 +109,9 @@ public class ApplicationApiController{
             } catch (Exception e) {
                 return new ResponseEntity<ApplicationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
+//        }
 
-        return new ResponseEntity<ApplicationResponse>(HttpStatus.NOT_IMPLEMENTED);
+//        return new ResponseEntity<ApplicationResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

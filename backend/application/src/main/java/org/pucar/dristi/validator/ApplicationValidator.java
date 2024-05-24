@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.List;
+
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
@@ -63,12 +65,12 @@ public class ApplicationValidator {
         }
         //TODO REMAINING VALIDATIONS FOR UPDATE APPLICATION
 
-        Application existingApplication = repository.getApplications(application.getId(), application.getFilingNumber(),
+        List<Application> existingApplication = repository.getApplications(String.valueOf(application.getId()), application.getFilingNumber(),
                 application.getCnrNumber(), application.getTenantId(), null, null);//fixme pass limit and offset
 
         if(existingApplication == null) {
             throw new CustomException(VALIDATION_ERR, "Application does not exist");
         }
-        return existingApplication;
+        return existingApplication.get(0);
     }
 }

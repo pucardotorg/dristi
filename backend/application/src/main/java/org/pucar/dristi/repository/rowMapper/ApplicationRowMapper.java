@@ -11,22 +11,19 @@ import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 @Component
 @Slf4j
-public class ApplicationRowMapper implements ResultSetExtractor<Application> {
-    public Application extractData(ResultSet rs) throws SQLException {
+public class ApplicationRowMapper implements ResultSetExtractor<List<Application>> {
+    public List<Application> extractData(ResultSet rs) throws SQLException {
         Map<String, Application> applicationMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-//            while (rs.next()) {
+            while (rs.next()) {
                 String uuid = rs.getString("id");
                 Application application = applicationMap.get(uuid);
 
@@ -45,28 +42,29 @@ public class ApplicationRowMapper implements ResultSetExtractor<Application> {
                             .build();
 
                     application = Application.builder() //FIXME ADD ALL THE FIELDS
-                            .applicationType(new ArrayList<>())
                             .applicationNumber(rs.getString("applicationnumber"))
+                            .cnrNumber(rs.getString("cnrnumber"))
+                            .filingNumber(rs.getString("filingnumber"))
+                            .referenceId(toUUID(rs.getString("referenceid")))
+                            .createdDate(rs.getString("createddate"))
+                            .createdBy(toUUID(rs.getString("applicationcreatedby")))
                             .tenantId(rs.getString("tenantid"))
-                            .id(UUID.fromString(rs.getString("id")))
+                            .id(toUUID(rs.getString("id")))
                             .isActive(rs.getBoolean("isactive"))
                             .status(rs.getString("status"))
+                            .comment(rs.getString("comment"))
+                            .additionalDetails(rs.getString("additionaldetails"))
                             .auditDetails(auditdetails)
                             .build();
                 }
-
-                String additionalDetails = rs.getString("additionalDetails");
-                if(additionalDetails!=null)
-                    application.setAdditionalDetails(additionalDetails);
-
-                applicationMap.put(uuid, application);
-//            }
+                    applicationMap.put(uuid, application);
+            }
         }
         catch (Exception e){
             log.error("Error occurred while processing Application ResultSet: {}", e.getMessage());
             throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing Application ResultSet: "+ e.getMessage());
         }
-        return applicationMap.get(rs.getString("id"));
+        return new ArrayList<>(applicationMap.values());
     }
     private UUID toUUID(String toUuid) {
         if(toUuid == null) {
