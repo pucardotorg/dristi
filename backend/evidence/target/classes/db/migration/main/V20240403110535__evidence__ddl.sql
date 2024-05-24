@@ -45,3 +45,10 @@ CREATE TABLE dristi_evidence_comment (
     createdTime int8 NULL,
     lastModifiedTime int8 NULL
 );
+
+CREATE SEQUENCE SEQ_DRISTI_ARTIFACT
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
