@@ -15,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -109,8 +110,13 @@ public class    CaseService {
             List<CaseExists> caseExistsList = new ArrayList<>();
 
             for(CaseCriteria caseCriteria: caseSearchRequests.getCriteria()){
-              boolean notExists = courtCases.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(caseCriteria.getFilingNumber())
-                      && c.getCaseNumber().equalsIgnoreCase(caseCriteria.getCnrNumber())).toList().isEmpty();
+                boolean notExists = courtCases.stream().noneMatch(c -> c.getFilingNumber().equalsIgnoreCase(caseCriteria.getFilingNumber())
+                        || c.getCnrNumber().equalsIgnoreCase(caseCriteria.getCnrNumber())
+                        || c.getId().toString().equalsIgnoreCase(caseCriteria.getCaseId())
+                        || c.getCourCaseNumber().equalsIgnoreCase(caseCriteria.getCourtCaseNumber())
+                        || (!c.getFilingDate().isBefore(caseCriteria.getFilingFromDate()) && !c.getFilingDate().isAfter(caseCriteria.getFilingToDate()))
+                        || (!c.getRegistrationDate().isBefore(caseCriteria.getRegistrationFromDate()) && !c.getRegistrationDate().isAfter(caseCriteria.getRegistrationToDate())));
+
               CaseExists caseExists = new CaseExists(caseCriteria.getCourtCaseNumber(),caseCriteria.getCnrNumber(), caseCriteria.getFilingNumber(), !notExists);
               caseExistsList.add(caseExists);
             }

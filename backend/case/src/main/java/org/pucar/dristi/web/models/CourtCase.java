@@ -105,7 +105,7 @@ public class CourtCase {
 
 	@JsonProperty("registrationDate")
 
-	private String registrationDate = null;
+	private LocalDate registrationDate = null;
 
 	@JsonProperty("caseDetails")
 
