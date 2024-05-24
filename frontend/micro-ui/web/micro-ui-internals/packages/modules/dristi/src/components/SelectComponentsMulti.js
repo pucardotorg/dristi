@@ -100,91 +100,62 @@ const selectCompMultiConfig = {
 
 const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
   const [locationData, setLocationData] = useState([{ id: generateUUID() }]);
-  //   const locationData = new Proxy(_locationData, {
-  //     set: (target, prop, value, receiver) => {
-  //       // Passthrough to the target object
-  //       console.trace({ prop, value });
-  //       return Reflect.set(target, prop, value, receiver);
-  //     },
-  //   });
   const handleAdd = () => {
-    setLocationData([...(locationData || []), { id: generateUUID() }]);
-    onSelect(config.key, [...(locationData || []), { id: generateUUID() }]);
+    setLocationData((locationData) => {
+      const updatedLocationData = [...(locationData || []), { id: generateUUID() }];
+      onSelect(config.key, updatedLocationData);
+      return updatedLocationData;
+    });
   };
 
-  const handleDeleteLocation = (index) => {
-    const currentFormData = structuredClone(locationData);
-    currentFormData.splice(index, 1);
-    setLocationData(currentFormData);
-    onSelect(config.key, currentFormData);
+  const handleDeleteLocation = (locationId) => {
+    setLocationData((locationData) => {
+      const currentFormData = locationData.filter((data) => data.id !== locationId);
+      onSelect(config.key, currentFormData);
+      return currentFormData;
+    });
   };
 
-  const onChange = (key, value, index) => {
-    // const currentFormData = new Proxy(structuredClone(_locationData), {
-    //   set: (target, prop, value, receiver) => {
-    //     // Passthrough to the target object
-    //     console.trace({ prop, value });
-    //     return Reflect.set(target, prop, value, receiver);
-    //   },
-    // });
-    const currentFormData = structuredClone(locationData);
-    const newCurr = Array.isArray(currentFormData) && currentFormData.map((val) => (val.id === index ? { ...val, addressDetails: value } : val));
-    console.debug(Array.isArray(currentFormData));
-    if (Array.isArray(currentFormData)) {
-      onSelect(config?.key, newCurr);
-      setLocationData(newCurr);
-    } else {
-      onSelect(config?.key, [{ addressDetails: value }]);
-      setLocationData([{ addressDetails: value }]);
-    }
+  const onChange = (key, value, locationId) => {
+    setLocationData((locationData) => {
+      const locationsCopy = structuredClone(locationData);
+      const updatedLocations = locationsCopy.map((data) => (data.id === locationId ? { ...data, addressDetails: value } : data));
+
+      onSelect(config?.key, updatedLocations);
+      return updatedLocations;
+    });
   };
 
-  console.log("loc", locationData);
 
   return (
     <div>
       {locationData.map((data, index) => (
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <h1> {`WITNESS'S_LOCATION ${index}`}</h1>
-            <span onClick={() => handleDeleteLocation(index)} style={locationData.length === 1 ? { display: "none" } : {}}>
+        <div key={data.id}>
+          <div style={{ display: "flex", gap: "4px" }}>
+            <h1>{`WITNESS'S_LOCATION #${index + 1}`}</h1>
+            <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
               <CrossIcon></CrossIcon>
             </span>
           </div>
           <LocationComponent
             t={t}
             config={selectCompMultiConfig}
-            locationFormData={structuredClone(data)}
+            locationFormData={data}
             onLocationSelect={(key, value) => {
               onChange(key, value, data.id);
             }}
             errors={{}}
-            key={`location-${data.addressDetails?.coordinates.latitude || 0}-${data.addressDetails?.coordinates.longitude}`}
-            //   mapIndex={index}
             mapIndex={data.id}
           ></LocationComponent>
         </div>
       ))}
-      {/* {!Array.isArray(locationData) && (
-        <LocationComponent
-          t={t}
-          config={selectCompMultiConfig}
-          locationFormData={formData?.[config.key]?.["addressDetails"] || {}}
-          onLocationSelect={(key, value) => {
-            onChange(key, value, 0);
-          }}
-          errors={{}}
-        ></LocationComponent>
-      )} */}
-      {
-        <Button
-          label={"Add Location"}
-          style={{ alignItems: "center" }}
-          onButtonClick={() => {
-            handleAdd();
-          }}
-        />
-      }
+      <Button
+        label={"Add Location"}
+        style={{ alignItems: "center" }}
+        onButtonClick={() => {
+          handleAdd();
+        }}
+      />
     </div>
   );
 };

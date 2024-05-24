@@ -32,7 +32,6 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
   };
 
   function setValue(value, input) {
-    console.debug(value);
     if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
@@ -116,11 +115,11 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
 
   return (
     <div>
-      {inputs?.map((input, index) => {
+      {inputs?.map((input) => {
         let currentValue = (locationFormData && locationFormData[config.key] && locationFormData[config.key][input.name]) || "";
         let isFirstRender = true;
         return (
-          <React.Fragment key={index}>
+          <React.Fragment key={input.label}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
             <LabelFieldPair style={{ width: "100%", display: "flex" }}>
               <CardLabel className="card-label-smaller">
@@ -181,7 +180,6 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                 ) : (
                   <TextInput
                     className="field desktop-w-full"
-                    key={input.name}
                     value={locationFormData && locationFormData[config.key] ? locationFormData[config.key][input.name] : undefined}
                     onChange={(e) => {
                       setValue(e.target.value, input.name);
