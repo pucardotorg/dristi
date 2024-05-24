@@ -52,4 +52,37 @@ public class EvidenceService {
             throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.getMessage());
         }
     }
+
+    public List<Artifact> updateEvidence(EvidenceRequest evidenceRequest) {
+
+        try {
+
+            // Validate whether the application that is being requested for update indeed exists
+            Artifact existingApplication;
+            try {
+                existingApplication = validator.validateApplicationExistence(evidenceRequest);
+            } catch (Exception e) {
+                log.error("Error validating existing application");
+                throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.getMessage());
+            }
+            existingApplication.setWorkflow(evidenceRequest.getArtifacts().get(0).getWorkflow());
+
+            // Enrich application upon update
+            enrichmentUtil.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
+
+            workflowService.updateWorkflowStatus(evidenceRequest);
+
+            producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
+
+            return evidenceRequest.getArtifacts();
+
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while updating evidence");
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while updating evidence");
+            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.getMessage());
+        }
+
+    }
 }

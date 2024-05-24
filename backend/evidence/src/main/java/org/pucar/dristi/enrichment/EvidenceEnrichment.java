@@ -54,4 +54,14 @@ public class EvidenceEnrichment {
         }
 
     }
+    public void enrichEvidenceRegistrationUponUpdate(EvidenceRequest evidenceRequest) {
+        try {
+            // Enrich lastModifiedTime and lastModifiedBy in case of update
+            evidenceRequest.getArtifacts().get(0).getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
+            evidenceRequest.getArtifacts().get(0).getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
+        } catch (Exception e) {
+            log.error("Error enriching advocate application upon update: {}", e.getMessage());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in order enrichment service during order update process: " + e.getMessage());
+        }
+    }
 }
