@@ -3,10 +3,13 @@ package org.pucar.dristi.enrichment;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.Hearing;
 import org.pucar.dristi.web.models.HearingRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
@@ -14,6 +17,9 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Component
 @Slf4j
 public class HearingRegistrationEnrichment {
+
+    @Autowired
+    private IdgenUtil idgenUtil;
 
     /**
      * Enrich the hearing application by setting values in different field
@@ -34,6 +40,8 @@ public class HearingRegistrationEnrichment {
                     document.setDocumentUid(document.getId());
                 });
             }
+            List<String> hearingIdList = idgenUtil.getIdList(hearingRequest.getRequestInfo(), hearingRequest.getRequestInfo().getUserInfo().getTenantId(), "hearing.id", null, 1);
+            hearing.setHearingId(hearingIdList.get(0));
         } catch (CustomException e) {
             log.error("Custom Exception occurred while Enriching hearing");
             throw e;

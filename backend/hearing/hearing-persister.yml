@@ -6,11 +6,12 @@ serviceMaps:
       fromTopic: create-hearing-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO dristi_hearing(id,tenantId,filingNumber,cnrNumbers,applicationNumbers,hearingType,status,startTime,endTime,presidedBy,attendees,transcript,vcLink,isActive,additionalDetails,notes,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_hearing(id,tenantId,hearingId,filingNumber,cnrNumbers,applicationNumbers,hearingType,status,startTime,endTime,presidedBy,attendees,transcript,vcLink,isActive,additionalDetails,notes,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: hearing
           jsonMaps:
             - jsonPath: $.hearing.id
             - jsonPath: $.hearing.tenantId
+            - jsonPath: $.hearing.hearingId
             - jsonPath: $.hearing.filingNumber
               type: JSON
               dbType: JSONB

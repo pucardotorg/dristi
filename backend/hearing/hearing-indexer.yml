@@ -43,12 +43,14 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.hearing
           customJsonMapping:
-            indexMapping: { "Data": { "advocateDetails": { "id": "","tenantId": "","applicationNumber": "","barRegistrationNumber": "","advocateType": "","individualId": "","organisationID": "","isActive":,"auditDetails": { },"additionalDetails": { } },"history": { },"individual": { } ,"auditDetails":{"createdBy":"","lastModifiedBy":"","createdTime":"","lastModifiedTime":""},"currentProcessInstance":{} } }
+            indexMapping: { "Data": { "hearing": { "id": "", "tenantId": "", "hearingId": "", "filingNumber": [], "cnrNumbers": [], "applicationNumber": [], "hearingType": "", "status": "", "startTime": "", "endTime": "", , "isActive":,"auditDetails": { },"additionalDetails": { } },"history": { },"individual": { } ,"auditDetails":{"createdBy":"","lastModifiedBy":"","createdTime":"","lastModifiedTime":""},"currentProcessInstance":{} } }
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.hearing.id
               - inJsonPath: $.tenantId
                 outJsonPath: $.Data.hearing.tenantId
+              - inJsonPath: $.hearingId
+                outJsonPath: $.Data.hearing.hearingId
               - inJsonPath: $.filingNumber
                 outJsonPath: $.Data.hearing.filingNumber
               - inJsonPath: $.cnrNumbers

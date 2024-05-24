@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_ACTIVE_STATUS;
 import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTION;
 
 @Component
@@ -48,9 +49,14 @@ public class WorkflowService {
             ProcessInstance processInstance = getProcessInstanceForHearing(hearing, hearingRequest.getRequestInfo());
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(hearingRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
-            String applicationStatus = callWorkFlow(workflowRequest).getApplicationStatus();
-            log.info("Application Status :: {}", applicationStatus);
-            hearing.setStatus(applicationStatus);
+            State workflowState = callWorkFlow(workflowRequest);
+            String state = workflowState.getState();
+            log.info("Application state :: {}", state);
+            hearing.setStatus(state);
+            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(workflowState.getApplicationStatus())) {
+                //setting true once application approved
+                hearing.setIsActive(true);
+            }
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
@@ -86,7 +92,7 @@ public class WorkflowService {
         try {
             Workflow workflow = hearing.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
-            processInstance.setBusinessId(hearing.getId().toString());
+            processInstance.setBusinessId(hearing.getHearingId());
             processInstance.setAction(workflow.getAction());
             processInstance.setModuleName(config.getHearingBusinessName());
             processInstance.setTenantId(hearing.getTenantId());

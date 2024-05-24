@@ -1,6 +1,7 @@
 CREATE TABLE dristi_hearing (
     id VARCHAR(64) NOT NULL PRIMARY KEY,
     tenantId VARCHAR(10) NOT NULL,
+    hearingId varchar(64) NULL,
     filingNumber JSONB NULL,
     cnrNumbers JSONB NULL,
     applicationNumbers JSONB NULL,

@@ -135,13 +135,10 @@ public class HearingService {
 //            Hearing hearing = validator.validateApplicationExistence(hearingRequest.getHearing());
 //            hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
 //            hearingRequest.setHearing(hearing);
+//            TODO: Validate hearing from DB, update hearing startDate, endDate and other fields that can be updated. Extra: add previous scheduled hearing startDate and endDate to additional details with process instance key.
             Hearing hearing = hearingRequest.getHearing();
 
             workflowService.updateWorkflowStatus(hearingRequest);
-            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(hearing.getStatus())) {
-                //setting true once application approved
-                hearing.setIsActive(true);
-            }
 
             // Enrich application upon update
             enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
