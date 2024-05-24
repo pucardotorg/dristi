@@ -232,7 +232,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                               AppLocalizations.of(context).translate(i18.common.notSupportedFileType),
                               style: TextStyle(color: Colors.red),
                             ),
-                          if (isEnable == true && context.read<AuthBloc>().userModel.documentBytes != null) ...[
+                          if (isEnable == true && context.read<AuthBloc>().userModel.documentBytes != null && context.read<AuthBloc>().userModel.documentFilename != null) ...[
                             const SizedBox(height: 20),
                             if (context.read<AuthBloc>().userModel.documentType == 'pdf')
                               Stack(

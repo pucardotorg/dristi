@@ -2,7 +2,7 @@ import 'dart:core';
 import 'dart:typed_data';
 
 class UserModel{
-   UserModel();
+   UserModel({this.mobileNumber, this.type});
 
   int? id;
   String? uuid;

@@ -247,7 +247,7 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                     AppLocalizations.of(context).translate(i18.common.notSupportedFileType),
                                     style: TextStyle(color: Colors.red),
                                   ),
-                                if (isEnable == true && context.read<AuthBloc>().userModel.idBytes != null) ...[
+                                if (isEnable == true && context.read<AuthBloc>().userModel.idBytes != null && context.read<AuthBloc>().userModel.idFilename != null) ...[
                                   const SizedBox(height: 20),
                                   if (context.read<AuthBloc>().userModel.idDocumentType == 'pdf')
                                     Stack(

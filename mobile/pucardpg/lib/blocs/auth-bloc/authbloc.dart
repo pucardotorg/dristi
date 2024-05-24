@@ -86,18 +86,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       accesstoken = response.accessToken!;
       _refreshtoken = response.refreshToken!;
       _userRequest = response.userRequest!;
-      userModel.authToken = response.accessToken;
-      userModel.id = response.userRequest?.id;
-      userModel.uuid = response.userRequest?.uuid;
-      userModel.username = response.userRequest?.userName;
       secureStore.setAccessToken(accesstoken);
       secureStore.setRefreshToken(_refreshtoken);
 
       IndividualSearchRequest individualSearchRequest = IndividualSearchRequest(
-          requestInfo: RequestInfoSearch(authToken: userModel.authToken!),
-          individual: IndividualSearch(userUuid: [userModel.uuid!]));
+          requestInfo: RequestInfoSearch(authToken: response.accessToken!),
+          individual: IndividualSearch(userUuid: [response.userRequest?.uuid ?? ""]));
 
       final responseSearchIndividual = await authRepository.searchIndividual('/individual/v1/_search?limit=${appConstants.limit}&offset=${appConstants.offset}&tenantId=${appConstants.tenantId}', individualSearchRequest);
+      userModel = UserModel(mobileNumber: userModel.mobileNumber, type: userModel.type);
+      userModel.authToken = response.accessToken;
+      userModel.id = response.userRequest?.id;
+      userModel.uuid = response.userRequest?.uuid;
+      userModel.username = response.userRequest?.userName;
       if (responseSearchIndividual.individual.isEmpty) {
         emit(AuthState.individualSearchSuccessState(individualSearchResponse: responseSearchIndividual));
       } else {
@@ -216,6 +217,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       accesstoken = response.accessToken!;
       _refreshtoken = response.refreshToken!;
       _userRequest = response.userRequest!;
+      userModel = UserModel(mobileNumber: userModel.mobileNumber, type: userModel.type);
       userModel.authToken = response.accessToken;
       userModel.id = response.userRequest?.id;
       userModel.uuid = response.userRequest?.uuid;
