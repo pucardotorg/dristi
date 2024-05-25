@@ -43,17 +43,14 @@ public class AdvocateClerkService {
     @Autowired
     private Configuration config;
 
-    public List<AdvocateClerk> registerAdvocateClerkRequest(AdvocateClerkRequest body) {
+    public AdvocateClerk registerAdvocateClerkRequest(AdvocateClerkRequest body) {
         try {
             validator.validateAdvocateClerkRegistration(body);
             enrichmentUtil.enrichAdvocateClerkRegistration(body);
             workflowService.updateWorkflowStatus(body);
 
             producer.push(config.getAdvClerkcreateTopic(), body);
-            return body.getClerks();
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while creating advocate clerk");
-            throw e;
+            return body.getClerk();
         } catch (Exception e){
             log.error("Error occurred while creating advocate clerk");
             throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
@@ -109,10 +106,7 @@ public class AdvocateClerkService {
             // Otherwise return the found applications
             return applications;
         }
-        catch (CustomException e){
-            log.error("Custom Exception occurred while searching");
-            throw e;
-        }
+
         catch (Exception e){
             log.error("Error while fetching to search results");
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
@@ -135,13 +129,8 @@ public class AdvocateClerkService {
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
 
-//            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             // Otherwise return the found applications
             return applications;
-        }
-        catch (CustomException e){
-            log.error("Custom Exception occurred while searching");
-            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
@@ -165,13 +154,8 @@ public class AdvocateClerkService {
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
 
-//            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             // Otherwise return the found applications
             return applications;
-        }
-        catch (CustomException e){
-            log.error("Custom Exception occurred while searching");
-            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
@@ -179,42 +163,36 @@ public class AdvocateClerkService {
         }
     }
 
-    public List<AdvocateClerk> updateAdvocateClerk(AdvocateClerkRequest advocateClerkRequest) {
+    public AdvocateClerk updateAdvocateClerk(AdvocateClerkRequest advocateClerkRequest) {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
+            AdvocateClerk advocateClerk = new AdvocateClerk();
+            AdvocateClerk existingApplication;
+            try {
+                existingApplication = validator.validateApplicationExistence(advocateClerk);
+            } catch (Exception e){
+                log.error("Error validating existing application");
+                throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
+            }
+            existingApplication.setWorkflow(advocateClerk.getWorkflow());
 
-            List<AdvocateClerk> advocateClerkList= new ArrayList<>();
-            advocateClerkRequest.getClerks().forEach(advocateClerk -> {
-                AdvocateClerk existingApplication;
-                try {
-                    existingApplication = validator.validateApplicationExistence(advocateClerk);
-                } catch (Exception e){
-                    log.error("Error validating existing application");
-                    throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
-                }
-                existingApplication.setWorkflow(advocateClerk.getWorkflow());
-                advocateClerkList.add(existingApplication);
-            });
-            advocateClerkRequest.setClerks(advocateClerkList);
+            advocateClerkRequest.setClerk(existingApplication);
 
             // Enrich application upon update
             enrichmentUtil.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest);
 
             workflowService.updateWorkflowStatus(advocateClerkRequest);
-            advocateClerkRequest.getClerks().forEach(advocateClerk -> {
-                if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerk.getStatus())) {
-                    //setting true once application approved
-                    advocateClerk.setIsActive(true);
-                }
-            });
+
+            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerk.getStatus())) {
+                //setting true once application approved
+                advocateClerk.setIsActive(true);
+            }
 
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
 
-            return advocateClerkRequest.getClerks();
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while updating advocate clerk");
-            throw e;
+            return advocateClerkRequest.getClerk();
+
         } catch (Exception e){
             log.error("Error occurred while updating advocate clerk");
             throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION,"Error occurred while updating advocate clerk: " + e.getMessage());

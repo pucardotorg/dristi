@@ -72,12 +72,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
         return new ArrayList<>(advocateClerkApplicationMap.values());
     }
 
-    private void addChildrenToProperty(ResultSet rs, AdvocateClerk advocateClerkApplication)
-    {
-        addDocumentToApplication(rs, advocateClerkApplication);
-    }
-
-    private void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) {
+    public void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) {
         List<Document> listDocument = new ArrayList<>();
         try {
             Document document = Document.builder()

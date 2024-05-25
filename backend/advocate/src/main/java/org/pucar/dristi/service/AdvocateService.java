@@ -10,6 +10,7 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.AdvocateRepository;
 import org.pucar.dristi.validators.AdvocateRegistrationValidator;
 import org.pucar.dristi.web.models.Advocate;
+import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class AdvocateService {
     @Autowired
     private Configuration config;
 
-    public List<Advocate> createAdvocate(AdvocateRequest body) {
+    public Advocate createAdvocate(AdvocateRequest body) {
         try {
 
             // Validate applications
@@ -62,10 +63,7 @@ public class AdvocateService {
 
             producer.push(config.getAdvocateCreateTopic(), body);
 
-            return body.getAdvocates();
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while creating advocate");
-            throw e;
+            return body.getAdvocate();
         } catch (Exception e) {
             log.error("Error occurred while creating advocate");
             throw new CustomException(ADVOCATE_CREATE_EXCEPTION, e.getMessage());
@@ -177,38 +175,35 @@ public class AdvocateService {
         }
     }
 
-    public List<Advocate> updateAdvocate(AdvocateRequest advocateRequest) {
+    public Advocate updateAdvocate(AdvocateRequest advocateRequest) {
 
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            List<Advocate> advocatesList = new ArrayList<>();
-            advocateRequest.getAdvocates().forEach(advocate -> {
-                Advocate existingApplication;
-                try {
-                    existingApplication = validator.validateApplicationExistence(advocate);
-                } catch (Exception e) {
-                    log.error("Error validating existing application");
-                    throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
-                }
-                existingApplication.setWorkflow(advocate.getWorkflow());
-                advocatesList.add(existingApplication);
-            });
-            advocateRequest.setAdvocates(advocatesList);
+            Advocate advocate = new Advocate();
+            Advocate existingApplication;
+            try {
+                existingApplication = validator.validateApplicationExistence(advocate);
+            } catch (Exception e) {
+                log.error("Error validating existing application");
+                throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
+            }
+            existingApplication.setWorkflow(advocate.getWorkflow());
+            advocateRequest.setAdvocate(existingApplication);
 
             // Enrich application upon update
             enrichmentUtil.enrichAdvocateApplicationUponUpdate(advocateRequest);
 
             workflowService.updateWorkflowStatus(advocateRequest);
-            advocateRequest.getAdvocates().forEach(advocate -> {
-                if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocate.getStatus())) {
-                    //setting true once application approved
-                    advocate.setIsActive(true);
-                }
-            });
+
+            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocate.getStatus())) {
+                //setting true once application approved
+                advocate.setIsActive(true);
+            }
+
             producer.push(config.getAdvocateUpdateTopic(), advocateRequest);
 
-            return advocateRequest.getAdvocates();
+            return advocateRequest.getAdvocate();
 
         } catch (CustomException e) {
             log.error("Custom Exception occurred while updating advocate");

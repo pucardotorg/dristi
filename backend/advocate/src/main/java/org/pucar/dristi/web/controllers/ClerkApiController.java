@@ -24,6 +24,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T05:55:27.937918+05:30[Asia/Kolkata]")
@@ -52,9 +53,9 @@ public class ClerkApiController {
 	public ResponseEntity<AdvocateClerkResponse> clerkV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the clerk registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 
-				List<AdvocateClerk> advocateList = advocateClerkService.registerAdvocateClerkRequest(body);
+				AdvocateClerk advocateList = advocateClerkService.registerAdvocateClerkRequest(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateList).responseInfo(responseInfo).build();
+				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(Collections.singletonList(advocateList)).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
 	}
 
@@ -82,7 +83,6 @@ public class ClerkApiController {
 		AdvocateClerkResponse response = AdvocateClerkResponse.builder().clerks(applications).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(response,HttpStatus.OK);
 
-//		return new ResponseEntity<AdvocateClerkListResponse>(HttpStatus.NOT_IMPLEMENTED);
 	}
 
 	@RequestMapping(value="/clerk/v1/applicationnumber/_search", method = RequestMethod.POST)
@@ -101,9 +101,9 @@ public class ClerkApiController {
 	public ResponseEntity<AdvocateClerkResponse> clerkV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
 
-				List<AdvocateClerk> advocateClerkList = advocateClerkService.updateAdvocateClerk(body);
+				AdvocateClerk advocateClerkList = advocateClerkService.updateAdvocateClerk(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(advocateClerkList).responseInfo(responseInfo).build();
+				AdvocateClerkResponse advocateClerkResponse = AdvocateClerkResponse.builder().clerks(Collections.singletonList(advocateClerkList)).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
 	}
 

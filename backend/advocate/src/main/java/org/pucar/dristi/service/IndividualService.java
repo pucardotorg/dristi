@@ -35,9 +35,8 @@ public class IndividualService {
             uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(requestInfo.getUserInfo().getTenantId()).append("&includeDeleted=true");
             Boolean isIndividualValid = individualUtils.individualCall(individualSearchRequest, uri, individualUserUUID);
             return isIndividualValid;
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e){
+        }
+        catch (Exception e){
             log.error("Error in search individual service");
             throw new CustomException(INDIVIDUAL_SERVICE_EXCEPTION,"Error in search individual service"+e.getMessage());
         }

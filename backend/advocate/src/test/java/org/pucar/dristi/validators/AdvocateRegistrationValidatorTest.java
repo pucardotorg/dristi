@@ -14,12 +14,13 @@ import org.pucar.dristi.web.models.AdvocateRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.dristi.service.IndividualService;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvocateRegistrationValidatorTest {
@@ -49,7 +50,7 @@ public class AdvocateRegistrationValidatorTest {
         Advocate advocate = new Advocate();
         advocate.setIndividualId("validIndividualId");
         advocate.setTenantId("validTenantId");
-        advocateRequest.setAdvocates(Collections.singletonList(advocate));
+        advocateRequest.setAdvocate(advocate);
 
         when(individualService.searchIndividual(requestInfo, "validIndividualId", new HashMap<>())).thenReturn(true);
 
@@ -61,7 +62,7 @@ public class AdvocateRegistrationValidatorTest {
         Advocate advocate = new Advocate();
         advocate.setIndividualId("invalidIndividualId");
         advocate.setTenantId("validTenantId");
-        advocateRequest.setAdvocates(Collections.singletonList(advocate));
+        advocateRequest.setAdvocate(advocate);
 
         when(individualService.searchIndividual(requestInfo, "invalidIndividualId", new HashMap<>())).thenReturn(false);
 
@@ -73,9 +74,51 @@ public class AdvocateRegistrationValidatorTest {
         Advocate advocate = new Advocate();
         advocate.setIndividualId("validIndividualId");
         // Missing tenantId intentionally
-        advocateRequest.setAdvocates(Collections.singletonList(advocate));
+        advocateRequest.setAdvocate(advocate);
 
 
         assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    void validateAdvocateRegistration_MissingUserInfo_ThrowsCustomException() {
+        Advocate advocate = new Advocate();
+        advocate.setIndividualId("validIndividualId");
+        // Missing UserInfos intentionally
+        advocateRequest.getRequestInfo().setUserInfo(null);
+        advocateRequest.setAdvocate(advocate);
+
+
+        assertThrows(CustomException.class, () -> validator.validateAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    void validateApplicationExistence_ApplicationExists() {
+        // Arrange
+        Advocate advocate = new Advocate();
+        advocate.setApplicationNumber("testAppNumber");
+        advocate.setTenantId("testTenantId");
+        List<Advocate> existingApplications = new ArrayList<>();
+        existingApplications.add(advocate);
+        when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+
+        // Act
+        Advocate result = validator.validateApplicationExistence(advocate);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(advocate, result);
+    }
+
+    @Test
+    void validateApplicationExistence_ApplicationDoesNotExist() {
+        // Arrange
+        Advocate advocate = new Advocate();
+        advocate.setApplicationNumber("nonExistingAppNumber");
+        advocate.setTenantId("testTenantId");
+        when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+
+        // Act + Assert
+        assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocate));
     }
 }

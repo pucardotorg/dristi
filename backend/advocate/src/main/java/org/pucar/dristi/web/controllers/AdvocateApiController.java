@@ -24,6 +24,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -57,9 +58,9 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the advocate registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 
-		List<Advocate> response = advocateService.createAdvocate(body);
+		Advocate response = advocateService.createAdvocate(body);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(response).responseInfo(responseInfo).build();
+		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(Collections.singletonList(response)).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 	}
 
@@ -103,9 +104,9 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details of the registered advocate + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {
 
-		List<Advocate> advocateList = advocateService.updateAdvocate(body);
+		Advocate advocateList = advocateService.updateAdvocate(body);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
+		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(Collections.singletonList(advocateList)).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
 		}
 

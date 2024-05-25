@@ -180,27 +180,12 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> list) {
-        preparedStmtList.addAll(list);
-    }
-
     private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE (");
         }else{
             query.append(" AND ");
         }
-    }
-
-    private String createQuery(List<String> ids) {
-        StringBuilder builder = new StringBuilder();
-        int length = ids.size();
-        for (int i = 0; i < length; i++) {
-            builder.append(" ?");
-            if (i != length - 1)
-                builder.append(",");
-        }
-        return builder.toString();
     }
 
     /** To add condition for fetching documents

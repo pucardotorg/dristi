@@ -1,6 +1,7 @@
 package org.pucar.dristi.enrichment;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -38,11 +39,15 @@ class AdvocateClerkRegistrationEnrichmentTest {
     void enrichAdvocateClerkRegistrationTest() {
         // Setup mock request and expected results
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
         AdvocateClerk clerk = new AdvocateClerk();
         clerk.setTenantId("tenantId");
-        clerks.add(clerk);
-        advocateClerkRequest.setClerks(clerks);
+        advocateClerkRequest.setClerk(clerk);
+        Document document = new Document();
+        document.setId("id");
+        document.setDocumentUid("documentUid");
+        List<Document> list = new ArrayList<>();
+        list.add(document);
+        clerk.setDocuments(list);
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid");
@@ -60,26 +65,24 @@ class AdvocateClerkRegistrationEnrichmentTest {
                 null, 1);
 
         // Assert that each clerk has been enriched as expected
-        assertNotNull(clerks.get(0).getId());
-        assertNotNull(clerks.get(0).getAuditDetails());
-        assertEquals(false, clerks.get(0).getIsActive());
-        assertEquals("user-uuid", clerks.get(0).getAuditDetails().getCreatedBy());
-        assertNotNull(clerks.get(0).getAuditDetails().getCreatedTime());
-        assertEquals("user-uuid", clerks.get(0).getAuditDetails().getLastModifiedBy());
-        assertNotNull(clerks.get(0).getAuditDetails().getLastModifiedTime());
+        assertNotNull(clerk.getId());
+        assertNotNull(clerk.getAuditDetails());
+        assertEquals(false, clerk.getIsActive());
+        assertEquals("user-uuid", clerk.getAuditDetails().getCreatedBy());
+        assertNotNull(clerk.getAuditDetails().getCreatedTime());
+        assertEquals("user-uuid", clerk.getAuditDetails().getLastModifiedBy());
+        assertNotNull(clerk.getAuditDetails().getLastModifiedTime());
     }
 
     @Test
     void enrichAdvocateClerkRegistrationUponUpdateTest() {
         // Setup mock request and expected results
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
         AdvocateClerk clerk = new AdvocateClerk();
         clerk.setTenantId("tenantId");
         AuditDetails auditDetails = AuditDetails.builder().createdBy("user-uuid-1").createdTime(System.currentTimeMillis()).lastModifiedBy("user-uuid-1").lastModifiedTime(System.currentTimeMillis()).build();
         clerk.setAuditDetails(auditDetails);
-        clerks.add(clerk);
-        advocateClerkRequest.setClerks(clerks);
+        advocateClerkRequest.setClerk(clerk);
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid-2");
@@ -90,31 +93,51 @@ class AdvocateClerkRegistrationEnrichmentTest {
         advocateClerkRegistrationEnrichment.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest);
 
         // Assert that each clerk has been enriched as expected
-        assertNotNull(clerks.get(0).getAuditDetails());
-        assertEquals("user-uuid-2", clerks.get(0).getAuditDetails().getLastModifiedBy());
-        assertNotNull(clerks.get(0).getAuditDetails().getLastModifiedTime());
+        assertNotNull(clerk.getAuditDetails());
+        assertEquals("user-uuid-2", clerk.getAuditDetails().getLastModifiedBy());
+        assertNotNull(clerk.getAuditDetails().getLastModifiedTime());
+    }
+
+    @Test
+    void enrichAdvocateClerkRegistrationUponUpdateExceptionTest() {
+        // Setup mock request and expected results
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setTenantId("tenantId");
+        AuditDetails auditDetails = AuditDetails.builder().createdBy("user-uuid-1").createdTime(System.currentTimeMillis()).lastModifiedBy("user-uuid-1").lastModifiedTime(System.currentTimeMillis()).build();
+        clerk.setAuditDetails(auditDetails);
+        advocateClerkRequest.setClerk(null);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid-2");
+        requestInfo.setUserInfo(userInfo);
+        advocateClerkRequest.setRequestInfo(requestInfo);
+
+        // Assert that each clerk has been enriched as expected
+        assertThrows(Exception.class, () -> {
+            advocateClerkRegistrationEnrichment.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest);
+        });
     }
 
     @Test
     public void testEnrichAdvocateClerkRegistration_MissingUserInfo() {
         // Setup request with missing user info
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-        advocateClerkRequest.setClerks(Collections.singletonList(new AdvocateClerk()));
+        advocateClerkRequest.setClerk(new AdvocateClerk());
         advocateClerkRequest.setRequestInfo(new RequestInfo());
 
         // Expect exception due to missing user info
         assertThrows(CustomException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));
+        assertThrows(Exception.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));
     }
 
     @Test
     public void testEnrichAdvocateClerkRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
         AdvocateClerk clerk = new AdvocateClerk();
         clerk.setTenantId("tenantId");
-        clerks.add(clerk);
-        advocateClerkRequest.setClerks(clerks);
+        advocateClerkRequest.setClerk(clerk);
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid");
@@ -126,22 +149,6 @@ class AdvocateClerkRegistrationEnrichmentTest {
 
         // Expect exception to propagate
         assertThrows(RuntimeException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));
-    }
-
-    @Test
-    public void testEnrichAdvocateClerkRegistration_EmptyClerkList() {
-        // Setup request with empty clerk list
-        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-        advocateClerkRequest.setRequestInfo(new RequestInfo());
-        User userInfo = new User();
-        userInfo.setUuid("user-uuid");
-        advocateClerkRequest.getRequestInfo().setUserInfo(userInfo);
-        advocateClerkRequest.setClerks(new ArrayList<>());
-
-        // Call the method
-        advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest);
-
-        // No assertions needed, method should not throw exceptions
     }
 
 }

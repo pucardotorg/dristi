@@ -13,12 +13,13 @@ import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.dristi.service.IndividualService;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvocateClerkRegistrationValidatorTest {
@@ -47,7 +48,7 @@ public class AdvocateClerkRegistrationValidatorTest {
         AdvocateClerk advocate = new AdvocateClerk();
         advocate.setIndividualId("validIndividualId");
         advocate.setTenantId("validTenantId");
-        advocateClerkRequest.setClerks(Collections.singletonList(advocate));
+        advocateClerkRequest.setClerk(advocate);
 
         when(individualService.searchIndividual(requestInfo, "validIndividualId", new HashMap<>())).thenReturn(true);
 
@@ -59,11 +60,49 @@ public class AdvocateClerkRegistrationValidatorTest {
         AdvocateClerk advocate = new AdvocateClerk();
         advocate.setIndividualId("invalidIndividualId");
         advocate.setTenantId("validTenantId");
-        advocateClerkRequest.setClerks(Collections.singletonList(advocate));
+        advocateClerkRequest.setClerk(advocate);
 
         when(individualService.searchIndividual(requestInfo, "invalidIndividualId", new HashMap<>())).thenReturn(false);
 
         assertThrows(CustomException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
+    }
+
+    @Test
+    void validateAdvocateRegistration_InvalidTenantId_ThrowsIllegalArgumentException() {
+        AdvocateClerk advocate = new AdvocateClerk();
+        advocate.setIndividualId("invalidIndividualId");
+        advocate.setTenantId(null);
+        advocateClerkRequest.setClerk(advocate);
+
+        assertThrows(CustomException.class, () -> validator.validateAdvocateClerkRegistration(advocateClerkRequest));
+    }
+
+    @Test
+    void validateApplicationExistence_ApplicationExists() {
+        // Arrange
+        AdvocateClerk advocateClerk = new AdvocateClerk();
+        advocateClerk.setApplicationNumber("testAppNumber");
+        List<AdvocateClerk> existingApplications = new ArrayList<>();
+        existingApplications.add(advocateClerk);
+        when(repository.getApplications(anyList(), anyString(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+
+        // Act
+        AdvocateClerk result = validator.validateApplicationExistence(advocateClerk);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(advocateClerk, result);
+    }
+
+    @Test
+    void validateApplicationExistence_ApplicationDoesNotExist() {
+        // Arrange
+        AdvocateClerk advocateClerk = new AdvocateClerk();
+        advocateClerk.setApplicationNumber("nonExistingAppNumber");
+        when(repository.getApplications(anyList(), anyString(), any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+
+        // Act + Assert
+        assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocateClerk));
     }
 
 }

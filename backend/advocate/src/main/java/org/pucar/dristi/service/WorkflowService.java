@@ -39,21 +39,20 @@ public class WorkflowService {
      * @param advocateRequest
      */
     public void updateWorkflowStatus(AdvocateRequest advocateRequest) {
-        advocateRequest.getAdvocates().forEach(advocate -> {
-            try {
-                ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
-                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                log.info("ProcessInstance Request :: {}", workflowRequest);
-                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
-                log.info("Application Status :: {}", applicationStatus);
-                advocate.setStatus(applicationStatus);
-            } catch (CustomException e){
-                throw e;
-            } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.toString());
-                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+ e);
-            }
-        });
+        try {
+            Advocate advocate =  advocateRequest.getAdvocate();
+            ProcessInstance processInstance = getProcessInstanceForADV(advocate, advocateRequest.getRequestInfo());
+            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateRequest.getRequestInfo(), Collections.singletonList(processInstance));
+            log.info("ProcessInstance Request :: {}", workflowRequest);
+            String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+            log.info("Application Status :: {}", applicationStatus);
+            advocate.setStatus(applicationStatus);
+        } catch (CustomException e){
+            throw e;
+        } catch (Exception e) {
+            log.error("Error updating workflow status: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+ e);
+        }
     }
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
         try {
@@ -74,21 +73,20 @@ public class WorkflowService {
      * @param advocateClerkRequest
      */
     public void updateWorkflowStatus(AdvocateClerkRequest advocateClerkRequest) {
-        advocateClerkRequest.getClerks().forEach(advocateClerk -> {
-            try {
-                ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
-                ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                log.info("ProcessInstance Request :: {}", workflowRequest);
-                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
-                log.info("Application Status :: {}", applicationStatus);
-                advocateClerk.setStatus(applicationStatus);
-            } catch (CustomException e){
-                throw e;
-            } catch (Exception e) {
-                log.error("Error updating workflow status: {}", e.toString());
-                throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
-            }
-        });
+        AdvocateClerk advocateClerk = advocateClerkRequest.getClerk();
+        try {
+            ProcessInstance processInstance = getProcessInstanceForADVClerk(advocateClerk, advocateClerkRequest.getRequestInfo());
+            ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(advocateClerkRequest.getRequestInfo(), Collections.singletonList(processInstance));
+            log.info("ProcessInstance Request :: {}", workflowRequest);
+            String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
+            log.info("Application Status :: {}", applicationStatus);
+            advocateClerk.setStatus(applicationStatus);
+        } catch (CustomException e){
+            throw e;
+        } catch (Exception e) {
+            log.error("Error updating workflow status: {}", e.toString());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
+        }
     }
 
     /** for advocate clerk application process instance
@@ -96,7 +94,7 @@ public class WorkflowService {
      * @param requestInfo
      * @return payload for workflow service call
      */
-    private ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
+    public ProcessInstance getProcessInstanceForADVClerk(AdvocateClerk advocateClerk, RequestInfo requestInfo) {
         try {
             Workflow workflow = advocateClerk.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -207,7 +205,7 @@ public class WorkflowService {
     }
     public ProcessInstanceRequest getProcessInstanceForAdvocateRegistrationPayment(AdvocateRequest updateRequest) {
         try {
-            Advocate application = updateRequest.getAdvocates().get(0);
+            Advocate application = updateRequest.getAdvocate();
             ProcessInstance process = ProcessInstance.builder()
                     .businessService("ADV")
                     .businessId(application.getApplicationNumber())

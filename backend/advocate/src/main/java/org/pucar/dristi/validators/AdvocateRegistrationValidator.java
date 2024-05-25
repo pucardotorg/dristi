@@ -38,14 +38,14 @@ public class AdvocateRegistrationValidator {
         RequestInfo requestInfo = advocateRequest.getRequestInfo();
          if(requestInfo.getUserInfo() == null)
             throw new CustomException(VALIDATION_EXCEPTION,"User info not found!!!");
-        advocateRequest.getAdvocates().forEach(advocate -> {
-            if(ObjectUtils.isEmpty(advocate.getTenantId()) || ObjectUtils.isEmpty(advocate.getIndividualId())){
-                throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and individualId are mandatory for creating advocate");
-            }
-            //searching individual exist or not
-            if(!individualService.searchIndividual(requestInfo,advocate.getIndividualId(), new HashMap<>()))
-                throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
-        });
+
+        Advocate advocate =  advocateRequest.getAdvocate();
+        if(ObjectUtils.isEmpty(advocate.getTenantId()) || ObjectUtils.isEmpty(advocate.getIndividualId())){
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and individualId are mandatory for creating advocate");
+        }
+        //searching individual exist or not
+        if(!individualService.searchIndividual(requestInfo,advocate.getIndividualId(), new HashMap<>()))
+            throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
     }
 
     /**

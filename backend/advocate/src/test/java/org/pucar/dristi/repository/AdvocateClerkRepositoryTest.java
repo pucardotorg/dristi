@@ -86,6 +86,21 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
+    public void testGetApplicationsEmpty() {
+        advocateClerkList = new ArrayList<>();
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), any(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", isIndividualLoggedInUser, 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     public void testGetApplicationsByStatus() {
         when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
@@ -108,6 +123,21 @@ public class AdvocateClerkRepositoryTest {
     }
 
     @Test
+    public void testGetApplicationsByStatusWithEmptySuccess() {
+        advocateClerkList = new ArrayList<>();
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     public void testGetApplicationsByAppNumber() {
         when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
@@ -127,6 +157,21 @@ public class AdvocateClerkRepositoryTest {
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
         verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumberWithEmptySuccess() {
+        advocateClerkList = new ArrayList<>();
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
 }

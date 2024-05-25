@@ -86,7 +86,6 @@ public class AdvocateRepository {
             throw e;
         }
         catch (Exception e){
-            e.printStackTrace();
             log.error("Error while fetching advocate application list");
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
         }
