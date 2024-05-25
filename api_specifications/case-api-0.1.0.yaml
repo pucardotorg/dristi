@@ -102,7 +102,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/CaseSearchRequest'
+              $ref: '#/components/schemas/CaseExistsRequest'
         required: true
       responses:
         '200':
@@ -635,6 +635,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CaseCriteria'
+
+    CaseExistsRequest:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseExists'
     
     CaseExistsResponse:
       type: object
