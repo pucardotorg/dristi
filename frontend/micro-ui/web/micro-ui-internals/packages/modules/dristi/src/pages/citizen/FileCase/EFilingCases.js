@@ -283,14 +283,6 @@ function EFilingCases({ path }) {
             <div
               onClick={handleAddForm}
               className="add-new-form"
-              style={{
-                display: "flex",
-                cursor: "pointer",
-                alignItems: "center",
-                justifyContent: "space-around",
-                width: "150px",
-                color: "#007E7E",
-              }}
             >
               <CustomAddIcon />
               <span>{pageConfig.addFormText}</span>
