@@ -16,6 +16,7 @@ const CitizenInfoLabel = (props) => {
         </div>
       )}
       <p style={props?.textStyle}>{props?.text}</p>
+      {props?.children && <p style={{ fontSize: "16px" }}>{props?.children}</p>}
     </div>
   );
 };
