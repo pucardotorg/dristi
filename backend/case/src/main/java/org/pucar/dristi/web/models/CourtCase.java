@@ -89,7 +89,7 @@ public class CourtCase {
 
 	@JsonProperty("benchId")
 
-	@Size(min = 2, max = 64)
+	//@Size(min = 2, max = 64) //FIX IT
 	private String benchId = null;
 
 	@JsonProperty("linkedCases")
