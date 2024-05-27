@@ -58,6 +58,9 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
   }
 
   const checkIfAadharValidationNotSuccessful = (currentValue, input) => {
+    if (!input.checkAadharVerification) {
+      return !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+    }
     let isValidated = true;
     const ifOnlyNumeric = /^\d*$/.test(currentValue);
     if (!ifOnlyNumeric) {

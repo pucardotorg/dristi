@@ -399,7 +399,10 @@ export const newConfig = [
               type: "text",
               name: "buildingName",
               validation: {
+                errMsg: "ADDRESS_BUILDING_NAME_INVALID",
                 isRequired: true,
+                minlength: 2,
+                title: "",
               },
               isMandatory: true,
             },
@@ -483,8 +486,9 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[a-zA-Z0-9/]*$/i,
+                pattern: /^[0-9A-Z/]+$/,
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
+                maxlength: 15,
               },
               isMandatory: true,
               isDependentOn: "selectUserType",
