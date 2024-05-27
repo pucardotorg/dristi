@@ -21,8 +21,6 @@ IndividualSearchRequest _$IndividualSearchRequestFromJson(
 
 /// @nodoc
 mixin _$IndividualSearchRequest {
-  @JsonKey(name: 'RequestInfo')
-  RequestInfoSearch get requestInfo => throw _privateConstructorUsedError;
   @JsonKey(name: 'Individual')
   IndividualSearch get individual => throw _privateConstructorUsedError;
 
@@ -38,11 +36,8 @@ abstract class $IndividualSearchRequestCopyWith<$Res> {
           $Res Function(IndividualSearchRequest) then) =
       _$IndividualSearchRequestCopyWithImpl<$Res, IndividualSearchRequest>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'RequestInfo') RequestInfoSearch requestInfo,
-      @JsonKey(name: 'Individual') IndividualSearch individual});
+  $Res call({@JsonKey(name: 'Individual') IndividualSearch individual});
 
-  $RequestInfoSearchCopyWith<$Res> get requestInfo;
   $IndividualSearchCopyWith<$Res> get individual;
 }
 
@@ -60,27 +55,14 @@ class _$IndividualSearchRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? requestInfo = null,
     Object? individual = null,
   }) {
     return _then(_value.copyWith(
-      requestInfo: null == requestInfo
-          ? _value.requestInfo
-          : requestInfo // ignore: cast_nullable_to_non_nullable
-              as RequestInfoSearch,
       individual: null == individual
           ? _value.individual
           : individual // ignore: cast_nullable_to_non_nullable
               as IndividualSearch,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $RequestInfoSearchCopyWith<$Res> get requestInfo {
-    return $RequestInfoSearchCopyWith<$Res>(_value.requestInfo, (value) {
-      return _then(_value.copyWith(requestInfo: value) as $Val);
-    });
   }
 
   @override
@@ -101,12 +83,8 @@ abstract class _$$IndividualSearchRequestImplCopyWith<$Res>
       __$$IndividualSearchRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'RequestInfo') RequestInfoSearch requestInfo,
-      @JsonKey(name: 'Individual') IndividualSearch individual});
+  $Res call({@JsonKey(name: 'Individual') IndividualSearch individual});
 
-  @override
-  $RequestInfoSearchCopyWith<$Res> get requestInfo;
   @override
   $IndividualSearchCopyWith<$Res> get individual;
 }
@@ -124,14 +102,9 @@ class __$$IndividualSearchRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? requestInfo = null,
     Object? individual = null,
   }) {
     return _then(_$IndividualSearchRequestImpl(
-      requestInfo: null == requestInfo
-          ? _value.requestInfo
-          : requestInfo // ignore: cast_nullable_to_non_nullable
-              as RequestInfoSearch,
       individual: null == individual
           ? _value.individual
           : individual // ignore: cast_nullable_to_non_nullable
@@ -144,22 +117,18 @@ class __$$IndividualSearchRequestImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$IndividualSearchRequestImpl implements _IndividualSearchRequest {
   const _$IndividualSearchRequestImpl(
-      {@JsonKey(name: 'RequestInfo') required this.requestInfo,
-      @JsonKey(name: 'Individual') required this.individual});
+      {@JsonKey(name: 'Individual') required this.individual});
 
   factory _$IndividualSearchRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$IndividualSearchRequestImplFromJson(json);
 
-  @override
-  @JsonKey(name: 'RequestInfo')
-  final RequestInfoSearch requestInfo;
   @override
   @JsonKey(name: 'Individual')
   final IndividualSearch individual;
 
   @override
   String toString() {
-    return 'IndividualSearchRequest(requestInfo: $requestInfo, individual: $individual)';
+    return 'IndividualSearchRequest(individual: $individual)';
   }
 
   @override
@@ -167,15 +136,13 @@ class _$IndividualSearchRequestImpl implements _IndividualSearchRequest {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$IndividualSearchRequestImpl &&
-            (identical(other.requestInfo, requestInfo) ||
-                other.requestInfo == requestInfo) &&
             (identical(other.individual, individual) ||
                 other.individual == individual));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, requestInfo, individual);
+  int get hashCode => Object.hash(runtimeType, individual);
 
   @JsonKey(ignore: true)
   @override
@@ -194,18 +161,13 @@ class _$IndividualSearchRequestImpl implements _IndividualSearchRequest {
 
 abstract class _IndividualSearchRequest implements IndividualSearchRequest {
   const factory _IndividualSearchRequest(
-          {@JsonKey(name: 'RequestInfo')
-          required final RequestInfoSearch requestInfo,
-          @JsonKey(name: 'Individual')
+          {@JsonKey(name: 'Individual')
           required final IndividualSearch individual}) =
       _$IndividualSearchRequestImpl;
 
   factory _IndividualSearchRequest.fromJson(Map<String, dynamic> json) =
       _$IndividualSearchRequestImpl.fromJson;
 
-  @override
-  @JsonKey(name: 'RequestInfo')
-  RequestInfoSearch get requestInfo;
   @override
   @JsonKey(name: 'Individual')
   IndividualSearch get individual;

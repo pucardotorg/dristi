@@ -9,8 +9,6 @@ part of 'individual_search_model.dart';
 _$IndividualSearchRequestImpl _$$IndividualSearchRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$IndividualSearchRequestImpl(
-      requestInfo: RequestInfoSearch.fromJson(
-          json['RequestInfo'] as Map<String, dynamic>),
       individual:
           IndividualSearch.fromJson(json['Individual'] as Map<String, dynamic>),
     );
@@ -18,7 +16,6 @@ _$IndividualSearchRequestImpl _$$IndividualSearchRequestImplFromJson(
 Map<String, dynamic> _$$IndividualSearchRequestImplToJson(
         _$IndividualSearchRequestImpl instance) =>
     <String, dynamic>{
-      'RequestInfo': instance.requestInfo,
       'Individual': instance.individual,
     };
 

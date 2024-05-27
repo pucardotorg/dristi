@@ -91,7 +91,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       secureStore.setRefreshToken(_refreshtoken);
 
       IndividualSearchRequest individualSearchRequest = IndividualSearchRequest(
-          requestInfo: RequestInfoSearch(authToken: response.accessToken!),
           individual: IndividualSearch(userUuid: [response.userRequest?.uuid ?? ""]));
 
       final responseSearchIndividual = await authRepository.searchIndividual('/individual/v1/_search?limit=${appConstants.limit}&offset=${appConstants.offset}&tenantId=${appConstants.tenantId}', individualSearchRequest);

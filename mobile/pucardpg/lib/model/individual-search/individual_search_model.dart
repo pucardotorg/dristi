@@ -8,7 +8,6 @@ part 'individual_search_model.g.dart';
 @freezed
 class IndividualSearchRequest with _$IndividualSearchRequest {
   const factory IndividualSearchRequest({
-    @JsonKey(name: 'RequestInfo') required RequestInfoSearch requestInfo,
     @JsonKey(name: 'Individual') required IndividualSearch individual,
   }) = _IndividualSearchRequest;
 
