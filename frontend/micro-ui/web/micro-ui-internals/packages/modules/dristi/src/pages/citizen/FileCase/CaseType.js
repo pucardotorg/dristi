@@ -6,6 +6,8 @@ import Modal from "../../../components/Modal";
 import Button from "../../../components/Button";
 import { ReactComponent as FileDownload } from "../../../icons/file_download.svg";
 import { DRISTIService } from "../../../services";
+import { Loader } from "@egovernments/digit-ui-components";
+import { userTypeOptions } from "../registration/config";
 
 const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -36,13 +38,57 @@ function CaseType({ t }) {
     );
   };
   const Submitbar = () => {
+    const token = window.localStorage.getItem("token");
+    const isUserLoggedIn = Boolean(token);
+    const moduleCode = "DRISTI";
+    const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+    const { data: individualData, isLoading, refetch, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+      {
+        Individual: {
+          userUuid: [userInfo?.uuid],
+        },
+      },
+      { tenantId, limit: 1000, offset: 0 },
+      moduleCode,
+      "",
+      userInfo?.uuid && isUserLoggedIn
+    );
+    const individualId = individualData?.Individual?.[0]?.individualId;
+
+    const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+      individualData?.Individual,
+    ]);
+
+    const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
+      {
+        criteria: [{ individualId }],
+        tenantId,
+      },
+      {},
+      individualId,
+      userType,
+      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    );
+
+    const userTypeDetail = useMemo(() => {
+      return userTypeOptions.find((item) => item.code === userType) || {};
+    }, [userType]);
+
+    const searchResult = useMemo(() => {
+      return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
+    const advocateId = useMemo(() => {
+      return searchResult?.[0]?.id;
+    }, [searchResult]);
+
+    if (isLoading || isFetching || isSearchLoading) {
+      return <Loader />;
+    }
+
     return (
       <div className="submit-bar-div">
-        <Button
-          icon={<FileDownload />}
-          className="download-button"
-          label={t("CS_COMMON_DOWNLOAD")}
-        />
+        <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
         <div className="right-div">
           <Button
             className="cancel-button"
@@ -73,8 +119,13 @@ function CaseType({ t }) {
                       subsections: ["138", "03."],
                     },
                   ],
-                  litigants: [],
-                  representatives: [],
+                  litigants: [{}],
+                  representatives: [
+                    {
+                      id: advocateId,
+                      tenantId,
+                    },
+                  ],
                   documents: [
                     {
                       documentType: null,

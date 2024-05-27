@@ -4,7 +4,7 @@ export const userTypeOptions = [
     name: "LITIGANT",
     showBarDetails: false,
     isVerified: false,
-    role: ["ADVOCATE_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
+    role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
   },
   {
     code: "ADVOCATE",

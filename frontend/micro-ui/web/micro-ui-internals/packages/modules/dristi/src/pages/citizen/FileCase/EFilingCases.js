@@ -107,6 +107,7 @@ function EFilingCases({ path }) {
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+      console.log("formdata[e-file]", formData);
       setFormdata(
         formdata.map((item, i) => {
           return i === index ? { ...item, data: formData } : item;

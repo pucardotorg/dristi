@@ -128,7 +128,7 @@ const complainantDetailsFormConfig = [
       {
         type: "component",
         component: "VerifyPhoneNumber",
-        key: "complainantId",
+        key: "complainantVerification",
         withoutLabel: true,
         label: "PHONE_NUMBER",
         name: "mobileNumber",
