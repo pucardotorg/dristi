@@ -15,9 +15,6 @@ import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXC
 @Slf4j
 public class ApplicationQueryBuilder {
 
-    //TODO WRITE APPLICATION GET QUERY
-
-//    private static final String BASE_APP_QUERY = "SELECT * ";
     private static final String BASE_APP_QUERY = //FIXME
             " SELECT app.id as id, app.tenantid as tenantid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                     " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
@@ -39,10 +36,7 @@ public class ApplicationQueryBuilder {
 
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_application_statute_section stse";
 
-//    private static final String DOCUMENT_SELECT_QUERY = //FIXME
-//            "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.application_id as applicationid ";
     private static final String FROM_APP_TABLE = " FROM dristi_application app"; //FIXME
-//    private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc"; //FIXME
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY app.createdtime DESC "; //FIXME
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY app.createdtime ASC "; //FIXME
 
@@ -136,24 +130,4 @@ public class ApplicationQueryBuilder {
     }
 }
 
-//    public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
-//        try {
-//            StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_APP);
-//            query.append(FROM_DOCUMENTS_TABLE);
-//            if (!ids.isEmpty()) {
-//                query.append(" WHERE doc.advocateid IN (")
-//                        .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-//                        .append(")");
-//                preparedStmtList.addAll(ids);
-//            }
-//
-//            return query.toString();
-//        } catch (Exception e) {
-//            log.error("Error while building document search query");
-//            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
-//        }
-//    }
-
-
-//}
 
