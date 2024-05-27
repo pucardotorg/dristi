@@ -49,7 +49,7 @@ public class WorkflowServiceTest {
         courtCase.setTenantId("tenant1");
 
         CaseRequest caseRequest = new CaseRequest();
-        caseRequest.setCases(Collections.singletonList(courtCase));
+        caseRequest.setCases(courtCase);
         courtCase.setWorkflow(Workflow.builder().action("APPROVE").build());
 
         when(config.getWfHost()).thenReturn("http://localhost:8080");
@@ -76,7 +76,7 @@ public class WorkflowServiceTest {
 
         CaseRequest updateRequest = new CaseRequest();
         updateRequest.setRequestInfo(new RequestInfo());
-        updateRequest.setCases(Collections.singletonList(courtCase));
+        updateRequest.setCases(courtCase);
 
         // Execute the method
         ProcessInstanceRequest processInstanceRequest = workflowService.getProcessInstanceRegistrationPayment(updateRequest);

@@ -3,6 +3,7 @@ package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.CaseExists;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -58,12 +59,59 @@ public class CaseQueryBuilder {
             " rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_REPRESENTING_TABLE = " FROM dristi_case_representing rpst";
 
+    private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_cases cases WHERE ";
+
+    public String checkCaseExistQuery(String courtCaseNumber, String cnrNumber, String filingNumber) {
+        try {
+            StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
+
+            if (courtCaseNumber != null && cnrNumber != null && filingNumber == null) {
+                // courtCaseNumber and cnrNumber are not null, filingNumber is null
+                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(" AND ");
+                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
+
+            } else if (courtCaseNumber != null && cnrNumber == null && filingNumber != null) {
+                // courtCaseNumber and filingNumber are not null, cnrNumber is null
+                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(" AND ");
+                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+
+            } else if (courtCaseNumber == null && cnrNumber != null && filingNumber != null) {
+                // cnrNumber and filingNumber are not null, courtCaseNumber is null
+                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
+                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+
+            } else if (courtCaseNumber != null && cnrNumber == null) {
+                // Only courtCaseNumber is not null, cnrNumber and filingNumber are null
+                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(";");
+
+            } else if (courtCaseNumber == null && cnrNumber != null) {
+                // Only cnrNumber is not null, courtCaseNumber and filingNumber are null
+                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
+
+            } else if (courtCaseNumber == null && filingNumber != null) {
+                // Only filingNumber is not null, courtCaseNumber and cnrNumber are null
+                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+
+            } else if (courtCaseNumber != null) {
+                // All fields are not null
+                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(" AND ");
+                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
+                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+            }
+
+            return query.toString();
+        } catch (Exception e) {
+            log.error("Error while building case exist query");
+            throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the case exist query : " + e.getMessage());
+        }
+    }
+
     public String getCasesSearchQuery(List<CaseCriteria> criteriaList, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_CASES_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
-            if(criteriaList != null && !criteriaList.isEmpty()) {
+            if (criteriaList != null && !criteriaList.isEmpty()) {
 
                 List<String> ids = criteriaList.stream()
                         .map(CaseCriteria::getCaseId)
@@ -126,23 +174,23 @@ public class CaseQueryBuilder {
                     firstCriteria = false;
                 }
 
-                for(CaseCriteria caseCriteria:criteriaList){
-                    if(caseCriteria.getFilingFromDate() != null && caseCriteria.getFilingToDate()!=null){
-                        if(firstCriteria==false)
-                          query.append("OR cases.filingdate BETWEEN "+caseCriteria.getFilingFromDate()+" AND "+caseCriteria.getFilingToDate()+" ");
-                        else{
-                            query.append("WHERE cases.filingdate BETWEEN "+caseCriteria.getFilingFromDate()+" AND "+caseCriteria.getFilingToDate()+" ");
+                for (CaseCriteria caseCriteria : criteriaList) {
+                    if (caseCriteria.getFilingFromDate() != null && caseCriteria.getFilingToDate() != null) {
+                        if (firstCriteria == false)
+                            query.append("OR cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
+                        else {
+                            query.append("WHERE cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
                         }
-                        firstCriteria =false;
+                        firstCriteria = false;
                     }
 
-                    if(caseCriteria.getRegistrationFromDate() != null && caseCriteria.getRegistrationToDate()!=null){
-                        if(firstCriteria==false)
-                            query.append("OR cases.registrationdate BETWEEN "+caseCriteria.getRegistrationFromDate()+" AND "+caseCriteria.getRegistrationToDate()+" ");
-                        else{
-                            query.append("WHERE cases.registrationdate BETWEEN "+caseCriteria.getRegistrationFromDate()+" AND "+caseCriteria.getRegistrationToDate()+" ");
+                    if (caseCriteria.getRegistrationFromDate() != null && caseCriteria.getRegistrationToDate() != null) {
+                        if (firstCriteria == false)
+                            query.append("OR cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
+                        else {
+                            query.append("WHERE cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
                         }
-                        firstCriteria =false;
+                        firstCriteria = false;
                     }
                 }
 
@@ -150,10 +198,9 @@ public class CaseQueryBuilder {
             query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
-        }
-         catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error while building case search query");
-            throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION,"Error occurred while building the case search query: "+ e.getMessage());
+            throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the case search query: " + e.getMessage());
         }
     }
 
@@ -179,7 +226,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -197,7 +244,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building linked case search query");
-            throw new CustomException(LINKED_CASE_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(LINKED_CASE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -215,7 +262,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building litigant search query");
-            throw new CustomException(LITIGANT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(LITIGANT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -233,7 +280,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building statute section search query");
-            throw new CustomException(STATUTE_SECTION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(STATUTE_SECTION_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -251,7 +298,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building representatives search query");
-            throw new CustomException(REPRESENTATIVES_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(REPRESENTATIVES_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -269,7 +316,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building representing search query");
-            throw new CustomException(REPRESENTING_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(REPRESENTING_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -287,7 +334,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -305,7 +352,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -323,7 +370,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -341,7 +388,7 @@ public class CaseQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 }

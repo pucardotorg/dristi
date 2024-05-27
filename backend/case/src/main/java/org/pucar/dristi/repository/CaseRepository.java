@@ -30,6 +30,7 @@ public class CaseRepository {
 
     @Autowired
     private CaseRowMapper rowMapper;
+
     @Autowired
     private DocumentRowMapper caseDocumentRowMapper;
 
@@ -87,7 +88,7 @@ public class CaseRepository {
             }
 
             for (CourtCase courtCase : courtCaseList) {
-                if(courtCase.getLinkedCases()!=null){
+                if (courtCase.getLinkedCases() != null) {
                     courtCase.getLinkedCases().forEach(linkedCase -> {
                         idsLinkedCases.add(linkedCase.getId().toString());
                     });
@@ -95,7 +96,7 @@ public class CaseRepository {
             }
 
             for (CourtCase courtCase : courtCaseList) {
-                if(courtCase.getLitigants()!=null){
+                if (courtCase.getLitigants() != null) {
                     courtCase.getLitigants().forEach(litigant -> {
                         idsLitigant.add(litigant.getId().toString());
                     });
@@ -103,7 +104,7 @@ public class CaseRepository {
             }
 
             for (CourtCase courtCase : courtCaseList) {
-                if(courtCase.getRepresentatives()!=null){
+                if (courtCase.getRepresentatives() != null) {
                     courtCase.getRepresentatives().forEach(rep -> {
                         idsRepresentive.add(rep.getId().toString());
                     });
@@ -111,9 +112,9 @@ public class CaseRepository {
             }
 
             for (CourtCase courtCase : courtCaseList) {
-                if(courtCase.getRepresentatives()!=null){
+                if (courtCase.getRepresentatives() != null) {
                     courtCase.getRepresentatives().forEach(rep -> {
-                        if(rep.getRepresenting()!=null){
+                        if (rep.getRepresenting() != null) {
                             rep.getRepresenting().forEach(representing -> {
                                 idsRepresenting.add(representing.getId().toString());
                             });
@@ -209,7 +210,7 @@ public class CaseRepository {
             Map<UUID, List<Document>> caseLinkedCaseDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), linkedCaseDocumentRowMapper);
             if (caseLinkedCaseDocumentMap != null) {
                 courtCaseList.forEach(courtCase -> {
-                    if(courtCase.getLinkedCases()!=null){
+                    if (courtCase.getLinkedCases() != null) {
                         courtCase.getLinkedCases().forEach(linkedCase -> {
                             linkedCase.setDocuments(caseLinkedCaseDocumentMap.get(linkedCase.getId()));
                         });
@@ -224,7 +225,7 @@ public class CaseRepository {
             Map<UUID, List<Document>> caseRepresentiveDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), representativeDocumentRowMapper);
             if (caseRepresentiveDocumentMap != null) {
                 courtCaseList.forEach(courtCase -> {
-                    if(courtCase.getRepresentatives()!=null){
+                    if (courtCase.getRepresentatives() != null) {
                         courtCase.getRepresentatives().forEach(rep -> {
                             rep.setDocuments(caseRepresentiveDocumentMap.get(rep.getId()));
                         });
@@ -239,9 +240,9 @@ public class CaseRepository {
             Map<UUID, List<Document>> caseRepresentingDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), representingDocumentRowMapper);
             if (caseRepresentingDocumentMap != null) {
                 courtCaseList.forEach(courtCase -> {
-                    if(courtCase.getRepresentatives()!=null){
+                    if (courtCase.getRepresentatives() != null) {
                         courtCase.getRepresentatives().forEach(rep -> {
-                            if(rep.getRepresenting()!=null){
+                            if (rep.getRepresenting() != null) {
                                 rep.getRepresenting().forEach(representing -> {
                                     representing.setDocuments(caseRepresentingDocumentMap.get(representing.getId()));
                                 });
@@ -252,14 +253,32 @@ public class CaseRepository {
             }
 
             return courtCaseList;
-        }
-        catch (CustomException e){
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             log.error("Error while fetching case application list");
-            throw new CustomException(SEARCH_CASE_ERR,"Error while fetching case application list: "+e.getMessage());
+            throw new CustomException(SEARCH_CASE_ERR, "Error while fetching case application list: " + e.getMessage());
         }
     }
 
+    public List<CaseExists> checkCaseExists(List<CaseExists> caseExistsRequest) {
+        try {
+            for (CaseExists caseExists : caseExistsRequest) {
+                if (caseExists.getCourtCaseNumber() == null && caseExists.getCnrNumber() == null && caseExists.getFilingNumber() == null) {
+                    caseExists.setExists(false);
+                } else {
+                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
+                    log.info("Final case exist query: {}", casesExistQuery);
+                    Integer count = jdbcTemplate.queryForObject(casesExistQuery, Integer.class);
+                    caseExists.setExists(count != null && count > 1);
+                }
+            }
+            return caseExistsRequest;
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while checking case exist");
+            throw new CustomException(SEARCH_CASE_ERR, "Custom exception while checking case exist : " + e.getMessage());
+        }
+    }
 }

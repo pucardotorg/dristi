@@ -84,7 +84,7 @@ public class CaseRegistrationValidatorTest {
         courtCase.setStatutesAndSections(List.of(new StatuteSection()));
         courtCase.setFilingDate(LocalDate.parse("2021-12-12"));
 
-        request.setCases(new ArrayList<>(Collections.singletonList(courtCase)));
+        request.setCases(courtCase);
 
         Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
         mdmsRes.put("case", new HashMap<>());
@@ -112,7 +112,7 @@ public class CaseRegistrationValidatorTest {
         CaseRequest request = new CaseRequest();
         request.setRequestInfo(new RequestInfo());
         CourtCase courtCase = new CourtCase();
-        request.setCases(new ArrayList<>(Collections.singletonList(courtCase)));
+        request.setCases(courtCase);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
     }

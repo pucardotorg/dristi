@@ -35,6 +35,7 @@ import java.util.List;
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IndividualSearch   {
+
     @JsonProperty("id")
     private List<String> id = null;
 

@@ -23,44 +23,36 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Witness {
-    @JsonProperty("id")
 
+    @JsonProperty("id")
     @Valid
     private UUID id = null;
 
     @JsonProperty("caseId")
     @NotNull
-
     private String caseId = null;
 
     @JsonProperty("filingNumber")
-
     private String filingNumber = null;
 
     @JsonProperty("cnrNumber")
-
     private String cnrNumber = null;
 
     @JsonProperty("witnessIdentifier")
-
     private String witnessIdentifier = null;
 
     @JsonProperty("individualId")
     @NotNull
-
     private String individualId = null;
 
     @JsonProperty("remarks")
-
     @Size(min = 10, max = 5000)
     private String remarks = null;
 
     @JsonProperty("isActive")
-
     private Boolean isActive = true;
 
     @JsonProperty("auditDetails")
-
     @Valid
     private AuditDetails auditDetails = null;
 

@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IndividualUtil;
 import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CourtCase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class IndividualServiceTest {
     void testSearchIndividual() {
         // Create test data
         CaseRequest caseRequest = new CaseRequest();
-        caseRequest.setCases(new ArrayList<>());
+        caseRequest.setCases(new CourtCase());
         caseRequest.setRequestInfo(RequestInfo.builder().userInfo(User.builder().tenantId("pg").build()).build()); // Mock or provide necessary data
         Map<String, String> individualUserUUID = new HashMap<>();
 

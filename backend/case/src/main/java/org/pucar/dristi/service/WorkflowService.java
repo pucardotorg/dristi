@@ -38,22 +38,19 @@ public class WorkflowService {
 
 
     public void updateWorkflowStatus(CaseRequest caseRequest) {
-        caseRequest.getCases().forEach(courtCase -> {
             try {
-                ProcessInstance processInstance = getProcessInstance(courtCase, caseRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstance(caseRequest.getCases(), caseRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 log.info("Application Status :: {}", applicationStatus);
-                courtCase.setStatus(applicationStatus);
+                caseRequest.getCases().setStatus(applicationStatus);
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
-                e.printStackTrace();
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
             }
-        });
     }
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
         try {
@@ -147,7 +144,7 @@ public class WorkflowService {
     }
     public ProcessInstanceRequest getProcessInstanceRegistrationPayment(CaseRequest updateRequest) {
         try {
-            CourtCase application = updateRequest.getCases().get(0);
+            CourtCase application = updateRequest.getCases();
             ProcessInstance process = ProcessInstance.builder()
                     .businessService("ADV")
                     .businessId(application.getFilingNumber())

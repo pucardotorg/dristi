@@ -47,7 +47,7 @@ public class WitnessRegistrationValidatorTest {
         Witness witnessWithNullCaseId = new Witness();
         Witness witnessWithValidCaseId = new Witness();
         witnessWithValidCaseId.setCaseId("validCaseId");
-        request.setWitnesses(List.of(witnessWithNullCaseId, witnessWithValidCaseId));
+        request.setWitness(witnessWithNullCaseId);
 
         // Ensure validation fails for the witness with null caseId
         Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),

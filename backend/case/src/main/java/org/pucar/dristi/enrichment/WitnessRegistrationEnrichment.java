@@ -27,25 +27,22 @@ public class WitnessRegistrationEnrichment {
 
     public void enrichWitnessRegistration(WitnessRequest witnessRequest) {
         try {
-            if(witnessRequest.getRequestInfo().getUserInfo() != null) {
-                for (Witness witness : witnessRequest.getWitnesses()) {
-                    AuditDetails auditDetails = AuditDetails.builder().createdBy(witnessRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(witnessRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-                    witness.setAuditDetails(auditDetails);
+            if (witnessRequest.getRequestInfo().getUserInfo() != null) {
+                Witness witness = witnessRequest.getWitness();
+                AuditDetails auditDetails = AuditDetails.builder().createdBy(witnessRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(witnessRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+                witness.setAuditDetails(auditDetails);
 
-                    witness.setId(UUID.randomUUID());
+                witness.setId(UUID.randomUUID());
 
-                    witness.setIsActive(false);
+                witness.setIsActive(false);
 
-                    witness.setFilingNumber(UUID.randomUUID().toString());
-                    witness.setCnrNumber(witness.getFilingNumber());
-                }
+                witness.setFilingNumber(UUID.randomUUID().toString());
+                witness.setCnrNumber(witness.getFilingNumber());
             }
-        }
-        catch (CustomException e){
+        } catch (CustomException e) {
             log.error("Exception occurred while Enriching witness");
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error enriching witness application: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
         }
@@ -54,14 +51,12 @@ public class WitnessRegistrationEnrichment {
     public void enrichWitnessApplicationUponUpdate(WitnessRequest witnessRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in witness of update
-            for (Witness witness : witnessRequest.getWitnesses()) {
-                witness.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                witness.getAuditDetails().setLastModifiedBy(witnessRequest.getRequestInfo().getUserInfo().getUuid());
-            }
+            Witness witness = witnessRequest.getWitness();
+            witness.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            witness.getAuditDetails().setLastModifiedBy(witnessRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
             log.error("Error enriching witness application upon update: {}", e.getMessage());
-            // Handle the exception or throw a custom exception
-            throw new CustomException(ENRICHMENT_EXCEPTION,"Error in witness enrichment service during witness update process: "+ e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in witness enrichment service during witness update process: " + e.getMessage());
         }
     }
 }

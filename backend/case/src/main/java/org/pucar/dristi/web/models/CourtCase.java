@@ -34,29 +34,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CourtCase {
-	@JsonProperty("id")
 
+	@JsonProperty("id")
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("resolutionMechanism")
-
 	@Size(min = 2, max = 128)
 	private String resolutionMechanism = null;
 
 	@JsonProperty("caseTitle")
-
 	@Size(min = 2, max = 512)
 	private String caseTitle = null;
 
 	@JsonProperty("caseDescription")
-
 	@Size(min = 2, max = 10000)
 	private String caseDescription = null;
 
@@ -74,21 +70,17 @@ public class CourtCase {
 	private String caseNumber = null;
 
 	@JsonProperty("cnrNumber")
-
 	@Size(min = 2, max = 32)
 	private String cnrNumber = null;
 
 	@JsonProperty("accessCode")
-
 	private String accessCode = null;
 
 	@JsonProperty("courtId")
-
 	@Size(min = 2, max = 64)
 	private String courtId = null;
 
 	@JsonProperty("benchId")
-
 	@Size(min = 2, max = 64)
 	private String benchId = null;
 
@@ -98,27 +90,23 @@ public class CourtCase {
 
 	@JsonProperty("filingDate")
 	@NotNull
-
 	@Valid
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private LocalDate filingDate = null;
 
 	@JsonProperty("registrationDate")
-
+	@JsonFormat(pattern = "dd-MM-yyyy")
 	private LocalDate registrationDate = null;
 
 	@JsonProperty("caseDetails")
-
 	private Object caseDetails = null;
 
 	@JsonProperty("caseCategory")
 	@NotNull
-
 	@Size(min = 2, max = 64)
 	private String caseCategory = null;
 
 	@JsonProperty("natureOfPleading")
-
 	@Size(min = 2, max = 64)
 	private String natureOfPleading = null;
 
@@ -138,7 +126,6 @@ public class CourtCase {
 	private List<AdvocateMapping> representatives = new ArrayList<>();
 
 	@JsonProperty("status")
-
 	private String status = null;
 
 	@JsonProperty("documents")
@@ -146,20 +133,16 @@ public class CourtCase {
 	private List<Document> documents = new ArrayList<>();
 
 	@JsonProperty("remarks")
-
 	private String remarks = null;
 
 	@JsonProperty("workflow")
-
 	@Valid
 	private Workflow workflow = null;
 
 	@JsonProperty("additionalDetails")
-
 	private Object additionalDetails = null;
 
-	@JsonProperty("auditdetails")
-
+	@JsonProperty("auditDetails")
 	@Valid
 	private AuditDetails auditdetails = null;
 

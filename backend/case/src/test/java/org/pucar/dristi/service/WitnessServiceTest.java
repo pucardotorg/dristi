@@ -46,16 +46,15 @@ public class WitnessServiceTest {
     @Test
     public void testRegisterWitnessRequest() {
         WitnessRequest request = new WitnessRequest();
-        List<Witness> witnesses = new ArrayList<>();
-        request.setWitnesses(witnesses);
+        request.setWitness(new Witness());
 
         doNothing().when(validator).validateCaseRegistration(request);
         doNothing().when(enrichmentUtil).enrichWitnessRegistration(request);
         doNothing().when(producer).push(any(String.class), any(WitnessRequest.class));
 
-        List<Witness> result = witnessService.registerWitnessRequest(request);
+        Witness result = witnessService.registerWitnessRequest(request);
 
-        Assert.isTrue(result == witnesses, "Returned witnesses should be same as input");
+        Assert.isTrue(result == request.getWitness(), "Returned witnesses should be same as input");
         verify(validator, times(1)).validateCaseRegistration(request);
         verify(enrichmentUtil, times(1)).enrichWitnessRegistration(request);
         verify(producer, times(1)).push(any(), any(WitnessRequest.class));
@@ -77,17 +76,16 @@ public class WitnessServiceTest {
     @Test
     public void testUpdateWitness() {
         WitnessRequest request = new WitnessRequest();
-        List<Witness> witnesses = new ArrayList<>();
-        request.setWitnesses(witnesses);
+        request.setRequestInfo(new RequestInfo());
+        request.setWitness(new Witness());
 
         doReturn(null).when(validator).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
         doNothing().when(enrichmentUtil).enrichWitnessApplicationUponUpdate(request);
         doNothing().when(producer).push(any(String.class), any(WitnessRequest.class));
 
-        List<Witness> result = witnessService.updateWitness(request);
+        witnessService.updateWitness(request);
 
-        Assert.isTrue(result.isEmpty(), "Returned witnesses should be empty");
-        verify(validator, times(witnesses.size())).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
+        verify(validator, times(1)).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
         verify(enrichmentUtil, times(1)).enrichWitnessApplicationUponUpdate(request);
     }
 

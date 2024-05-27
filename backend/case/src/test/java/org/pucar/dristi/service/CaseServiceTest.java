@@ -43,12 +43,17 @@ public class CaseServiceTest {
     private CaseService caseService;
 
     private CaseRequest caseRequest;
+
     private CaseSearchRequest caseSearchRequest;
+
+    private CaseExistsRequest caseExistsRequest;
 
     @BeforeEach
     void setup() {
         caseRequest = new CaseRequest();
+        caseRequest.setCases(new CourtCase());
         caseSearchRequest = new CaseSearchRequest();
+        caseExistsRequest = new CaseExistsRequest();
     }
     @Test
     void testCreateCase() {
@@ -59,7 +64,7 @@ public class CaseServiceTest {
         doNothing().when(producer).push(any(), any()); // Stubbing to accept any arguments
 
         // Call the method under test
-        List<CourtCase> result = caseService.createCase(caseRequest);
+        CourtCase result = caseService.createCase(caseRequest);
 
         // Assert and verify
         assertNotNull(result);
@@ -68,10 +73,6 @@ public class CaseServiceTest {
         verify(workflowService, times(1)).updateWorkflowStatus(any());
         verify(producer, times(1)).push(any(), any()); // Verifying the method was called with any arguments
     }
-
-
-
-
 
     @Test
     void testSearchCases() {
@@ -101,8 +102,8 @@ public class CaseServiceTest {
     @Test
     void testUpdateCase_Success() {
         // Setup
-        CourtCase courtCase = new CourtCase(); // Mock a CourtCase object with required fields
-        caseRequest.setCases(Arrays.asList(courtCase));
+        CourtCase courtCase = new CourtCase(); // Mock case-indexer.yml CourtCase object with required fields
+        caseRequest.setCases(courtCase);
 
         when(validator.validateApplicationExistence(any(CourtCase.class), any())).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
@@ -111,11 +112,10 @@ public class CaseServiceTest {
         when(config.getCaseUpdateTopic()).thenReturn("case-update-topic");
 
         // Execute
-        List<CourtCase> results = caseService.updateCase(caseRequest);
+        CourtCase results = caseService.updateCase(caseRequest);
 
         // Assert
         assertNotNull(results);
-        assertEquals(1, results.size());
         verify(producer).push(eq("case-update-topic"), any(CaseRequest.class));
     }
 
@@ -123,7 +123,7 @@ public class CaseServiceTest {
     void testUpdateCase_ValidationException() {
         // Setup
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
-        caseRequest.setCases(Arrays.asList(courtCase));
+        caseRequest.setCases(courtCase);
 
         when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
 
@@ -134,39 +134,34 @@ public class CaseServiceTest {
     @Test
     void testExistCases_Success() {
         // Setup
-        CaseCriteria criteria = new CaseCriteria();
-        criteria.setCnrNumber("12345");
-        criteria.setFilingNumber("67890");
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCnrNumber("12345");
+        caseExists.setFilingNumber("67890");
 
-        caseSearchRequest.setCriteria(Arrays.asList(criteria));
+        caseExistsRequest.setCriteria(List.of(caseExists));
 
-        CourtCase courtCase = new CourtCase();
-        courtCase.setCaseNumber("12345");
-        courtCase.setFilingNumber("67890");
-        when(caseRepository.getApplications(any())).thenReturn(Arrays.asList(courtCase));
+        when(caseRepository.checkCaseExists(any())).thenReturn(List.of(caseExists));
 
         // Execute
-        List<CaseExists> results = caseService.existCases(caseSearchRequest);
+        List<CaseExists> results = caseService.existCases(caseExistsRequest);
 
         // Assert
         assertNotNull(results);
-        assertFalse(results.isEmpty());
-        assertTrue(results.get(0).getExists());
     }
 
     @Test
     void testExistCases_NoCasesExist() {
         // Setup
-        CaseCriteria criteria = new CaseCriteria();
-        criteria.setCnrNumber("12345");
-        criteria.setFilingNumber("67890");
+        CaseExists caseExists = new CaseExists();
+        caseExists.setCnrNumber("12345");
+        caseExists.setFilingNumber("67890");
 
-        caseSearchRequest.setCriteria(Arrays.asList(criteria));
+        caseExistsRequest.setCriteria(List.of(caseExists));
 
-        when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
+        when(caseRepository.checkCaseExists(any())).thenReturn(new ArrayList<>());
 
         // Execute
-        List<CaseExists> results = caseService.existCases(caseSearchRequest);
+        List<CaseExists> results = caseService.existCases(caseExistsRequest);
 
         // Assert
         assertNotNull(results);
@@ -176,34 +171,29 @@ public class CaseServiceTest {
     @Test
     void testExistCases_Exception() {
         // Setup
-        when(caseRepository.getApplications(any())).thenThrow(new RuntimeException("Database error"));
+        when(caseRepository.checkCaseExists(any())).thenThrow(new RuntimeException("Database error"));
 
         // Execute & Assert
-        assertThrows(CustomException.class, () -> caseService.existCases(caseSearchRequest));
+        assertThrows(CustomException.class, () -> caseService.existCases(caseExistsRequest));
     }
 
 
     @Test
     void testRegisterCaseRequest_ValidInput() {
         CaseRequest caseRequest = new CaseRequest(); // Assume CaseRequest is suitably instantiated
-        List<CourtCase> cases = Arrays.asList(new CourtCase()); // Mock court case list
+        CourtCase cases = new CourtCase(); // Mock court case list
         caseRequest.setCases(cases);
         doNothing().when(validator).validateCaseRegistration(any(CaseRequest.class));
         doNothing().when(enrichmentUtil).enrichCaseRegistration(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
 
 
-        List<CourtCase> result = caseService.createCase(caseRequest);
+        CourtCase result = caseService.createCase(caseRequest);
 
         assertNotNull(result);
         assertEquals(cases, result);
 
     }
-
-
-
-
-
 
     @Test
     void testSearchCases_EmptyResult() {

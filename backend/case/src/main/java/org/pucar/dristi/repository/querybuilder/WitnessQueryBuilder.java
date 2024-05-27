@@ -93,12 +93,4 @@ public class WitnessQueryBuilder {
             query.append(" OR ");
         }
     }
-
-//    private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
-//        if (isFirstCriteria) {
-//            query.append(" WHERE ");
-//        } else {
-//            query.append(" AND ");
-//        }
-//    }
 }

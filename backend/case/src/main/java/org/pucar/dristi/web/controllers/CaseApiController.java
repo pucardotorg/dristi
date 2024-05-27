@@ -1,6 +1,6 @@
 package org.pucar.dristi.web.controllers;
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import org.egov.common.contract.response.ResponseInfo;
@@ -52,15 +52,15 @@ public class CaseApiController {
     @RequestMapping(value = "/case/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
 
-        List<CourtCase> caseList = caseService.createCase(body);
+        CourtCase cases = caseService.createCase(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        CaseResponse advocateClerkResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(advocateClerkResponse, HttpStatus.OK);
+        CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(cases)).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(caseResponse, HttpStatus.OK);
         }
 
     @RequestMapping(value = "/case/v1/_exists", method = RequestMethod.POST)
     public ResponseEntity<CaseExistsResponse> caseV1ExistsPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
+            @Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseExistsRequest body){
 
         List<CaseExists> caseExists = caseService.existCases(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
@@ -82,9 +82,9 @@ public class CaseApiController {
     public ResponseEntity<CaseResponse> caseV1UpdatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body){
 
-        List<CourtCase> caseList = caseService.updateCase(body);
+        CourtCase cases = caseService.updateCase(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        CaseResponse caseResponse = CaseResponse.builder().cases(caseList).responseInfo(responseInfo).build();
+        CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(cases)).responseInfo(responseInfo).build();
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
     }
 
@@ -92,9 +92,9 @@ public class CaseApiController {
     public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
 
-        List<Witness> witnessesList = witnessService.registerWitnessRequest(body);
+        Witness witness = witnessService.registerWitnessRequest(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessesList).requestInfo(responseInfo).build();
+        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(Collections.singletonList(witness)).requestInfo(responseInfo).build();
         return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
     }
 
@@ -112,9 +112,9 @@ public class CaseApiController {
     public ResponseEntity<WitnessResponse> caseWitnessV1UpdatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
 
-        List<Witness> witnessList = witnessService.updateWitness(body);
+        Witness witness= witnessService.updateWitness(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessList).requestInfo(responseInfo).build();
+        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(Collections.singletonList(witness)).requestInfo(responseInfo).build();
         return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
     }
 
