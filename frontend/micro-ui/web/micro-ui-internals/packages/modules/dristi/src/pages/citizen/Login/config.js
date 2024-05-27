@@ -23,7 +23,6 @@ export const loginSteps = [
   {
     texts: {
       header: "CS_REGISTER_PROVIDE_USER_NAME",
-      cardText: "CS_USER_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
     },

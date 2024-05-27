@@ -394,6 +394,15 @@ export const newConfig = [
               isMandatory: true,
             },
             {
+              label: "BUILDING_NAME",
+              type: "text",
+              name: "buildingName",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
               label: "DOOR_NUMBER",
               type: "text",
               name: "doorNo",
