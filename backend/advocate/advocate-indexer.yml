@@ -1,0 +1,82 @@
+ServiceMaps:
+  serviceName: Advocate services
+  version: 1.0.0
+  mappings:
+    - topic: save-advocate-application
+      configKey: INDEX
+      indexes:
+        - name: advocate-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.advocates
+          customJsonMapping:
+            indexMapping: {"Data":{"advocateDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.advocateDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.advocateDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.advocateDetails.applicationNumber
+              - inJsonPath: $.barRegistrationNumber
+                outJsonPath: $.Data.advocateDetails.barRegistrationNumber
+              - inJsonPath: $.advocateType
+                outJsonPath: $.Data.advocateDetails.advocateType
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.advocateDetails.individualId
+              - inJsonPath: $.organisationID
+                outJsonPath: $.Data.advocateDetails.organisationID
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.advocateDetails.isActive
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.advocateDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.advocateDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.advocateDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.advocateDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.advocateDetails.additionalDetails
+    - topic: update-advocate-application
+      configKey: INDEX
+      indexes:
+        - name: advocate-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.advocates
+          customJsonMapping:
+            indexMapping: {"Data":{"advocateDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.advocateDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.advocateDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.advocateDetails.applicationNumber
+              - inJsonPath: $.barRegistrationNumber
+                outJsonPath: $.Data.advocateDetails.barRegistrationNumber
+              - inJsonPath: $.advocateType
+                outJsonPath: $.Data.advocateDetails.advocateType
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.advocateDetails.individualId
+              - inJsonPath: $.organisationID
+                outJsonPath: $.Data.advocateDetails.organisationID
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.advocateDetails.isActive
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.advocateDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.advocateDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.advocateDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.advocateDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.advocateDetails.additionalDetails              
+                
+ 

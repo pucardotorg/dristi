@@ -31,6 +31,7 @@ function TakeUserToRegistration({ message }) {
           onButtonClick={() => {
             sessionStorage.removeItem("Digit.UploadedDocument");
             sessionStorage.removeItem("Digit.aadharNumber");
+            sessionStorage.removeItem("Digit.isAadharNumberVerified");
             history.push(`/digit-ui/citizen/dristi/home/login/id-verification`);
           }}
           label={t("Register")}

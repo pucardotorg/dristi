@@ -106,6 +106,7 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
             city: data?.addressDetails?.city,
             pincode: data?.addressDetails?.pincode,
             district: data?.addressDetails?.district,
+            buildingName: data?.addressDetails?.buildingName,
           },
         ],
         identifiers: [

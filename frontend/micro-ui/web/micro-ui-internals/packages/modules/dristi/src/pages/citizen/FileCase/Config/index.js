@@ -6,6 +6,7 @@ import { delayApplicationConfig } from "./delayApplicationConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";
 import { respondentconfig } from "./respondentConfig";
 import { reviewcasefileconfig } from "./reviewcasefileconfig";
+import { signatureconfig } from "./signatureconfig";
 import { witnessConfig } from "./witnessConfig";
 
 export const sideMenuConfig = [
@@ -37,10 +38,31 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_CASE_SPECIFIC_DETAILS",
     children: [
-      { label: "CS_CHEQUE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: chequeDetailsConfig },
-      { label: "CS_DEBT_LIABILITY_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: debtliabilityconfig },
-      { label: "CS_DEMAND_NOTICE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: demandNoticeConfig },
-      { label: "CS_DELAY_APPLICATIONS", checked: false, isCompleted: false, isDisabled: false, pageConfig: delayApplicationConfig },
+      { key: "chequeDetails", label: "CS_CHEQUE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: chequeDetailsConfig },
+      {
+        key: "debtLiabilityDetails",
+        label: "CS_DEBT_LIABILITY_DETAILS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: debtliabilityconfig,
+      },
+      {
+        key: "demandNoticeDetails",
+        label: "CS_DEMAND_NOTICE_DETAILS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: demandNoticeConfig,
+      },
+      {
+        key: "delayApplications",
+        label: "CS_DELAY_APPLICATIONS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: delayApplicationConfig,
+      },
     ],
     checked: false,
     isCompleted: 0,
@@ -50,9 +72,16 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_ADDITIONAL_DETAILS",
     children: [
-      { label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: witnessConfig },
-      { label: "CS_PRAYER_SWORN_STATEMENT", checked: false, isCompleted: false, isDisabled: false },
-      { label: "CS_ADVOCATE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: advocateDetailsConfig },
+      { key: "witnessDetails", label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: witnessConfig },
+      { key: "prayerSwornStatement", label: "CS_PRAYER_SWORN_STATEMENT", checked: false, isCompleted: false, isDisabled: false },
+      {
+        key: "advocateDetails",
+        label: "CS_ADVOCATE_DETAILS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: advocateDetailsConfig,
+      },
     ],
   },
   {
@@ -60,8 +89,15 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_REVIEW_SIGN",
     children: [
-      { label: "CS_REVIEW_CASE_FILE", checked: false, isCompleted: false, isDisabled: false, pageConfig: reviewcasefileconfig },
-      { label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false },
+      {
+        key: "reviewCaseFile",
+        label: "CS_REVIEW_CASE_FILE",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: reviewcasefileconfig,
+      },
+      { key: "addSignature", label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false, pageConfig: signatureconfig },
     ],
   },
 ];

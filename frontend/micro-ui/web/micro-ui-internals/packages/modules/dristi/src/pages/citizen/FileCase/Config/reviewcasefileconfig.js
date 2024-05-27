@@ -10,6 +10,7 @@ const reviewCaseFileFormConfig = [
         populators: {
           inputs: [
             {
+              key: "complaintDetails",
               label: "CS_COMPLAINT_DETAILS",
               icon: "ComplainantDetailsIcon",
               config: [
@@ -21,6 +22,7 @@ const reviewCaseFileFormConfig = [
               data: [{ name: "Sheetal Arora", phone: "9834178901", id: "uri", address: "4601E, Gatade Plot, Pandharpur" }],
             },
             {
+              key: "respondentDetails",
               label: "CS_RESPONDENT_DETAILS",
               icon: "RespondentDetailsIcon",
               config: [
@@ -43,6 +45,7 @@ const reviewCaseFileFormConfig = [
         populators: {
           inputs: [
             {
+              key: "chequeDetails",
               label: "CS_CHECKQUE_DETAILS",
               icon: "ChequeDetailsIcon",
               config: [
@@ -82,6 +85,7 @@ const reviewCaseFileFormConfig = [
               ],
             },
             {
+              key: "debtLiabilityDetails",
               label: "CS_DEBT_LIABILITY_DETAILS",
               icon: "DebtLiabilityIcon",
               config: [
@@ -92,6 +96,7 @@ const reviewCaseFileFormConfig = [
               data: [{ nature: "Loan", receivedfor: "Partial Liability", document: "ui" }],
             },
             {
+              key: "demandNoticeDetails",
               label: "CS_DEMAND_NOTICE_DETAILS",
               icon: "DemandDetailsNoticeIcon",
               config: [
@@ -116,6 +121,7 @@ const reviewCaseFileFormConfig = [
         populators: {
           inputs: [
             {
+              key: "witnessDetails",
               label: "CS_WITNESS_DETAILS",
               icon: "WitnessDetailsIcon",
               config: [
@@ -129,6 +135,7 @@ const reviewCaseFileFormConfig = [
               ],
             },
             {
+              key: "prayerSwornStatement",
               label: "CS_PRAYER_SWORN_DETAILS",
               icon: "PrayerSwornIcon",
               config: [
@@ -143,6 +150,7 @@ const reviewCaseFileFormConfig = [
               ],
             },
             {
+              key: "advocateDetails",
               label: "CS_ADVOCATE_DETAILS",
               icon: "AdvocateDetailsIcon",
               config: [

@@ -23,7 +23,6 @@ export const loginSteps = [
   {
     texts: {
       header: "CS_REGISTER_PROVIDE_USER_NAME",
-      cardText: "CS_USER_TEXT",
       nextText: "CS_COMMONS_NEXT",
       submitBarLabel: "CS_COMMONS_NEXT",
     },
@@ -67,7 +66,8 @@ export const loginSteps = [
               optionsKey: "name",
               error: "sample required message",
               validation: {},
-              clearFields: { aadharNumber: "" },
+              clearFields: { aadharNumber: "", ID_Proof: [] },
+              clearFieldsType: { ID_Proof: "documentUpload" },
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
@@ -114,6 +114,7 @@ export const loginSteps = [
               clearFieldsType: { ID_Proof: "documentUpload" },
               disableMandatoryFieldFor: ["ID_Proof", "selectIdTypeType"],
               isMandatory: true,
+              checkAadharVerification: true,
             },
             {
               type: "infoBox",

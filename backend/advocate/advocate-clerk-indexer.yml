@@ -1,0 +1,78 @@
+ServiceMaps:
+  serviceName: Advocate Clerk Service
+  version: 1.0.0
+  mappings:
+    - topic: save-advocate-clerk
+      configKey: INDEX
+      indexes:
+        - name: advocate-clerk-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.clerks
+          customJsonMapping:
+            indexMapping: {"Data":{"clerkDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.clerkDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.clerkDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.clerkDetails.applicationNumber
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.clerkDetails.individualId
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.clerkDetails.isActive
+              - inJsonPath: $.status
+                outJsonPath: $.Data.clerkDetails.status
+              - inJsonPath: $.stateRegnNumber
+                outJsonPath: $.Data.clerkDetails.stateRegnNumber
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.clerkDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.clerkDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.clerkDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.clerkDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.clerkDetails.additionalDetails
+
+    - topic: update-advocate-clerk-application
+      configKey: INDEX
+      indexes:
+        - name: advocate-clerk-index
+          type: general
+          id: $.id
+          isBulk: true
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.clerks
+          customJsonMapping:
+            indexMapping: { "Data": { "clerkDetails": { },"history": { } } }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.clerkDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.clerkDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.clerkDetails.applicationNumber
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.clerkDetails.individualId
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.clerkDetails.isActive
+              - inJsonPath: $.status
+                outJsonPath: $.Data.clerkDetails.status
+              - inJsonPath: $.stateRegnNumber
+                outJsonPath: $.Data.clerkDetails.stateRegnNumber
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.clerkDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.clerkDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.clerkDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.clerkDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.clerkDetails.additionalDetails
+
