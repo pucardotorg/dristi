@@ -15,7 +15,7 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [{ setFormErrors }, setState] = useState({ setFormErrors: null });
+  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: null, resetFormData: null });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -118,6 +118,7 @@ function EFilingCases({ path }) {
       setState((prev) => ({
         ...prev,
         setFormErrors: setError,
+        resetFormData: reset,
       }));
     }
   };
@@ -130,6 +131,7 @@ function EFilingCases({ path }) {
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
     setIsOpen(false);
+    !!resetFormData && resetFormData();
     history.push(`?selected=${key}`);
   };
 

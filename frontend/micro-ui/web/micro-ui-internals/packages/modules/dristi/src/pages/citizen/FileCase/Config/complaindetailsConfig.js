@@ -3,7 +3,7 @@ const complainantDetailsFormConfig = [
     body: [
       {
         type: "radio",
-        key: "complaintType",
+        key: "complainantType",
         label: "CS_RESPONDENT_TYPE",
         isMandatory: true,
         populators: {
@@ -47,7 +47,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -66,7 +66,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_COMPLAINANT_DETAIL",
     body: [
       {
@@ -95,6 +95,7 @@ const complainantDetailsFormConfig = [
               type: "text",
               name: "middleName",
               inputFieldClassName: "user-details-form-style",
+              showOptional: true,
               validation: {
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -123,7 +124,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -145,7 +146,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_ADDRESS_DETAIL",
     body: [
       {
@@ -155,7 +156,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"] },
             {
               label: "PINCODE",
               type: "text",
@@ -228,5 +229,5 @@ export const complaintdetailconfig = {
   isOptional: false,
   addFormText: "ADD_Complaint",
   formItemName: "Complainant",
-  className: "complainant"
+  className: "complainant",
 };

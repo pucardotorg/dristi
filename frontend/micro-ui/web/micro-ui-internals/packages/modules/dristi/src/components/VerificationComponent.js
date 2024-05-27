@@ -152,7 +152,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
 
                 <InfoCard
                   variant={isAadharVerified ? "success" : "default"}
-                  label={isAadharVerified ? "Success" : "Info"}
+                  label={isAadharVerified ? "CS_AADHAR_VERIFIED" : "CS_COMMON_NOTE"}
                   style={{ margin: "16px 0 0 0", backgroundColor: isAadharVerified ? "#E4F2E4" : "#ECF3FD" }}
                   additionalElements={{}}
                   inline

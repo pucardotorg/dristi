@@ -42,6 +42,7 @@ function CaseType({ t }) {
     const isUserLoggedIn = Boolean(token);
     const moduleCode = "DRISTI";
     const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+    const roles = userInfo?.roles;
     const { data: individualData, isLoading, refetch, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
       {
         Individual: {
@@ -119,7 +120,7 @@ function CaseType({ t }) {
                       subsections: ["138", "03."],
                     },
                   ],
-                  litigants: [{}],
+                  litigants: [],
                   representatives: [
                     {
                       id: advocateId,
