@@ -33,7 +33,6 @@ class Advocate with _$Advocate {
 @freezed
 class AdvocateRegistrationRequest with _$AdvocateRegistrationRequest {
   const factory AdvocateRegistrationRequest({
-    @JsonKey(name: 'RequestInfo') required AdvocateRequestInfo requestInfo,
     @JsonKey(name: 'advocates') required List<Advocate> advocates
   }) = _AdvocateRegistrationRequest;
 

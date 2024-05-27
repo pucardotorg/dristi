@@ -45,8 +45,6 @@ Map<String, dynamic> _$$AdvocateImplToJson(_$AdvocateImpl instance) =>
 _$AdvocateRegistrationRequestImpl _$$AdvocateRegistrationRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$AdvocateRegistrationRequestImpl(
-      requestInfo: AdvocateRequestInfo.fromJson(
-          json['RequestInfo'] as Map<String, dynamic>),
       advocates: (json['advocates'] as List<dynamic>)
           .map((e) => Advocate.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -55,7 +53,6 @@ _$AdvocateRegistrationRequestImpl _$$AdvocateRegistrationRequestImplFromJson(
 Map<String, dynamic> _$$AdvocateRegistrationRequestImplToJson(
         _$AdvocateRegistrationRequestImpl instance) =>
     <String, dynamic>{
-      'RequestInfo': instance.requestInfo,
       'advocates': instance.advocates,
     };
 

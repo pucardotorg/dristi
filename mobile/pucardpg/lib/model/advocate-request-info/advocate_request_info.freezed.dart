@@ -35,7 +35,7 @@ mixin _$AdvocateRequestInfo {
   @JsonKey(name: 'msgId')
   String? get msgId => throw _privateConstructorUsedError;
   @JsonKey(name: 'userInfo')
-  AdvocateUserInfo? get userInfo => throw _privateConstructorUsedError;
+  UserRequest? get userInfo => throw _privateConstructorUsedError;
   @JsonKey(name: 'authToken')
   String? get authToken => throw _privateConstructorUsedError;
 
@@ -59,10 +59,10 @@ abstract class $AdvocateRequestInfoCopyWith<$Res> {
       @JsonKey(name: 'did') String? did,
       @JsonKey(name: 'key') String? key,
       @JsonKey(name: 'msgId') String? msgId,
-      @JsonKey(name: 'userInfo') AdvocateUserInfo? userInfo,
+      @JsonKey(name: 'userInfo') UserRequest? userInfo,
       @JsonKey(name: 'authToken') String? authToken});
 
-  $AdvocateUserInfoCopyWith<$Res>? get userInfo;
+  $UserRequestCopyWith<$Res>? get userInfo;
 }
 
 /// @nodoc
@@ -120,7 +120,7 @@ class _$AdvocateRequestInfoCopyWithImpl<$Res, $Val extends AdvocateRequestInfo>
       userInfo: freezed == userInfo
           ? _value.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
-              as AdvocateUserInfo?,
+              as UserRequest?,
       authToken: freezed == authToken
           ? _value.authToken
           : authToken // ignore: cast_nullable_to_non_nullable
@@ -130,12 +130,12 @@ class _$AdvocateRequestInfoCopyWithImpl<$Res, $Val extends AdvocateRequestInfo>
 
   @override
   @pragma('vm:prefer-inline')
-  $AdvocateUserInfoCopyWith<$Res>? get userInfo {
+  $UserRequestCopyWith<$Res>? get userInfo {
     if (_value.userInfo == null) {
       return null;
     }
 
-    return $AdvocateUserInfoCopyWith<$Res>(_value.userInfo!, (value) {
+    return $UserRequestCopyWith<$Res>(_value.userInfo!, (value) {
       return _then(_value.copyWith(userInfo: value) as $Val);
     });
   }
@@ -157,11 +157,11 @@ abstract class _$$AdvocateRequestInfoImplCopyWith<$Res>
       @JsonKey(name: 'did') String? did,
       @JsonKey(name: 'key') String? key,
       @JsonKey(name: 'msgId') String? msgId,
-      @JsonKey(name: 'userInfo') AdvocateUserInfo? userInfo,
+      @JsonKey(name: 'userInfo') UserRequest? userInfo,
       @JsonKey(name: 'authToken') String? authToken});
 
   @override
-  $AdvocateUserInfoCopyWith<$Res>? get userInfo;
+  $UserRequestCopyWith<$Res>? get userInfo;
 }
 
 /// @nodoc
@@ -217,7 +217,7 @@ class __$$AdvocateRequestInfoImplCopyWithImpl<$Res>
       userInfo: freezed == userInfo
           ? _value.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
-              as AdvocateUserInfo?,
+              as UserRequest?,
       authToken: freezed == authToken
           ? _value.authToken
           : authToken // ignore: cast_nullable_to_non_nullable
@@ -266,7 +266,7 @@ class _$AdvocateRequestInfoImpl implements _AdvocateRequestInfo {
   final String? msgId;
   @override
   @JsonKey(name: 'userInfo')
-  final AdvocateUserInfo? userInfo;
+  final UserRequest? userInfo;
   @override
   @JsonKey(name: 'authToken')
   final String? authToken;
@@ -323,7 +323,7 @@ abstract class _AdvocateRequestInfo implements AdvocateRequestInfo {
           @JsonKey(name: 'did') final String? did,
           @JsonKey(name: 'key') final String? key,
           @JsonKey(name: 'msgId') final String? msgId,
-          @JsonKey(name: 'userInfo') final AdvocateUserInfo? userInfo,
+          @JsonKey(name: 'userInfo') final UserRequest? userInfo,
           @JsonKey(name: 'authToken') final String? authToken}) =
       _$AdvocateRequestInfoImpl;
 
@@ -353,7 +353,7 @@ abstract class _AdvocateRequestInfo implements AdvocateRequestInfo {
   String? get msgId;
   @override
   @JsonKey(name: 'userInfo')
-  AdvocateUserInfo? get userInfo;
+  UserRequest? get userInfo;
   @override
   @JsonKey(name: 'authToken')
   String? get authToken;

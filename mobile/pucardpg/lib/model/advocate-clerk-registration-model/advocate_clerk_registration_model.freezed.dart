@@ -476,8 +476,6 @@ AdvocateClerkRegistrationRequest _$AdvocateClerkRegistrationRequestFromJson(
 
 /// @nodoc
 mixin _$AdvocateClerkRegistrationRequest {
-  @JsonKey(name: 'RequestInfo')
-  AdvocateRequestInfo get requestInfo => throw _privateConstructorUsedError;
   @JsonKey(name: 'clerks')
   List<Clerk> get clerks => throw _privateConstructorUsedError;
 
@@ -495,11 +493,7 @@ abstract class $AdvocateClerkRegistrationRequestCopyWith<$Res> {
       _$AdvocateClerkRegistrationRequestCopyWithImpl<$Res,
           AdvocateClerkRegistrationRequest>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'RequestInfo') AdvocateRequestInfo requestInfo,
-      @JsonKey(name: 'clerks') List<Clerk> clerks});
-
-  $AdvocateRequestInfoCopyWith<$Res> get requestInfo;
+  $Res call({@JsonKey(name: 'clerks') List<Clerk> clerks});
 }
 
 /// @nodoc
@@ -516,27 +510,14 @@ class _$AdvocateClerkRegistrationRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? requestInfo = null,
     Object? clerks = null,
   }) {
     return _then(_value.copyWith(
-      requestInfo: null == requestInfo
-          ? _value.requestInfo
-          : requestInfo // ignore: cast_nullable_to_non_nullable
-              as AdvocateRequestInfo,
       clerks: null == clerks
           ? _value.clerks
           : clerks // ignore: cast_nullable_to_non_nullable
               as List<Clerk>,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $AdvocateRequestInfoCopyWith<$Res> get requestInfo {
-    return $AdvocateRequestInfoCopyWith<$Res>(_value.requestInfo, (value) {
-      return _then(_value.copyWith(requestInfo: value) as $Val);
-    });
   }
 }
 
@@ -549,12 +530,7 @@ abstract class _$$AdvocateClerkRegistrationRequestImplCopyWith<$Res>
       __$$AdvocateClerkRegistrationRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'RequestInfo') AdvocateRequestInfo requestInfo,
-      @JsonKey(name: 'clerks') List<Clerk> clerks});
-
-  @override
-  $AdvocateRequestInfoCopyWith<$Res> get requestInfo;
+  $Res call({@JsonKey(name: 'clerks') List<Clerk> clerks});
 }
 
 /// @nodoc
@@ -570,14 +546,9 @@ class __$$AdvocateClerkRegistrationRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? requestInfo = null,
     Object? clerks = null,
   }) {
     return _then(_$AdvocateClerkRegistrationRequestImpl(
-      requestInfo: null == requestInfo
-          ? _value.requestInfo
-          : requestInfo // ignore: cast_nullable_to_non_nullable
-              as AdvocateRequestInfo,
       clerks: null == clerks
           ? _value._clerks
           : clerks // ignore: cast_nullable_to_non_nullable
@@ -591,17 +562,13 @@ class __$$AdvocateClerkRegistrationRequestImplCopyWithImpl<$Res>
 class _$AdvocateClerkRegistrationRequestImpl
     implements _AdvocateClerkRegistrationRequest {
   const _$AdvocateClerkRegistrationRequestImpl(
-      {@JsonKey(name: 'RequestInfo') required this.requestInfo,
-      @JsonKey(name: 'clerks') required final List<Clerk> clerks})
+      {@JsonKey(name: 'clerks') required final List<Clerk> clerks})
       : _clerks = clerks;
 
   factory _$AdvocateClerkRegistrationRequestImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$AdvocateClerkRegistrationRequestImplFromJson(json);
 
-  @override
-  @JsonKey(name: 'RequestInfo')
-  final AdvocateRequestInfo requestInfo;
   final List<Clerk> _clerks;
   @override
   @JsonKey(name: 'clerks')
@@ -613,7 +580,7 @@ class _$AdvocateClerkRegistrationRequestImpl
 
   @override
   String toString() {
-    return 'AdvocateClerkRegistrationRequest(requestInfo: $requestInfo, clerks: $clerks)';
+    return 'AdvocateClerkRegistrationRequest(clerks: $clerks)';
   }
 
   @override
@@ -621,15 +588,13 @@ class _$AdvocateClerkRegistrationRequestImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AdvocateClerkRegistrationRequestImpl &&
-            (identical(other.requestInfo, requestInfo) ||
-                other.requestInfo == requestInfo) &&
             const DeepCollectionEquality().equals(other._clerks, _clerks));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, requestInfo, const DeepCollectionEquality().hash(_clerks));
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_clerks));
 
   @JsonKey(ignore: true)
   @override
@@ -650,18 +615,13 @@ class _$AdvocateClerkRegistrationRequestImpl
 abstract class _AdvocateClerkRegistrationRequest
     implements AdvocateClerkRegistrationRequest {
   const factory _AdvocateClerkRegistrationRequest(
-          {@JsonKey(name: 'RequestInfo')
-          required final AdvocateRequestInfo requestInfo,
-          @JsonKey(name: 'clerks') required final List<Clerk> clerks}) =
+          {@JsonKey(name: 'clerks') required final List<Clerk> clerks}) =
       _$AdvocateClerkRegistrationRequestImpl;
 
   factory _AdvocateClerkRegistrationRequest.fromJson(
           Map<String, dynamic> json) =
       _$AdvocateClerkRegistrationRequestImpl.fromJson;
 
-  @override
-  @JsonKey(name: 'RequestInfo')
-  AdvocateRequestInfo get requestInfo;
   @override
   @JsonKey(name: 'clerks')
   List<Clerk> get clerks;

@@ -570,8 +570,24 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                         },
                                         advocateSearchSuccessState: (advocateSearchResponse) {
                                           List<Advocate> advocates = advocateSearchResponse.advocates;
-                                          Advocate advocate = advocates[0];
+                                          if (advocates.isEmpty) {
+                                            DigitToast.show(
+                                              context,
+                                              options: DigitToastOptions(
+                                                "OTP Verified",
+                                                false,
+                                                DigitTheme.instance.mobileTheme,
+                                              ),
+                                            );
+                                            Future.delayed(const Duration(seconds: 1), () {
+                                              isSubmit = false;
+                                              Navigator.of(context).pop();
+                                              AutoRouter.of(context)
+                                                  .push(AdvocateRegistrationRoute());
+                                            });
+                                          }
                                           if (advocates.isNotEmpty) {
+                                            Advocate advocate = advocates[0];
                                             DigitToast.show(
                                               context,
                                               options: DigitToastOptions(
@@ -608,8 +624,8 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                         },
                                         advocateClerkSearchSuccessState: (advocateClerkSearchResponse) {
                                           List<Clerk> clerks = advocateClerkSearchResponse.clerks;
-                                          Clerk clerk = clerks[0];
                                           if (clerks.isNotEmpty) {
+                                            Clerk clerk = clerks[0];
                                             DigitToast.show(
                                               context,
                                               options: DigitToastOptions(

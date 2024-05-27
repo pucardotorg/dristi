@@ -89,6 +89,26 @@ class SecureStore {
     await storage.delete(key: 'accessInfo');
   }
 
+  Future setUserRequest(UserRequest userRequest) async {
+    String jsonUserRequest = json.encode(userRequest.toJson());
+    await storage.write(key: 'userRequest', value: jsonUserRequest);
+  }
+
+  Future<UserRequest?> getUserRequest() async {
+    String? jsonUserRequest = await storage.read(key: 'userRequest');
+    if (jsonUserRequest == null) return null;
+    try {
+      return UserRequest.fromJson(json.decode(jsonUserRequest));
+    } catch (err) {
+      print(err);
+      rethrow;
+    }
+  }
+
+  Future deleteUserRequest() async {
+    await storage.delete(key: 'userRequest');
+  }
+
   //role actions
   Future setRoleActions(RoleActionsWrapperModel actionsWrapper) async {
     String jsonActionsWrapper = json.encode(actionsWrapper.toJson());

@@ -14,7 +14,6 @@ class AdvocateClerkSearchRequest with _$AdvocateClerkSearchRequest {
     @JsonKey(name: "criteria") @Default([]) List<SearchCriteria> criteria,
     @JsonKey(name: 'status') @Default([]) List<String> status,
     @JsonKey(name: 'tenantId') String? tenantId,
-    @JsonKey(name: 'RequestInfo') required AdvocateRequestInfo requestInfo,
   }) = _AdvocateClerkSearchRequest;
 
   factory AdvocateClerkSearchRequest.fromJson(Map<String, dynamic> json) =>

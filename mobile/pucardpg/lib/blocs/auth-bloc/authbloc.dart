@@ -86,6 +86,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       accesstoken = response.accessToken!;
       _refreshtoken = response.refreshToken!;
       _userRequest = response.userRequest!;
+      secureStore.setUserRequest(response.userRequest!);
       secureStore.setAccessToken(accesstoken);
       secureStore.setRefreshToken(_refreshtoken);
 
@@ -149,15 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AdvocateSearchRequest advocateSearchRequest = AdvocateSearchRequest(
               criteria: [SearchCriteria(individualId: userModel.individualId)],
               tenantId: appConstants.tenantId,
-              requestInfo: AdvocateRequestInfo(
-                  authToken: userModel.authToken,
-                  userInfo: AdvocateUserInfo(
-                      type: appConstants.type,
-                      tenantId: appConstants.tenantId,
-                      uuid: userModel.uuid,
-                      roles: [appConstants.getCitizenRole]
-                  )
-              ));
+          );
           final responseSearchAdvocate = await authRepository.searchAdvocate('/advocate/advocate/v1/_search', advocateSearchRequest);
           if (responseSearchAdvocate.advocates.isNotEmpty) {
             Advocate advocate = responseSearchAdvocate.advocates[0];
@@ -176,15 +169,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           AdvocateClerkSearchRequest advocateClerkSearchRequest = AdvocateClerkSearchRequest(
               criteria: [SearchCriteria(individualId: userModel.individualId)],
               tenantId: appConstants.tenantId,
-              requestInfo: AdvocateRequestInfo(
-                  authToken: userModel.authToken,
-                  userInfo: AdvocateUserInfo(
-                      type: appConstants.type,
-                      tenantId: appConstants.tenantId,
-                      uuid: userModel.uuid,
-                      roles: [appConstants.getCitizenRole]
-                  )
-              ));
+          );
           final responseSearchAdvocateClerk = await authRepository.searchAdvocateClerk('/advocate/clerk/v1/_search', advocateClerkSearchRequest);
           emit(AuthState.advocateClerkSearchSuccessState(advocateClerkSearchResponse: responseSearchAdvocateClerk));
         }
@@ -222,6 +207,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       userModel.id = response.userRequest?.id;
       userModel.uuid = response.userRequest?.uuid;
       userModel.username = response.userRequest?.userName;
+      secureStore.setUserRequest(response.userRequest!);
       secureStore.setAccessToken(accesstoken);
       secureStore.setRefreshToken(_refreshtoken);
       emit(AuthState.otpCorrect(
@@ -346,8 +332,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     accesstoken = response.accessToken!;
     _refreshtoken = response.refreshToken!;
     _userRequest = response.userRequest!;
+    userModel.authToken = response.accessToken!;
+    _authResponse = response;
 
     //store accessToken in secure storage
+    secureStore.setUserRequest(response.userRequest!);
     secureStore.setAccessToken(accesstoken);
     secureStore.setRefreshToken(_refreshtoken);
 
@@ -389,13 +378,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userId: userModel.id!.toString(),
         mobileNumber: userModel.mobileNumber!,
         address: [Address(
-            doorNo: userModel.addressModel.doorNo!,
-            latitude: userModel.addressModel.latitude!,
-            longitude: userModel.addressModel.longitude!,
-            city: userModel.addressModel.city!,
-            district: userModel.addressModel.district!,
-            street: userModel.addressModel.street!,
-            pincode: userModel.addressModel.pincode!
+            doorNo: userModel.addressModel.doorNo ?? "",
+            latitude: userModel.addressModel.latitude ?? 0.0,
+            longitude: userModel.addressModel.longitude ?? 0.0,
+            city: userModel.addressModel.city ?? "",
+            district: userModel.addressModel.district ?? "",
+            street: userModel.addressModel.street ?? "",
+            pincode: userModel.addressModel.pincode ?? ""
         )],
         identifiers: userModel.identifierId == null ? [] :
         [Identifier(
@@ -432,17 +421,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       userModel.individualId = registerResponse.individualInfo.individualId;
       if (userModel.userType == 'ADVOCATE') {
         AdvocateRegistrationRequest advocateRegistrationRequest = AdvocateRegistrationRequest(
-            requestInfo: AdvocateRequestInfo(
-                userInfo: AdvocateUserInfo(
-                    type: appConstants.type,
-                    tenantId: appConstants.tenantId,
-                    roles: [
-                      appConstants.getCitizenRole
-                    ],
-                    uuid: userModel.uuid
-                ),
-                authToken: userModel.authToken
-            ),
             advocates: [
               Advocate(
                   tenantId: appConstants.tenantId,
@@ -470,17 +448,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await authRepository.registerAdvocate('/advocate/advocate/v1/_create', advocateRegistrationRequest);
       } else if (userModel.userType == 'ADVOCATE_CLERK') {
         AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest = AdvocateClerkRegistrationRequest(
-            requestInfo: AdvocateRequestInfo(
-                userInfo: AdvocateUserInfo(
-                    type: appConstants.type,
-                    tenantId: appConstants.tenantId,
-                    roles: [
-                      appConstants.getCitizenRole
-                    ],
-                    uuid: userModel.uuid
-                ),
-                authToken: userModel.authToken
-            ),
             clerks: [
               Clerk(
                   tenantId: appConstants.tenantId,

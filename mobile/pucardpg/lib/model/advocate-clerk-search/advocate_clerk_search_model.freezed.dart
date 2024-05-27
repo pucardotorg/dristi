@@ -27,8 +27,6 @@ mixin _$AdvocateClerkSearchRequest {
   List<String> get status => throw _privateConstructorUsedError;
   @JsonKey(name: 'tenantId')
   String? get tenantId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'RequestInfo')
-  AdvocateRequestInfo get requestInfo => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -46,10 +44,7 @@ abstract class $AdvocateClerkSearchRequestCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: "criteria") List<SearchCriteria> criteria,
       @JsonKey(name: 'status') List<String> status,
-      @JsonKey(name: 'tenantId') String? tenantId,
-      @JsonKey(name: 'RequestInfo') AdvocateRequestInfo requestInfo});
-
-  $AdvocateRequestInfoCopyWith<$Res> get requestInfo;
+      @JsonKey(name: 'tenantId') String? tenantId});
 }
 
 /// @nodoc
@@ -69,7 +64,6 @@ class _$AdvocateClerkSearchRequestCopyWithImpl<$Res,
     Object? criteria = null,
     Object? status = null,
     Object? tenantId = freezed,
-    Object? requestInfo = null,
   }) {
     return _then(_value.copyWith(
       criteria: null == criteria
@@ -84,19 +78,7 @@ class _$AdvocateClerkSearchRequestCopyWithImpl<$Res,
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
               as String?,
-      requestInfo: null == requestInfo
-          ? _value.requestInfo
-          : requestInfo // ignore: cast_nullable_to_non_nullable
-              as AdvocateRequestInfo,
     ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $AdvocateRequestInfoCopyWith<$Res> get requestInfo {
-    return $AdvocateRequestInfoCopyWith<$Res>(_value.requestInfo, (value) {
-      return _then(_value.copyWith(requestInfo: value) as $Val);
-    });
   }
 }
 
@@ -112,11 +94,7 @@ abstract class _$$AdvocateClerkSearchRequestImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: "criteria") List<SearchCriteria> criteria,
       @JsonKey(name: 'status') List<String> status,
-      @JsonKey(name: 'tenantId') String? tenantId,
-      @JsonKey(name: 'RequestInfo') AdvocateRequestInfo requestInfo});
-
-  @override
-  $AdvocateRequestInfoCopyWith<$Res> get requestInfo;
+      @JsonKey(name: 'tenantId') String? tenantId});
 }
 
 /// @nodoc
@@ -135,7 +113,6 @@ class __$$AdvocateClerkSearchRequestImplCopyWithImpl<$Res>
     Object? criteria = null,
     Object? status = null,
     Object? tenantId = freezed,
-    Object? requestInfo = null,
   }) {
     return _then(_$AdvocateClerkSearchRequestImpl(
       criteria: null == criteria
@@ -150,10 +127,6 @@ class __$$AdvocateClerkSearchRequestImplCopyWithImpl<$Res>
           ? _value.tenantId
           : tenantId // ignore: cast_nullable_to_non_nullable
               as String?,
-      requestInfo: null == requestInfo
-          ? _value.requestInfo
-          : requestInfo // ignore: cast_nullable_to_non_nullable
-              as AdvocateRequestInfo,
     ));
   }
 }
@@ -165,8 +138,7 @@ class _$AdvocateClerkSearchRequestImpl implements _AdvocateClerkSearchRequest {
       {@JsonKey(name: "criteria")
       final List<SearchCriteria> criteria = const [],
       @JsonKey(name: 'status') final List<String> status = const [],
-      @JsonKey(name: 'tenantId') this.tenantId,
-      @JsonKey(name: 'RequestInfo') required this.requestInfo})
+      @JsonKey(name: 'tenantId') this.tenantId})
       : _criteria = criteria,
         _status = status;
 
@@ -195,13 +167,10 @@ class _$AdvocateClerkSearchRequestImpl implements _AdvocateClerkSearchRequest {
   @override
   @JsonKey(name: 'tenantId')
   final String? tenantId;
-  @override
-  @JsonKey(name: 'RequestInfo')
-  final AdvocateRequestInfo requestInfo;
 
   @override
   String toString() {
-    return 'AdvocateClerkSearchRequest(criteria: $criteria, status: $status, tenantId: $tenantId, requestInfo: $requestInfo)';
+    return 'AdvocateClerkSearchRequest(criteria: $criteria, status: $status, tenantId: $tenantId)';
   }
 
   @override
@@ -212,9 +181,7 @@ class _$AdvocateClerkSearchRequestImpl implements _AdvocateClerkSearchRequest {
             const DeepCollectionEquality().equals(other._criteria, _criteria) &&
             const DeepCollectionEquality().equals(other._status, _status) &&
             (identical(other.tenantId, tenantId) ||
-                other.tenantId == tenantId) &&
-            (identical(other.requestInfo, requestInfo) ||
-                other.requestInfo == requestInfo));
+                other.tenantId == tenantId));
   }
 
   @JsonKey(ignore: true)
@@ -223,8 +190,7 @@ class _$AdvocateClerkSearchRequestImpl implements _AdvocateClerkSearchRequest {
       runtimeType,
       const DeepCollectionEquality().hash(_criteria),
       const DeepCollectionEquality().hash(_status),
-      tenantId,
-      requestInfo);
+      tenantId);
 
   @JsonKey(ignore: true)
   @override
@@ -246,9 +212,7 @@ abstract class _AdvocateClerkSearchRequest
   const factory _AdvocateClerkSearchRequest(
           {@JsonKey(name: "criteria") final List<SearchCriteria> criteria,
           @JsonKey(name: 'status') final List<String> status,
-          @JsonKey(name: 'tenantId') final String? tenantId,
-          @JsonKey(name: 'RequestInfo')
-          required final AdvocateRequestInfo requestInfo}) =
+          @JsonKey(name: 'tenantId') final String? tenantId}) =
       _$AdvocateClerkSearchRequestImpl;
 
   factory _AdvocateClerkSearchRequest.fromJson(Map<String, dynamic> json) =
@@ -263,9 +227,6 @@ abstract class _AdvocateClerkSearchRequest
   @override
   @JsonKey(name: 'tenantId')
   String? get tenantId;
-  @override
-  @JsonKey(name: 'RequestInfo')
-  AdvocateRequestInfo get requestInfo;
   @override
   @JsonKey(ignore: true)
   _$$AdvocateClerkSearchRequestImplCopyWith<_$AdvocateClerkSearchRequestImpl>

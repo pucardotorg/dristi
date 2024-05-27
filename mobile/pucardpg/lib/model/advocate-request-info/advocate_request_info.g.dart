@@ -18,7 +18,7 @@ _$AdvocateRequestInfoImpl _$$AdvocateRequestInfoImplFromJson(
       msgId: json['msgId'] as String?,
       userInfo: json['userInfo'] == null
           ? null
-          : AdvocateUserInfo.fromJson(json['userInfo'] as Map<String, dynamic>),
+          : UserRequest.fromJson(json['userInfo'] as Map<String, dynamic>),
       authToken: json['authToken'] as String?,
     );
 

@@ -18,8 +18,6 @@ _$AdvocateClerkSearchRequestImpl _$$AdvocateClerkSearchRequestImplFromJson(
               .toList() ??
           const [],
       tenantId: json['tenantId'] as String?,
-      requestInfo: AdvocateRequestInfo.fromJson(
-          json['RequestInfo'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$AdvocateClerkSearchRequestImplToJson(
@@ -28,7 +26,6 @@ Map<String, dynamic> _$$AdvocateClerkSearchRequestImplToJson(
       'criteria': instance.criteria,
       'status': instance.status,
       'tenantId': instance.tenantId,
-      'RequestInfo': instance.requestInfo,
     };
 
 _$AdvocateClerkSearchResponseImpl _$$AdvocateClerkSearchResponseImplFromJson(

@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pucardpg/model/advocate-user-info/advocate_user_info.dart';
+import 'package:pucardpg/model/auth-response/auth_response.dart';
 
 part 'advocate_request_info.freezed.dart';
 part 'advocate_request_info.g.dart';
@@ -14,7 +15,7 @@ class AdvocateRequestInfo with _$AdvocateRequestInfo {
     @JsonKey(name: 'did') String? did,
     @JsonKey(name: 'key') String? key,
     @JsonKey(name: 'msgId') String? msgId,
-    @JsonKey(name: 'userInfo') AdvocateUserInfo? userInfo,
+    @JsonKey(name: 'userInfo') UserRequest? userInfo,
     @JsonKey(name: 'authToken') String? authToken,
   }) = _AdvocateRequestInfo;
 
