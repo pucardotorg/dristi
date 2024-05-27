@@ -77,7 +77,7 @@ public class AdvocateRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
-        List<Advocate> result = advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
+        List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -121,7 +121,7 @@ public class AdvocateRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
-        List<Advocate> result = advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
+        List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);

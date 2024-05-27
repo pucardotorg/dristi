@@ -8,9 +8,9 @@ ServiceMaps:
         - name: advocate-clerk-index
           type: general
           id: $.id
-          isBulk: true
+          isBulk: false
           timeStampField: $.auditDetails.createdTime
-          jsonPath: $.clerks
+          jsonPath: $.clerk
           customJsonMapping:
             indexMapping: {"Data":{"clerkDetails":{},"history":{}}}
             fieldMapping:
@@ -45,9 +45,9 @@ ServiceMaps:
         - name: advocate-clerk-index
           type: general
           id: $.id
-          isBulk: true
+          isBulk: false
           timeStampField: $.auditDetails.createdTime
-          jsonPath: $.clerks
+          jsonPath: $.clerk
           customJsonMapping:
             indexMapping: { "Data": { "clerkDetails": { },"history": { } } }
             fieldMapping:

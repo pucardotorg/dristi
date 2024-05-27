@@ -76,39 +76,16 @@ public class AdvocateService {
         List<Advocate> applications = new ArrayList<>();
 
         try {
-            if (!EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && advocateSearchCriteria != null) {
-                Optional<AdvocateSearchCriteria> firstNonNull = advocateSearchCriteria.stream()
-
-                        // Filter out objects with non-null individualId
-                        .filter(criteria -> Objects.nonNull(criteria.getIndividualId()))
-                        .findFirst();
-
-                firstNonNull.ifPresent(value -> {
-                    log.info("Search Criteria :: {}", value);
-                    if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
-                        if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
-                            isIndividualLoggedInUser.set(true);
-                        }
-                    }
-                });
-                limit = null;
-                offset = null;
-            } else if (EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
-                if (limit == null)
-                    limit = 10;
-                if (offset == null)
-                    offset = 0;
-            }
+            if (limit == null)
+                limit = 10;
+            if (offset == null)
+                offset = 0;
 
             // Fetch applications from database according to the given search criteria
             advocateRepository.getApplications(advocateSearchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
 
             // If no applications are found matching the given criteria, return an empty list
 
-//            if (isIndividualLoggedInUser.get()) {
-//                if (applications.size() > 1)
-//                    applications.subList(1, applications.size()).clear();
-//            }
             for (AdvocateSearchCriteria searchCriteria : advocateSearchCriteria){
                 searchCriteria.getResponseList().forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             }
@@ -123,7 +100,7 @@ public class AdvocateService {
         }
     }
 
-    public List<Advocate> searchAdvocateByStatus(String status, String tenantId, Integer limit, Integer offset) {
+    public List<Advocate> searchAdvocateByStatus(RequestInfo requestInfo, String status, String tenantId, Integer limit, Integer offset) {
         try {
             if (limit == null)
                 limit = 10;
@@ -138,7 +115,8 @@ public class AdvocateService {
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
 
-//            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
+            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
+
             return applications;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
@@ -149,7 +127,7 @@ public class AdvocateService {
         }
     }
 
-    public List<Advocate> searchAdvocateByApplicationNumber(String applicationNumber, String tenantId, Integer limit, Integer offset) {
+    public List<Advocate> searchAdvocateByApplicationNumber(RequestInfo requestInfo, String applicationNumber, String tenantId, Integer limit, Integer offset) {
         try {
             if (limit == null)
                 limit = 10;
@@ -164,8 +142,10 @@ public class AdvocateService {
             if (CollectionUtils.isEmpty(applications))
                 return new ArrayList<>();
 
-//            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
+            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
+
             return applications;
+
         } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;

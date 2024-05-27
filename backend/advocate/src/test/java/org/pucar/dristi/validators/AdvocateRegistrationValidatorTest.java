@@ -13,6 +13,7 @@ import org.pucar.dristi.web.models.Advocate;
 import org.pucar.dristi.web.models.AdvocateRequest;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.dristi.service.IndividualService;
+import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -98,8 +99,14 @@ public class AdvocateRegistrationValidatorTest {
         Advocate advocate = new Advocate();
         advocate.setApplicationNumber("testAppNumber");
         advocate.setTenantId("testTenantId");
-        List<Advocate> existingApplications = new ArrayList<>();
-        existingApplications.add(advocate);
+        List<Advocate> advocates = new ArrayList<>();
+        advocates.add(advocate);
+        List<AdvocateSearchCriteria> existingApplications = new ArrayList<>();
+        AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+        advocateSearchCriteria.setApplicationNumber("appNumber");
+        advocateSearchCriteria.setResponseList(advocates);
+
+        existingApplications.add(advocateSearchCriteria);
         when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act
@@ -114,9 +121,18 @@ public class AdvocateRegistrationValidatorTest {
     void validateApplicationExistence_ApplicationDoesNotExist() {
         // Arrange
         Advocate advocate = new Advocate();
-        advocate.setApplicationNumber("nonExistingAppNumber");
+        advocate.setApplicationNumber("testAppNumber");
         advocate.setTenantId("testTenantId");
-        when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        List<Advocate> advocates = new ArrayList<>();
+//        advocates.add(advocate);
+        List<AdvocateSearchCriteria> existingApplications = new ArrayList<>();
+        AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+        advocateSearchCriteria.setApplicationNumber("appNumber");
+        advocateSearchCriteria.setResponseList(advocates);
+
+        existingApplications.add(advocateSearchCriteria);
+
+        when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act + Assert
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocate));

@@ -44,7 +44,7 @@ public class AdvocateRepository {
      * @param offset
      * @return list of advocate found in the DB
      */
-    public List<Advocate> getApplications(List<AdvocateSearchCriteria> searchCriteria, AtomicReference<Boolean> isIndividualLoggedInUser, String tenantId, Integer limit, Integer offset ) {
+    public List<AdvocateSearchCriteria> getApplications(List<AdvocateSearchCriteria> searchCriteria, AtomicReference<Boolean> isIndividualLoggedInUser, String tenantId, Integer limit, Integer offset ) {
 
         try {
 
@@ -80,7 +80,7 @@ public class AdvocateRepository {
                 }
             }
 
-            return searchCriteria.get(0).getResponseList(); // Use this return validate function used by update API
+            return searchCriteria; // Use this return validate function used by update API
         }
         catch (CustomException e){
             throw e;

@@ -177,10 +177,16 @@ public class AdvocateClerkServiceTest {
         clerk.setTenantId("tenantId");
         applications.add(clerk);
 
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
         when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
 
         // Act
-        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(applicationNumber, tenantId, limit, offset);
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -194,11 +200,16 @@ public class AdvocateClerkServiceTest {
         String tenantId = "testTenantId";
         Integer limit = null;
         Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
         // Act and Assert
         assertThrows(Exception.class, () -> {
-            advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(applicationNumber, tenantId, limit, offset);
+            advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
         });
     }
 
@@ -209,6 +220,11 @@ public class AdvocateClerkServiceTest {
         String tenantId = "testTenantId";
         Integer limit = null;
         Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         List<AdvocateClerk> applications = new ArrayList<>();
         // Populate applications with test data
@@ -216,7 +232,7 @@ public class AdvocateClerkServiceTest {
         when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
 
         // Act
-        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(applicationNumber, tenantId, limit, offset);
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -237,10 +253,16 @@ public class AdvocateClerkServiceTest {
         clerk.setTenantId("tenantId");
         applications.add(clerk);
 
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
         when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
 
         // Act
-        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByStatus(status, tenantId, limit, offset);
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -255,13 +277,19 @@ public class AdvocateClerkServiceTest {
         Integer limit = null;
         Integer offset = null;
 
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
         List<AdvocateClerk> applications = new ArrayList<>();
         // Populate applications with test data
 
         when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
 
         // Act
-        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByStatus(status, tenantId, limit, offset);
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -276,10 +304,16 @@ public class AdvocateClerkServiceTest {
         Integer limit = null;
         Integer offset = null;
 
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
         when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
 
         // Assert
-        assertThrows(Exception.class, () -> advocateClerkService.searchAdvocateClerkApplicationsByStatus(status, tenantId, limit, offset));
+        assertThrows(Exception.class, () -> advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset));
     }
 
     @Test

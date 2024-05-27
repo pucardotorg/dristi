@@ -80,9 +80,10 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1StatusSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "status of advocate registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "status", required = true) String status,
 																	   @NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
 																	   @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
-																	   @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+																	   @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset,
+																	   @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSimpleSearchRequest body) {
 
-		List<Advocate> advocateList = advocateService.searchAdvocateByStatus(status, tenantId,limit, offset);
+		List<Advocate> advocateList = advocateService.searchAdvocateByStatus(body.getRequestInfo(), status, tenantId,limit, offset);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
 		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);
@@ -92,9 +93,10 @@ public class AdvocateApiController {
 	public ResponseEntity<AdvocateResponse> advocateV1ApplicationnumberSearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "applicationNumber of advocate registration being searched" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
 																				  @NotNull @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,required=true,schema=@Schema()) @javax.validation.Valid @RequestParam(value = "tenantId", required = true) String tenantId,
 																				  @Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
-																				  @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
+																				  @Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset,
+																				  @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateSimpleSearchRequest body) {
 
-		List<Advocate> advocateList = advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId,limit, offset);
+		List<Advocate> advocateList = advocateService.searchAdvocateByApplicationNumber(body.getRequestInfo(), applicationNumber, tenantId,limit, offset);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(null, true);
 		AdvocateResponse advocateResponse = AdvocateResponse.builder().advocates(advocateList).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(advocateResponse, HttpStatus.OK);

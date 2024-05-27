@@ -1,6 +1,7 @@
 package org.pucar.dristi.web.controllers;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -64,11 +66,18 @@ public class AdvocateApiControllerTest {
         String status = "active";
         String tenantId = "tenantId";
         List<Advocate> advocateList = Arrays.asList(new Advocate());
+        AdvocateSimpleSearchRequest advocateSimpleSearchRequest = new AdvocateSimpleSearchRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+        advocateSimpleSearchRequest.setRequestInfo(requestInfo);
 
-        when(advocateService.searchAdvocateByStatus(status, tenantId, 10, 0)).thenReturn(advocateList);
+        when(advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, 10, 0)).thenReturn(advocateList);
         when(responseInfoFactory.createResponseInfoFromRequestInfo(null, true)).thenReturn(new ResponseInfo());
 
-        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1StatusSearchPost(status, tenantId, 10, 0);
+        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1StatusSearchPost(status, tenantId, 10, 0, advocateSimpleSearchRequest);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(advocateList, responseEntity.getBody().getAdvocates());
@@ -79,11 +88,18 @@ public class AdvocateApiControllerTest {
         String applicationNumber = "app123";
         String tenantId = "tenantId";
         List<Advocate> advocateList = Arrays.asList(new Advocate());
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+        AdvocateSimpleSearchRequest advocateSimpleSearchRequest = new AdvocateSimpleSearchRequest();
+        advocateSimpleSearchRequest.setRequestInfo(requestInfo);
 
-        when(advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, 10, 0)).thenReturn(advocateList);
+        when(advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, 10, 0)).thenReturn(advocateList);
         when(responseInfoFactory.createResponseInfoFromRequestInfo(null, true)).thenReturn(new ResponseInfo());
 
-        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1ApplicationnumberSearchPost(applicationNumber, tenantId, 10, 0);
+        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1ApplicationnumberSearchPost(applicationNumber, tenantId, 10, 0, advocateSimpleSearchRequest);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(advocateList, responseEntity.getBody().getAdvocates());

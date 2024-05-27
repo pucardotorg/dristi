@@ -198,13 +198,18 @@ public class AdvocateServiceTest {
         String tenantId = "testTenantId";
         Integer limit = 10;
         Integer offset = 0;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         // Mock behavior
         when(advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate() {
         }));
 
         // Execution
-        List<Advocate> result = advocateService.searchAdvocateByStatus(status, tenantId, limit, offset);
+        List<Advocate> result = advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset);
 
         // Verification
         assertNotNull(result);
@@ -228,7 +233,7 @@ public class AdvocateServiceTest {
         when(advocateRepository.getListApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
 
         // Assert
-        assertThrows(Exception.class, () -> advocateService.searchAdvocateByStatus(status, tenantId, limit, offset));
+        assertThrows(Exception.class, () -> advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset));
     }
 
     @Test
@@ -248,7 +253,7 @@ public class AdvocateServiceTest {
         when(advocateRepository.getListApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(CustomException.class);
 
         // Assert
-        assertThrows(CustomException.class, () -> advocateService.searchAdvocateByStatus(status, tenantId, limit, offset));
+        assertThrows(CustomException.class, () -> advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset));
     }
 
 //    @Test
@@ -277,13 +282,18 @@ public class AdvocateServiceTest {
         String tenantId = "testTenantId";
         Integer limit = 10;
         Integer offset = 0;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         // Mock behavior
         when(advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate() {
         }));
 
         // Execution
-        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, limit, offset);
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
 
         // Verification
         assertNotNull(result);
@@ -297,12 +307,17 @@ public class AdvocateServiceTest {
         String tenantId = "testTenantId";
         Integer limit = null;
         Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         // Mock behavior
 //        when(advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate()));
 
         // Execution
-        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, limit, offset);
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
 
         // Verification
         assertNotNull(result);
@@ -316,17 +331,22 @@ public class AdvocateServiceTest {
         String tenantId = "testTenantId";
         Integer limit = null;
         Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         // Mock behavior
 //        when(advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate()));
 
         // Execution
-        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, limit, offset);
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
 
         when(advocateRepository.getListApplicationsByApplicationNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(CustomException.class);
 
         // Assert
-        assertThrows(CustomException.class, () -> advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, limit, offset));
+        assertThrows(CustomException.class, () -> advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset));
     }
 
     @Test
@@ -336,11 +356,16 @@ public class AdvocateServiceTest {
         String tenantId = "testTenantId";
         Integer limit = null;
         Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
         when(advocateRepository.getListApplicationsByApplicationNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
 
         // Assert
-        assertThrows(Exception.class, () -> advocateService.searchAdvocateByApplicationNumber(applicationNumber, tenantId, limit, offset));
+        assertThrows(Exception.class, () -> advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset));
     }
 
     @Test
