@@ -2,7 +2,6 @@ import { Button, CardLabel, RemoveableTag, TextInput } from "@egovernments/digit
 import React, { useMemo, useState } from "react";
 
 function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
-  console.debug(errors);
   const [enableAdd, setEnableAdd] = useState(false);
   const inputs = useMemo(
     () =>
