@@ -162,4 +162,5 @@ export const debtliabilityconfig = {
   header: "CS_DEBT_LIABILITY_HEADING",
   subtext: "CS_DEBT_LIABILITY_SUBTEXT",
   isOptional: false,
+  className: "debt-liability",
 };

@@ -71,7 +71,6 @@ function EFilingCases({ path }) {
     return formdata.filter((item) => item.isenabled === true).length;
   }, [formdata]);
 
-  useEffect(() => { }, []);
   const handleAddForm = () => {
     setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };
@@ -241,7 +240,7 @@ function EFilingCases({ path }) {
                 <CustomArrowDownIcon />
               </div>
             </div>
-            <p>{`Please provide the necessary details about the respondent(s)`}</p>
+            <p>{t(pageConfig.subtext || "Please provide the necessary details")}</p>
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
@@ -272,7 +271,7 @@ function EFilingCases({ path }) {
                   }}
                   cardStyle={{ minWidth: "100%" }}
                   isDisabled={isDisabled}
-                  cardClassName={"e-filing-card-form-style"}
+                  cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
@@ -283,14 +282,7 @@ function EFilingCases({ path }) {
           {pageConfig?.addFormText && (
             <div
               onClick={handleAddForm}
-              style={{
-                display: "flex",
-                cursor: "pointer",
-                alignItems: "center",
-                justifyContent: "space-around",
-                width: "150px",
-                color: "#007E7E",
-              }}
+              className="add-new-form"
             >
               <CustomAddIcon />
               <span>{pageConfig.addFormText}</span>

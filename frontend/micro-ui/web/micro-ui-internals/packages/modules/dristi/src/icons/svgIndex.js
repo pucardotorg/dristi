@@ -211,6 +211,12 @@ const CloseIcon = ({ className, style }) => (
   </svg>
 );
 
+const CloseIconWhite = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9.66927 1.27203L8.72927 0.332031L5.0026 4.0587L1.27594 0.332031L0.335938 1.27203L4.0626 4.9987L0.335938 8.72536L1.27594 9.66537L5.0026 5.9387L8.72927 9.66537L9.66927 8.72536L5.9426 4.9987L9.66927 1.27203Z" fill="white" />
+  </svg>
+)
+
 const ComplaintDetailsIcon = () => (
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="32" height="32" rx="4" fill="#F8EBE3" />
@@ -314,6 +320,19 @@ const PrayerSwornIcon = () => (
   </svg>
 );
 
+const FileIcon = () => (
+  <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 0H2C0.9 0 0.0100002 0.9 0.0100002 2L0 18C0 19.1 0.89 20 1.99 20H14C15.1 20 16 19.1 16 18V6L10 0ZM12 16H4V14H12V16ZM12 12H4V10H12V12ZM9 7V1.5L14.5 7H9Z" fill="#3D3C3C" />
+  </svg>
+)
+
+const FileUploadIcon = () => (
+  <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.5 13H10.5V7H14.5L7.5 0L0.5 7H4.5V13ZM0.5 15H14.5V17H0.5V15Z" fill="#007E7E" />
+  </svg>
+
+)
+
 export {
   RegisterIcon,
   LoginIcon,
@@ -332,10 +351,13 @@ export {
   CustomSchedule,
   CustomCompleteIcon,
   CloseIcon,
+  CloseIconWhite,
   ComplaintDetailsIcon,
   RespondentDetailsIcon,
   ChequeDetailsIcon,
   DebtLiabilityIcon,
   DemandDetailsNoticeIcon,
   PrayerSwornIcon,
+  FileIcon,
+  FileUploadIcon
 };
