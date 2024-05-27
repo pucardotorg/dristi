@@ -2,9 +2,24 @@ import React, { useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, CustomDropdown } from "@egovernments/digit-ui-react-components";
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import CitizenInfoLabel from "./CitizenInfoLabel";
+import { CardText } from "@egovernments/digit-ui-components";
+import useInterval from "../hooks/useInterval";
+const TYPE_REGISTER = { type: "register" };
+const TYPE_LOGIN = { type: "login" };
+const DEFAULT_USER = "digit-user";
 
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   const [removeFile, setRemoveFile] = useState();
+  const [timeLeft, setTimeLeft] = useState(10);
+  // const [isUserRegistered, setIsUserRegistered] = useState(true);
+  const getUserType = () => window?.Digit.UserService.getType();
+  const stateCode = window?.Digit.ULBService.getStateId();
+  useInterval(
+    () => {
+      setTimeLeft(timeLeft - 1);
+    },
+    timeLeft > 0 ? 1000 : null
+  );
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -68,10 +83,36 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     }
     return !isValidated;
   };
+
+  const sendOtp = async (data) => {
+    try {
+      const res = await window?.Digit.UserService.sendOtp(data, stateCode);
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  };
+
+  const resendOtp = async (input) => {
+    const data = {
+      mobileNumber: formData[config.key]?.[input?.mobileNoKey],
+      tenantId: stateCode,
+      userType: getUserType(),
+    };
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    if (!err) {
+      return;
+    } else {
+      const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
+      return;
+    }
+  };
+
   return (
     <div>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
+        console.log("formData", formData);
         const showDependentFields =
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
@@ -91,7 +132,20 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
 
             {showDependentFields && (
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
+                <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
+                  {t(input.label) +
+                    `${
+                      input?.hasMobileNo
+                        ? formData[config.key]?.[input?.mobileNoKey]
+                          ? input?.isMobileSecret
+                            ? input?.mobileCode
+                              ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                              : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                            : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                          : ""
+                        : ""
+                    }`}
+                </CardLabel>
 
                 <div className="field">
                   {["radioButton", "dropdown"].includes(input?.type) && (
@@ -178,6 +232,17 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                 className="doc-banner"
                 children={t("CS_AADHAR_NUMBER_INPUT_INFO")}
               ></CitizenInfoLabel>
+            )}
+            {input?.hasResendOTP && (
+              <React.Fragment>
+                {timeLeft > 0 ? (
+                  <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+                ) : (
+                  <p className="card-text" onClick={() => resendOtp(input)} style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer" }}>
+                    {t("CS_RESEND_OTP")}
+                  </p>
+                )}
+              </React.Fragment>
             )}
           </React.Fragment>
         );

@@ -13,6 +13,12 @@
         text-align: center;
         color: #fff !important;
       }
+      h2.default-text {
+        color: theme(colors.text.primary) !important;
+      }
+      h2.error-text {
+        color: #b91900 !important;
+      }
       h2.secondary-label-selector {
         text-align: left;
         font-family: Roboto;

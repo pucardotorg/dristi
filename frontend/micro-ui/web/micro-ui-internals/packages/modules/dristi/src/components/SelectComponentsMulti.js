@@ -3,14 +3,7 @@ import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Button } from "@e
 import Axios from "axios";
 import LocationComponent from "./LocationComponent";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
-
-function generateUUID() {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
+import { generateUUID } from "../Utils";
 
 const selectCompMultiConfig = {
   type: "component",
@@ -125,7 +118,6 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       return updatedLocations;
     });
   };
-
 
   return (
     <div>
