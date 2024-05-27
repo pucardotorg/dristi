@@ -25,6 +25,7 @@ import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
 import SelectComponentsMulti from "./components/SelectComponentsMulti";
 import SelectReviewAccordion from "./components/SelectReviewAccordion";
+import SelectSignature from "./components/SelectSignature";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -66,6 +67,7 @@ const componentsToRegister = {
   SelectCustomTextArea,
   IdProofUploadComponent,
   SelectReviewAccordion,
+  SelectSignature,
 };
 
 const overrideHooks = () => {

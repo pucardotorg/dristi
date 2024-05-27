@@ -6,6 +6,7 @@ import { delayApplicationConfig } from "./delayApplicationConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";
 import { respondentconfig } from "./respondentConfig";
 import { reviewcasefileconfig } from "./reviewcasefileconfig";
+import { signatureconfig } from "./signatureconfig";
 import { witnessConfig } from "./witnessConfig";
 
 export const sideMenuConfig = [
@@ -96,7 +97,7 @@ export const sideMenuConfig = [
         isDisabled: false,
         pageConfig: reviewcasefileconfig,
       },
-      { key: "addSignature", label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false },
+      { key: "addSignature", label: "CS_ADD_SIGNATURE", checked: false, isCompleted: false, isDisabled: false, pageConfig: signatureconfig },
     ],
   },
 ];

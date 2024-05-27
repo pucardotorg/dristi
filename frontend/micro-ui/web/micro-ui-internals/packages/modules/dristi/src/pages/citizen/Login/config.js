@@ -66,7 +66,8 @@ export const loginSteps = [
               optionsKey: "name",
               error: "sample required message",
               validation: {},
-              clearFields: { aadharNumber: "" },
+              clearFields: { aadharNumber: "", ID_Proof: [] },
+              clearFieldsType: { ID_Proof: "documentUpload" },
               isMandatory: true,
               disableMandatoryFieldFor: ["aadharNumber"],
               disableFormValidation: false,
@@ -113,6 +114,7 @@ export const loginSteps = [
               clearFieldsType: { ID_Proof: "documentUpload" },
               disableMandatoryFieldFor: ["ID_Proof", "selectIdTypeType"],
               isMandatory: true,
+              checkAadharVerification: true,
             },
             {
               type: "infoBox",

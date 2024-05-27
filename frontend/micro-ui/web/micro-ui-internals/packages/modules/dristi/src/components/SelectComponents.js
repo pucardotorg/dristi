@@ -110,7 +110,12 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      if (value.startsWith(" ")) {
+        value = "";
+      }
+      onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
 
   const checkIfValidated = (currentValue, input) => {
