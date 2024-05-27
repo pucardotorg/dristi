@@ -93,9 +93,10 @@ function CitizenHome({ tenantId }) {
       {individualId &&
         !isApprovalPending &&
         !isRejected &&
-        cardIcons.map((card) => {
+        cardIcons.map((card, index) => {
           return (
             <CustomCard
+              key={index}
               label={card.label}
               Icon={card.Icon}
               style={{ width: "400px", height: "150px" }}

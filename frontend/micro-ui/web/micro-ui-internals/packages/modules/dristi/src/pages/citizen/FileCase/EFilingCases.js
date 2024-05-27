@@ -1,11 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CloseSvg, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
-import { ReactComponent as InfoIcon } from '../../../icons/info.svg';
+import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import Modal from "../../../components/Modal";
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
@@ -15,9 +15,30 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [accordion, setAccordion] = useState(sideMenuConfig);
-  const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[0]?.pageConfig);
   const [{ setFormErrors }, setState] = useState({ setFormErrors: null });
+  const urlParams = new URLSearchParams(window.location.search);
+  const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
+  const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
+
+  useEffect(() => {
+    setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
+  }, [selected]);
+
+  const accordion = useMemo(() => {
+    return sideMenuConfig.map((parent, pIndex) => ({
+      ...parent,
+      isOpen: pIndex === parentOpen,
+      children: parent.children.map((child, cIndex) => ({
+        ...child,
+        checked: child.key === selected,
+      })),
+    }));
+  }, [parentOpen, selected]);
+
+  const pageConfig = useMemo(() => {
+    return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected)).children.find((child) => child.key === selected)
+      ?.pageConfig;
+  }, [selected]);
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
@@ -101,34 +122,14 @@ function EFilingCases({ path }) {
   };
 
   const handleAccordionClick = (index) => {
-    setAccordion((prevAccordion) => {
-      const newAccordion = prevAccordion.map((parent, pIndex) => ({
-        ...parent,
-        isOpen: pIndex === index ? !parent.isOpen : false,
-      }));
-      return newAccordion;
-    });
+    setParentOpen(index);
   };
 
-  const handlePageChange = (parentIndex, childIndex) => {
-    const newPageConfig = accordion?.[parentIndex]?.children?.[childIndex]?.pageConfig;
-    if (!newPageConfig || accordion?.[parentIndex]?.children?.[childIndex].checked) {
-      return null;
-    }
-    setAccordion((prevAccordion) => {
-      const newAccordion = prevAccordion.map((parent, pIndex) => ({
-        ...parent,
-        children: parent.children.map((child, cIndex) => ({
-          ...child,
-          checked: pIndex === parentIndex && cIndex === childIndex ? 1 : 0,
-        })),
-      }));
-      return newAccordion;
-    });
-    setPageConfig(newPageConfig);
+  const handlePageChange = (key) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
     setIsOpen(false);
+    history.push(`?selected=${key}`);
   };
 
   const validateData = (data) => {
@@ -189,29 +190,35 @@ function EFilingCases({ path }) {
             <span className="place-name"> Kollam S 138 Special Court</span>
           </p>
         </div>
-        {isOpen && <Modal
-          headerBarEnd={<CloseBtn onClick={() => { setIsOpen(false) }} />}
-          hideSubmit={true}
-        >
-          <div>
-            {accordion.map((item, index) => (
-              <Accordion
-                t={t}
-                title={item.title}
-                handlePageChange={handlePageChange}
-                handleAccordionClick={() => {
-                  handleAccordionClick(index);
+        {isOpen && (
+          <Modal
+            headerBarEnd={
+              <CloseBtn
+                onClick={() => {
+                  setIsOpen(false);
                 }}
-                key={index}
-                children={item.children}
-                parentIndex={index}
-                isOpen={item.isOpen}
               />
-            ))}
-          </div>
-        </Modal>}
-
-
+            }
+            hideSubmit={true}
+          >
+            <div>
+              {accordion.map((item, index) => (
+                <Accordion
+                  t={t}
+                  title={item.title}
+                  handlePageChange={handlePageChange}
+                  handleAccordionClick={() => {
+                    handleAccordionClick(index);
+                  }}
+                  key={index}
+                  children={item.children}
+                  parentIndex={index}
+                  isOpen={item.isOpen}
+                />
+              ))}
+            </div>
+          </Modal>
+        )}
 
         <div className="file-case-select-form-section">
           {accordion.map((item, index) => (
@@ -236,7 +243,12 @@ function EFilingCases({ path }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t(pageConfig.header)}</Header>
-              <div className="header-icon" onClick={() => { setIsOpen(true) }}>
+              <div
+                className="header-icon"
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
                 <CustomArrowDownIcon />
               </div>
             </div>
@@ -280,10 +292,7 @@ function EFilingCases({ path }) {
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div
-              onClick={handleAddForm}
-              className="add-new-form"
-            >
+            <div onClick={handleAddForm} className="add-new-form">
               <CustomAddIcon />
               <span>{pageConfig.addFormText}</span>
             </div>
