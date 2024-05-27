@@ -130,7 +130,7 @@ public class CourtCase {
 	@JsonProperty("litigants")
 	@NotNull
 	@Valid
-	@Size(min = 2)
+	//@Size(min = 2) //FIX
 	private List<Party> litigants = new ArrayList<>();
 
 	@JsonProperty("representatives")
