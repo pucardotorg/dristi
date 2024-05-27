@@ -270,7 +270,7 @@ public class CaseRepository {
                     String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
                     log.info("Final case exist query: {}", casesExistQuery);
                     Integer count = jdbcTemplate.queryForObject(casesExistQuery, Integer.class);
-                    caseExists.setExists(count != null && count > 1);
+                    caseExists.setExists(count != null && count > 0);
                 }
             }
             return caseExistsRequest;

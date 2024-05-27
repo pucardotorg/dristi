@@ -52,6 +52,9 @@ public class CourtCase {
 	@Size(min = 2, max = 512)
 	private String caseTitle = null;
 
+	@JsonProperty("isActive")
+	private Boolean isActive = true;
+
 	@JsonProperty("caseDescription")
 	@Size(min = 2, max = 10000)
 	private String caseDescription = null;
