@@ -86,7 +86,7 @@ const complainantDetailsFormConfig = [
                 errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
                 title: "",
                 patternType: "Name",
-                isRequired: true,
+                // isRequired: true,
               },
               isMandatory: true,
             },

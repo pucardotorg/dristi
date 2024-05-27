@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
-import LocationSearch from "./LocationSearch";
+import { CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import Axios from "axios";
+import React, { useMemo, useState } from "react";
+import LocationSearch from "./LocationSearch";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -10,7 +10,8 @@ const getLocation = (places, code) => {
   })?.long_name;
   return location ? location : null;
 };
-const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
+const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
+  console.debug({ formData, formState, errors2: formState.errors, errors });
   const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
   const inputs = useMemo(
     () =>
@@ -110,7 +111,9 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
+    }
   }
 
   return (
@@ -171,17 +174,33 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                     }}
                   />
                 ) : (
-                  <TextInput
-                    className="field desktop-w-full"
-                    key={input.name}
-                    value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
-                    onChange={(e) => {
-                      setValue(e.target.value, input.name);
-                    }}
-                    disable={input.isDisabled}
-                    defaultValue={undefined}
-                    {...input.validation}
-                  />
+                  <React.Fragment>
+                    {/* <RenderInput
+                      input={input}
+                      register={register}
+                      name={`${config.key}.${input.name}`}
+                      value={watch(config.key)?.[input.name]}
+                      onChange={(e) => {
+                        setValue(e.target.value, input.name);
+                      }}
+                    /> */}
+                    <TextInput
+                      className="field desktop-w-full"
+                      name={`${config.key}.${input.name}`}
+                      inputRef={register(
+                        { name: `${config.key}.${input.name}`, type: "string" },
+                        {
+                          required: "this is a required field",
+                          min: 3,
+                        }
+                      )}
+                      value={watch(config.key)?.[input.name]}
+                      onChange={(e) => {
+                        setValue(e.target.value, input.name);
+                      }}
+                      disable={input.isDisabled}
+                    />
+                  </React.Fragment>
                 )}
                 {currentValue &&
                   currentValue.length > 0 &&
@@ -201,3 +220,12 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
 };
 
 export default SelectComponents;
+
+function RenderInput({ register, value, input, name, onChange }) {
+  console.debug("test", register("xx.qa"));
+  const { ref, ...restProps } = register(name, {
+    required: input.isMandatory,
+    ...input.validation,
+  });
+  return <TextInput inputRef={ref} className="field desktop-w-full" {...restProps} value={value} onChange={onChange} disable={input.isDisabled} />;
+}
