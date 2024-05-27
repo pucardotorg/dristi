@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:dio/src/dio_mixin.dart';
+import 'package:dio/src/options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:pucardpg/data/api_interceptors.dart';
@@ -335,15 +337,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _authResponse = response;
 
     //store accessToken in secure storage
-    secureStore.setUserRequest(response.userRequest!);
-    secureStore.setAccessToken(accesstoken);
-    secureStore.setRefreshToken(_refreshtoken);
+    await secureStore.setUserRequest(response.userRequest!);
+    await secureStore.setAccessToken(accesstoken);
+    await secureStore.setRefreshToken(_refreshtoken);
 
     //store other access Information in secure storage
     secureStore.setAccessInfo(response);
 
     //change to authenticated state now that we have access
-    emit(AuthState.error());
+    emit(AuthState.error(event.requestOptions, event.handler));
   }
 
   FutureOr<void> submitIndividualProfile(_SubmitProfileEvent event,
@@ -488,14 +490,18 @@ class AuthEvent with _$AuthEvent {
       final String username, final String password, UserModel userModel) = _SubmitLoginOtpEvent;
   const factory AuthEvent.submitLogoutUser(
       final String authToken) = _SubmitLogoutUserEvent;
-  const factory AuthEvent.refreshToken() = _AuthRefreshTokenEvent;
+  const factory AuthEvent.refreshToken(
+      RequestOptions requestOptions,
+      ErrorInterceptorHandler handler) = _AuthRefreshTokenEvent;
   const factory AuthEvent.submitProfile() = _SubmitProfileEvent;
 }
 
 @freezed
 class AuthState with _$AuthState {
 
-  const factory AuthState.error() = _ErrorState;
+  const factory AuthState.error(
+      RequestOptions requestOptions,
+      ErrorInterceptorHandler handler) = _ErrorState;
   const factory AuthState.initial() = _InitialState;
   const factory AuthState.unauthenticated() = _UnauthenticatedState;
   const factory AuthState.authenticated({

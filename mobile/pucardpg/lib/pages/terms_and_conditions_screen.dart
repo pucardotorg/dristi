@@ -8,8 +8,10 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
+import 'package:pucardpg/data/secure_storage/secureStore.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
 import '../utils/i18_key_constants.dart' as i18;
+import 'package:dio/dio.dart';
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
 import 'package:pucardpg/widget/checkbox_tile.dart';
@@ -135,16 +137,21 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: (){},
-                  error: () {
+                  error: (requestOptions, handler) async {
                     isSubmitting = false;
-                    DigitToast.show(
-                      context,
-                      options: DigitToastOptions(
-                        "Try Again",
-                        true,
-                        widget.theme.theme(),
-                      ),
-                    );
+                    // DigitToast.show(
+                    //   context,
+                    //   options: DigitToastOptions(
+                    //     "Try Again",
+                    //     true,
+                    //     widget.theme.theme(),
+                    //   ),
+                    // );
+                    final newAuthToken = await SecureStore().getAccessToken();
+                    requestOptions.data["RequestInfo"]["authToken"] = newAuthToken;
+
+                    final retryResponse = await Dio().fetch(requestOptions);
+                    return handler.resolve(retryResponse);
                   },
                   profileFailedState: (error) {
                     isSubmitting = false;

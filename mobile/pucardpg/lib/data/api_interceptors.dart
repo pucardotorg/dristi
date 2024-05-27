@@ -80,7 +80,7 @@ class AuthTokenInterceptor extends Interceptor {
                   // Trigger the refresh token action
                   scaffoldMessengerKey.currentContext!
                       .read<AuthBloc>()
-                      .add(const AuthEvent.refreshToken());
+                      .add(AuthEvent.refreshToken(err.requestOptions, handler));
                   break;
                 }
               }

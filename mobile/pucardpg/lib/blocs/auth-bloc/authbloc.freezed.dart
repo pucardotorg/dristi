@@ -29,7 +29,9 @@ mixin _$AuthEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) =>
       throw _privateConstructorUsedError;
@@ -45,7 +47,9 @@ mixin _$AuthEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) =>
       throw _privateConstructorUsedError;
@@ -61,7 +65,9 @@ mixin _$AuthEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) =>
@@ -178,7 +184,9 @@ class _$AuthLoginEventImpl implements _AuthLoginEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return login();
@@ -197,7 +205,9 @@ class _$AuthLoginEventImpl implements _AuthLoginEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return login?.call();
@@ -216,7 +226,9 @@ class _$AuthLoginEventImpl implements _AuthLoginEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -336,7 +348,9 @@ class _$AuthLogoutEventImpl implements _AuthLogoutEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return logout();
@@ -355,7 +369,9 @@ class _$AuthLogoutEventImpl implements _AuthLogoutEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return logout?.call();
@@ -374,7 +390,9 @@ class _$AuthLogoutEventImpl implements _AuthLogoutEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -494,7 +512,9 @@ class _$AuthLoadEventImpl implements _AuthLoadEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return attemptLoad();
@@ -513,7 +533,9 @@ class _$AuthLoadEventImpl implements _AuthLoadEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return attemptLoad?.call();
@@ -532,7 +554,9 @@ class _$AuthLoadEventImpl implements _AuthLoadEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -688,7 +712,9 @@ class _$RequestOtpEventImpl implements _RequestOtpEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return requestOtp(mobileNumber, type);
@@ -707,7 +733,9 @@ class _$RequestOtpEventImpl implements _RequestOtpEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return requestOtp?.call(mobileNumber, type);
@@ -726,7 +754,9 @@ class _$RequestOtpEventImpl implements _RequestOtpEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -889,7 +919,9 @@ class _$ResendOtpEventImpl implements _ResendOtpEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return resendOtp(mobileNumber, type);
@@ -908,7 +940,9 @@ class _$ResendOtpEventImpl implements _ResendOtpEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return resendOtp?.call(mobileNumber, type);
@@ -927,7 +961,9 @@ class _$ResendOtpEventImpl implements _ResendOtpEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -1102,7 +1138,9 @@ class _$SubmitRegistrationOtpEventImpl implements _SubmitRegistrationOtpEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return submitRegistrationOtp(username, otp, userModel);
@@ -1121,7 +1159,9 @@ class _$SubmitRegistrationOtpEventImpl implements _SubmitRegistrationOtpEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return submitRegistrationOtp?.call(username, otp, userModel);
@@ -1140,7 +1180,9 @@ class _$SubmitRegistrationOtpEventImpl implements _SubmitRegistrationOtpEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -1315,7 +1357,9 @@ class _$SubmitLoginOtpEventImpl implements _SubmitLoginOtpEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return submitLoginOtpEvent(username, password, userModel);
@@ -1334,7 +1378,9 @@ class _$SubmitLoginOtpEventImpl implements _SubmitLoginOtpEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return submitLoginOtpEvent?.call(username, password, userModel);
@@ -1353,7 +1399,9 @@ class _$SubmitLoginOtpEventImpl implements _SubmitLoginOtpEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -1512,7 +1560,9 @@ class _$SubmitLogoutUserEventImpl implements _SubmitLogoutUserEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return submitLogoutUser(authToken);
@@ -1531,7 +1581,9 @@ class _$SubmitLogoutUserEventImpl implements _SubmitLogoutUserEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return submitLogoutUser?.call(authToken);
@@ -1550,7 +1602,9 @@ class _$SubmitLogoutUserEventImpl implements _SubmitLogoutUserEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -1633,6 +1687,8 @@ abstract class _$$AuthRefreshTokenEventImplCopyWith<$Res> {
           _$AuthRefreshTokenEventImpl value,
           $Res Function(_$AuthRefreshTokenEventImpl) then) =
       __$$AuthRefreshTokenEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({RequestOptions requestOptions, ErrorInterceptorHandler handler});
 }
 
 /// @nodoc
@@ -1642,27 +1698,60 @@ class __$$AuthRefreshTokenEventImplCopyWithImpl<$Res>
   __$$AuthRefreshTokenEventImplCopyWithImpl(_$AuthRefreshTokenEventImpl _value,
       $Res Function(_$AuthRefreshTokenEventImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? requestOptions = null,
+    Object? handler = null,
+  }) {
+    return _then(_$AuthRefreshTokenEventImpl(
+      null == requestOptions
+          ? _value.requestOptions
+          : requestOptions // ignore: cast_nullable_to_non_nullable
+              as RequestOptions,
+      null == handler
+          ? _value.handler
+          : handler // ignore: cast_nullable_to_non_nullable
+              as ErrorInterceptorHandler,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$AuthRefreshTokenEventImpl implements _AuthRefreshTokenEvent {
-  const _$AuthRefreshTokenEventImpl();
+  const _$AuthRefreshTokenEventImpl(this.requestOptions, this.handler);
+
+  @override
+  final RequestOptions requestOptions;
+  @override
+  final ErrorInterceptorHandler handler;
 
   @override
   String toString() {
-    return 'AuthEvent.refreshToken()';
+    return 'AuthEvent.refreshToken(requestOptions: $requestOptions, handler: $handler)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AuthRefreshTokenEventImpl);
+            other is _$AuthRefreshTokenEventImpl &&
+            (identical(other.requestOptions, requestOptions) ||
+                other.requestOptions == requestOptions) &&
+            (identical(other.handler, handler) || other.handler == handler));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, requestOptions, handler);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AuthRefreshTokenEventImplCopyWith<_$AuthRefreshTokenEventImpl>
+      get copyWith => __$$AuthRefreshTokenEventImplCopyWithImpl<
+          _$AuthRefreshTokenEventImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1678,10 +1767,12 @@ class _$AuthRefreshTokenEventImpl implements _AuthRefreshTokenEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
-    return refreshToken();
+    return refreshToken(requestOptions, handler);
   }
 
   @override
@@ -1697,10 +1788,12 @@ class _$AuthRefreshTokenEventImpl implements _AuthRefreshTokenEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
-    return refreshToken?.call();
+    return refreshToken?.call(requestOptions, handler);
   }
 
   @override
@@ -1716,12 +1809,14 @@ class _$AuthRefreshTokenEventImpl implements _AuthRefreshTokenEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
     if (refreshToken != null) {
-      return refreshToken();
+      return refreshToken(requestOptions, handler);
     }
     return orElse();
   }
@@ -1784,7 +1879,14 @@ class _$AuthRefreshTokenEventImpl implements _AuthRefreshTokenEvent {
 }
 
 abstract class _AuthRefreshTokenEvent implements AuthEvent {
-  const factory _AuthRefreshTokenEvent() = _$AuthRefreshTokenEventImpl;
+  const factory _AuthRefreshTokenEvent(final RequestOptions requestOptions,
+      final ErrorInterceptorHandler handler) = _$AuthRefreshTokenEventImpl;
+
+  RequestOptions get requestOptions;
+  ErrorInterceptorHandler get handler;
+  @JsonKey(ignore: true)
+  _$$AuthRefreshTokenEventImplCopyWith<_$AuthRefreshTokenEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1836,7 +1938,9 @@ class _$SubmitProfileEventImpl implements _SubmitProfileEvent {
             String username, String password, UserModel userModel)
         submitLoginOtpEvent,
     required TResult Function(String authToken) submitLogoutUser,
-    required TResult Function() refreshToken,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        refreshToken,
     required TResult Function() submitProfile,
   }) {
     return submitProfile();
@@ -1855,7 +1959,9 @@ class _$SubmitProfileEventImpl implements _SubmitProfileEvent {
     TResult? Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult? Function(String authToken)? submitLogoutUser,
-    TResult? Function()? refreshToken,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult? Function()? submitProfile,
   }) {
     return submitProfile?.call();
@@ -1874,7 +1980,9 @@ class _$SubmitProfileEventImpl implements _SubmitProfileEvent {
     TResult Function(String username, String password, UserModel userModel)?
         submitLoginOtpEvent,
     TResult Function(String authToken)? submitLogoutUser,
-    TResult Function()? refreshToken,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        refreshToken,
     TResult Function()? submitProfile,
     required TResult orElse(),
   }) {
@@ -1949,7 +2057,9 @@ abstract class _SubmitProfileEvent implements AuthEvent {
 mixin _$AuthState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -1975,7 +2085,9 @@ mixin _$AuthState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -2000,7 +2112,9 @@ mixin _$AuthState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -2125,6 +2239,8 @@ abstract class _$$ErrorStateImplCopyWith<$Res> {
   factory _$$ErrorStateImplCopyWith(
           _$ErrorStateImpl value, $Res Function(_$ErrorStateImpl) then) =
       __$$ErrorStateImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({RequestOptions requestOptions, ErrorInterceptorHandler handler});
 }
 
 /// @nodoc
@@ -2134,31 +2250,66 @@ class __$$ErrorStateImplCopyWithImpl<$Res>
   __$$ErrorStateImplCopyWithImpl(
       _$ErrorStateImpl _value, $Res Function(_$ErrorStateImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? requestOptions = null,
+    Object? handler = null,
+  }) {
+    return _then(_$ErrorStateImpl(
+      null == requestOptions
+          ? _value.requestOptions
+          : requestOptions // ignore: cast_nullable_to_non_nullable
+              as RequestOptions,
+      null == handler
+          ? _value.handler
+          : handler // ignore: cast_nullable_to_non_nullable
+              as ErrorInterceptorHandler,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$ErrorStateImpl implements _ErrorState {
-  const _$ErrorStateImpl();
+  const _$ErrorStateImpl(this.requestOptions, this.handler);
+
+  @override
+  final RequestOptions requestOptions;
+  @override
+  final ErrorInterceptorHandler handler;
 
   @override
   String toString() {
-    return 'AuthState.error()';
+    return 'AuthState.error(requestOptions: $requestOptions, handler: $handler)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ErrorStateImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$ErrorStateImpl &&
+            (identical(other.requestOptions, requestOptions) ||
+                other.requestOptions == requestOptions) &&
+            (identical(other.handler, handler) || other.handler == handler));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, requestOptions, handler);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ErrorStateImplCopyWith<_$ErrorStateImpl> get copyWith =>
+      __$$ErrorStateImplCopyWithImpl<_$ErrorStateImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -2181,13 +2332,15 @@ class _$ErrorStateImpl implements _ErrorState {
             AdvocateClerkSearchResponse advocateClerkSearchResponse)
         advocateClerkSearchSuccessState,
   }) {
-    return error();
+    return error(requestOptions, handler);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -2209,13 +2362,15 @@ class _$ErrorStateImpl implements _ErrorState {
     TResult? Function(AdvocateClerkSearchResponse advocateClerkSearchResponse)?
         advocateClerkSearchSuccessState,
   }) {
-    return error?.call();
+    return error?.call(requestOptions, handler);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -2239,7 +2394,7 @@ class _$ErrorStateImpl implements _ErrorState {
     required TResult orElse(),
   }) {
     if (error != null) {
-      return error();
+      return error(requestOptions, handler);
     }
     return orElse();
   }
@@ -2335,7 +2490,14 @@ class _$ErrorStateImpl implements _ErrorState {
 }
 
 abstract class _ErrorState implements AuthState {
-  const factory _ErrorState() = _$ErrorStateImpl;
+  const factory _ErrorState(final RequestOptions requestOptions,
+      final ErrorInterceptorHandler handler) = _$ErrorStateImpl;
+
+  RequestOptions get requestOptions;
+  ErrorInterceptorHandler get handler;
+  @JsonKey(ignore: true)
+  _$$ErrorStateImplCopyWith<_$ErrorStateImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -2376,7 +2538,9 @@ class _$InitialStateImpl implements _InitialState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -2405,7 +2569,9 @@ class _$InitialStateImpl implements _InitialState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -2433,7 +2599,9 @@ class _$InitialStateImpl implements _InitialState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -2595,7 +2763,9 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -2624,7 +2794,9 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -2652,7 +2824,9 @@ class _$UnauthenticatedStateImpl implements _UnauthenticatedState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -2878,7 +3052,9 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -2907,7 +3083,9 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -2935,7 +3113,9 @@ class _$AuthenticatedStateImpl implements _AuthenticatedState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -3135,7 +3315,9 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -3164,7 +3346,9 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -3192,7 +3376,9 @@ class _$OtpGenerationSuccessStateImpl implements _OtpGenerationSuccessState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -3390,7 +3576,9 @@ class _$ResendOtpGenerationSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -3419,7 +3607,9 @@ class _$ResendOtpGenerationSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -3447,7 +3637,9 @@ class _$ResendOtpGenerationSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -3643,7 +3835,9 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -3672,7 +3866,9 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -3700,7 +3896,9 @@ class _$RequestFailedStateImpl implements _RequestFailedState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -3905,7 +4103,9 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -3934,7 +4134,9 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -3962,7 +4164,9 @@ class _$OtpCorrectStateImpl implements _OtpCorrectState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -4158,7 +4362,9 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -4187,7 +4393,9 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -4215,7 +4423,9 @@ class _$RequestOtpFailedStateImpl implements _RequestOtpFailedState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -4415,7 +4625,9 @@ class _$RegistrationRequestOtpFailedStateImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -4444,7 +4656,9 @@ class _$RegistrationRequestOtpFailedStateImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -4472,7 +4686,9 @@ class _$RegistrationRequestOtpFailedStateImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -4669,7 +4885,9 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -4698,7 +4916,9 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -4726,7 +4946,9 @@ class _$LogoutFailedStateImpl implements _LogoutFailedState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -4894,7 +5116,9 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -4923,7 +5147,9 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -4951,7 +5177,9 @@ class _$ProfileSuccessStateImpl implements _ProfileSuccessState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -5140,7 +5368,9 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -5169,7 +5399,9 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -5197,7 +5429,9 @@ class _$ProfileFailedStateImpl implements _ProfileFailedState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -5409,7 +5643,9 @@ class _$IndividualSearchSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -5438,7 +5674,9 @@ class _$IndividualSearchSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -5466,7 +5704,9 @@ class _$IndividualSearchSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -5677,7 +5917,9 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -5706,7 +5948,9 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -5734,7 +5978,9 @@ class _$AdvocateSearchSuccessStateImpl implements _AdvocateSearchSuccessState {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
@@ -5948,7 +6194,9 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() error,
+    required TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)
+        error,
     required TResult Function() initial,
     required TResult Function() unauthenticated,
     required TResult Function(
@@ -5977,7 +6225,9 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? error,
+    TResult? Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult? Function()? initial,
     TResult? Function()? unauthenticated,
     TResult? Function(
@@ -6005,7 +6255,9 @@ class _$AdvocateClerkSearchSuccessStateImpl
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? error,
+    TResult Function(
+            RequestOptions requestOptions, ErrorInterceptorHandler handler)?
+        error,
     TResult Function()? initial,
     TResult Function()? unauthenticated,
     TResult Function(
