@@ -120,6 +120,7 @@ export const chequeDetailsFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "bouncedChequeFileUpload",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -145,6 +146,7 @@ export const chequeDetailsFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "bouncedChequeFileUpload",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -184,4 +186,5 @@ export const chequeDetailsConfig = {
   isOptional: false,
   addFormText: "ADD_CHEQUE",
   formItemName: "Cheque",
+  className: "cheque"
 };

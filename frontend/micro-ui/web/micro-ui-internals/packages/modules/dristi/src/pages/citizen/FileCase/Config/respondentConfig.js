@@ -98,6 +98,7 @@ const respondentFromconfig = [
         type: "component",
         component: "SelectCustomNote",
         key: "personalDetailsNote",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -119,6 +120,7 @@ const respondentFromconfig = [
         type: "component",
         component: "SelectBulkInputs",
         key: "phonenumbers",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -135,6 +137,7 @@ const respondentFromconfig = [
                 pattern: /^[6-9]\d{9}$/,
                 isArray: true,
               },
+              className: "mobile-number"
             },
           ],
           validation: {},
@@ -150,6 +153,7 @@ const respondentFromconfig = [
         type: "component",
         component: "SelectBulkInputs",
         key: "emails",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -163,6 +167,7 @@ const respondentFromconfig = [
                 pattern: /\S+@\S+\.\S+/,
                 isArray: true,
               },
+              className: "email-address"
             },
           ],
           validation: {},
@@ -279,6 +284,7 @@ const respondentFromconfig = [
         type: "component",
         component: "SelectCustomNote",
         key: "addressDetailsNote",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -299,6 +305,7 @@ const respondentFromconfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "condonationFileUpload",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -327,4 +334,5 @@ export const respondentconfig = {
   isOptional: false,
   addFormText: "ADD_RESPONDENT",
   formItemName: "Respondent",
+  className: "respondent"
 };

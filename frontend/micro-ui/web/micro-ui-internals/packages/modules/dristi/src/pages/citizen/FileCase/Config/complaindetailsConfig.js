@@ -228,4 +228,5 @@ export const complaintdetailconfig = {
   isOptional: false,
   addFormText: "ADD_Complaint",
   formItemName: "Complainant",
+  className: "complainant"
 };
