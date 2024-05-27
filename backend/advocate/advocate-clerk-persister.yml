@@ -7,7 +7,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: INSERT INTO dristi_advocate_clerk(id, tenantId, applicationNumber,status, individualId, stateRegnNumber,isActive , createdBy, lastModifiedBy, createdTime, lastModifiedTime,additionalDetails) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);
-          basePath: clerks.*
+          basePath: clerk.*
           jsonMaps:
             - jsonPath: $.clerk.id
             - jsonPath: $.clerk.tenantId
@@ -25,7 +25,7 @@ serviceMaps:
               dbType: JSONB
 
         - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType ,clerk_id,additionalDetails) VALUES (?,?, ?,?,?,?);
-          basePath: $.clerks.*.documents.*
+          basePath: $.clerk.*.documents.*
           jsonMaps:
             - jsonPath: $.clerk.documents.*.id
             - jsonPath: $.clerk.documents.*.fileStore
@@ -41,7 +41,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: UPDATE  dristi_advocate_clerk SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
-          basePath: clerks.*
+          basePath: clerk.*
           jsonMaps:
             - jsonPath: $.clerk.status
             - jsonPath: $.clerk.isActive

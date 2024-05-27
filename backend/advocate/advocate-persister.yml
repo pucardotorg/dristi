@@ -8,7 +8,7 @@ serviceMaps:
       queryMaps:
 
         - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,status,barRegistrationNumber,advocateType,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?);
-          basePath: advocates.*
+          basePath: advocate.*
           jsonMaps:
             - jsonPath: $.advocate.id
             - jsonPath: $.advocate.tenantId
@@ -28,7 +28,7 @@ serviceMaps:
             - jsonPath: $.advocate.auditDetails.lastModifiedTime
 
         - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType,advocateId,additionalDetails) VALUES (?,?, ?, ?, ?, ?);
-          basePath: advocates.*.documents.*
+          basePath: advocate.*.documents.*
           jsonMaps:
             - jsonPath: $.advocate.documents.*.id
             - jsonPath: $.advocate.documents.*.fileStore
@@ -45,7 +45,7 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: UPDATE  dristi_advocate SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
-          basePath: advocates.*
+          basePath: advocate.*
           jsonMaps:
             - jsonPath: $.advocate.status
             - jsonPath: $.advocate.isActive

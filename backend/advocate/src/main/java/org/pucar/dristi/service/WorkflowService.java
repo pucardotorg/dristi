@@ -47,9 +47,8 @@ public class WorkflowService {
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
             log.info("Application Status :: {}", applicationStatus);
             advocate.setStatus(applicationStatus);
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Error updating workflow status: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+ e);
         }
@@ -61,8 +60,6 @@ public class WorkflowService {
             log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -81,8 +78,6 @@ public class WorkflowService {
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
             log.info("Application Status :: {}", applicationStatus);
             advocateClerk.setStatus(applicationStatus);
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error updating workflow status: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -115,8 +110,6 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for ADVOCATE: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -149,8 +142,6 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for ADVOCATE: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
@@ -165,37 +156,35 @@ public class WorkflowService {
             if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
                 return response.getProcessInstances().get(0);
             return null;
-        } catch (CustomException e){
-            throw e;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
-    private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {
-        try {
-            String tenantId = advocate.getTenantId();
-            StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            Object result = repository.fetchResult(url, requestInfoWrapper);
-            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-                throw new CustomException();
-            return response.getBusinessServices().get(0);
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting business service: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
-        }
-    }
-    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfBusinessServiceSearchPath());
-        url.append("?tenantId=").append(tenantId);
-        url.append("&businessServices=").append(businessService);
-        return url;
-    }
+//    private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {
+//        try {
+//            String tenantId = advocate.getTenantId();
+//            StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
+//            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+//            Object result = repository.fetchResult(url, requestInfoWrapper);
+//            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
+//            if (CollectionUtils.isEmpty(response.getBusinessServices()))
+//                throw new CustomException();
+//            return response.getBusinessServices().get(0);
+//        } catch (CustomException e){
+//            throw e;
+//        } catch (Exception e) {
+//            log.error("Error getting business service: {}", e.toString());
+//            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
+//        }
+//    }
+//    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
+//        StringBuilder url = new StringBuilder(config.getWfHost());
+//        url.append(config.getWfBusinessServiceSearchPath());
+//        url.append("?tenantId=").append(tenantId);
+//        url.append("&businessServices=").append(businessService);
+//        return url;
+//    }
     private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());
@@ -203,28 +192,28 @@ public class WorkflowService {
         url.append("&businessIds=").append(businessService);
         return url;
     }
-    public ProcessInstanceRequest getProcessInstanceForAdvocateRegistrationPayment(AdvocateRequest updateRequest) {
-        try {
-            Advocate application = updateRequest.getAdvocate();
-            ProcessInstance process = ProcessInstance.builder()
-                    .businessService("ADV")
-                    .businessId(application.getApplicationNumber())
-                    .comment("Payment for advocate registration processed")
-                    .moduleName("advocate-services")
-                    .tenantId(application.getTenantId())
-                    .action("PAY")
-                    .build();
-            return ProcessInstanceRequest.builder()
-                    .requestInfo(updateRequest.getRequestInfo())
-                    .processInstances(Arrays.asList(process))
-                    .build();
-        } catch (CustomException e){
-            throw e;
-        } catch (Exception e) {
-            log.error("Error getting process instance for advocate registration payment: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
-        }
-    }
+//    public ProcessInstanceRequest getProcessInstanceForAdvocateRegistrationPayment(AdvocateRequest updateRequest) {
+//        try {
+//            Advocate application = updateRequest.getAdvocate();
+//            ProcessInstance process = ProcessInstance.builder()
+//                    .businessService("ADV")
+//                    .businessId(application.getApplicationNumber())
+//                    .comment("Payment for advocate registration processed")
+//                    .moduleName("advocate-services")
+//                    .tenantId(application.getTenantId())
+//                    .action("PAY")
+//                    .build();
+//            return ProcessInstanceRequest.builder()
+//                    .requestInfo(updateRequest.getRequestInfo())
+//                    .processInstances(Arrays.asList(process))
+//                    .build();
+//        } catch (CustomException e){
+//            throw e;
+//        } catch (Exception e) {
+//            log.error("Error getting process instance for advocate registration payment: {}", e.toString());
+//            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
+//        }
+//    }
 
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
         if(processInstance == null) {
