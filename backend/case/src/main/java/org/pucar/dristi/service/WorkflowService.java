@@ -73,9 +73,9 @@ public class WorkflowService {
             ProcessInstance processInstance = new ProcessInstance();
             processInstance.setBusinessId(courtCase.getFilingNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("pucar"); // FIXME
+            processInstance.setModuleName(config.getCaseBusinessName());
             processInstance.setTenantId(courtCase.getTenantId());
-            processInstance.setBusinessService("case"); // FIXME
+            processInstance.setBusinessService(config.getCaseBusinessServiceName());
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
