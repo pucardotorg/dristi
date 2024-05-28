@@ -3,6 +3,7 @@ package org.pucar.dristi.web.controllers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import org.egov.common.contract.response.ResponseInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,8 @@ public class ArtifactsApiControllerTest {
         when(evidenceService.createEvidence(request)).thenReturn(expectedArtifact);
 
         // Mock response info
-        // Assuming response info is created successfully
+        ResponseInfo mockResponseInfo = new ResponseInfo(/* construct mock response info */);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(mockResponseInfo);
 
         // Call the method
         ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1CreatePost(request);
@@ -57,8 +59,10 @@ public class ArtifactsApiControllerTest {
         EvidenceResponse response = responseEntity.getBody();
         assertNotNull(response.getArtifact());
         assertEquals(expectedArtifact, response.getArtifact());
-        // Add more verification as needed
+        assertNotNull(response.getResponseInfo()); // Verify response info is not null
+        assertEquals(mockResponseInfo, response.getResponseInfo()); // Verify response info content
     }
+
 
 
     @Test
@@ -71,7 +75,8 @@ public class ArtifactsApiControllerTest {
         when(evidenceService.updateEvidence(request)).thenReturn(expectedArtifact);
 
         // Mock response info
-        // Assuming response info is created successfully
+        ResponseInfo mockResponseInfo = new ResponseInfo(/* construct mock response info */);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(mockResponseInfo);
 
         // Call the method
         ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1UpdatePost(request);
@@ -83,6 +88,8 @@ public class ArtifactsApiControllerTest {
         EvidenceResponse response = responseEntity.getBody();
         assertNotNull(response.getArtifact());
         assertEquals(expectedArtifact, response.getArtifact());
-        // Add more verification as needed
+        assertNotNull(response.getResponseInfo()); // Verify response info is not null
+        assertEquals(mockResponseInfo, response.getResponseInfo()); // Verify response info content
     }
+
 }
