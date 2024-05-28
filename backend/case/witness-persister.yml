@@ -1,5 +1,5 @@
 serviceMaps:
-  serviceName: adv-services
+  serviceName: witness-services
   mappings:
     - version: 1.0
       description: Persists witness details in tables
