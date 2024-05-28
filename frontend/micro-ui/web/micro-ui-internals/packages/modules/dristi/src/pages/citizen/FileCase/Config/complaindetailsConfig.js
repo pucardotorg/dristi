@@ -39,8 +39,9 @@ const complainantDetailsFormConfig = [
             },
           ],
           customStyle: {
-            display: "flex",
-            gap: 50,
+            gap: "40px",
+            flexDirection: "row",
+            alignItems: "center",
           },
         },
       },
@@ -61,6 +62,9 @@ const complainantDetailsFormConfig = [
               name: "complainantId",
             },
           ],
+          customStyle: {
+            marginTop: 20,
+          },
         },
       },
     ],
@@ -70,54 +74,50 @@ const complainantDetailsFormConfig = [
     head: "CS_COMMON_COMPLAINANT_DETAIL",
     body: [
       {
-        type: "component",
-        component: "SelectComponents",
-        key: "userDetails",
-        withoutLabel: true,
+        type: "text",
+        label: "FIRST_NAME",
+        isMandatory: true,
         populators: {
-          inputs: [
-            {
-              label: "FIRST_NAME",
-              type: "text",
-              name: "firstName",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-                patternType: "Name",
-                // isRequired: true,
-              },
-              isMandatory: true,
+          name: "firstName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "MIDDLE_NAME",
-              type: "text",
-              name: "middleName",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "MIDDLE_NAME",
+        populators: {
+          name: "middleName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "LAST_NAME",
-              type: "text",
-              name: "lastName",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
-              isMandatory: true,
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "LAST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "lastName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-          ],
-          validation: {},
+            title: "",
+            patternType: "Name",
+          },
         },
       },
     ],

@@ -133,42 +133,8 @@ function EFilingCases({ path }) {
     setIsOpen(false);
   };
 
-  const validateData = (data) => {
-    let isValid = true;
-    formConfig.forEach((config) => {
-      config?.body?.forEach((body) => {
-        if (body?.type === "component") {
-          body?.populators?.inputs?.forEach((input) => {
-            if (input?.isMandatory) {
-              if (input?.validation) {
-                if (input?.validation?.isArray) {
-                  if (!formdata?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
-                    isValid = false;
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  } else {
-                    setFormErrors(body.key, { [input.name]: "" });
-                  }
-                } else {
-                  if (!formdata?.[body.key]?.[input.name]) {
-                    isValid = false;
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  } else {
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  }
-                }
-              }
-            }
-          });
-        }
-      });
-    });
-    return isValid;
-  };
-
-  const onSubmit = (props) => {
-    if (!validateData(props)) {
-      return null;
-    }
+  const onSubmit = (formData) => {
+    console.log(formData)
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
@@ -288,6 +254,7 @@ function EFilingCases({ path }) {
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
+                  noBreakLine
                 />
               </div>
             ) : null;
