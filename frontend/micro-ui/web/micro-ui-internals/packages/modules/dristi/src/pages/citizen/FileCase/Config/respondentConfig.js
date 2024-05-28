@@ -137,7 +137,7 @@ const respondentFromconfig = [
                 pattern: /^[6-9]\d{9}$/,
                 isArray: true,
               },
-              className: "mobile-number"
+              className: "mobile-number",
             },
           ],
           validation: {},
@@ -167,7 +167,7 @@ const respondentFromconfig = [
                 pattern: /\S+@\S+\.\S+/,
                 isArray: true,
               },
-              className: "email-address"
+              className: "email-address",
             },
           ],
           validation: {},
@@ -334,5 +334,5 @@ export const respondentconfig = {
   isOptional: false,
   addFormText: "ADD_RESPONDENT",
   formItemName: "Respondent",
-  className: "respondent"
+  className: "respondent",
 };

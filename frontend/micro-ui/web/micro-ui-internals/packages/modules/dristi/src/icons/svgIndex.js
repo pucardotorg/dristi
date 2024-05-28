@@ -372,6 +372,28 @@ const LitigentIcon = () => (
   </svg>
 );
 
+const ErrorInfoIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_3309_15175)">
+      <path
+        d="M7.9987 1.33203C4.3187 1.33203 1.33203 4.3187 1.33203 7.9987C1.33203 11.6787 4.3187 14.6654 7.9987 14.6654C11.6787 14.6654 14.6654 11.6787 14.6654 7.9987C14.6654 4.3187 11.6787 1.33203 7.9987 1.33203ZM8.66536 11.332H7.33203V7.33203H8.66536V11.332ZM8.66536 5.9987H7.33203V4.66536H8.66536V5.9987Z"
+        fill="#BB2C2F"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_3309_15175">
+        <rect width="16" height="16" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const FlagIcon = ({ style }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 3V4V14V21H5V14H12.3828L13.3828 16H21V5H14.6172L13.6172 3H3ZM5 5H12.3828L13.3828 7H14H19V14H14.6172L13.6172 12H5V5Z" fill="#3D3C3C" />
+  </svg>
+);
+
 export {
   RegisterIcon,
   LoginIcon,
@@ -401,4 +423,6 @@ export {
   FileUploadIcon,
   AdvocateIcon,
   LitigentIcon,
+  ErrorInfoIcon,
+  FlagIcon,
 };

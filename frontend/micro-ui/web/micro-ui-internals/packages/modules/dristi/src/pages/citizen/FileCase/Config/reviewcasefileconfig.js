@@ -1,4 +1,4 @@
-const reviewCaseFileFormConfig = [
+export const reviewCaseFileFormConfig = [
   {
     body: [
       {

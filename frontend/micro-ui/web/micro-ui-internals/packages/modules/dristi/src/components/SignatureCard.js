@@ -2,7 +2,7 @@ import React from "react";
 import { AdvocateIcon, LitigentIcon } from "../icons/svgIndex";
 import { Button } from "@egovernments/digit-ui-react-components";
 
-function SignatureCard({ input, data }) {
+function SignatureCard({ input, data, setOpenAadharModal, setOpenUploadSignatureModal, t }) {
   const Icon = ({ icon }) => {
     switch (icon) {
       case "LitigentIcon":
@@ -30,8 +30,18 @@ function SignatureCard({ input, data }) {
         {data?.[input?.config?.title]}
       </div>
       <div style={{ display: "flex", gap: "20px", alignItems: "center", justifyContent: "space-between" }}>
-        <Button label={"CS_UPLOAD_ESIGNATURE"}></Button>
-        <Button label={"CS_ESIGN_AADHAR"}></Button>
+        <Button
+          label={t("CS_UPLOAD_ESIGNATURE")}
+          onButtonClick={() => {
+            setOpenUploadSignatureModal(true);
+          }}
+        ></Button>
+        <Button
+          label={t("CS_ESIGN_AADHAR")}
+          onButtonClick={() => {
+            setOpenAadharModal(true);
+          }}
+        ></Button>
       </div>
     </div>
   );
