@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
 public class ProducerTest {
 
     @Mock
