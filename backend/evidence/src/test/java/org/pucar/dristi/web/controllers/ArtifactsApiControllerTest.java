@@ -3,6 +3,8 @@ package org.pucar.dristi.web.controllers;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +21,6 @@ import org.pucar.dristi.web.models.EvidenceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class ArtifactsApiControllerTest {
 
@@ -28,6 +29,12 @@ public class ArtifactsApiControllerTest {
 
     @Mock
     private ResponseInfoFactory responseInfoFactory;
+
+    @Mock
+    private ObjectMapper objectMapper;
+
+    @Mock
+    private HttpServletRequest request;
 
     @InjectMocks
     private ArtifactsApiController artifactsApiController;
@@ -67,7 +74,6 @@ public class ArtifactsApiControllerTest {
         assertNotNull(response.getResponseInfo()); // Verify response info is not null
         assertEquals(mockResponseInfo, response.getResponseInfo()); // Verify response info content
     }
-
 
 
     @Test
