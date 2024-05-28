@@ -112,7 +112,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
         }, {}),
       });
     } else {
-      onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
+      onSelect(`${config.key}.${input}`, value, { shouldValidate: true });
     }
   }
 
@@ -175,15 +175,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                   />
                 ) : (
                   <React.Fragment>
-                    {/* <RenderInput
-                      input={input}
-                      register={register}
-                      name={`${config.key}.${input.name}`}
-                      value={watch(config.key)?.[input.name]}
-                      onChange={(e) => {
-                        setValue(e.target.value, input.name);
-                      }}
-                    /> */}
                     <TextInput
                       className="field desktop-w-full"
                       name={`${config.key}.${input.name}`}
@@ -220,12 +211,3 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
 };
 
 export default SelectComponents;
-
-function RenderInput({ register, value, input, name, onChange }) {
-  console.debug("test", register("xx.qa"));
-  const { ref, ...restProps } = register(name, {
-    required: input.isMandatory,
-    ...input.validation,
-  });
-  return <TextInput inputRef={ref} className="field desktop-w-full" {...restProps} value={value} onChange={onChange} disable={input.isDisabled} />;
-}
