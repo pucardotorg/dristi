@@ -1,0 +1,119 @@
+package org.pucar.dristi.repository;
+
+import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
+import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
+import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
+import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
+import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.StatuteSection;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
+
+@ExtendWith(MockitoExtension.class)
+class ApplicationRepositoryTest {
+
+    @Mock
+    private ApplicationQueryBuilder queryBuilder;
+
+    @Mock
+    private JdbcTemplate jdbcTemplate;
+
+    @Mock
+    private ApplicationRowMapper rowMapper;
+
+    @Mock
+    private DocumentRowMapper documentRowMapper;
+
+    @Mock
+    private StatuteSectionRowMapper statuteSectionRowMapper;
+
+    @InjectMocks
+    private ApplicationRepository applicationRepository;
+
+    private List<Application> applicationList;
+    private List<Document> documentList;
+    private Map<UUID, StatuteSection> statuteSectionsMap;
+    private Map<UUID, List<Document>> documentMap;
+
+    @BeforeEach
+    void setUp() {
+        // Setting up sample data
+        Application application = new Application();
+        application.setId(UUID.randomUUID());
+        applicationList = Collections.singletonList(application);
+
+        Document document = new Document();
+        documentList = Collections.singletonList(document);
+
+        StatuteSection statuteSection = new StatuteSection();
+        statuteSectionsMap = new HashMap<>();
+        statuteSectionsMap.put(application.getId(), statuteSection);
+
+        documentMap = new HashMap<>();
+        documentMap.put(application.getId(), documentList);
+    }
+
+    @Test
+    void testGetApplications_Success() {
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+                .thenReturn("some SQL query");
+        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
+
+        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
+                .thenReturn("statute section SQL query");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
+                .thenReturn(statuteSectionsMap);
+
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+                .thenReturn("document SQL query");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
+                .thenReturn(documentMap);
+
+        List<Application> result = applicationRepository.getApplications("1", "123", "CNR123", "tenant1", 10, 0);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(applicationList.size(), result.size());
+        assertEquals(documentList, result.get(0).getDocuments());
+        assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
+    }
+
+    @Test
+    void testGetApplications_EmptyResult() {
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+                .thenReturn("some SQL query");
+        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
+
+        List<Application> result = applicationRepository.getApplications("1", "123", "CNR123", "tenant1", 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testGetApplications_Exception() {
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException("Database error"));
+
+        CustomException exception = assertThrows(CustomException.class, () ->
+                applicationRepository.getApplications("1", "123", "CNR123", "tenant1", 10, 0)
+        );
+
+        assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
+        assertTrue(exception.getMessage().contains("Error while fetching application list: Database error"));
+    }
+}
