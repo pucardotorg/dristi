@@ -36,6 +36,7 @@ public class ArtifactsApiControllerTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
     }
+
     @Test
     public void testArtifactsV1CreatePost_ValidInput() {
         // Prepare valid input
@@ -51,6 +52,10 @@ public class ArtifactsApiControllerTest {
 
         // Call the method
         ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1CreatePost(request);
+
+        // Verify service and factory calls
+        verify(evidenceService).createEvidence(request);
+        verify(responseInfoFactory).createResponseInfoFromRequestInfo(eq(request.getRequestInfo()), eq(true));
 
         // Verify response
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -81,6 +86,10 @@ public class ArtifactsApiControllerTest {
         // Call the method
         ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1UpdatePost(request);
 
+        // Verify service and factory calls
+        verify(evidenceService).updateEvidence(request);
+        verify(responseInfoFactory).createResponseInfoFromRequestInfo(eq(request.getRequestInfo()), eq(true));
+
         // Verify response
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
@@ -91,5 +100,6 @@ public class ArtifactsApiControllerTest {
         assertNotNull(response.getResponseInfo()); // Verify response info is not null
         assertEquals(mockResponseInfo, response.getResponseInfo()); // Verify response info content
     }
+
 
 }
