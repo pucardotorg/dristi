@@ -30,7 +30,7 @@ public class AdvocateMapping   {
         @Valid         private String id = null;
 
         @JsonProperty("tenantId")
-          @NotNull
+        //  @NotNull
 
                 private String tenantId = null;
 
@@ -44,7 +44,8 @@ public class AdvocateMapping   {
 
         @JsonProperty("representing")
           @Valid
-        @Size(min=1)         private List<Party> representing = null;
+       // @Size(min=1)
+        private List<Party> representing = null;
 
         @JsonProperty("isActive")
 
