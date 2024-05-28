@@ -1,7 +1,7 @@
 import React from "react";
 import { CustomArrowDownIcon, CustomCompleteIcon, CustomSchedule } from "../icons/svgIndex";
 
-function Accordion({ t, title, handlePageChange, handleAccordionClick, children, parentIndex, isOpen }) {
+function Accordion({ t, title, handlePageChange, handleAccordionClick, children, parentIndex, isOpen, showConfirmModal }) {
   return (
     <div key={parentIndex} className="accordion-wrapper">
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={handleAccordionClick}>
@@ -21,7 +21,7 @@ function Accordion({ t, title, handlePageChange, handleAccordionClick, children,
               className="radio-wrap"
               style={item.checked ? { background: "#E8E8E8", color: "#3D3C3C", borderRadius: "0px" } : { color: "#77787B" }}
               onClick={() => {
-                handlePageChange(item.key);
+                handlePageChange(item.key, !showConfirmModal);
               }}
             >
               {item.isCompleted ? (

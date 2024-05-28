@@ -1,9 +1,12 @@
 import { CloseSvg, Modal, TextInput } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { ErrorInfoIcon } from "../icons/svgIndex";
 
-function EsignAdharModal({ t, modalconfig = { name: "Enter Aadhar to Esign" } }) {
+function EsignAdharModal({ t, modalconfig = { name: "Enter Aadhar to Esign" }, setOpenAadharModal }) {
   const [page, setPage] = useState(0);
-  const [aadharNumber, setAadharNumber] = useState();
+  const [aadharNumber, setAadharNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -16,38 +19,77 @@ function EsignAdharModal({ t, modalconfig = { name: "Enter Aadhar to Esign" } })
     return <h1 className="heading-m">{props.label}</h1>;
   };
 
-  const onSelect = () => {
-    setPage(1);
+  const onSubmit = () => {
+    if (page === 0) {
+      setPage(1);
+      return;
+    }
+    if (page === 1) {
+      setOpenAadharModal(false);
+    }
   };
 
-  const onCancel = () => {};
+  const onCancel = () => {
+    setOpenAadharModal(false);
+  };
+
+  const textfieldTitle = useMemo(() => {
+    return page === 0 ? "Enter Aadhar to Esign" : "Enter OTP Sent to ";
+  }, [page]);
+
+  const minLength = useMemo(() => {
+    return page === 0 ? 12 : 6;
+  }, [page]);
+
+  const maxLength = useMemo(() => {
+    return page === 0 ? 12 : 6;
+  }, [page]);
+
+  const bottomText = useMemo(() => {
+    if (errorMessage) {
+      return errorMessage;
+    }
+    if (page === 0) {
+      return "Make sure to add the Aadhar of person E-Signing.";
+    }
+    if (page === 1) {
+      return "Haven’t received OTP?";
+    }
+  }, [page, errorMessage]);
+
+  const isDisabled = useMemo(() => {
+    return (page === 0 && aadharNumber < minLength) || errorMessage || (page === 1 && otp.length < minLength) ? true : false;
+  }, [aadharNumber, errorMessage, minLength, otp.length, page]);
+
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={onCancel} />}
-      actionCancelOnSubmit={onCancel}
-      actionSaveLabel={t("CS_SEND_OTP")}
-      actionSaveOnSubmit={onSelect}
+      actionSaveLabel={page === 0 ? t("CS_SEND_OTP") : t("CS_VERIFY_AADHAR")}
+      actionSaveOnSubmit={onSubmit}
       formId="modal-action"
       headerBarMain={<Heading label={t("CS_ESIGN_AADHAR")} />}
-      style={{ height: "3vh" }}
       className="case-types"
+      isDisabled={isDisabled}
     >
       <div>
-        <div>Enter Adhar No. to E-sign</div>
-        <div style={{ display: "flex", width: "100%" }}>
+        <div>{textfieldTitle}</div>
+        <div style={{ width: "100%" }}>
           <TextInput
-            value={aadharNumber}
+            value={page === 0 ? aadharNumber : otp}
             onChange={(event) => {
               const { value } = event.target;
-              setAadharNumber(value);
+              page === 0 ? setAadharNumber(value) : setOtp(value);
+              const isDigitsOnly = /^\d+$/.test(value);
+              setErrorMessage(isDigitsOnly ? "" : t("CS_NO_ALPHABETICAL_VALUES"));
             }}
-            name={modalconfig.name}
-            minlength={modalconfig?.validation?.minLength}
-            maxlength={modalconfig?.validation?.maxLength}
-            validation={modalconfig?.validation}
-            ValidationRequired={modalconfig?.validation}
-            title={modalconfig?.validation?.title}
+            minlength={minLength}
+            maxlength={maxLength}
           />
+          <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "3px", paddingBottom: "5px" }}>
+            {errorMessage && <ErrorInfoIcon />}
+            <div style={{ color: errorMessage ? "#BB2C2F" : "black" }}>{bottomText}</div>
+            {page === 1 && <div style={{ borderBottom: "1px", color: "#007E7E" }}>Resend</div>}
+          </div>
         </div>
       </div>
     </Modal>

@@ -7,6 +7,7 @@ import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import Modal from "../../../components/Modal";
+import EditFieldsModal from "./EditFieldsModal";
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -19,6 +20,7 @@ function EFilingCases({ path }) {
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
+  const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
 
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -44,6 +46,10 @@ function EFilingCases({ path }) {
     return pageConfig?.formconfig;
   }, [pageConfig?.formconfig]);
 
+  const confirmModalConfig = useMemo(() => {
+    return pageConfig?.confirmmodalconfig;
+  }, [pageConfig?.confirmmodalconfig]);
+  
   const CloseBtn = (props) => {
     return (
       <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -127,7 +133,14 @@ function EFilingCases({ path }) {
     setParentOpen(index);
   };
 
-  const handlePageChange = (key) => {
+  const handlePageChange = (key, isConfirm) => {
+    if (key === selected) {
+      return;
+    }
+    if (!isConfirm) {
+      setOpenConfigurationModal(key);
+      return;
+    }
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
     setIsOpen(false);
@@ -217,6 +230,7 @@ function EFilingCases({ path }) {
                   children={item.children}
                   parentIndex={index}
                   isOpen={item.isOpen}
+                  showConfirmModal={confirmModalConfig ? true : false}
                 />
               ))}
             </div>
@@ -236,6 +250,7 @@ function EFilingCases({ path }) {
               children={item.children}
               parentIndex={index}
               isOpen={item.isOpen}
+              showConfirmModal={confirmModalConfig ? true : false}
             />
           ))}
         </div>
@@ -300,7 +315,15 @@ function EFilingCases({ path }) {
               <span>{pageConfig.addFormText}</span>
             </div>
           )}
-
+          {openConfigurationModal && (
+            <EditFieldsModal
+              t={t}
+              config={confirmModalConfig}
+              setOpenConfigurationModal={setOpenConfigurationModal}
+              selected={openConfigurationModal}
+              handlePageChange={handlePageChange}
+            />
+          )}
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>
