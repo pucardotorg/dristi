@@ -134,7 +134,6 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                     setCoordinateData={setCoordinateData}
                     index={mapIndex}
                     onChange={(pincode, location, coordinates = {}) => {
-                      console.log(location);
                       setValue(
                         {
                           pincode:

@@ -105,8 +105,10 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
             longitude: data?.addressDetails?.coordinates?.longitude,
             city: data?.addressDetails?.city,
             pincode: data?.addressDetails?.pincode,
-            district: data?.addressDetails?.district,
+            addressLine1: data?.addressDetails?.state,
+            addressLine2: data?.addressDetails?.district,
             buildingName: data?.addressDetails?.buildingName,
+            landmark: data?.addressDetails?.locality,
           },
         ],
         identifiers: [

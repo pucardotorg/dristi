@@ -112,7 +112,6 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     <div>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
-        console.log("formData", formData);
         const showDependentFields =
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false

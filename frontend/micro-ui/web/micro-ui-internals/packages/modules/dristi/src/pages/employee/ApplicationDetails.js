@@ -223,7 +223,7 @@ const ApplicationDetails = ({ location, match }) => {
 
   const header = useMemo(() => {
     return applicationNo || applicationNumber ? t(`Application Number ${applicationNo || applicationNumber}`) : "My Application";
-  }, [applicationNumber]);
+  }, [applicationNo, applicationNumber, t]);
 
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;

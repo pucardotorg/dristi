@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import Button from "./Button";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
+import { DRISTIService } from "../services";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -95,6 +96,64 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     }
   };
 
+  const searchIndividualUser = (info, tokens) => {
+    DRISTIService.searchIndividualUser(
+      {
+        Individual: {
+          userUuid: [info?.uuid],
+        },
+      },
+      { tenantId: stateCode, limit: 10, offset: 0 }
+    )
+      .then((individualData) => {
+        setUser({ info, ...tokens });
+        const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
+        const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
+        const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+        const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+        const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+        const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+        const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
+        const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
+        const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
+
+        const address = `${doorNo} ${buildingName} ${landmark}`.trim();
+
+        const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
+        const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
+        const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
+
+        const data = {
+          addressDetails: {
+            pincode: pincode,
+            district: addressLine2,
+            city: city,
+            state: addressLine1,
+            coordinates: {
+              longitude: latitude,
+              latitude: longitude,
+            },
+            locality: address,
+          },
+          userDetails: {
+            firstName: givenName,
+            lastName: familyName,
+            middleName: otherNames,
+          },
+          complainantId: true,
+        };
+
+        ["addressDetails", "complainantId", "userDetails"].forEach((key) => {
+          onSelect(key, { ...formData?.[key], ...data[key] });
+        });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: individualData?.Individual?.[0]?.individualId });
+      })
+      .catch(() => {
+        setUser({ info, ...tokens });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null });
+      });
+  };
+
   const selectOtp = async (input) => {
     try {
       if (isUserRegistered) {
@@ -108,9 +167,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
-
-        setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], userDetails: { info, ...tokens } });
+        searchIndividualUser(info, tokens);
+        setState((prev) => ({
+          ...prev,
+          isUserVerified: true,
+          showModal: false,
+        }));
       } else if (!isUserRegistered) {
         const requestData = {
           name: DEFAULT_USER,
@@ -124,11 +186,20 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
-
-        setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], userDetails: { info, ...tokens } });
+        searchIndividualUser(info, tokens);
+        setState((prev) => ({
+          ...prev,
+          isUserVerified: true,
+          showModal: false,
+        }));
       }
-    } catch (err) {}
+    } catch (err) {
+      setState((prev) => ({
+        ...prev,
+        isUserVerified: false,
+        showModal: true,
+      }));
+    }
   };
 
   const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
@@ -215,25 +286,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           actionCancelOnSubmit={() => {}}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
-            selectOtp(input)
-              .then(() => {
-                setState((prev) => ({
-                  ...prev,
-                  isUserVerified: true,
-                }));
-              })
-              .catch(() => {
-                setState((prev) => ({
-                  ...prev,
-                  isUserVerified: false,
-                }));
-              })
-              .finally(() => {
-                setState((prev) => ({
-                  ...prev,
-                  showModal: false,
-                }));
-              });
+            selectOtp(input);
           }}
           formId="modal-action"
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}

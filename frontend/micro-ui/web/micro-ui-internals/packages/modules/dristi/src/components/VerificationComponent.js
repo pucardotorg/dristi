@@ -111,7 +111,6 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
           [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
             fileValidator(file, idProofVerificationConfig?.[0].body[0]?.populators?.inputs?.[1])
           );
-        console.log("currentValue", currentValue, formData);
         return (
           <React.Fragment key={index}>
             <LabelFieldPair style={{ width: "100%", display: "flex", alignItem: "center" }}>

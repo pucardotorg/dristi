@@ -2,13 +2,9 @@ import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-comp
 import React, { useState } from "react";
 import { complainantDetailsConfig } from "./config";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 
 function ComplainantDetails({ params = {}, setParams = () => {} }) {
   const { t } = useTranslation();
-  const Digit = window.Digit || {};
-  const tenantId = Digit.ULBService.getCurrentTenantId();
-  const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -22,9 +18,7 @@ function ComplainantDetails({ params = {}, setParams = () => {} }) {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const onSubmit = (data) => {};
 
   return (
     <div className="e-filing-card-wrapper">

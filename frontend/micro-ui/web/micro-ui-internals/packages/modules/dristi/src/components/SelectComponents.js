@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import LocationSearch from "./LocationSearch";
 import Axios from "axios";
@@ -148,7 +148,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                     setCoordinateData={setCoordinateData}
                     index={formData?.[config.key]?.uuid || uuid}
                     onChange={(pincode, location, coordinates = {}) => {
-                      console.log(location);
+                      console.log("selectComp", formData);
                       setValue(
                         {
                           pincode: formData && isFirstRender && formData[config.key] ? formData[config.key]["pincode"] : pincode || "",

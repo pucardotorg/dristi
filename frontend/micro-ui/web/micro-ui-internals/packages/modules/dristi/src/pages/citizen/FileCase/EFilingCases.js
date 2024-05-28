@@ -1,12 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseSvg, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import Modal from "../../../components/Modal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { DRISTIService } from "../../../services";
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -18,8 +20,25 @@ function EFilingCases({ path }) {
   const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: null, resetFormData: null });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
+  const caseId = urlParams.get("caseId");
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
 
+  const { data: caseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    caseId
+  );
+  const caseDetails = useMemo(() => caseData?.cases?.[0], [caseData]);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -107,7 +126,6 @@ function EFilingCases({ path }) {
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
-      console.log("formdata[e-file]", formData);
       setFormdata(
         formdata.map((item, i) => {
           return i === index ? { ...item, data: formData } : item;
@@ -132,7 +150,7 @@ function EFilingCases({ path }) {
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
     setIsOpen(false);
     !!resetFormData && resetFormData();
-    history.push(`?selected=${key}`);
+    history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
   const validateData = (data) => {
@@ -144,19 +162,23 @@ function EFilingCases({ path }) {
             if (input?.isMandatory) {
               if (input?.validation) {
                 if (input?.validation?.isArray) {
-                  if (!formdata?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
-                    isValid = false;
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  } else {
-                    setFormErrors(body.key, { [input.name]: "" });
-                  }
+                  formdata?.forEach((data) => {
+                    if (!data?.data?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
+                      isValid = false;
+                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                    } else {
+                      // setFormErrors(body.key, { [input.name]: "" });
+                    }
+                  });
                 } else {
-                  if (!formdata?.[body.key]?.[input.name]) {
-                    isValid = false;
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  } else {
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  }
+                  formdata?.forEach((data) => {
+                    if (!data?.data?.[body.key]?.[input.name]) {
+                      isValid = false;
+                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                    } else {
+                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                    }
+                  });
                 }
               }
             }
@@ -167,10 +189,33 @@ function EFilingCases({ path }) {
     return isValid;
   };
 
-  const onSubmit = (props) => {
-    if (!validateData(props)) {
+  const onSubmit = (props, index) => {
+    if (!validateData(props, index)) {
       return null;
     }
+    const data = {};
+    if (selected === "complaintDetails") {
+      const litigants = [];
+      formdata.forEach((data, index) => {
+        if (data?.data?.complainantVerification?.individualDetails) {
+          litigants.push({
+            tenantId,
+            caseId: caseDetails?.id,
+            partyCategory: data?.data?.complainantType?.code,
+            individualId: data?.data?.complainantVerification?.individualDetails,
+            partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+          });
+        }
+      });
+      const representatives = [...caseDetails?.representatives].map((representative) => ({
+        ...representative,
+        caseId: caseDetails?.id,
+        representing: [...litigants],
+      }));
+      data.litigants = litigants;
+      data.representatives = representatives;
+    }
+    DRISTIService.caseUpdateService({ cases: [{ ...caseDetails, ...data }], tenantId }, tenantId);
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
@@ -178,7 +223,9 @@ function EFilingCases({ path }) {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -278,7 +325,7 @@ function EFilingCases({ path }) {
                 <FormComposerV2
                   label={t("CS_COMMON_CONTINUE")}
                   config={config}
-                  onSubmit={onSubmit}
+                  onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={{}}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {

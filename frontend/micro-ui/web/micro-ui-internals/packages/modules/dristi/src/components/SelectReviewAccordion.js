@@ -7,6 +7,8 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const [isOpen, setOpen] = useState(true);
   const history = useHistory();
+  const urlParams = new URLSearchParams(window.location.search);
+  const caseId = urlParams.get("caseId");
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -67,7 +69,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 <div
                   style={{ cursor: "pointer" }}
                   onClick={() => {
-                    history.push(`?selected=${input?.key}`);
+                    history.push(`?caseId=${caseId}&selected=${input?.key}`);
                   }}
                 >
                   <EditPencilIcon />

@@ -348,7 +348,6 @@ const LocationSearch = (props) => {
   const { setCoordinateData } = props;
   const [coordinates, setCoordinates] = useState({ lat: 31.6160638, lng: 74.8978579 });
   useEffect(() => {
-    console.log("coordinatess", coordinates);
     async function mapScriptCall() {
       const getLatLng = (position) => {
         initAutocomplete(props.onChange, { lat: position.coords.latitude, lng: position.coords.longitude }, props.isPlaceRequired, props?.index);

@@ -19,7 +19,6 @@ import CustomInput from "./components/CustomInput";
 import SelectBulkInputs from "./components/SelectBulkInputs";
 import SelectCustomNote from "./components/SelectCustomNote";
 import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
-import InfoCard from "./components/InfoCard";
 import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
@@ -62,7 +61,6 @@ const componentsToRegister = {
   SelectBulkInputs,
   SelectCustomNote,
   SelectCustomDragDrop,
-  InfoCard,
   VerifyPhoneNumber,
   SelectCustomTextArea,
   IdProofUploadComponent,

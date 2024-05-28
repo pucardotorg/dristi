@@ -21,6 +21,7 @@ function CaseType({ t }) {
   const history = useHistory();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(false);
   const onCancel = () => {
     history.push("/digit-ui/citizen/dristi/home");
   };
@@ -101,8 +102,9 @@ function CaseType({ t }) {
           <Button
             className="start-filling-button"
             label={t("CS_START_FILLING")}
+            isDisabled={false}
             onButtonClick={() => {
-              history.push(`${path}/case`);
+              setIsDisabled(true);
               const cases = [
                 {
                   tenantId,
@@ -120,11 +122,17 @@ function CaseType({ t }) {
                       subsections: ["138", "03."],
                     },
                   ],
-                  litigants: [],
+                  litigants: [
+                    {
+                      tenantId,
+                      partyCategory: "INDIVIDUAL",
+                    },
+                  ],
                   representatives: [
                     {
-                      id: advocateId,
+                      advocateId: advocateId,
                       tenantId,
+                      representing: [],
                     },
                   ],
                   documents: [
@@ -151,7 +159,11 @@ function CaseType({ t }) {
                   additionalDetails: {},
                 },
               ];
-              DRISTIService.caseCreateService({ cases, tenantId });
+              DRISTIService.caseCreateService({ cases, tenantId })
+                .then((res) => {
+                  history.push(`${path}/case?caseId=${res?.cases[0]?.id}`);
+                })
+                .finally(() => setIsDisabled(false));
             }}
           />
           {/* <ButtonSelector
