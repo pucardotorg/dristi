@@ -11,16 +11,11 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.validators.EvidenceValidator;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Collections;
-import java.util.List;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
-
-@SpringBootTest
 public class EvidenceServiceTest {
 
     @Mock
@@ -70,7 +65,6 @@ public class EvidenceServiceTest {
         // Mock behavior
         when(config.getUpdateEvidenceKafkaTopic()).thenReturn("update_topic");
         when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(new Artifact());
-
 
         // Execute method
         Artifact result = evidenceService.updateEvidence(evidenceRequest);

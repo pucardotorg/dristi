@@ -1,37 +1,26 @@
 package org.pucar.dristi.web.controllers;
-import jakarta.servlet.http.HttpServletRequest;
-import org.egov.common.contract.response.ResponseInfo;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pucar.dristi.service.EvidenceService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
 import org.pucar.dristi.web.models.EvidenceResponse;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.TestPropertySource;
-import org.junit.jupiter.api.BeforeEach;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.HandlerMapping;
-import java.util.Arrays;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@TestPropertySource(properties = {"spring.main.allow-bean-definition-overriding=true"})
-class ArtifactsApiControllerTest {
 
-    @InjectMocks
-    private ArtifactsApiController artifactsApiController;
+@RunWith(MockitoJUnitRunner.class)
+public class ArtifactsApiControllerTest {
 
     @Mock
     private EvidenceService evidenceService;
@@ -39,63 +28,61 @@ class ArtifactsApiControllerTest {
     @Mock
     private ResponseInfoFactory responseInfoFactory;
 
-    @BeforeEach
-    void setUp() {
+    @InjectMocks
+    private ArtifactsApiController artifactsApiController;
+
+    @Before
+    public void setup() {
         MockitoAnnotations.initMocks(this);
     }
-
     @Test
-    void artifactsV1CreatePost_Success() {
-        // Mock request
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn("/artifacts/v1/_create");
+    public void testArtifactsV1CreatePost_ValidInput() {
+        // Prepare valid input
+        EvidenceRequest request = new EvidenceRequest(/* construct a valid request */);
+        Artifact expectedArtifact = new Artifact(/* construct expected artifact */);
 
         // Mock service response
-        Artifact artifact = new Artifact();
-        when(evidenceService.createEvidence(any())).thenReturn(artifact);
+        when(evidenceService.createEvidence(request)).thenReturn(expectedArtifact);
 
         // Mock response info
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), anyBoolean())).thenReturn(new ResponseInfo());
+        // Assuming response info is created successfully
 
-        // Create request body
-        EvidenceRequest requestBody = new EvidenceRequest();
+        // Call the method
+        ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1CreatePost(request);
 
-        // Execute the method
-        ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1CreatePost(requestBody);
-
-        // Assertions
-        assertNotNull(responseEntity);
+        // Verify response
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
-        assertEquals(artifact, responseEntity.getBody().getArtifact());
+
+        EvidenceResponse response = responseEntity.getBody();
+        assertNotNull(response.getArtifact());
+        assertEquals(expectedArtifact, response.getArtifact());
+        // Add more verification as needed
     }
 
+
     @Test
-    void artifactsV1UpdatePost_Success() {
-        // Mock request
-        HttpServletRequest request = mock(HttpServletRequest.class);
-        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
-        when(request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE)).thenReturn("/artifacts/v1/_update");
+    public void testArtifactsV1UpdatePost_ValidInput() {
+        // Prepare valid input
+        EvidenceRequest request = new EvidenceRequest(/* construct a valid request */);
+        Artifact expectedArtifact = new Artifact(/* construct expected artifact */);
 
         // Mock service response
-        Artifact artifact = new Artifact();
-        when(evidenceService.updateEvidence(any())).thenReturn(artifact);
+        when(evidenceService.updateEvidence(request)).thenReturn(expectedArtifact);
 
         // Mock response info
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), anyBoolean())).thenReturn(new ResponseInfo());
+        // Assuming response info is created successfully
 
-        // Create request body
-        EvidenceRequest requestBody = new EvidenceRequest();
+        // Call the method
+        ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1UpdatePost(request);
 
-        // Execute the method
-        ResponseEntity<EvidenceResponse> responseEntity = artifactsApiController.artifactsV1UpdatePost(requestBody);
-
-        // Assertions
-        assertNotNull(responseEntity);
+        // Verify response
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
-        assertEquals(artifact, responseEntity.getBody().getArtifact());
+
+        EvidenceResponse response = responseEntity.getBody();
+        assertNotNull(response.getArtifact());
+        assertEquals(expectedArtifact, response.getArtifact());
+        // Add more verification as needed
     }
 }
-

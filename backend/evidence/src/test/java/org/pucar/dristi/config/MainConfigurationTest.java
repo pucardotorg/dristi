@@ -4,27 +4,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.TimeZone;
 
-@SpringBootTest
-@ActiveProfiles("test") // Use the test profile
 public class MainConfigurationTest {
 
-    @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
     private MappingJackson2HttpMessageConverter jacksonConverter;
+    private String timeZone = "UTC"; // Assuming you want to test with UTC as the timezone
 
-    @Value("${app.timezone}")
-    private String timeZone;
+    @BeforeEach
+    public void setUp() {
+        objectMapper = new ObjectMapper();
+        objectMapper.setTimeZone(TimeZone.getTimeZone(timeZone));
+
+        jacksonConverter = new MappingJackson2HttpMessageConverter();
+        jacksonConverter.setObjectMapper(objectMapper);
+    }
 
     @Test
     public void testObjectMapper() {

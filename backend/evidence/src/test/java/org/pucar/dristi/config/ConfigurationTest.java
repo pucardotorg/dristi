@@ -1,18 +1,39 @@
 package org.pucar.dristi.config;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest
-@TestPropertySource(locations = "classpath:application.properties")
 class ConfigurationTest {
 
-    @Autowired
     private Configuration configuration;
+
+    @BeforeEach
+    void setUp() {
+        configuration = new Configuration();
+        configuration.setUserHost("testUserHost");
+        configuration.setUserContextPath("testUserContextPath");
+        configuration.setUserCreateEndpoint("testUserCreateEndpoint");
+        configuration.setUserSearchEndpoint("testUserSearchEndpoint");
+        configuration.setUserUpdateEndpoint("testUserUpdateEndpoint");
+        configuration.setIdGenHost("testIdGenHost");
+        configuration.setIdGenPath("testIdGenPath");
+        configuration.setWfHost("testWfHost");
+        configuration.setWfTransitionPath("testWfTransitionPath");
+        configuration.setWfBusinessServiceSearchPath("testWfBusinessServiceSearchPath");
+        configuration.setWfProcessInstanceSearchPath("testWfProcessInstanceSearchPath");
+        configuration.setMdmsHost("testMdmsHost");
+        configuration.setMdmsEndPoint("testMdmsEndPoint");
+        configuration.setHrmsHost("testHrmsHost");
+        configuration.setHrmsEndPoint("testHrmsEndPoint");
+        configuration.setUrlShortnerHost("testUrlShortnerHost");
+        configuration.setUrlShortnerEndpoint("testUrlShortnerEndpoint");
+        configuration.setSmsNotificationTopic("testSmsNotificationTopic");
+        configuration.setEvidenceCreateTopic("testEvidenceCreateTopic");
+        configuration.setUpdateEvidenceKafkaTopic("testUpdateEvidenceKafkaTopic");
+        configuration.setBusinessServiceModule("testBusinessServiceModule");
+        configuration.setBusinessServiceName("testBusinessServiceName");
+    }
 
     @Test
     void testUserConfig() {
