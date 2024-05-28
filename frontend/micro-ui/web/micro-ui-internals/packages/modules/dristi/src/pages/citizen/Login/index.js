@@ -5,9 +5,7 @@ import { Route, Switch, useHistory, useLocation, useRouteMatch } from "react-rou
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
 import SelectOtp from "./SelectOtp";
-import SelectId from "./SelectId";
-import SelectName from "./SelectName";
-import { userTypeOptions } from "../registration/config";
+
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -29,7 +27,7 @@ const setCitizenDetail = (userObject, token, tenantId) => {
 function getRedirectionUrl(status) {
   switch (status) {
     case "isNotRegistered":
-      return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      return `/${window?.contextPath}/citizen/dristi/home/registration/user-name`;
     case "isNotApproved":
       return `/${window?.contextPath}/citizen/dristi/home/isNotApproved`;
     case "isApproved":
@@ -39,7 +37,7 @@ function getRedirectionUrl(status) {
     case "isRegistered":
       return `/${window?.contextPath}/citizen/dristi/home/login`;
     default:
-      return `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      return `/${window?.contextPath}/citizen/dristi/home/registration/user-name`;
   }
 }
 
@@ -57,17 +55,16 @@ const Login = ({ stateCode }) => {
   const history = useHistory();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [tokens, setTokens] = useState(null);
   const [params, setParmas] = useState({});
   const [errorTO, setErrorTO] = useState(null);
   const searchParams = Digit.Hooks.useQueryParams();
-  const [canSubmitName, setCanSubmitName] = useState(false);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
-  const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
-  const userMobileNUmber = Digit.UserService.getUser()?.info?.mobileNumber;
   useEffect(() => {
     let errorTimeout;
     if (error) {
@@ -97,10 +94,9 @@ const Login = ({ stateCode }) => {
     localStorage.setItem("citizen.refresh-token", user?.refresh_token);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
-    // routeToAdditionalDetail(user?.info);
     if (!Digit.ULBService.getCitizenCurrentTenant(true)) {
       const homeUrl = `/${window?.contextPath}/citizen/dristi/home`;
-      const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/login/id-verification`;
+      const idVerificationUrl = `/${window?.contextPath}/citizen/dristi/home/registration/user-name`;
       history.push(isUserRegistered ? homeUrl : idVerificationUrl, {
         redirectBackTo: redirectPath,
       });
@@ -127,9 +123,6 @@ const Login = ({ stateCode }) => {
   const handleOtpChange = (otp) => {
     setParmas({ ...params, otp });
   };
-  const handleAadharOtpChange = (aadharOtp) => {
-    setParmas({ ...params, aadharOtp });
-  };
 
   const handleMobileChange = (event) => {
     const { value } = event.target;
@@ -145,51 +138,16 @@ const Login = ({ stateCode }) => {
       tenantId: stateCode,
       userType: getUserType(),
     };
-    if (isUserRegistered) {
-      const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
-      if (!err) {
-        setCanSubmitNo(true);
-        history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams), role: location.state?.role });
-        return;
-      } else {
-        setCanSubmitNo(true);
-        // setError("MOBILE_NUMBER_NOT_REGISTERED");
-        // setTimeout(() => history.replace(getRedirectionUrl("isNotLoggedIn")), 3000);
-        setIsUserRegistered(false);
-        history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
-      }
-    } else if (!isUserRegistered && !params.name) {
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    if (!err) {
       setCanSubmitNo(true);
-      history.push(`${path}/user-name`, { from: getFromLocation(location.state, searchParams) });
+      history.push(`${path}/otp`);
+      return;
     } else {
-      const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-      if (!err) {
-        setCanSubmitNo(true);
-        history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
-        return;
-      } else {
-        setCanSubmitNo(true);
-        // setError("MOBILE_NUMBER_ALREADY_REGISTERED");
-        // setTimeout(() => history.replace(getRedirectionUrl("isRegistered")), 3000);
-      }
-    }
-  };
-
-  const selectName = async (name) => {
-    setParmas({ ...params, ...name });
-    const data = {
-      ...params,
-      tenantId: stateCode,
-      userType: getUserType(),
-      ...name,
-    };
-    setCanSubmitName(true);
-    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
-    if (res) {
-      setCanSubmitName(false);
-      history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
-    } else {
-      setCanSubmitName(false);
+      setCanSubmitNo(true);
+      setIsUserRegistered(false);
+      setError(t("ES_ERROR_USER_NOT_PERMITTED"));
+      history.replace(`${path}/login`, { from: getFromLocation(location.state, searchParams) });
     }
   };
 
@@ -271,30 +229,6 @@ const Login = ({ stateCode }) => {
     setParmas({ ...params, isRememberMe: !params.isRememberMe });
   };
 
-  const handleNameChange = (e) => {
-    const { value } = e.target;
-    setParmas({ ...params, name: value });
-  };
-
-  const onAadharChange = (aadharNumber) => {
-    Digit.SessionStorage.set("aadharNumber", aadharNumber);
-    Digit.SessionStorage.del("UploadedDocument");
-    history.push(`${path}/aadhar-otp`);
-  };
-  const onDocumentUpload = async (filename, filedata, IdType) => {
-    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
-    Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
-    Digit.SessionStorage.del("aadharNumber");
-    history.push(`/digit-ui/citizen/dristi/home/registration`);
-  };
-  const onAadharOtpSelect = () => {
-    setCanSubmitAadharOtp(false);
-    history.push(`/${window?.contextPath}/citizen/dristi/home/registration`);
-    setCanSubmitAadharOtp(true);
-    Digit.SessionStorage.set("isAadharNumberVerified", true);
-    Digit.SessionStorage.del("UploadedDocument");
-  };
-
   return (
     <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
       <Switch>
@@ -306,56 +240,26 @@ const Login = ({ stateCode }) => {
               mobileNumber={params.mobileNumber || ""}
               onMobileChange={handleMobileChange}
               canSubmit={canSubmitNo}
+              isUserLoggedIn={isUserLoggedIn}
               showRegisterLink={isUserRegistered && !location.state?.role}
               t={t}
-              isRememberMe={params?.isRememberMe || false}
-              handleRememberMeChange={handleRememberMeChange}
-            />
-          </Route>
-          <Route path={`${path}/user-name`}>
-            <SelectName
-              t={t}
-              config={stepItems[1]}
-              onSelect={selectName}
-              value={params?.name}
-              canSubmit={canSubmitName}
-              path={path}
-              params={params}
-              handleNameChange={handleNameChange}
             />
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{ ...stepItems[2], texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || ""}` } }}
+              cardText={`${stepItems[2].texts.cardText} ${params.mobileNumber || ""}`}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
               otp={params.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
+              params={params}
               t={t}
               path={path}
-              params={params}
             />
           </Route>
-          <Route path={`${path}/id-verification`}>
-            <SelectId t={t} config={[stepItems[3]]} onAadharChange={onAadharChange} onDocumentUpload={onDocumentUpload} />
-          </Route>
-          <Route path={`${path}/aadhar-otp`}>
-            <SelectOtp
-              config={{
-                ...stepItems[4],
-                texts: { ...stepItems[4].texts, cardText: `${stepItems[4].texts.cardText}` },
-              }}
-              onOtpChange={handleAadharOtpChange}
-              onResend={resendOtp}
-              onSelect={onAadharOtpSelect}
-              otp={params.aadharOtp}
-              error={isOtpValid}
-              canSubmit={canSubmitAadharOtp}
-              t={t}
-            />
-          </Route>
+
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </AppContainer>
       </Switch>

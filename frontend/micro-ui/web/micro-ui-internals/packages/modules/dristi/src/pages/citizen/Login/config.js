@@ -1,14 +1,15 @@
 export const loginSteps = [
   {
     texts: {
-      header: "CS_LOGIN_PROVIDE_MOBILE_NUMBER",
-      cardText: "CS_LOGIN_TEXT",
-      nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "CS_COMMONS_NEXT",
+      header: "CS_SIGNIN_PROVIDE_MOBILE_NUMBER",
+      cardText: "CS_WELCOME",
+      nextText: "CS_SIGNIN_NEXT",
+      submitBarLabel: "CS_SIGNIN_NEXT",
+      submitInForm: true,
     },
     inputs: [
       {
-        label: "CORE_COMMON_MOBILE_NUMBER",
+        label: "CORE_COMMON_PHONE_NUMBER",
         type: "text",
         name: "mobileNumber",
         error: "ERR_HRMS_INVALID_MOB_NO",
@@ -28,7 +29,31 @@ export const loginSteps = [
     },
     inputs: [
       {
-        label: "CORE_COMMON_USER_NAME",
+        label: "First Name",
+        type: "text",
+        name: "name",
+        error: "ERR_HRMS_INVALID_USER_NAME",
+        validation: {
+          required: true,
+          minlength: 1,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          patternType: "Name",
+        },
+      },
+      {
+        label: "Middle Name (optional)",
+        type: "text",
+        name: "name",
+        error: "ERR_HRMS_INVALID_USER_NAME",
+        validation: {
+          required: false,
+          minlength: 1,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          patternType: "Name",
+        },
+      },
+      {
+        label: "Last Name",
         type: "text",
         name: "name",
         error: "ERR_HRMS_INVALID_USER_NAME",
@@ -45,8 +70,6 @@ export const loginSteps = [
     texts: {
       header: "CS_LOGIN_OTP",
       cardText: "CS_LOGIN_OTP_TEXT",
-      nextText: "CS_COMMONS_NEXT",
-      submitBarLabel: "CS_COMMONS_NEXT",
     },
   },
   {
@@ -62,7 +85,7 @@ export const loginSteps = [
             {
               label: "CS_ID_TYPE",
               type: "dropdown",
-              name: "selectIdTypeType",
+              name: "selectIdType",
               optionsKey: "name",
               error: "sample required message",
               validation: {},

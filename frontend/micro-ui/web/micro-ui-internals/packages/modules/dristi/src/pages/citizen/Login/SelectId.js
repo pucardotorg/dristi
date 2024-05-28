@@ -1,99 +1,82 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import React, { useState } from "react";
 
-function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
+function SelectId({ config, t, params, history, onSelect }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const history = useHistory();
-  const validateFormData = (data) => {
-    let isValid = true;
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const onFormValueChange = (setValue, formData, formState) => {
+    let isDisabled = false;
     config.forEach((curr) => {
-      if (!isValid) return;
-      if (!(curr.body[0].key in data) || !data[curr.body[0].key]) {
-        isValid = false;
+      if (isDisabled) return;
+      if (!(curr.body[0].key in formData) || !formData[curr.body[0].key]) {
+        return;
       }
       curr.body[0].populators.inputs.forEach((input) => {
-        if (!isValid) return;
+        if (isDisabled) return;
         if (Array.isArray(input.name)) return;
-        if (input.disableMandatoryFieldFor) {
-          if (input.disableMandatoryFieldFor.some((field) => !data[curr.body[0].key][field]) && data[curr.body[0].key][input.name]) {
-            if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
-              isValid = false;
-            }
-            if ((input?.isMandatory && !(input.name in data[curr.body[0].key])) || !data[curr.body[0].key][input.name]) {
-              isValid = false;
-            }
-            return;
-          } else {
-            if (
-              (input?.isMandatory && !(input.name in data[curr.body[0].key])) ||
-              (!data[curr.body[0].key][input.name] && !input.disableMandatoryFieldFor.some((field) => data[curr.body[0].key][field]))
-            ) {
-              isValid = false;
-            }
-          }
-          return;
-        } else {
-          if (Array.isArray(data[curr.body[0].key][input.name]) && data[curr.body[0].key][input.name].length === 0) {
-            isValid = false;
-          }
-          if (input?.isMandatory && !(input.name in data[curr.body[0].key])) {
-            isValid = false;
-          }
+        if (
+          formData[curr.body[0].key][input.name] &&
+          formData[curr.body[0].key][input.name].length > 0 &&
+          !["documentUpload", "radioButton"].includes(input.type) &&
+          input.validation &&
+          !formData[curr.body[0].key][input.name].match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern)
+        ) {
+          isDisabled = true;
+        }
+        if (Array.isArray(formData[curr.body[0].key][input.name]) && formData[curr.body[0].key][input.name].length === 0) {
+          isDisabled = true;
         }
       });
     });
-    return isValid;
+    if (isDisabled) {
+      setIsDisabled(isDisabled);
+    } else {
+      setIsDisabled(false);
+    }
   };
-
   const closeToast = () => {
     setShowErrorToast(false);
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, 2000);
+  const validateFormData = (data) => {
+    let isValid = true;
+    if (!data?.IdVerification?.selectIdType) {
+      isValid = false;
+    }
 
-    return () => clearTimeout(timer);
-  }, [closeToast]);
+    return isValid;
+  };
 
-  const onFormValueChange = (setValue, formData, formState, reset, setError) => {};
-
-  if (sessionStorage.getItem("Digit.UploadedDocument") || sessionStorage.getItem("Digit.aadharNumber")) {
-    sessionStorage.removeItem("Digit.UploadedDocument");
-    sessionStorage.removeItem("Digit.aadharNumber");
-    history.push(`/${window.contextPath}/citizen/dristi/home`);
+  if (!params?.address) {
+    history.push("/digit-ui/citizen/dristi/home/login");
   }
-
   return (
     <React.Fragment>
       <FormComposerV2
         config={config}
         t={t}
-        onSubmit={(data) => {
-          console.log(data);
-          if (!validateFormData(data)) {
-            setShowErrorToast(!validateFormData(data));
-          } else if (data?.SelectUserTypeComponent?.aadharNumber) {
-            onAadharChange(data?.SelectUserTypeComponent?.aadharNumber);
+        noBoxShadow
+        inline
+        isDisabled={isDisabled}
+        label={t("CS_COMMON_CONTINUE")}
+        onSecondayActionClick={() => {}}
+        headingStyle={{ textAlign: "center" }}
+        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", justifyContent: "center" }}
+        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
+        onFormValueChange={onFormValueChange}
+        defaultValues={params?.indentity || {}}
+        buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
+        value={params?.indentity || {}}
+        onSubmit={(props) => {
+          if (!validateFormData(props)) {
+            setShowErrorToast(!validateFormData(props));
           } else {
-            onDocumentUpload(
-              data?.SelectUserTypeComponent?.ID_Proof[0][0],
-              data?.SelectUserTypeComponent?.ID_Proof[0][1]?.file,
-              data?.SelectUserTypeComponent?.selectIdTypeType
-            );
+            onSelect(props);
           }
           return;
         }}
-        noBoxShadow
-        inline
-        label={"Next"}
-        // onFormValueChange={onFormValueChange}
-        onSecondayActionClick={() => {}}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
+        submitInForm
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </React.Fragment>

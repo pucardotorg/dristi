@@ -35,9 +35,9 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
-            <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
+          <div style={{ display: "flex", justifyContent: "right" }}>
+            {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
+            <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
               <span style={{ color: "#f47738" }}>Help</span>
               <HelpOutlineIcon />
             </span>
