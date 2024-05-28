@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { newConfig } from "./config";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
@@ -98,6 +98,14 @@ const RegistrationForm = ({ setParams, params, path }) => {
       setIsDisabled(false);
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
 
   return (
     <div className="employee-card-wrapper">

@@ -121,6 +121,7 @@ const MultiUploadWrapper = ({
     } else {
       setFileErrors(validationMsg);
       setEnableButton(true);
+      return dispatch({ type: FILES_UPLOADED, payload: { files: [], fileStoreIds: [1] } });
     }
   };
 

@@ -332,7 +332,11 @@ export const newConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            {
+              label: "CS_PIN_LOCATION",
+              type: "LocationSearch",
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "buildingName", "doorNo"],
+            },
             {
               label: "PINCODE",
               type: "text",

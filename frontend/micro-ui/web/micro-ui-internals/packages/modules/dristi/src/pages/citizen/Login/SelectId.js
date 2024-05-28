@@ -1,5 +1,5 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 
 function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
@@ -49,6 +49,14 @@ function SelectId({ config, t, onAadharChange, onDocumentUpload }) {
   const closeToast = () => {
     setShowErrorToast(false);
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError) => {};
 

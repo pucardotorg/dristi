@@ -177,6 +177,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                                     .join(", ");
                                 })(),
                           coordinates,
+                          buildingName: "",
+                          doorNo: "",
                         },
                         input.name
                       );
