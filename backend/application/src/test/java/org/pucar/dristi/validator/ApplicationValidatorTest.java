@@ -83,6 +83,77 @@ public class ApplicationValidatorTest {
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("user info is mandatory for creating application", exception.getMessage());
     }
+    @Test
+    public void testValidateApplication_MissingOnBehalfOf() {
+        User user = new User();
+        application.setTenantId("tenantId");
+        application.setCreatedDate("2024-05-01");
+        application.setCreatedBy(UUID.randomUUID());
+        requestInfo.setUserInfo(user);
+        application.setCnrNumber("cnrNumber");
+        application.setFilingNumber("filingNumber");
+        application.setReferenceId(UUID.randomUUID());
+
+        Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
+        assertEquals("onBehalfOf is mandatory for creating application", exception.getMessage());
+    }
+    @Test
+    public void testValidateApplication_MissingCnrNumber() {
+        User user = new User();
+        List<UUID> onBehalfOf = new ArrayList<>();
+        onBehalfOf.add(UUID.randomUUID());
+        application.setTenantId("tenantId");
+        application.setCreatedDate("2024-05-01");
+        application.setCreatedBy(UUID.randomUUID());
+        requestInfo.setUserInfo(user); // Simulating non-empty user info
+        application.setOnBehalfOf(onBehalfOf);
+        application.setFilingNumber("filingNumber");
+        application.setReferenceId(UUID.randomUUID());
+
+        Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
+        assertEquals("cnrNumber is mandatory for creating application", exception.getMessage());
+    }
+    @Test
+    public void testValidateApplication_MissingFilingNumber() {
+        User user = new User();
+        List<UUID> onBehalfOf = new ArrayList<>();
+        onBehalfOf.add(UUID.randomUUID());
+        application.setTenantId("tenantId");
+        application.setCreatedDate("2024-05-01");
+        application.setCreatedBy(UUID.randomUUID());
+        requestInfo.setUserInfo(user); // Simulating non-empty user info
+        application.setOnBehalfOf(onBehalfOf);
+        application.setCnrNumber("cnrNumber");
+        application.setReferenceId(UUID.randomUUID());
+
+        Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
+        assertEquals("filingNumber is mandatory for creating application", exception.getMessage());
+    }
+    @Test
+    public void testValidateApplication_MissingReferenceId() {
+        User user = new User();
+        List<UUID> onBehalfOf = new ArrayList<>();
+        onBehalfOf.add(UUID.randomUUID());
+        application.setTenantId("tenantId");
+        application.setCreatedDate("2024-05-01");
+        application.setCreatedBy(UUID.randomUUID());
+        requestInfo.setUserInfo(user); // Simulating non-empty user info
+        application.setOnBehalfOf(onBehalfOf);
+        application.setFilingNumber("filingNumber");
+        application.setCnrNumber("cnrNumber");
+
+
+        Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
+        assertEquals("referenceId is mandatory for creating application", exception.getMessage());
+    }
+    @Test
+    public void testValidateApplication_MissingCreatedBy() {
+        application.setTenantId("tenantId");
+        application.setCreatedDate("2024-05-01");
+
+        Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
+        assertEquals("createdBy is mandatory for creating application", exception.getMessage());
+    }
 
     @Test
     public void testValidateApplicationExistence_Success() {
@@ -122,5 +193,56 @@ public class ApplicationValidatorTest {
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(requestInfo, application));
         assertEquals("Application does not exist", exception.getMessage());
+    }
+    @Test
+    public void testValidateApplicationExistence_WithMissingId_ShouldThrowException() {
+        Application application = new Application();
+        application.setCnrNumber("cnr123");
+        application.setFilingNumber("file123");
+        application.setReferenceId(UUID.randomUUID());
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+
+        assertEquals("id is mandatory for updating application", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateApplicationExistence_WithMissingCnrNumber_ShouldThrowException() {
+        Application application = new Application();
+        application.setId(UUID.randomUUID());
+        application.setFilingNumber("file123");
+        application.setReferenceId(UUID.randomUUID());
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+
+        assertEquals("cnrNumber is mandatory for updating application", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateApplicationExistence_WithMissingFilingNumber_ShouldThrowException() {
+        Application application = new Application();
+        application.setId(UUID.randomUUID());
+        application.setCnrNumber("cnr123");
+        application.setReferenceId(UUID.randomUUID());
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+
+        assertEquals("filingNumber is mandatory for updating application", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateApplicationExistence_WithMissingReferenceId_ShouldThrowException() {
+        Application application = new Application();
+        application.setId(UUID.randomUUID());
+        application.setCnrNumber("cnr123");
+        application.setFilingNumber("file123");
+
+        CustomException exception = assertThrows(CustomException.class,
+                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+
+        assertEquals("referenceId is mandatory for updating application", exception.getMessage());
     }
 }
