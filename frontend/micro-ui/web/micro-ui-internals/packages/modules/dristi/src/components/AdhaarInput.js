@@ -76,6 +76,12 @@ const AadhaarInput = (props) => {
                 ref={inputRefs[index]}
                 type="text"
                 maxLength={4}
+                onInput={(e) => {
+                  const value = e.target.value.replace(/\D/, "");
+                  if (value !== e.target.value) {
+                    e.target.value = value;
+                  }
+                }}
                 value={value}
                 onChange={(e) => handleChange(input.name, e.target.value, index)}
                 onFocus={() => handleFocus(index)}

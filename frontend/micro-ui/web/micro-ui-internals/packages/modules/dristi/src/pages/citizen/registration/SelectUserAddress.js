@@ -1,29 +1,63 @@
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectUserAddress = ({ config, onSelect, t, params }) => {
   const history = useHistory();
-  if (!params?.name) {
-    history.push("/digit-ui/citizen/dristi/home/login");
-  }
+  const [isDisabled, setIsDisabled] = useState(false);
+
+  const onFormValueChange = (setValue, formData, formState) => {
+    let isDisabled = false;
+    config.forEach((curr) => {
+      if (isDisabled) return;
+      if (!(curr.body[0].key in formData) || !formData[curr.body[0].key]) {
+        return;
+      }
+      curr.body[0].populators.inputs.forEach((input) => {
+        if (isDisabled) return;
+        if (Array.isArray(input.name)) return;
+        if (
+          formData[curr.body[0].key][input.name] &&
+          formData[curr.body[0].key][input.name].length > 0 &&
+          !["documentUpload", "radioButton"].includes(input.type) &&
+          input.validation &&
+          !formData[curr.body[0].key][input.name].match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern)
+        ) {
+          isDisabled = true;
+        }
+        if (Array.isArray(formData[curr.body[0].key][input.name]) && formData[curr.body[0].key][input.name].length === 0) {
+          isDisabled = true;
+        }
+      });
+    });
+    if (isDisabled) {
+      setIsDisabled(isDisabled);
+    } else {
+      setIsDisabled(false);
+    }
+  };
+  // if (!params?.name) {
+  //   history.push("/digit-ui/citizen/dristi/home/login");
+  // }
   return (
-    <React.Fragment>
+    <div style={{ minWidth: "100%" }}>
       <FormComposerV2
         config={config}
         t={t}
         onSubmit={(props) => onSelect(props)}
         noBoxShadow
         inline
-        label={"Next"}
+        label={"CS_COMMON_CONTINUE"}
         onSecondayActionClick={() => {}}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "0%", padding: 20, display: "flex", flexDirection: "column" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
+        cardStyle={{ padding: 40, flexDirection: "column" }}
+        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px", textAlign: "center" }}
         submitInForm
-        buttonStyle={{ alignItems: "center" }}
+        buttonStyle={{ alignSelf: "center", minWidth: "100%" }}
+        onFormValueChange={onFormValueChange}
+        isDisabled={isDisabled}
+        defaultValues={params?.address || {}}
       ></FormComposerV2>
-    </React.Fragment>
+    </div>
   );
 };
 

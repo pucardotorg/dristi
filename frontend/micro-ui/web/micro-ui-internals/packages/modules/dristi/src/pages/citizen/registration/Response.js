@@ -41,39 +41,42 @@ const Response = ({ refetch }) => {
       )}
 
       <CardHeader style={{ margin: 0, fontSize: "20px" }}>
-        {/* {"You’ve been registered successfully!"} */}
         {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
       </CardHeader>
       <CardText style={{ marginBottom: "50px" }}>
-        {/* {"You can now proceed to file a case or join an on-going case"} */}
         {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS_SUB_TEXT") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
       </CardText>
-      <Button
-        onButtonClick={() => {
-          history.push(`/digit-ui/citizen/dristi/home/login`);
-        }}
-        label={t("File a case")}
-        style={{
-          flex: 1,
-          maxHeight: "7vh",
-          width: "20vw",
-          margin: "4px",
-        }}
-      ></Button>
-      <Button
-        onButtonClick={() => {
-          history.push(`/digit-ui/citizen/dristi/home/login`);
-        }}
-        label={t("Join a case")}
-        style={{
-          flex: 1,
-          maxHeight: "7vh",
-          width: "20vw",
-          margin: "4px",
-          background: "none",
-          color: "#007E7E",
-        }}
-      ></Button>
+      {location?.state?.response === "success" && (
+        <React.Fragment>
+          <Button
+            onButtonClick={() => {
+              history.push(`/${window?.contextPath}/citizen/dristi/home`);
+            }}
+            label={t("File a case")}
+            style={{
+              flex: 1,
+              maxHeight: "7vh",
+              width: "20vw",
+              margin: "4px",
+            }}
+          />
+          <Button
+            onButtonClick={() => {
+              history.push(`/${window?.contextPath}/citizen/dristi/home`);
+            }}
+            label={t("Join a case")}
+            style={{
+              flex: 1,
+              maxHeight: "7vh",
+              width: "20vw",
+              margin: "4px",
+              background: "none",
+              color: "#007E7E",
+            }}
+          />
+        </React.Fragment>
+      )}
+
       <ActionBar>
         {
           <SubmitBar

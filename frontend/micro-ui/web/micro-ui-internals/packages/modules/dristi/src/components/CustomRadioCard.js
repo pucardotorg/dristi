@@ -7,19 +7,8 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors }) => {
   const inputs = useMemo(() => config?.populators?.inputs, [config?.populators?.inputs]);
 
   function setValue(value, name, input) {
-    if (input && input?.clearFields && value) {
-      if (input?.clearFieldsType && formData[config.key]) {
-        Object.keys(input?.clearFields).forEach((ele) => {
-          if (ele in input?.clearFieldsType && input?.clearFieldsType[ele] === "documentUpload" && formData[config.key][ele]?.length > 0) {
-            const [fileData] = formData[config.key][ele];
-            setRemoveFile(fileData[1]);
-          }
-        });
-      }
-      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
-    } else onSelect(config.key, { ...formData[config.key], [name]: value });
+    onSelect(config.key, { ...formData[config.key], [name]: value });
   }
-
   return (
     <div>
       {inputs?.map((input, index) => {

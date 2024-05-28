@@ -55,6 +55,8 @@ const Login = ({ stateCode }) => {
   const history = useHistory();
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
   const [isOtpValid, setIsOtpValid] = useState(true);
   const [tokens, setTokens] = useState(null);
   const [params, setParmas] = useState({});
@@ -238,13 +240,14 @@ const Login = ({ stateCode }) => {
               mobileNumber={params.mobileNumber || ""}
               onMobileChange={handleMobileChange}
               canSubmit={canSubmitNo}
+              isUserLoggedIn={isUserLoggedIn}
               showRegisterLink={isUserRegistered && !location.state?.role}
               t={t}
             />
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{ ...stepItems[2], texts: { ...stepItems[2].texts, cardText: `${stepItems[2].texts.cardText} ${params.mobileNumber || ""}` } }}
+              cardText={`${stepItems[2].texts.cardText} ${params.mobileNumber || ""}`}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}

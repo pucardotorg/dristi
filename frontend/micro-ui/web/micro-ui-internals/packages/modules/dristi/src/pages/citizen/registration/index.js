@@ -211,7 +211,7 @@ const Registration = ({ stateCode }) => {
             <SelectMobileNumber
               onSelect={selectMobileNumber}
               config={stepItems[5]}
-              mobileNumber={newParams.mobileNumber || ""}
+              mobileNumber={newParams?.mobileNumber || ""}
               onMobileChange={handleMobileChange}
               canSubmit={canSubmitNo}
               isRegister={true}
@@ -223,17 +223,14 @@ const Registration = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              config={{
-                ...stepItems[4],
-                texts: { ...stepItems[4].texts, cardText: `${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}` },
-              }}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
-              otp={newParams.otp}
+              otp={newParams?.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               params={newParams}
+              cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
               t={t}
             />
           </Route>
@@ -256,22 +253,20 @@ const Registration = ({ stateCode }) => {
           </Route>
 
           <Route path={`${path}/enter-adhaar`}>
-            <EnterAdhaar t={t} config={[stepItems[7]]} onSelect={handleAdhaarChange} params={newParams} />
+            <EnterAdhaar t={t} config={[stepItems[7]]} onSelect={handleAdhaarChange} params={newParams} adhaarNumber={newParams?.adhaarNumber} />
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp
-              config={{
-                ...stepItems[8],
-                texts: { ...stepItems[4].texts, cardText: `${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}` },
-              }}
+              cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
               onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}
               onSelect={onAadharOtpSelect}
-              otp={newParams.aadharOtp}
+              otp={newParams?.aadharOtp}
               error={isOtpValid}
               canSubmit={canSubmitAadharOtp}
               params={newParams}
               path={`${path}/user-type`}
+              isAdhaar={true}
               t={t}
             />
           </Route>

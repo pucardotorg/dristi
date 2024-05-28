@@ -1,9 +1,8 @@
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
-import DocViewerWrapper from "../../employee/docViewerWrapper";
 
 function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
   const { t } = useTranslation();
@@ -98,7 +97,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
       setShowErrorToast(!validateFormData(formData));
       return;
     }
-    const data = params?.userType;
+    const data = params?.userType?.clientDetails;
     const Individual = params?.Individual;
     console.log(formData);
     const oldData = params;
@@ -165,10 +164,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
             })
               .then(() => {
                 setShowSuccess(true);
-                history.push(`/digit-ui/citizen/dristi/home/response`, {
-                  response: "success",
-                  createType: data?.selectUserType?.code,
-                });
+                history.push(`/${window?.contextPath}/citizen/dristi/home`);
               })
               .catch(() => {
                 history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
@@ -226,10 +222,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
           })
             .then(() => {
               setShowSuccess(true);
-              history.push(`/digit-ui/citizen/dristi/home/response`, {
-                response: "success",
-                createType: data?.selectUserType?.code,
-              });
+              history.push(`/${window?.contextPath}/citizen/dristi/home`);
             })
             .catch(() => {
               history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
@@ -264,7 +257,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
           onSubmit(props);
         }}
         isDisabled={isDisabled}
-        label={"CS_COMMONS_NEXT"}
+        label={"CS_COMMON_CONTINUE"}
         headingStyle={{ textAlign: "center" }}
         sectionHeadStyle={{ fontSize: "30px" }}
         defaultValues={{ ...params?.registrationData } || {}}

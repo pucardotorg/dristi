@@ -47,13 +47,14 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
       });
     }
 
-    numberOfFiles > 0 &&
-      onDocumentUpload(filesData[0][1]?.file, filesData[0][0]).then((document) => {
-        setFileName(filesData[0][0]);
+    numberOfFiles > 0
+      ? onDocumentUpload(filesData[0][1]?.file, filesData[0][0]).then((document) => {
+          setFileName(filesData[0][0]);
 
-        setFileStoreID(document.file?.files?.[0]?.fileStoreId);
-        setShowDoc(true);
-      });
+          setFileStoreID(document.file?.files?.[0]?.fileStoreId);
+          setShowDoc(true);
+        })
+      : setShowDoc(false);
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
   const onDocumentUpload = async (fileData, filename) => {

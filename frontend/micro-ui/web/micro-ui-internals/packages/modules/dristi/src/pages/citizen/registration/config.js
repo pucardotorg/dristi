@@ -455,7 +455,7 @@ export const newConfig = [
         label: "CORE_COMMON_FIRST_NAME",
         type: "text",
         name: "firstName",
-        error: "ERR_HRMS_INVALID_FIRST_NAME",
+        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
         validation: {
           required: true,
           minlength: 1,
@@ -467,7 +467,7 @@ export const newConfig = [
         label: "CORE_COMMON_MIDDLE_NAME",
         type: "text",
         name: "middleName",
-        error: "ERR_HRMS_INVALID_MIDDLE_NAME",
+        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
         validation: {
           required: false,
           minlength: 1,
@@ -479,7 +479,7 @@ export const newConfig = [
         label: "CORE_COMMON_LAST_NAME",
         type: "text",
         name: "name",
-        error: "ERR_HRMS_INVALID_LAST_NAME",
+        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
         validation: {
           required: true,
           minlength: 1,
@@ -504,7 +504,7 @@ export const newConfig = [
     },
     inputs: [
       {
-        label: "CORE_COMMON_PHONE_NUMBER",
+        label: "CORE_COMMON_MOBILE_NUMBER",
         type: "text",
         name: "mobileNumber",
         error: "ERR_HRMS_INVALID_MOB_NO",
