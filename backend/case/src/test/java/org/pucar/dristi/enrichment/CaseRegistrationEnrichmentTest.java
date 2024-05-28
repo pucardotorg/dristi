@@ -1,4 +1,7 @@
 package org.pucar.dristi.enrichment;
+import jakarta.servlet.http.Part;
+import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,15 +48,43 @@ class CaseRegistrationEnrichmentTest {
         userInfo.setUuid("user-uuid");
         requestInfo.setUserInfo(userInfo);
 
+        Document document = new Document();
+        document.setDocumentType("documentType");
+        document.setFileStore("fileStore");
+        List<Document> documentsList = new ArrayList<>();
+        documentsList.add(document);
+
         // Create case-indexer.yml CaseRequest with case-indexer.yml single CourtCase
         caseRequest = new CaseRequest();
         courtCase = new CourtCase();
         courtCase.setTenantId("tenant-id");
-        courtCase.setLinkedCases(new ArrayList<>());
-        courtCase.setLitigants(new ArrayList<>());
-        courtCase.setRepresentatives(new ArrayList<>());
-        courtCase.setStatutesAndSections(new ArrayList<>());
-        courtCase.setDocuments(new ArrayList<>());
+        List<LinkedCase> linkedCases = new ArrayList<>();
+        linkedCases.add(LinkedCase.builder().caseNumber("caseNumber").documents(documentsList).build());
+        courtCase.setLinkedCases(linkedCases);
+
+        List<Party> listLitigants = new ArrayList<>();
+        listLitigants.add(Party.builder().partyCategory("ctaegory1").documents(documentsList).build());
+        listLitigants.add(Party.builder().tenantId("pg").partyCategory("ctaegory2").documents(documentsList).build());
+        courtCase.setLitigants(listLitigants);
+
+        List<AdvocateMapping> advocateMappingList = new ArrayList<>();
+        List<Party> representingList = new ArrayList<>();
+        representingList.add(Party.builder().tenantId("pg").documents(documentsList).build());
+        advocateMappingList.add(AdvocateMapping.builder().tenantId("pg").representing(representingList).documents(documentsList).build());
+        courtCase.setRepresentatives(advocateMappingList);
+
+        List<StatuteSection> statuteSectionList = new ArrayList<>();
+        List<String> sections = new ArrayList<>();
+        sections.add("section1");
+        sections.add("section2");
+        List<String> subSections = new ArrayList<>();
+        subSections.add("subsection1");
+        subSections.add("subsection2");
+        statuteSectionList.add(StatuteSection.builder().tenantId("pg").sections(sections).subsections(subSections).build());
+        courtCase.setStatutesAndSections(statuteSectionList);
+
+        documentsList.add(Document.builder().fileStore("fileStore").build());
+        courtCase.setDocuments(documentsList);
         caseRequest.setCases(courtCase);
 
         // Set the request info in the case request
@@ -82,6 +112,35 @@ class CaseRegistrationEnrichmentTest {
         assertNotNull(courtCase.getRepresentatives());
         assertEquals("generated-id", courtCase.getFilingNumber());
         assertEquals("generated-id", courtCase.getCaseNumber());
+    }
+
+    @Test
+    void enrichCaseRegistration_ShouldThrowCustomException_WhenErrorOccurs() {
+
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("Error"));
+
+        // Invoke the method and assert that it throws CustomException
+        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistration(caseRequest));
+    }
+
+    @Test
+    void enrichCaseApplicationUponUpdate_ShouldEnrichAuditDetails() {
+        userInfo.setUuid("user123");
+        courtCase.setAuditdetails(new AuditDetails());
+
+        // Invoke the method
+        caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest);
+
+        // Assert the enriched audit details
+        assertEquals(System.currentTimeMillis(), courtCase.getAuditdetails().getLastModifiedTime());
+        assertEquals("user123", courtCase.getAuditdetails().getLastModifiedBy());
+    }
+
+    @Test
+    void enrichCaseApplicationUponUpdate_ShouldEnrichAuditDetailsException() {
+        caseRequest.setCases(null);
+
+        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistration(caseRequest));
     }
 }
 

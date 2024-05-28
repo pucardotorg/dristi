@@ -108,10 +108,8 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             return caseRepository.checkCaseExists(caseExistsRequest.getCriteria());
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while checking case exist");
-            throw e;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log.error("Error while fetching to exist case");
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }

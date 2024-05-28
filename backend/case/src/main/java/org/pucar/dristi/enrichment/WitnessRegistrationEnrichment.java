@@ -39,9 +39,6 @@ public class WitnessRegistrationEnrichment {
                 witness.setFilingNumber(UUID.randomUUID().toString());
                 witness.setCnrNumber(witness.getFilingNumber());
             }
-        } catch (CustomException e) {
-            log.error("Exception occurred while Enriching witness");
-            throw e;
         } catch (Exception e) {
             log.error("Error enriching witness application: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());

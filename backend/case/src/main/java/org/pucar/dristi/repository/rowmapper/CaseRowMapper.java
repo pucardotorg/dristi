@@ -76,12 +76,6 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
         }
         return new ArrayList<>(caseMap.values());
     }
-    private UUID toUUID(String toUuid) {
-        if(toUuid == null) {
-            return null;
-        }
-        return UUID.fromString(toUuid);
-    }
 
     private LocalDate stringToLocalDate(String str){
         LocalDate localDate = null;
