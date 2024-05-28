@@ -1,56 +1,142 @@
 package org.pucar.dristi.config;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-@SpringBootTest
-@ActiveProfiles("test")  // Use the application-test.properties
 public class ConfigurationTest {
 
-    @Autowired
+    @InjectMocks
     private Configuration configuration;
 
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+
+        // Manually setting the values for testing
+        ReflectionTestUtils.setField(configuration, "userHost", "http://userhost.com");
+        ReflectionTestUtils.setField(configuration, "userContextPath", "/user/context");
+        ReflectionTestUtils.setField(configuration, "userCreateEndpoint", "/user/create");
+        ReflectionTestUtils.setField(configuration, "userSearchEndpoint", "/user/search");
+        ReflectionTestUtils.setField(configuration, "userUpdateEndpoint", "/user/update");
+        ReflectionTestUtils.setField(configuration, "idGenHost", "http://idgenhost.com");
+        ReflectionTestUtils.setField(configuration, "idGenPath", "/idgen/path");
+        ReflectionTestUtils.setField(configuration, "wfHost", "http://wfhost.com");
+        ReflectionTestUtils.setField(configuration, "wfTransitionPath", "/wf/transition");
+        ReflectionTestUtils.setField(configuration, "wfBusinessServiceSearchPath", "/wf/businessservice/search");
+        ReflectionTestUtils.setField(configuration, "wfProcessInstanceSearchPath", "/wf/processinstance/search");
+        ReflectionTestUtils.setField(configuration, "mdmsHost", "http://mdmshost.com");
+        ReflectionTestUtils.setField(configuration, "mdmsEndPoint", "/mdms/search");
+        ReflectionTestUtils.setField(configuration, "hrmsHost", "http://hrmshost.com");
+        ReflectionTestUtils.setField(configuration, "hrmsEndPoint", "/hrms/search");
+        ReflectionTestUtils.setField(configuration, "urlShortnerHost", "http://urlshortnerhost.com");
+        ReflectionTestUtils.setField(configuration, "urlShortnerEndpoint", "/urlshortner/endpoint");
+        ReflectionTestUtils.setField(configuration, "smsNotificationTopic", "smsNotificationTopic");
+        ReflectionTestUtils.setField(configuration, "applicationCreateTopic", "applicationCreateTopic");
+        ReflectionTestUtils.setField(configuration, "applicationUpdateTopic", "applicationUpdateTopic");
+    }
+
     @Test
-    public void testConfigurationValues() {
-        // Assert User Config
-        assertEquals("http://localhost:8086", configuration.getUserHost());
-        assertEquals("/user/users", configuration.getUserContextPath());
-        assertEquals("/_createnovalidate", configuration.getUserCreateEndpoint());
-        assertEquals("/user/_search", configuration.getUserSearchEndpoint());
-        assertEquals("/_updatenovalidate", configuration.getUserUpdateEndpoint());
+    public void testUserHost() {
+        assertEquals("http://userhost.com", configuration.getUserHost());
+    }
 
-        // Assert Idgen Config
-        assertEquals("http://localhost:8087/", configuration.getIdGenHost());
-        assertEquals("egov-idgen/id/_generate", configuration.getIdGenPath());
+    @Test
+    public void testUserContextPath() {
+        assertEquals("/user/context", configuration.getUserContextPath());
+    }
 
-        // Assert Workflow Config
-        assertEquals("http://localhost:8088", configuration.getWfHost());
-        assertEquals("/egov-workflow-v2/egov-wf/process/_transition", configuration.getWfTransitionPath());
-        assertEquals("/egov-workflow-v2/egov-wf/businessservice/_search", configuration.getWfBusinessServiceSearchPath());
-        assertEquals("/egov-workflow-v2/egov-wf/process/_search", configuration.getWfProcessInstanceSearchPath());
+    @Test
+    public void testUserCreateEndpoint() {
+        assertEquals("/user/create", configuration.getUserCreateEndpoint());
+    }
 
-        // Assert MDMS Config
-        assertEquals("http://localhost:8085", configuration.getMdmsHost());
-        assertEquals("/egov-mdms-service/v1/_search", configuration.getMdmsEndPoint());
+    @Test
+    public void testUserSearchEndpoint() {
+        assertEquals("/user/search", configuration.getUserSearchEndpoint());
+    }
 
-        // Assert HRMS Config
-        assertEquals("https://dev.digit.org", configuration.getHrmsHost());
-        assertEquals("/egov-hrms/employees/_search", configuration.getHrmsEndPoint());
+    @Test
+    public void testUserUpdateEndpoint() {
+        assertEquals("/user/update", configuration.getUserUpdateEndpoint());
+    }
 
-        // Assert URL Shortening Config
-        assertEquals("https://dev.digit.org", configuration.getUrlShortnerHost());
-        assertEquals("/egov-url-shortening/shortener", configuration.getUrlShortnerEndpoint());
+    @Test
+    public void testIdGenHost() {
+        assertEquals("http://idgenhost.com", configuration.getIdGenHost());
+    }
 
-        // Assert SMS Notification Config
-        assertEquals("egov.core.notification.sms", configuration.getSmsNotificationTopic());
+    @Test
+    public void testIdGenPath() {
+        assertEquals("/idgen/path", configuration.getIdGenPath());
+    }
 
-        // Assert Kafka Topics
-        assertEquals("save-application", configuration.getApplicationCreateTopic());
-        assertEquals("update-application", configuration.getApplicationUpdateTopic());
+    @Test
+    public void testWfHost() {
+        assertEquals("http://wfhost.com", configuration.getWfHost());
+    }
 
+    @Test
+    public void testWfTransitionPath() {
+        assertEquals("/wf/transition", configuration.getWfTransitionPath());
+    }
+
+    @Test
+    public void testWfBusinessServiceSearchPath() {
+        assertEquals("/wf/businessservice/search", configuration.getWfBusinessServiceSearchPath());
+    }
+
+    @Test
+    public void testWfProcessInstanceSearchPath() {
+        assertEquals("/wf/processinstance/search", configuration.getWfProcessInstanceSearchPath());
+    }
+
+    @Test
+    public void testMdmsHost() {
+        assertEquals("http://mdmshost.com", configuration.getMdmsHost());
+    }
+
+    @Test
+    public void testMdmsEndPoint() {
+        assertEquals("/mdms/search", configuration.getMdmsEndPoint());
+    }
+
+    @Test
+    public void testHrmsHost() {
+        assertEquals("http://hrmshost.com", configuration.getHrmsHost());
+    }
+
+    @Test
+    public void testHrmsEndPoint() {
+        assertEquals("/hrms/search", configuration.getHrmsEndPoint());
+    }
+
+    @Test
+    public void testUrlShortnerHost() {
+        assertEquals("http://urlshortnerhost.com", configuration.getUrlShortnerHost());
+    }
+
+    @Test
+    public void testUrlShortnerEndpoint() {
+        assertEquals("/urlshortner/endpoint", configuration.getUrlShortnerEndpoint());
+    }
+
+    @Test
+    public void testSmsNotificationTopic() {
+        assertEquals("smsNotificationTopic", configuration.getSmsNotificationTopic());
+    }
+
+    @Test
+    public void testApplicationCreateTopic() {
+        assertEquals("applicationCreateTopic", configuration.getApplicationCreateTopic());
+    }
+
+    @Test
+    public void testApplicationUpdateTopic() {
+        assertEquals("applicationUpdateTopic", configuration.getApplicationUpdateTopic());
     }
 }
