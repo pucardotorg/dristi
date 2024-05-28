@@ -121,6 +121,11 @@ const ApplicationDetails = ({ location, match }) => {
   useEffect(() => {
     setIsAction(searchResult?.[0]?.status === "INWORKFLOW");
   }, [searchResult]);
+
+  const applicationNumber = useMemo(() => {
+    return searchResult?.[0]?.applicationNumber;
+  }, [searchResult]);
+
   // let isMobile = window.Digit.Utils.browser.isMobile();
 
   function takeAction(action) {
@@ -215,11 +220,13 @@ const ApplicationDetails = ({ location, match }) => {
     ];
   }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
 
+  const header = useMemo(() => {
+    return applicationNo || applicationNumber ? t(`Application Number ${applicationNo || applicationNumber}`) : "My Application";
+  }, [applicationNumber]);
+
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
   }
-  console.log(actions);
-  const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <Card style={{ paddingLeft: "20px", minWidth: "100%" }}>

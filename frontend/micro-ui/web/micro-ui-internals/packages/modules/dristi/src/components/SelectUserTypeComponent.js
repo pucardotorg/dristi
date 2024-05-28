@@ -28,6 +28,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         });
       }
       if (input?.type && input.type === "documentUpload" && value?.length === 0) {
+        onSelect(config.key, { ...formData[config.key], [name]: value });
         return;
       }
       onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
@@ -55,6 +56,18 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     }
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
+
+  const checkIfAadharValidationNotSuccessful = (currentValue, input) => {
+    if (!input.checkAadharVerification) {
+      return !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+    }
+    let isValidated = true;
+    const ifOnlyNumeric = /^\d*$/.test(currentValue);
+    if (!ifOnlyNumeric) {
+      isValidated = false;
+    }
+    return !isValidated;
+  };
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -135,7 +148,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
                     input.validation &&
-                    !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
+                    checkIfAadharValidationNotSuccessful(currentValue, input) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
                         <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>
@@ -145,12 +158,13 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
             )}
             {input?.type === "infoBox" && (
               <CitizenInfoLabel
-                style={{ maxWidth: "100%", height: "90px", padding: "0 8px" }}
+                style={{ maxWidth: "100%", padding: "0 8px 10px 8px" }}
                 textStyle={{ margin: 8 }}
                 iconStyle={{ margin: 0 }}
                 info={t("ES_COMMON_INFO")}
                 text={t(input?.bannerLabel)}
                 className="doc-banner"
+                children={t("CS_AADHAR_NUMBER_INPUT_INFO")}
               ></CitizenInfoLabel>
             )}
           </React.Fragment>

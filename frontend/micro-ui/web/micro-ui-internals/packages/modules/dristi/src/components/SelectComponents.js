@@ -110,8 +110,18 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      if (value.startsWith(" ")) {
+        value = "";
+      }
+      onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
+
+  const checkIfValidated = (currentValue, input) => {
+    const isEmpty = /^\s*$/.test(currentValue);
+    return isEmpty || !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+  };
 
   return (
     <div>
@@ -167,6 +177,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                                     .join(", ");
                                 })(),
                           coordinates,
+                          buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
+                          doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
                         },
                         input.name
                       );
@@ -186,14 +198,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                     {...input.validation}
                   />
                 )}
-                {currentValue &&
-                  currentValue.length > 0 &&
-                  input.validation &&
-                  !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
-                    </CardLabelError>
-                  )}
+                {currentValue && currentValue.length > 0 && input.validation && checkIfValidated(currentValue, input) && (
+                  <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
+                    <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                  </CardLabelError>
+                )}
               </div>
             </LabelFieldPair>
           </React.Fragment>

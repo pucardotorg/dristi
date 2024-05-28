@@ -336,7 +336,11 @@ export const newConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            {
+              label: "CS_PIN_LOCATION",
+              type: "LocationSearch",
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "buildingName", "doorNo"],
+            },
             {
               label: "PINCODE",
               type: "text",
@@ -394,6 +398,18 @@ export const newConfig = [
               name: "locality",
               validation: {
                 isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "BUILDING_NAME",
+              type: "text",
+              name: "buildingName",
+              validation: {
+                errMsg: "ADDRESS_BUILDING_NAME_INVALID",
+                isRequired: true,
+                minlength: 2,
+                title: "",
               },
               isMandatory: true,
             },
@@ -643,8 +659,9 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[a-zA-Z0-9/]*$/i,
+                pattern: /^[0-9A-Z/]+$/,
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
+                maxlength: 15,
               },
               isMandatory: true,
               isDependentOn: "selectUserType",

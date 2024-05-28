@@ -8,14 +8,41 @@ const DRISTICard = () => {
   const Digit = window?.Digit || {};
   const history = useHistory();
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  const requestBody = {
-    applicationNumber: "",
-    tenantId: "pg",
-    status: ["INWORKFLOW"],
+  const advocateClerkRequestBody = {
+    inbox: {
+      processSearchCriteria: {
+        businessService: ["advocateclerk"],
+        moduleName: "Advocate Clerk Service",
+        tenantId: "pg",
+      },
+      moduleSearchCriteria: {
+        tenantId: "pg",
+      },
+      tenantId: "pg",
+      limit: 10,
+      offset: 0,
+    },
   };
+
+  const advocateRequestBody = {
+    inbox: {
+      processSearchCriteria: {
+        businessService: ["advocate"],
+        moduleName: "Advocate services",
+        tenantId: "pg",
+      },
+      moduleSearchCriteria: {
+        tenantId: "pg",
+      },
+      tenantId: "pg",
+      limit: 10,
+      offset: 0,
+    },
+  };
+
   const { data: clerkData, isLoading: isLoadingClerk } = Digit.Hooks.dristi.useGetAdvocateClientServices(
-    "/advocate/clerk/v1/_search",
-    requestBody,
+    "/inbox/v2/_search",
+    advocateClerkRequestBody,
     tenantId,
     "clerk",
     {},
@@ -23,17 +50,19 @@ const DRISTICard = () => {
     true
   );
   const { data: advocateData, isLoading: isLoadingAdvocate } = Digit.Hooks.dristi.useGetAdvocateClientServices(
-    "/advocate/advocate/v1/_search",
-    requestBody,
+    "/inbox/v2/_search",
+    advocateRequestBody,
     tenantId,
     "advocate",
     {},
     true,
     true
   );
+
   if (isLoadingAdvocate || isLoadingClerk) {
     return <Loader />;
   }
+
   return (
     <div style={{ alignContent: "center", width: "100%" }}>
       <Card className="main-card-home">
