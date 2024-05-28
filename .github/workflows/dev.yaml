@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - test1
+      - dev_backend_evidence
   workflow_dispatch:    
 jobs:
   docker_image-build:
