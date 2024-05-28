@@ -157,8 +157,8 @@ public class WorkflowService {
                 return response.getProcessInstances().get(0);
             return null;
         } catch (Exception e) {
-            log.error("Error getting current workflow: {}", e.toString());
-            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
+            log.error("Error getting current workflow: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
 //    private BusinessService getBusinessService(Advocate advocate, RequestInfo requestInfo) {

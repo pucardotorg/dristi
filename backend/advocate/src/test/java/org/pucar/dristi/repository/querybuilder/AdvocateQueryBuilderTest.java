@@ -30,13 +30,12 @@ class AdvocateQueryBuilderTest {
         AdvocateSearchCriteria criteria = null;
 
         List<Object> preparedStmtList = new ArrayList<>();
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, isIndividualLoggedInUser, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -57,13 +56,12 @@ class AdvocateQueryBuilderTest {
         criteria.setApplicationNumber("APP456");
         criteria.setIndividualId("IND789");
         List<Object> preparedStmtList = new ArrayList<>();
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(true);
         String tenantId = "tenant1";
         Integer limit = 10;
         Integer offset = 0;
 
         // Act
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, isIndividualLoggedInUser, tenantId, limit, offset);
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);

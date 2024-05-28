@@ -31,12 +31,11 @@ public class AdvocateClerkQueryBuilder {
      * @param criteria
      * @param preparedStmtList
      * @param tenantId
-     * @param isIndividualLoggedInUser
      * @param limit
      * @param offset
      * @return query
      */
-    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
@@ -79,12 +78,8 @@ public class AdvocateClerkQueryBuilder {
                 }
             }
 
-            if(isIndividualLoggedInUser.get()){
-                query.append(ORDERBY_CREATEDTIME_DESC);
-            }
-            else {
-                query.append(ORDERBY_CREATEDTIME_ASC);
-            }
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
             // Adding Pagination
             if (limit != null && offset != null) {
                 query.append(" LIMIT ? OFFSET ?");

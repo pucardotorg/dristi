@@ -33,7 +33,7 @@ public class AdvocateQueryBuilder {
      * @param offset
      * @return
      */
-    public String getAdvocateSearchQuery(AdvocateSearchCriteria criteria, List<Object> preparedStmtList, AtomicReference<Boolean> isIndividualLoggedInUser, String tenantId, Integer limit, Integer offset) {
+    public String getAdvocateSearchQuery(AdvocateSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
@@ -81,12 +81,7 @@ public class AdvocateQueryBuilder {
                 }
             }
 
-            if(isIndividualLoggedInUser.get()){
-                query.append(ORDERBY_CREATEDTIME_DESC);
-            }
-            else {
-                query.append(ORDERBY_CREATEDTIME_ASC);
-            }
+            query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
             if (limit != null && offset != null) {

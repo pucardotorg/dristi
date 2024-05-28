@@ -40,19 +40,16 @@ public class AdvocateClerkRepository {
 
     /** Used to get applications based on search criteria using query
      * @param searchCriteria
-     * @param statusList
-     * @param applicationNumber
-     * @param isIndividualLoggedInUser
      * @param limit
      * @param offset
      * @return list of clerks found in the DB
      */
-    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, String tenantId, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public List<AdvocateClerk> getApplications(List<AdvocateClerkSearchCriteria> searchCriteria, String tenantId, Integer limit, Integer offset){
         try {
             for (AdvocateClerkSearchCriteria advocateSearchCriteria : searchCriteria) {
                 List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
-                String query = queryBuilder.getAdvocateClerkSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, isIndividualLoggedInUser, limit, offset);
+                String query = queryBuilder.getAdvocateClerkSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, limit, offset);
                 log.info("Final query: " + query);
                 List<AdvocateClerk> list = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
                 if (list != null) {

@@ -107,7 +107,7 @@ public class AdvocateRegistrationValidatorTest {
         advocateSearchCriteria.setResponseList(advocates);
 
         existingApplications.add(advocateSearchCriteria);
-        when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+        when(repository.getApplications(anyList(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act
         Advocate result = validator.validateApplicationExistence(advocate);
@@ -132,7 +132,7 @@ public class AdvocateRegistrationValidatorTest {
 
         existingApplications.add(advocateSearchCriteria);
 
-        when(repository.getApplications(anyList(), any(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+        when(repository.getApplications(anyList(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act + Assert
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocate));

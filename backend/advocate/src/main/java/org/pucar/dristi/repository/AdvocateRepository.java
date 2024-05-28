@@ -44,7 +44,7 @@ public class AdvocateRepository {
      * @param offset
      * @return list of advocate found in the DB
      */
-    public List<AdvocateSearchCriteria> getApplications(List<AdvocateSearchCriteria> searchCriteria, AtomicReference<Boolean> isIndividualLoggedInUser, String tenantId, Integer limit, Integer offset ) {
+    public List<AdvocateSearchCriteria> getApplications(List<AdvocateSearchCriteria> searchCriteria, String tenantId, Integer limit, Integer offset ) {
 
         try {
 
@@ -52,7 +52,7 @@ public class AdvocateRepository {
                 List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String advocateQuery = "";
-                advocateQuery = queryBuilder.getAdvocateSearchQuery(advocateSearchCriteria, preparedStmtList, isIndividualLoggedInUser, tenantId, limit, offset);
+                advocateQuery = queryBuilder.getAdvocateSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, limit, offset);
                 log.info("Final advocate list query: {}", advocateQuery);
                 List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
                 log.info("Application size :: {}", list);

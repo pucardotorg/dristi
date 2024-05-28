@@ -106,14 +106,12 @@ public class AdvocateRepositoryTest {
         listAdvocates.add(advocate2);
         listAdvocates.add(advocate3);
 
-
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(true);
         String tenantId = "testTenantId";
         Integer limit = 10;
         Integer offset = 0;
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any(), any())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any())).thenReturn("testAdvocateQuery");
         when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
 
         // Mock jdbcTemplate methods
@@ -121,7 +119,7 @@ public class AdvocateRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
 
         // Act
-        List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
+        List<AdvocateSearchCriteria> result = advocateRepository.getApplications(searchCriteria, tenantId, limit, offset);
 
         // Assert
         assertNotNull(result);
@@ -133,13 +131,12 @@ public class AdvocateRepositoryTest {
         // Arrange
         List<AdvocateSearchCriteria> searchCriteria = null;
 
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(true);
         String tenantId = "testTenantId";
         Integer limit = 10;
         Integer offset = 0;
 
         // Mock queryBuilder methods
-        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any(), any())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any())).thenReturn("testAdvocateQuery");
         when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
 
         // Mock jdbcTemplate methods
@@ -147,7 +144,7 @@ public class AdvocateRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
 
         // Assert
-        assertThrows(Exception.class, () -> advocateRepository.getApplications(searchCriteria, isIndividualLoggedInUser, tenantId, limit, offset));
+        assertThrows(Exception.class, () -> advocateRepository.getApplications(searchCriteria, tenantId, limit, offset));
     }
 
     @Test

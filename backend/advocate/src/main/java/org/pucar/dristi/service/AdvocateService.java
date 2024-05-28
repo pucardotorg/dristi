@@ -36,9 +36,6 @@ public class AdvocateService {
     private WorkflowService workflowService;
 
     @Autowired
-    private IndividualService individualService;
-
-    @Autowired
     private AdvocateRepository advocateRepository;
 
     @Autowired
@@ -71,8 +68,6 @@ public class AdvocateService {
     }
 
     public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, String tenantId, Integer limit, Integer offset) {
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
-        Map<String, String> individualUserUUID = new HashMap<>();
         List<Advocate> applications = new ArrayList<>();
 
         try {
@@ -82,7 +77,7 @@ public class AdvocateService {
                 offset = 0;
 
             // Fetch applications from database according to the given search criteria
-            advocateRepository.getApplications(advocateSearchCriteria, isIndividualLoggedInUser, tenantId, limit, offset);
+            advocateRepository.getApplications(advocateSearchCriteria, tenantId, limit, offset);
 
             // If no applications are found matching the given criteria, return an empty list
 
@@ -95,7 +90,7 @@ public class AdvocateService {
             log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching to search results "+ e.getMessage());
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION, e.getMessage());
         }
     }

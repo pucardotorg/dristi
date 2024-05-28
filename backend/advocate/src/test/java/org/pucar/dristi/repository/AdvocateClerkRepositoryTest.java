@@ -59,13 +59,11 @@ public class AdvocateClerkRepositoryTest {
 
         documentMap = new HashMap<>();
         documentMap.put(clerk.getId(), new ArrayList<>());
-
-        isIndividualLoggedInUser = new AtomicReference<>(false);
     }
 
     @Test
     public void testGetApplications() {
-        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), any(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
@@ -75,11 +73,11 @@ public class AdvocateClerkRepositoryTest {
                 .thenReturn(documentMap);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplications(
-                searchCriteriaList, "tenantId", isIndividualLoggedInUser, 10, 0);
+                searchCriteriaList, "tenantId", 10, 0);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(queryBuilder, times(1)).getAdvocateClerkSearchQuery(any(), anyList(), anyString(), any(), anyInt(), anyInt());
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
         verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
@@ -88,13 +86,13 @@ public class AdvocateClerkRepositoryTest {
     @Test
     public void testGetApplicationsEmpty() {
         advocateClerkList = new ArrayList<>();
-        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), any(), anyInt(), anyInt()))
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
                 .thenReturn("SELECT * FROM advocate_clerk");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
                 .thenReturn(advocateClerkList);
 
         List<AdvocateClerk> result = advocateClerkRepository.getApplications(
-                searchCriteriaList, "tenantId", isIndividualLoggedInUser, 10, 0);
+                searchCriteriaList, "tenantId", 10, 0);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

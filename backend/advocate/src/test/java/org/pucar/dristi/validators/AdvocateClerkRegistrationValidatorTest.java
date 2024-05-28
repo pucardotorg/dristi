@@ -84,7 +84,7 @@ public class AdvocateClerkRegistrationValidatorTest {
         advocateClerk.setApplicationNumber("testAppNumber");
         List<AdvocateClerk> existingApplications = new ArrayList<>();
         existingApplications.add(advocateClerk);
-        when(repository.getApplications(anyList(), anyString(), any(), anyInt(), anyInt())).thenReturn(existingApplications);
+        when(repository.getApplications(anyList(), anyString(), anyInt(), anyInt())).thenReturn(existingApplications);
 
         // Act
         AdvocateClerk result = validator.validateApplicationExistence(advocateClerk);
@@ -99,7 +99,7 @@ public class AdvocateClerkRegistrationValidatorTest {
         // Arrange
         AdvocateClerk advocateClerk = new AdvocateClerk();
         advocateClerk.setApplicationNumber("nonExistingAppNumber");
-        when(repository.getApplications(anyList(), anyString(), any(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
+        when(repository.getApplications(anyList(), anyString(), anyInt(), anyInt())).thenReturn(Collections.emptyList());
 
         // Act + Assert
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(advocateClerk));

@@ -28,12 +28,11 @@ public class AdvocateClerkQueryBuilderTest {
         AdvocateClerkSearchCriteria criteria = null;
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = null;
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
         Integer limit = 10;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, isIndividualLoggedInUser, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -51,12 +50,11 @@ public class AdvocateClerkQueryBuilderTest {
         criteria.setIndividualId("indivID");
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(true);
         Integer limit = 10;
         Integer offset = 0;
 
         // Act
-        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, isIndividualLoggedInUser, limit, offset);
+        String query = queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
 
         // Assert
         assertNotNull(query);
@@ -159,13 +157,12 @@ public class AdvocateClerkQueryBuilderTest {
     public void testGetAdvocateClerkSearchQuery_withNullCriteria() {
         List<Object> preparedStmtList = new ArrayList<>();
         String tenantId = "tenant1";
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(true);
         Integer limit = 10;
         Integer offset = 0;
 
         String expectedQuery = "SELECT advc.id as id, advc.tenantid as tenantid, advc.applicationnumber as applicationnumber, advc.stateregnnumber as stateregnnumber, advc.individualid as individualid, advc.isactive as isactive, advc.additionaldetails as additionaldetails, advc.createdby as createdby, advc.lastmodifiedby as lastmodifiedby, advc.createdtime as createdtime, advc.lastmodifiedtime as lastmodifiedtime, advc.status as status  FROM dristi_advocate_clerk advc ORDER BY advc.createdtime DESC  LIMIT ? OFFSET ?";
 
-        String actualQuery = queryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList, tenantId, isIndividualLoggedInUser, limit, offset);
+        String actualQuery = queryBuilder.getAdvocateClerkSearchQuery(null, preparedStmtList, tenantId, limit, offset);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(List.of(10, 0), preparedStmtList);

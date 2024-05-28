@@ -57,8 +57,6 @@ public class AdvocateClerkService {
         }
     }
     public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, String tenantId, Integer limit, Integer offset) {
-        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
-        Map<String, String> individualUserUUID = new HashMap<>();
         List<AdvocateClerk> applications = new ArrayList<>();
 
         try {
@@ -67,7 +65,7 @@ public class AdvocateClerkService {
             if(offset == null)
                 offset = 0;
             // Fetch applications from database according to the given search criteria
-            advocateClerkRepository.getApplications(advocateClerkSearchCriteria, tenantId, isIndividualLoggedInUser, limit, offset);
+            advocateClerkRepository.getApplications(advocateClerkSearchCriteria, tenantId, limit, offset);
 
             log.info("Application size :: {}", applications.size());
             // If no applications are found matching the given criteria, return an empty list
