@@ -24,23 +24,21 @@ public class EvidenceEnrichment {
     public void enrichEvidenceRegistration(EvidenceRequest evidenceRequest) {
         try {
             if(evidenceRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> aetifactRegistrationIdList = idgenUtil.getIdList(evidenceRequest.getRequestInfo(), evidenceRequest.getRequestInfo().getUserInfo().getTenantId(), "artifact.artifact_number", null, evidenceRequest.getArtifacts().size());
+                List<String> aetifactRegistrationIdList = idgenUtil.getIdList(evidenceRequest.getRequestInfo(), evidenceRequest.getRequestInfo().getUserInfo().getTenantId(), "artifact.artifact_number", null, 1);
                 int index = 0;
-                for (Artifact artifact : evidenceRequest.getArtifacts()) {
                     AuditDetails auditDetails = AuditDetails.builder().createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-                    artifact.setAuditdetails(auditDetails);
-                    artifact.setId(UUID.randomUUID());
-                    for (Comment comment : artifact.getComments()) {
+                evidenceRequest.getArtifact().setAuditdetails(auditDetails);
+                evidenceRequest.getArtifact().setId(UUID.randomUUID());
+                    for (Comment comment : evidenceRequest.getArtifact().getComments()) {
                         comment.setId(UUID.randomUUID());
                     }
-                    artifact.setIsActive(false);
-                    artifact.setArtifactNumber(aetifactRegistrationIdList.get(index++));
-                    if(artifact.getFile()!=null){
-                        artifact.getFile().setId(String.valueOf(UUID.randomUUID()));
-                        artifact.getFile().setDocumentUid(artifact.getFile().getId());
+                evidenceRequest.getArtifact().setIsActive(false);
+                evidenceRequest.getArtifact().setArtifactNumber(aetifactRegistrationIdList.get(index++));
+                    if(evidenceRequest.getArtifact().getFile()!=null){
+                        evidenceRequest.getArtifact().getFile().setId(String.valueOf(UUID.randomUUID()));
+                        evidenceRequest.getArtifact().getFile().setDocumentUid(evidenceRequest.getArtifact().getFile().getId());
                     }
                 }
-            }
             else{
                 throw new CustomException(ENRICHMENT_EXCEPTION,"User info not found!!!");
             }
@@ -57,8 +55,8 @@ public class EvidenceEnrichment {
     public void enrichEvidenceRegistrationUponUpdate(EvidenceRequest evidenceRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
-            evidenceRequest.getArtifacts().get(0).getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
-            evidenceRequest.getArtifacts().get(0).getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
+            evidenceRequest.getArtifact().getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
+            evidenceRequest.getArtifact().getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
             log.error("Error enriching advocate application upon update: {}", e.getMessage());
             throw new CustomException("ENRICHMENT_EXCEPTION", "Error in order enrichment service during order update process: " + e.getMessage());

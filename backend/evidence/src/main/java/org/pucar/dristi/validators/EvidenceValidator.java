@@ -26,20 +26,17 @@ public class EvidenceValidator {
     private EvidenceRepository repository;
     @Autowired
     private MdmsUtil mdmsUtil;
-    public void validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
+    public void     validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
         RequestInfo requestInfo = evidenceRequest.getRequestInfo();
 
-        evidenceRequest.getArtifacts().forEach(artifact -> {
-            if(ObjectUtils.isEmpty(artifact.getTenantId()) || ObjectUtils.isEmpty(artifact.getCaseId())){
+            if(ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId())){
                 throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and caseId are mandatory for creating advocate");
             }
-        });
     }
 
     public Artifact validateApplicationExistence(EvidenceRequest evidenceRequest) {
-        List<Artifact> artifact = evidenceRequest.getArtifacts();
         RequestInfo requestInfo = evidenceRequest.getRequestInfo();
-        List<Artifact> existingApplications = repository.getArtifacts(String.valueOf(artifact.get(0).getId()),artifact.get(0).getTenantId(),artifact.get(0).getArtifactNumber(),artifact.get(0).getEvidenceNumber(),artifact.get(0).getCaseId(),artifact.get(0).getStatus());
+        List<Artifact> existingApplications = repository.getArtifacts(String.valueOf(evidenceRequest.getArtifact().getId()),evidenceRequest.getArtifact().getTenantId(),evidenceRequest.getArtifact().getArtifactNumber(),evidenceRequest.getArtifact().getEvidenceNumber(),evidenceRequest.getArtifact().getCaseId(),evidenceRequest.getArtifact().getStatus());
         log.info("Existing application :: {}", existingApplications.size());
         if (existingApplications.isEmpty())
             throw new CustomException("VALIDATION EXCEPTION", "Evidence does not exist");

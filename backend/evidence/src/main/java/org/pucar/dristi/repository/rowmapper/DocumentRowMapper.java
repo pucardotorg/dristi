@@ -17,7 +17,7 @@ public class DocumentRowMapper implements ResultSetExtractor<Document> {
 
     @Override
     public Document extractData(ResultSet rs) {
-        Document document = new Document();
+        Document document = null;
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

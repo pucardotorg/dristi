@@ -27,7 +27,7 @@ public class EvidenceService {
     private Producer producer;
     @Autowired
     private Configuration config;
-    public List<Artifact> createEvidence(EvidenceRequest body) {
+    public Artifact createEvidence(EvidenceRequest body) {
         try {
 
             // Validate applications
@@ -43,7 +43,7 @@ public class EvidenceService {
 
             producer.push(config.getEvidenceCreateTopic(), body);
 
-            return body.getArtifacts();
+            return body.getArtifact();
         } catch (CustomException e){
             log.error("Custom Exception occurred while creating evidence");
             throw e;
@@ -53,7 +53,7 @@ public class EvidenceService {
         }
     }
 
-    public List<Artifact> updateEvidence(EvidenceRequest evidenceRequest) {
+    public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
 
         try {
 
@@ -65,7 +65,7 @@ public class EvidenceService {
                 log.error("Error validating existing application");
                 throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.getMessage());
             }
-            existingApplication.setWorkflow(evidenceRequest.getArtifacts().get(0).getWorkflow());
+            existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
 
             // Enrich application upon update
             enrichmentUtil.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
@@ -74,7 +74,7 @@ public class EvidenceService {
 
             producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
 
-            return evidenceRequest.getArtifacts();
+            return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
             log.error("Custom Exception occurred while updating evidence");

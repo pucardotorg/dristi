@@ -46,18 +46,18 @@ public class ArtifactsApiController {
 	@RequestMapping(value = "/artifacts/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<EvidenceResponse> artifactsV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the artifact + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceRequest body) {
-		List<Artifact> response = evidenceService.createEvidence(body);
+		Artifact response = evidenceService.createEvidence(body);
 		ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-		EvidenceResponse evidenceResponse = EvidenceResponse.builder().artifacts(response).responseInfo(responseInfo).build();
+		EvidenceResponse evidenceResponse = EvidenceResponse.builder().artifact(response).responseInfo(responseInfo).build();
 		return new ResponseEntity<>(evidenceResponse, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/artifacts/v1/_update", method = RequestMethod.POST)
 	public ResponseEntity<EvidenceResponse> artifactsV1UpdatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the artifact to be updated + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody EvidenceRequest body) {
-				List<Artifact> response = evidenceService.updateEvidence(body);
+				Artifact response = evidenceService.updateEvidence(body);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-				EvidenceResponse evidenceResponse = EvidenceResponse.builder().artifacts(response).responseInfo(responseInfo).build();
+				EvidenceResponse evidenceResponse = EvidenceResponse.builder().artifact(response).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(evidenceResponse, HttpStatus.OK);
 	}
 

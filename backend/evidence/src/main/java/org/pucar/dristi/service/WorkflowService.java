@@ -36,19 +36,17 @@ public class WorkflowService {
 
 
     public void updateWorkflowStatus(EvidenceRequest evidenceRequest) {
-        evidenceRequest.getArtifacts().forEach(artifact -> {
             try {
-                ProcessInstance processInstance = getProcessInstanceForArtifact(artifact, evidenceRequest.getRequestInfo());
+                ProcessInstance processInstance = getProcessInstanceForArtifact(evidenceRequest.getArtifact(), evidenceRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(evidenceRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
-                artifact.setStatus(applicationStatus);
+                evidenceRequest.getArtifact().setStatus(applicationStatus);
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
             }
-        });
     }
     public State callWorkFlow(ProcessInstanceRequest workflowReq) {
         try {
@@ -63,7 +61,7 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
-    private ProcessInstance getProcessInstanceForArtifact(Artifact artifact, RequestInfo requestInfo) {
+    ProcessInstance getProcessInstanceForArtifact(Artifact artifact, RequestInfo requestInfo) {
         try {
             Workflow workflow = artifact.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
