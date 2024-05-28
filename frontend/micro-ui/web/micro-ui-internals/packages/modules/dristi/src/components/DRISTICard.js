@@ -78,7 +78,7 @@ const DRISTICard = () => {
         label={"Cases"}
         Icon={<CasesIcon />}
         style={{ width: "400px", height: "150px", cursor: "pointer" }}
-        showNumber={749}
+        // showNumber={749}
         onClick={() => {
           // history.push("/digit-ui/employee/dristi/total-cases");
         }}
