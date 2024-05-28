@@ -11,7 +11,8 @@ const getLocation = (places, code) => {
   return location ? location : null;
 };
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
-  console.debug({ formData, formState, errors2: formState.errors, errors });
+  console.debug({ formData, errors });
+  const configKey = `${config.key}-select`;
   const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
   const inputs = useMemo(
     () =>
@@ -40,20 +41,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
             (res.data.results && res.data.results?.length === 0) ||
             (res.data.status === "OK" && getLocation(res.data.results[0], "country") !== "India")
           ) {
-            onSelect(config.key, {
-              ...formData[config.key],
-              ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
-                res[curr] = "";
-                if (curr === "pincode") {
-                  res[curr] = value;
-                }
-                return res;
-              }, {}),
-            });
+            throw new Error("Invalid Pincode");
           } else {
             const [location] = res.data.results;
-            onSelect(config.key, {
-              ...formData[config.key],
+            onSelect(configKey, {
+              ...formData[configKey],
               [input]: value,
               state: getLocation(location, "administrative_area_level_1") || "",
               district: getLocation(location, "administrative_area_level_3") || "",
@@ -78,8 +70,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
           }
         })
         .catch(() => {
-          onSelect(config.key, {
-            ...formData[config.key],
+          onSelect(configKey, {
+            ...formData[configKey],
             ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
               res[curr] = "";
               if (curr === "pincode") {
@@ -91,35 +83,29 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
         });
       return;
     } else if (input === "pincode") {
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
-          res[curr] = "";
-          if (curr === "pincode") {
-            res[curr] = value;
-          }
-          return res;
-        }, {}),
+      ["state", "district", "city", "locality", "coordinates"].forEach((key) => {
+        onSelect(`${configKey}.${key}`, "");
       });
+      onSelect(`${configKey}.${"pincode"}`, value);
       return;
     }
     if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
+      onSelect(configKey, {
+        ...formData[configKey],
         ...input.reduce((res, curr) => {
           res[curr] = value[curr];
           return res;
         }, {}),
       });
     } else {
-      onSelect(`${config.key}.${input}`, value, { shouldValidate: true });
+      onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
     }
   }
 
   return (
     <div>
       {inputs?.map((input, index) => {
-        let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
+        let currentValue = (formData && formData[configKey] && formData[configKey][input.name]) || "";
         let isFirstRender = true;
         return (
           <React.Fragment key={index}>
@@ -130,28 +116,25 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
                     locationStyle={{ maxWidth: "100%" }}
-                    position={formData?.[config.key]?.coordinates || {}}
+                    position={formData?.[configKey]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
                     onChange={(pincode, location, coordinates = {}) => {
-                      console.log(location);
                       setValue(
                         {
-                          pincode: formData && isFirstRender && formData[config.key] ? formData[config.key]["pincode"] : pincode || "",
+                          pincode: formData && isFirstRender && formData[configKey] ? formData[configKey]["pincode"] : pincode || "",
                           state:
-                            formData && isFirstRender && formData[config.key]
-                              ? formData[config.key]["state"]
+                            formData && isFirstRender && formData[configKey]
+                              ? formData[configKey]["state"]
                               : getLocation(location, "administrative_area_level_1") || "",
                           district:
-                            formData && isFirstRender && formData[config.key]
-                              ? formData[config.key]["district"]
+                            formData && isFirstRender && formData[configKey]
+                              ? formData[configKey]["district"]
                               : getLocation(location, "administrative_area_level_3") || "",
                           city:
-                            formData && isFirstRender && formData[config.key]
-                              ? formData[config.key]["city"]
-                              : getLocation(location, "locality") || "",
+                            formData && isFirstRender && formData[configKey] ? formData[configKey]["city"] : getLocation(location, "locality") || "",
                           locality:
-                            isFirstRender && formData[config.key]
-                              ? formData[config.key]["locality"]
+                            isFirstRender && formData[configKey]
+                              ? formData[configKey]["locality"]
                               : (() => {
                                   const plusCode = getLocation(location, "plus_code");
                                   const neighborhood = getLocation(location, "neighborhood");
@@ -177,15 +160,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                   <React.Fragment>
                     <TextInput
                       className="field desktop-w-full"
-                      name={`${config.key}.${input.name}`}
-                      inputRef={register(
-                        { name: `${config.key}.${input.name}`, type: "string" },
-                        {
-                          required: "this is a required field",
-                          min: 3,
-                        }
-                      )}
-                      value={watch(config.key)?.[input.name]}
+                      name={`${configKey}.${input.name}`}
+                      inputRef={register({
+                        required: input.isMandatory,
+                        ...input.validation,
+                      })}
                       onChange={(e) => {
                         setValue(e.target.value, input.name);
                       }}
