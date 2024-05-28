@@ -4,6 +4,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -90,5 +91,24 @@ class ApplicationEnrichmentTest {
 
         assertEquals("user-uuid", application.getAuditDetails().getLastModifiedBy());
         assertTrue(application.getAuditDetails().getLastModifiedTime() > auditDetails.getCreatedTime());
+    }
+    @Test
+    public void testEnrichApplication_CustomException() {
+        when(idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1))
+                .thenThrow(new CustomException("IDGEN_ERROR", "ID generation error"));
+
+        assertThrows(CustomException.class, () -> {
+            applicationEnrichment.enrichApplication(applicationRequest);
+        });
+    }
+
+    @Test
+    public void testEnrichApplication_GenericException() {
+        when(idgenUtil.getIdList(applicationRequest.getRequestInfo(), applicationRequest.getRequestInfo().getUserInfo().getTenantId(), "application.application_number", null, 1))
+                .thenThrow(new RuntimeException("Runtime exception"));
+
+        assertThrows(CustomException.class, () -> {
+            applicationEnrichment.enrichApplication(applicationRequest);
+        });
     }
 }

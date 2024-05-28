@@ -116,4 +116,26 @@ class ApplicationRepositoryTest {
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
         assertTrue(exception.getMessage().contains("Error while fetching application list: Database error"));
     }
+    @Test
+    public void testGetApplications_ThrowsCustomException() {
+        // Arrange
+        String id = "testId";
+        String filingNumber = "testFilingNumber";
+        String cnrNumber = "testCnrNumber";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        doThrow(new RuntimeException("Database error")).when(jdbcTemplate).query(anyString(), any(ApplicationRowMapper.class));
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, limit, offset);
+        });
+
+        // Assert
+        String expectedMessage = "Error while fetching application list:";
+        String actualMessage = exception.getMessage();
+        assert actualMessage.contains(expectedMessage);
+    }
 }
