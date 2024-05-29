@@ -28,12 +28,15 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 public class CaseRegistrationValidator {
+
     @Autowired
     private IndividualService individualService;
+
     @Autowired
     private CaseRepository repository;
 
-    CaseService caseService;
+    private CaseService caseService;
+
     @Autowired
     private MdmsUtil mdmsUtil;
 
@@ -42,6 +45,9 @@ public class CaseRegistrationValidator {
 
     @Autowired
     private AdvocateUtil advocateUtil;
+
+    @Autowired
+    private Configuration config;
 
     /*  To do validation->
         1. Validate MDMS data
@@ -72,23 +78,19 @@ public class CaseRegistrationValidator {
     }
 
     public Boolean validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
-        List<CourtCase> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).build()));
+
+        if (ObjectUtils.isEmpty(courtCase.getTenantId()))
+            throw new CustomException(UPDATE_CASE_ERR, "tenantId is mandatory for updating case");
+        if (ObjectUtils.isEmpty(courtCase.getFilingDate()))
+            throw new CustomException(UPDATE_CASE_ERR, "filingDate is mandatory for updating case");
+
+        List<CaseCriteria> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build()));
         if (existingApplications.isEmpty())
-            throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getTenantId()))
-            throw new CustomException(CREATE_CASE_ERR, "tenantId is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getFilingDate()))
-            throw new CustomException(CREATE_CASE_ERR, "filingDate is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getCaseCategory()))
-            throw new CustomException(CREATE_CASE_ERR, "caseCategory is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getStatutesAndSections()))
-            throw new CustomException(CREATE_CASE_ERR, "statute and sections is mandatory for creating case");
-        if (ObjectUtils.isEmpty(existingApplications.get(0).getLitigants()))
-            throw new CustomException(CREATE_CASE_ERR, "litigants is mandatory for creating case");
+            return false;
+        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), config.getCaseBusinessServiceName(), createMasterDetails());
 
-        Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, existingApplications.get(0).getTenantId(), "case", createMasterDetails());
-
-        if (mdmsData.get("case") == null)
+        if (mdmsData.get(config.getCaseBusinessServiceName()) == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
         if (!courtCase.getLitigants().isEmpty()) {
             courtCase.getLitigants().forEach(litigant -> {
@@ -110,14 +112,11 @@ public class CaseRegistrationValidator {
         }
         if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {
             courtCase.getLinkedCases().forEach(linkedCase -> {
-                CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
                 List<CaseCriteria> caseCriteriaList = new ArrayList<>();
                 CaseCriteria caseCriteria = new CaseCriteria();
                 caseCriteria.setCaseId(linkedCase.getId().toString());
                 caseCriteriaList.add(caseCriteria);
-                caseSearchRequest.setRequestInfo(requestInfo);
-                caseSearchRequest.setCriteria(caseCriteriaList);
-                if (!caseService.searchCases(caseSearchRequest).isEmpty())
+                if (!repository.getApplications(caseCriteriaList).isEmpty())
                     throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
             });
         }

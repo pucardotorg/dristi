@@ -60,21 +60,18 @@ public class CaseService {
             log.error("Error occurred while creating case");
             throw new CustomException(CREATE_CASE_ERR, e.getMessage());
         }
-
-
     }
 
-    public List<CourtCase> searchCases(CaseSearchRequest caseSearchRequests) {
+    public void searchCases(CaseSearchRequest caseSearchRequests) {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
-            log.info("Court Case Applications Size :: {}", courtCases.size());
+            caseRepository.getApplications(caseSearchRequests.getCriteria());
+
             // If no applications are found matching the given criteria, return an empty list
-            if (CollectionUtils.isEmpty(courtCases))
-                return new ArrayList<>();
-            courtCases.forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
-            return courtCases;
+            for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()){
+                searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
+            }
         } catch (Exception e) {
             log.error("Error while fetching to search results");
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());
@@ -86,7 +83,7 @@ public class CaseService {
         try {
             // Validate whether the application that is being requested for update indeed exists
             if (!validator.validateApplicationExistence(caseRequest.getCases(), caseRequest.getRequestInfo()))
-                throw new CustomException(VALIDATION_ERR, "Error validating existing application: ");
+                throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
 
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
@@ -108,8 +105,10 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             return caseRepository.checkCaseExists(caseExistsRequest.getCriteria());
-        }
-        catch (Exception e) {
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while checking case exist");
+            throw e;
+        } catch (Exception e) {
             log.error("Error while fetching to exist case");
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }

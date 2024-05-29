@@ -1,12 +1,12 @@
 serviceMaps:
-  serviceName: adv-services
+  serviceName: witness-services
   mappings:
     - version: 1.0
       description: Persists witness details in tables
       fromTopic: save-witness-application
       isTransaction: true
       module: WITNESS
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.witness
       queryMaps:
@@ -34,7 +34,7 @@ serviceMaps:
       fromTopic: update-witness-application
       isTransaction: true
       module: WITNESS
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.witness
       queryMaps:

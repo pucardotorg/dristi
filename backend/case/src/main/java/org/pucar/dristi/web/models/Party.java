@@ -34,7 +34,7 @@ public class Party {
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	@NotNull
+	//@NotNull
 
 	private String tenantId = null;
 
@@ -43,7 +43,7 @@ public class Party {
 	private String caseId = null;
 
 	@JsonProperty("partyCategory")
-	@NotNull
+	//@NotNull
 
 	private String partyCategory = null;
 

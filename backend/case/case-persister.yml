@@ -3,10 +3,10 @@ serviceMaps:
   mappings:
     - version: 1.0
       description: Persists case details in tables
-      fromTopic: create-case
+      fromTopic: save-case-application
       isTransaction: true
       module: CASE
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       tenantIdJsonPath: $.tenantId
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.cases
