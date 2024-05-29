@@ -41,6 +41,26 @@ function EFilingCases({ path }) {
     caseId,
     caseId
   );
+
+  const getAllKeys = useMemo(() => {
+    const keys = [];
+    sideMenuConfig.forEach((parent) => {
+      parent.children.forEach((child) => {
+        keys.push(child.key);
+      });
+    });
+    return keys;
+  }, []);
+
+  const nextSelected = useMemo(() => {
+    const index = getAllKeys.indexOf(selected);
+    if (index !== -1 && index + 1 < getAllKeys.length) {
+      return getAllKeys[index + 1];
+    } else {
+      return null;
+    }
+  }, [getAllKeys, selected]);
+
   const caseDetails = useMemo(() => caseData?.cases?.[0], [caseData]);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -58,13 +78,17 @@ function EFilingCases({ path }) {
   }, [parentOpen, selected]);
 
   const pageConfig = useMemo(() => {
-    return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected)).children.find((child) => child.key === selected)
+    return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected))?.children?.find((child) => child.key === selected)
       ?.pageConfig;
   }, [selected]);
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
   }, [pageConfig?.formconfig]);
+
+  if (!getAllKeys.includes(selected) || !formConfig) {
+    history.push(`?caseId=${caseId}&selected=${getAllKeys[0]}`);
+  }
 
   const confirmModalConfig = useMemo(() => {
     return pageConfig?.confirmmodalconfig;
@@ -221,7 +245,7 @@ function EFilingCases({ path }) {
           });
         }
       });
-      const representatives = [...caseDetails?.representatives].map((representative) => ({
+      const representatives = [...caseDetails?.representatives]?.map((representative) => ({
         ...representative,
         caseId: caseDetails?.id,
         representing: [...litigants],
