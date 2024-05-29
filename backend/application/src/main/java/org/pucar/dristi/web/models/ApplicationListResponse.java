@@ -33,16 +33,16 @@ public class ApplicationListResponse   {
 
                 private Integer totalCount = null;
 
-        @JsonProperty("HearingList")
+        @JsonProperty("applicationList")
           @Valid
-                private List<Application> hearingList = null;
+                private List<Application> applicationList = null;
 
 
-        public ApplicationListResponse addHearingListItem(Application hearingListItem) {
-            if (this.hearingList == null) {
-            this.hearingList = new ArrayList<>();
+        public ApplicationListResponse addHearingListItem(Application applicationListItem) {
+            if (this.applicationList == null) {
+            this.applicationList = new ArrayList<>();
             }
-        this.hearingList.add(hearingListItem);
+        this.applicationList.add(applicationListItem);
         return this;
         }
 

@@ -24,10 +24,10 @@ public class ApplicationExistsRequest   {
           @Valid
                 private RequestInfo requestInfo = null;
 
-        @JsonProperty("order")
+        @JsonProperty("applicationExists")
 
           @Valid
-                private ApplicationExists order = null;
+                private ApplicationExists applicationExists = null;
 
 
 }
