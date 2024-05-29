@@ -6,7 +6,7 @@ serviceMaps:
       fromTopic: save-witness-application
       isTransaction: true
       module: WITNESS
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.witness
       queryMaps:
@@ -34,7 +34,7 @@ serviceMaps:
       fromTopic: update-witness-application
       isTransaction: true
       module: WITNESS
-      objecIdJsonPath: $.id
+      objectIdJsonPath: $.id
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.witness
       queryMaps:
