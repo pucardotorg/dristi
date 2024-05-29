@@ -108,57 +108,5 @@ public class WorkflowServiceTest {
         assertThrows(CustomException.class, () -> workflowService.callWorkFlow(workflowReq));
     }
 
-//    @Test
-//    void getProcessInstanceForArtifact_Success() {
-//        // Mock EvidenceRequest
-//        ApplicationRequest evidenceRequest = new ApplicationRequest();
-//        evidenceRequest.setRequestInfo(new RequestInfo());
-//        Application application = new Application();
-//        application.setApplicationNumber("APP001");
-//        application.setTenantId("tenant1");
-//        Workflow workflow = new Workflow();
-//        workflow.setAction("create");
-//        application.setWorkflow(workflow);
-//        evidenceRequest.setApplication(application);
-//
-//        // Execute the method
-//        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact, evidenceRequest.getRequestInfo());
-//
-//        // Assertions
-//        assertNotNull(processInstance);
-//        assertEquals("ART001", processInstance.getBusinessId());
-//        assertEquals("tenant1", processInstance.getTenantId());
-//    }
-//    @Test
-//    void getProcessInstanceForArtifact_WithAssignees() {
-//        // Mock EvidenceRequest
-//        EvidenceRequest evidenceRequest = new EvidenceRequest();
-//        evidenceRequest.setRequestInfo(new RequestInfo());
-//        Artifact artifact = new Artifact();
-//        artifact.setArtifactNumber("ART001");
-//        artifact.setTenantId("tenant1");
-//        Workflow workflow = new Workflow();
-//        workflow.setAction("create");
-//        List<String> assignees = Arrays.asList("assignee1", "assignee2");
-//        workflow.setAssignes(assignees);
-//        artifact.setWorkflow(workflow);
-//        evidenceRequest.setArtifact(artifact);
-//
-//        // Execute the method
-//        ProcessInstance processInstance = workflowService.getProcessInstanceForArtifact(artifact, evidenceRequest.getRequestInfo());
-//
-//        // Assertions
-//        assertNotNull(processInstance);
-//        assertEquals("ART001", processInstance.getBusinessId());
-//        assertEquals("tenant1", processInstance.getTenantId());
-//
-//        // Assert assignees are set properly
-//        List<User> assigneesList = processInstance.getAssignes();
-//        assertNotNull(assigneesList);
-//        assertEquals(assignees.size(), assigneesList.size());
-//        for (int i = 0; i < assignees.size(); i++) {
-//            assertEquals(assignees.get(i), assigneesList.get(i).getUuid());
-//        }
-//    }
 
 }

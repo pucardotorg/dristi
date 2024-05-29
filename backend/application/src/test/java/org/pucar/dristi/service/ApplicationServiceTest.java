@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 import static org.pucar.dristi.config.ServiceConstants.CREATE_APPLICATION_ERR;
 
 import org.egov.common.contract.request.RequestInfo;
@@ -18,6 +19,11 @@ import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.validator.ApplicationValidator;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.RequestInfoBody;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 class ApplicationServiceTest {
 
@@ -145,5 +151,52 @@ class ApplicationServiceTest {
         verify(validator).validateApplicationExistence(requestInfo, application);
         verify(enrichmentUtil).enrichApplicationUponUpdate(applicationRequest);
         verify(producer, never()).push(anyString(), any());
+    }
+    @Test
+    public void testSearchApplication_success() {
+        List<Application> applicationList = new ArrayList<>();
+        Application mockApplication = new Application();
+        mockApplication.setId(UUID.randomUUID());
+        applicationList.add(mockApplication);
+
+        when(applicationRepository.getApplications( any(), any(),any(), any(),any(), any(),any()))
+                .thenReturn(applicationList);
+        //  when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
+
+        List<Application> result = applicationService.searchApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null, null, new RequestInfoBody());
+
+        assertNotNull(result);
+        verify(applicationRepository, times(1)).getApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null);
+    }
+    @Test
+    public void testSearchApplications_NoResults() {
+        // Arrange
+        when(applicationRepository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt())).thenReturn(new ArrayList<>());
+
+        // Act
+        List<Application> result = applicationService.searchApplications("id", "filingNumber", "cnrNumber", "tenantId", "status", 10, 0, "sortBy", new RequestInfoBody());
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+        verify(applicationRepository, times(1)).getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt());
+    }
+
+
+    @Test
+    void testSearchApplicationHandleException() {
+        String id = "testId";
+        String tenantId = "testTenantId";
+        String filingNumber = "filingNumber";
+        String cnrNumber = "cnrNumber";
+        String status = "status";
+
+        when(applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, null, null)).thenThrow(new RuntimeException("Database error"));
+
+        CustomException exception = assertThrows(CustomException.class, () ->
+                applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, null, null, null, new RequestInfoBody()));
+
+        assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
+        assertEquals("Database error", exception.getMessage());
     }
 }

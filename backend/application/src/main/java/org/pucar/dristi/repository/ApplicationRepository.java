@@ -38,14 +38,14 @@ public class ApplicationRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, Integer limit, Integer offset ) {
+    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset ) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, limit, offset);
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
             log.info("Final application search query: {}", applicationQuery);
             List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
             log.info("DB application list :: {}", list);
@@ -90,7 +90,7 @@ public class ApplicationRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching application list");
+            log.error("Error while fetching application list {}", e.getMessage());
             throw new CustomException(APPLICATION_SEARCH_ERR,"Error while fetching application list: "+e.getMessage());
         }
     }

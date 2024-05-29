@@ -26,6 +26,7 @@ class ApplicationQueryBuilderTest {
         String filingNumber = null;
         String cnrNumber = null;
         String tenantId = "test-tenant";
+        String status = null;
         Integer limit = 10;
         Integer offset = 0;
 
@@ -33,10 +34,10 @@ class ApplicationQueryBuilderTest {
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
-                " app.additionaldetails as additionaldetails,app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
-                " FROM dristi_application app WHERE app.id ='test-id' OR app.tenantId ='test-tenant' ORDER BY app.createdtime DESC ";
+                " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
+                " FROM dristi_application app WHERE app.id ='test-id' AND app.tenantId ='test-tenant' ORDER BY app.createdtime DESC ";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, limit, offset);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -47,6 +48,7 @@ class ApplicationQueryBuilderTest {
         String filingNumber = null;
         String cnrNumber = null;
         String tenantId = null;
+        String status = null;
         Integer limit = 10;
         Integer offset = 0;
 
@@ -54,10 +56,10 @@ class ApplicationQueryBuilderTest {
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
-                " app.additionaldetails as additionaldetails,app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
+                " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app ORDER BY app.createdtime DESC ";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, limit, offset);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
 
         assertEquals(expectedQuery, actualQuery);
     }

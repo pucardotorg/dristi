@@ -160,11 +160,12 @@ public class ApplicationValidatorTest {
         application.setId(UUID.randomUUID());
         application.setCnrNumber("cnrNumber");
         application.setFilingNumber("filingNumber");
+        application.setStatus("status1");
         application.setReferenceId(UUID.randomUUID());
         List<Application> existingApplications = new ArrayList<>();
         existingApplications.add(application);
 
-        when(repository.getApplications(any(), anyString(), anyString(), any(), eq(null), eq(null)))
+        when(repository.getApplications(any(), anyString(), anyString(), any(), any(), eq(null), eq(null)))
                 .thenReturn(existingApplications);
 
         Application result = validator.validateApplicationExistence(requestInfo, application);
@@ -188,7 +189,7 @@ public class ApplicationValidatorTest {
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
 
-        when(repository.getApplications(any(), anyString(), anyString(), any(), any(), any()))
+        when(repository.getApplications(any(), anyString(), anyString(), any(), any(), any(), any()))
                 .thenReturn(null);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(requestInfo, application));

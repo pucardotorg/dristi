@@ -5,15 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.egov.common.contract.workflow.ProcessInstance;
-import org.egov.common.contract.workflow.ProcessInstanceRequest;
-import org.egov.common.contract.workflow.ProcessInstanceResponse;
-import org.egov.common.contract.workflow.State;
+import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.RequestInfoWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -98,23 +96,23 @@ public class WorkflowService {
         }
     }
 
-//    public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
-//        try {
-//            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-//            StringBuilder url = getSearchURLForProcessInstanceWithParams(tenantId, businessId);
-//            Object res = repository.fetchResult(url, requestInfoWrapper);
-//            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
-//            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
-//                return response.getProcessInstances().get(0);
-//            return null;
-//        } catch (CustomException e){
-//            throw e;
-//        } catch (Exception e) {
-//            log.error("Error getting current workflow: {}", e.getMessage());
-//            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
-//        }
-//    }
-//    private BusinessService getBusinessService(CourtCase courtCase, RequestInfo requestInfo) {
+    public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
+        try {
+            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+            StringBuilder url = getSearchURLForProcessInstanceWithParams(tenantId, businessId);
+            Object res = repository.fetchResult(url, requestInfoWrapper);
+            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
+            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
+                return response.getProcessInstances().get(0);
+            return null;
+        } catch (CustomException e){
+            throw e;
+        } catch (Exception e) {
+            log.error("Error getting current workflow: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+        }
+    }
+//    private BusinessService getBusinessService(Application courtCase, RequestInfo requestInfo) {
 //        try {
 //            String tenantId = courtCase.getTenantId();
 //            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
@@ -131,20 +129,20 @@ public class WorkflowService {
 //            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
 //        }
 //    }
-//    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
-//        StringBuilder url = new StringBuilder(config.getWfHost());
-//        url.append(config.getWfBusinessServiceSearchPath());
-//        url.append("?tenantId=").append(tenantId);
-//        url.append("&businessServices=").append(businessService);
-//        return url;
-//    }
-//    private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
-//        StringBuilder url = new StringBuilder(config.getWfHost());
-//        url.append(config.getWfProcessInstanceSearchPath());
-//        url.append("?tenantId=").append(tenantId);
-//        url.append("&businessIds=").append(businessService);
-//        return url;
-//    }
+    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
+        StringBuilder url = new StringBuilder(config.getWfHost());
+        url.append(config.getWfBusinessServiceSearchPath());
+        url.append("?tenantId=").append(tenantId);
+        url.append("&businessServices=").append(businessService);
+        return url;
+    }
+    private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
+        StringBuilder url = new StringBuilder(config.getWfHost());
+        url.append(config.getWfProcessInstanceSearchPath());
+        url.append("?tenantId=").append(tenantId);
+        url.append("&businessIds=").append(businessService);
+        return url;
+    }
 //    public ProcessInstanceRequest getProcessInstanceRegistrationPayment(CaseRequest updateRequest) {
 //        try {
 //            CourtCase application = updateRequest.getCases().get(0);
@@ -168,10 +166,10 @@ public class WorkflowService {
 //        }
 //    }
 //
-//    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
-//        if(processInstance == null) {
-//            return null;
-//        }
-//        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
-//    }
+    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
+        if(processInstance == null) {
+            return null;
+        }
+        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
+    }
 }

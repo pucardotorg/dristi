@@ -11,6 +11,7 @@ import org.pucar.dristi.validator.ApplicationValidator;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationExists;
 import org.pucar.dristi.web.models.ApplicationRequest;
+import org.pucar.dristi.web.models.RequestInfoBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -47,7 +48,7 @@ public class ApplicationService {
             producer.push(config.getApplicationCreateTopic(), body);
             return body.getApplication();
         } catch (Exception e) {
-            log.error("Error occurred while creating application");
+            log.error("Error occurred while creating application {}", e.getMessage());
             throw new CustomException(CREATE_APPLICATION_ERR, e.getMessage());
         }
     }
@@ -59,7 +60,7 @@ public class ApplicationService {
                 try {
                     existingApplication = validator.validateApplicationExistence(applicationRequest.getRequestInfo(),application);
                 } catch (Exception e) {
-                    log.error("Error validating existing application");
+                    log.error("Error validating existing application {}", e.getMessage());
                     throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
                 }
                 existingApplication.setWorkflow(application.getWorkflow());// TODO check
@@ -67,37 +68,36 @@ public class ApplicationService {
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
 
-//            workflowService.updateWorkflowStatus(applicationRequest);
+//            workflowService.updateWorkflowStatus(applicationRequest);// TODO check
 
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 
             return applicationRequest.getApplication();
 
         } catch (CustomException e){
-            log.error("Custom Exception occurred while updating application");
+            log.error("Custom Exception occurred while updating application {}", e.getMessage());
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while updating application");
+            log.error("Error occurred while updating application {}", e.getMessage());
             throw new CustomException(UPDATE_APPLICATION_ERR,"Error occurred while updating application: " + e.getMessage());
         }
     }
 
-//        public List<Application> searchApplications (String id, String filingNumber , String cnrNumber, String tenantId, String limit, String offset, String sortBy){
-
-//            try {
-//                // Fetch applications from database according to the given search params
-//                List<Application> applicationList = applicationRepository.getApplications(caseSearchRequests.getCriteria());
-//                log.info("Court Case Applications Size :: {}", applicationList.size());
-//                // If no applications are found, return an empty list
-//                if (CollectionUtils.isEmpty(applicationList))
-//                    return new ArrayList<>();
-//                applicationList.forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
-//                return applicationList;
-//            } catch (Exception e) {
-//                log.error("Error while fetching to search results");
-//                throw new CustomException("SEARCH_APPLICATION_ERR", e.getMessage());
-//            }
-//        }
+        public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
+            try {
+                // Fetch applications from database according to the given search params
+                List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+                log.info("No. of applications :: {}", applicationList.size());
+                // If no applications are found, return an empty list
+                if (CollectionUtils.isEmpty(applicationList))
+                    return new ArrayList<>();
+                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfoBody.getRequestInfo(), requestInfoBody.getTenantId(), application.getApplicationNumber()))));
+                return applicationList;
+            } catch (Exception e) {
+                log.error("Error while fetching to search results {}", e.getMessage());
+                throw new CustomException(APPLICATION_SEARCH_ERR, e.getMessage());
+            }
+        }
 
 //        public ApplicationExists getExistingApplications (ApplicationExists applicationExists) {
 //            try {
