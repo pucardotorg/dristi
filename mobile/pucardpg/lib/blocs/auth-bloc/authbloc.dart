@@ -373,7 +373,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
         userDetails: UserDetails(
           username: userModel.username!,
-          roles: [appConstants.getCitizenRole],
+          roles: [appConstants.getCitizenRole,
+            appConstants.getCaseCreatorRole,
+            appConstants.getCaseEditorRole,
+            appConstants.getCaseViewerRole],
         ),
         userUuid: userModel.uuid!,
         userId: userModel.id!.toString(),

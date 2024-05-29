@@ -49,6 +49,21 @@ class AppConstants {
       code: "CITIZEN"
   );
 
+  Role get getCaseCreatorRole => const Role(
+      name: "CASE_CREATOR",
+      code: "CASE_CREATOR"
+  );
+
+  Role get getCaseEditorRole => const Role(
+      name: "CASE_EDITOR",
+      code: "CASE_EDITOR"
+  );
+
+  Role get getCaseViewerRole => const Role(
+      name: "CASE_VIEWER",
+      code: "CASE_VIEWER"
+  );
+
   Fields get litigant => const Fields(
     key: 'userType',
     value: "LITIGANT",
