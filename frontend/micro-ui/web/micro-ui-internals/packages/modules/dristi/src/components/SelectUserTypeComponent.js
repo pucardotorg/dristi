@@ -2,9 +2,24 @@ import React, { useMemo, useState } from "react";
 import { LabelFieldPair, CardLabel, TextInput, CardLabelError, CustomDropdown } from "@egovernments/digit-ui-react-components";
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import CitizenInfoLabel from "./CitizenInfoLabel";
+import { CardText } from "@egovernments/digit-ui-components";
+import useInterval from "../hooks/useInterval";
+const TYPE_REGISTER = { type: "register" };
+const TYPE_LOGIN = { type: "login" };
+const DEFAULT_USER = "digit-user";
 
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   const [removeFile, setRemoveFile] = useState();
+  const [timeLeft, setTimeLeft] = useState(10);
+  // const [isUserRegistered, setIsUserRegistered] = useState(true);
+  const getUserType = () => window?.Digit.UserService.getType();
+  const stateCode = window?.Digit.ULBService.getStateId();
+  useInterval(
+    () => {
+      setTimeLeft(timeLeft - 1);
+    },
+    timeLeft > 0 ? 1000 : null
+  );
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -28,6 +43,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         });
       }
       if (input?.type && input.type === "documentUpload" && value?.length === 0) {
+        onSelect(config.key, { ...formData[config.key], [name]: value });
         return;
       }
       onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
@@ -55,6 +71,43 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     }
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
+
+  const checkIfAadharValidationNotSuccessful = (currentValue, input) => {
+    if (!input.checkAadharVerification) {
+      return !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+    }
+    let isValidated = true;
+    const ifOnlyNumeric = /^\d*$/.test(currentValue);
+    if (!ifOnlyNumeric) {
+      isValidated = false;
+    }
+    return !isValidated;
+  };
+
+  const sendOtp = async (data) => {
+    try {
+      const res = await window?.Digit.UserService.sendOtp(data, stateCode);
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  };
+
+  const resendOtp = async (input) => {
+    const data = {
+      mobileNumber: formData[config.key]?.[input?.mobileNoKey],
+      tenantId: stateCode,
+      userType: getUserType(),
+    };
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    if (!err) {
+      return;
+    } else {
+      const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
+      return;
+    }
+  };
+
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -78,7 +131,20 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
 
             {showDependentFields && (
               <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
+                <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
+                  {t(input.label) +
+                    `${
+                      input?.hasMobileNo
+                        ? formData[config.key]?.[input?.mobileNoKey]
+                          ? input?.isMobileSecret
+                            ? input?.mobileCode
+                              ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                              : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                            : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                          : ""
+                        : ""
+                    }`}
+                </CardLabel>
 
                 <div className="field">
                   {["radioButton", "dropdown"].includes(input?.type) && (
@@ -147,7 +213,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
                     input.validation &&
-                    !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
+                    checkIfAadharValidationNotSuccessful(currentValue, input) && (
                       <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
                         <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>
@@ -157,13 +223,25 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
             )}
             {input?.type === "infoBox" && (
               <CitizenInfoLabel
-                style={{ maxWidth: "100%", height: "90px", padding: "0 8px" }}
+                style={{ maxWidth: "100%", padding: "0 8px 10px 8px" }}
                 textStyle={{ margin: 8 }}
                 iconStyle={{ margin: 0 }}
                 info={t("ES_COMMON_INFO")}
                 text={t(input?.bannerLabel)}
                 className="doc-banner"
+                children={t("CS_AADHAR_NUMBER_INPUT_INFO")}
               ></CitizenInfoLabel>
+            )}
+            {input?.hasResendOTP && (
+              <React.Fragment>
+                {timeLeft > 0 ? (
+                  <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+                ) : (
+                  <p className="card-text" onClick={() => resendOtp(input)} style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer" }}>
+                    {t("CS_RESEND_OTP")}
+                  </p>
+                )}
+              </React.Fragment>
             )}
           </React.Fragment>
         );

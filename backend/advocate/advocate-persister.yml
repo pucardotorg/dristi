@@ -1,0 +1,54 @@
+serviceMaps:
+  serviceName: adv-services
+  mappings:
+    - version: 1.0
+      description: Persists advocate details in tables
+      fromTopic: save-advocate-application
+      isTransaction: true
+      queryMaps:
+
+        - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,status,barRegistrationNumber,advocateType,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?);
+          basePath: advocates.*
+          jsonMaps:
+            - jsonPath: $.advocates.*.id
+            - jsonPath: $.advocates.*.tenantId
+            - jsonPath: $.advocates.*.applicationNumber
+            - jsonPath: $.advocates.*.status
+            - jsonPath: $.advocates.*.barRegistrationNumber
+            - jsonPath: $.advocates.*.advocateType
+            - jsonPath: $.advocates.*.organisationID
+            - jsonPath: $.advocates.*.individualId
+            - jsonPath: $.advocates.*.isActive
+            - jsonPath: $.advocates.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.advocates.*.auditDetails.createdBy
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedBy
+            - jsonPath: $.advocates.*.auditDetails.createdTime
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType,advocateId,additionalDetails) VALUES (?,?, ?, ?, ?, ?);
+          basePath: advocates.*.documents.*
+          jsonMaps:
+            - jsonPath: $.advocates.*.documents.*.id
+            - jsonPath: $.advocates.*.documents.*.fileStore
+            - jsonPath: $.advocates.*.documents.*.documentUid
+            - jsonPath: $.advocates.*.documents.*.documentType
+            - jsonPath: $.advocates[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.advocates.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+    - version: 1.0
+      description: Update advocate details in tables
+      fromTopic: update-advocate-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE  dristi_advocate SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
+          basePath: advocates.*
+          jsonMaps:
+            - jsonPath: $.advocates.*.status
+            - jsonPath: $.advocates.*.isActive
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedBy
+            - jsonPath: $.advocates.*.auditDetails.lastModifiedTime
+            - jsonPath: $.advocates.*.id

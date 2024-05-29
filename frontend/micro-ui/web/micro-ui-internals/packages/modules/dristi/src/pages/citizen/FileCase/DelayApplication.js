@@ -141,7 +141,6 @@ function DelayApplication() {
   const handleOptionChange = (event) => {
     setSelectedConfigName(event.target.value);
   };
-
   return (
     <div>
       {configRadioOptions.map((option) => (

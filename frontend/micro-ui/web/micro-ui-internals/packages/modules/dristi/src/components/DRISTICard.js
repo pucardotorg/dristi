@@ -51,7 +51,7 @@ const DRISTICard = () => {
         style={{ width: "400px", height: "150px", cursor: "pointer" }}
         showNumber={749}
         onClick={() => {
-          // history.push("/digit-ui/employee/dristi/total-cases");
+          history.push("/digit-ui/employee/dristi/cases");
         }}
       ></CustomCard>
     </div>

@@ -11,7 +11,7 @@ const getLocation = (places, code) => {
   return location ? location : null;
 };
 const LocationComponent = ({ t, config, onLocationSelect, locationFormData, errors, mapIndex }) => {
-  const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
+  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -32,7 +32,6 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
   };
 
   function setValue(value, input) {
-    console.debug(value);
     if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
@@ -74,7 +73,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
               })(),
               coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
             });
-            coordinateData.callback({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
+            coordinateData.callbackFunc({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
           }
         })
         .catch(() => {
@@ -116,26 +115,25 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
 
   return (
     <div>
-      {inputs?.map((input, index) => {
+      {inputs?.map((input) => {
         let currentValue = (locationFormData && locationFormData[config.key] && locationFormData[config.key][input.name]) || "";
         let isFirstRender = true;
         return (
-          <React.Fragment key={index}>
+          <React.Fragment key={input.label}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
             <LabelFieldPair style={{ width: "100%", display: "flex" }}>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
                 {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
               </CardLabel>
-              <div className="field" style={{ width: "50%" }}>
+              <div className="field">
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
-                    locationStyle={{ maxWidth: "540px" }}
+                    locationStyle={{}}
                     position={locationFormData?.[config.key]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
                     index={mapIndex}
                     onChange={(pincode, location, coordinates = {}) => {
-                      console.log(location);
                       setValue(
                         {
                           pincode:
@@ -181,7 +179,6 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                 ) : (
                   <TextInput
                     className="field desktop-w-full"
-                    key={input.name}
                     value={locationFormData && locationFormData[config.key] ? locationFormData[config.key][input.name] : undefined}
                     onChange={(e) => {
                       setValue(e.target.value, input.name);

@@ -58,6 +58,7 @@ const witnessFormConfig = [
         type: "component",
         component: "SelectBulkInputs",
         key: "phonenumbers",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -72,6 +73,7 @@ const witnessFormConfig = [
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
               },
+              className: "mobile-number"
             },
           ],
           validation: {},
@@ -86,6 +88,7 @@ const witnessFormConfig = [
         type: "component",
         component: "SelectBulkInputs",
         key: "emails",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -97,6 +100,7 @@ const witnessFormConfig = [
                 required: true,
                 pattern: /\S+@\S+\.\S+/,
               },
+              className: "email-address"
             },
           ],
           validation: {},
@@ -172,6 +176,7 @@ const witnessFormConfig = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "witnessAdditionalDetails",
+        withoutLabel: true,
         populators: {
           inputs: [
             {

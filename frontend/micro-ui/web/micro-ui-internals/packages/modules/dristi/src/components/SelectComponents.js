@@ -10,11 +10,12 @@ const getLocation = (places, code) => {
   })?.long_name;
   return location ? location : null;
 };
+
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
   console.debug({ formData, errors });
   const configKey = `${config.key}-select`;
   // const configKey = config.key;
-  const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
+  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -35,6 +36,9 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
   };
 
   function setValue(value, input) {
+    if (typeof value === "string") {
+      value = value.trim();
+    }
     if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
@@ -67,7 +71,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
               })(),
               coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
             });
-            coordinateData.callback({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
+            coordinateData.callbackFunc({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
           }
         })
         .catch(() => {
@@ -103,6 +107,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
     }
   }
 
+  const checkIfValidated = (currentValue, input) => {
+    const isEmpty = /^\s*$/.test(currentValue);
+    return isEmpty || !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+  };
+
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -112,13 +121,17 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
             <LabelFieldPair>
-              <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
+              <CardLabel className="card-label-smaller">
+                {t(input.label)}
+                <span>{input?.showOptional && ` (${t("CS_OPTIONAL")})`}</span>
+              </CardLabel>
               <div className={`field ${input.inputFieldClassName}`}>
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
                     locationStyle={{ maxWidth: "100%" }}
                     position={formData?.[configKey]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
+                    index={formData?.[config.key]?.uuid || uuid}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {
@@ -151,6 +164,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                                     .join(", ");
                                 })(),
                           coordinates,
+                          uuid: isFirstRender && formData[config.key] ? formData[config.key]["uuid"] : uuid,
                         },
                         input.name
                       );
@@ -173,14 +187,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                     />
                   </React.Fragment>
                 )}
-                {currentValue &&
-                  currentValue.length > 0 &&
-                  input.validation &&
-                  !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
-                    </CardLabelError>
-                  )}
+                {currentValue && currentValue.length > 0 && input.validation && checkIfValidated(currentValue, input) && (
+                  <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
+                    <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                  </CardLabelError>
+                )}
               </div>
             </LabelFieldPair>
           </React.Fragment>

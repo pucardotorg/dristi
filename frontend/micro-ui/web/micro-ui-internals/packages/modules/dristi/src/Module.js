@@ -19,12 +19,12 @@ import CustomInput from "./components/CustomInput";
 import SelectBulkInputs from "./components/SelectBulkInputs";
 import SelectCustomNote from "./components/SelectCustomNote";
 import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
-import InfoCard from "./components/InfoCard";
 import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
 import SelectComponentsMulti from "./components/SelectComponentsMulti";
 import SelectReviewAccordion from "./components/SelectReviewAccordion";
+import SelectSignature from "./components/SelectSignature";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -61,11 +61,11 @@ const componentsToRegister = {
   SelectBulkInputs,
   SelectCustomNote,
   SelectCustomDragDrop,
-  InfoCard,
   VerifyPhoneNumber,
   SelectCustomTextArea,
   IdProofUploadComponent,
   SelectReviewAccordion,
+  SelectSignature,
 };
 
 const overrideHooks = () => {

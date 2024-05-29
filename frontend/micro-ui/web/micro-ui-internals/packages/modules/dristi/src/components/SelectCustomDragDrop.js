@@ -3,6 +3,31 @@ import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
+import { FileUploadIcon } from "../icons/svgIndex";
+
+const DragDropJSX = ({ t, currentValue }) => {
+  return (
+    <React.Fragment>
+      <div className="drag-drop-container-desktop">
+        <UploadIcon />
+        <p className="drag-drop-text">
+          {t("WBH_DRAG_DROP")} <text className="browse-text">{t("WBH_BULK_BROWSE_FILES")}</text>
+        </p>
+      </div>
+      <div className="drag-drop-container-mobile">
+        <div className={`file-count-class ${currentValue && currentValue.length > 0 ? "uploaded" : ""}`}>
+          <h3>{currentValue && currentValue.length > 0 ? `${currentValue.length} File uploaded` : "No file selected"} </h3>
+        </div>
+        <div className="button-class">
+          <div>
+            <FileUploadIcon />
+          </div>
+          <h3>Upload</h3>
+        </div>
+      </div>
+    </React.Fragment>
+  );
+};
 
 function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
   const inputs = useMemo(
@@ -15,7 +40,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           infoTooltipMessage: "Tooltip",
           type: "DragDropComponent",
           uploadGuidelines: "Upload .png",
-          maxFileSize: 1024 * 1024 * 50,
+          maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],
           isMultipleUpload: true,
@@ -57,15 +82,6 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
     setValue(currentValue, input?.name);
   };
 
-  const dragDropJSX = (
-    <div className="drag-drop-container">
-      <UploadIcon />
-      <p className="drag-drop-text">
-        {t("WBH_DRAG_DROP")} <text className="browse-text">{t("WBH_BULK_BROWSE_FILES")}</text>
-      </p>
-    </div>
-  );
-
   return inputs.map((input) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     let fileErrors = currentValue.map((file) => fileValidator(file, input));
@@ -78,8 +94,22 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             {input?.isOptional && <h3>{`(${t(input?.isOptional)})`}</h3>}
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
-          {<p>{t(input?.documentSubText)}</p>}
+          {input.documentSubText && <p>{t(input.documentSubText)}</p>}
         </div>
+
+        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
+          <FileUploader
+            handleChange={(data) => {
+              handleChange(data, input);
+            }}
+            name="file"
+            types={input?.fileTypes}
+            children={<DragDropJSX t={t} currentValue={currentValue} />}
+            key={input?.name}
+          />
+          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
+        </div>
+
         {currentValue.map((file, index) => (
           <RenderFileCard
             key={`${input?.name}${index}`}
@@ -92,22 +122,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             input={input}
           />
         ))}
-        {showFileUploader && (
-          <div className="file-uploader-div-main">
-            <FileUploader
-              handleChange={(data) => {
-                handleChange(data, input);
-              }}
-              name="file"
-              types={input?.fileTypes}
-              children={dragDropJSX}
-              key={input?.name}
-            />
-            <div className="upload-guidelines-div">
-              <p>{t(input?.uploadGuidelines)}</p>
-            </div>
-          </div>
-        )}
+
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
           {input?.downloadTemplateText && t(input?.downloadTemplateText)}
           {input?.downloadTemplateLink && (

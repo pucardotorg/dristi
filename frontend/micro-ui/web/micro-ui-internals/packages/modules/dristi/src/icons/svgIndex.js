@@ -211,6 +211,15 @@ const CloseIcon = ({ className, style }) => (
   </svg>
 );
 
+const CloseIconWhite = () => (
+  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M9.66927 1.27203L8.72927 0.332031L5.0026 4.0587L1.27594 0.332031L0.335938 1.27203L4.0626 4.9987L0.335938 8.72536L1.27594 9.66537L5.0026 5.9387L8.72927 9.66537L9.66927 8.72536L5.9426 4.9987L9.66927 1.27203Z"
+      fill="white"
+    />
+  </svg>
+);
+
 const ComplaintDetailsIcon = () => (
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <rect width="32" height="32" rx="4" fill="#F8EBE3" />
@@ -314,6 +323,77 @@ const PrayerSwornIcon = () => (
   </svg>
 );
 
+const FileIcon = () => (
+  <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M10 0H2C0.9 0 0.0100002 0.9 0.0100002 2L0 18C0 19.1 0.89 20 1.99 20H14C15.1 20 16 19.1 16 18V6L10 0ZM12 16H4V14H12V16ZM12 12H4V10H12V12ZM9 7V1.5L14.5 7H9Z"
+      fill="#3D3C3C"
+    />
+  </svg>
+);
+
+const FileUploadIcon = () => (
+  <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.5 13H10.5V7H14.5L7.5 0L0.5 7H4.5V13ZM0.5 15H14.5V17H0.5V15Z" fill="#007E7E" />
+  </svg>
+);
+
+const AdvocateIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#1D4278" fill-opacity="0.1" />
+    <g clip-path="url(#clip0_776_71262)">
+      <path
+        d="M16 16C18.21 16 20 14.21 20 12C20 9.79 18.21 8 16 8C13.79 8 12 9.79 12 12C12 14.21 13.79 16 16 16ZM16 18C13.33 18 8 19.34 8 22V24H24V22C24 19.34 18.67 18 16 18Z"
+        fill="#1D4278"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_776_71262">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const LitigentIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#761D78" fill-opacity="0.1" />
+    <g clip-path="url(#clip0_776_71274)">
+      <path
+        d="M16 16C18.21 16 20 14.21 20 12C20 9.79 18.21 8 16 8C13.79 8 12 9.79 12 12C12 14.21 13.79 16 16 16ZM16 18C13.33 18 8 19.34 8 22V24H24V22C24 19.34 18.67 18 16 18Z"
+        fill="#761D78"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_776_71274">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const ErrorInfoIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_3309_15175)">
+      <path
+        d="M7.9987 1.33203C4.3187 1.33203 1.33203 4.3187 1.33203 7.9987C1.33203 11.6787 4.3187 14.6654 7.9987 14.6654C11.6787 14.6654 14.6654 11.6787 14.6654 7.9987C14.6654 4.3187 11.6787 1.33203 7.9987 1.33203ZM8.66536 11.332H7.33203V7.33203H8.66536V11.332ZM8.66536 5.9987H7.33203V4.66536H8.66536V5.9987Z"
+        fill="#BB2C2F"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_3309_15175">
+        <rect width="16" height="16" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const FlagIcon = ({ style }) => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 3V4V14V21H5V14H12.3828L13.3828 16H21V5H14.6172L13.6172 3H3ZM5 5H12.3828L13.3828 7H14H19V14H14.6172L13.6172 12H5V5Z" fill="#3D3C3C" />
+  </svg>
+);
+
 export {
   RegisterIcon,
   LoginIcon,
@@ -332,10 +412,17 @@ export {
   CustomSchedule,
   CustomCompleteIcon,
   CloseIcon,
+  CloseIconWhite,
   ComplaintDetailsIcon,
   RespondentDetailsIcon,
   ChequeDetailsIcon,
   DebtLiabilityIcon,
   DemandDetailsNoticeIcon,
   PrayerSwornIcon,
+  FileIcon,
+  FileUploadIcon,
+  AdvocateIcon,
+  LitigentIcon,
+  ErrorInfoIcon,
+  FlagIcon,
 };

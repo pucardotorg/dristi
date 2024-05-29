@@ -2,7 +2,6 @@ import { Button, CardLabel, RemoveableTag, TextInput } from "@egovernments/digit
 import React, { useMemo, useState } from "react";
 
 function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
-  console.debug(errors);
   const [enableAdd, setEnableAdd] = useState(false);
   const inputs = useMemo(
     () =>
@@ -68,7 +67,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
     const currentValue = (formData && formData[config.key] && formData[config.key].textfieldValue) || "";
     const chipList = (formData && formData[config.key] && formData[config.key][input.name]) || "";
     return (
-      <div style={{ width: "100%" }}>
+      <div className={`${input.className || ""}`} style={{ width: "100%" }}>
         <CardLabel>{t(input.label)}</CardLabel>
         <div style={{ display: "flex", justifyContent: "left", gap: "20px" }}>
           <div style={{ display: "flex", width: "100%" }}>

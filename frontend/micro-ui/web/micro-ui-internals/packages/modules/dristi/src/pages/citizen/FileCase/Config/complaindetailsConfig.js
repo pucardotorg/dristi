@@ -3,7 +3,7 @@ const complainantDetailsFormConfig = [
     body: [
       {
         type: "radio",
-        key: "complaintType",
+        key: "complainantType",
         label: "CS_RESPONDENT_TYPE",
         isMandatory: true,
         populators: {
@@ -48,7 +48,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -70,7 +70,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_COMPLAINANT_DETAIL",
     body: [
       {
@@ -124,12 +124,12 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     body: [
       {
         type: "component",
         component: "VerifyPhoneNumber",
-        key: "complainantId",
+        key: "complainantVerification",
         withoutLabel: true,
         label: "PHONE_NUMBER",
         name: "mobileNumber",
@@ -146,7 +146,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_ADDRESS_DETAIL",
     body: [
       {
@@ -156,7 +156,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"] },
             {
               label: "PINCODE",
               type: "text",
@@ -229,4 +229,5 @@ export const complaintdetailconfig = {
   isOptional: false,
   addFormText: "ADD_Complaint",
   formItemName: "Complainant",
+  className: "complainant",
 };
