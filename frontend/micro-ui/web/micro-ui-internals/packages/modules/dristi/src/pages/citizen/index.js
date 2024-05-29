@@ -136,7 +136,7 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          {/* <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <BreadCrumb crumbs={citizenCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></BreadCrumb>
             {!hideHomeCrumb.includes(location.pathname) && (
               <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
@@ -144,7 +144,7 @@ const App = ({ stateCode, tenantId }) => {
                 <HelpOutlineIcon />
               </span>
             )}
-          </div>
+          </div> */}
           <PrivateRoute exact path={`${path}/home`}>
             <CitizenHome tenantId={tenantId} />
           </PrivateRoute>

@@ -330,7 +330,46 @@ const FileUploadIcon = () => (
   <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M4.5 13H10.5V7H14.5L7.5 0L0.5 7H4.5V13ZM0.5 15H14.5V17H0.5V15Z" fill="#007E7E" />
   </svg>
+);
 
+const AdvocateIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#1D4278" fill-opacity="0.1" />
+    <g clip-path="url(#clip0_776_71262)">
+      <path
+        d="M16 16C18.21 16 20 14.21 20 12C20 9.79 18.21 8 16 8C13.79 8 12 9.79 12 12C12 14.21 13.79 16 16 16ZM16 18C13.33 18 8 19.34 8 22V24H24V22C24 19.34 18.67 18 16 18Z"
+        fill="#1D4278"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_776_71262">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const LitigentIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" rx="4" fill="#761D78" fill-opacity="0.1" />
+    <g clip-path="url(#clip0_776_71274)">
+      <path
+        d="M16 16C18.21 16 20 14.21 20 12C20 9.79 18.21 8 16 8C13.79 8 12 9.79 12 12C12 14.21 13.79 16 16 16ZM16 18C13.33 18 8 19.34 8 22V24H24V22C24 19.34 18.67 18 16 18Z"
+        fill="#761D78"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_776_71274">
+        <rect width="24" height="24" fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
+const InfoIconRed = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.9987 0.333374C3.3187 0.333374 0.332031 3.32004 0.332031 7.00004C0.332031 10.68 3.3187 13.6667 6.9987 13.6667C10.6787 13.6667 13.6654 10.68 13.6654 7.00004C13.6654 3.32004 10.6787 0.333374 6.9987 0.333374ZM7.66536 10.3334H6.33203V6.33337H7.66536V10.3334ZM7.66536 5.00004H6.33203V3.66671H7.66536V5.00004Z" fill="#BB2C2F" />
+  </svg>
 )
 
 export {
@@ -359,5 +398,8 @@ export {
   DemandDetailsNoticeIcon,
   PrayerSwornIcon,
   FileIcon,
-  FileUploadIcon
+  FileUploadIcon,
+  AdvocateIcon,
+  LitigentIcon,
+  InfoIconRed,
 };

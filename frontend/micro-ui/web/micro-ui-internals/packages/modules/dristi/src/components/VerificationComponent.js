@@ -160,7 +160,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
               <Modal
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
-                actionCancelOnSubmit={() => {}}
+                actionCancelOnSubmit={() => { }}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });
@@ -173,8 +173,9 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                 formId="modal-action"
                 headerBarMain={<Heading label={t("UPLOAD_ID_PROOF_HEADER")} />}
                 submitTextClassName={"verification-button-text-modal"}
+                className={"case-types"}
               >
-                <div>
+                <div style={{ padding: "16px 24px" }}>
                   <FormComposerV2
                     config={idProofVerificationConfig}
                     t={t}

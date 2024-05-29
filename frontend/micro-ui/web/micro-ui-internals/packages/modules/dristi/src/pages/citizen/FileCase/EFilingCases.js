@@ -189,29 +189,36 @@ function EFilingCases({ path }) {
             <span className="place-name"> Kollam S 138 Special Court</span>
           </p>
         </div>
-        {isOpen && <Modal
-          headerBarEnd={<CloseBtn onClick={() => { setIsOpen(false) }} />}
-          hideSubmit={true}
-        >
-          <div>
-            {accordion.map((item, index) => (
-              <Accordion
-                t={t}
-                title={item.title}
-                handlePageChange={handlePageChange}
-                handleAccordionClick={() => {
-                  handleAccordionClick(index);
+        {isOpen && (
+          <Modal
+            headerBarEnd={
+              <CloseBtn
+                onClick={() => {
+                  setIsOpen(false);
                 }}
-                key={index}
-                children={item.children}
-                parentIndex={index}
-                isOpen={item.isOpen}
               />
-            ))}
-          </div>
-        </Modal>}
-
-
+            }
+            hideSubmit={true}
+            className={'case-types'}
+          >
+            <div style={{ padding: "8px 16px" }}>
+              {accordion.map((item, index) => (
+                <Accordion
+                  t={t}
+                  title={item.title}
+                  handlePageChange={handlePageChange}
+                  handleAccordionClick={() => {
+                    handleAccordionClick(index);
+                  }}
+                  key={index}
+                  children={item.children}
+                  parentIndex={index}
+                  isOpen={item.isOpen}
+                />
+              ))}
+            </div>
+          </Modal>
+        )}
 
         <div className="file-case-select-form-section">
           {accordion.map((item, index) => (
@@ -285,7 +292,7 @@ function EFilingCases({ path }) {
               className="add-new-form"
             >
               <CustomAddIcon />
-              <span>{pageConfig.addFormText}</span>
+              <span>{t(pageConfig.addFormText)}</span>
             </div>
           )}
 

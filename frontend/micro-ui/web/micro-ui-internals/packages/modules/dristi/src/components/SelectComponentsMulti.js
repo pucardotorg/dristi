@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Button } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import Axios from "axios";
 import LocationComponent from "./LocationComponent";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
+import Button from "./Button";
 
 function generateUUID() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
@@ -178,8 +179,8 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       )} */}
       {
         <Button
+          className={"add-location-btn"}
           label={"Add Location"}
-          style={{ alignItems: "center" }}
           onButtonClick={() => {
             handleAdd();
           }}

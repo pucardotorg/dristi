@@ -47,6 +47,20 @@
   max-width: 62%;
   padding: 24px 0px 0px 0px;
   gap: 32px;
+  .jk-digit-primary-btn.add-location-btn {
+    background-color: white !important;
+    box-shadow: none !important;
+    border: 1px #007e7e solid;
+    margin-top: 24px;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      line-height: 18.75px !important;
+      text-align: center;
+      color: #007e7e !important;
+    }
+  }
   .employee-card-wrapper {
     display: flex;
     justify-content: space-between;
@@ -524,14 +538,6 @@
       width: 100%;
       .file-case-select-form-section {
         display: none;
-      }
-      .popup-wrap {
-        .popup-module {
-          margin: auto 16px;
-          .header-wrap {
-            height: 56px;
-          }
-        }
       }
     }
   }
