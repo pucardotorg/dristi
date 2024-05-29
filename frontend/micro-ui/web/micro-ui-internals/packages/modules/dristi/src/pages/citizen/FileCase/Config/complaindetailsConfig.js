@@ -86,6 +86,7 @@ const complainantDetailsFormConfig = [
             },
             title: "",
             patternType: "Name",
+            error: "CORE_REQUIRED_FIELD_ERROR"
           },
         },
       },

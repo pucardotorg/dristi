@@ -13,6 +13,7 @@ const getLocation = (places, code) => {
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
   console.debug({ formData, errors });
   const configKey = `${config.key}-select`;
+  // const configKey = config.key;
   const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
   const inputs = useMemo(
     () =>

@@ -134,7 +134,7 @@ function EFilingCases({ path }) {
   };
 
   const onSubmit = (formData) => {
-    console.log(formData)
+    console.log(formData);
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });

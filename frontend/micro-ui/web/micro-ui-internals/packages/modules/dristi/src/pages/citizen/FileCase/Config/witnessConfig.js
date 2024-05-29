@@ -3,51 +3,50 @@ const witnessFormConfig = [
     head: "CS_RESPONDENT_NAME",
     body: [
       {
-        type: "component",
-        component: "SelectComponents",
-        key: "userDetails",
-        withoutLabel: true,
+        type: "text",
+        label: "FIRST_NAME",
+        isMandatory: true,
         populators: {
-          inputs: [
-            {
-              label: "FIRST_NAME",
-              type: "text",
-              name: "firstName",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-                patternType: "Name",
-                isRequired: true,
-              },
-              isMandatory: true,
+          name: "firstName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "MIDDLE_NAME",
-              type: "text",
-              name: "middleName",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "MIDDLE_NAME",
+        populators: {
+          name: "middleName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "LAST_NAME",
-              type: "text",
-              name: "lastName",
-              validation: {
-                isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
-              isMandatory: true,
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "LAST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "lastName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-          ],
-          validation: {},
+            title: "",
+            patternType: "Name",
+          },
         },
       },
     ],
