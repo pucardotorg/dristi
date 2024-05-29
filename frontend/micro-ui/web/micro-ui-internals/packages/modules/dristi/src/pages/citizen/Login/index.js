@@ -153,6 +153,8 @@ const Login = ({ stateCode }) => {
 
   const selectOtp = async () => {
     try {
+      setParmas({ ...params, otp: "" });
+
       setIsOtpValid(true);
       setCanSubmitOtp(false);
       const { mobileNumber, otp, name } = params;
@@ -203,6 +205,7 @@ const Login = ({ stateCode }) => {
   };
 
   const resendOtp = async () => {
+    setParmas({ ...params, otp: "" });
     const { mobileNumber } = params;
     const data = {
       mobileNumber,
@@ -224,11 +227,6 @@ const Login = ({ stateCode }) => {
       return [null, err];
     }
   };
-
-  const handleRememberMeChange = () => {
-    setParmas({ ...params, isRememberMe: !params.isRememberMe });
-  };
-
   return (
     <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
       <Switch>
@@ -255,6 +253,7 @@ const Login = ({ stateCode }) => {
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               params={params}
+              setParams={setParmas}
               t={t}
               path={path}
             />

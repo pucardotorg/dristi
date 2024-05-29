@@ -147,12 +147,13 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
                     username: oldData?.name?.firstName + " " + oldData?.name?.name,
                   },
                   ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                    res[curr] = formData?.clientDetails?.barRegistrationNumber;
+                    res[curr] = data?.clientDetails[curr];
                     return res;
                   }, {}),
                 },
               ],
             };
+            console.log("REQUES", requestBody);
             Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
               roles: [
                 {

@@ -1,5 +1,5 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const EnterAdhaar = ({ t, onSelect, config, params }) => {
   const history = useHistory();
@@ -16,9 +16,16 @@ const EnterAdhaar = ({ t, onSelect, config, params }) => {
   const closeToast = () => {
     setShowErrorToast(false);
   };
-  // if (!params?.indentity) {
-  //   history.push("/digit-ui/citizen/dristi/home/login");
-  // }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
+  if (!params?.indentity) {
+    history.push("/digit-ui/citizen/dristi/home/login");
+  }
   return (
     <React.Fragment>
       <FormComposerV2

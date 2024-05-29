@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 
 const AadhaarInput = (props) => {
-  const { formData = {}, onSelect, config, t } = props;
+  const { formData = {}, onSelect, config, t, value } = props;
 
   const [boxCount, setboxCount] = useState(["", "", ""]);
   const [focusedInput, setFocusedInput] = useState(null);
