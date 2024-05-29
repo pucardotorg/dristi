@@ -32,7 +32,7 @@ function TakeUserToRegistration({ message }) {
             sessionStorage.removeItem("Digit.UploadedDocument");
             sessionStorage.removeItem("Digit.aadharNumber");
             sessionStorage.removeItem("Digit.isAadharNumberVerified");
-            history.push(`/digit-ui/citizen/dristi/home/login/id-verification`);
+            history.push(`/digit-ui/citizen/dristi/home/registration/user-name`);
           }}
           label={t("Register")}
           style={{

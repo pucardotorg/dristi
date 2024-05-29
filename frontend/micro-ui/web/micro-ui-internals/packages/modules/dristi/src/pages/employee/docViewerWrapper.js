@@ -43,6 +43,7 @@ const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename, selectedDocs
         {documents?.length != 0 && (
           <>
             <DocViewer
+              className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
               style={{ width: 262, height: 206 }}

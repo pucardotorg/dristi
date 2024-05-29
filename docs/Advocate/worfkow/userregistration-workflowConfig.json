@@ -18,9 +18,7 @@
             {
               "action": "REGISTER",
               "nextState": "USERREGISTRATIONREQUESTED",
-              "roles": [
-                "USER_REGISTER"
-              ]
+              "roles": ["USER_REGISTER"]
             }
           ]
         },
@@ -36,16 +34,12 @@
             {
               "action": "APPROVE",
               "nextState": "USERREGISTERED",
-              "roles": [
-                "USER_APPROVER"
-              ]
+              "roles": ["USER_APPROVER"]
             },
             {
               "action": "REJECT",
               "nextState": "USER_REJECTED",
-              "roles": [
-                "USER_APPROVER"
-              ]
+              "roles": ["USER_APPROVER"]
             }
           ]
         },

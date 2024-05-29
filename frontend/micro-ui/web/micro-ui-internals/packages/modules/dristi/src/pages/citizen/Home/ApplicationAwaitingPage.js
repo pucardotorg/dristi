@@ -2,8 +2,7 @@ import { Button } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { ReactComponent as WaitImage } from "./ImageUpload/image/AppAwait.svg";
-import { ReactComponent as RightArrow } from "./ImageUpload/image/arrow_forward.svg";
+import { WaitIcon } from "../../../icons/svgIndex";
 
 function ApplicationAwaitingPage({ individualId }) {
   const { t } = useTranslation();
@@ -11,10 +10,13 @@ function ApplicationAwaitingPage({ individualId }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "90vw", height: "52vh", background: "white", alignItems: "center" }}>
       <div style={{ maxHeight: "40vh" }}>
-        <WaitImage></WaitImage>
+        <WaitIcon />
       </div>
       <div style={{ "text-align": "center" }}>
-        <h2> your application is awaiting approval.....!</h2>
+        <h2> {t("APPROVAL_WAITING")}</h2>
+      </div>
+      <div style={{ "text-align": "center" }}>
+        <h3> {t("APPROVAL_WAITING_SUBTEXT")}</h3>
       </div>
       <div>
         <Button
@@ -24,15 +26,10 @@ function ApplicationAwaitingPage({ individualId }) {
           label={t("View My Application")}
           style={{
             flex: 1,
-            maxHeight: "7vh",
             width: "20vw",
-            background: "none",
-            color: "#007E7E",
             boxShadow: "none",
           }}
-        >
-          <RightArrow />
-        </Button>
+        ></Button>
       </div>
     </div>
   );
