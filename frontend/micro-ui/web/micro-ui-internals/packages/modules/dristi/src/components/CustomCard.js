@@ -1,7 +1,7 @@
-import { Card, CardHeader, CardLabel, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Card, CardLabel, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
-const CustomCard = ({ Icon, showNumber, label, style, onClick, subLabel, buttonLabel, className }) => {
+const CustomCard = ({ Icon, label, style, onClick, subLabel, buttonLabel, className }) => {
   return (
     <Card
       style={{
@@ -13,12 +13,16 @@ const CustomCard = ({ Icon, showNumber, label, style, onClick, subLabel, buttonL
         ...style,
       }}
       className={className}
-      // onClick={onClick}
+      onClick={() => {
+        if (Icon) {
+          onClick();
+        }
+      }}
     >
       <CardLabel style={{ fontSize: "24px", fontWeight: "600", marginBottom: "0px" }}>{label}</CardLabel>
       <CardText style={{ fontSize: "14px", fontWeight: "400", marginBottom: "10px" }}> {subLabel}</CardText>
-
-      <SubmitBar label={buttonLabel} onSubmit={onClick} />
+      {buttonLabel && <SubmitBar label={buttonLabel} onSubmit={onClick} />}
+      {Icon ? Icon : null}
     </Card>
   );
 };

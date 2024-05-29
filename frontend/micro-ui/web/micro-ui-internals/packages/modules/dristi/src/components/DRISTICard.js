@@ -1,8 +1,7 @@
-import { Card, CardHeader, Header, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, Header, Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import CustomCard from "./CustomCard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { CasesIcon, RegistrationRequestIcon } from "../icons/svgIndex";
 
 const DRISTICard = () => {
   const Digit = window?.Digit || {};
@@ -72,9 +71,8 @@ const DRISTICard = () => {
             label={"View Registrations"}
             subLabel={"Review new platform registration requests from Advocates"}
             buttonLabel={"View Requests"}
-            Icon={<RegistrationRequestIcon />}
             className="custom-card-style"
-            showNumber={String(clerkData?.clerks?.length + advocateData?.advocates?.length) || 35}
+            // showNumber={String(clerkData?.clerks?.length + advocateData?.advocates?.length) || 35}
             onClick={() => {
               history.push("/digit-ui/employee/dristi/registration-requests");
             }}
@@ -83,11 +81,10 @@ const DRISTICard = () => {
             label={"View Cases"}
             subLabel={"Explore cases and support on-going case queries"}
             buttonLabel={"View Cases"}
-            Icon={<CasesIcon />}
             className="custom-card-style"
-            showNumber={749}
+            // showNumber={749}
             onClick={() => {
-              // history.push("/digit-ui/employee/dristi/total-cases");
+              history.push("/digit-ui/employee/dristi/cases");
             }}
           ></CustomCard>
         </div>
