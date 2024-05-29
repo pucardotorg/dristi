@@ -177,18 +177,18 @@ public class CaseQueryBuilder {
                 for (CaseCriteria caseCriteria : criteriaList) {
                     if (caseCriteria.getFilingFromDate() != null && caseCriteria.getFilingToDate() != null) {
                         if (firstCriteria == false)
-                            query.append("OR cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
+                            query.append(" OR cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
                         else {
-                            query.append("WHERE cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
+                            query.append(" WHERE cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
                         }
                         firstCriteria = false;
                     }
 
                     if (caseCriteria.getRegistrationFromDate() != null && caseCriteria.getRegistrationToDate() != null) {
                         if (firstCriteria == false)
-                            query.append("OR cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
+                            query.append(" OR cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
                         else {
-                            query.append("WHERE cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
+                            query.append(" WHERE cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
                         }
                         firstCriteria = false;
                     }

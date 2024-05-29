@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,16 +28,18 @@ public class WitnessRowMapperTest {
     @InjectMocks
     private WitnessRowMapper witnessRowMapper;
 
+    @Mock
+    private ResultSet resultSet;
+
     @BeforeEach
     public void setUp() {
         witnessRowMapper = new WitnessRowMapper();
+        resultSet = mock(ResultSet.class);
     }
 
     @Test
     public void testExtractData_Success() throws SQLException {
         // Arrange
-        ResultSet resultSet = mock(ResultSet.class);
-
         when(resultSet.next()).thenReturn(true).thenReturn(false);
         when(resultSet.getString("id")).thenReturn(UUID.randomUUID().toString());
         when(resultSet.getString("caseid")).thenReturn("case123");
@@ -73,6 +76,13 @@ public class WitnessRowMapperTest {
         assertEquals("user456", witness.getAuditDetails().getLastModifiedBy());
         // Test that additionalDetails is not set (as we mocked it to null)
         assertEquals(null, witness.getAdditionalDetails());
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(resultSet.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> witnessRowMapper.extractData(resultSet));
     }
 
     // Add more test cases as necessary

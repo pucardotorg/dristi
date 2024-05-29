@@ -12,6 +12,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -74,6 +75,13 @@ class LinkedCaseRowMapperTest {
 
         assertTrue(result.containsKey(UUID.fromString("00000000-0000-0000-0000-000000000000")));
         assertEquals(1, result.get(UUID.fromString("00000000-0000-0000-0000-000000000000")).size());
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(rs.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
 }
 

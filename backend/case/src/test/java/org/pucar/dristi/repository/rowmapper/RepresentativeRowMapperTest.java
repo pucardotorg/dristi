@@ -11,6 +11,7 @@ import org.pucar.dristi.web.models.AdvocateMapping;
 import org.pucar.dristi.web.models.CourtCase;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -43,6 +44,13 @@ class RepresentativeRowMapperTest {
         assertNotNull(result);
         assertTrue(result.containsKey(UUID.fromString("123e4567-e89b-12d3-a456-426614174000")));
         assertEquals(1, result.size());
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(mockResultSet.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(mockResultSet));
     }
 
 }

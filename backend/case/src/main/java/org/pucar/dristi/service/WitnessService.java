@@ -45,9 +45,6 @@ public class WitnessService {
             producer.push(config.getWitnessCreateTopic(), body);
 
             return body.getWitness();
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while creating witness");
-            throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating witness");
             throw new CustomException(CREATE_WITNESS_ERR, e.getMessage());
@@ -67,9 +64,6 @@ public class WitnessService {
             if (CollectionUtils.isEmpty(witnesses))
                 return new ArrayList<>();
             return witnesses;
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while searching");
-            throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results");
             throw new CustomException(SEARCH_WITNESS_ERR, e.getMessage());
@@ -95,9 +89,6 @@ public class WitnessService {
 
             return witnessRequest.getWitness();
 
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating witness");
-            throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating witness");
             throw new CustomException(UPDATE_WITNESS_ERR, "Error occurred while updating witness: " + e.getMessage());

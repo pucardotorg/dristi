@@ -142,5 +142,12 @@ class CaseRegistrationEnrichmentTest {
 
         assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistration(caseRequest));
     }
+
+    @Test
+    void enrichCaseApplicationUponUpdate_Exception() {
+        caseRequest.setCases(null);
+
+        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest));
+    }
 }
 

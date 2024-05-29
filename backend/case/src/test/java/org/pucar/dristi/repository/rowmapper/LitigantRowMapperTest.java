@@ -10,6 +10,7 @@ import org.pucar.dristi.web.models.Party;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -56,6 +57,13 @@ class LitigantRowMapperTest {
         assertTrue(result.containsKey(UUID.fromString("123e4567-e89b-12d3-a456-426614174000")));
         Party party = result.get(UUID.fromString("123e4567-e89b-12d3-a456-426614174000")).get(0);
         assertEquals("creator", party.getAuditDetails().getCreatedBy());
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(rs.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
 }
 

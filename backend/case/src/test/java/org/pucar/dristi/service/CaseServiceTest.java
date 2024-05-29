@@ -89,6 +89,28 @@ public class CaseServiceTest {
     }
 
     @Test
+    void testSearchCases2() {
+        // Set up mock responses
+        List<CourtCase> mockCases = new ArrayList<>(); // Assume filled with test data
+
+        when(caseRepository.getApplications(any())).thenReturn(List.of(CourtCase.builder().caseNumber("caseNbr").tenantId("tenantID").build()));
+
+        // Call the method under test
+        List<CourtCase> result = caseService.searchCases(caseSearchRequest);
+
+        // Assert and verify
+        assertNotNull(result);
+        verify(caseRepository, times(1)).getApplications(any());
+    }
+
+    @Test
+    void testSearchCases_Exception() {
+        when(caseRepository.getApplications(any())).thenThrow(CustomException.class);
+
+        assertThrows(CustomException.class, () -> caseService.searchCases(caseSearchRequest));
+    }
+
+    @Test
     void testRegisterCaseRequest_Exception() {
         // Setup
         doThrow(new CustomException("VALIDATION", "Validation failed")).when(validator).validateCaseRegistration(any(CaseRequest.class));
