@@ -87,21 +87,21 @@ public class CaseApiControllerTest {
     public void caseV1SearchPostSuccess() {
         // Mocking request body
         CaseSearchRequest caseRequest = new CaseSearchRequest(); // Create a mock CaseRequest object
-
+        caseRequest.setCriteria(List.of(CaseCriteria.builder().cnrNumber("cnrNumber").build()));
         // Mocking caseService.createCase method to return a CourtCase object
         CourtCase courtCase = new CourtCase(); // Create a mock CourtCase object
-        when(caseService.searchCases(caseRequest)).thenReturn(List.of(courtCase));
+        caseService.searchCases(caseRequest);
 
         // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object
         ResponseInfo responseInfo = new ResponseInfo(); // Create a mock ResponseInfo object
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), any())).thenReturn(responseInfo);
 
         // Call the method under test
-        ResponseEntity<CaseResponse> responseEntity = caseApiController.caseV1SearchPost(caseRequest);
+        ResponseEntity<CaseListResponse> responseEntity = caseApiController.caseV1SearchPost(caseRequest);
 
         // Verify the response entity
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(courtCase, responseEntity.getBody().getCases().get(0));
+        assertEquals(caseRequest.getCriteria(), responseEntity.getBody().getCriteria());
     }
     @Test
     public void caseV1UpdatePostSuccess() {
