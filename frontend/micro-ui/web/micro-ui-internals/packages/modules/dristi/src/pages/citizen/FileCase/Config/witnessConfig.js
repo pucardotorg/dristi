@@ -8,11 +8,13 @@ const witnessFormConfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
+            minLength: 2,
             title: "",
             patternType: "Name",
           },
@@ -39,11 +41,13 @@ const witnessFormConfig = [
         isMandatory: true,
         populators: {
           name: "lastName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
+            minLength: 2,
             title: "",
             patternType: "Name",
           },
@@ -73,7 +77,7 @@ const witnessFormConfig = [
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
               },
-              className: "mobile-number"
+              className: "mobile-number",
             },
           ],
           validation: {},
@@ -100,7 +104,7 @@ const witnessFormConfig = [
                 required: true,
                 pattern: /\S+@\S+\.\S+/,
               },
-              className: "email-address"
+              className: "email-address",
             },
           ],
           validation: {},

@@ -2,6 +2,7 @@ import { CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernme
 import Axios from "axios";
 import React, { useMemo, useState } from "react";
 import LocationSearch from "./LocationSearch";
+import { generateUUID } from "../Utils";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -12,19 +13,20 @@ const getLocation = (places, code) => {
 };
 
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
-  console.debug({ formData, errors });
   const configKey = `${config.key}-select`;
   // const configKey = config.key;
   const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
-  const inputs = useMemo(
-    () =>
-      config?.populators?.inputs || [
+  const { inputs, uuid } = useMemo(
+    () => ({
+      inputs: config?.populators?.inputs || [
         {
           label: "CS_PIN_LOCATION",
           type: "LocationSearch",
           name: [],
         },
       ],
+      uuid: generateUUID(),
+    }),
     [config?.populators?.inputs]
   );
 
