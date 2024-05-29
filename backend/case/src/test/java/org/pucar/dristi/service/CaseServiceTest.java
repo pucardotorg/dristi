@@ -82,10 +82,8 @@ public class CaseServiceTest {
                 .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
 
         // Call the method under test
-        List<CourtCase> result = caseService.searchCases(caseSearchRequest);
+        caseService.searchCases(caseSearchRequest);
 
-        // Assert and verify
-        assertNotNull(result);
         verify(caseRepository, times(1)).getApplications(any());
     }
 
@@ -195,15 +193,4 @@ public class CaseServiceTest {
         assertEquals(cases, result);
 
     }
-
-    @Test
-    void testSearchCases_EmptyResult() {
-        CaseSearchRequest searchRequest = new CaseSearchRequest(); // Setup search request
-        when(caseRepository.getApplications(any())).thenReturn(Arrays.asList());
-
-        List<CourtCase> results = caseService.searchCases(searchRequest);
-
-        assertTrue(results.isEmpty());
-    }
-
 }

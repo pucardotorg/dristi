@@ -112,14 +112,11 @@ public class CaseRegistrationValidator {
         }
         if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {
             courtCase.getLinkedCases().forEach(linkedCase -> {
-                CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
                 List<CaseCriteria> caseCriteriaList = new ArrayList<>();
                 CaseCriteria caseCriteria = new CaseCriteria();
                 caseCriteria.setCaseId(linkedCase.getId().toString());
                 caseCriteriaList.add(caseCriteria);
-                caseSearchRequest.setRequestInfo(requestInfo);
-                caseSearchRequest.setCriteria(caseCriteriaList);
-                if (!caseService.searchCases(caseSearchRequest).isEmpty())
+                if (!repository.getApplications(caseCriteriaList).isEmpty())
                     throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
             });
         }
