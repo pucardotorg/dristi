@@ -228,9 +228,9 @@ function EFilingCases({ path }) {
   };
 
   const onSubmit = (props, index) => {
-    if (!validateData(props, index)) {
-      return null;
-    }
+    // if (!validateData(props, index)) {
+    //   return null;
+    // }
     const data = {};
     if (selected === "complaintDetails") {
       const litigants = [];
@@ -252,6 +252,9 @@ function EFilingCases({ path }) {
       }));
       data.litigants = litigants;
       data.representatives = representatives;
+    }
+    if (selected === "respondentDetails") {
+      console.debug(formdata);
     }
     DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data }, tenantId }, tenantId);
   };
