@@ -40,12 +40,12 @@ class CaseRepositoryTest {
     void testGetCourtCases() {
         List<CaseCriteria> criteria = new ArrayList<>();
         String sql = "SELECT * FROM cases";
-        List<CourtCase> mockedList = new ArrayList<>();
-        mockedList.add(new CourtCase());
+        CourtCase courtCase = new CourtCase();
 
-        when(queryBuilder.getCasesSearchQuery(criteria, new ArrayList<>())).thenReturn(sql);
+        lenient().when(queryBuilder.getCasesSearchQuery(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build(), new ArrayList<>())).thenReturn(sql);
 
-        List<CourtCase> result = caseRepository.getApplications(criteria);
+        List<CaseCriteria> result = caseRepository.getApplications(criteria);
 
         assertNotNull(result);
     }

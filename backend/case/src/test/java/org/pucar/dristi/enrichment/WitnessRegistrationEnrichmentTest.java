@@ -45,26 +45,20 @@ public class WitnessRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         witnessRequest.setRequestInfo(requestInfo);
 
-        List<Witness> witnesses = new ArrayList<>();
-        Witness witness1 = new Witness();
-        witnesses.add(witness1);
-        Witness witness2 = new Witness();
-        witnesses.add(witness2);
-        witnessRequest.setWitnesses(witnesses);
+        Witness witness = new Witness();
+        witnessRequest.setWitness(witness);
 
 
         // Act
         witnessRegistrationEnrichment.enrichWitnessRegistration(witnessRequest);
 
         // Assert
-        for (Witness witness : witnessRequest.getWitnesses()) {
-            assertEquals(userInfo.getUuid(), witness.getAuditDetails().getCreatedBy());
-            assertEquals(userInfo.getUuid(), witness.getAuditDetails().getLastModifiedBy());
-            assertEquals(false, witness.getIsActive());
-            assertEquals(witness.getFilingNumber(), witness.getCnrNumber());
-            assertEquals(36, witness.getId().toString().length()); // Assuming UUID length is 36
-            assertEquals(36, witness.getFilingNumber().length()); // Assuming UUID length is 36
-        }
+        assertEquals(userInfo.getUuid(), witness.getAuditDetails().getCreatedBy());
+        assertEquals(userInfo.getUuid(), witness.getAuditDetails().getLastModifiedBy());
+        assertEquals(false, witness.getIsActive());
+        assertEquals(witness.getFilingNumber(), witness.getCnrNumber());
+        assertEquals(36, witness.getId().toString().length()); // Assuming UUID length is 36
+        assertEquals(36, witness.getFilingNumber().length()); // Assuming UUID length is 36
     }
 
     @Test
@@ -77,30 +71,19 @@ public class WitnessRegistrationEnrichmentTest {
         requestInfo.setUserInfo(userInfo);
         witnessRequest.setRequestInfo(requestInfo);
 
-        List<Witness> witnesses = new ArrayList<>();
-        Witness witness1 = new Witness();
-        witnesses.add(witness1);
-        Witness witness2 = new Witness();
-        witnesses.add(witness2);
-        witnessRequest.setWitnesses(witnesses);
+        Witness witness = new Witness();
+        witnessRequest.setWitness(witness);
 
         // Ensure that AuditDetails object is initialized for all witnesses
-        for (Witness witness : witnessRequest.getWitnesses()) {
-            if (witness.getAuditDetails() == null) {
-                witness.setAuditDetails(new AuditDetails());
-            }
+        if (witness.getAuditDetails() == null) {
+            witness.setAuditDetails(new AuditDetails());
         }
 
         // Act
         witnessRegistrationEnrichment.enrichWitnessApplicationUponUpdate(witnessRequest);
 
         // Assert
-        for (Witness witness : witnessRequest.getWitnesses()) {
-            assertEquals(userInfo.getUuid(), witness.getAuditDetails().getLastModifiedBy());
-        }
+        assertEquals(userInfo.getUuid(), witness.getAuditDetails().getLastModifiedBy());
     }
 
 }
-
-    // Add more test cases as necessary
-

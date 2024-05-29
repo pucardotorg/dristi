@@ -1,0 +1,82 @@
+ServiceMaps:
+  serviceName: witness services
+  version: 1.0.0
+  mappings:
+    - topic: save-witness-application
+      configKey: INDEX
+      indexes:
+        - name: witness-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.witness
+          customJsonMapping:
+            indexMapping: {"Data":{"witnessDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.witnessDetails.id
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.witnessDetails.caseId
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.witnessDetails.filingNumber
+              - inJsonPath: $.cnrNumber
+                outJsonPath: $.Data.witnessDetails.cnrNumber
+              - inJsonPath: $.witnessIdentifier
+                outJsonPath: $.Data.witnessDetails.witnessIdentifier
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.witnessDetails.individualId
+              - inJsonPath: $.remarks
+                outJsonPath: $.Data.witnessDetails.remarks
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.witnessDetails.isActive
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.witnessDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.witnessDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.witnessDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.witnessDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.witnessDetails.additionalDetails
+
+    - topic: update-witness-application
+      configKey: INDEX
+      indexes:
+        - name: witness-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.witness
+          customJsonMapping:
+            indexMapping: {"Data":{"witnessDetails":{},"history":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.witnessDetails.id
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.witnessDetails.caseId
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.witnessDetails.filingNumber
+              - inJsonPath: $.cnrNumber
+                outJsonPath: $.Data.witnessDetails.cnrNumber
+              - inJsonPath: $.witnessIdentifier
+                outJsonPath: $.Data.witnessDetails.witnessIdentifier
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.witnessDetails.individualId
+              - inJsonPath: $.remarks
+                outJsonPath: $.Data.witnessDetails.remarks
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.witnessDetails.isActive
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.witnessDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.witnessDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.witnessDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.witnessDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.witnessDetails.additionalDetails
+

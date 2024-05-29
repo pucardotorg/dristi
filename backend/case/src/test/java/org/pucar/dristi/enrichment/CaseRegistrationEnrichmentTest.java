@@ -46,7 +46,7 @@ class CaseRegistrationEnrichmentTest {
         userInfo.setUuid("user-uuid");
         requestInfo.setUserInfo(userInfo);
 
-        // Create a CaseRequest with a single CourtCase
+        // Create case-indexer.yml CaseRequest with case-indexer.yml single CourtCase
         caseRequest = new CaseRequest();
         courtCase = new CourtCase();
         courtCase.setTenantId("tenant-id");
@@ -55,7 +55,7 @@ class CaseRegistrationEnrichmentTest {
         courtCase.setRepresentatives(new ArrayList<>());
         courtCase.setStatutesAndSections(new ArrayList<>());
         courtCase.setDocuments(new ArrayList<>());
-        caseRequest.setCases(Collections.singletonList(courtCase));
+        caseRequest.setCases(courtCase);
 
         // Set the request info in the case request
         caseRequest.setRequestInfo(requestInfo);
@@ -66,7 +66,7 @@ class CaseRegistrationEnrichmentTest {
         // Mock the config to return specific values
         when(config.getCaseFilingNumber()).thenReturn("caseFilingNumber");
 
-        // Mock the ID generation to return a list of IDs
+        // Mock the ID generation to return case-indexer.yml list of IDs
         List<String> idList = Collections.singletonList("generated-id");
         when(idgenUtil.getIdList(any(RequestInfo.class), anyString(), anyString(), any(), anyInt()))
                 .thenReturn(idList);

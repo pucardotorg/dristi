@@ -15,36 +15,39 @@ import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.INDIVIDUAL_NOT_FOUND;
 
-import static org.pucar.dristi.config.ServiceConstants.INVALID_CASE_ID;
 import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
 
 @Component
 public class WitnessRegistrationValidator {
+
     @Autowired
     private IndividualService individualService;
-    @Autowired
-    CaseRepository repository;
-    @Autowired
-    WitnessRepository witnessRepository;
-    public void validateCaseRegistration(WitnessRequest witnessRequest) throws CustomException{
-        RequestInfo requestInfo = witnessRequest.getRequestInfo();
 
-        witnessRequest.getWitnesses().forEach(witness -> {
-            if(ObjectUtils.isEmpty(witness.getCaseId()))
-                throw new CustomException("INVALID_CASE_ID", "caseId is mandatory for creating witness");
-            if(ObjectUtils.isEmpty(witness.getIndividualId()))
-                throw new CustomException("INDIVIDUAL_NOT_FOUND", "individualId is mandatory for creating witness");
-            if (!individualService.searchIndividual(requestInfo, witness.getIndividualId()))
-                throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
-        });
+    @Autowired
+    private CaseRepository repository;
+
+    @Autowired
+    private WitnessRepository witnessRepository;
+
+    public void validateCaseRegistration(WitnessRequest witnessRequest) throws CustomException {
+        RequestInfo requestInfo = witnessRequest.getRequestInfo();
+        Witness witness = witnessRequest.getWitness();
+        if (ObjectUtils.isEmpty(witness.getCaseId()))
+            throw new CustomException("INVALID_CASE_ID", "caseId is mandatory for creating witness");
+        if (ObjectUtils.isEmpty(witness.getIndividualId()))
+            throw new CustomException("INDIVIDUAL_NOT_FOUND", "individualId is mandatory for creating witness");
+        if (!individualService.searchIndividual(requestInfo, witness.getIndividualId()))
+            throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
     }
-    public Witness validateApplicationExistence(RequestInfo requestInfo ,Witness witness) {
+
+    public Witness validateApplicationExistence(RequestInfo requestInfo, Witness witness) {
         List<Witness> existingApplications = witnessRepository.getApplications(Collections.singletonList(WitnessSearchCriteria.builder().caseId(witness.getCaseId()).build()));
-        if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_ERR,"Witness Application does not exist");
-         if(ObjectUtils.isEmpty(witness.getCaseId()))
-                throw new CustomException("EG_WT_APP_ERR", "caseId is mandatory for creating witness");
-            if(ObjectUtils.isEmpty(witness.getIndividualId()))
-                throw new CustomException("EG_WT_APP_ERR", "individualId is mandatory for creating witness");
+        if (existingApplications.isEmpty())
+            throw new CustomException(VALIDATION_ERR, "Witness Application does not exist");
+        if (ObjectUtils.isEmpty(witness.getCaseId()))
+            throw new CustomException("EG_WT_APP_ERR", "caseId is mandatory for creating witness");
+        if (ObjectUtils.isEmpty(witness.getIndividualId()))
+            throw new CustomException("EG_WT_APP_ERR", "individualId is mandatory for creating witness");
         if (!individualService.searchIndividual(requestInfo, witness.getIndividualId()))
             throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
         return existingApplications.get(0);

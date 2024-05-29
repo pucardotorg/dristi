@@ -54,7 +54,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                             .courtId(rs.getString("courtid"))
                             .benchId(rs.getString("benchid"))
                             .filingDate(stringToLocalDate(rs.getString("filingdate")))
-                            .registrationDate(rs.getString("registrationdate"))
+                            .filingDate(stringToLocalDate(rs.getString("registrationdate")))
                             .caseCategory(rs.getString("casecategory"))
                             .natureOfPleading(rs.getString("natureofpleading"))
                             .status(rs.getString("status"))
