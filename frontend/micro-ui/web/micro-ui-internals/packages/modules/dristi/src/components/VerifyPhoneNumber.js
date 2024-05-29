@@ -124,7 +124,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
 
         const data = {
-          addressDetails: {
+          "addressDetails-select": {
             pincode: pincode,
             district: addressLine2,
             city: city,
@@ -135,16 +135,17 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             },
             locality: address,
           },
-          userDetails: {
-            firstName: givenName,
-            lastName: familyName,
-            middleName: otherNames,
-          },
+          firstName: givenName,
+          lastName: familyName,
+          middleName: otherNames,
           complainantId: true,
         };
 
-        ["addressDetails", "complainantId", "userDetails"].forEach((key) => {
-          onSelect(key, { ...formData?.[key], ...data[key] });
+        ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
+          onSelect(
+            `${key}`,
+            typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
+          );
         });
         onSelect(config?.key, { ...formData?.[config.key], individualDetails: individualData?.Individual?.[0]?.individualId });
       })
