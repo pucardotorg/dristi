@@ -77,8 +77,9 @@ public class CaseServiceTest {
     @Test
     void testSearchCases() {
         // Set up mock responses
-        List<CourtCase> mockCases = new ArrayList<>(); // Assume filled with test data
-        when(caseRepository.getApplications(any())).thenReturn(mockCases);
+        CourtCase courtCase = new CourtCase(); // Assume filled with test data
+        when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
 
         // Call the method under test
         List<CourtCase> result = caseService.searchCases(caseSearchRequest);

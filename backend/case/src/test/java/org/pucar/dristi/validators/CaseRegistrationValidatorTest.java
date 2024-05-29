@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.egov.common.contract.request.RequestInfo;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.AdvocateUtil;
@@ -46,6 +47,9 @@ public class CaseRegistrationValidatorTest {
 
     @Mock
     private AdvocateUtil advocateUtil;
+
+    @Mock
+    private Configuration configuration;
 
     @BeforeEach
     void setUp() {
@@ -146,8 +150,10 @@ public class CaseRegistrationValidatorTest {
         when(individualService.searchIndividual(new RequestInfo(), "123")).thenReturn(true);
         when(fileStoreUtil.fileStore("pg","123")).thenReturn(true);
         when(advocateUtil.fetchAdvocateDetails(new RequestInfo(), "123")).thenReturn(true);
+        when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        when(caseRepository.getApplications(any())).thenReturn(List.of(courtCase));
+        when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
 
         Boolean result = validator.validateApplicationExistence(courtCase, new RequestInfo());
         assertTrue(result);
@@ -158,7 +164,7 @@ public class CaseRegistrationValidatorTest {
         CourtCase courtCase = new CourtCase();
         courtCase.setFilingNumber("Filing123");
 
-        when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
+       lenient().when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
     }

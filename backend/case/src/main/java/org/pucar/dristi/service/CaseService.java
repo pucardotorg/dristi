@@ -88,7 +88,7 @@ public class CaseService {
         try {
             // Validate whether the application that is being requested for update indeed exists
             if (!validator.validateApplicationExistence(caseRequest.getCases(), caseRequest.getRequestInfo()))
-                throw new CustomException(VALIDATION_ERR, "Error validating existing application: ");
+                throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
 
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);

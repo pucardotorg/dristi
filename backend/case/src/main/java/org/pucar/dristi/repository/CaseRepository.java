@@ -67,7 +67,6 @@ public class CaseRepository {
 
             for (CaseCriteria caseCriteria : searchCriteria) {
 
-                List<CourtCase> courtCaseList = new ArrayList<>();
                 List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String casesQuery = "";
