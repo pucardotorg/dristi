@@ -274,55 +274,55 @@ export const newConfig = [
   {
     body: [
       {
-        type: "component",
-        component: "SelectComponents",
-        key: "userDetails",
-        withoutLabel: true,
+        type: "text",
+        label: "FIRST_NAME",
+        isMandatory: true,
         populators: {
-          inputs: [
-            {
-              label: "FIRST_NAME",
-              type: "text",
-              name: "firstName",
-              validation: {
-                isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-                patternType: "Name",
-                //required: true,
-                minlength: 2,
-              },
-              isMandatory: true,
+          name: "firstName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "MIDDLE_NAME",
-              type: "text",
-              name: "middleName",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "ERR_HRMS_INVALID_MIDDLE_NAME",
-                patternType: "Name",
-                title: "",
-              },
+            title: "",
+            patternType: "Name",
+            minLength: 2,
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "MIDDLE_NAME",
+        populators: {
+          name: "middleName",
+          error: "ERR_HRMS_INVALID_MIDDLE_NAME",
+          validation: {
+            pattern: {
+              message: "ERR_HRMS_INVALID_MIDDLE_NAME",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "LAST_NAME",
-              type: "text",
-              name: "name",
-              validation: {
-                isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-                patternType: "Name",
-                // required: true,
-                minlength: 2,
-              },
-              isMandatory: true,
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "LAST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "lastName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-          ],
-          validation: {},
+            title: "",
+            patternType: "Name",
+            minLength: 2,
+          },
         },
       },
     ],

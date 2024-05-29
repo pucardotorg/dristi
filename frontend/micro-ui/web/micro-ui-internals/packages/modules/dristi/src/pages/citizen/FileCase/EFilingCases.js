@@ -10,6 +10,7 @@ import Modal from "../../../components/Modal";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
+
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -18,7 +19,7 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: null, resetFormData: null });
+  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: () => {}, resetFormData: () => {} });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
@@ -352,6 +353,7 @@ function EFilingCases({ path }) {
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
+                  noBreakLine
                 />
               </div>
             ) : null;

@@ -176,9 +176,9 @@
   }
   .label-field-pair {
     display: flex;
-    align-items: center;
-    gap: 40px !important;
-    padding-bottom: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     h2 {
       font-family: Roboto;
       font-size: 16px;
@@ -541,4 +541,14 @@
   display: flex;
   flex-direction: row-reverse;
   gap: 20px;
+}
+
+.label-field-pair {
+  .field-container {
+    max-width: unset !important;
+    align-items: flex-start;
+    .text-input-width {
+      max-width: unset;
+    }
+  }
 }
