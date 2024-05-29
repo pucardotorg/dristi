@@ -1,9 +1,11 @@
-import { CardLabel, CardLabelError, CloseSvg, FormComposerV2, LabelFieldPair, Modal, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, CardText } from "@egovernments/digit-ui-components";
 import React, { useMemo, useState } from "react";
+import Modal from "./Modal";
 import Button from "./Button";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
-import { InfoIconRed } from "../icons/svgIndex";
+import { DRISTIService } from "../services";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -30,9 +32,47 @@ const Heading = (props) => {
 };
 
 function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setError }) {
-  const [{ showModal }, setState] = useState({
+  const [{ showModal, mobileNumber, isUserVerified }, setState] = useState({
     showModal: false,
+    mobileNumber: null,
+    isUserVerified: false,
   });
+  const [user, setUser] = useState(null);
+  const [isUserRegistered, setIsUserRegistered] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(10);
+  const getUserType = () => window?.Digit.UserService.getType();
+  const stateCode = window?.Digit.ULBService.getStateId();
+  useInterval(
+    () => {
+      if (showModal) setTimeLeft(timeLeft - 1);
+    },
+    timeLeft > 0 ? 1000 : null
+  );
+
+  const sendOtp = async (data) => {
+    try {
+      const res = await window?.Digit.UserService.sendOtp(data, stateCode);
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
+  };
+
+  const selectMobileNumber = async () => {
+    const data = {
+      mobileNumber: formData?.[config.key]?.[config.name],
+      tenantId: stateCode,
+      userType: getUserType(),
+    };
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    if (!err) {
+      return;
+    } else {
+      setIsUserRegistered(false);
+      const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
+      return;
+    }
+  };
 
   const handleCloseModal = () => {
     setState((prev) => ({
@@ -56,6 +96,65 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     }
   };
 
+  const searchIndividualUser = (info, tokens) => {
+    DRISTIService.searchIndividualUser(
+      {
+        Individual: {
+          userUuid: [info?.uuid],
+        },
+      },
+      { tenantId: stateCode, limit: 10, offset: 0 }
+    )
+      .then((individualData) => {
+        setUser({ info, ...tokens });
+        const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
+        const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
+        const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+        const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+        const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+        const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+        const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
+        const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
+        const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
+
+        const address = `${doorNo} ${buildingName} ${landmark}`.trim();
+
+        const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
+        const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
+        const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
+
+        const data = {
+          "addressDetails-select": {
+            pincode: pincode,
+            district: addressLine2,
+            city: city,
+            state: addressLine1,
+            coordinates: {
+              longitude: latitude,
+              latitude: longitude,
+            },
+            locality: address,
+          },
+          firstName: givenName,
+          lastName: familyName,
+          middleName: otherNames,
+          complainantId: true,
+        };
+
+        ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
+          onSelect(
+            `${key}`,
+            typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
+          );
+        });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: individualData?.Individual?.[0]?.individualId });
+      })
+      .catch(() => {
+        setUser({ info, ...tokens });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null });
+      });
+  };
+
   const selectOtp = async (input) => {
     try {
       if (isUserRegistered) {
@@ -69,9 +168,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
-
-        setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], userDetails: { info, ...tokens } });
+        searchIndividualUser(info, tokens);
+        setState((prev) => ({
+          ...prev,
+          isUserVerified: true,
+          showModal: false,
+        }));
       } else if (!isUserRegistered) {
         const requestData = {
           name: DEFAULT_USER,
@@ -85,11 +187,20 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         if (window?.globalConfigs?.getConfig("ENABLE_SINGLEINSTANCE")) {
           info.tenantId = window?.Digit.ULBService.getStateId();
         }
-
-        setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], userDetails: { info, ...tokens } });
+        searchIndividualUser(info, tokens);
+        setState((prev) => ({
+          ...prev,
+          isUserVerified: true,
+          showModal: false,
+        }));
       }
-    } catch (err) { }
+    } catch (err) {
+      setState((prev) => ({
+        ...prev,
+        isUserVerified: false,
+        showModal: true,
+      }));
+    }
   };
 
   const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
@@ -110,8 +221,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             validation={config?.validation}
             ValidationRequired={config?.validation}
             title={config?.validation?.title}
-            disable={config?.disable ? config?.disable : false}
-            // inputRef={register(config?.validation)}
+            disable={isUserVerified}
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
@@ -124,55 +234,63 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             }}
           />
         </div>
-        <Button
-          label={"VERIFY_OTP"}
-          style={{ alignItems: "center" }}
-          className={"secondary-button-selector"}
-          labelClassName={"secondary-label-selector"}
-          isDisabled={
-            !formData?.[config.key]?.[config.name] ||
-            errors?.[config?.key]?.[config.name] ||
-            formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
-            formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
-          }
-          onButtonClick={() => {
-            // handleAdd(value);
-            setState((prev) => ({
-              ...prev,
-              showModal: true,
-            }));
-          }}
-        />
+        {isUserVerified ? (
+          <div
+            style={{
+              display: "flex",
+              gap: "8px",
+              height: "40px",
+              alignItems: "center",
+            }}
+          >
+            <RoundedCheck />
+            <span style={{ color: "green" }}>{t("CS_VERIFIED")}</span>
+          </div>
+        ) : (
+          <Button
+            label={"VERIFY_OTP"}
+            style={{ alignItems: "center" }}
+            className={"secondary-button-selector"}
+            labelClassName={"secondary-label-selector"}
+            isDisabled={
+              !formData?.[config.key]?.[config.name] ||
+              errors?.[config?.key]?.[config.name] ||
+              formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
+              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
+            }
+            onButtonClick={() => {
+              selectMobileNumber(mobileNumber).then(() => {
+                setState((prev) => ({
+                  ...prev,
+                  showModal: true,
+                  mobileNumber: null,
+                }));
+                setTimeLeft(10);
+              });
+            }}
+          />
+        )}
       </div>
-      <CardLabelError>{t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}</CardLabelError>
+      <CardLabelError
+        style={{
+          fontWeight: 100,
+          position: "relative",
+          top: "-20px",
+        }}
+        className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}
+      >
+        {t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
+      </CardLabelError>
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
           actionCancelOnSubmit={() => { }}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
-            selectOtp(input)
-              .then(() => {
-                setState((prev) => ({
-                  ...prev,
-                  isUserVerified: true,
-                }));
-              })
-              .catch(() => {
-                setState((prev) => ({
-                  ...prev,
-                  isUserVerified: false,
-                }));
-              })
-              .finally(() => {
-                setState((prev) => ({
-                  ...prev,
-                  showModal: false,
-                }));
-              });
+            selectOtp(input);
           }}
           formId="modal-action"
-          headerBarMain={<Heading label={t("UPLOAD_ID_PROOF_HEADER")} />}
+          headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
           className={'case-types'}
         >

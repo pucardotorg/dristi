@@ -28,17 +28,19 @@ const TopBarSideBar = ({
   const handleOnSubmit = () => {
     Digit.UserService.logout();
     setShowDialog(false);
-  }
+  };
   const handleOnCancel = () => {
     setShowDialog(false);
-  }
+  };
   const userProfile = () => {
     history.push(`/${window?.contextPath}/employee/user/profile`);
   };
-  const userOptions = [
-    { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
-    { name: t("CORE_COMMON_LOGOUT"), icon: <LogoutIcon className="icon" />, func: handleLogout },
-  ];
+  const userOptions = CITIZEN
+    ? [{ name: t("CORE_COMMON_LOGOUT"), icon: <LogoutIcon className="icon" />, func: handleLogout }]
+    : [
+        { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
+        { name: t("CORE_COMMON_LOGOUT"), icon: <LogoutIcon className="icon" />, func: handleLogout },
+      ];
   return (
     <React.Fragment>
       <TopBar
@@ -56,9 +58,7 @@ const TopBarSideBar = ({
         logoUrl={logoUrl}
         showLanguageChange={showLanguageChange}
       />
-      {showDialog && (
-        <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>
-      )}
+      {showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}
       {showSidebar && (
         <SideBar
           t={t}

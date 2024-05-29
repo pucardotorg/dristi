@@ -2,9 +2,13 @@ import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { ChequeDetailsIcon, DebtLiabilityIcon, DemandDetailsNoticeIcon, PrayerSwornIcon, RespondentDetailsIcon } from "../icons/svgIndex";
 import CustomReviewCard from "./CustomReviewCard";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const [isOpen, setOpen] = useState(true);
+  const history = useHistory();
+  const urlParams = new URLSearchParams(window.location.search);
+  const caseId = urlParams.get("caseId");
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -39,14 +43,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     }
   };
 
-  const data = { name: "Sheetal Arora", phone: "9834178901", id: "uri", address: "4601E, Gatade Plot, Pandharpur" };
-  const config1 = [
-    { type: "title", value: "name" },
-    { type: "phonenumber", label: "Phone Number", value: "phone" },
-    { type: "image", label: "ID Proof", value: "id" },
-    { type: "address", label: "Address", value: "address" },
-  ];
-
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
@@ -70,7 +66,14 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   {input?.icon && <Icon icon={input?.icon} />}
                   {input?.label}
                 </div>
-                <EditPencilIcon />
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    history.push(`?caseId=${caseId}&selected=${input?.key}`);
+                  }}
+                >
+                  <EditPencilIcon />
+                </div>
               </div>
               {Array.isArray(input.data) && input.data.map((item, index) => <CustomReviewCard config={input.config} index={index + 1} data={item} />)}
               {!Array.isArray(input.data) && <CustomReviewCard config={input.config} data={input.data} />}

@@ -45,7 +45,7 @@
 .file-case-form-section {
   width: 100%;
   max-width: 62%;
-  padding: 24px 0px 0px 0px;
+  padding: 0px;
   gap: 32px;
   .jk-digit-primary-btn.add-location-btn {
     background-color: white !important;
@@ -190,9 +190,9 @@
   }
   .label-field-pair {
     display: flex;
-    align-items: center;
-    gap: 40px !important;
-    padding-bottom: 40px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
     h2 {
       font-family: Roboto;
       font-size: 16px;
@@ -547,4 +547,14 @@
   display: flex;
   flex-direction: row-reverse;
   gap: 20px;
+}
+
+.label-field-pair {
+  .field-container {
+    max-width: unset !important;
+    align-items: flex-start;
+    .text-input-width {
+      max-width: unset;
+    }
+  }
 }

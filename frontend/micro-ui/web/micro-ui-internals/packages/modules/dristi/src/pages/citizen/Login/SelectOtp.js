@@ -1,11 +1,12 @@
-import { CardLabelError, CardText } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
+import { Close } from "@egovernments/digit-ui-svg-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, path, params }) => {
+const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, params, path, isAdhaar, cardText }) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
@@ -21,23 +22,29 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     onResend();
     setTimeLeft(30);
   };
+  const onCancel = () => {
+    history.goBack();
+  };
+  const Heading = (props) => {
+    return <h1 className="heading-m">{props.label}</h1>;
+  };
+  const CloseBtn = (props) => {
+    return (
+      <div onClick={props?.onClick} style={props?.isMobileView ? { padding: 5 } : null}>
+        {props?.isMobileView ? (
+          <CloseSvg />
+        ) : (
+          <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
+            {" "}
+            <Close />{" "}
+          </div>
+        )}
+      </div>
+    );
+  };
 
-  if (isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber")) {
-    history.push(`/${window.contextPath}/citizen/dristi/home`);
-  }
-
-  if (!isUserLoggedIn && !sessionStorage.getItem("Digit.aadharNumber") && !params?.mobileNumber) {
-    history.push(path);
-  }
-
-  if (
-    sessionStorage.getItem("Digit.UploadedDocument") ||
-    (sessionStorage.getItem("Digit.aadharNumber") && sessionStorage.getItem("Digit.isAadharNumberVerified") && isUserLoggedIn)
-  ) {
-    sessionStorage.removeItem("Digit.UploadedDocument");
-    sessionStorage.removeItem("Digit.aadharNumber");
-    sessionStorage.removeItem("Digit.isAadharNumberVerified");
-    history.push(`/${window.contextPath}/citizen/dristi/home`);
+  if (!params?.mobileNumber && !isAdhaar) {
+    history.push("/digit-ui/citizen/dristi/home/login");
   }
 
   if (userType === "employee") {
@@ -61,19 +68,40 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
   }
 
   return (
-    <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 6 && canSubmit)} cardStyle={{ minWidth: "100%" }}>
-      <div style={{ display: "flex" }}>
-        <OTPInput length={6} onChange={onOtpChange} value={otp} />
-      </div>
-      {timeLeft > 0 ? (
-        <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
-      ) : (
-        <p className="card-text" onClick={handleResendOtp} style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer" }}>
-          {t("CS_RESEND_OTP")}
-        </p>
-      )}
-      {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
-    </FormStep>
+    <Modal
+      headerBarEnd={<CloseBtn onClick={onCancel} isMobileView={false} />}
+      actionSaveLabel={t("VERIFY")}
+      actionSaveOnSubmit={onSelect}
+      isDisabled={!(otp?.length === 6 && canSubmit)}
+      formId="modal-action"
+      headerBarMain={
+        <div>
+          <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
+          <CardText style={{ marginLeft: "20px" }}>{cardText}</CardText>
+        </div>
+      }
+      popupStyles={{ width: "580px", alignItems: "center" }}
+    >
+      <FormStep
+        onSelect={onSelect}
+        config={config}
+        t={t}
+        isDisabled={!(otp?.length === 6 && canSubmit)}
+        cardStyle={{ minWidth: "100%", alignItems: "center" }}
+      >
+        <div style={{ display: "flex" }}>
+          <OTPInput length={6} onChange={onOtpChange} value={otp} />
+        </div>
+        {timeLeft > 0 ? (
+          <CardText style={{ alignSelf: "flex-start" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+        ) : (
+          <p className="card-text" onClick={handleResendOtp} style={{ backgroundColor: "#fff", color: "#f47738", cursor: "pointer" }}>
+            {t("CS_RESEND_OTP")}
+          </p>
+        )}
+        {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+      </FormStep>
+    </Modal>
   );
 };
 

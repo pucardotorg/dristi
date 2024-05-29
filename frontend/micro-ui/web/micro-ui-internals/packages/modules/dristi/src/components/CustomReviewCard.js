@@ -1,6 +1,7 @@
 import { Card } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
+import { FlagIcon } from "../icons/svgIndex";
 
 function CustomReviewCard({ index, config, data }) {
   const Getrow = ({ type, label, value }) => {
@@ -12,6 +13,9 @@ function CustomReviewCard({ index, config, data }) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px" }}>
             <div style={{ width: "40%" }}>{label}</div>
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-start" }}> {data[value]} </div>
+            <div style={{ cursor: "pointer" }}>
+              <FlagIcon />
+            </div>
           </div>
         );
       case "amount":
@@ -19,6 +23,9 @@ function CustomReviewCard({ index, config, data }) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px", background: "#F9FAFB" }}>
             <div style={{ width: "40%" }}>{label}</div>
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-start" }}> {`₹${data[value]}`} </div>
+            <div style={{ cursor: "pointer" }}>
+              <FlagIcon />
+            </div>
           </div>
         );
       case "phonenumber":
@@ -26,6 +33,9 @@ function CustomReviewCard({ index, config, data }) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px", background: "#F9FAFB" }}>
             <div style={{ width: "40%" }}>{label}</div>
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-start" }}> {`+91-${data[value]}`} </div>
+            <div style={{ cursor: "pointer" }}>
+              <FlagIcon />
+            </div>
           </div>
         );
       case "image":
@@ -40,6 +50,9 @@ function CustomReviewCard({ index, config, data }) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px", background: "#F9FAFB" }}>
             <div style={{ width: "40%" }}>{label}</div>
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-start" }}>{data[value]}</div>
+            <div style={{ cursor: "pointer" }}>
+              <FlagIcon />
+            </div>
           </div>
         );
       default:
@@ -47,6 +60,9 @@ function CustomReviewCard({ index, config, data }) {
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "5px" }}>
             <div style={{ width: "40%" }}>{label}</div>
             <div style={{ flex: 1, display: "flex", justifyContent: "flex-start" }}> {data[value]} </div>
+            <div style={{ cursor: "pointer" }}>
+              <FlagIcon />
+            </div>
           </div>
         );
     }

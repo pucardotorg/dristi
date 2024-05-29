@@ -19,10 +19,11 @@ const Heading = (props) => {
 };
 
 function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
-  const [{ showModal, verificationType, modalData }, setState] = useState({
+  const [{ showModal, verificationType, modalData, isAadharVerified }, setState] = useState({
     showModal: false,
     verificationType: "",
     modalData: {},
+    isAadharVerified: false,
   });
   const [isDisabled, setIsDisabled] = useState(false);
   const inputs = useMemo(
@@ -85,10 +86,6 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
   );
 
   const fileValidator = (file, input) => {
-    // const fileType = file?.type.split("/")[1].toUpperCase();
-    // if (fileType && !input.fileTypes.includes(fileType)) {
-    //   return { [input?.name]: "Invalid File Type", ...uploadErrorInfo };
-    // }
     const maxFileSize = input?.maxFileSize * 1024 * 1024;
     return file.size > maxFileSize ? t(input?.maxFileErrorMessage) : null;
   };
@@ -109,8 +106,11 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
     <div>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
-        let fileErrors = currentValue?.[input.name]?.["ID_Proof"].map((file) => fileValidator(file, input));
-        console.log("currentValue", currentValue, formData);
+        let fileErrors =
+          currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"] &&
+          [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
+            fileValidator(file, idProofVerificationConfig?.[0].body[0]?.populators?.inputs?.[1])
+          );
         return (
           <React.Fragment key={index}>
             <LabelFieldPair style={{ width: "100%", display: "flex", alignItem: "center" }}>
@@ -120,30 +120,52 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
             </LabelFieldPair>
             {!currentValue?.[input.name]?.["ID_Proof"] ? (
               <React.Fragment>
-                <div className="button-field" style={{ width: "50%" }}>
-                  <Button
-                    variation={"secondary"}
-                    className={"secondary-button-selector"}
-                    label={t("VERIFY_AADHAR")}
-                    labelClassName={"secondary-label-selector"}
-                  />
-                  <Button
-                    className={"tertiary-button-selector"}
-                    label={t("VERIFY_ID_PROOF")}
-                    labelClassName={"tertiary-label-selector"}
-                    onButtonClick={() => {
-                      setState((prev) => ({
-                        ...prev,
-                        showModal: true,
-                        verificationType: "uploadIdProof",
-                      }));
-                    }}
-                  />
-                </div>
-                <InfoCard style={{ margin: "16px 0 0 0" }} />
+                {!isAadharVerified && (
+                  <div className="button-field" style={{ width: "50%" }}>
+                    <Button
+                      variation={"secondary"}
+                      className={"secondary-button-selector"}
+                      label={t("VERIFY_AADHAR")}
+                      labelClassName={"secondary-label-selector"}
+                      onButtonClick={() => {
+                        setState((prev) => ({
+                          ...prev,
+                          isAadharVerified: true,
+                        }));
+                      }}
+                    />
+                    <Button
+                      className={"tertiary-button-selector"}
+                      label={t("VERIFY_ID_PROOF")}
+                      labelClassName={"tertiary-label-selector"}
+                      onButtonClick={() => {
+                        setState((prev) => ({
+                          ...prev,
+                          showModal: true,
+                          verificationType: "uploadIdProof",
+                        }));
+                      }}
+                    />
+                  </div>
+                )}
+
+                <InfoCard
+                  variant={isAadharVerified ? "success" : "default"}
+                  label={isAadharVerified ? "CS_AADHAR_VERIFIED" : "CS_COMMON_NOTE"}
+                  style={{ margin: "16px 0 0 0", backgroundColor: isAadharVerified ? "#E4F2E4" : "#ECF3FD" }}
+                  additionalElements={{}}
+                  inline
+                  text={
+                    isAadharVerified
+                      ? "Adhaar verification is instant and can help increase the speed of case filing"
+                      : "Your Id was already verified during user registration."
+                  }
+                  textStyle={{}}
+                  className={"adhaar-verification-info-card"}
+                />
               </React.Fragment>
             ) : (
-              currentValue?.[input.name]?.["ID_Proof"].map((file, index) => (
+              [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file, index) => (
                 <RenderFileCard
                   key={`${input?.name}${index}`}
                   index={index}
@@ -153,6 +175,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                   t={t}
                   uploadErrorInfo={fileErrors[index]}
                   input={input}
+                  isDisabled={true}
                 />
               ))
             )}
@@ -179,20 +202,8 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                   <FormComposerV2
                     config={idProofVerificationConfig}
                     t={t}
-                    // onSubmit={(props) => {
-                    //   console.log("idProofVerificationConfig", props);
-                    //   onSelect(config.key, { ...formData[config.key], [input]: { verificationType, [input]: props } });
-                    //   setState((prev) => ({
-                    //     ...prev,
-                    //     showModal: false,
-                    //     verificationType: "",
-                    //   }));
-                    // }}
                     cardClassName={"form-composer-id-proof-card"}
-                    // isDisabled={isDisabled}
-                    // defaultValues={{ Terms_Conditions: null }}
                     inline
-                    // label={"CS_COMMON_SUBMIT"}
                     headingStyle={{ textAlign: "center" }}
                     cardStyle={{ minWidth: "100%" }}
                     onFormValueChange={onFormValueChange}

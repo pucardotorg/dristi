@@ -4,7 +4,7 @@ import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { FileUploader } from "react-drag-drop-files";
 import { ReactComponent as UploadFileIcon } from "../images/upload.svg";
 import { CloseIconWhite, FileIcon } from "../icons/svgIndex";
-function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, index, uploadErrorInfo }) {
+function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, index, uploadErrorInfo, isDisabled = false }) {
   return (
     <div className={`uploaded-file-div-main upload-${!!uploadErrorInfo ? "error" : "successful"}`}>
       <div className={`uploaded-file-div-sub ${!!uploadErrorInfo ? "error" : ""}`}>
@@ -24,9 +24,17 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
               }}
               name="file"
               types={input?.fileTypes}
+              disabled={isDisabled}
               children={
                 <Button
-                  icon={<div><UploadFileIcon /> </div>}
+                  onButtonClick={() => {
+                    if (isDisabled) handleChange(input, index);
+                  }}
+                  icon={
+                    <div>
+                      <UploadFileIcon />{" "}
+                    </div>
+                  }
                   className="reupload-button"
                   label={t("CS_REUPLOAD")}
                 />
@@ -38,10 +46,26 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
             onButtonClick={() => {
               handleDeleteFile(input, index);
             }}
-            icon={<div><DeleteFileIcon /> </div>}
+            icon={
+              <div>
+                <DeleteFileIcon />{" "}
+              </div>
+            }
             className="delete-button"
             label={t("Delete")}
           />
+        </div>
+      </div>
+
+      <div className={`uploaded-file-div-sub-mobile`}>
+        <img src="https://picsum.photos/200" alt="Description" className="image" />
+        <div
+          className="close-button"
+          onClick={() => {
+            handleDeleteFile(input, index);
+          }}
+        >
+          <CloseIconWhite />
         </div>
       </div>
 

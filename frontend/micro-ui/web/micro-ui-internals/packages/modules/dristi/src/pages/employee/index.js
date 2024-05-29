@@ -5,17 +5,18 @@ import { Switch } from "react-router-dom";
 import ApplicationDetails from "./ApplicationDetails";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import Breadcrumb from "../../components/BreadCrumb";
+import ViewCaseFile from "./scrutiny/ViewCaseFile";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const Inbox = Digit?.ComponentRegistryService?.getComponent("Inbox");
-
+  const hideHomeCrumb = [`${path}/cases`];
   const employeeCrumbs = [
     {
       path: `/digit-ui/employee`,
       content: t("ES_COMMON_HOME"),
-      show: true,
+      show: !hideHomeCrumb.includes(location.pathname),
       isLast: false,
     },
     {
@@ -35,15 +36,16 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
-            <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "5px" }}>
-              <span style={{ color: "#007E7E" }}>Help</span>
+          <div style={{ display: "flex", justifyContent: "right" }}>
+            {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
+            <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
+              <span style={{ color: "#f47738" }}>Help</span>
               <HelpOutlineIcon />
             </span>
           </div>
           <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
+          <PrivateRoute exact path={`${path}/cases`} component={(props) => <ViewCaseFile {...props} t={t} />} />
         </div>
       </React.Fragment>
     </Switch>

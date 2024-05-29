@@ -3,7 +3,7 @@ const complainantDetailsFormConfig = [
     body: [
       {
         type: "radio",
-        key: "complaintType",
+        key: "complainantType",
         label: "CS_RESPONDENT_TYPE",
         isMandatory: true,
         populators: {
@@ -39,15 +39,16 @@ const complainantDetailsFormConfig = [
             },
           ],
           customStyle: {
-            display: "flex",
-            gap: 50,
+            gap: "40px",
+            flexDirection: "row",
+            alignItems: "center",
           },
         },
       },
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     body: [
       {
         type: "component",
@@ -61,74 +62,77 @@ const complainantDetailsFormConfig = [
               name: "complainantId",
             },
           ],
+          customStyle: {
+            marginTop: 20,
+          },
         },
       },
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_COMPLAINANT_DETAIL",
     body: [
       {
-        type: "component",
-        component: "SelectComponents",
-        key: "userDetails",
-        withoutLabel: true,
+        type: "text",
+        label: "FIRST_NAME",
+        isMandatory: true,
         populators: {
-          inputs: [
-            {
-              label: "FIRST_NAME",
-              type: "text",
-              name: "firstName",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-                patternType: "Name",
-                isRequired: true,
-              },
-              isMandatory: true,
+          name: "firstName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "MIDDLE_NAME",
-              type: "text",
-              name: "middleName",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
+            minLength: 2,
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "MIDDLE_NAME",
+        populators: {
+          name: "middleName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "LAST_NAME",
-              type: "text",
-              name: "lastName",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
-              isMandatory: true,
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "LAST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "lastName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-          ],
-          validation: {},
+            minLength: 2,
+            title: "",
+            patternType: "Name",
+          },
         },
       },
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     body: [
       {
         type: "component",
         component: "VerifyPhoneNumber",
-        key: "complainantId",
+        key: "complainantVerification",
         withoutLabel: true,
         label: "PHONE_NUMBER",
         name: "mobileNumber",
@@ -145,7 +149,7 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
-    dependentKey: { complaintType: ["commonFields"] },
+    dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_ADDRESS_DETAIL",
     body: [
       {
@@ -155,7 +159,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"] },
             {
               label: "PINCODE",
               type: "text",
@@ -228,5 +232,5 @@ export const complaintdetailconfig = {
   isOptional: false,
   addFormText: "ADD_COMPLAINANT",
   formItemName: "Complainant",
-  className: "complainant"
+  className: "complainant",
 };

@@ -1,12 +1,16 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CloseSvg, FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
-import { ReactComponent as InfoIcon } from '../../../icons/info.svg';
+import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import Modal from "../../../components/Modal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { DRISTIService } from "../../../services";
+import EditFieldsModal from "./EditFieldsModal";
+
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -15,13 +19,80 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [accordion, setAccordion] = useState(sideMenuConfig);
-  const [pageConfig, setPageConfig] = useState(sideMenuConfig?.[0]?.children?.[0]?.pageConfig);
-  const [{ setFormErrors }, setState] = useState({ setFormErrors: null });
+  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: () => { }, resetFormData: () => { } });
+  const urlParams = new URLSearchParams(window.location.search);
+  const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
+  const caseId = urlParams.get("caseId");
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
+  const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
+
+  const { data: caseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    caseId
+  );
+
+  const getAllKeys = useMemo(() => {
+    const keys = [];
+    sideMenuConfig.forEach((parent) => {
+      parent.children.forEach((child) => {
+        keys.push(child.key);
+      });
+    });
+    return keys;
+  }, []);
+
+  const nextSelected = useMemo(() => {
+    const index = getAllKeys.indexOf(selected);
+    if (index !== -1 && index + 1 < getAllKeys.length) {
+      return getAllKeys[index + 1];
+    } else {
+      return null;
+    }
+  }, [getAllKeys, selected]);
+
+  const caseDetails = useMemo(() => caseData?.cases?.[0], [caseData]);
+  useEffect(() => {
+    setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
+  }, [selected]);
+
+  const accordion = useMemo(() => {
+    return sideMenuConfig.map((parent, pIndex) => ({
+      ...parent,
+      isOpen: pIndex === parentOpen,
+      children: parent.children.map((child, cIndex) => ({
+        ...child,
+        checked: child.key === selected,
+      })),
+    }));
+  }, [parentOpen, selected]);
+
+  const pageConfig = useMemo(() => {
+    return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected))?.children?.find((child) => child.key === selected)
+      ?.pageConfig;
+  }, [selected]);
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
   }, [pageConfig?.formconfig]);
+
+  if (!getAllKeys.includes(selected) || !formConfig) {
+    history.push(`?caseId=${caseId}&selected=${getAllKeys[0]}`);
+  }
+
+  const confirmModalConfig = useMemo(() => {
+    return pageConfig?.confirmmodalconfig;
+  }, [pageConfig?.confirmmodalconfig]);
 
   const CloseBtn = (props) => {
     return (
@@ -96,39 +167,28 @@ function EFilingCases({ path }) {
       setState((prev) => ({
         ...prev,
         setFormErrors: setError,
+        resetFormData: reset,
       }));
     }
   };
 
   const handleAccordionClick = (index) => {
-    setAccordion((prevAccordion) => {
-      const newAccordion = prevAccordion.map((parent, pIndex) => ({
-        ...parent,
-        isOpen: pIndex === index ? !parent.isOpen : false,
-      }));
-      return newAccordion;
-    });
+    setParentOpen(index);
   };
 
-  const handlePageChange = (parentIndex, childIndex) => {
-    const newPageConfig = accordion?.[parentIndex]?.children?.[childIndex]?.pageConfig;
-    if (!newPageConfig || accordion?.[parentIndex]?.children?.[childIndex].checked) {
-      return null;
+  const handlePageChange = (key, isConfirm) => {
+    if (key === selected) {
+      return;
     }
-    setAccordion((prevAccordion) => {
-      const newAccordion = prevAccordion.map((parent, pIndex) => ({
-        ...parent,
-        children: parent.children.map((child, cIndex) => ({
-          ...child,
-          checked: pIndex === parentIndex && cIndex === childIndex ? 1 : 0,
-        })),
-      }));
-      return newAccordion;
-    });
-    setPageConfig(newPageConfig);
+    if (!isConfirm) {
+      setOpenConfigurationModal(key);
+      return;
+    }
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
     setIsOpen(false);
+    !!resetFormData && resetFormData();
+    history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
   const validateData = (data) => {
@@ -140,19 +200,23 @@ function EFilingCases({ path }) {
             if (input?.isMandatory) {
               if (input?.validation) {
                 if (input?.validation?.isArray) {
-                  if (!formdata?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
-                    isValid = false;
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  } else {
-                    setFormErrors(body.key, { [input.name]: "" });
-                  }
+                  formdata?.forEach((data) => {
+                    if (!data?.data?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
+                      isValid = false;
+                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                    } else {
+                      // setFormErrors(body.key, { [input.name]: "" });
+                    }
+                  });
                 } else {
-                  if (!formdata?.[body.key]?.[input.name]) {
-                    isValid = false;
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  } else {
-                    setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                  }
+                  formdata?.forEach((data) => {
+                    if (!data?.data?.[body.key]?.[input.name]) {
+                      isValid = false;
+                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                    } else {
+                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+                    }
+                  });
                 }
               }
             }
@@ -163,10 +227,33 @@ function EFilingCases({ path }) {
     return isValid;
   };
 
-  const onSubmit = (props) => {
-    if (!validateData(props)) {
+  const onSubmit = (props, index) => {
+    if (!validateData(props, index)) {
       return null;
     }
+    const data = {};
+    if (selected === "complaintDetails") {
+      const litigants = [];
+      formdata.forEach((data, index) => {
+        if (data?.data?.complainantVerification?.individualDetails) {
+          litigants.push({
+            tenantId,
+            caseId: caseDetails?.id,
+            partyCategory: data?.data?.complainantType?.code,
+            individualId: data?.data?.complainantVerification?.individualDetails,
+            partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+          });
+        }
+      });
+      const representatives = [...caseDetails?.representatives]?.map((representative) => ({
+        ...representative,
+        caseId: caseDetails?.id,
+        representing: [...litigants],
+      }));
+      data.litigants = litigants;
+      data.representatives = representatives;
+    }
+    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data }, tenantId }, tenantId);
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
@@ -174,7 +261,9 @@ function EFilingCases({ path }) {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -233,6 +322,7 @@ function EFilingCases({ path }) {
               children={item.children}
               parentIndex={index}
               isOpen={item.isOpen}
+              showConfirmModal={confirmModalConfig ? true : false}
             />
           ))}
         </div>
@@ -243,7 +333,12 @@ function EFilingCases({ path }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t(pageConfig.header)}</Header>
-              <div className="header-icon" onClick={() => { setIsOpen(true) }}>
+              <div
+                className="header-icon"
+                onClick={() => {
+                  setIsOpen(true);
+                }}
+              >
                 <CustomArrowDownIcon />
               </div>
             </div>
@@ -270,7 +365,7 @@ function EFilingCases({ path }) {
                 <FormComposerV2
                   label={t("CS_COMMON_CONTINUE")}
                   config={config}
-                  onSubmit={onSubmit}
+                  onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={{}}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
@@ -282,6 +377,7 @@ function EFilingCases({ path }) {
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
+                  noBreakLine
                 />
               </div>
             ) : null;
@@ -295,7 +391,15 @@ function EFilingCases({ path }) {
               <span>{t(pageConfig.addFormText)}</span>
             </div>
           )}
-
+          {openConfigurationModal && (
+            <EditFieldsModal
+              t={t}
+              config={confirmModalConfig}
+              setOpenConfigurationModal={setOpenConfigurationModal}
+              selected={openConfigurationModal}
+              handlePageChange={handlePageChange}
+            />
+          )}
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>

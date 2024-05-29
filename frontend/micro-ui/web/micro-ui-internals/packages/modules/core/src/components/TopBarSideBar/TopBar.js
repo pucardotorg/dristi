@@ -92,7 +92,23 @@ const TopBar = ({
           cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
           onNotificationIconClick={onNotificationIconClick}
           hideNotificationIconOnSomeUrlsWhenNotLoggedIn={true}
-          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
+          changeLanguage={
+            !mobileView ? (
+              <ChangeLanguage
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                dropdownClassName={"change-language-citizen"}
+                dropdown={true}
+              />
+            ) : null
+          }
+          userOptions={userOptions}
+          handleUserDropdownSelection={handleUserDropdownSelection}
+          TextToImg={TextToImg}
+          mobileView={mobileView}
         />
       </div>
     );

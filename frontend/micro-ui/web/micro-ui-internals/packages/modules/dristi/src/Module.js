@@ -3,7 +3,13 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import CitizenApp from "./pages/citizen";
 import SelectComponents from "./components/SelectComponents";
+import AddressComponent from "./components/AddressComponent";
+
 import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
+import CustomRadioCard from "./components/CustomRadioCard";
+import AdhaarInput from "./components/AdhaarInput";
+import AdvocateDetailComponent from "./components/AdvocateDetailComponent";
+
 import Registration from "./pages/citizen/registration";
 import EmployeeApp from "./pages/employee";
 import DRISTICard from "./components/DRISTICard";
@@ -19,12 +25,12 @@ import CustomInput from "./components/CustomInput";
 import SelectBulkInputs from "./components/SelectBulkInputs";
 import SelectCustomNote from "./components/SelectCustomNote";
 import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
-import InfoCard from "./components/InfoCard";
 import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
 import SelectComponentsMulti from "./components/SelectComponentsMulti";
 import SelectReviewAccordion from "./components/SelectReviewAccordion";
+import SelectSignature from "./components/SelectSignature";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -61,11 +67,15 @@ const componentsToRegister = {
   SelectBulkInputs,
   SelectCustomNote,
   SelectCustomDragDrop,
-  InfoCard,
   VerifyPhoneNumber,
   SelectCustomTextArea,
   IdProofUploadComponent,
   SelectReviewAccordion,
+  SelectSignature,
+  CustomRadioCard,
+  AddressComponent,
+  AdhaarInput,
+  AdvocateDetailComponent,
 };
 
 const overrideHooks = () => {

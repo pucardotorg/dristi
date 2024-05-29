@@ -1,14 +1,15 @@
 export const userTypeOptions = [
   {
     code: "LITIGANT",
-    name: "LITIGANT",
+    name: "LITIGANT_TEXT",
     showBarDetails: false,
     isVerified: false,
-    role: ["ADVOCATE_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
+    role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
+    subText: "LITIGANT_SUB_TEXT",
   },
   {
     code: "ADVOCATE",
-    name: "ADVOCATE",
+    name: "ADVOCATE_TEXT",
     showBarDetails: true,
     isVerified: true,
     hasBarRegistrationNo: true,
@@ -18,10 +19,11 @@ export const userTypeOptions = [
       requestKey: "advocates",
       AdditionalFields: ["barRegistrationNumber"],
     },
+    subText: "ADVOCATE_SUB_TEXT",
   },
   {
     code: "ADVOCATE_CLERK",
-    name: "ADVOCATE CLERK",
+    name: "ADVOCATE_CLERK_TEXT",
     showBarDetails: true,
     hasStateRegistrationNo: true,
     isVerified: true,
@@ -31,6 +33,8 @@ export const userTypeOptions = [
       requestKey: "clerks",
       AdditionalFields: ["stateRegnNumber"],
     },
+
+    subText: "ADVOCATE_CLERK_SUB_TEXT",
   },
 ];
 
@@ -270,64 +274,74 @@ export const newConfig = [
   {
     body: [
       {
-        type: "component",
-        component: "SelectComponents",
-        key: "userDetails",
-        withoutLabel: true,
+        type: "text",
+        label: "FIRST_NAME",
+        isMandatory: true,
         populators: {
-          inputs: [
-            {
-              label: "FIRST_NAME",
-              type: "text",
-              name: "firstName",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-                isRequired: true,
-              },
-              isMandatory: true,
+          name: "firstName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "MIDDLE_NAME",
-              type: "text",
-              name: "middleName",
-              validation: {
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                patternType: "Name",
-                title: "",
-              },
+            title: "",
+            patternType: "Name",
+            minLength: 2,
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "MIDDLE_NAME",
+        populators: {
+          name: "middleName",
+          error: "ERR_HRMS_INVALID_MIDDLE_NAME",
+          validation: {
+            pattern: {
+              message: "ERR_HRMS_INVALID_MIDDLE_NAME",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-            {
-              label: "LAST_NAME",
-              type: "text",
-              name: "lastName",
-              validation: {
-                isRequired: true,
-                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{2,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_NAME_INVALID",
-                title: "",
-              },
-              isMandatory: true,
+            title: "",
+            patternType: "Name",
+          },
+        },
+      },
+      {
+        type: "text",
+        label: "LAST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "lastName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
-          ],
-          validation: {},
+            title: "",
+            patternType: "Name",
+            minLength: 2,
+          },
         },
       },
     ],
   },
   {
-    head: "CS_COMMON_ADDRESS_DETAIL",
+    head: "CS_ENTER_ADDRESS",
     body: [
       {
         type: "component",
-        component: "SelectComponents",
+        component: "AddressComponent",
         key: "addressDetails",
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            {
+              label: "CS_PIN_LOCATION",
+              type: "LocationSearch",
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "buildingName", "doorNo"],
+            },
             {
               label: "PINCODE",
               type: "text",
@@ -389,6 +403,18 @@ export const newConfig = [
               isMandatory: true,
             },
             {
+              label: "BUILDING_NAME",
+              type: "text",
+              name: "buildingName",
+              validation: {
+                errMsg: "ADDRESS_BUILDING_NAME_INVALID",
+                isRequired: true,
+                minlength: 2,
+                title: "",
+              },
+              isMandatory: true,
+            },
+            {
               label: "DOOR_NUMBER",
               type: "text",
               name: "doorNo",
@@ -411,13 +437,14 @@ export const newConfig = [
     body: [
       {
         type: "component",
-        component: "SelectUserTypeComponent",
+        component: "CustomRadioCard",
         key: "clientDetails",
         withoutLabel: true,
         populators: {
           inputs: [
             {
-              label: "SELECT_USER_TYPE",
+              label: "SELECT_USER_TYPE_TEXT",
+              subLabel: "SELECT_USER_TYPE_SUB_TEXT",
               type: "radioButton",
               name: "selectUserType",
               optionsKey: "name",
@@ -426,11 +453,171 @@ export const newConfig = [
               isMandatory: true,
               clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
               options: userTypeOptions,
+              styles: { flexDirection: "column" },
             },
           ],
         },
       },
     ],
+  },
+  {
+    texts: {
+      header: "CS_ENTER_NAME",
+      cardText: "CS_ENTER_NAME_SUB_TEXT",
+      submitInForm: true,
+      submitBarLabel: "CS_COMMON_CONTINUE",
+    },
+    inputs: [
+      {
+        label: "CORE_COMMON_FIRST_NAME",
+        type: "text",
+        name: "firstName",
+        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
+        validation: {
+          required: true,
+          minlength: 1,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          patternType: "Name",
+        },
+      },
+      {
+        label: "CORE_COMMON_MIDDLE_NAME",
+        type: "text",
+        name: "middleName",
+        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
+        validation: {
+          required: false,
+          minlength: 1,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          patternType: "Name",
+        },
+      },
+      {
+        label: "CORE_COMMON_LAST_NAME",
+        type: "text",
+        name: "name",
+        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
+        validation: {
+          required: true,
+          minlength: 1,
+          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+          patternType: "Name",
+        },
+      },
+    ],
+  },
+  {
+    texts: {
+      // header: "CS_LOGIN_OTP",
+      cardText: "CS_LOGIN_OTP_TEXT",
+    },
+  },
+  {
+    texts: {
+      header: "CS_ENTER_MOBILE",
+      cardText: "CS_ENTER_MOBILE_SUB_TEXT",
+      submitBarLabel: "CS_COMMON_CONTINUE",
+      submitInForm: true,
+    },
+    inputs: [
+      {
+        label: "CORE_COMMON_MOBILE_NUMBER",
+        type: "text",
+        name: "mobileNumber",
+        error: "ERR_HRMS_INVALID_MOB_NO",
+        validation: {
+          required: true,
+          minlength: 10,
+          maxlength: 10,
+        },
+      },
+    ],
+  },
+  {
+    body: [
+      {
+        type: "component",
+        component: "CustomRadioCard",
+        key: "IdVerification",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "CS_VERFIY_IDENTITY",
+              subLabel: "CS_VERFIY_IDENTITY_SUB_TEXT",
+              type: "radioButton",
+              name: "selectIdType",
+              optionsKey: "name",
+              error: "sample required message",
+              validation: {},
+              clearFields: { aadharNumber: "" },
+              isMandatory: true,
+              disableMandatoryFieldFor: ["aadharNumber"],
+              disableFormValidation: false,
+              options: [
+                {
+                  code: "AADHAR",
+                  name: "CS_ADHAAR",
+                  subText: "CS_ADHAAR_SUB_TEXT",
+                },
+                {
+                  code: "OTHER ID",
+                  name: "CS_OTHER",
+                  subText: "CS_OTHER_SUB_TEXT",
+                },
+              ],
+              optionsCustomStyle: {
+                top: "40px",
+              },
+              styles: { flexDirection: "column" },
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
+  {
+    head: "CS_ENTER_ADHAAR",
+    subHead: "CS_ENTER_ADHAAR_TEXT",
+    body: [
+      {
+        type: "component",
+        component: "AdhaarInput",
+        key: "AdhaarInput",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "ENTER_AADHAR_NUMBER",
+              type: "text",
+              name: "aadharNumber",
+              validation: {
+                minlength: 12,
+                maxlength: 12,
+                patternType: "AadharNo",
+                pattern: "[0-9]+",
+                errMsg: "AADHAR_NUMBER_INVALID",
+                title: "",
+              },
+              clearFields: { ID_Proof: [], selectIdTypeType: "" },
+              clearFieldsType: { ID_Proof: "documentUpload" },
+              disableMandatoryFieldFor: ["ID_Proof", "selectIdTypeType"],
+              isMandatory: true,
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
+  {
+    texts: {
+      header: "CS_AADHAR_OTP",
+      cardText: "CS_AADHAR_OTP_TEXT",
+      nextText: "CS_COMMONS_NEXT",
+      submitBarLabel: "CS_COMMONS_NEXT",
+    },
   },
 ];
 
@@ -454,12 +641,17 @@ export const termsAndConditionConfig = [
 
 export const advocateClerkConfig = [
   {
+    head: "CORE_ADVOCATE_VERFICATION",
+    subHead: "CORE_ADVOCATE_VERFICATION_TEXT",
+
     body: [
       {
         type: "component",
-        component: "SelectUserTypeComponent",
+        component: "AdvocateDetailComponent",
         key: "clientDetails",
-        withoutLabel: true,
+        // header: "Verify your identity",
+        // withoutLabel: true,
+        // subLabel: "Before diving in, we'll need to verify your identity for account setup",
         populators: {
           inputs: [
             {
@@ -468,28 +660,16 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[a-zA-Z0-9/]*$/i,
+                pattern: /^[0-9A-Z/]+$/,
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
+                maxlength: 15,
               },
               isMandatory: true,
               isDependentOn: "selectUserType",
               clearFields: { stateRegnNumber: "" },
               dependentKey: { selectUserType: ["showBarDetails", "hasBarRegistrationNo"] },
             },
-            {
-              label: "STATE_REGISTRATION_NUMBER",
-              type: "text",
-              name: "stateRegnNumber",
-              validation: {
-                isRequired: true,
-                pattern: /^[a-zA-Z0-9/]*$/i,
-                errMsg: "STATE_REGISTRATION_NUMBER_INVALID",
-              },
-              isMandatory: true,
-              isDependentOn: "selectUserType",
-              clearFields: { barRegistrationNumber: "" },
-              dependentKey: { selectUserType: ["showBarDetails", "hasStateRegistrationNo"] },
-            },
+
             {
               label: "BAR_COUNCIL_ID",
               type: "documentUpload",

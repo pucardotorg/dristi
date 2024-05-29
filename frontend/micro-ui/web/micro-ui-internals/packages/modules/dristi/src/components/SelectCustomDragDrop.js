@@ -3,7 +3,6 @@ import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
-import { ReactComponent as UploadFileIcon } from "../images/upload.svg";
 import { FileUploadIcon } from "../icons/svgIndex";
 
 const DragDropJSX = ({ t, currentValue }) => {
@@ -16,17 +15,19 @@ const DragDropJSX = ({ t, currentValue }) => {
         </p>
       </div>
       <div className="drag-drop-container-mobile">
-        <div className={`file-count-class ${currentValue && currentValue.length > 0 ? "uploaded" : ''}`}>
-          <h3>{currentValue && currentValue.length > 0 ? `${currentValue.length} File uploaded` : 'No file selected'} </h3>
+        <div className={`file-count-class ${currentValue && currentValue.length > 0 ? "uploaded" : ""}`}>
+          <h3>{currentValue && currentValue.length > 0 ? `${currentValue.length} File uploaded` : "No file selected"} </h3>
         </div>
         <div className="button-class">
-          <div><FileUploadIcon /></div>
+          <div>
+            <FileUploadIcon />
+          </div>
           <h3>Upload</h3>
         </div>
       </div>
     </React.Fragment>
   );
-}
+};
 
 function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
   const inputs = useMemo(
@@ -39,7 +40,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           infoTooltipMessage: "Tooltip",
           type: "DragDropComponent",
           uploadGuidelines: "Upload .png",
-          maxFileSize: 1024 * 1024 * 50,
+          maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],
           isMultipleUpload: true,
@@ -123,8 +124,6 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             input={input}
           />
         ))}
-
-
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
           {input?.downloadTemplateText && t(input?.downloadTemplateText)}

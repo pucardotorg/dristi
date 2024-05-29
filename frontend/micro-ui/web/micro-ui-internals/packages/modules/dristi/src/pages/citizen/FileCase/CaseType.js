@@ -6,6 +6,8 @@ import Modal from "../../../components/Modal";
 import Button from "../../../components/Button";
 import { ReactComponent as FileDownload } from "../../../icons/file_download.svg";
 import { DRISTIService } from "../../../services";
+import { Loader } from "@egovernments/digit-ui-components";
+import { userTypeOptions } from "../registration/config";
 
 const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -19,6 +21,7 @@ function CaseType({ t }) {
   const history = useHistory();
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [page, setPage] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(false);
   const onCancel = () => {
     history.push("/digit-ui/citizen/dristi/home");
   };
@@ -36,6 +39,55 @@ function CaseType({ t }) {
     );
   };
   const Submitbar = () => {
+    const token = window.localStorage.getItem("token");
+    const isUserLoggedIn = Boolean(token);
+    const moduleCode = "DRISTI";
+    const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+    const roles = userInfo?.roles;
+    const { data: individualData, isLoading, refetch, isFetching } = window?.Digit.Hooks.dristi.useGetIndividualUser(
+      {
+        Individual: {
+          userUuid: [userInfo?.uuid],
+        },
+      },
+      { tenantId, limit: 1000, offset: 0 },
+      moduleCode,
+      "",
+      userInfo?.uuid && isUserLoggedIn
+    );
+    const individualId = individualData?.Individual?.[0]?.individualId;
+
+    const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
+      individualData?.Individual,
+    ]);
+
+    const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
+      {
+        criteria: [{ individualId }],
+        tenantId,
+      },
+      {},
+      individualId,
+      userType,
+      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+    );
+
+    const userTypeDetail = useMemo(() => {
+      return userTypeOptions.find((item) => item.code === userType) || {};
+    }, [userType]);
+
+    const searchResult = useMemo(() => {
+      return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
+    const advocateId = useMemo(() => {
+      return searchResult?.[0]?.id;
+    }, [searchResult]);
+
+    if (isLoading || isFetching || isSearchLoading) {
+      return <Loader />;
+    }
+
     return (
       <div className="submit-bar-div">
         <Button
@@ -54,52 +106,66 @@ function CaseType({ t }) {
           <Button
             className="start-filling-button"
             label={t("CS_START_FILLING")}
+            isDisabled={false}
             onButtonClick={() => {
-              history.push(`${path}/case`);
-              const cases = [
-                {
-                  tenantId,
-                  resolutionMechanism: "COURT",
-                  caseDescription: "Case description",
-                  linkedCases: [],
-                  filingDate: formatDate(new Date()),
-                  caseDetails: {},
-                  caseCategory: "CRIMINAL",
-                  statutesAndSections: [
-                    {
-                      tenantId,
-                      statute: "Statute",
-                      sections: ["Negotiable Insruments Act", "02."],
-                      subsections: ["138", "03."],
-                    },
-                  ],
-                  litigants: [],
-                  representatives: [],
+              setIsDisabled(true);
+              const cases = {
+                tenantId,
+                resolutionMechanism: "COURT",
+                caseDescription: "Case description",
+                linkedCases: [],
+                filingDate: formatDate(new Date()),
+                caseDetails: {},
+                caseCategory: "CRIMINAL",
+                statutesAndSections: [
+                  {
+                    tenantId,
+                    statute: "Statute",
+                    sections: ["Negotiable Instruments Act", "02."],
+                    subsections: ["138", "03."],
+                  },
+                ],
+                litigants: [
+                  {
+                    tenantId,
+                    partyCategory: "INDIVIDUAL",
+                  },
+                ],
+                representatives: [
+                  {
+                    advocateId: advocateId,
+                    tenantId,
+                    representing: [],
+                  },
+                ],
+                documents: [
+                  {
+                    documentType: null,
+                    fileStore: null,
+                    documentUid: "",
+                    additionalDetails: {},
+                  },
+                ],
+                workflow: {
+                  action: "SAVE_DRAFT",
+                  comments: null,
+                  assignes: null,
                   documents: [
                     {
                       documentType: null,
                       fileStore: null,
-                      documentUid: "",
-                      additionalDetails: {},
+                      documentUid: null,
+                      additionalDetails: null,
                     },
                   ],
-                  workflow: {
-                    action: "SAVE_DRAFT",
-                    comments: null,
-                    assignes: null,
-                    documents: [
-                      {
-                        documentType: null,
-                        fileStore: null,
-                        documentUid: null,
-                        additionalDetails: null,
-                      },
-                    ],
-                  },
-                  additionalDetails: {},
                 },
-              ];
-              DRISTIService.caseCreateService({ cases, tenantId });
+                additionalDetails: {},
+              };
+              DRISTIService.caseCreateService({ cases, tenantId })
+                .then((res) => {
+                  history.push(`${path}/case?caseId=${res?.cases[0]?.id}`);
+                })
+                .finally(() => setIsDisabled(false));
             }}
           />
           {/* <ButtonSelector
