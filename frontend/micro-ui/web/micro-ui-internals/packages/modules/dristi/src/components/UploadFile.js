@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, Fragment, useCallback } from "react";
 import { Close, RemoveableTag, ButtonSelector } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
+import { UploadIcon } from "../icons/svgIndex";
 
 const getRandomId = () => {
   return Math.floor((Math.random() || 1) * 139);
@@ -191,8 +192,14 @@ const UploadFile = (props) => {
             ref={inpRef}
             style={{ opacity: 0, maxWidth: "100%", minHeight: "40px" }}
           />
-          <span style={{ minWidth: "100%", textAlign: "center", cursor: "pointer" }} onClick={handleReupload}>
-            <span style={{ color: "#007E7E" }} className="upload-button-custimised">
+          <span style={{ minWidth: "100%", cursor: "pointer", alignItems: "center" }} onClick={handleReupload}>
+            <span
+              style={{ color: "#007E7E", display: "flex", flexDirection: "row", justifyContent: "center", marginTop: "5px" }}
+              className="upload-button-custimised"
+            >
+              <div style={{ marginRight: "5px" }}>
+                <UploadIcon />
+              </div>
               {t("CS_COMMON_CHOOSE_FILE")}
             </span>
           </span>

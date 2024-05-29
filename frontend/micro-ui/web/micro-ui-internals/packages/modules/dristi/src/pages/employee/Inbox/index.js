@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { CustomDropdown, Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
+import { CustomDropdown, Header, InboxSearchComposer, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { dropdownConfig, newconfigAdvocate, newconfigClerk } from "./config";
 
@@ -24,6 +24,18 @@ const Inbox = ({ tenants, parentRoute }) => {
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type") || "advocate";
+  const actions = urlParams.get("actions");
+  const [message, setMessage] = useState(null);
+  useEffect(() => {
+    if (actions) {
+      setMessage(actions === "APPROVE" ? t("ES_USER_APPROVED") : actions === "ERROR" ? t("ES_API_ERROR") : t("ES_USER_REJECTED"));
+      setTimeout(() => {
+        history.push(`/digit-ui/employee/dristi/registration-requests`);
+      }, 3000);
+    }
+    return;
+  }, [actions]);
+
   const defaultType = { code: type, name: type?.charAt(0)?.toUpperCase() + type?.slice(1) };
   const [{ userType }, setSearchParams] = useState({
     eventStatus: [],
@@ -66,6 +78,9 @@ const Inbox = ({ tenants, parentRoute }) => {
           {type === "clerk" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigClerk}></InboxSearchComposer>}
           {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigAdvocate}></InboxSearchComposer>}
         </div>
+        {message && (
+          <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")} label={message} onClose={() => setMessage(null)} />
+        )}
       </div>
     </React.Fragment>
   );
