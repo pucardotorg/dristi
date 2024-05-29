@@ -8,6 +8,7 @@ const debtLiabilityFromconfig = [
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
+          name: "liabilityNature",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
@@ -48,6 +49,7 @@ const debtLiabilityFromconfig = [
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
+          name: "liabilityType",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
