@@ -105,60 +105,58 @@ function CaseType({ t }) {
             isDisabled={false}
             onButtonClick={() => {
               setIsDisabled(true);
-              const cases = [
-                {
-                  tenantId,
-                  resolutionMechanism: "COURT",
-                  caseDescription: "Case description",
-                  linkedCases: [],
-                  filingDate: formatDate(new Date()),
-                  caseDetails: {},
-                  caseCategory: "CRIMINAL",
-                  statutesAndSections: [
-                    {
-                      tenantId,
-                      statute: "Statute",
-                      sections: ["Negotiable Insruments Act", "02."],
-                      subsections: ["138", "03."],
-                    },
-                  ],
-                  litigants: [
-                    {
-                      tenantId,
-                      partyCategory: "INDIVIDUAL",
-                    },
-                  ],
-                  representatives: [
-                    {
-                      advocateId: advocateId,
-                      tenantId,
-                      representing: [],
-                    },
-                  ],
+              const cases = {
+                tenantId,
+                resolutionMechanism: "COURT",
+                caseDescription: "Case description",
+                linkedCases: [],
+                filingDate: formatDate(new Date()),
+                caseDetails: {},
+                caseCategory: "CRIMINAL",
+                statutesAndSections: [
+                  {
+                    tenantId,
+                    statute: "Statute",
+                    sections: ["Negotiable Instruments Act", "02."],
+                    subsections: ["138", "03."],
+                  },
+                ],
+                litigants: [
+                  {
+                    tenantId,
+                    partyCategory: "INDIVIDUAL",
+                  },
+                ],
+                representatives: [
+                  {
+                    advocateId: advocateId,
+                    tenantId,
+                    representing: [],
+                  },
+                ],
+                documents: [
+                  {
+                    documentType: null,
+                    fileStore: null,
+                    documentUid: "",
+                    additionalDetails: {},
+                  },
+                ],
+                workflow: {
+                  action: "SAVE_DRAFT",
+                  comments: null,
+                  assignes: null,
                   documents: [
                     {
                       documentType: null,
                       fileStore: null,
-                      documentUid: "",
-                      additionalDetails: {},
+                      documentUid: null,
+                      additionalDetails: null,
                     },
                   ],
-                  workflow: {
-                    action: "SAVE_DRAFT",
-                    comments: null,
-                    assignes: null,
-                    documents: [
-                      {
-                        documentType: null,
-                        fileStore: null,
-                        documentUid: null,
-                        additionalDetails: null,
-                      },
-                    ],
-                  },
-                  additionalDetails: {},
                 },
-              ];
+                additionalDetails: {},
+              };
               DRISTIService.caseCreateService({ cases, tenantId })
                 .then((res) => {
                   history.push(`${path}/case?caseId=${res?.cases[0]?.id}`);

@@ -229,7 +229,7 @@ function EFilingCases({ path }) {
       data.litigants = litigants;
       data.representatives = representatives;
     }
-    DRISTIService.caseUpdateService({ cases: [{ ...caseDetails, ...data }], tenantId }, tenantId);
+    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data }, tenantId }, tenantId);
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
