@@ -48,8 +48,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: >-
-                #/components/schemas/EvidenceRequest
+              $ref: '#/components/schemas/EvidenceRequest'
         required: true
       responses:
         '201':
@@ -64,9 +63,35 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
-
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  /artifacts/v1/_search:
+    post:
+      tags:
+        - Evidence
+      summary: Search for artifacts
+      description: |
+        API used to search  artifacts using search criteria
+      requestBody:
+        description: Search criteria for artifcat + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/EvidenceSearchRequest'
+        required: true
+      responses:
+        '201':
+          description: ReponseInfo with artifact(s) updated sucessfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/EvidenceSearchResponse'
+        '400':
+          description: Artifact(s) creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: ArtifactRequest
 components:
   schemas:
     Artifact:
@@ -203,16 +228,14 @@ components:
             This field is meant to hold any extra information that we want to
             store for this entity.
         auditdetails:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
       required: [tenantId, artifactId, individualId, comment]
    
     EvidenceRequest:
       type: object
       properties:
-        requestInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         artifacts:
           type: array
           items:
@@ -220,14 +243,55 @@ components:
     EvidenceResponse:
       type: object
       properties:
-        responseInfo:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         artifacts:
           type: array
           items:
             $ref: '#/components/schemas/Artifact'
         pagination:
-          $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination
-
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Pagination'
+    EvidenceSearchRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        tenantid: 
+          type: string
+        criteria:
+          $ref: '#/components/schemas/EvidenceSearchCriteria'
+          
+    EvidenceSearchResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        tenantid: 
+          type: string    
+        criteria:
+          $ref: '#/components/schemas/EvidenceSearchCriteria'
+          
+    EvidenceSearchCriteria:
+      type: object
+      description: the fields specified will be used in a logical AND condition
+      properties:
+        caseId:
+          type: string
+        applicationId:
+          type: string
+        hearing:
+          type: string
+        order:
+          type: string
+        sourceid:
+          type: string
+        sourcename:
+          type: string
+        status:
+          type: string
+        responseList:
+          type: array
+          description: his is an output field and will contain the list of artifacts found as per the search criteria
+          items:
+            $ref: '#/components/schemas/Artifact'
+        
