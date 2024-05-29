@@ -1,19 +1,11 @@
 name: cron test
 
 on:
-  push:
-    branches:
-      - test1
   schedule:
      - cron: '*/5 * * * *'
-    # Run at 6:30 p.m. UTC (12 a.m. IST)
-    # - cron: '30 18 * * 1-5'
-    # Run at 2:30 a.m. UTC (8 a.m. IST)
-   
-
+     
 jobs:
-  stop-resources:
-    if: github.event_name == 'schedule' && github.event.schedule == '*/5 * * * *'
+  test_schedule:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
