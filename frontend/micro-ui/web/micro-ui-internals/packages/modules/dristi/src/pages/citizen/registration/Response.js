@@ -50,7 +50,8 @@ const Response = ({ refetch }) => {
         <React.Fragment>
           <Button
             onButtonClick={() => {
-              history.push(`/${window?.contextPath}/citizen/dristi/home`);
+              refetch();
+              history.push(`/${window?.contextPath}/citizen/dristi/home/file-case`);
             }}
             label={t("File a case")}
             style={{
@@ -62,6 +63,7 @@ const Response = ({ refetch }) => {
           />
           <Button
             onButtonClick={() => {
+              refetch();
               history.push(`/${window?.contextPath}/citizen/dristi/home`);
             }}
             label={t("Join a case")}

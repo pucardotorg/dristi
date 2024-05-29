@@ -1,10 +1,19 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function SelectId({ config, t, params, history, onSelect }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const closeToast = () => {
+    setShowErrorToast(false);
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, [closeToast]);
   const onFormValueChange = (setValue, formData, formState) => {
     let isDisabled = false;
     config.forEach((curr) => {
@@ -34,9 +43,6 @@ function SelectId({ config, t, params, history, onSelect }) {
     } else {
       setIsDisabled(false);
     }
-  };
-  const closeToast = () => {
-    setShowErrorToast(false);
   };
 
   const validateFormData = (data) => {

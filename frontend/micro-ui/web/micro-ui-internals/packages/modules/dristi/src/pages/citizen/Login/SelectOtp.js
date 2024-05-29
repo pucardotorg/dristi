@@ -6,11 +6,26 @@ import FormStep from "../../../components/FormStep";
 import { Close } from "@egovernments/digit-ui-svg-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, userType = "citizen", canSubmit, params, path, isAdhaar, cardText }) => {
+const SelectOtp = ({
+  config,
+  otp,
+  onOtpChange,
+  onResend,
+  onSelect,
+  t,
+  error,
+  userType = "citizen",
+  canSubmit,
+  params,
+  setParams,
+  path,
+  isAdhaar,
+  cardText,
+}) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(25);
   useInterval(
     () => {
       setTimeLeft(timeLeft - 1);
@@ -20,9 +35,15 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
 
   const handleResendOtp = () => {
     onResend();
-    setTimeLeft(30);
+    setTimeLeft(25);
   };
   const onCancel = () => {
+    setParams({
+      ...params,
+      otp: "",
+      aadharOtp: "",
+    });
+
     history.goBack();
   };
   const Heading = (props) => {

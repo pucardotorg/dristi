@@ -47,7 +47,16 @@ const Registration = ({ stateCode }) => {
   const searchParams = Digit.Hooks.useQueryParams();
   const [canSubmitAadharOtp, setCanSubmitAadharOtp] = useState(true);
   const [error, setError] = useState(null);
+  const closeToast = () => {
+    setError(null);
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, [closeToast]);
   useEffect(() => {
     if (!user) {
       return;
@@ -120,6 +129,7 @@ const Registration = ({ stateCode }) => {
   };
   const selectOtp = async () => {
     try {
+      setNewParams({ ...newParams, otp: "" });
       setIsOtpValid(true);
       setCanSubmitOtp(false);
       const { mobileNumber, otp, name } = newParams;
@@ -150,6 +160,7 @@ const Registration = ({ stateCode }) => {
     history.push(`${path}/aadhar-otp`);
   };
   const resendOtp = async () => {
+    setNewParams({ ...newParams, otp: "", aadharOtp: "" });
     const { mobileNumber } = newParams;
     const data = {
       mobileNumber,
@@ -181,6 +192,7 @@ const Registration = ({ stateCode }) => {
 
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
+    setNewParams({ ...newParams, aadharOtp: "" });
     history.push(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
@@ -226,6 +238,7 @@ const Registration = ({ stateCode }) => {
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
+              setParams={setNewParams}
               otp={newParams?.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
@@ -261,6 +274,7 @@ const Registration = ({ stateCode }) => {
               onOtpChange={handleAadharOtpChange}
               onResend={resendOtp}
               onSelect={onAadharOtpSelect}
+              setParams={setNewParams}
               otp={newParams?.aadharOtp}
               error={isOtpValid}
               canSubmit={canSubmitAadharOtp}
@@ -274,7 +288,7 @@ const Registration = ({ stateCode }) => {
             <SelectUserType config={[stepItems[2]]} t={t} setParams={setNewParams} params={newParams} onSelect={handleUserTypeSave} />
           </Route>
 
-          {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
+          {error && <Toast error={true} label={error} onClose={closeToast} />}
         </AppContainer>
       </Switch>
     </div>

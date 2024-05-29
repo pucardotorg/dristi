@@ -1,5 +1,5 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
@@ -11,6 +11,13 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
   const closeToast = () => {
     setShowErrorToast(false);
   };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
   const validateFormData = (data) => {
     let isValid = true;
     config.forEach((curr) => {
@@ -162,7 +169,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
         ...userType,
       },
     });
-    if (userTypeSelcted === "LITIGANT") {
+    if (userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") {
       const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
       Digit.DRISTIService.postIndividualService(Individual, tenantId)
         .then(() => {
