@@ -60,21 +60,23 @@ public class CaseService {
             log.error("Error occurred while creating case");
             throw new CustomException(CREATE_CASE_ERR, e.getMessage());
         }
-
-
     }
 
     public List<CourtCase> searchCases(CaseSearchRequest caseSearchRequests) {
 
         try {
+            List<CourtCase> courtCaseList = new ArrayList<>();
+
             // Fetch applications from database according to the given search criteria
-            List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
-            log.info("Court Case Applications Size :: {}", courtCases.size());
+            caseRepository.getApplications(caseSearchRequests.getCriteria());
+
             // If no applications are found matching the given criteria, return an empty list
-            if (CollectionUtils.isEmpty(courtCases))
-                return new ArrayList<>();
-            courtCases.forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
-            return courtCases;
+            for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()){
+                searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
+                courtCaseList.addAll(searchCriteria.getResponseList());
+            }
+            return courtCaseList;
+
         } catch (Exception e) {
             log.error("Error while fetching to search results");
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());

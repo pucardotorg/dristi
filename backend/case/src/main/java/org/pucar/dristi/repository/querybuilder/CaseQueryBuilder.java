@@ -106,94 +106,58 @@ public class CaseQueryBuilder {
         }
     }
 
-    public String getCasesSearchQuery(List<CaseCriteria> criteriaList, List<Object> preparedStmtList) {
+    public String getCasesSearchQuery(CaseCriteria criteria, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_CASES_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
-            if (criteriaList != null && !criteriaList.isEmpty()) {
+            if (criteria != null) {
 
-                List<String> ids = criteriaList.stream()
-                        .map(CaseCriteria::getCaseId)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> cnrNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getCaseId() == null)
-                        .map(CaseCriteria::getCnrNumber)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> filingNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getCaseId() == null && criteria.getCnrNumber() == null)
-                        .map(CaseCriteria::getFilingNumber)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> courtCaseNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getCaseId() == null && criteria.getCnrNumber() == null && criteria.getFilingNumber() == null)
-                        .map(CaseCriteria::getCourtCaseNumber)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-
-                if (!ids.isEmpty()) {
+                if (criteria.getCaseId() != null && !criteria.getCaseId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.id IN (")
-                            .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(ids);
+                    query.append("cases.id = ?");
+                    preparedStmtList.add(criteria.getCaseId());
                     firstCriteria = false;
                 }
 
-                if (!cnrNumbers.isEmpty()) {
+                if (criteria.getCnrNumber() != null && !criteria.getCnrNumber().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.cnrNumber IN (")
-                            .append(cnrNumbers.stream().map(reg -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(cnrNumbers);
-                    firstCriteria = false;
-
-                }
-
-                if (!filingNumbers.isEmpty()) {
-                    addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.filingnumber IN (")
-                            .append(filingNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(filingNumbers);
+                    query.append("cases.cnrNumber = ?");
+                    preparedStmtList.add(criteria.getCnrNumber());
                     firstCriteria = false;
                 }
 
-                if (!courtCaseNumbers.isEmpty()) {
+                if (criteria.getFilingNumber() != null && !criteria.getFilingNumber().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.courtcasenumber IN (")
-                            .append(courtCaseNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(courtCaseNumbers);
+                    query.append("cases.filingnumber = ?");
+                    preparedStmtList.add(criteria.getFilingNumber());
                     firstCriteria = false;
                 }
 
-                for (CaseCriteria caseCriteria : criteriaList) {
-                    if (caseCriteria.getFilingFromDate() != null && caseCriteria.getFilingToDate() != null) {
-                        if (firstCriteria == false)
-                            query.append("OR cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
-                        else {
-                            query.append("WHERE cases.filingdate BETWEEN " + caseCriteria.getFilingFromDate() + " AND " + caseCriteria.getFilingToDate() + " ");
-                        }
-                        firstCriteria = false;
+                if (criteria.getCourtCaseNumber() != null && !criteria.getCourtCaseNumber().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.courtcasenumber = ?");
+                    preparedStmtList.add(criteria.getCourtCaseNumber());
+                    firstCriteria = false;
+                }
+
+                if (criteria.getFilingFromDate() != null && criteria.getFilingToDate() != null) {
+                    if (!firstCriteria)
+                        query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
+                    else {
+                        query.append("WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
                     }
-
-                    if (caseCriteria.getRegistrationFromDate() != null && caseCriteria.getRegistrationToDate() != null) {
-                        if (firstCriteria == false)
-                            query.append("OR cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
-                        else {
-                            query.append("WHERE cases.registrationdate BETWEEN " + caseCriteria.getRegistrationFromDate() + " AND " + caseCriteria.getRegistrationToDate() + " ");
-                        }
-                        firstCriteria = false;
-                    }
+                    firstCriteria = false;
                 }
 
+                if (criteria.getRegistrationFromDate() != null && criteria.getRegistrationToDate() != null) {
+                    if (!firstCriteria)
+                        query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(" AND ").append(criteria.getRegistrationToDate()).append(" ");
+                    else {
+                        query.append("WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(" AND ").append(criteria.getRegistrationToDate()).append(" ");
+                    }
+                    firstCriteria = false;
+                }
             }
             query.append(ORDERBY_CREATEDTIME);
 

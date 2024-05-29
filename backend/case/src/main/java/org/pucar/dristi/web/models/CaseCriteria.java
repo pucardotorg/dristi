@@ -1,13 +1,11 @@
 package org.pucar.dristi.web.models;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -50,5 +48,17 @@ public class CaseCriteria {
 	@JsonProperty("registrationToDate")
 	@Valid
 	private LocalDate registrationToDate = null;
+
+        @JsonProperty("responseList")
+        @Valid
+        private List<CourtCase> responseList = null;
+
+        public CaseCriteria addResponseListItem(CourtCase responseListItem) {
+                if (this.responseList == null) {
+                        this.responseList = new ArrayList<>();
+                }
+                this.responseList.add(responseListItem);
+                return this;
+        }
 
 }
