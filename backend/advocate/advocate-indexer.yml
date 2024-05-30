@@ -12,7 +12,7 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.advocate
           customJsonMapping:
-            indexMapping: {"Data":{"advocateDetails":{},"history":{}}}
+            indexMapping: { "Data": { "advocateDetails": {}, "history": {} } }
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.advocateDetails.id
@@ -50,7 +50,7 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.advocate
           customJsonMapping:
-            indexMapping: {"Data":{"advocateDetails":{},"history":{}}}
+            indexMapping: { "Data": { "advocateDetails": {}, "history": {} } }
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.advocateDetails.id
@@ -77,6 +77,4 @@ ServiceMaps:
               - inJsonPath: $.auditDetails.lastModifiedTime
                 outJsonPath: $.Data.advocateDetails.lastModifiedTime
               - inJsonPath: $.additionalDetails
-                outJsonPath: $.Data.advocateDetails.additionalDetails              
-                
- 
+                outJsonPath: $.Data.advocateDetails.additionalDetails

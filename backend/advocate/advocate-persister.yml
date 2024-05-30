@@ -6,7 +6,6 @@ serviceMaps:
       fromTopic: save-advocate-application
       isTransaction: true
       queryMaps:
-
         - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,status,barRegistrationNumber,advocateType,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?);
           basePath: advocate
           jsonMaps:

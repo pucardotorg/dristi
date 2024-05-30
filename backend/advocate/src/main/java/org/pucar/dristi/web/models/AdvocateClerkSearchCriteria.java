@@ -44,5 +44,4 @@ public class AdvocateClerkSearchCriteria {
 		this.responseList.add(responseListItem);
 		return this;
 	}
-
 }

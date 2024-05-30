@@ -33,6 +33,12 @@ public class AdvocateClerkSearchRequest {
 	@Valid
 	private List<AdvocateClerkSearchCriteria> criteria = null;
 
+	@JsonProperty("status")
+	private List<String> status = null;
+
+	@JsonProperty("applicationNumber")
+	private String applicationNumber = null;
+
 	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
 		if (this.criteria == null) {
 			this.criteria = new ArrayList<>();
