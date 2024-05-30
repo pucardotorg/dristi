@@ -51,7 +51,7 @@
         },
         {
           "sla": 5,
-          "state": "REQUESTFILERESPONSE",
+          "state": "PENDINGRESPONSEAPPROVAL",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
