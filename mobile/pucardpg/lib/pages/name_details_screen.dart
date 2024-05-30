@@ -85,7 +85,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     keyboardType: TextInputType.text,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
-                                          RegExp(r'[a-zA-Z]')),
+                                          RegExp(r'^[a-zA-Z][a-zA-Z ]*$')),
                                     ],
                                     validationMessages: {
                                       'required': (_) =>
@@ -110,7 +110,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     keyboardType: TextInputType.text,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
-                                          RegExp(r'[a-zA-Z]')),
+                                          RegExp(r'^[a-zA-Z][a-zA-Z ]*$')),
                                     ],
                                   ),
                                   const SizedBox(
@@ -127,7 +127,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     keyboardType: TextInputType.text,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
-                                          RegExp(r'[a-zA-Z]')),
+                                          RegExp(r'^[a-zA-Z][a-zA-Z ]*$')),
                                     ],
                                     validationMessages: {
                                       'required': (_) =>

@@ -225,7 +225,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                         isSubmitting = false;
                                         widget.theme.showDigitDialog(
                                             true,
-                                            error,
+                                            AppLocalizations.of(context).translate(i18.errorMessages.esUserNotPermitted),
                                             context);
                                       },
                                       otpGenerationSucceed: (type){

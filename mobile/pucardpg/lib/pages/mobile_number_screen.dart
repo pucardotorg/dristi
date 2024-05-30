@@ -187,7 +187,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                             isSubmitting = false;
                             widget.theme.showDigitDialog(
                                 true,
-                                error,
+                                AppLocalizations.of(context).translate(i18.errorMessages.mobileNumberAlreadyRegistered),
                                 context);
                           },
                           otpGenerationSucceed: (type){

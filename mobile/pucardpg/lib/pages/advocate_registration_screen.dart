@@ -136,6 +136,7 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                               FilteringTextInputFormatter.allow(
                                   RegExp("[a-zA-Z0-9\\/\\']"))
                             ],
+                            maxLength: 20,
                             textCapitalization: TextCapitalization.characters,
                           ),
                           const SizedBox(height: 20,),

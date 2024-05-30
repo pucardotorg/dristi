@@ -14,6 +14,7 @@ const advocateVerification = AdvocateVerification();
 const success = SuccessText();
 const terms = TermsAndConditionsText();
 const applicationDetails = ApplicationDetails();
+const errorMessages = ErrorMessages();
 
 const appConstants = AppConstants();
 
@@ -216,4 +217,10 @@ class TermsAndConditionsText {
   String get secondTermsAndConditions => 'SECOND_TERMS_AND_CONDITIONS';
   String get thirdTermsAndConditions => 'THIRD_TERMS_AND_CONDITIONS';
   String get fourthTermsAndConditions => 'FOURTH_TERMS_AND_CONDITIONS';
+}
+
+class ErrorMessages {
+  const ErrorMessages();
+  String get esUserNotPermitted => 'ES_ERROR_USER_NOT_PERMITTED';
+  String get mobileNumberAlreadyRegistered => 'MOBILE_NUMBER_ALREADY_REGISTERED';
 }
