@@ -71,11 +71,11 @@ public class WorkflowService {
         try {
             Workflow workflow = application.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
-            processInstance.setBusinessId(application.getApplicationNumber()); //TODO CHECK BUSINESS ID
+            processInstance.setBusinessId(application.getApplicationNumber());
             processInstance.setAction(workflow.getAction());
-            processInstance.setModuleName("pucar"); // FIXME
+            processInstance.setModuleName("pucar");
             processInstance.setTenantId(application.getTenantId());
-            processInstance.setBusinessService("application"); // FIXME
+            processInstance.setBusinessService("application");
             processInstance.setDocuments(workflow.getDocuments());
             processInstance.setComment(workflow.getComments());
             if (!CollectionUtils.isEmpty(workflow.getAssignes())) {
@@ -112,23 +112,23 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
-//    private BusinessService getBusinessService(Application courtCase, RequestInfo requestInfo) {
-//        try {
-//            String tenantId = courtCase.getTenantId();
-//            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
-//            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-//            Object result = repository.fetchResult(url, requestInfoWrapper);
-//            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
-//            if (CollectionUtils.isEmpty(response.getBusinessServices()))
-//                throw new CustomException();
-//            return response.getBusinessServices().get(0);
-//        } catch (CustomException e){
-//            throw e;
-//        } catch (Exception e) {
-//            log.error("Error getting business service: {}", e.getMessage());
-//            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
-//        }
-//    }
+    private BusinessService getBusinessService(Application courtCase, RequestInfo requestInfo) {
+        try {
+            String tenantId = courtCase.getTenantId();
+            StringBuilder url = getSearchURLWithParams(tenantId, "CASE");
+            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+            Object result = repository.fetchResult(url, requestInfoWrapper);
+            BusinessServiceResponse response = mapper.convertValue(result, BusinessServiceResponse.class);
+            if (CollectionUtils.isEmpty(response.getBusinessServices()))
+                throw new CustomException();
+            return response.getBusinessServices().get(0);
+        } catch (CustomException e){
+            throw e;
+        } catch (Exception e) {
+            log.error("Error getting business service: {}", e.getMessage());
+            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
+        }
+    }
     private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfBusinessServiceSearchPath());
@@ -143,29 +143,7 @@ public class WorkflowService {
         url.append("&businessIds=").append(businessService);
         return url;
     }
-//    public ProcessInstanceRequest getProcessInstanceRegistrationPayment(CaseRequest updateRequest) {
-//        try {
-//            CourtCase application = updateRequest.getCases().get(0);
-//            ProcessInstance process = ProcessInstance.builder()
-//                    .businessService("ADV")
-//                    .businessId(application.getFilingNumber())
-//                    .comment("Payment for Case registration processed")
-//                    .moduleName("cases-services")
-//                    .tenantId(application.getTenantId())
-//                    .action("PAY")
-//                    .build();
-//            return ProcessInstanceRequest.builder()
-//                    .requestInfo(updateRequest.getRequestInfo())
-//                    .processInstances(Arrays.asList(process))
-//                    .build();
-//        } catch (CustomException e){
-//            throw e;
-//        } catch (Exception e) {
-//            log.error("Error getting process instance for case registration payment: {}", e.getMessage());
-//            throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
-//        }
-//    }
-//
+
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
         if(processInstance == null) {
             return null;

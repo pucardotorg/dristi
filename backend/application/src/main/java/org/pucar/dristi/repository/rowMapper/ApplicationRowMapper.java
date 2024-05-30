@@ -41,7 +41,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .lastModifiedTime(lastModifiedTime)
                             .build();
 
-                    application = Application.builder() //FIXME ADD ALL THE FIELDS
+                    application = Application.builder()
                             .applicationNumber(rs.getString("applicationnumber"))
                             .cnrNumber(rs.getString("cnrnumber"))
                             .filingNumber(rs.getString("filingnumber"))

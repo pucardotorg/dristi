@@ -66,7 +66,7 @@ public class ApplicationValidator {
         //TODO REMAINING VALIDATIONS FOR UPDATE APPLICATION
 
         List<Application> existingApplication = repository.getApplications(String.valueOf(application.getId()), application.getFilingNumber(),
-                application.getCnrNumber(), application.getTenantId(), null, null, null);//fixme pass limit and offset
+                application.getCnrNumber(), application.getTenantId(), application.getStatus(), null, null);//fixme pass limit and offset
 
         if(existingApplication == null) {
             throw new CustomException(VALIDATION_ERR, "Application does not exist");

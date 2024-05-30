@@ -52,8 +52,6 @@ public class ApplicationEnrichment {
                         document.setDocumentUid(document.getId());
                     });
                 }
-                //TODO DO REMAINING ENRICHMENT
-
             }
         }
         catch (CustomException e){
@@ -76,7 +74,5 @@ public class ApplicationEnrichment {
                 log.error("Error enriching application upon update: {}", e.getMessage());
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error enriching application upon update: " + e.getMessage());
             }
-        //TODO DO REMAINING ENRICHMENT
-
     }
 }

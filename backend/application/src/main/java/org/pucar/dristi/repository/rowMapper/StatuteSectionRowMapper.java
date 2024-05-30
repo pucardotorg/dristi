@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.STATUTE_ROW_MAPPER_EXCEPTION;
+
 @Component
 @Slf4j
 public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, StatuteSection>> {
@@ -53,7 +56,7 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
             }
         } catch (Exception e) {
             log.error("Error occurred while processing Application ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Application ResultSet: " + e.getMessage());
+            throw new CustomException(STATUTE_ROW_MAPPER_EXCEPTION, "Error occurred while processing Application ResultSet: " + e.getMessage());
         }
         return statuteSectionMap;
     }

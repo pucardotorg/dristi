@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -84,7 +83,7 @@ public class ApplicationQueryBuilder {
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building application search query");
+            log.error("Error while building application search query {}", e.getMessage());
             throw new CustomException(APPLICATION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the application search query: "+ e.getMessage());
         }
     }
@@ -110,8 +109,8 @@ public class ApplicationQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.getMessage());
+            log.error("Error while building document search query {}", e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -129,8 +128,8 @@ public class ApplicationQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.getMessage());
+            log.error("Error while building statute section search query {}", e.getMessage());
+            throw new CustomException(STATUTE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 }

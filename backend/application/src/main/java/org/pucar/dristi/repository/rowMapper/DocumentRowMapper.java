@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_ROW_MAPPER_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 
@@ -47,7 +48,7 @@ public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Docum
         }
         catch (Exception e){
             log.error("Error occurred while processing document ResultSet: {}", e.getMessage());
-            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing document ResultSet: "+ e.getMessage());
+            throw new CustomException(DOCUMENT_ROW_MAPPER_EXCEPTION,"Error occurred while processing document ResultSet: "+ e.getMessage());
         }
         return documentMap;
     }
