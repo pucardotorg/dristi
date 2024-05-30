@@ -46,27 +46,27 @@ public class ApplicationQueryBuilder {
             query.append(FROM_APP_TABLE);
 
             boolean firstCriteria = true; // To check if it's the first criteria
-            if(id != null){
+            if(id != null && !id.isEmpty()){
                 addClauseIfRequired(query, firstCriteria);
                 query.append("app.id =").append("'").append(id).append("'");
                 firstCriteria = false; // Update firstCriteria flag
             }
-            if(filingNumber != null){
+            if(filingNumber != null && !filingNumber.isEmpty()){
                 addClauseIfRequired(query, firstCriteria);
                 query.append("app.filingNumber =").append("'").append(filingNumber).append("'");
                 firstCriteria = false; // Update firstCriteria flag
              }
-            if(cnrNumber != null){
+            if(cnrNumber != null && !cnrNumber.isEmpty()){
                 addClauseIfRequired(query, firstCriteria);
                 query.append("app.cnrNumber =").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
-            if(tenantId != null){
+            if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequired(query, firstCriteria);
                 query.append("app.tenantId =").append("'").append(tenantId).append("'");
                 firstCriteria = false;
             }
-            if (status!=null) {
+            if (status!=null && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("app.status =").append("'").append(status).append("'");
                 firstCriteria = false;
