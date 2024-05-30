@@ -137,7 +137,9 @@ const App = ({ stateCode, tenantId }) => {
   if (isUserLoggedIn && !location.pathname.includes(`${path}/home`)) {
     history.push(`${path}/home`);
   }
-
+  if (isUserLoggedIn && registerScreenRoute.includes(location.pathname)) {
+    history.push(`${path}/home`);
+  }
   if (isLoading) {
     return <Loader />;
   }
