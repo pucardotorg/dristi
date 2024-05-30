@@ -35,8 +35,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
-      - name: Build and analyze case
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
-          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+      - name: Build and Push Docker image for advocate
+        run: |
+          docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for advocate_DB
+        run: |
+          docker build  -t pucar_advocate_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
+           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
+           docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
