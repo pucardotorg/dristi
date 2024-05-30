@@ -49,11 +49,6 @@ public class AdvocateApiController {
 		this.request = request;
 	}
 
-	public void setMockInjects(AdvocateService advocateService, ResponseInfoFactory responseInfoFactory){
-		this.advocateService = advocateService;
-		this.responseInfoFactory = responseInfoFactory;
-	}
-
 	@RequestMapping(value = "/advocate/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateResponse> advocateV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the advocate registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateRequest body) {

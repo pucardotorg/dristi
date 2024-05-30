@@ -45,10 +45,7 @@ public class ClerkApiController {
 		this.objectMapper = objectMapper;
 		this.request = request;
 	}
-	public void setMockInjects(AdvocateClerkService advocateClerkService, ResponseInfoFactory responseInfoFactory){
-		this.advocateClerkService = advocateClerkService;
-		this.responseInfoFactory = responseInfoFactory;
-	}
+
 	@RequestMapping(value = "/clerk/v1/_create", method = RequestMethod.POST)
 	public ResponseEntity<AdvocateClerkResponse> clerkV1CreatePost(
 			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the clerk registration + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody AdvocateClerkRequest body) {
