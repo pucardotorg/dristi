@@ -1,4 +1,4 @@
-import { HelpOutlineIcon, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, HelpOutlineIcon, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
@@ -36,7 +36,9 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <div style={{ display: "flex", justifyContent: "right" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <BackButton />
+
             {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
             <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
               <span style={{ color: "#f47738" }}>Help</span>

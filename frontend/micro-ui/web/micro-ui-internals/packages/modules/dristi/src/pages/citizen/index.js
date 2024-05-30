@@ -124,6 +124,7 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/registration/aadhar-otp`,
     `${path}/home/registration/additional-details`,
   ];
+  const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
 
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
     history.push(`${path}/home/login`);
