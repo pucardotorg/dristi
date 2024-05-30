@@ -1,6 +1,8 @@
 package org.pucar.dristi.repository.rowMapper;
 
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,13 +12,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 public class DocumentRowMapperTest {
 
@@ -25,10 +31,14 @@ public class DocumentRowMapperTest {
 
     @Mock
     private ResultSet resultSet;
-
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+        documentRowMapper = new DocumentRowMapper();
+    }
     @Test
     public void testExtractData() throws Exception {
-        MockitoAnnotations.openMocks(this); // Initialize mocks
+//        MockitoAnnotations.openMocks(this); // Initialize mocks
 
         // Sample ResultSet data
         when(resultSet.next()).thenReturn(true).thenReturn(false);
@@ -57,5 +67,38 @@ public class DocumentRowMapperTest {
         assertEquals("doc_type_1", document.getDocumentType());
         assertEquals("file_store_path_1", document.getFileStore());
         assertEquals("doc_uid_1", document.getDocumentUid());
+    }
+
+    @Test
+    void testExtractData_WhenSQLExceptionThrown_ShouldThrowCustomException() throws Exception {
+        // Arrange
+//        when(resultSet.next()).thenReturn(true).thenReturn(false);
+
+        when(resultSet.next()).thenThrow(new SQLException("Test SQL Exception"));
+
+        // Act & Assert
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            documentRowMapper.extractData(resultSet);
+        });
+
+        // Assert
+        assertEquals(ROW_MAPPER_EXCEPTION, thrown.getCode());
+        assertEquals("Error occurred while processing document ResultSet: Test SQL Exception", thrown.getMessage());
+    }
+
+    @Test
+    void testExtractData_WhenOtherExceptionThrown_ShouldThrowCustomException() throws Exception {
+        // Arrange
+        when(resultSet.next()).thenReturn(true);
+        when(resultSet.getString(anyString())).thenThrow(new RuntimeException("Test Runtime Exception"));
+
+        // Act & Assert
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            documentRowMapper.extractData(resultSet);
+        });
+
+        // Assert
+        assertEquals(ROW_MAPPER_EXCEPTION, thrown.getCode());
+        assertEquals("Error occurred while processing document ResultSet: Test Runtime Exception", thrown.getMessage());
     }
 }
