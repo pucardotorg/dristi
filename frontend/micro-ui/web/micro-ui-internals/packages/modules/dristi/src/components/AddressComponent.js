@@ -30,7 +30,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
     return response;
   };
   function setValue(value, input) {
-    if (input === "pincode") {
+    if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
           if (
@@ -87,6 +87,18 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
           });
         });
       return;
+    } else if (input === "pincode") {
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
+          res[curr] = "";
+          if (curr === "pincode") {
+            res[curr] = value;
+          }
+          return res;
+        }, {}),
+      });
+      return;
     }
     if (Array.isArray(input)) {
       onSelect(config.key, {
@@ -96,55 +108,74 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      if (value.startsWith(" ")) {
+        value = "";
+      }
+      onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
+  const checkIfValidated = (currentValue, input) => {
+    const isEmpty = /^\s*$/.test(currentValue);
+    return isEmpty || !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+  };
 
   return (
     <div>
       {inputs
         .filter((input) => input.type === "LocationSearch")
-        .map((input, index) => (
-          <div className="field" key={index} style={{ alignContent: "center" }}>
-            <LocationSearch
-              locationStyle={{ maxWidth: "900px" }}
-              position={formData?.[config.key]?.coordinates || {}}
-              setCoordinateData={setCoordinateData}
-              onChange={(pincode, location, coordinates = {}) => {
-                setValue(
-                  {
-                    pincode: formData && formData[config.key] ? formData[config.key]["pincode"] : pincode || "",
-                    state:
-                      formData && formData[config.key] ? formData[config.key]["state"] : getLocation(location, "administrative_area_level_1") || "",
-                    district:
-                      formData && formData[config.key]
-                        ? formData[config.key]["district"]
-                        : getLocation(location, "administrative_area_level_3") || "",
-                    city: formData && formData[config.key] ? formData[config.key]["city"] : getLocation(location, "locality") || "",
-                    locality:
-                      formData && formData[config.key]
-                        ? formData[config.key]["locality"]
-                        : (() => {
-                            const plusCode = getLocation(location, "plus_code");
-                            const neighborhood = getLocation(location, "neighborhood");
-                            const sublocality_level_1 = getLocation(location, "sublocality_level_1");
-                            const sublocality_level_2 = getLocation(location, "sublocality_level_2");
-                            return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
-                              .reduce((result, current) => {
-                                if (current) {
-                                  result.push(current);
-                                }
-                                return result;
-                              }, [])
-                              .join(", ");
-                          })(),
-                    coordinates,
-                  },
-                  input.name
-                );
-              }}
-            />
-          </div>
-        ))}
+        .map((input, index) => {
+          let isFirstRender = true;
+
+          return (
+            <div className="field" key={index} style={{ alignContent: "center" }}>
+              <LocationSearch
+                locationStyle={{ maxWidth: "900px" }}
+                position={formData?.[config.key]?.coordinates || {}}
+                setCoordinateData={setCoordinateData}
+                onChange={(pincode, location, coordinates = {}) => {
+                  setValue(
+                    {
+                      pincode: formData && isFirstRender && formData[config.key] ? formData[config.key]["pincode"] : pincode || "",
+                      state:
+                        formData && isFirstRender && formData[config.key]
+                          ? formData[config.key]["state"]
+                          : getLocation(location, "administrative_area_level_1") || "",
+                      district:
+                        formData && isFirstRender && formData[config.key]
+                          ? formData[config.key]["district"]
+                          : getLocation(location, "administrative_area_level_3") || "",
+                      city:
+                        formData && isFirstRender && formData[config.key] ? formData[config.key]["city"] : getLocation(location, "locality") || "",
+                      locality:
+                        isFirstRender && formData[config.key]
+                          ? formData[config.key]["locality"]
+                          : (() => {
+                              const plusCode = getLocation(location, "plus_code");
+                              const neighborhood = getLocation(location, "neighborhood");
+                              const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                              const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                              return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                                .reduce((result, current) => {
+                                  if (current) {
+                                    result.push(current);
+                                  }
+                                  return result;
+                                }, [])
+                                .join(", ");
+                            })(),
+                      coordinates,
+                      buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
+                      doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
+                    },
+                    input.name
+                  );
+                  isFirstRender = false;
+                }}
+              />
+            </div>
+          );
+        })}
       <div className="address-card-input">
         {inputs
           .filter((input) => input.type !== "LocationSearch")

@@ -2,7 +2,19 @@ import { CloseSvg, Modal, TextInput } from "@egovernments/digit-ui-react-compone
 import React, { useMemo, useState } from "react";
 import { ErrorInfoIcon } from "../icons/svgIndex";
 
-function EsignAdharModal({ t, modalconfig = { name: "Enter Aadhar to Esign" }, setOpenAadharModal }) {
+function EsignAdharModal({ t, setOpenAadharModal, name, onSelect, config, formData }) {
+  function setValue(value, input) {
+    if (Array.isArray(input)) {
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      });
+    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+  }
+
   const [page, setPage] = useState(0);
   const [aadharNumber, setAadharNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -25,6 +37,7 @@ function EsignAdharModal({ t, modalconfig = { name: "Enter Aadhar to Esign" }, s
       return;
     }
     if (page === 1) {
+      setValue(["aadharsignature"], name);
       setOpenAadharModal(false);
     }
   };

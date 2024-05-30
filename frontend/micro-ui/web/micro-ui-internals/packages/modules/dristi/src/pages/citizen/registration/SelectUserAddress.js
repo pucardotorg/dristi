@@ -36,9 +36,9 @@ const SelectUserAddress = ({ config, onSelect, t, params }) => {
       setIsDisabled(false);
     }
   };
-  // if (!params?.name) {
-  //   history.push("/digit-ui/citizen/dristi/home/login");
-  // }
+  if (!params?.name) {
+    history.push("/digit-ui/citizen/dristi/home/login");
+  }
   return (
     <div style={{ minWidth: "100%" }}>
       <FormComposerV2

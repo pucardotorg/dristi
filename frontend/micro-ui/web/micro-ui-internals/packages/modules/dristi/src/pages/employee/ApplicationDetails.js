@@ -1,4 +1,4 @@
-import { Header, Card, Loader, ActionBar, SubmitBar, Modal, CardText, Toast, TextArea } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, ActionBar, SubmitBar, Modal, CardText, Toast, TextArea, BackButton } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -228,62 +228,64 @@ const ApplicationDetails = ({ location, match }) => {
     return <Loader />;
   }
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
-      <Card style={{ paddingLeft: "20px", minWidth: "100%" }}>
-        <Header className="application-header">{header}</Header>
-        <div className="application-card">
-          <DocumentDetailCard cardData={aadharData} />
-          <DocumentDetailCard cardData={personalData} />
-        </div>
-        {type === "advocate" && (
-          <div className="application-bar-info">
-            <DocumentDetailCard cardData={barDetails} />
+    <React.Fragment>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Card style={{ paddingLeft: "20px", minWidth: "100%" }}>
+          <Header className="application-header">{header}</Header>
+          <div className="application-card">
+            <DocumentDetailCard cardData={aadharData} />
+            <DocumentDetailCard cardData={personalData} />
           </div>
-        )}
-        {!applicationNo && (
-          <div className="action-button-application">
-            <SubmitBar
-              label={t("Go_Back_Home")}
-              onSubmit={() => {
-                history.push(`/${window?.contextPath}/citizen/dristi/home`);
-              }}
-            />
-          </div>
-        )}
-        {applicationNo && (
-          <div className="action-button-application">
-            {actions.map((option, index) => (
+          {type === "advocate" && (
+            <div className="application-bar-info">
+              <DocumentDetailCard cardData={barDetails} />
+            </div>
+          )}
+          {!applicationNo && (
+            <div className="action-button-application">
               <SubmitBar
-                key={index}
-                label={option}
-                style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
-                onSubmit={(data) => {
-                  onActionSelect(option);
+                label={t("Go_Back_Home")}
+                onSubmit={() => {
+                  history.push(`/${window?.contextPath}/citizen/dristi/home`);
                 }}
-                className="action-button-width"
               />
-            ))}
-          </div>
-        )}
-        {showModal && (
-          <Modal
-            headerBarMain={<Heading label={t("Confirm Reject Application")} />}
-            headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-            actionSaveLabel={t("Reject")}
-            actionSaveOnSubmit={() => {
-              handleDelete("REJECT");
-            }}
-            isDisabled={!reasons || !reasons.trim()}
-            style={{ backgroundColor: "#BB2C2F" }}
-          >
-            <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
-              <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
-              <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
-            </Card>
-          </Modal>
-        )}
-      </Card>
-    </div>
+            </div>
+          )}
+          {applicationNo && (
+            <div className="action-button-application">
+              {actions.map((option, index) => (
+                <SubmitBar
+                  key={index}
+                  label={option}
+                  style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
+                  onSubmit={(data) => {
+                    onActionSelect(option);
+                  }}
+                  className="action-button-width"
+                />
+              ))}
+            </div>
+          )}
+          {showModal && (
+            <Modal
+              headerBarMain={<Heading label={t("Confirm Reject Application")} />}
+              headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+              actionSaveLabel={t("Reject")}
+              actionSaveOnSubmit={() => {
+                handleDelete("REJECT");
+              }}
+              isDisabled={!reasons || !reasons.trim()}
+              style={{ backgroundColor: "#BB2C2F" }}
+            >
+              <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
+                <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
+                <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
+              </Card>
+            </Modal>
+          )}
+        </Card>
+      </div>
+    </React.Fragment>
   );
 };
 
