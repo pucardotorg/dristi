@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - user-registration-flow
+      - e-filing-flow
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -12,14 +12,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
-      # - name: SonarCloud Scan
-      #   uses: SonarSource/sonarcloud-github-action@master
-      #   with:
-      #     projectBaseDir: frontend/micro-ui/web
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-      #     SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-      # Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
