@@ -1,12 +1,30 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 
+function splitStringIntoChunks(numberString) {
+  const chunks = [];
+  for (let i = 0; i < numberString.length; i += 4) {
+    chunks.push(numberString.slice(i, i + 4));
+  }
+  while (chunks.length < 3) {
+    chunks.push("");
+  }
+  return chunks;
+}
+
 const AadhaarInput = (props) => {
   const { formData = {}, onSelect, config, t, value } = props;
 
-  const [boxCount, setboxCount] = useState(["", "", ""]);
+  const [boxCount, setboxCount] = useState(() => setInitialboxCount());
   const [focusedInput, setFocusedInput] = useState(null);
   const inputRefs = [useRef(), useRef(), useRef()];
   const inputs = useMemo(() => config?.populators?.inputs, [config?.populators?.inputs]);
+
+  function setInitialboxCount() {
+    if (formData && formData[config.key].aadharNumber) {
+      return splitStringIntoChunks(formData[config.key].aadharNumber);
+    } else return ["", "", ""];
+  }
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!inputRefs.some((ref) => ref.current.contains(event.target))) {
@@ -21,6 +39,7 @@ const AadhaarInput = (props) => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [focusedInput]);
+
   const handleChange = (key, value, index) => {
     const newInputs = [...boxCount];
     newInputs[index] = value;
@@ -64,6 +83,7 @@ const AadhaarInput = (props) => {
       inputRefs[index].current.focus();
     }
   };
+
   return (
     <div>
       {inputs.map((input, index1) => {

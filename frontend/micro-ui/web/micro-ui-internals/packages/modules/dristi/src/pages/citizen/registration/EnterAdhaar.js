@@ -46,7 +46,7 @@ const EnterAdhaar = ({ t, onSelect, config, params }) => {
           }
           return;
         }}
-        defaultValues={params?.aadharNumber || {}}
+        defaultValues={{ AdhaarInput: { aadharNumber: params?.adhaarNumber } }}
         submitInForm
         buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
       ></FormComposerV2>
