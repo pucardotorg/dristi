@@ -20,7 +20,7 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: () => {}, resetFormData: () => {} });
+  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: () => { }, resetFormData: () => { } });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
@@ -302,8 +302,9 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
+            className={'case-types'}
           >
-            <div>
+            <div style={{ padding: "8px 16px" }}>
               {accordion.map((item, index) => (
                 <Accordion
                   t={t}
@@ -316,7 +317,6 @@ function EFilingCases({ path }) {
                   children={item.children}
                   parentIndex={index}
                   isOpen={item.isOpen}
-                  showConfirmModal={confirmModalConfig ? true : false}
                 />
               ))}
             </div>
@@ -397,9 +397,12 @@ function EFilingCases({ path }) {
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div onClick={handleAddForm} className="add-new-form">
+            <div
+              onClick={handleAddForm}
+              className="add-new-form"
+            >
               <CustomAddIcon />
-              <span>{pageConfig.addFormText}</span>
+              <span>{t(pageConfig.addFormText)}</span>
             </div>
           )}
           {openConfigurationModal && (

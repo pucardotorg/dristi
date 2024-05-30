@@ -284,7 +284,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-          actionCancelOnSubmit={() => {}}
+          actionCancelOnSubmit={() => { }}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
             selectOtp(input);
@@ -292,21 +292,21 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           formId="modal-action"
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
+          className={'case-types'}
         >
           <div>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
-                  `${
-                    input?.hasMobileNo
-                      ? formData[config.key]?.[input?.mobileNoKey]
-                        ? input?.isMobileSecret
-                          ? input?.mobileCode
-                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
-                        : ""
+                  `${input?.hasMobileNo
+                    ? formData[config.key]?.[input?.mobileNoKey]
+                      ? input?.isMobileSecret
+                        ? input?.mobileCode
+                          ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                        : ` ${formData[config.key]?.[input?.mobileNoKey]}`
                       : ""
+                    : ""
                   }`}
               </CardLabel>
               <div className="field">

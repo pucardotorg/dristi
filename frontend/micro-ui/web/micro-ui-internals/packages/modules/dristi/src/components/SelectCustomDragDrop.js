@@ -109,7 +109,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             children={<DragDropJSX t={t} currentValue={currentValue} />}
             key={input?.name}
           />
-          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
+          <div className="upload-guidelines-div">
+            {input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}
+          </div>
         </div>
 
         {currentValue.map((file, index) => (
