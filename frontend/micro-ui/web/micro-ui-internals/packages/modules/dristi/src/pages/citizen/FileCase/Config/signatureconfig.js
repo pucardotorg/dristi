@@ -42,7 +42,12 @@ const signatureFormConfig = [
     ],
   },
 ];
-const confirmmodalconfig = { actionCancelLabel: "CS_CORE_CANCEL", actionSaveLabel: "CS_CONTINUE_EDITING", headerBarMain: "CS_EDIT_FIELDS" };
+const confirmmodalconfig = {
+  actionCancelLabel: "CS_CORE_CANCEL",
+  actionSaveLabel: "CS_CONTINUE_EDITING",
+  headerBarMain: "CS_EDIT_FIELDS",
+  modalText: "CS_EDIT_FIELDS_TEXT",
+};
 
 export const signatureconfig = {
   formconfig: signatureFormConfig,

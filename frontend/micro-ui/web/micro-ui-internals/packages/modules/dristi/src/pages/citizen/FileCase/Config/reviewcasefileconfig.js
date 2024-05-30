@@ -1,3 +1,11 @@
+import { AdvocateDummy } from "../AdvocateDummy";
+import { CheckqueDummy } from "../ChequeDummy";
+import { ComplainantDummy } from "../ComplainantDummy";
+import { DebtDummy } from "../DebtDummy";
+import { DemandDummy } from "../DemandDummy";
+import { RespondentDummy } from "../RespondentDummy";
+import { WitnessDummy } from "../WitnessDummy";
+
 export const reviewCaseFileFormConfig = [
   {
     body: [
@@ -14,24 +22,24 @@ export const reviewCaseFileFormConfig = [
               label: "CS_COMPLAINT_DETAILS",
               icon: "ComplainantDetailsIcon",
               config: [
-                { type: "title", value: "name" },
+                { type: "title", value: ["firstName", "lastName"] },
                 { type: "phonenumber", label: "Phone Number", value: "phone" },
                 { type: "image", label: "ID Proof", value: "id" },
-                { type: "address", label: "Address", value: "address" },
+                { type: "address", label: "Address", value: "addressDetailsSelect" },
               ],
-              data: [{ name: "Sheetal Arora", phone: "9834178901", id: "uri", address: "4601E, Gatade Plot, Pandharpur" }],
+              data: ComplainantDummy,
             },
             {
               key: "respondentDetails",
               label: "CS_RESPONDENT_DETAILS",
               icon: "RespondentDetailsIcon",
               config: [
-                { type: "title", value: "name" },
-                { type: "phonenumber", label: "Phone Number", value: "phone" },
-                { type: "image", label: "ID Proof", value: "id" },
-                { type: "address", label: "Address", value: "address" },
+                { type: "title", value: ["firstName", "lastName"] },
+                { type: "phonenumber", label: "Phone Number", value: "phonenumbers.mobileNumber" },
+                { type: "text", label: "Email", value: "emails.emailId" },
+                { type: "address", label: "Address", value: "addressDetails" },
               ],
-              data: [{ name: "N. S. Prasad", phone: "9894178901", id: "uri", address: "4601E, Gatade Plot, Pandharpur" }],
+              data: RespondentDummy,
             },
           ],
         },
@@ -49,65 +57,42 @@ export const reviewCaseFileFormConfig = [
               label: "CS_CHECKQUE_DETAILS",
               icon: "ChequeDetailsIcon",
               config: [
-                { type: "title", value: "checkno" },
-                { type: "amount", label: "Cheque Amount", value: "amount" },
-                { type: "text", label: "Checque Issued to", value: "issuedto" },
+                { type: "title", value: "chequeNumber" },
+                { type: "amount", label: "Cheque Amount", value: "chequeAmount" },
+                { type: "text", label: "Cheque Issued to", value: "name" },
                 { type: "text", label: "Payer bank", value: "payerbank" },
-                { type: "text", label: "Payee bank", value: "payeebank" },
+                { type: "text", label: "Payee bank", value: "bankName" },
                 { type: "text", label: "Name of the signatory", value: "signatory" },
                 { type: "text", label: "IFSC Code", value: "ifsc" },
-                { type: "text", label: "Date of deposit", value: "depositdate" },
-                { type: "text", label: "Date of issuance", value: "issuancedate" },
+                { type: "text", label: "Date of deposit", value: "depositDate" },
+                { type: "text", label: "Date of issuance", value: "issuanceDate" },
               ],
-              data: [
-                {
-                  checkno: "Cheque No. 134582",
-                  payerbank: "HDFC Bank",
-                  issuedto: "Aparna Subramhanyam",
-                  payeebank: "State Bank of India",
-                  amount: "50000",
-                  signatory: "Name of the signatory",
-                  ifsc: "ABC12345",
-                  depositdate: "10/02/2024",
-                  issuancedate: "10/02/2024",
-                },
-                {
-                  checkno: "Cheque No. 134582",
-                  payerbank: "HDFC Bank",
-                  issuedto: "Aparna Subramhanyam",
-                  payeebank: "State Bank of India",
-                  amount: "50000",
-                  signatory: "Name of the signatory",
-                  ifsc: "ABC12345",
-                  depositdate: "10/02/2024",
-                  issuancedate: "10/02/2024",
-                },
-              ],
+              data: CheckqueDummy,
             },
             {
               key: "debtLiabilityDetails",
               label: "CS_DEBT_LIABILITY_DETAILS",
               icon: "DebtLiabilityIcon",
               config: [
-                { type: "text", label: "Nature of Debt/Liability", value: "nature" },
+                { type: "text", label: "Nature of Debt/Liability", value: "liabilityNature.name" },
                 { type: "text", label: "Cheque Recieved for", value: "receivedfor" },
                 { type: "image", label: "Documents", value: "document" },
               ],
-              data: [{ nature: "Loan", receivedfor: "Partial Liability", document: "ui" }],
+              data: DebtDummy,
             },
             {
               key: "demandNoticeDetails",
               label: "CS_DEMAND_NOTICE_DETAILS",
               icon: "DemandDetailsNoticeIcon",
               config: [
-                { type: "text", label: "Mode of Dispatch", value: "dispatch" },
-                { type: "text", label: "Dispatched on", value: "dispatchon" },
-                { type: "text", label: "Serviced on", value: "servicedon" },
+                { type: "text", label: "Mode of Dispatch", value: "SelectUserTypeComponent.modeOfDispatchType.name" },
+                { type: "text", label: "Dispatched on", value: "SelectUserTypeComponent.dateOfDispatch" },
+                { type: "text", label: "Serviced on", value: "SelectUserTypeComponent.dateOfService" },
                 { type: "text", label: "Recieved reply on", value: "recievedon" },
                 { type: "text", label: "Cause of action on", value: "causeon" },
                 { type: "image", label: "Documents", value: "document" },
               ],
-              data: [{ dispatch: "Post", dispatchon: "02/01/2024", servicedon: "03/01/2024", causeon: "21/01/2024" }],
+              data: DemandDummy,
             },
           ],
         },
@@ -125,14 +110,12 @@ export const reviewCaseFileFormConfig = [
               label: "CS_WITNESS_DETAILS",
               icon: "WitnessDetailsIcon",
               config: [
-                { type: "title", value: "name" },
-                { type: "phonenumber", label: "Phone Number", value: "phone" },
-                { type: "text", label: "Email ID", value: "email" },
-                { type: "address", label: "Address", value: "address" },
+                { type: "title", value: ["firstName", "lastName"] },
+                { type: "phonenumber", label: "Phone Number", value: "phonenumbers.mobileNumber" },
+                { type: "text", label: "Email ID", value: "emails.emailId" },
+                { type: "address", label: "Address", value: "addressDetails" },
               ],
-              data: [
-                { name: "Sheetal Arora", phone: "9834178901", id: "uri", address: "4601E, Gatade Plot, Pandharpur", email: "vaibhav.c@gmail.com" },
-              ],
+              data: WitnessDummy,
             },
             {
               key: "prayerSwornStatement",
@@ -140,12 +123,25 @@ export const reviewCaseFileFormConfig = [
               icon: "PrayerSwornIcon",
               config: [
                 { type: "text", label: "Prayer of Relief", value: "prayer" },
-                { type: "address", label: "Address", value: "address" },
+                { type: "address", label: "Address", value: "addressDetails" },
               ],
               data: [
                 {
-                  prayer: `The Petitioner respectfully requests the Court to:Summon the Respondent to appear before this Court and answer the charges.Find the Respondent guilty of the offence under Section 138 of the Negotiable Instruments Act. Grant an order directing the Respondent to pay the sum of [amount] (cheque amount) along with any accrued interest and legal fees.Grant such other and further relief as this Court deems fit and just in the circumstances.`,
-                  adress: "1469 feakl jfdsakl jkl asdj f",
+                  data: {
+                    prayer: `The Petitioner respectfully requests the Court to:Summon the Respondent to appear before this Court and answer the charges.Find the Respondent guilty of the offence under Section 138 of the Negotiable Instruments Act. Grant an order directing the Respondent to pay the sum of [amount] (cheque amount) along with any accrued interest and legal fees.Grant such other and further relief as this Court deems fit and just in the circumstances.`,
+                    addressDetails: {
+                      pincode: "500032",
+                      state: "Telangana",
+                      district: "Rangareddy",
+                      city: "Kondapur",
+                      coordinates: {
+                        longitude: 78.3500765,
+                        latitude: 17.4549784,
+                      },
+                      locality: "F84X+6P6",
+                      doorNo: "dfhdghhf",
+                    },
+                  },
                 },
               ],
             },
@@ -158,7 +154,7 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "BAR Registraion", value: "bar" },
                 { type: "image", label: "ID Proof", value: "id" },
               ],
-              data: [{ name: "Soumya Arora", bar: "9834178901", id: "uri" }],
+              data: AdvocateDummy,
             },
           ],
         },
