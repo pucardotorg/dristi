@@ -31,6 +31,8 @@ import IdProofUploadComponent from "./components/IdProofUploadComponent";
 import SelectComponentsMulti from "./components/SelectComponentsMulti";
 import SelectReviewAccordion from "./components/SelectReviewAccordion";
 import SelectSignature from "./components/SelectSignature";
+import SelectUploadFiles from "./components/SelectUploadFiles";
+import SelectUploadDocWithName from "./components/SelectUploadDocWithName";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -76,6 +78,8 @@ const componentsToRegister = {
   AddressComponent,
   AdhaarInput,
   AdvocateDetailComponent,
+  SelectUploadFiles,
+  SelectUploadDocWithName,
 };
 
 const overrideHooks = () => {

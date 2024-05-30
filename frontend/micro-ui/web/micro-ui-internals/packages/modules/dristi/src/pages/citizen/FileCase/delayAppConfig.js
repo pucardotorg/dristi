@@ -81,7 +81,7 @@ export const delayAppConfig = [
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "Upload .png",
-              maxFileSize: 1024 * 1024 * 5,
+              maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
               fileTypes: ["JPG", "PNG", "PDF"],
             },

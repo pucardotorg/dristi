@@ -1,6 +1,6 @@
 // ErrorTooltip.js
 import React from "react";
-import { ReactComponent as InfoToolTipIcon } from "../images/info_tooltip.svg";
+import { ReactComponent as InfoToolTipIcon } from "../images/Vector.svg";
 
 const CustomErrorTooltip = ({ message, showTooltip }) => {
   if (!showTooltip) {
@@ -12,7 +12,9 @@ const CustomErrorTooltip = ({ message, showTooltip }) => {
       <span>
         <InfoToolTipIcon></InfoToolTipIcon>
       </span>
-      <div className="custom-error-tooltip-message">{message}</div>
+      <div className="custom-error-tooltip-message" style={{ ...(!message && { border: "none" }) }}>
+        {message}
+      </div>
     </div>
   );
 };

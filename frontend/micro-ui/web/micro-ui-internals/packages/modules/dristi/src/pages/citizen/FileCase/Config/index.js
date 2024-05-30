@@ -4,6 +4,7 @@ import { complaintdetailconfig } from "./complaindetailsConfig";
 import { debtliabilityconfig } from "./debtLiabilityConfig";
 import { delayApplicationConfig } from "./delayApplicationConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";
+import { prayerAndSwornConfig } from "./prayerAndSwornConfig";
 import { respondentconfig } from "./respondentConfig";
 import { reviewcasefileconfig } from "./reviewcasefileconfig";
 import { signatureconfig } from "./signatureconfig";
@@ -73,7 +74,14 @@ export const sideMenuConfig = [
     title: "CS_ADDITIONAL_DETAILS",
     children: [
       { key: "witnessDetails", label: "CS_WITNESS_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: witnessConfig },
-      { key: "prayerSwornStatement", label: "CS_PRAYER_SWORN_STATEMENT", checked: false, isCompleted: false, isDisabled: false },
+      {
+        key: "prayerSwornStatement",
+        label: "CS_PRAYER_SWORN_STATEMENT",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: prayerAndSwornConfig,
+      },
       {
         key: "advocateDetails",
         label: "CS_ADVOCATE_DETAILS",

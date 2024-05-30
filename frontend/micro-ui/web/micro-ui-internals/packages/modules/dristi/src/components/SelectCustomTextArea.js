@@ -10,6 +10,8 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
       config?.populators?.inputs || [
         {
           textAreaHeader: "custom note",
+          textAreaSubHeader: "please provide some more details.",
+          isOptional: false,
         },
       ],
     [config?.populators?.inputs]
@@ -35,8 +37,20 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
   return inputs.map((input) => {
     return (
       <div className="custom-text-area-main-div" style={input?.style}>
-        <div>
-          <h1 className={`${input?.headerClassName}`}> {t(input?.textAreaHeader)}</h1>
+        <div className="custom-text-area-header-div">
+          <h1 className={`${input?.headerClassName}`} style={{ margin: "0px" }}>
+            {t(input?.textAreaHeader)}
+          </h1>
+          {
+            <div>
+              <span>
+                <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+                  {`${t(input?.textAreaSubHeader)}`}
+                  {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+                </p>
+              </span>
+            </div>
+          }
         </div>
         <div>
           <textarea

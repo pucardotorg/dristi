@@ -48,7 +48,7 @@ const delayApplicationFormConfig = [
             {
               textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
               type: "TextAreaComponent",
-              headerClassName: "text-area-header"
+              headerClassName: "text-area-header",
             },
           ],
         },
@@ -93,7 +93,7 @@ const delayApplicationFormConfig = [
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "Upload .png",
-              maxFileSize: 1024 * 1024 * 5,
+              maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
               fileTypes: ["JPG", "PNG", "PDF"],
             },

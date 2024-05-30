@@ -1,7 +1,7 @@
 import { ErrorIcon, FileIcon, UploadIcon } from "@egovernments/digit-ui-react-components";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
-import { ReactComponent as InfoToolTipIcon } from "../images/info_tooltip.svg";
+import { ReactComponent as InfoToolTipIcon } from "../images/Vector.svg";
 
 import { FileUploader } from "react-drag-drop-files";
 import CustomUploadButton from "./CustomUploadButton";

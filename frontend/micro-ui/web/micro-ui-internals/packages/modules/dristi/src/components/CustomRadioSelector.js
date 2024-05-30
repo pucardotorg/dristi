@@ -1,6 +1,6 @@
 import { RadioButtons } from "@egovernments/digit-ui-react-components";
 import React from "react";
-import { ReactComponent as InfoToolTipIcon } from "../images/info_tooltip.svg";
+import { ReactComponent as InfoToolTipIcon } from "../images/Vector.svg";
 
 function CustomRadioSelector({ selectionQuestionText, t, ...RadioButtonProps }) {
   return (

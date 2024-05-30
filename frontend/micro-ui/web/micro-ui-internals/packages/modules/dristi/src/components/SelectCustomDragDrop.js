@@ -90,8 +90,10 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">
           <div className="drag-drop-heading">
-            <h2 className="card-label">{t(input?.documentHeader)}</h2>
-            {input?.isOptional && <h3>{`(${t(input?.isOptional)})`}</h3>}
+            <span>
+              <h2 className="card-label">{t(input?.documentHeader)}</h2>
+              {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`(${t(input?.isOptional)})`}</span>}
+            </span>
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
           {input.documentSubText && <p>{t(input.documentSubText)}</p>}
