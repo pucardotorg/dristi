@@ -20,6 +20,8 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.service.WorkflowService;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
+import org.pucar.dristi.web.models.RequestInfoWrapper;
+import org.springframework.web.client.RestClientException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,7 +91,92 @@ public class WorkflowServiceTest {
         // Execute the method
         assertThrows(CustomException.class, () -> workflowService.callWorkFlow(workflowReq));
     }
+    @Test
+    void getWorkflowFromProcessInstance_NullProcessInstance() {
+        // Test when processInstance is null
+        ProcessInstance processInstance = null;
+        Workflow result = workflowService.getWorkflowFromProcessInstance(processInstance);
+        assertNull(result);
+    }
+    @Test
+    void getSearchURLForProcessInstanceWithParams_ValidParameters() {
+        // Mock configuration values
+        when(config.getWfHost()).thenReturn("http://example.com");
+        when(config.getWfProcessInstanceSearchPath()).thenReturn("/workflow/processInstance");
 
+        // Test input parameters
+        String tenantId = "tenant1";
+        String businessService = "businessService1";
+
+        // Expected URL construction
+        String expectedURL = "http://example.com/workflow/processInstance?tenantId=tenant1&businessIds=businessService1";
+
+        // Call the method to test
+        StringBuilder result = workflowService.getSearchURLForProcessInstanceWithParams(tenantId, businessService);
+
+        // Verify that the URL construction is correct
+        assertEquals(expectedURL, result.toString());
+    }
+    @Test
+    void getWorkflowFromProcessInstance_ValidProcessInstance() {
+        // Test when processInstance has valid data
+        State state = new State();
+        state.setState("APPROVED");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(state);
+        processInstance.setComment("Test comment");
+
+        Workflow result = workflowService.getWorkflowFromProcessInstance(processInstance);
+
+        assertNotNull(result);
+        assertEquals("APPROVED", result.getAction());
+        assertEquals("Test comment", result.getComments());
+    }
+    @Test
+    void getCurrentWorkflow_ValidResponse() {
+        // Mock inputs
+        RequestInfo requestInfo = new RequestInfo();
+        String tenantId = "tenant1";
+        String businessId = "businessId1";
+
+        // Mock config behavior
+        when(config.getWfHost()).thenReturn("http://example.com");
+        when(config.getWfProcessInstanceSearchPath()).thenReturn("/searchPath");
+
+        // Mock response
+        ProcessInstance processInstance = new ProcessInstance();
+        ProcessInstanceResponse response = new ProcessInstanceResponse();
+        response.setProcessInstances(Collections.singletonList(processInstance));
+
+        // Mock repository response
+        when(repository.fetchResult(any(StringBuilder.class), any(RequestInfoWrapper.class))).thenReturn(new Object());
+        when(mapper.convertValue(any(), eq(ProcessInstanceResponse.class))).thenReturn(response);
+
+        // Execute the method
+        ProcessInstance result = workflowService.getCurrentWorkflow(requestInfo, tenantId, businessId);
+
+        // Verify the result
+        assertNotNull(result);
+        assertEquals(processInstance, result);
+    }
+
+    @Test
+    void getWorkflowFromProcessInstance_ProcessInstanceWithNullComment() {
+        // Test when processInstance has null comment
+        State state = new State();
+        state.setState("APPROVED");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(state);
+        processInstance.setComment(null);
+
+        Workflow result = workflowService.getWorkflowFromProcessInstance(processInstance);
+
+        assertNotNull(result);
+        assertEquals("APPROVED", result.getAction());
+        assertNull(result.getComments()); // Comment is null, so comments should be null
+    }
     @Test
     void callWorkFlow_Exception() {
         // Mock ProcessInstanceRequest

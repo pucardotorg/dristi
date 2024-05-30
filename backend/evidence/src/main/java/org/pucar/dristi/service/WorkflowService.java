@@ -111,11 +111,11 @@ public class WorkflowService {
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }
-    private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
-        StringBuilder url = new StringBuilder(config.getWfHost());
-        url.append(config.getWfProcessInstanceSearchPath());
-        url.append("?tenantId=").append(tenantId);
-        url.append("&businessIds=").append(businessService);
-        return url;
-    }
+        StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
+            StringBuilder url = new StringBuilder(config.getWfHost());
+            url.append(config.getWfProcessInstanceSearchPath());
+            url.append("?tenantId=").append(tenantId);
+            url.append("&businessIds=").append(businessService);
+            return url;
+        }
 }
