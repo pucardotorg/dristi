@@ -84,24 +84,6 @@ class ApplicationQueryBuilderTest {
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
     }
-
-    @Test
-    void testGetApplicationSearchQueryWithNullFilingNumber() {
-        // Prepare inputs
-        String id = null;
-        String filingNumber = null;
-        String cnrNumber = null;
-        String tenantId = null;
-        String status = null;
-        Integer limit = null;
-        Integer offset = null;
-
-        // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
-
-        assertFalse(query.contains("app.filingNumber ="));
-    }
-
     @Test
     void testGetApplicationSearchQueryWithEmptyFilingNumber() {
         // Prepare inputs
@@ -142,7 +124,7 @@ class ApplicationQueryBuilderTest {
     }
 
     @Test
-    void testGetApplicationSearchQueryWithNullCnrNumber() {
+    void testGetApplicationSearchQueryWithNullFields() {
         // Prepare inputs
         String id = null;
         String filingNumber = null;
@@ -156,6 +138,8 @@ class ApplicationQueryBuilderTest {
         String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
 
         assertFalse(query.contains("app.cnrNumber ="));
+        assertFalse(query.contains("app.status ="));
+        assertFalse(query.contains("app.filingNumber ="));
     }
 
     @Test
@@ -194,23 +178,6 @@ class ApplicationQueryBuilderTest {
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
-    }
-
-    @Test
-    void testGetApplicationSearchQueryWithNullStatus() {
-        // Prepare inputs
-        String id = null;
-        String filingNumber = null;
-        String cnrNumber = null;
-        String tenantId = null;
-        String status = null;
-        Integer limit = null;
-        Integer offset = null;
-
-        // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
-
-        assertFalse(query.contains("app.status ="));
     }
 
     @Test
