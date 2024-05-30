@@ -19,6 +19,11 @@ class SideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = AppTheme.instance;
+    var t = AppLocalizations.of(context);
+    var home = t.translate(i18.common.esCommonHome);
+    var logout = t.translate(i18.common.coreCommonLogout);
+    var language = t.translate(i18.common.csCommonLanguage);
+
     // return BlocBuilder<AppInitialization, InitState>(
     //   builder: (context, state) {
     //     final actionMap = state.entityActionMapping;
@@ -54,17 +59,14 @@ class SideBar extends StatelessWidget {
                       }),
                 )),
             DigitIconTile(
-              title: AppLocalizations.of(context).translate(
-                i18.common.esCommonHome,
-              ),
+              title: home,
               icon: Icons.home,
               onPressed: () {
                 // AutoRouter.of(context).replace(HomeRoute());
               },
             ),
             DigitIconTile(
-              title: AppLocalizations.of(context)
-                  .translate(i18.common.coreCommonLogout),
+              title: logout,
               icon: Icons.logout,
               onPressed: () {
                 context.read<AuthBloc>().add(const AuthEvent.logout());
@@ -75,8 +77,7 @@ class SideBar extends StatelessWidget {
                 child: DigitIconTile(
                   icon: Icons.language,
                   onPressed: () {},
-                  title: AppLocalizations.of(context)
-                      .translate(i18.common.csCommonChooseLanguage),
+                  title: language,
                   content: BlocBuilder<AppInitialization, InitState>(
                       builder: (context, state) => state.maybeWhen(
                             orElse: () => const Text('Could not load'),

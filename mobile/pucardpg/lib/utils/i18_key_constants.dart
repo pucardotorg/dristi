@@ -98,6 +98,7 @@ class Common {
   String get coreCommonLogout => 'CORE_COMMON_LOGOUT';
   String get esCommonHome => 'ES_COMMON_HOME';
   String get csCommonChooseLanguage => 'CS_COMMON_CHOOSE_LANGUAGE';
+  String get csCommonLanguage => 'CS_COMMON_LANGUAGE';
   String get coreCommonContinue => 'CORE_COMMON_CONTINUE';
   String get csNoFileSelected => 'CS_NO_FILE_SELECTED';
   String get oneFileUploaded => 'ONE_FILE_UPLOADED';
