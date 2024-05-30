@@ -10,10 +10,7 @@ import org.pucar.dristi.service.IndividualService;
 import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
-import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -111,16 +108,20 @@ public class CaseRegistrationValidator {
             });
         }
         if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {
-            courtCase.getLinkedCases().forEach(linkedCase -> {
-                List<CaseCriteria> caseCriteriaList = new ArrayList<>();
-                CaseCriteria caseCriteria = new CaseCriteria();
-                caseCriteria.setCaseId(linkedCase.getId().toString());
-                caseCriteriaList.add(caseCriteria);
-                if (!repository.getApplications(caseCriteriaList).isEmpty())
-                    throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
-            });
+            boolean isValidLinkedCase = courtCase.getLinkedCases().stream().allMatch(linkedCase ->
+                    existingApplications.get(0).getResponseList().stream().anyMatch(existingCase ->
+                            existingCase.getLinkedCases().stream().anyMatch(existingLinkedCase ->
+                                    (linkedCase.getId() != null && linkedCase.getId().equals(existingLinkedCase.getId())) ||
+                                            (linkedCase.getIsActive() != null && linkedCase.getIsActive() == existingLinkedCase.getIsActive()) ||
+                                            (linkedCase.getCaseNumber() != null &&  linkedCase.getCaseNumber().equals(existingLinkedCase.getCaseNumber())) ||
+                                            (linkedCase.getReferenceUri() != null && linkedCase.getReferenceUri().equals(existingLinkedCase.getReferenceUri()))
+                            )
+                    )
+            );
+            if (!isValidLinkedCase)
+                throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
         }
-        return !existingApplications.isEmpty();
+        return true;
     }
 
     private List<String> createMasterDetails() {

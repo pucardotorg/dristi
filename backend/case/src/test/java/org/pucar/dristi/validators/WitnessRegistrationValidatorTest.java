@@ -61,6 +61,58 @@ public class WitnessRegistrationValidatorTest {
         verify(individualService, never()).searchIndividual(any(), anyString());
     }
 
+    @Test
+    public void testValidateCaseRegistration_MissingIndividualId() {
+        WitnessRequest request = new WitnessRequest();
+        request.setRequestInfo(new RequestInfo());
+        Witness witnessWithValidCaseId = new Witness();
+        witnessWithValidCaseId.setCaseId("validCaseId");
+        request.setWitness(witnessWithValidCaseId);
+
+        // Ensure validation fails for the witness with null caseId
+        Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
+                "Validation should fail when caseId is null");
+    }
+
+    @Test
+    public void testValidateCaseRegistration_INDIVIDUAL_NOT_FOUND() {
+        WitnessRequest request = new WitnessRequest();
+        request.setRequestInfo(new RequestInfo());
+        Witness witnessWithValidCaseId = new Witness();
+        witnessWithValidCaseId.setCaseId("validCaseId");
+        witnessWithValidCaseId.setIndividualId("individualID");
+        request.setWitness(witnessWithValidCaseId);
+
+        when(individualService.searchIndividual(any(), any())).thenReturn(false);
+
+        // Ensure validation fails for the witness with null caseId
+        Exception exception = assertThrows(Exception.class, () -> validator.validateCaseRegistration(request),
+                "Validation should fail when caseId is null");
+    }
+
+    @Test
+    public void testValidateApplicationExistence_ExistingWitness() {
+        // Mock data
+        RequestInfo requestInfo = new RequestInfo();
+
+        Witness witness = new Witness();
+        witness.setCaseId("nonExistingCaseId");
+        witness.setIndividualId("nonExistingIndividualId");
+
+        Witness witnessBis = new Witness();
+
+        // Mock repository behavior
+        when(witnessRepository.getApplications(any())).thenReturn(List.of(witness));
+
+        // Call the method under test and expect CustomException
+        assertThrows(CustomException.class, () -> {
+            validator.validateApplicationExistence(requestInfo, witnessBis);
+        });
+
+        // Verify repository method is called
+        verify(witnessRepository, times(1)).getApplications(any());
+        verify(individualService, never()).searchIndividual(any(), any()); // Ensure individual service is not called
+    }
 
     @Test
     public void testValidateApplicationExistence_NonExistingWitness() {
@@ -82,6 +134,53 @@ public class WitnessRegistrationValidatorTest {
         // Verify repository method is called
         verify(witnessRepository, times(1)).getApplications(any());
         verify(individualService, never()).searchIndividual(any(), any()); // Ensure individual service is not called
+    }
+
+    @Test
+    public void testValidateApplicationExistence() {
+        // Mock data
+        RequestInfo requestInfo = new RequestInfo();
+
+        Witness witness = new Witness();
+        witness.setCaseId("nonExistingCaseId");
+        witness.setIndividualId("nonExistingIndividualId");
+
+        // Mock repository behavior
+        when(witnessRepository.getApplications(any())).thenReturn(List.of(witness));
+
+        // Call the method under test and expect CustomException
+        assertThrows(CustomException.class, () -> {
+            validator.validateApplicationExistence(requestInfo, witness);
+        });
+    }
+
+    @Test
+    public void testValidateApplicationExistence_MissingIndividualId() {
+        // Mock data
+        RequestInfo requestInfo = new RequestInfo();
+
+        Witness witness = new Witness();
+        witness.setCaseId("nonExistingCaseId");
+//        witness.setIndividualId("nonExistingIndividualId");
+
+        // Call the method under test and expect CustomException
+        assertThrows(Exception.class, () -> {
+            validator.validateApplicationExistence(requestInfo, witness);
+        });
+    }
+
+    @Test
+    public void testValidateApplicationExistence_INDIVIDUAL_NOT_FOUND() {
+
+        Witness witnessWithValidCaseId = new Witness();
+        witnessWithValidCaseId.setCaseId("validCaseId");
+        witnessWithValidCaseId.setIndividualId("individualID");
+
+        when(individualService.searchIndividual(any(), any())).thenReturn(false);
+
+        // Ensure validation fails for the witness with null caseId
+        Exception exception = assertThrows(Exception.class, () -> validator.validateApplicationExistence(new RequestInfo(), witnessWithValidCaseId),
+                "Validation should fail when caseId is null");
     }
 }
 

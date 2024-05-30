@@ -9,6 +9,7 @@ import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.Party;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -59,6 +60,13 @@ class RepresentingRowMapperTest {
         assertNotNull(party.getAdditionalDetails());
 
         verify(rs, times(1)).getString("representative_id");
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(rs.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
 }
 

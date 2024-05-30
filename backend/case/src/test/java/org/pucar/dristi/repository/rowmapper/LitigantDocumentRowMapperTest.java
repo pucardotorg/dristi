@@ -11,6 +11,7 @@ import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.CourtCase;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -67,6 +68,13 @@ class LitigantDocumentRowMapperTest {
         Map<UUID, List<Document>> documents = rowMapper.extractData(resultSet);
         assertTrue(documents.containsKey(UUID.fromString("00000000-0000-0000-0000-000000000000")));
         assertFalse(documents.get(UUID.fromString("00000000-0000-0000-0000-000000000000")).isEmpty());
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(resultSet.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(resultSet));
     }
 
 }

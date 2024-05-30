@@ -29,7 +29,7 @@ public class CaseListResponse {
     @Valid
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("cases")
+    @JsonProperty("criteria")
     @Valid
     private List<CaseCriteria> criteria = null;
 

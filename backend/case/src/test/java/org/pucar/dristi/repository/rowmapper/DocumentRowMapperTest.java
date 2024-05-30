@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -55,6 +56,13 @@ class DocumentRowMapperTest {
 
         verify(rs, times(1)).getString("case_id");
         verify(pgObject, times(1)).getValue();
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(rs.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
 }
 
