@@ -10,6 +10,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <jacoco.version>0.8.9</jacoco.version>
+        <sonar.coverage.jacoco.xmlReportPaths>
+         backend/advocate/target/site/jacoco-aggregate/jacoco.xml
+      </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
