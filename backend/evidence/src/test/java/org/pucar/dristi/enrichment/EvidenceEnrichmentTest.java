@@ -1,5 +1,6 @@
 package org.pucar.dristi.enrichment;
 
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
@@ -28,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 public class EvidenceEnrichmentTest {
 
@@ -122,4 +122,16 @@ public class EvidenceEnrichmentTest {
         assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedTime() > 0;
         assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedBy().equals(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
     }
+    @Test
+    void testEnrichEvidenceRegistrationUponUpdate_Exception() {
+        // Create a scenario where getAuditdetails() will throw a NullPointerException
+        evidenceRequest.getArtifact().setAuditdetails(null);
+
+        Exception exception = assertThrows(CustomException.class, () -> {
+            evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
+        });
+
+        assertTrue(exception.getMessage().contains("Error in order enrichment service during order update process"));
+    }
+
 }
