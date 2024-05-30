@@ -1,16 +1,20 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.EvidenceEnrichment;
 import org.pucar.dristi.kafka.Producer;
+import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.validators.EvidenceValidator;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.EVIDENCE_CREATE_EXCEPTION;
@@ -23,6 +27,8 @@ public class EvidenceService {
     private EvidenceEnrichment enrichmentUtil;
     @Autowired
     private WorkflowService workflowService;
+    @Autowired
+    private EvidenceRepository repository;
     @Autowired
     private Producer producer;
     @Autowired
@@ -50,6 +56,25 @@ public class EvidenceService {
         } catch (Exception e){
             log.error("Error occurred while creating evidence");
             throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.getMessage());
+        }
+    }
+    public List<Artifact> searchEvidence(String id,String tenantId, String caseId, String application, String hearing, String order, String sourceId, String sourceName, RequestInfo requestInfo) {
+
+        try {
+            // Fetch applications from database according to the given search criteria
+            List<Artifact> artifacts = repository.getArtifacts(id, caseId, application, hearing, order, sourceId, sourceName);
+
+            // If no applications are found matching the given criteria, return an empty list
+            if (CollectionUtils.isEmpty(artifacts))
+                return new ArrayList<>();
+
+            artifacts.forEach(artifact -> artifact.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, artifact.getArtifactNumber()))));
+
+            return artifacts;
+
+        } catch (Exception e) {
+            log.error("Error while fetching to search results");
+            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION", e.getMessage());
         }
     }
 

@@ -1,6 +1,7 @@
 package org.pucar.dristi.enrichment;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -16,12 +17,14 @@ import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.Comment;
 import org.pucar.dristi.web.models.EvidenceRequest;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,6 +76,40 @@ public class EvidenceEnrichmentTest {
         CustomException thrown = assertThrows(CustomException.class, () -> evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest));
         assert thrown.getCode().equals("ENRICHMENT_EXCEPTION");
         assert thrown.getMessage().contains("User info not found!!!");
+    }
+    @Test
+    void testEnrichEvidenceRegistration_WithFile() {
+        List<String> idList = new ArrayList<>();
+        idList.add("artifactNumber");
+        Mockito.when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenReturn(idList);
+
+        // Set up the file in the artifact
+        Document document = new Document();
+        Artifact artifact = evidenceRequest.getArtifact();
+        artifact.setFile(document);
+
+        evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest);
+
+        verify(idgenUtil, times(1)).getIdList(any(), anyString(), anyString(), any(), anyInt());
+        assert artifact.getId() != null;
+        assert artifact.getAuditdetails() != null;
+        assert artifact.getArtifactNumber().equals("artifactNumber");
+        assert artifact.getFile().getId() != null;
+        assert artifact.getFile().getDocumentUid().equals(artifact.getFile().getId());
+    }
+
+    @Test
+    void testEnrichEvidenceRegistration_Exception() {
+        List<String> idList = new ArrayList<>();
+        idList.add("artifactNumber");
+        Mockito.when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("ID generation failed"));
+
+        Exception exception = assertThrows(CustomException.class, () -> {
+            evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest);
+        });
+
+        assertTrue(exception.getMessage().contains("Error evidence in enrichment service: ID generation failed"));
+        verify(idgenUtil, times(1)).getIdList(any(), anyString(), anyString(), any(), anyInt());
     }
 
     @Test

@@ -36,7 +36,7 @@ public class EvidenceValidator {
 
     public Artifact validateApplicationExistence(EvidenceRequest evidenceRequest) {
         RequestInfo requestInfo = evidenceRequest.getRequestInfo();
-        List<Artifact> existingApplications = repository.getArtifacts(String.valueOf(evidenceRequest.getArtifact().getId()),evidenceRequest.getArtifact().getTenantId(),evidenceRequest.getArtifact().getArtifactNumber(),evidenceRequest.getArtifact().getEvidenceNumber(),evidenceRequest.getArtifact().getCaseId(),evidenceRequest.getArtifact().getStatus());
+        List<Artifact> existingApplications = repository.getArtifacts(String.valueOf(evidenceRequest.getArtifact().getId()),evidenceRequest.getArtifact().getCaseId(),evidenceRequest.getArtifact().getApplication(),evidenceRequest.getArtifact().getHearing(),evidenceRequest.getArtifact().getOrder(),evidenceRequest.getArtifact().getSourceID(),evidenceRequest.getArtifact().getSourceName());
         log.info("Existing application :: {}", existingApplications.size());
         if (existingApplications.isEmpty())
             throw new CustomException("VALIDATION EXCEPTION", "Evidence does not exist");

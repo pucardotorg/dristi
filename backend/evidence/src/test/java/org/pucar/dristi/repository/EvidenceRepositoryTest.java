@@ -46,7 +46,7 @@ public class EvidenceRepositoryTest {
     @Test
     public void testGetArtifacts() {
         // Mock query result from the query builder
-        when(queryBuilder.getArtifactSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(queryBuilder.getArtifactSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("SELECT * FROM artifacts WHERE ...");
 
         // Mock jdbcTemplate behavior
@@ -54,11 +54,11 @@ public class EvidenceRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(EvidenceRowMapper.class))).thenReturn(expectedArtifacts);
 
         // Invoke the method under test
-        List<Artifact> actualArtifacts = evidenceRepository.getArtifacts(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
+        List<Artifact> actualArtifacts = evidenceRepository.getArtifacts(anyString(), anyString(), anyString(), anyString(),anyString(), anyString(), anyString());
 
         // Verify behavior
         assertEquals(expectedArtifacts, actualArtifacts);
-        verify(queryBuilder, times(1)).getArtifactSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(queryBuilder, times(1)).getArtifactSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
         verify(jdbcTemplate, times(1)).query(anyString(), any(EvidenceRowMapper.class));
     }
 }

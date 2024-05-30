@@ -1,5 +1,8 @@
 package org.pucar.dristi.service;
 
+import org.egov.common.contract.models.Workflow;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,12 +12,16 @@ import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.EvidenceEnrichment;
 import org.pucar.dristi.kafka.Producer;
+import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.validators.EvidenceValidator;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class EvidenceServiceTest {
@@ -28,6 +35,8 @@ public class EvidenceServiceTest {
     @Mock
     private Producer producer;
     @Mock
+    private EvidenceRepository repository;
+    @Mock
     private Configuration config;
 
     @InjectMocks
@@ -38,7 +47,77 @@ public class EvidenceServiceTest {
         MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(evidenceService, "config", config);
     }
+    @Test
+    void testSearchEvidenceSuccessWithResults() {
+        String id = "testId";
+        String tenantId = "testTenantId";
+        String caseId = "testCaseId";
+        String application = "testApplication";
+        String hearing = "testHearing";
+        String order = "testOrder";
+        String sourceId = "testSourceId";
+        String sourceName = "testSourceName";
+        RequestInfo requestInfo = new RequestInfo();
 
+        List<Artifact> artifactList = new ArrayList<>();
+        Artifact artifact = new Artifact();
+        artifact.setArtifactNumber("testArtifactNumber");
+        artifactList.add(artifact);
+
+        ProcessInstance processInstance = new ProcessInstance();
+        Workflow workflow = new Workflow();
+
+        when(repository.getArtifacts(id, caseId, application, hearing, order, sourceId, sourceName)).thenReturn(artifactList);
+        when(workflowService.getCurrentWorkflow(requestInfo, tenantId, "testArtifactNumber")).thenReturn(processInstance);
+        when(workflowService.getWorkflowFromProcessInstance(processInstance)).thenReturn(workflow);
+
+        List<Artifact> result = evidenceService.searchEvidence(id, tenantId, caseId, application, hearing, order, sourceId, sourceName, requestInfo);
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(workflow, result.get(0).getWorkflow());
+    }
+
+    @Test
+    void testSearchEvidenceSuccessNoResults() {
+        String id = "testId";
+        String tenantId = "testTenantId";
+        String caseId = "testCaseId";
+        String application = "testApplication";
+        String hearing = "testHearing";
+        String order = "testOrder";
+        String sourceId = "testSourceId";
+        String sourceName = "testSourceName";
+        RequestInfo requestInfo = new RequestInfo();
+
+        when(repository.getArtifacts(id, caseId, application, hearing, order, sourceId, sourceName)).thenReturn(new ArrayList<>());
+
+        List<Artifact> result = evidenceService.searchEvidence(id, tenantId, caseId, application, hearing, order, sourceId, sourceName, requestInfo);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testSearchEvidenceHandleException() {
+        String id = "testId";
+        String tenantId = "testTenantId";
+        String caseId = "testCaseId";
+        String application = "testApplication";
+        String hearing = "testHearing";
+        String order = "testOrder";
+        String sourceId = "testSourceId";
+        String sourceName = "testSourceName";
+        RequestInfo requestInfo = new RequestInfo();
+
+        when(repository.getArtifacts(id, caseId, application, hearing, order, sourceId, sourceName)).thenThrow(new RuntimeException("Database error"));
+
+        CustomException exception = assertThrows(CustomException.class, () ->
+                evidenceService.searchEvidence(id, tenantId, caseId, application, hearing, order, sourceId, sourceName, requestInfo));
+
+        assertEquals("EVIDENCE_SEARCH_EXCEPTION", exception.getCode());
+        assertEquals("Database error", exception.getMessage());
+    }
     @Test
     public void testCreateEvidence() {
         // Prepare data

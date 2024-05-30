@@ -34,7 +34,7 @@ public class EvidenceQueryBuilder {
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY art.createdTime DESC ";
 
-    public String getArtifactSearchQuery(String id, String tenantId, String artifactNumber, String evidenceNumber, String caseId, String status) {
+    public String getArtifactSearchQuery(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
@@ -46,33 +46,39 @@ public class EvidenceQueryBuilder {
                 firstCriteria = false;
             }
 
-            if (tenantId != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.tenantId = '").append(tenantId).append("'");
-                firstCriteria = false;
-            }
-
-            if (artifactNumber != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.artifactNumber = '").append(artifactNumber).append("'");
-                firstCriteria = false;
-            }
-
-            if (evidenceNumber != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.evidenceNumber = '").append(evidenceNumber).append("'");
-                firstCriteria = false;
-            }
-
             if (caseId != null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("art.caseId = '").append(caseId).append("'");
                 firstCriteria = false;
             }
 
-            if (status != null) {
+            if (application != null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("art.status = '").append(status).append("'");
+                query.append("art.application = '").append(application).append("'");
+                firstCriteria = false;
+            }
+
+            if (hearing != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("art.hearing = '").append(hearing).append("'");
+                firstCriteria = false;
+            }
+
+            if (order != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("art.order = '").append(order).append("'");
+                firstCriteria = false;
+            }
+
+            if (sourceId != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("art.sourceId = '").append(sourceId).append("'");
+                firstCriteria = false;
+            }
+
+            if (sourceName != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("art.sourceName = '").append(sourceName).append("'");
                 firstCriteria = false;
             }
 
@@ -83,6 +89,7 @@ public class EvidenceQueryBuilder {
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.getMessage());
         }
     }
+
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {

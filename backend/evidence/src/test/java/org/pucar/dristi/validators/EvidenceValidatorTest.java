@@ -70,7 +70,7 @@ public class EvidenceValidatorTest {
         // Mock repository to return existing application
         List<Artifact> existingApplications = new ArrayList<>();
         existingApplications.add(new Artifact());
-        when(repository.getArtifacts(any(), any(), any(), any(), any(), any())).thenReturn(existingApplications);
+        when(repository.getArtifacts(any(), any(), any(), any(), any(),  any(),any())).thenReturn(existingApplications);
 
         // Execute the method
         Artifact result = evidenceValidator.validateApplicationExistence(evidenceRequest);
@@ -82,7 +82,7 @@ public class EvidenceValidatorTest {
     @Test
     void validateApplicationExistence_NonExistingApplication() {
         // Mock repository to return empty list (no existing application)
-        when(repository.getArtifacts(any(), any(), any(), any(), any(), any())).thenReturn(new ArrayList<>());
+        when(repository.getArtifacts(any(), any(), any(), any(),any(), any(), any())).thenReturn(new ArrayList<>());
 
         // Execute the method and assert CustomException
         CustomException exception = assertThrows(CustomException.class, () -> evidenceValidator.validateApplicationExistence(evidenceRequest));

@@ -35,12 +35,13 @@
         @Autowired
         private CommentRowMapper commentRowMapper;
 
-        public List<Artifact> getArtifacts(String id, String tenantId, String artifactNumber, String evidenceNumber, String caseId, String status) {
+        public List<Artifact> getArtifacts(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName) {
             try {
                 List<Artifact> artifactList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
-                List<Object> preparedStmtListCom = new ArrayList<>(); // New prepared statement list for comments
-                String artifactQuery = queryBuilder.getArtifactSearchQuery(id, tenantId, artifactNumber, evidenceNumber, caseId, status);
+                List<Object> preparedStmtListCom = new ArrayList<>();
+
+                String artifactQuery = queryBuilder.getArtifactSearchQuery(id, caseId, application, hearing, order, sourceId, sourceName);
                 log.info("Final artifact query: {}", artifactQuery);
                 artifactList = jdbcTemplate.query(artifactQuery, evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
@@ -49,23 +50,18 @@
                 for (Artifact artifact : artifactList) {
                     artifactIds.add(String.valueOf(artifact.getId()));
                 }
-                if (artifactIds.isEmpty()) {
-                    return artifactList;
+
+                if (!artifactIds.isEmpty()) {
+                    String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc);
+                    log.info("Final document query: {}", documentQuery);
+                    Document documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
+                    log.info("DB document map :: {}", documentMap);
+
+                    String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom);
+                    log.info("Final comment query: {}", commentQuery);
+                    List<Comment> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), commentRowMapper);
+                    log.info("DB comment map :: {}", commentMap);
                 }
-
-                String documentQuery = queryBuilder.getDocumentSearchQuery(artifactIds, preparedStmtListDoc);
-                log.info("Final document query: {}", documentQuery);
-                Document documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
-                log.info("DB document map :: {}", documentMap);
-
-
-
-                String commentQuery = queryBuilder.getCommentSearchQuery(artifactIds, preparedStmtListCom); // Use separate prepared statement list for comments
-                log.info("Final comment query: {}", commentQuery);
-                List<Comment> commentMap = jdbcTemplate.query(commentQuery, preparedStmtListCom.toArray(), commentRowMapper); // Use separate prepared statement list for comments
-                log.info("DB comment map :: {}", commentMap);
-
-
 
                 return artifactList;
             } catch (CustomException e) {
@@ -76,5 +72,6 @@
                 throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.getMessage());
             }
         }
+
     }
 
