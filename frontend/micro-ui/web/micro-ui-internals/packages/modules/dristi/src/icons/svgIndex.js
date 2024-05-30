@@ -391,9 +391,12 @@ const ErrorInfoIcon = () => (
   </svg>
 );
 
-const FlagIcon = ({ style }) => (
+const FlagIcon = ({ isError }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M3 3V4V14V21H5V14H12.3828L13.3828 16H21V5H14.6172L13.6172 3H3ZM5 5H12.3828L13.3828 7H14H19V14H14.6172L13.6172 12H5V5Z" fill="#3D3C3C" />
+    <path
+      d="M3 3V4V14V21H5V14H12.3828L13.3828 16H21V5H14.6172L13.6172 3H3ZM5 5H12.3828L13.3828 7H14H19V14H14.6172L13.6172 12H5V5Z"
+      fill={isError ? "#BB2C2F" : "#3D3C3C"}
+    />
   </svg>
 );
 const SuccessIcon = () => (

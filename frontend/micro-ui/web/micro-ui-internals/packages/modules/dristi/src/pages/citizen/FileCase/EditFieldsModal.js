@@ -30,9 +30,7 @@ function EditFieldsModal({ t, config, setOpenConfigurationModal, selected, handl
       headerBarMain={<Heading label={t(config?.headerBarMain)} />}
       className="case-types"
     >
-      <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>
-        E-sign has already been added to this case file. Edits will require sign to be affixed again. Confirm if you would like to go ahead.
-      </div>
+      <div style={{ paddingTop: "10px", paddingBottom: "10px" }}>{t(config?.modalText)}</div>
     </Modal>
   );
 }
