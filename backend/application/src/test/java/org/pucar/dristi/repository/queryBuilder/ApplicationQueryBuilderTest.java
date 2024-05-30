@@ -65,6 +65,173 @@ class ApplicationQueryBuilderTest {
     }
 
     @Test
+    void testGetApplicationSearchQueryWithFilingNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = "filingNumber123";
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Expected query part
+        String expectedQueryPart = "app.filingNumber ='filingNumber123'";
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        // Verify the expected part of the query is present
+        assertTrue(query.contains(expectedQueryPart));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithNullFilingNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        assertFalse(query.contains("app.filingNumber ="));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithEmptyFilingNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = "";
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        assertFalse(query.contains("app.filingNumber ="));
+    }
+
+
+    @Test
+    void testGetApplicationSearchQueryWithCnrNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = "CNR123456";
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Expected query part
+        String expectedQueryPart = "app.cnrNumber ='CNR123456'";
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        // Verify the expected part of the query is present
+        assertTrue(query.contains(expectedQueryPart));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithNullCnrNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        assertFalse(query.contains("app.cnrNumber ="));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithEmptyCnrNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = "";
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        assertFalse(query.contains("app.cnrNumber ="));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithStatus() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = "status123";
+        Integer limit = null;
+        Integer offset = null;
+
+        // Expected query part
+        String expectedQueryPart = "app.status ='status123'";
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        // Verify the expected part of the query is present
+        assertTrue(query.contains(expectedQueryPart));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithNullStatus() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        assertFalse(query.contains("app.status ="));
+    }
+
+    @Test
+    void testGetApplicationSearchQueryWithEmptyStatus() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String tenantId = null;
+        String status = "";
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+
+        assertFalse(query.contains("app.status ="));
+    }
+
+
+    @Test
     void testGetDocumentSearchQuery() {
         List<String> ids = Arrays.asList("id1", "id2", "id3");
         List<Object> preparedStmtList = new java.util.ArrayList<>();
