@@ -79,14 +79,14 @@ paths:
               $ref: '#/components/schemas/EvidenceSearchRequest'
         required: true
       responses:
-        '201':
-          description: ReponseInfo with artifact(s) updated sucessfully
+        '200':
+          description: ResponseInfo with artifacts matching search criteria
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/EvidenceSearchResponse'
         '400':
-          description: Artifact(s) creation failed
+          description: Artifacts search failed. Refer to the response body for specifics.
           content:
             '*/*':
               schema:
@@ -268,8 +268,11 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         tenantid: 
           type: string    
-        criteria:
-          $ref: '#/components/schemas/EvidenceSearchCriteria'
+        artifacts:
+          type: array
+          description: his is an output field and will contain the list of artifacts found as per the search criteria
+          items:
+            $ref: '#/components/schemas/Artifact'
           
     EvidenceSearchCriteria:
       type: object
@@ -289,9 +292,4 @@ components:
           type: string
         status:
           type: string
-        responseList:
-          type: array
-          description: his is an output field and will contain the list of artifacts found as per the search criteria
-          items:
-            $ref: '#/components/schemas/Artifact'
         
