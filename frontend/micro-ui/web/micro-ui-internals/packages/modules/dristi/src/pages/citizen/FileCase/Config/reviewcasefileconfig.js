@@ -116,7 +116,7 @@ export const reviewCaseFileFormConfig = [
         type: "component",
         component: "SelectReviewAccordion",
         key: "userDetails",
-        label: "2. Additional Details",
+        label: "3. Additional Details",
         withoutLabel: true,
         populators: {
           inputs: [
@@ -171,4 +171,5 @@ export const reviewcasefileconfig = {
   formconfig: reviewCaseFileFormConfig,
   header: "CS_REVIEW_CASE_FILE_HEADING",
   subtext: "CS_REVIEW_CASE_FILE_SUBTEXT",
+  className: "review-case-file",
 };
