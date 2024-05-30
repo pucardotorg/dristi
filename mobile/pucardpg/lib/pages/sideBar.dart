@@ -6,6 +6,8 @@ import 'package:pucardpg/blocs/app-init-bloc/app_init.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/blocs/localization-bloc/localization.dart';
+import 'package:pucardpg/theme/app_themes.dart';
+import 'package:pucardpg/widget/digit_language_row_card.dart';
 import '../utils/i18_key_constants.dart' as i18;
 
 class SideBar extends StatelessWidget {
@@ -16,7 +18,7 @@ class SideBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final theme = AppTheme.instance;
     // return BlocBuilder<AppInitialization, InitState>(
     //   builder: (context, state) {
     //     final actionMap = state.entityActionMapping;
@@ -29,19 +31,23 @@ class SideBar extends StatelessWidget {
                 color: theme.colorScheme.secondary.withOpacity(0.12),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
+                  height: 200,
                   child: state.maybeWhen(
                       orElse: () => const Offstage(),
                       // orElse: () => const Text('Side Bar could not load'),
                       authenticated: (accessToken, refreshToken, userRequest) {
                         return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              userRequest!.userName ?? "",
-                              style: theme.textTheme.displayMedium,
+                              userRequest!.name ?? "",
+                              style: theme.mobileTypography.textTheme.headlineLarge,
                             ),
                             Text(
                               userRequest.mobileNumber ?? "",
-                              style: theme.textTheme.displayMedium,
+                              style: theme.mobileTypography.textTheme.headlineLarge?.apply(
+                                color: theme.lightGrey
+                              ),
                             ),
                           ],
                         );
@@ -81,25 +87,28 @@ class SideBar extends StatelessWidget {
                               return BlocBuilder<LocalizationBloc,
                                       LocalizationState>(
                                   builder: (context, locState) {
-                                return DigitRowCard(
-                                  rowItems: languages!.map((e) {
-                                    return DigitRowCardModel(
-                                        label: e.label,
-                                        value: e.value,
-                                        isSelected: e.value ==
-                                            context
-                                                .read<LocalizationBloc>()
-                                                .locale);
-                                  }).toList(),
-                                  width: MediaQuery.of(context).size.width,
-                                  onChanged: (rowCardValue) {
-                                    context.read<LocalizationBloc>().add(
-                                        LocalizationEvent.onSelect(
-                                            locale: rowCardValue.value,
-                                            moduleList: appConfig
-                                                .mdmsRes?.commonMasters!.stateInfo?[0]
-                                                .localizationModules));
-                                  },
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: DigitLanguageRowCard(
+                                    rowItems: languages!.map((e) {
+                                      return DigitRowCardModel(
+                                          label: e.label,
+                                          value: e.value,
+                                          isSelected: e.value ==
+                                              context
+                                                  .read<LocalizationBloc>()
+                                                  .locale);
+                                    }).toList(),
+                                    width: MediaQuery.of(context).size.width,
+                                    onChanged: (rowCardValue) {
+                                      context.read<LocalizationBloc>().add(
+                                          LocalizationEvent.onSelect(
+                                              locale: rowCardValue.value,
+                                              moduleList: appConfig
+                                                  .mdmsRes?.commonMasters!.stateInfo?[0]
+                                                  .localizationModules));
+                                    },
+                                  ),
                                 );
                               });
                             },
@@ -117,8 +126,9 @@ class SideBar extends StatelessWidget {
               height: MediaQuery.of(context).size.height / 3,
             ),
             const PoweredByDigit(
-              version: 'v1.3',
-            )
+              version: 'v1',
+            ),
+            const SizedBox(height: 5,),
           ],
         );
       },
