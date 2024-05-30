@@ -24,7 +24,7 @@ paths:
               $ref: '#/components/schemas/EvidenceRequest'
         required: true
       responses:
-        '201':
+        '200':
           description: ReponseInfo with artifact(s) updated sucessfully
           content:
             '*/*':
