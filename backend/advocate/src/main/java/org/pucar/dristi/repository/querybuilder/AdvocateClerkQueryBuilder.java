@@ -143,7 +143,7 @@ public class AdvocateClerkQueryBuilder {
             }
 
             if(tenantId != null && !tenantId.isEmpty()){
-                addClauseIfRequiredForStatus(query, preparedStmtList);
+                addClauseIfRequiredForTenantId(query, preparedStmtList);
                 query.append("LOWER(advc.tenantid) = LOWER(?)");
 //                        .append(")");
                 preparedStmtList.add(tenantId.toLowerCase());
@@ -177,6 +177,14 @@ public class AdvocateClerkQueryBuilder {
     private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE (");
+        }else{
+            query.append(" AND ");
+        }
+    }
+
+    private void addClauseIfRequiredForTenantId(StringBuilder query, List<Object> preparedStmtList){
+        if(preparedStmtList.isEmpty()){
+            query.append(" WHERE ");
         }else{
             query.append(" AND ");
         }

@@ -92,6 +92,7 @@ public class AdvocateQueryBuilder {
             return query.toString();
         }
          catch (Exception e) {
+            e.printStackTrace();
             log.error("Error while building advocate search query");
             throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
         }
@@ -111,9 +112,8 @@ public class AdvocateQueryBuilder {
                 firstCriteria = false;
             }
             if(tenantId != null && !tenantId.isEmpty()){
-                addClauseIfRequiredForStatus(query, firstCriteria);
+                addClauseIfRequiredForTenantId(query, firstCriteria);
                 query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
-//                        .append(")");
                 preparedStmtList.add("%" + tenantId.toLowerCase() + "%");
                 firstCriteria = false;
             }
@@ -184,6 +184,14 @@ public class AdvocateQueryBuilder {
     private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
             query.append(" WHERE (");
+        } else {
+            query.append(" AND ");
+        }
+    }
+
+    private void addClauseIfRequiredForTenantId(StringBuilder query, boolean isFirstCriteria) {
+        if (isFirstCriteria) {
+            query.append(" WHERE ");
         } else {
             query.append(" AND ");
         }
