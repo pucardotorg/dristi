@@ -461,47 +461,59 @@ export const newConfig = [
     ],
   },
   {
-    texts: {
-      header: "CS_ENTER_NAME",
-      cardText: "CS_ENTER_NAME_SUB_TEXT",
-      submitInForm: true,
-      submitBarLabel: "CS_COMMON_CONTINUE",
-    },
-    inputs: [
+    head: "CS_ENTER_NAME",
+    subHead: "CS_ENTER_NAME_SUB_TEXT",
+    headId: "select-name-subtext", // for css
+    body: [
       {
-        label: "CORE_COMMON_FIRST_NAME",
         type: "text",
-        name: "firstName",
-        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
-        validation: {
-          required: true,
-          minlength: 1,
-          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-          patternType: "Name",
+        label: "FIRST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "firstName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            minLength: 2,
+            title: "",
+            patternType: "Name",
+          },
         },
       },
       {
+        type: "text",
         label: "CORE_COMMON_MIDDLE_NAME",
-        type: "text",
-        name: "middleName",
-        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
-        validation: {
-          required: false,
-          minlength: 1,
-          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-          patternType: "Name",
+        populators: {
+          name: "middleName",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            title: "",
+            patternType: "Name",
+          },
         },
       },
       {
-        label: "CORE_COMMON_LAST_NAME",
         type: "text",
-        name: "name",
-        error: "CORE_COMMON_APPLICANT_NAME_INVALID",
-        validation: {
-          required: true,
-          minlength: 1,
-          pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-          patternType: "Name",
+        label: "LAST_NAME",
+        isMandatory: true,
+        populators: {
+          name: "lastName",
+          error: "CORE_REQUIRED_FIELD_ERROR",
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            minLength: 2,
+            title: "",
+            patternType: "Name",
+          },
         },
       },
     ],

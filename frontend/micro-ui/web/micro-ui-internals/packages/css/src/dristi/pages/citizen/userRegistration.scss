@@ -373,3 +373,69 @@
   position: fixed !important;
   bottom: 0px;
 }
+
+.registration-select-name {
+  display: flex !important;
+  justify-content: center !important;
+  padding: 40px !important;
+  background-color: #ffffff !important;
+  box-shadow: none !important;
+  .card {
+    margin: 0px !important;
+    padding: 0px !important;
+    display: flex !important;
+    align-items: center !important;
+    .card-header {
+      font-family: Roboto !important;
+      font-size: 24px !important;
+      font-weight: 700 !important;
+      line-height: 30px !important;
+      text-align: center !important;
+      color: #0b0c0c !important;
+      margin-bottom: 8px !important;
+    }
+    #select-name-subtext_DES {
+      width: 75% !important;
+      font-family: Roboto !important;
+      font-size: 14px !important;
+      font-weight: 400 !important;
+      line-height: 21px !important;
+      text-align: center !important;
+      color: #505a5f !important;
+      margin: 0px !important;
+    }
+    div {
+      width: 100%;
+      .card-label {
+        margin: 32px 0px 8px 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0b0c0c;
+      }
+
+      input {
+        margin: 0px;
+      }
+    }
+    button {
+      width: 100%;
+      box-shadow: none;
+      margin-top: 32px;
+    }
+    .card-label-error {
+      width: 80% !important;
+      display: flex !important;
+      justify-content: center !important;
+      position: relative !important;
+      margin-top: 0px !important;
+      margin-bottom: -15px !important;
+      margin-left: 0px !important;
+    }
+  }
+  .toast-success {
+    display: none !important;
+  }
+}
