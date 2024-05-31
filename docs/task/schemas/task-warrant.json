@@ -28,9 +28,7 @@
     },
     "gender": {
       "type": "string",
-      "pattern": "^[a-zA-Z]{1,16}$",
-      "description": "string value to a max of 16 alphabets",
-      "examples" : ["male", "female","transgender"]
+      "enum" : ["male", "female","transgender"]
     }
   },
   "caseDetails":
@@ -70,12 +68,26 @@
       "pattern": "^\\+?[0-9\\-() ]+$"
     }
   },
+  "$comment": "array of deliveryChannels",
   "deliveryChannel" : [
     {
-      "name" : {
+      "name": {
         "type": "string",
         "pattern": "^[a-zA-Z]{1,32}$",
         "description": "sting having a max of 32 alphabets. no numbers"
+      },
+      "address": {
+        "type": "string",
+        "pattern": "^.{1,400}$",
+        "description": "string having a max of 400 characters and matches any character (including newline characters)"
+      },
+      "phone": {
+        "type": "string",
+        "pattern": "^\\+?[0-9\\-() ]+$"
+      },
+      "email": {
+        "type": "string",
+        "format": "email"
       },
       "status": {
         "type": "string",
@@ -91,6 +103,13 @@
         "minimum": 0,
         "maximum": 5000,
         "description": "putting some random number for max limit for now"
+      },
+      "feesStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "paid"
+        ]
       }
     }
   ]

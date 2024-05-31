@@ -29,9 +29,7 @@
     },
     "gender": {
       "type": "string",
-      "pattern": "^[a-zA-Z]{1,16}$",
-      "description": "string value to a max of 16 alphabets",
-      "examples" : ["male", "female","transgender"]
+      "enum" : ["male", "female","transgender"]
     }
   },
   "caseDetails":
