@@ -124,7 +124,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
 
         const data = {
-          "addressDetails-select": {
+          addressDetailsSelect: {
             pincode: pincode,
             district: addressLine2,
             city: city,
@@ -141,7 +141,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           complainantId: true,
         };
 
-        ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
+        ["addressDetailsSelect", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
           onSelect(
             `${key}`,
             typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
@@ -292,6 +292,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           formId="modal-action"
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
+          className={"case-types"}
         >
           <div>
             <LabelFieldPair>

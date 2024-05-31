@@ -619,6 +619,61 @@ export const newConfig = [
       submitBarLabel: "CS_COMMONS_NEXT",
     },
   },
+  {
+    head: "UPLOAD-ID",
+    subHead: "UPLOAD_SUBTEXT",
+    body: [
+      {
+        type: "component",
+        component: "SelectUserTypeComponent",
+        key: "SelectUserTypeComponent",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              label: "CS_ID_TYPE",
+              type: "dropdown",
+              name: "selectIdType",
+              optionsKey: "name",
+              error: "sample required message",
+              validation: {},
+              clearFields: { aadharNumber: "", ID_Proof: [] },
+              clearFieldsType: { ID_Proof: "documentUpload" },
+              isMandatory: true,
+              disableMandatoryFieldFor: ["aadharNumber"],
+              disableFormValidation: false,
+              options: [
+                {
+                  code: "AADHAR",
+                  name: "AADHAR",
+                },
+                {
+                  code: "PAN",
+                  name: "PAN",
+                },
+              ],
+              optionsCustomStyle: {
+                top: "40px",
+              },
+            },
+            {
+              label: "Upload ID Proof",
+              type: "documentUpload",
+              name: "ID_Proof",
+              validation: {},
+              clearFields: { aadharNumber: "" },
+              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
+              isMandatory: true,
+              disableMandatoryFieldFor: ["aadharNumber"],
+              errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",
+              disableFormValidation: false,
+            },
+          ],
+          validation: {},
+        },
+      },
+    ],
+  },
 ];
 
 export const termsAndConditionConfig = [

@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useGetAccessToken } from "../../../hooks/useGetAccessToken";
-// import useInterval from "../../../hooks/useInterval";
 import { SuccessIcon } from "../../../icons/svgIndex";
 
 const Response = ({ refetch }) => {
@@ -16,16 +15,6 @@ const Response = ({ refetch }) => {
   //   Digit.UserService.logout();
   // };
 
-  // const [timeLeft, setTimeLeft] = useState(5);
-  // useInterval(
-  //   () => {
-  //     setTimeLeft(timeLeft - 1);
-  //     if (timeLeft === 1 && location?.state?.createType !== "LITIGANT") {
-  //       handleLogout();
-  //     }
-  //   },
-  //   timeLeft > 0 ? 1000 : null
-  // );
   useGetAccessToken("citizen.refresh-token");
 
   return (

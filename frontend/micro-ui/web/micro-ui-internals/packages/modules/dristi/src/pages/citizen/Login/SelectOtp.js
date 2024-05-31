@@ -65,7 +65,9 @@ const SelectOtp = ({
   };
 
   if (!params?.mobileNumber && !isAdhaar) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(path);
+  } else if (!params?.adhaarNumber && isAdhaar) {
+    history.push(path);
   }
 
   if (userType === "employee") {

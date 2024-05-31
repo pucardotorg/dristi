@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
 
-function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
+function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOnRefresh }) {
   const { t } = useTranslation();
   const Digit = window.Digit || {};
   const history = useHistory();
@@ -91,7 +91,8 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type };
   };
-  const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
+  console.log(params?.userType?.clientDetails?.selectUserType?.role[0]);
+
   const onSubmit = (formData) => {
     if (!validateFormData(formData)) {
       setShowErrorToast(!validateFormData(formData));
@@ -99,18 +100,14 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
     }
     const data = params?.userType?.clientDetails;
     const Individual = params?.Individual;
-    console.log(formData);
     const oldData = params;
-    const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
-    const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : aadhaarNumber;
-    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     Digit.DRISTIService.postIndividualService(Individual, tenantId)
       .then((result) => {
         if (
           data?.selectUserType?.apiDetails &&
           data?.selectUserType?.apiDetails?.serviceName &&
           result &&
-          data?.selectUserType?.role === "ADVOCATE_ROLE"
+          data?.selectUserType?.role[0] === "ADVOCATE_ROLE"
         ) {
           onDocumentUpload(formData?.clientDetails?.barCouncilId[0][1]?.file, formData?.clientDetails?.barCouncilId[0][0]).then((document) => {
             const requestBody = {
@@ -147,13 +144,12 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
                     username: oldData?.name?.firstName + " " + oldData?.name?.name,
                   },
                   ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                    res[curr] = data?.clientDetails[curr];
+                    res[curr] = formData?.clientDetails?.barRegistrationNumber;
                     return res;
                   }, {}),
                 },
               ],
             };
-            console.log("REQUES", requestBody);
             Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
               roles: [
                 {
@@ -247,7 +243,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config }) {
     // history.push(`${path}/additional-details/terms-conditions`);
   };
   if (!params?.Individual && showSuccess == false) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
     <div className="employee-card-wrapper">

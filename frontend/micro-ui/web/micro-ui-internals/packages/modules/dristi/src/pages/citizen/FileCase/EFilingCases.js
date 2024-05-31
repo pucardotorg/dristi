@@ -10,6 +10,7 @@ import Modal from "../../../components/Modal";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
+import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
@@ -26,7 +27,7 @@ function EFilingCases({ path }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
-
+  const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -256,11 +257,21 @@ function EFilingCases({ path }) {
     if (selected === "respondentDetails") {
       console.debug(formdata);
     }
+    if (selected === "addSignature") {
+      setOpenConfirmCourtModal(true);
+      return;
+    }
     DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data }, tenantId }, tenantId);
+    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+  };
+
+  const onSubmitCase = (data) => {
+    console.debug(data);
+    setOpenConfirmCourtModal(false);
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -291,8 +302,9 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
+            className={'case-types'}
           >
-            <div>
+            <div style={{ padding: "8px 16px" }}>
               {accordion.map((item, index) => (
                 <Accordion
                   t={t}
@@ -305,7 +317,6 @@ function EFilingCases({ path }) {
                   children={item.children}
                   parentIndex={index}
                   isOpen={item.isOpen}
-                  showConfirmModal={confirmModalConfig ? true : false}
                 />
               ))}
             </div>
@@ -370,7 +381,7 @@ function EFilingCases({ path }) {
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
-                  defaultValues={{}}
+                  defaultValues={formdata[index]?.data}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
@@ -386,9 +397,12 @@ function EFilingCases({ path }) {
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div onClick={handleAddForm} className="add-new-form">
+            <div
+              onClick={handleAddForm}
+              className="add-new-form"
+            >
               <CustomAddIcon />
-              <span>{pageConfig.addFormText}</span>
+              <span>{t(pageConfig.addFormText)}</span>
             </div>
           )}
           {openConfigurationModal && (
@@ -403,6 +417,7 @@ function EFilingCases({ path }) {
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>
+      {openConfirmCourtModal && <ConfirmCourtModal setOpenConfirmCourtModal={setOpenConfirmCourtModal} t={t} onSubmitCase={onSubmitCase} />}
     </div>
   );
 }

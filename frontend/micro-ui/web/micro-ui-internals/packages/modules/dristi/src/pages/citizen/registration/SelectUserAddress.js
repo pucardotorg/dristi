@@ -2,7 +2,7 @@ import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectUserAddress = ({ config, onSelect, t, params }) => {
+const SelectUserAddress = ({ config, onSelect, t, params, pathOnRefresh }) => {
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -37,7 +37,7 @@ const SelectUserAddress = ({ config, onSelect, t, params }) => {
     }
   };
   if (!params?.name) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
     <div className="user-address">

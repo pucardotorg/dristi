@@ -12,6 +12,7 @@ import SelectMobileNumber from "../Login/SelectMobileNumber";
 import SelectId from "../Login/SelectId";
 import EnterAdhaar from "./EnterAdhaar";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import UploadIdType from "./UploadIdType";
 
 const TYPE_REGISTER = { type: "register" };
 const setCitizenDetail = (userObject, token, tenantId) => {
@@ -202,22 +203,38 @@ const Registration = ({ stateCode }) => {
   };
   const handleIdentitySave = (indentity) => {
     setNewParams({ ...newParams, indentity });
-    history.push(`${path}/enter-adhaar`);
+    console.log(indentity);
+    indentity.IdVerification.selectIdType.code === "AADHAR" ? history.push(`${path}/enter-adhaar`) : history.push(`${path}/upload-id`);
   };
   const handleUserTypeSave = (userType) => {
     setNewParams({ ...newParams, userType });
     history.push(`/digit-ui/citizen/dristi/home/response`);
   };
+  const onDocumentUpload = async (filename, filedata, IdType) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
+    setNewParams({ ...newParams, indentity: "OTHER" });
 
+    Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
+    Digit.SessionStorage.del("aadharNumber");
+    history.push(`${path}/user-type`);
+  };
   if (isLoading || isFetching) {
     return <Loader />;
   }
+  const pathOnRefresh = `${path}/user-name`;
+  // console.log(newParams);
   return (
     <div className="citizen-form-wrapper">
       <Switch>
         <React.Fragment>
           <Route path={`${path}/additional-details`}>
-            <AdvocateClerkAdditionalDetail setParams={setNewParams} params={newParams} path={path} config={stepItems[9]} />
+            <AdvocateClerkAdditionalDetail
+              setParams={setNewParams}
+              params={newParams}
+              path={path}
+              config={stepItems[9]}
+              pathOnRefresh={pathOnRefresh}
+            />
           </Route>
           <Route path={`${path}/mobile-number`}>
             <SelectMobileNumber
@@ -243,6 +260,7 @@ const Registration = ({ stateCode }) => {
               error={isOtpValid}
               canSubmit={canSubmitOtp}
               params={newParams}
+              path={`${path}/mobile-number`}
               cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
               t={t}
             />
@@ -256,17 +274,32 @@ const Registration = ({ stateCode }) => {
               history={history}
               value={newParams?.name}
               isUserLoggedIn={isUserLoggedIn}
+              pathOnRefresh={pathOnRefresh}
             />
           </Route>
           <Route path={`${path}/user-address`}>
-            <SelectUserAddress config={[stepItems[1]]} t={t} params={newParams} onSelect={handleAddressSave} />
+            <SelectUserAddress config={[stepItems[1]]} t={t} params={newParams} pathOnRefresh={pathOnRefresh} onSelect={handleAddressSave} />
           </Route>
           <Route path={`${path}/id-verification`}>
-            <SelectId t={t} config={[stepItems[6]]} params={newParams} history={history} onSelect={handleIdentitySave} />
+            <SelectId
+              t={t}
+              config={[stepItems[6]]}
+              params={newParams}
+              history={history}
+              pathOnRefresh={pathOnRefresh}
+              onSelect={handleIdentitySave}
+            />
           </Route>
 
           <Route path={`${path}/enter-adhaar`}>
-            <EnterAdhaar t={t} config={[stepItems[7]]} onSelect={handleAdhaarChange} params={newParams} adhaarNumber={newParams?.adhaarNumber} />
+            <EnterAdhaar
+              t={t}
+              config={[stepItems[7]]}
+              onSelect={handleAdhaarChange}
+              pathOnRefresh={pathOnRefresh}
+              params={newParams}
+              adhaarNumber={newParams?.adhaarNumber}
+            />
           </Route>
           <Route path={`${path}/aadhar-otp`}>
             <SelectOtp
@@ -279,15 +312,24 @@ const Registration = ({ stateCode }) => {
               error={isOtpValid}
               canSubmit={canSubmitAadharOtp}
               params={newParams}
-              path={`${path}/user-type`}
+              path={pathOnRefresh}
               isAdhaar={true}
               t={t}
             />
           </Route>
           <Route path={`${path}/user-type`}>
-            <SelectUserType config={[stepItems[2]]} t={t} setParams={setNewParams} params={newParams} onSelect={handleUserTypeSave} />
+            <SelectUserType
+              config={[stepItems[2]]}
+              t={t}
+              setParams={setNewParams}
+              pathOnRefresh={pathOnRefresh}
+              params={newParams}
+              onSelect={handleUserTypeSave}
+            />
           </Route>
-
+          <Route path={`${path}/upload-id`}>
+            <UploadIdType t={t} config={[stepItems[9]]} pathOnRefresh={pathOnRefresh} onDocumentUpload={onDocumentUpload} params={newParams} />
+          </Route>
           {error && <Toast error={true} label={error} onClose={closeToast} />}
         </React.Fragment>
       </Switch>

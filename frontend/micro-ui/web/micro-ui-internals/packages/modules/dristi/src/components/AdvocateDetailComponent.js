@@ -21,6 +21,10 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
       ],
     [config?.populators?.inputs]
   );
+  const onDocumentUpload = async (fileData, filename) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
   function setValue(value, name, input) {
     if (input && input?.clearFields && value) {
       if (input?.clearFieldsType && formData[config.key]) {
@@ -57,10 +61,6 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
       : setShowDoc(false);
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
-  const onDocumentUpload = async (fileData, filename) => {
-    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
-    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
-  };
 
   return (
     <div>

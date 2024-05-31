@@ -123,6 +123,7 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/registration/enter-adhaar`,
     `${path}/home/registration/aadhar-otp`,
     `${path}/home/registration/additional-details`,
+    `${path}/home/registration/upload-id`,
   ];
   const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
 
@@ -138,7 +139,7 @@ const App = ({ stateCode, tenantId }) => {
     history.push(`${path}/home`);
   }
   if (isUserLoggedIn && registerScreenRoute.includes(location.pathname)) {
-    history.push(`${path}/home`);
+    history.push(`${path}/home/registration/user-name`);
   }
   if (isLoading) {
     return <Loader />;
@@ -149,7 +150,7 @@ const App = ({ stateCode, tenantId }) => {
       <Switch>
         <React.Fragment>
           {
-            !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number")) &&
+            !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) &&
             <div className="back-button-home">
               <BackButton />
             </div>

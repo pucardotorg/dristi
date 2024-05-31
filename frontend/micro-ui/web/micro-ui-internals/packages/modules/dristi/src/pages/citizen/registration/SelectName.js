@@ -13,7 +13,7 @@ const SelectName = ({ config, onSelect, t, isDisabled, params, history, value, i
         t={t}
         isDisabled={isDisabled}
         defaultValue={value}
-        cardStyle={{ minWidth: "50%" }}
+        cardStyle={{ minWidth: "100%" }}
       ></FormStep>
     </div>
   );

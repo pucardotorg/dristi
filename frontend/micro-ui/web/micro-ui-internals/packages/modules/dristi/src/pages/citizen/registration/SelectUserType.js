@@ -2,7 +2,7 @@ import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
+const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRefresh }) => {
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
@@ -93,29 +93,40 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
   const onSubmit = (userType) => {
     const data = params;
     const userTypeSelcted = userType?.clientDetails?.selectUserType?.code;
+    const uploadedDocument = Digit?.SessionStorage?.get("UploadedDocument");
+    const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
+    const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : data?.adhaarNumber;
+    const identifierIdDetails = uploadedDocument
+      ? {
+          fileStoreId: identifierId,
+          filename: uploadedDocument?.filename,
+        }
+      : {};
+    console.log(uploadedDocument);
+    const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     setParams({ ...params, userType });
     let Individual = {
       Individual: {
         tenantId: tenantId,
         name: {
           givenName: data?.name?.firstName,
-          familyName: data?.name?.lastName,
-          otherNames: data?.name?.name,
+          familyName: data?.name?.name,
+          otherNames: data?.name?.middleName,
         },
         userDetails: {
           username: Digit.UserService.getUser()?.info?.userName,
-          roles: data?.userType?.clientDetails?.selectUserType?.role
+          roles: data?.clientDetails?.selectUserType?.role
             ? [
                 {
                   code: "CITIZEN",
                   name: "Citizen",
                   tenantId: tenantId,
                 },
-                {
-                  code: data?.userType?.clientDetails?.selectUserType?.role,
-                  name: data?.userType?.clientDetails?.selectUserType?.role,
+                ...data?.clientDetails?.selectUserType?.role?.map((role) => ({
+                  code: role,
+                  name: role,
                   tenantId: tenantId,
-                },
+                })),
               ]
             : [
                 {
@@ -143,8 +154,8 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
         ],
         identifiers: [
           {
-            identifierType: data?.indentity?.IdVerification?.selectIdType?.code,
-            identifierId: data?.adhaarNumber,
+            identifierType: identifierType,
+            identifierId: identifierId,
           },
         ],
         isSystemUser: true,
@@ -154,8 +165,10 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
             { key: "userType", value: userTypeSelcted },
             { key: "userTypeDetail", value: JSON.stringify(userType?.clientDetails?.selectUserType) },
             { key: "termsAndCondition", value: true },
+            { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
           ],
         },
+
         clientAuditDetails: {},
         auditDetails: {},
       },
@@ -189,7 +202,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {} }) => {
     }
   };
   if (!params?.indentity) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
     <React.Fragment>

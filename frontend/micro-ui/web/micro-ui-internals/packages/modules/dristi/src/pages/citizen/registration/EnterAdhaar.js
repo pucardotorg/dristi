@@ -1,7 +1,7 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-const EnterAdhaar = ({ t, onSelect, config, params }) => {
+const EnterAdhaar = ({ t, onSelect, config, params, pathOnRefresh }) => {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const validateFormData = (data) => {
@@ -24,7 +24,7 @@ const EnterAdhaar = ({ t, onSelect, config, params }) => {
     return () => clearTimeout(timer);
   }, [closeToast]);
   if (!params?.indentity) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
     <React.Fragment>

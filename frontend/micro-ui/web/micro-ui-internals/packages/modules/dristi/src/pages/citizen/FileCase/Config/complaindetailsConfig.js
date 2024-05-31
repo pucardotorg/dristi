@@ -230,7 +230,7 @@ export const complaintdetailconfig = {
   header: "CS_COMPLAINT_DETAIL_HEADING",
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
-  addFormText: "ADD_Complaint",
+  addFormText: "ADD_COMPLAINANT",
   formItemName: "Complainant",
   className: "complainant",
 };
