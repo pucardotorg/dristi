@@ -28,6 +28,55 @@
   .citizen-form-wrapper {
     margin-top: 0px !important;
 
+    .enter-addhar {
+      padding: 40px;
+      margin: 0px;
+      background-color: #ffffff;
+
+      .card {
+        box-shadow: none;
+        padding: 0px;
+        margin: 0px !important;
+        .card-section-header:first-child {
+          margin: 0px !important;
+          font-family: Roboto !important;
+          font-size: 24px !important;
+          font-weight: 700 !important;
+          line-height: 30px !important;
+          text-align: center;
+          color: #0b0c0c !important;
+          margin-bottom: 8px !important;
+        }
+        .card-section-header:nth-child(2) {
+          margin: 0px !important;
+          font-family: Roboto !important;
+          font-size: 16px !important;
+          font-weight: 400 !important;
+          line-height: 24px !important;
+          text-align: center;
+          color: #505a5f !important;
+          padding-bottom: 32px;
+        }
+        .input-otp-wrap {
+          margin-bottom: 0px !important;
+          display: flex;
+          width: 100%;
+          gap: 16px;
+          input {
+            width: 165px !important;
+            margin-bottom: 0px;
+            margin-right: 0px;
+          }
+        }
+
+        button {
+          width: 100%;
+          margin-top: 32px;
+          box-shadow: none;
+        }
+      }
+    }
+
     .login-form {
       padding: 40px;
       margin: 0px;
@@ -105,6 +154,18 @@
       }
     }
 
+    .select-user {
+      .radio-wrap {
+        .card {
+          padding: 16px 0px !important;
+          border-width: 0px 0px 1px 0px !important;
+          border-style: solid;
+          border-color: #00000026;
+        }
+      }
+    }
+
+    .select-user,
     .id-verification {
       padding: 40px !important;
       background-color: #ffffff;
@@ -152,7 +213,7 @@
             display: flex;
             justify-content: flex-start;
             gap: 16px !important;
-            padding: 16px !important;
+            padding: 16px;
             box-shadow: none;
             border: 1px #d9d9d9 solid;
             border-radius: 8px;
@@ -165,17 +226,18 @@
                 flex-direction: column;
                 align-items: flex-start;
                 .card-sub-header {
-                  margin: 0px;
+                  margin: 0px !important;
                   font-family: Roboto;
                   font-size: 16px !important;
                   font-weight: 500;
                   line-height: 18.75px;
                   text-align: left;
                   color: #0b0c0c;
-                  margin-bottom: 8px;
+                  margin-bottom: 8px !important;
                 }
                 .card-text {
-                  margin: 0px;
+                  margin: 0px !important;
+                  padding: 0px !important;
                   font-family: Roboto;
                   font-size: 14px !important;
                   font-weight: 400;

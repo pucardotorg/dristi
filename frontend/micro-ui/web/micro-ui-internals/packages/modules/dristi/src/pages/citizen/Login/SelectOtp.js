@@ -21,6 +21,7 @@ const SelectOtp = ({
   path,
   isAdhaar,
   cardText,
+  mobileNumber,
 }) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
@@ -100,7 +101,7 @@ const SelectOtp = ({
       headerBarMain={
         <React.Fragment>
           <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
-          <CardText>{cardText}</CardText>
+          <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
         </React.Fragment>
       }
       popupStyles={{ width: "580px", alignItems: "center" }}
