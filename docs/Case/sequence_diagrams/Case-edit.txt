@@ -1,0 +1,46 @@
+@startuml
+title Edit a Case - Pending Application Approval
+participant UI as UI
+participant Case as Case
+UI -> Case : Edit a case
+Case -> Case: Check if update contains editable fields
+Case -> MDMS ++: Retrieve all MDMS data for service \n in one go.
+return MDMS data for Case
+Case -> Case: Validate MDMS data
+alt Error
+  Case -> UI: Return 400 if data invalid
+end
+Case -> Individual ++: Validate individualId of complainant
+return Individual details
+alt Empty Individual array
+ Case -> UI: Return 400: Invalid complainant details
+end
+Case -> Advocate ++: Fetch advocate Id
+return Advocate info
+alt Empty advocate payload
+Case -> UI: Return 400: Invalid advocate details
+end
+Case -> HRMS ++: Fetch court department info from HRMS
+return court info
+alt Court info not found
+Case -> UI: Return 400: Invalid court information
+end
+Case -> Case: Validate Judge ID
+Case -> FileStore++: Validate filestore IDs for vakalath nama \n PoA etc..
+return document details
+alt Document doesn't exist
+Case -> UI: Return 400: Invalid document details
+end
+Case -> Case: Remove filestore IDs that've been deleted.
+Case -> Case : Create a new copy of the case with updates
+Case -> Workflow ++: Trigger update workflow with \n application status as INWORKFLOW
+return Workflow status
+Case -> Kafka: Push payload to Kafka
+Case -> UI : Court case edit pending
+Persister -> Kafka: Read case payload
+Persister -> Postgres: Persist payload
+Indexer -> Kafka: Read case payload
+Indexer -> Indexer: Enrich case payload
+Indexer -> ElasticSearch: Push to case index
+
+@enduml

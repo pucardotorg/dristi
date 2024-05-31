@@ -6,17 +6,47 @@ UI -> Case : File a case
 Case -> MDMS ++: Retrieve all MDMS data for service \n in one go.
 return MDMS data for Case
 Case -> Case: Validate MDMS data
-Case -> UI: Return 400 if data invalid
-Case -> Advocate ++: Fetch advocate Ids
+alt Error
+  Case -> UI: Return 400 if data invalid
+end
+Case -> Individual ++: Validate individualId of complainant
+return Individual details
+alt Empty Individual array
+ Case -> UI: Return 400: Invalid complainant details
+end
+Case -> Advocate ++: Fetch advocate Id
 return Advocate info
-Case -> Case: Validate advocate information
-Case -> HRMS ++: Fetch Judge info from HRMS
-return employee details
+alt Empty advocate payload
+Case -> UI: Return 400: Invalid advocate details
+end
+Case -> HRMS ++: Fetch court department info from HRMS
+return court info
+alt Court info not found
+Case -> UI: Return 400: Invalid court information
+end
 Case -> Case: Validate Judge ID
+Case -> FileStore++: Validate filestore IDs
+return document details
+alt Document doesn't exist
+Case -> UI: Return 400: Invalid document details
+end
+Case -> Evidence++: Validate artifact Ids
+return Uploaded artifacts array
+alt Empty artifacts array
+Case -> UI: Return 400: Missing artifacts
+end
 Case -> IDGen ++: Request formatted filing number
-return formatted IDs
+return Formatted filing ID array
 Case -> Case: Enrich filing number in payload
 Case -> Workflow ++ : Transition to Case under scrutiny
 return Workflow status
+Case -> Case: Enrich Case payload with workflow status
+Case -> Kafka: Push payload to Kafka
 Case -> UI : Court case created
+Persister -> Kafka: Read case payload
+Persister -> Postgres: Persist payload
+Indexer -> Kafka: Read case payload
+Indexer -> Indexer: Enrich case payload
+Indexer -> ElasticSearch: Push to case index
+
 @enduml
