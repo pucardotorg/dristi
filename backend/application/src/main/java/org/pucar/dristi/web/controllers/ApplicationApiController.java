@@ -67,16 +67,16 @@ public class ApplicationApiController{
 
     @RequestMapping(value="/application/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<ApplicationExistsResponse> applicationV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the application(S) exists", required=true, schema=@Schema()) @Valid @RequestBody ApplicationExistsRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ApplicationExistsResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"applicationlist\" : {    \"filingNumber\" : \"filingNumber\",    \"applicationNumber\" : \"applicationNumber\",    \"exists\" : true,    \"cnrNumber\" : \"cnrNumber\"  }}", ApplicationExistsResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<ApplicationExistsResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            List<ApplicationExists> applicationExistsList = applicationService.existsApplication(body);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+            ApplicationExistsResponse applicationExistsResponse = ApplicationExistsResponse.builder().applicationExists(applicationExistsList).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(applicationExistsResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false);
+            ApplicationExistsResponse applicationExistsResponse = ApplicationExistsResponse.builder().applicationExists(null).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(applicationExistsResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<ApplicationExistsResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value="/application/v1/search", method = RequestMethod.POST)

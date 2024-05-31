@@ -8,10 +8,7 @@ import org.pucar.dristi.enrichment.ApplicationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.validator.ApplicationValidator;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationExists;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.RequestInfoBody;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -83,7 +80,7 @@ public class ApplicationService {
         }
     }
 
-        public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
+    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
             try {
                 // Fetch applications from database according to the given search params
                 List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
@@ -98,4 +95,18 @@ public class ApplicationService {
                 throw new CustomException(APPLICATION_SEARCH_ERR, e.getMessage());
             }
         }
+
+    public List<ApplicationExists> existsApplication(ApplicationExistsRequest applicationExistsRequest) {
+        try {
+            return applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists());
+        }
+        catch (CustomException e){
+            log.error("Error while checking application exist {}", e.getMessage());
+            throw e;
+        }
+        catch (Exception e){
+            log.error("Error while checking application exist {}", e.getMessage());
+            throw new CustomException(APPLICATION_EXIST_EXCEPTION,e.getMessage());
+        }
     }
+}

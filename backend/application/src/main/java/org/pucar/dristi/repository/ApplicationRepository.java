@@ -8,6 +8,7 @@ import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
 import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.ApplicationExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 
 @Slf4j
@@ -92,6 +94,30 @@ public class ApplicationRepository {
         catch (Exception e){
             log.error("Error while fetching application list {}", e.getMessage());
             throw new CustomException(APPLICATION_SEARCH_ERR,"Error while fetching application list: "+e.getMessage());
+        }
+    }
+
+    public List<ApplicationExists> checkApplicationExists(List<ApplicationExists> applicationExistsList) {
+        try {
+            for (ApplicationExists applicationExist : applicationExistsList) {
+                if ((applicationExist.getFilingNumber() == null || applicationExist.getFilingNumber().isEmpty()) &&
+                        (applicationExist.getCnrNumber() == null || applicationExist.getCnrNumber().isEmpty()) &&
+                        (applicationExist.getApplicationNumber() == null || applicationExist.getApplicationNumber().isEmpty()) )
+                    {
+                        applicationExist.setExists(false);
+                } else {
+                    String applicationExistQuery = queryBuilder.checkApplicationExistQuery(applicationExist.getFilingNumber(), applicationExist.getCnrNumber(), applicationExist.getApplicationNumber());
+                    log.info("Final application exist query: {}", applicationExistQuery);
+                    Integer count = jdbcTemplate.queryForObject(applicationExistQuery, Integer.class);
+                    applicationExist.setExists(count != null && count > 0);
+                }
+            }
+            return applicationExistsList;
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while checking application exist");
+            throw new CustomException(APPLICATION_EXIST_EXCEPTION, "Custom exception while checking application exist : " + e.getMessage());
         }
     }
 }

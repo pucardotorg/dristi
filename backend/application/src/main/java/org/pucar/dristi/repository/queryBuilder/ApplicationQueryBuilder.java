@@ -39,6 +39,41 @@ public class ApplicationQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY app.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY app.createdtime ASC ";
 
+    private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app WHERE ";
+
+    public String checkApplicationExistQuery(String filingNumber, String cnrNumber, String applicationNumber) {
+        try {
+            StringBuilder query = new StringBuilder(BASE_APPLICATION_EXIST_QUERY);
+            boolean hasPreviousCondition = false;
+
+            if (filingNumber != null && !filingNumber.isEmpty()) {
+                query.append("app.filingnumber = '").append(filingNumber).append("'");
+                hasPreviousCondition = true;
+            }
+
+            if (cnrNumber != null && !cnrNumber.isEmpty()) {
+                if (hasPreviousCondition) {
+                    query.append(" AND ");
+                }
+                query.append("app.cnrnumber = '").append(cnrNumber).append("'");
+                hasPreviousCondition = true;
+            }
+
+            if (applicationNumber != null && !applicationNumber.isEmpty()) {
+                if (hasPreviousCondition) {
+                    query.append(" AND ");
+                }
+                query.append("app.applicationnumber = '").append(applicationNumber).append("'");
+            }
+
+            query.append(";");
+            return query.toString();
+        } catch (Exception e) {
+            log.error("Error while building application exist query");
+            throw new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " + e.getMessage());
+        }
+    }
+
     public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);

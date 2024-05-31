@@ -54,6 +54,7 @@ public class ServiceConstants {
     public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
     public static final String DOCUMENT_ROW_MAPPER_EXCEPTION = "DOCUMENT_ROW_MAPPER_EXCEPTION";
     public static final String STATUTE_ROW_MAPPER_EXCEPTION = "STATUTE_ROW_MAPPER_EXCEPTION";
+    public static final String APPLICATION_EXIST_EXCEPTION = "APPLICATION_EXIST_EXCEPTION";
     public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
     public static final String VALIDATION_ERR = "VALIDATION_ERR";
     public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
