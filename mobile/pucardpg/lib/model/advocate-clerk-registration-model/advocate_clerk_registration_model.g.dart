@@ -6,7 +6,9 @@ part of 'advocate_clerk_registration_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$ClerkImpl _$$ClerkImplFromJson(Map<String, dynamic> json) => _$ClerkImpl(
+_$ResponseListClerkImpl _$$ResponseListClerkImplFromJson(
+        Map<String, dynamic> json) =>
+    _$ResponseListClerkImpl(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String?,
       applicationNumber: json['applicationNumber'] as String?,
@@ -25,7 +27,8 @@ _$ClerkImpl _$$ClerkImplFromJson(Map<String, dynamic> json) => _$ClerkImpl(
       additionalDetails: json['additionalDetails'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$ClerkImplToJson(_$ClerkImpl instance) =>
+Map<String, dynamic> _$$ResponseListClerkImplToJson(
+        _$ResponseListClerkImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'tenantId': instance.tenantId,
@@ -41,19 +44,37 @@ Map<String, dynamic> _$$ClerkImplToJson(_$ClerkImpl instance) =>
       'additionalDetails': instance.additionalDetails,
     };
 
+_$ClerkImpl _$$ClerkImplFromJson(Map<String, dynamic> json) => _$ClerkImpl(
+      id: json['id'] as String?,
+      applicationNumber: json['applicationNumber'] as String?,
+      stateRegnNumber: json['stateRegnNumber'] as String?,
+      individualId: json['individualId'] as String?,
+      responseList: (json['responseList'] as List<dynamic>)
+          .map((e) => ResponseListClerk.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$ClerkImplToJson(_$ClerkImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'applicationNumber': instance.applicationNumber,
+      'stateRegnNumber': instance.stateRegnNumber,
+      'individualId': instance.individualId,
+      'responseList': instance.responseList,
+    };
+
 _$AdvocateClerkRegistrationRequestImpl
     _$$AdvocateClerkRegistrationRequestImplFromJson(
             Map<String, dynamic> json) =>
         _$AdvocateClerkRegistrationRequestImpl(
-          clerks: (json['clerks'] as List<dynamic>)
-              .map((e) => Clerk.fromJson(e as Map<String, dynamic>))
-              .toList(),
+          clerk:
+              ResponseListClerk.fromJson(json['clerk'] as Map<String, dynamic>),
         );
 
 Map<String, dynamic> _$$AdvocateClerkRegistrationRequestImplToJson(
         _$AdvocateClerkRegistrationRequestImpl instance) =>
     <String, dynamic>{
-      'clerks': instance.clerks,
+      'clerk': instance.clerk,
     };
 
 _$AdvocateClerkRegistrationResponseImpl
@@ -65,7 +86,7 @@ _$AdvocateClerkRegistrationResponseImpl
               : ResponseInfoSearch.fromJson(
                   json['responseInfo'] as Map<String, dynamic>),
           clerks: (json['clerks'] as List<dynamic>)
-              .map((e) => Clerk.fromJson(e as Map<String, dynamic>))
+              .map((e) => ResponseListClerk.fromJson(e as Map<String, dynamic>))
               .toList(),
         );
 

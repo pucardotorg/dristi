@@ -133,7 +133,6 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                   menuItems: ['PAN', 'AADHAR', 'DRIVING LICENSE'],
                                   formControlName: typeKey,
                                   valueMapper: (value) => value.toUpperCase(),
-                                  isRequired: true,
                                   onChanged: (val) {
                                     context.read<AuthBloc>().userModel.identifierType = val;
                                     setState(() {

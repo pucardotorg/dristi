@@ -10,8 +10,8 @@ part 'advocate_registration_model.freezed.dart';
 part 'advocate_registration_model.g.dart';
 
 @freezed
-class Advocate with _$Advocate {
-  const factory Advocate({
+class ResponseList with _$ResponseList {
+  const factory ResponseList({
     @JsonKey(name: "id") String? id,
     @JsonKey(name: 'tenantId') String? tenantId,
     @JsonKey(name: 'applicationNumber') String? applicationNumber,
@@ -24,6 +24,20 @@ class Advocate with _$Advocate {
     @JsonKey(name: 'workflow') Workflow? workflow,
     @JsonKey(name: 'documents') List<Document>? documents,
     @JsonKey(name: 'additionalDetails') Map<String, dynamic>? additionalDetails,
+  }) = _ResponseList;
+
+  factory ResponseList.fromJson(Map<String, dynamic> json) =>
+      _$ResponseListFromJson(json);
+}
+
+@freezed
+class Advocate with _$Advocate {
+  const factory Advocate({
+    @JsonKey(name: "id") String? id,
+    @JsonKey(name: 'barRegistrationNumber') String? barRegistrationNumber,
+    @JsonKey(name: 'applicationNumber') String? applicationNumber,
+    @JsonKey(name: 'individualId') String? individualId,
+    @JsonKey(name: 'responseList') required List<ResponseList> responseList
   }) = _Advocate;
 
   factory Advocate.fromJson(Map<String, dynamic> json) =>
@@ -33,7 +47,7 @@ class Advocate with _$Advocate {
 @freezed
 class AdvocateRegistrationRequest with _$AdvocateRegistrationRequest {
   const factory AdvocateRegistrationRequest({
-    @JsonKey(name: 'advocates') required List<Advocate> advocates
+    @JsonKey(name: 'advocate') required ResponseList advocate
   }) = _AdvocateRegistrationRequest;
 
   factory AdvocateRegistrationRequest.fromJson(Map<String, dynamic> json) =>
@@ -44,7 +58,7 @@ class AdvocateRegistrationRequest with _$AdvocateRegistrationRequest {
 class AdvocateRegistrationResponse with _$AdvocateRegistrationResponse {
   const factory AdvocateRegistrationResponse({
     @JsonKey(name: 'responseInfo') @Default(ResponseInfoSearch(status: "")) ResponseInfoSearch responseInfo,
-    @JsonKey(name: 'advocates') required List<Advocate> advocates,
+    @JsonKey(name: 'advocates') required List<ResponseList> advocates,
   }) = _AdvocateRegistrationResponse;
 
   factory AdvocateRegistrationResponse.fromJson(Map<String, dynamic> json) =>

@@ -95,8 +95,7 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                               fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
                             ),
                           ),
-                          const SizedBox(height: 15,),
-                          const SizedBox(height: 25,),
+                          const SizedBox(height: 20,),
                           Container(
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(

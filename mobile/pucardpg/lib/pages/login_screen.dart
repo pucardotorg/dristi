@@ -195,7 +195,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                     ),
                                   ),
                                   formControlName: mobileNumberKey,
-                                  isRequired: true,
                                   maxLength: 10,
                                   onChanged: (val) {
                                     context.read<AuthBloc>().userModel.mobileNumber = val.value.toString();
@@ -569,7 +568,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                           }
                                         },
                                         advocateSearchSuccessState: (advocateSearchResponse) {
-                                          List<Advocate> advocates = advocateSearchResponse.advocates;
+                                          List<ResponseList> advocates = advocateSearchResponse.advocates[0].responseList;
                                           if (advocates.isEmpty) {
                                             DigitToast.show(
                                               context,
@@ -587,7 +586,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                             });
                                           }
                                           if (advocates.isNotEmpty) {
-                                            Advocate advocate = advocates[0];
+                                            ResponseList advocate = advocates[0];
                                             DigitToast.show(
                                               context,
                                               options: DigitToastOptions(
@@ -623,9 +622,9 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                           }
                                         },
                                         advocateClerkSearchSuccessState: (advocateClerkSearchResponse) {
-                                          List<Clerk> clerks = advocateClerkSearchResponse.clerks;
+                                          List<ResponseListClerk> clerks = advocateClerkSearchResponse.clerks[0].responseList;
                                           if (clerks.isNotEmpty) {
-                                            Clerk clerk = clerks[0];
+                                            ResponseListClerk clerk = clerks[0];
                                             DigitToast.show(
                                               context,
                                               options: DigitToastOptions(

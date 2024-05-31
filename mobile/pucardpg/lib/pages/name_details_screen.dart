@@ -77,7 +77,6 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                   DigitTextFormField(
                                     label: AppLocalizations.of(context).translate(i18.userDetails.coreCommonFirstName),
                                     formControlName: firstNameKey,
-                                    isRequired: true,
                                     onChanged: (val) {
                                       context.read<AuthBloc>().userModel.firstName =
                                           val.value.toString();
@@ -106,7 +105,6 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                           val.value.toString();
                                     },
                                     formControlName: middleNameKey,
-                                    isRequired: false,
                                     keyboardType: TextInputType.text,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
@@ -123,7 +121,6 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                       context.read<AuthBloc>().userModel.lastName =
                                           val.value.toString();
                                     },
-                                    isRequired: true,
                                     keyboardType: TextInputType.text,
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(

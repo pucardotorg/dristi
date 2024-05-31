@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
-import 'package:digit_components/widgets/atoms/digit_toaster.dart';
 import 'package:digit_components/widgets/digit_card.dart';
 import 'package:digit_components/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import 'package:pucardpg/widget/digit_toast_revised.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
@@ -170,7 +170,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                     }
                     bool isValidAadharNumber = _validateAadharNumber(aadharNumber);
                     if ((aadharNumber.length != 12 || !isValidAadharNumber)) {
-                      DigitToast.show(context,
+                      DigitToastRevised.show(context,
                         options: DigitToastOptions(
                           "Enter a valid aadhar number",
                           true,
@@ -372,7 +372,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                                       otp += controller.text;
                                     }
                                     if (otp.length != 6) {
-                                      DigitToast.show(
+                                      DigitToastRevised.show(
                                         context,
                                         options: DigitToastOptions(
                                           "Invalid OTP",

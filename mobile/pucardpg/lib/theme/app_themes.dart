@@ -123,7 +123,7 @@ class AppTheme{
     vertical: kPadding,
   );
 
-  Duration get toastDuration => const Duration(seconds: 2);
+  Duration get toastDuration => const Duration(milliseconds: 700);
 
   OutlinedBorder get buttonBorder => const RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.zero),

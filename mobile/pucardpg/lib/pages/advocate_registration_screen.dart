@@ -128,7 +128,6 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                           DigitTextField(
                             label: AppLocalizations.of(context).translate(i18.advocateVerification.barRegistrationNumber),
                             controller: TextEditingController(text: context.read<AuthBloc>().userModel.barRegistrationNumber ?? ''),
-                            isRequired: true,
                             onChange: (val) {
                               context.read<AuthBloc>().userModel.barRegistrationNumber = val;
                             },
@@ -147,7 +146,6 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                                 child: DigitTextField(
                                   label: AppLocalizations.of(context).translate(i18.advocateVerification.barCouncilId),
                                   controller: TextEditingController(text: context.read<AuthBloc>().userModel.documentFilename ?? ''),
-                                  isRequired: true,
                                   readOnly: true,
                                   hintText: AppLocalizations.of(context).translate(i18.common.csNoFileSelected),
                                   onChange: (val) { },

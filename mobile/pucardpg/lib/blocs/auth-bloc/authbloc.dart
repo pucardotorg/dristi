@@ -153,8 +153,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               tenantId: appConstants.tenantId,
           );
           final responseSearchAdvocate = await authRepository.searchAdvocate('/advocate/advocate/v1/_search', advocateSearchRequest);
-          if (responseSearchAdvocate.advocates.isNotEmpty) {
-            Advocate advocate = responseSearchAdvocate.advocates[0];
+          if (responseSearchAdvocate.advocates[0].responseList.isNotEmpty) {
+            ResponseList advocate = responseSearchAdvocate.advocates[0].responseList[0];
             userModel.documentFilename = advocate.additionalDetails?['filename'];
             userModel.barRegistrationNumber = advocate.barRegistrationNumber;
             userModel.fileStore = advocate.documents?[0].fileStore;
@@ -425,8 +425,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       userModel.individualId = registerResponse.individualInfo.individualId;
       if (userModel.userType == 'ADVOCATE') {
         AdvocateRegistrationRequest advocateRegistrationRequest = AdvocateRegistrationRequest(
-            advocates: [
-              Advocate(
+            advocate:
+              ResponseList(
                   tenantId: appConstants.tenantId,
                   barRegistrationNumber: userModel.barRegistrationNumber,
                   individualId: userModel.individualId,
@@ -447,13 +447,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                     "filename" : userModel.documentFilename
                   }
               )
-            ]
         );
         await authRepository.registerAdvocate('/advocate/advocate/v1/_create', advocateRegistrationRequest);
       } else if (userModel.userType == 'ADVOCATE_CLERK') {
         AdvocateClerkRegistrationRequest advocateClerkRegistrationRequest = AdvocateClerkRegistrationRequest(
-            clerks: [
-              Clerk(
+            clerk:
+              ResponseListClerk(
                   tenantId: appConstants.tenantId,
                   stateRegnNumber: userModel.stateRegnNumber,
                   individualId: userModel.individualId,
@@ -466,7 +465,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                   ],
                   additionalDetails: {"username" : userModel.firstName! + userModel.lastName!}
               )
-            ]
         );
         await authRepository.registerAdvocateClerk('/advocate/clerk/v1/_create', advocateClerkRegistrationRequest);
       }

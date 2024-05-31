@@ -14,12 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Clerk _$ClerkFromJson(Map<String, dynamic> json) {
-  return _Clerk.fromJson(json);
+ResponseListClerk _$ResponseListClerkFromJson(Map<String, dynamic> json) {
+  return _ResponseListClerk.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Clerk {
+mixin _$ResponseListClerk {
   @JsonKey(name: "id")
   String? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'tenantId')
@@ -48,13 +48,15 @@ mixin _$Clerk {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $ClerkCopyWith<Clerk> get copyWith => throw _privateConstructorUsedError;
+  $ResponseListClerkCopyWith<ResponseListClerk> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $ClerkCopyWith<$Res> {
-  factory $ClerkCopyWith(Clerk value, $Res Function(Clerk) then) =
-      _$ClerkCopyWithImpl<$Res, Clerk>;
+abstract class $ResponseListClerkCopyWith<$Res> {
+  factory $ResponseListClerkCopyWith(
+          ResponseListClerk value, $Res Function(ResponseListClerk) then) =
+      _$ResponseListClerkCopyWithImpl<$Res, ResponseListClerk>;
   @useResult
   $Res call(
       {@JsonKey(name: "id") String? id,
@@ -75,9 +77,9 @@ abstract class $ClerkCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ClerkCopyWithImpl<$Res, $Val extends Clerk>
-    implements $ClerkCopyWith<$Res> {
-  _$ClerkCopyWithImpl(this._value, this._then);
+class _$ResponseListClerkCopyWithImpl<$Res, $Val extends ResponseListClerk>
+    implements $ResponseListClerkCopyWith<$Res> {
+  _$ResponseListClerkCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -166,10 +168,11 @@ class _$ClerkCopyWithImpl<$Res, $Val extends Clerk>
 }
 
 /// @nodoc
-abstract class _$$ClerkImplCopyWith<$Res> implements $ClerkCopyWith<$Res> {
-  factory _$$ClerkImplCopyWith(
-          _$ClerkImpl value, $Res Function(_$ClerkImpl) then) =
-      __$$ClerkImplCopyWithImpl<$Res>;
+abstract class _$$ResponseListClerkImplCopyWith<$Res>
+    implements $ResponseListClerkCopyWith<$Res> {
+  factory _$$ResponseListClerkImplCopyWith(_$ResponseListClerkImpl value,
+          $Res Function(_$ResponseListClerkImpl) then) =
+      __$$ResponseListClerkImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -192,11 +195,11 @@ abstract class _$$ClerkImplCopyWith<$Res> implements $ClerkCopyWith<$Res> {
 }
 
 /// @nodoc
-class __$$ClerkImplCopyWithImpl<$Res>
-    extends _$ClerkCopyWithImpl<$Res, _$ClerkImpl>
-    implements _$$ClerkImplCopyWith<$Res> {
-  __$$ClerkImplCopyWithImpl(
-      _$ClerkImpl _value, $Res Function(_$ClerkImpl) _then)
+class __$$ResponseListClerkImplCopyWithImpl<$Res>
+    extends _$ResponseListClerkCopyWithImpl<$Res, _$ResponseListClerkImpl>
+    implements _$$ResponseListClerkImplCopyWith<$Res> {
+  __$$ResponseListClerkImplCopyWithImpl(_$ResponseListClerkImpl _value,
+      $Res Function(_$ResponseListClerkImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -215,7 +218,7 @@ class __$$ClerkImplCopyWithImpl<$Res>
     Object? documents = freezed,
     Object? additionalDetails = freezed,
   }) {
-    return _then(_$ClerkImpl(
+    return _then(_$ResponseListClerkImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -270,8 +273,8 @@ class __$$ClerkImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$ClerkImpl implements _Clerk {
-  const _$ClerkImpl(
+class _$ResponseListClerkImpl implements _ResponseListClerk {
+  const _$ResponseListClerkImpl(
       {@JsonKey(name: "id") this.id,
       @JsonKey(name: 'tenantId') this.tenantId,
       @JsonKey(name: 'applicationNumber') this.applicationNumber,
@@ -288,8 +291,8 @@ class _$ClerkImpl implements _Clerk {
       : _documents = documents,
         _additionalDetails = additionalDetails;
 
-  factory _$ClerkImpl.fromJson(Map<String, dynamic> json) =>
-      _$$ClerkImplFromJson(json);
+  factory _$ResponseListClerkImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ResponseListClerkImplFromJson(json);
 
   @override
   @JsonKey(name: "id")
@@ -346,14 +349,14 @@ class _$ClerkImpl implements _Clerk {
 
   @override
   String toString() {
-    return 'Clerk(id: $id, tenantId: $tenantId, applicationNumber: $applicationNumber, status: $status, stateRegnNumber: $stateRegnNumber, advocateType: $advocateType, organisationID: $organisationID, individualId: $individualId, isActive: $isActive, workflow: $workflow, documents: $documents, additionalDetails: $additionalDetails)';
+    return 'ResponseListClerk(id: $id, tenantId: $tenantId, applicationNumber: $applicationNumber, status: $status, stateRegnNumber: $stateRegnNumber, advocateType: $advocateType, organisationID: $organisationID, individualId: $individualId, isActive: $isActive, workflow: $workflow, documents: $documents, additionalDetails: $additionalDetails)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ClerkImpl &&
+            other is _$ResponseListClerkImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
@@ -398,19 +401,20 @@ class _$ClerkImpl implements _Clerk {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$ClerkImplCopyWith<_$ClerkImpl> get copyWith =>
-      __$$ClerkImplCopyWithImpl<_$ClerkImpl>(this, _$identity);
+  _$$ResponseListClerkImplCopyWith<_$ResponseListClerkImpl> get copyWith =>
+      __$$ResponseListClerkImplCopyWithImpl<_$ResponseListClerkImpl>(
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ClerkImplToJson(
+    return _$$ResponseListClerkImplToJson(
       this,
     );
   }
 }
 
-abstract class _Clerk implements Clerk {
-  const factory _Clerk(
+abstract class _ResponseListClerk implements ResponseListClerk {
+  const factory _ResponseListClerk(
       {@JsonKey(name: "id") final String? id,
       @JsonKey(name: 'tenantId') final String? tenantId,
       @JsonKey(name: 'applicationNumber') final String? applicationNumber,
@@ -423,9 +427,10 @@ abstract class _Clerk implements Clerk {
       @JsonKey(name: 'workflow') final Workflow? workflow,
       @JsonKey(name: 'documents') final List<Document>? documents,
       @JsonKey(name: 'additionalDetails')
-      final Map<String, dynamic>? additionalDetails}) = _$ClerkImpl;
+      final Map<String, dynamic>? additionalDetails}) = _$ResponseListClerkImpl;
 
-  factory _Clerk.fromJson(Map<String, dynamic> json) = _$ClerkImpl.fromJson;
+  factory _ResponseListClerk.fromJson(Map<String, dynamic> json) =
+      _$ResponseListClerkImpl.fromJson;
 
   @override
   @JsonKey(name: "id")
@@ -465,6 +470,256 @@ abstract class _Clerk implements Clerk {
   Map<String, dynamic>? get additionalDetails;
   @override
   @JsonKey(ignore: true)
+  _$$ResponseListClerkImplCopyWith<_$ResponseListClerkImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Clerk _$ClerkFromJson(Map<String, dynamic> json) {
+  return _Clerk.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Clerk {
+  @JsonKey(name: "id")
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'applicationNumber')
+  String? get applicationNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'stateRegnNumber')
+  String? get stateRegnNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'individualId')
+  String? get individualId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'responseList')
+  List<ResponseListClerk> get responseList =>
+      throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $ClerkCopyWith<Clerk> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $ClerkCopyWith<$Res> {
+  factory $ClerkCopyWith(Clerk value, $Res Function(Clerk) then) =
+      _$ClerkCopyWithImpl<$Res, Clerk>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") String? id,
+      @JsonKey(name: 'applicationNumber') String? applicationNumber,
+      @JsonKey(name: 'stateRegnNumber') String? stateRegnNumber,
+      @JsonKey(name: 'individualId') String? individualId,
+      @JsonKey(name: 'responseList') List<ResponseListClerk> responseList});
+}
+
+/// @nodoc
+class _$ClerkCopyWithImpl<$Res, $Val extends Clerk>
+    implements $ClerkCopyWith<$Res> {
+  _$ClerkCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? applicationNumber = freezed,
+    Object? stateRegnNumber = freezed,
+    Object? individualId = freezed,
+    Object? responseList = null,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      applicationNumber: freezed == applicationNumber
+          ? _value.applicationNumber
+          : applicationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stateRegnNumber: freezed == stateRegnNumber
+          ? _value.stateRegnNumber
+          : stateRegnNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualId: freezed == individualId
+          ? _value.individualId
+          : individualId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      responseList: null == responseList
+          ? _value.responseList
+          : responseList // ignore: cast_nullable_to_non_nullable
+              as List<ResponseListClerk>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$ClerkImplCopyWith<$Res> implements $ClerkCopyWith<$Res> {
+  factory _$$ClerkImplCopyWith(
+          _$ClerkImpl value, $Res Function(_$ClerkImpl) then) =
+      __$$ClerkImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") String? id,
+      @JsonKey(name: 'applicationNumber') String? applicationNumber,
+      @JsonKey(name: 'stateRegnNumber') String? stateRegnNumber,
+      @JsonKey(name: 'individualId') String? individualId,
+      @JsonKey(name: 'responseList') List<ResponseListClerk> responseList});
+}
+
+/// @nodoc
+class __$$ClerkImplCopyWithImpl<$Res>
+    extends _$ClerkCopyWithImpl<$Res, _$ClerkImpl>
+    implements _$$ClerkImplCopyWith<$Res> {
+  __$$ClerkImplCopyWithImpl(
+      _$ClerkImpl _value, $Res Function(_$ClerkImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? applicationNumber = freezed,
+    Object? stateRegnNumber = freezed,
+    Object? individualId = freezed,
+    Object? responseList = null,
+  }) {
+    return _then(_$ClerkImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      applicationNumber: freezed == applicationNumber
+          ? _value.applicationNumber
+          : applicationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      stateRegnNumber: freezed == stateRegnNumber
+          ? _value.stateRegnNumber
+          : stateRegnNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualId: freezed == individualId
+          ? _value.individualId
+          : individualId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      responseList: null == responseList
+          ? _value._responseList
+          : responseList // ignore: cast_nullable_to_non_nullable
+              as List<ResponseListClerk>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$ClerkImpl implements _Clerk {
+  const _$ClerkImpl(
+      {@JsonKey(name: "id") this.id,
+      @JsonKey(name: 'applicationNumber') this.applicationNumber,
+      @JsonKey(name: 'stateRegnNumber') this.stateRegnNumber,
+      @JsonKey(name: 'individualId') this.individualId,
+      @JsonKey(name: 'responseList')
+      required final List<ResponseListClerk> responseList})
+      : _responseList = responseList;
+
+  factory _$ClerkImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ClerkImplFromJson(json);
+
+  @override
+  @JsonKey(name: "id")
+  final String? id;
+  @override
+  @JsonKey(name: 'applicationNumber')
+  final String? applicationNumber;
+  @override
+  @JsonKey(name: 'stateRegnNumber')
+  final String? stateRegnNumber;
+  @override
+  @JsonKey(name: 'individualId')
+  final String? individualId;
+  final List<ResponseListClerk> _responseList;
+  @override
+  @JsonKey(name: 'responseList')
+  List<ResponseListClerk> get responseList {
+    if (_responseList is EqualUnmodifiableListView) return _responseList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_responseList);
+  }
+
+  @override
+  String toString() {
+    return 'Clerk(id: $id, applicationNumber: $applicationNumber, stateRegnNumber: $stateRegnNumber, individualId: $individualId, responseList: $responseList)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ClerkImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.applicationNumber, applicationNumber) ||
+                other.applicationNumber == applicationNumber) &&
+            (identical(other.stateRegnNumber, stateRegnNumber) ||
+                other.stateRegnNumber == stateRegnNumber) &&
+            (identical(other.individualId, individualId) ||
+                other.individualId == individualId) &&
+            const DeepCollectionEquality()
+                .equals(other._responseList, _responseList));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      applicationNumber,
+      stateRegnNumber,
+      individualId,
+      const DeepCollectionEquality().hash(_responseList));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ClerkImplCopyWith<_$ClerkImpl> get copyWith =>
+      __$$ClerkImplCopyWithImpl<_$ClerkImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$ClerkImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Clerk implements Clerk {
+  const factory _Clerk(
+      {@JsonKey(name: "id") final String? id,
+      @JsonKey(name: 'applicationNumber') final String? applicationNumber,
+      @JsonKey(name: 'stateRegnNumber') final String? stateRegnNumber,
+      @JsonKey(name: 'individualId') final String? individualId,
+      @JsonKey(name: 'responseList')
+      required final List<ResponseListClerk> responseList}) = _$ClerkImpl;
+
+  factory _Clerk.fromJson(Map<String, dynamic> json) = _$ClerkImpl.fromJson;
+
+  @override
+  @JsonKey(name: "id")
+  String? get id;
+  @override
+  @JsonKey(name: 'applicationNumber')
+  String? get applicationNumber;
+  @override
+  @JsonKey(name: 'stateRegnNumber')
+  String? get stateRegnNumber;
+  @override
+  @JsonKey(name: 'individualId')
+  String? get individualId;
+  @override
+  @JsonKey(name: 'responseList')
+  List<ResponseListClerk> get responseList;
+  @override
+  @JsonKey(ignore: true)
   _$$ClerkImplCopyWith<_$ClerkImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -476,8 +731,8 @@ AdvocateClerkRegistrationRequest _$AdvocateClerkRegistrationRequestFromJson(
 
 /// @nodoc
 mixin _$AdvocateClerkRegistrationRequest {
-  @JsonKey(name: 'clerks')
-  List<Clerk> get clerks => throw _privateConstructorUsedError;
+  @JsonKey(name: 'clerk')
+  ResponseListClerk get clerk => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -493,7 +748,9 @@ abstract class $AdvocateClerkRegistrationRequestCopyWith<$Res> {
       _$AdvocateClerkRegistrationRequestCopyWithImpl<$Res,
           AdvocateClerkRegistrationRequest>;
   @useResult
-  $Res call({@JsonKey(name: 'clerks') List<Clerk> clerks});
+  $Res call({@JsonKey(name: 'clerk') ResponseListClerk clerk});
+
+  $ResponseListClerkCopyWith<$Res> get clerk;
 }
 
 /// @nodoc
@@ -510,14 +767,22 @@ class _$AdvocateClerkRegistrationRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? clerks = null,
+    Object? clerk = null,
   }) {
     return _then(_value.copyWith(
-      clerks: null == clerks
-          ? _value.clerks
-          : clerks // ignore: cast_nullable_to_non_nullable
-              as List<Clerk>,
+      clerk: null == clerk
+          ? _value.clerk
+          : clerk // ignore: cast_nullable_to_non_nullable
+              as ResponseListClerk,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ResponseListClerkCopyWith<$Res> get clerk {
+    return $ResponseListClerkCopyWith<$Res>(_value.clerk, (value) {
+      return _then(_value.copyWith(clerk: value) as $Val);
+    });
   }
 }
 
@@ -530,7 +795,10 @@ abstract class _$$AdvocateClerkRegistrationRequestImplCopyWith<$Res>
       __$$AdvocateClerkRegistrationRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'clerks') List<Clerk> clerks});
+  $Res call({@JsonKey(name: 'clerk') ResponseListClerk clerk});
+
+  @override
+  $ResponseListClerkCopyWith<$Res> get clerk;
 }
 
 /// @nodoc
@@ -546,13 +814,13 @@ class __$$AdvocateClerkRegistrationRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? clerks = null,
+    Object? clerk = null,
   }) {
     return _then(_$AdvocateClerkRegistrationRequestImpl(
-      clerks: null == clerks
-          ? _value._clerks
-          : clerks // ignore: cast_nullable_to_non_nullable
-              as List<Clerk>,
+      clerk: null == clerk
+          ? _value.clerk
+          : clerk // ignore: cast_nullable_to_non_nullable
+              as ResponseListClerk,
     ));
   }
 }
@@ -562,25 +830,19 @@ class __$$AdvocateClerkRegistrationRequestImplCopyWithImpl<$Res>
 class _$AdvocateClerkRegistrationRequestImpl
     implements _AdvocateClerkRegistrationRequest {
   const _$AdvocateClerkRegistrationRequestImpl(
-      {@JsonKey(name: 'clerks') required final List<Clerk> clerks})
-      : _clerks = clerks;
+      {@JsonKey(name: 'clerk') required this.clerk});
 
   factory _$AdvocateClerkRegistrationRequestImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$AdvocateClerkRegistrationRequestImplFromJson(json);
 
-  final List<Clerk> _clerks;
   @override
-  @JsonKey(name: 'clerks')
-  List<Clerk> get clerks {
-    if (_clerks is EqualUnmodifiableListView) return _clerks;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_clerks);
-  }
+  @JsonKey(name: 'clerk')
+  final ResponseListClerk clerk;
 
   @override
   String toString() {
-    return 'AdvocateClerkRegistrationRequest(clerks: $clerks)';
+    return 'AdvocateClerkRegistrationRequest(clerk: $clerk)';
   }
 
   @override
@@ -588,13 +850,12 @@ class _$AdvocateClerkRegistrationRequestImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AdvocateClerkRegistrationRequestImpl &&
-            const DeepCollectionEquality().equals(other._clerks, _clerks));
+            (identical(other.clerk, clerk) || other.clerk == clerk));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_clerks));
+  int get hashCode => Object.hash(runtimeType, clerk);
 
   @JsonKey(ignore: true)
   @override
@@ -615,7 +876,7 @@ class _$AdvocateClerkRegistrationRequestImpl
 abstract class _AdvocateClerkRegistrationRequest
     implements AdvocateClerkRegistrationRequest {
   const factory _AdvocateClerkRegistrationRequest(
-          {@JsonKey(name: 'clerks') required final List<Clerk> clerks}) =
+          {@JsonKey(name: 'clerk') required final ResponseListClerk clerk}) =
       _$AdvocateClerkRegistrationRequestImpl;
 
   factory _AdvocateClerkRegistrationRequest.fromJson(
@@ -623,8 +884,8 @@ abstract class _AdvocateClerkRegistrationRequest
       _$AdvocateClerkRegistrationRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: 'clerks')
-  List<Clerk> get clerks;
+  @JsonKey(name: 'clerk')
+  ResponseListClerk get clerk;
   @override
   @JsonKey(ignore: true)
   _$$AdvocateClerkRegistrationRequestImplCopyWith<
@@ -642,7 +903,7 @@ mixin _$AdvocateClerkRegistrationResponse {
   @JsonKey(name: 'responseInfo')
   ResponseInfoSearch get responseInfo => throw _privateConstructorUsedError;
   @JsonKey(name: 'clerks')
-  List<Clerk> get clerks => throw _privateConstructorUsedError;
+  List<ResponseListClerk> get clerks => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -660,7 +921,7 @@ abstract class $AdvocateClerkRegistrationResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'responseInfo') ResponseInfoSearch responseInfo,
-      @JsonKey(name: 'clerks') List<Clerk> clerks});
+      @JsonKey(name: 'clerks') List<ResponseListClerk> clerks});
 
   $ResponseInfoSearchCopyWith<$Res> get responseInfo;
 }
@@ -690,7 +951,7 @@ class _$AdvocateClerkRegistrationResponseCopyWithImpl<$Res,
       clerks: null == clerks
           ? _value.clerks
           : clerks // ignore: cast_nullable_to_non_nullable
-              as List<Clerk>,
+              as List<ResponseListClerk>,
     ) as $Val);
   }
 
@@ -714,7 +975,7 @@ abstract class _$$AdvocateClerkRegistrationResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'responseInfo') ResponseInfoSearch responseInfo,
-      @JsonKey(name: 'clerks') List<Clerk> clerks});
+      @JsonKey(name: 'clerks') List<ResponseListClerk> clerks});
 
   @override
   $ResponseInfoSearchCopyWith<$Res> get responseInfo;
@@ -744,7 +1005,7 @@ class __$$AdvocateClerkRegistrationResponseImplCopyWithImpl<$Res>
       clerks: null == clerks
           ? _value._clerks
           : clerks // ignore: cast_nullable_to_non_nullable
-              as List<Clerk>,
+              as List<ResponseListClerk>,
     ));
   }
 }
@@ -756,7 +1017,7 @@ class _$AdvocateClerkRegistrationResponseImpl
   const _$AdvocateClerkRegistrationResponseImpl(
       {@JsonKey(name: 'responseInfo')
       this.responseInfo = const ResponseInfoSearch(status: ""),
-      @JsonKey(name: 'clerks') required final List<Clerk> clerks})
+      @JsonKey(name: 'clerks') required final List<ResponseListClerk> clerks})
       : _clerks = clerks;
 
   factory _$AdvocateClerkRegistrationResponseImpl.fromJson(
@@ -766,10 +1027,10 @@ class _$AdvocateClerkRegistrationResponseImpl
   @override
   @JsonKey(name: 'responseInfo')
   final ResponseInfoSearch responseInfo;
-  final List<Clerk> _clerks;
+  final List<ResponseListClerk> _clerks;
   @override
   @JsonKey(name: 'clerks')
-  List<Clerk> get clerks {
+  List<ResponseListClerk> get clerks {
     if (_clerks is EqualUnmodifiableListView) return _clerks;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_clerks);
@@ -815,7 +1076,8 @@ abstract class _AdvocateClerkRegistrationResponse
     implements AdvocateClerkRegistrationResponse {
   const factory _AdvocateClerkRegistrationResponse(
           {@JsonKey(name: 'responseInfo') final ResponseInfoSearch responseInfo,
-          @JsonKey(name: 'clerks') required final List<Clerk> clerks}) =
+          @JsonKey(name: 'clerks')
+          required final List<ResponseListClerk> clerks}) =
       _$AdvocateClerkRegistrationResponseImpl;
 
   factory _AdvocateClerkRegistrationResponse.fromJson(
@@ -827,7 +1089,7 @@ abstract class _AdvocateClerkRegistrationResponse
   ResponseInfoSearch get responseInfo;
   @override
   @JsonKey(name: 'clerks')
-  List<Clerk> get clerks;
+  List<ResponseListClerk> get clerks;
   @override
   @JsonKey(ignore: true)
   _$$AdvocateClerkRegistrationResponseImplCopyWith<

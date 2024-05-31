@@ -6,8 +6,8 @@ part of 'advocate_registration_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$AdvocateImpl _$$AdvocateImplFromJson(Map<String, dynamic> json) =>
-    _$AdvocateImpl(
+_$ResponseListImpl _$$ResponseListImplFromJson(Map<String, dynamic> json) =>
+    _$ResponseListImpl(
       id: json['id'] as String?,
       tenantId: json['tenantId'] as String?,
       applicationNumber: json['applicationNumber'] as String?,
@@ -26,7 +26,7 @@ _$AdvocateImpl _$$AdvocateImplFromJson(Map<String, dynamic> json) =>
       additionalDetails: json['additionalDetails'] as Map<String, dynamic>?,
     );
 
-Map<String, dynamic> _$$AdvocateImplToJson(_$AdvocateImpl instance) =>
+Map<String, dynamic> _$$ResponseListImplToJson(_$ResponseListImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'tenantId': instance.tenantId,
@@ -42,18 +42,36 @@ Map<String, dynamic> _$$AdvocateImplToJson(_$AdvocateImpl instance) =>
       'additionalDetails': instance.additionalDetails,
     };
 
+_$AdvocateImpl _$$AdvocateImplFromJson(Map<String, dynamic> json) =>
+    _$AdvocateImpl(
+      id: json['id'] as String?,
+      barRegistrationNumber: json['barRegistrationNumber'] as String?,
+      applicationNumber: json['applicationNumber'] as String?,
+      individualId: json['individualId'] as String?,
+      responseList: (json['responseList'] as List<dynamic>)
+          .map((e) => ResponseList.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$AdvocateImplToJson(_$AdvocateImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'barRegistrationNumber': instance.barRegistrationNumber,
+      'applicationNumber': instance.applicationNumber,
+      'individualId': instance.individualId,
+      'responseList': instance.responseList,
+    };
+
 _$AdvocateRegistrationRequestImpl _$$AdvocateRegistrationRequestImplFromJson(
         Map<String, dynamic> json) =>
     _$AdvocateRegistrationRequestImpl(
-      advocates: (json['advocates'] as List<dynamic>)
-          .map((e) => Advocate.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      advocate: ResponseList.fromJson(json['advocate'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$AdvocateRegistrationRequestImplToJson(
         _$AdvocateRegistrationRequestImpl instance) =>
     <String, dynamic>{
-      'advocates': instance.advocates,
+      'advocate': instance.advocate,
     };
 
 _$AdvocateRegistrationResponseImpl _$$AdvocateRegistrationResponseImplFromJson(
@@ -64,7 +82,7 @@ _$AdvocateRegistrationResponseImpl _$$AdvocateRegistrationResponseImplFromJson(
           : ResponseInfoSearch.fromJson(
               json['responseInfo'] as Map<String, dynamic>),
       advocates: (json['advocates'] as List<dynamic>)
-          .map((e) => Advocate.fromJson(e as Map<String, dynamic>))
+          .map((e) => ResponseList.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

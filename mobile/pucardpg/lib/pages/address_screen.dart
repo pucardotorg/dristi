@@ -124,6 +124,8 @@ class AddressScreenState extends State<AddressScreen> {
     } else {
       var position = LatLng(context.read<AuthBloc>().userModel.addressModel.latitude!, context.read<AuthBloc>().userModel.addressModel.longitude!);
 
+      GoogleMapController mapController = await _googleMapController.future;
+
       markersList.add(Marker(
           markerId: marker.markerId,
           draggable: true,
@@ -134,7 +136,6 @@ class AddressScreenState extends State<AddressScreen> {
             _getAddressFromLatLng(form, newPosition);
           }
       ));
-      GoogleMapController mapController = await _googleMapController.future;
       mapController.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
               target: position,
@@ -308,6 +309,7 @@ class AddressScreenState extends State<AddressScreen> {
                                       _cameraPosition!,
                                       markers: markersList,
                                       mapType: MapType.normal,
+                                      myLocationEnabled: true,
                                       onMapCreated:
                                           (GoogleMapController controller) {
                                         if (!_googleMapController.isCompleted) {
@@ -368,7 +370,6 @@ class AddressScreenState extends State<AddressScreen> {
                                       formControlName: pinCodeKey,
                                       label: AppLocalizations.of(context).translate(i18.address.pincode),
                                       keyboardType: TextInputType.number,
-                                      isRequired: true,
                                       maxLength: 6,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.pincode =
@@ -391,7 +392,6 @@ class AddressScreenState extends State<AddressScreen> {
                                       formControlName: stateKey,
                                       label: AppLocalizations.of(context).translate(i18.address.state),
                                       keyboardType: TextInputType.text,
-                                      isRequired: true,
                                       maxLength: 128,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.state =
@@ -413,7 +413,6 @@ class AddressScreenState extends State<AddressScreen> {
                                       formControlName: districtKey,
                                       label: AppLocalizations.of(context).translate(i18.address.district),
                                       keyboardType: TextInputType.text,
-                                      isRequired: true,
                                       maxLength: 128,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.district =
@@ -435,7 +434,6 @@ class AddressScreenState extends State<AddressScreen> {
                                       formControlName: cityKey,
                                       label: AppLocalizations.of(context).translate(i18.address.cityTown),
                                       keyboardType: TextInputType.text,
-                                      isRequired: true,
                                       maxLength: 128,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.city =
@@ -509,7 +507,6 @@ class AddressScreenState extends State<AddressScreen> {
                                         padding: const EdgeInsets.only(top: 0),
                                         formControlName: localityKey,
                                         label: AppLocalizations.of(context).translate(i18.address.localityStreet),
-                                        isRequired: true,
                                         onChanged: (value) {
                                           context.read<AuthBloc>().userModel.addressModel.street =
                                               value.value.toString();
@@ -532,7 +529,6 @@ class AddressScreenState extends State<AddressScreen> {
                                         padding: const EdgeInsets.only(top: 0),
                                         formControlName: doorNoKey,
                                         label: AppLocalizations.of(context).translate(i18.address.buildingDoorNo),
-                                        isRequired: true,
                                         onChanged: (value) {
                                           context.read<AuthBloc>().userModel.addressModel.doorNo =
                                               value.value.toString();

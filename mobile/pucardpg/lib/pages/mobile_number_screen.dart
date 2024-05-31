@@ -69,13 +69,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
     });
   }
 
-
-  bool _validateMobile(String value) {
-    final RegExp mobileRegex =
-        RegExp(r'^[6789][0-9]{9}$', caseSensitive: false);
-    return mobileRegex.hasMatch(value);
-  }
-
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
@@ -149,7 +142,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               ),
                             ),
                             formControlName: mobileNumberKey,
-                            isRequired: true,
                             maxLength: 10,
                             onChanged: (val) {
                               context.read<AuthBloc>().userModel.mobileNumber = val.value.toString();
@@ -163,7 +155,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               'Mobile number should have 10 digits',
                               'maxLength': (_) =>
                               'Mobile number should have 10 digits',
-                              'pattern': (_) => 'Invalid Mobile Number'
+                              'pattern': (_) => 'Mobile Number is not valid'
                             },
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
@@ -211,18 +203,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                 FocusScope.of(context).unfocus();
                                 form.markAllAsTouched();
                                 if (!form.valid) return;
-                                bool isValidNumber = _validateMobile(
-                                    form
-                                        .control(mobileNumberKey)
-                                        .value);
-                                if (!isValidNumber) {
-                                  widget.theme.showDigitDialog(
-                                      true,
-                                      "Mobile Number is not valid",
-                                      context);
-
-                                  return;
-                                }
                                 isSubmitting = true;
                                 context.read<AuthBloc>().add(
                                     AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, 'register')

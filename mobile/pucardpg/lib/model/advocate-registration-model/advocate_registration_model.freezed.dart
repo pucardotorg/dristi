@@ -14,12 +14,12 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-Advocate _$AdvocateFromJson(Map<String, dynamic> json) {
-  return _Advocate.fromJson(json);
+ResponseList _$ResponseListFromJson(Map<String, dynamic> json) {
+  return _ResponseList.fromJson(json);
 }
 
 /// @nodoc
-mixin _$Advocate {
+mixin _$ResponseList {
   @JsonKey(name: "id")
   String? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'tenantId')
@@ -48,14 +48,15 @@ mixin _$Advocate {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $AdvocateCopyWith<Advocate> get copyWith =>
+  $ResponseListCopyWith<ResponseList> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $AdvocateCopyWith<$Res> {
-  factory $AdvocateCopyWith(Advocate value, $Res Function(Advocate) then) =
-      _$AdvocateCopyWithImpl<$Res, Advocate>;
+abstract class $ResponseListCopyWith<$Res> {
+  factory $ResponseListCopyWith(
+          ResponseList value, $Res Function(ResponseList) then) =
+      _$ResponseListCopyWithImpl<$Res, ResponseList>;
   @useResult
   $Res call(
       {@JsonKey(name: "id") String? id,
@@ -76,9 +77,9 @@ abstract class $AdvocateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$AdvocateCopyWithImpl<$Res, $Val extends Advocate>
-    implements $AdvocateCopyWith<$Res> {
-  _$AdvocateCopyWithImpl(this._value, this._then);
+class _$ResponseListCopyWithImpl<$Res, $Val extends ResponseList>
+    implements $ResponseListCopyWith<$Res> {
+  _$ResponseListCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -167,11 +168,11 @@ class _$AdvocateCopyWithImpl<$Res, $Val extends Advocate>
 }
 
 /// @nodoc
-abstract class _$$AdvocateImplCopyWith<$Res>
-    implements $AdvocateCopyWith<$Res> {
-  factory _$$AdvocateImplCopyWith(
-          _$AdvocateImpl value, $Res Function(_$AdvocateImpl) then) =
-      __$$AdvocateImplCopyWithImpl<$Res>;
+abstract class _$$ResponseListImplCopyWith<$Res>
+    implements $ResponseListCopyWith<$Res> {
+  factory _$$ResponseListImplCopyWith(
+          _$ResponseListImpl value, $Res Function(_$ResponseListImpl) then) =
+      __$$ResponseListImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -194,11 +195,11 @@ abstract class _$$AdvocateImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$AdvocateImplCopyWithImpl<$Res>
-    extends _$AdvocateCopyWithImpl<$Res, _$AdvocateImpl>
-    implements _$$AdvocateImplCopyWith<$Res> {
-  __$$AdvocateImplCopyWithImpl(
-      _$AdvocateImpl _value, $Res Function(_$AdvocateImpl) _then)
+class __$$ResponseListImplCopyWithImpl<$Res>
+    extends _$ResponseListCopyWithImpl<$Res, _$ResponseListImpl>
+    implements _$$ResponseListImplCopyWith<$Res> {
+  __$$ResponseListImplCopyWithImpl(
+      _$ResponseListImpl _value, $Res Function(_$ResponseListImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -217,7 +218,7 @@ class __$$AdvocateImplCopyWithImpl<$Res>
     Object? documents = freezed,
     Object? additionalDetails = freezed,
   }) {
-    return _then(_$AdvocateImpl(
+    return _then(_$ResponseListImpl(
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -272,8 +273,8 @@ class __$$AdvocateImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$AdvocateImpl implements _Advocate {
-  const _$AdvocateImpl(
+class _$ResponseListImpl implements _ResponseList {
+  const _$ResponseListImpl(
       {@JsonKey(name: "id") this.id,
       @JsonKey(name: 'tenantId') this.tenantId,
       @JsonKey(name: 'applicationNumber') this.applicationNumber,
@@ -290,8 +291,8 @@ class _$AdvocateImpl implements _Advocate {
       : _documents = documents,
         _additionalDetails = additionalDetails;
 
-  factory _$AdvocateImpl.fromJson(Map<String, dynamic> json) =>
-      _$$AdvocateImplFromJson(json);
+  factory _$ResponseListImpl.fromJson(Map<String, dynamic> json) =>
+      _$$ResponseListImplFromJson(json);
 
   @override
   @JsonKey(name: "id")
@@ -348,14 +349,14 @@ class _$AdvocateImpl implements _Advocate {
 
   @override
   String toString() {
-    return 'Advocate(id: $id, tenantId: $tenantId, applicationNumber: $applicationNumber, status: $status, barRegistrationNumber: $barRegistrationNumber, advocateType: $advocateType, organisationID: $organisationID, individualId: $individualId, isActive: $isActive, workflow: $workflow, documents: $documents, additionalDetails: $additionalDetails)';
+    return 'ResponseList(id: $id, tenantId: $tenantId, applicationNumber: $applicationNumber, status: $status, barRegistrationNumber: $barRegistrationNumber, advocateType: $advocateType, organisationID: $organisationID, individualId: $individualId, isActive: $isActive, workflow: $workflow, documents: $documents, additionalDetails: $additionalDetails)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AdvocateImpl &&
+            other is _$ResponseListImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
@@ -400,19 +401,19 @@ class _$AdvocateImpl implements _Advocate {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$AdvocateImplCopyWith<_$AdvocateImpl> get copyWith =>
-      __$$AdvocateImplCopyWithImpl<_$AdvocateImpl>(this, _$identity);
+  _$$ResponseListImplCopyWith<_$ResponseListImpl> get copyWith =>
+      __$$ResponseListImplCopyWithImpl<_$ResponseListImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AdvocateImplToJson(
+    return _$$ResponseListImplToJson(
       this,
     );
   }
 }
 
-abstract class _Advocate implements Advocate {
-  const factory _Advocate(
+abstract class _ResponseList implements ResponseList {
+  const factory _ResponseList(
       {@JsonKey(name: "id") final String? id,
       @JsonKey(name: 'tenantId') final String? tenantId,
       @JsonKey(name: 'applicationNumber') final String? applicationNumber,
@@ -426,10 +427,10 @@ abstract class _Advocate implements Advocate {
       @JsonKey(name: 'workflow') final Workflow? workflow,
       @JsonKey(name: 'documents') final List<Document>? documents,
       @JsonKey(name: 'additionalDetails')
-      final Map<String, dynamic>? additionalDetails}) = _$AdvocateImpl;
+      final Map<String, dynamic>? additionalDetails}) = _$ResponseListImpl;
 
-  factory _Advocate.fromJson(Map<String, dynamic> json) =
-      _$AdvocateImpl.fromJson;
+  factory _ResponseList.fromJson(Map<String, dynamic> json) =
+      _$ResponseListImpl.fromJson;
 
   @override
   @JsonKey(name: "id")
@@ -469,6 +470,259 @@ abstract class _Advocate implements Advocate {
   Map<String, dynamic>? get additionalDetails;
   @override
   @JsonKey(ignore: true)
+  _$$ResponseListImplCopyWith<_$ResponseListImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+Advocate _$AdvocateFromJson(Map<String, dynamic> json) {
+  return _Advocate.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Advocate {
+  @JsonKey(name: "id")
+  String? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'barRegistrationNumber')
+  String? get barRegistrationNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'applicationNumber')
+  String? get applicationNumber => throw _privateConstructorUsedError;
+  @JsonKey(name: 'individualId')
+  String? get individualId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'responseList')
+  List<ResponseList> get responseList => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $AdvocateCopyWith<Advocate> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $AdvocateCopyWith<$Res> {
+  factory $AdvocateCopyWith(Advocate value, $Res Function(Advocate) then) =
+      _$AdvocateCopyWithImpl<$Res, Advocate>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") String? id,
+      @JsonKey(name: 'barRegistrationNumber') String? barRegistrationNumber,
+      @JsonKey(name: 'applicationNumber') String? applicationNumber,
+      @JsonKey(name: 'individualId') String? individualId,
+      @JsonKey(name: 'responseList') List<ResponseList> responseList});
+}
+
+/// @nodoc
+class _$AdvocateCopyWithImpl<$Res, $Val extends Advocate>
+    implements $AdvocateCopyWith<$Res> {
+  _$AdvocateCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? barRegistrationNumber = freezed,
+    Object? applicationNumber = freezed,
+    Object? individualId = freezed,
+    Object? responseList = null,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barRegistrationNumber: freezed == barRegistrationNumber
+          ? _value.barRegistrationNumber
+          : barRegistrationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      applicationNumber: freezed == applicationNumber
+          ? _value.applicationNumber
+          : applicationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualId: freezed == individualId
+          ? _value.individualId
+          : individualId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      responseList: null == responseList
+          ? _value.responseList
+          : responseList // ignore: cast_nullable_to_non_nullable
+              as List<ResponseList>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$AdvocateImplCopyWith<$Res>
+    implements $AdvocateCopyWith<$Res> {
+  factory _$$AdvocateImplCopyWith(
+          _$AdvocateImpl value, $Res Function(_$AdvocateImpl) then) =
+      __$$AdvocateImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: "id") String? id,
+      @JsonKey(name: 'barRegistrationNumber') String? barRegistrationNumber,
+      @JsonKey(name: 'applicationNumber') String? applicationNumber,
+      @JsonKey(name: 'individualId') String? individualId,
+      @JsonKey(name: 'responseList') List<ResponseList> responseList});
+}
+
+/// @nodoc
+class __$$AdvocateImplCopyWithImpl<$Res>
+    extends _$AdvocateCopyWithImpl<$Res, _$AdvocateImpl>
+    implements _$$AdvocateImplCopyWith<$Res> {
+  __$$AdvocateImplCopyWithImpl(
+      _$AdvocateImpl _value, $Res Function(_$AdvocateImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? barRegistrationNumber = freezed,
+    Object? applicationNumber = freezed,
+    Object? individualId = freezed,
+    Object? responseList = null,
+  }) {
+    return _then(_$AdvocateImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barRegistrationNumber: freezed == barRegistrationNumber
+          ? _value.barRegistrationNumber
+          : barRegistrationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      applicationNumber: freezed == applicationNumber
+          ? _value.applicationNumber
+          : applicationNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      individualId: freezed == individualId
+          ? _value.individualId
+          : individualId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      responseList: null == responseList
+          ? _value._responseList
+          : responseList // ignore: cast_nullable_to_non_nullable
+              as List<ResponseList>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$AdvocateImpl implements _Advocate {
+  const _$AdvocateImpl(
+      {@JsonKey(name: "id") this.id,
+      @JsonKey(name: 'barRegistrationNumber') this.barRegistrationNumber,
+      @JsonKey(name: 'applicationNumber') this.applicationNumber,
+      @JsonKey(name: 'individualId') this.individualId,
+      @JsonKey(name: 'responseList')
+      required final List<ResponseList> responseList})
+      : _responseList = responseList;
+
+  factory _$AdvocateImpl.fromJson(Map<String, dynamic> json) =>
+      _$$AdvocateImplFromJson(json);
+
+  @override
+  @JsonKey(name: "id")
+  final String? id;
+  @override
+  @JsonKey(name: 'barRegistrationNumber')
+  final String? barRegistrationNumber;
+  @override
+  @JsonKey(name: 'applicationNumber')
+  final String? applicationNumber;
+  @override
+  @JsonKey(name: 'individualId')
+  final String? individualId;
+  final List<ResponseList> _responseList;
+  @override
+  @JsonKey(name: 'responseList')
+  List<ResponseList> get responseList {
+    if (_responseList is EqualUnmodifiableListView) return _responseList;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_responseList);
+  }
+
+  @override
+  String toString() {
+    return 'Advocate(id: $id, barRegistrationNumber: $barRegistrationNumber, applicationNumber: $applicationNumber, individualId: $individualId, responseList: $responseList)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AdvocateImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.barRegistrationNumber, barRegistrationNumber) ||
+                other.barRegistrationNumber == barRegistrationNumber) &&
+            (identical(other.applicationNumber, applicationNumber) ||
+                other.applicationNumber == applicationNumber) &&
+            (identical(other.individualId, individualId) ||
+                other.individualId == individualId) &&
+            const DeepCollectionEquality()
+                .equals(other._responseList, _responseList));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      barRegistrationNumber,
+      applicationNumber,
+      individualId,
+      const DeepCollectionEquality().hash(_responseList));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AdvocateImplCopyWith<_$AdvocateImpl> get copyWith =>
+      __$$AdvocateImplCopyWithImpl<_$AdvocateImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$AdvocateImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Advocate implements Advocate {
+  const factory _Advocate(
+      {@JsonKey(name: "id") final String? id,
+      @JsonKey(name: 'barRegistrationNumber')
+      final String? barRegistrationNumber,
+      @JsonKey(name: 'applicationNumber') final String? applicationNumber,
+      @JsonKey(name: 'individualId') final String? individualId,
+      @JsonKey(name: 'responseList')
+      required final List<ResponseList> responseList}) = _$AdvocateImpl;
+
+  factory _Advocate.fromJson(Map<String, dynamic> json) =
+      _$AdvocateImpl.fromJson;
+
+  @override
+  @JsonKey(name: "id")
+  String? get id;
+  @override
+  @JsonKey(name: 'barRegistrationNumber')
+  String? get barRegistrationNumber;
+  @override
+  @JsonKey(name: 'applicationNumber')
+  String? get applicationNumber;
+  @override
+  @JsonKey(name: 'individualId')
+  String? get individualId;
+  @override
+  @JsonKey(name: 'responseList')
+  List<ResponseList> get responseList;
+  @override
+  @JsonKey(ignore: true)
   _$$AdvocateImplCopyWith<_$AdvocateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -480,8 +734,8 @@ AdvocateRegistrationRequest _$AdvocateRegistrationRequestFromJson(
 
 /// @nodoc
 mixin _$AdvocateRegistrationRequest {
-  @JsonKey(name: 'advocates')
-  List<Advocate> get advocates => throw _privateConstructorUsedError;
+  @JsonKey(name: 'advocate')
+  ResponseList get advocate => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -497,7 +751,9 @@ abstract class $AdvocateRegistrationRequestCopyWith<$Res> {
       _$AdvocateRegistrationRequestCopyWithImpl<$Res,
           AdvocateRegistrationRequest>;
   @useResult
-  $Res call({@JsonKey(name: 'advocates') List<Advocate> advocates});
+  $Res call({@JsonKey(name: 'advocate') ResponseList advocate});
+
+  $ResponseListCopyWith<$Res> get advocate;
 }
 
 /// @nodoc
@@ -514,14 +770,22 @@ class _$AdvocateRegistrationRequestCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? advocates = null,
+    Object? advocate = null,
   }) {
     return _then(_value.copyWith(
-      advocates: null == advocates
-          ? _value.advocates
-          : advocates // ignore: cast_nullable_to_non_nullable
-              as List<Advocate>,
+      advocate: null == advocate
+          ? _value.advocate
+          : advocate // ignore: cast_nullable_to_non_nullable
+              as ResponseList,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $ResponseListCopyWith<$Res> get advocate {
+    return $ResponseListCopyWith<$Res>(_value.advocate, (value) {
+      return _then(_value.copyWith(advocate: value) as $Val);
+    });
   }
 }
 
@@ -534,7 +798,10 @@ abstract class _$$AdvocateRegistrationRequestImplCopyWith<$Res>
       __$$AdvocateRegistrationRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'advocates') List<Advocate> advocates});
+  $Res call({@JsonKey(name: 'advocate') ResponseList advocate});
+
+  @override
+  $ResponseListCopyWith<$Res> get advocate;
 }
 
 /// @nodoc
@@ -550,13 +817,13 @@ class __$$AdvocateRegistrationRequestImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? advocates = null,
+    Object? advocate = null,
   }) {
     return _then(_$AdvocateRegistrationRequestImpl(
-      advocates: null == advocates
-          ? _value._advocates
-          : advocates // ignore: cast_nullable_to_non_nullable
-              as List<Advocate>,
+      advocate: null == advocate
+          ? _value.advocate
+          : advocate // ignore: cast_nullable_to_non_nullable
+              as ResponseList,
     ));
   }
 }
@@ -566,25 +833,19 @@ class __$$AdvocateRegistrationRequestImplCopyWithImpl<$Res>
 class _$AdvocateRegistrationRequestImpl
     implements _AdvocateRegistrationRequest {
   const _$AdvocateRegistrationRequestImpl(
-      {@JsonKey(name: 'advocates') required final List<Advocate> advocates})
-      : _advocates = advocates;
+      {@JsonKey(name: 'advocate') required this.advocate});
 
   factory _$AdvocateRegistrationRequestImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$AdvocateRegistrationRequestImplFromJson(json);
 
-  final List<Advocate> _advocates;
   @override
-  @JsonKey(name: 'advocates')
-  List<Advocate> get advocates {
-    if (_advocates is EqualUnmodifiableListView) return _advocates;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_advocates);
-  }
+  @JsonKey(name: 'advocate')
+  final ResponseList advocate;
 
   @override
   String toString() {
-    return 'AdvocateRegistrationRequest(advocates: $advocates)';
+    return 'AdvocateRegistrationRequest(advocate: $advocate)';
   }
 
   @override
@@ -592,14 +853,13 @@ class _$AdvocateRegistrationRequestImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AdvocateRegistrationRequestImpl &&
-            const DeepCollectionEquality()
-                .equals(other._advocates, _advocates));
+            (identical(other.advocate, advocate) ||
+                other.advocate == advocate));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_advocates));
+  int get hashCode => Object.hash(runtimeType, advocate);
 
   @JsonKey(ignore: true)
   @override
@@ -619,16 +879,15 @@ class _$AdvocateRegistrationRequestImpl
 abstract class _AdvocateRegistrationRequest
     implements AdvocateRegistrationRequest {
   const factory _AdvocateRegistrationRequest(
-          {@JsonKey(name: 'advocates')
-          required final List<Advocate> advocates}) =
+          {@JsonKey(name: 'advocate') required final ResponseList advocate}) =
       _$AdvocateRegistrationRequestImpl;
 
   factory _AdvocateRegistrationRequest.fromJson(Map<String, dynamic> json) =
       _$AdvocateRegistrationRequestImpl.fromJson;
 
   @override
-  @JsonKey(name: 'advocates')
-  List<Advocate> get advocates;
+  @JsonKey(name: 'advocate')
+  ResponseList get advocate;
   @override
   @JsonKey(ignore: true)
   _$$AdvocateRegistrationRequestImplCopyWith<_$AdvocateRegistrationRequestImpl>
@@ -645,7 +904,7 @@ mixin _$AdvocateRegistrationResponse {
   @JsonKey(name: 'responseInfo')
   ResponseInfoSearch get responseInfo => throw _privateConstructorUsedError;
   @JsonKey(name: 'advocates')
-  List<Advocate> get advocates => throw _privateConstructorUsedError;
+  List<ResponseList> get advocates => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -663,7 +922,7 @@ abstract class $AdvocateRegistrationResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'responseInfo') ResponseInfoSearch responseInfo,
-      @JsonKey(name: 'advocates') List<Advocate> advocates});
+      @JsonKey(name: 'advocates') List<ResponseList> advocates});
 
   $ResponseInfoSearchCopyWith<$Res> get responseInfo;
 }
@@ -693,7 +952,7 @@ class _$AdvocateRegistrationResponseCopyWithImpl<$Res,
       advocates: null == advocates
           ? _value.advocates
           : advocates // ignore: cast_nullable_to_non_nullable
-              as List<Advocate>,
+              as List<ResponseList>,
     ) as $Val);
   }
 
@@ -717,7 +976,7 @@ abstract class _$$AdvocateRegistrationResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'responseInfo') ResponseInfoSearch responseInfo,
-      @JsonKey(name: 'advocates') List<Advocate> advocates});
+      @JsonKey(name: 'advocates') List<ResponseList> advocates});
 
   @override
   $ResponseInfoSearchCopyWith<$Res> get responseInfo;
@@ -747,7 +1006,7 @@ class __$$AdvocateRegistrationResponseImplCopyWithImpl<$Res>
       advocates: null == advocates
           ? _value._advocates
           : advocates // ignore: cast_nullable_to_non_nullable
-              as List<Advocate>,
+              as List<ResponseList>,
     ));
   }
 }
@@ -759,7 +1018,7 @@ class _$AdvocateRegistrationResponseImpl
   const _$AdvocateRegistrationResponseImpl(
       {@JsonKey(name: 'responseInfo')
       this.responseInfo = const ResponseInfoSearch(status: ""),
-      @JsonKey(name: 'advocates') required final List<Advocate> advocates})
+      @JsonKey(name: 'advocates') required final List<ResponseList> advocates})
       : _advocates = advocates;
 
   factory _$AdvocateRegistrationResponseImpl.fromJson(
@@ -769,10 +1028,10 @@ class _$AdvocateRegistrationResponseImpl
   @override
   @JsonKey(name: 'responseInfo')
   final ResponseInfoSearch responseInfo;
-  final List<Advocate> _advocates;
+  final List<ResponseList> _advocates;
   @override
   @JsonKey(name: 'advocates')
-  List<Advocate> get advocates {
+  List<ResponseList> get advocates {
     if (_advocates is EqualUnmodifiableListView) return _advocates;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_advocates);
@@ -820,7 +1079,7 @@ abstract class _AdvocateRegistrationResponse
   const factory _AdvocateRegistrationResponse(
           {@JsonKey(name: 'responseInfo') final ResponseInfoSearch responseInfo,
           @JsonKey(name: 'advocates')
-          required final List<Advocate> advocates}) =
+          required final List<ResponseList> advocates}) =
       _$AdvocateRegistrationResponseImpl;
 
   factory _AdvocateRegistrationResponse.fromJson(Map<String, dynamic> json) =
@@ -831,7 +1090,7 @@ abstract class _AdvocateRegistrationResponse
   ResponseInfoSearch get responseInfo;
   @override
   @JsonKey(name: 'advocates')
-  List<Advocate> get advocates;
+  List<ResponseList> get advocates;
   @override
   @JsonKey(ignore: true)
   _$$AdvocateRegistrationResponseImplCopyWith<
