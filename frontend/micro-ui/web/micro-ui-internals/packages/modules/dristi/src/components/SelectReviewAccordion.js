@@ -1,5 +1,5 @@
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ChequeDetailsIcon,
   CustomArrowDownIcon,
@@ -14,12 +14,14 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
-  // const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
-  const isScrutiny = false;
+  const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
   const [isOpen, setOpen] = useState(true);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const ref = useRef();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -31,6 +33,28 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       ],
     [config?.populators?.inputs]
   );
+
+  function setValue(value, input) {
+    if (Array.isArray(input)) {
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      });
+    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+  }
+
+  useEffect(() => {
+    const names = inputs.map((item) => item.name);
+    const values = inputs.reduce((acc, item) => {
+      acc[item.name] = { scrutinyMessage: "", form: item.data.map(() => ({})) };
+      return acc;
+    }, {});
+    setValue(values, names);
+  }, [inputs]);
+
   const Icon = ({ icon }) => {
     switch (icon) {
       case "RespondentDetailsIcon":
@@ -53,6 +77,30 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
+  const handleOpenPopup = (clickref, type = "section", sectionName = "complaintDetails", fieldName = "name", index) => {
+    if (clickref.current) {
+      const rect = clickref.current.getBoundingClientRect();
+      setPopupPosition({
+        top: rect.top + window.scrollY,
+        left: rect.right + window.scrollX,
+      });
+    }
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+  };
+  const handleAddError = (input, index, val) => {
+    console.debug(input, index, val);
+    const currentValue = (formData && formData[config.key] && formData[config.key]?.[input.name]) || {
+      scrutinyMessage: "",
+      form: inputs.find((item) => item.name === input.name)?.data?.map(() => ({})),
+    };
+    const newFormData = currentValue;
+    setValue(newFormData, input.name);
+    setIsPopupOpen(false);
+  };
 
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
@@ -64,7 +112,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       </div>
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
-          {inputs.map((input) => (
+          {inputs.map((input, index) => (
             <div className="content-item">
               <div className="item-header">
                 <div className="header-left">
@@ -82,14 +130,36 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   </div>
                 )}
                 {isScrutiny && (
-                  <div style={{ cursor: "pointer" }}>
+                  <div
+                    ref={ref}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleOpenPopup(ref, "section");
+                    }}
+                    key={index}
+                  >
                     <FlagIcon style={{ fill: "blue" }} />
                   </div>
                 )}
               </div>
               {Array.isArray(input.data) &&
                 input.data.map((item, index) => (
-                  <CustomReviewCard isScrutiny={isScrutiny} config={input.config} index={index + 1} data={item?.data} />
+                  <CustomReviewCard
+                    isScrutiny={isScrutiny}
+                    config={input.config}
+                    titleIndex={index + 1}
+                    data={item?.data}
+                    key={index}
+                    index={index}
+                    isPopupOpen={isPopupOpen}
+                    popupPosition={popupPosition}
+                    t={t}
+                    handleClosePopup={handleClosePopup}
+                    handleAddError={handleAddError}
+                    handleOpenPopup={handleOpenPopup}
+                    formData={formData}
+                    input={input}
+                  />
                 ))}
             </div>
           ))}

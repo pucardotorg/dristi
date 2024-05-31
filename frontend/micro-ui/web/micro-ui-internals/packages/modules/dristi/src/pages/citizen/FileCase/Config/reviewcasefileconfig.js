@@ -12,13 +12,14 @@ export const reviewCaseFileFormConfig = [
       {
         type: "component",
         component: "SelectReviewAccordion",
-        key: "userDetails",
+        key: "litigentDetails",
         label: "1. Litigent",
         withoutLabel: true,
         populators: {
           inputs: [
             {
               key: "complaintDetails",
+              name: "complaintDetails",
               label: "CS_COMPLAINT_DETAILS",
               icon: "ComplainantDetailsIcon",
               config: [
@@ -31,6 +32,7 @@ export const reviewCaseFileFormConfig = [
             },
             {
               key: "respondentDetails",
+              name: "respondentDetails",
               label: "CS_RESPONDENT_DETAILS",
               icon: "RespondentDetailsIcon",
               config: [
@@ -47,13 +49,14 @@ export const reviewCaseFileFormConfig = [
       {
         type: "component",
         component: "SelectReviewAccordion",
-        key: "userDetails",
+        key: "caseSpecificDetails",
         label: "2. Case Specific Details",
         withoutLabel: true,
         populators: {
           inputs: [
             {
               key: "chequeDetails",
+              name: "chequeDetails",
               label: "CS_CHECKQUE_DETAILS",
               icon: "ChequeDetailsIcon",
               config: [
@@ -71,6 +74,7 @@ export const reviewCaseFileFormConfig = [
             },
             {
               key: "debtLiabilityDetails",
+              name: "debtLiabilityDetails",
               label: "CS_DEBT_LIABILITY_DETAILS",
               icon: "DebtLiabilityIcon",
               config: [
@@ -82,6 +86,7 @@ export const reviewCaseFileFormConfig = [
             },
             {
               key: "demandNoticeDetails",
+              name: "demandNoticeDetails",
               label: "CS_DEMAND_NOTICE_DETAILS",
               icon: "DemandDetailsNoticeIcon",
               config: [
@@ -100,13 +105,14 @@ export const reviewCaseFileFormConfig = [
       {
         type: "component",
         component: "SelectReviewAccordion",
-        key: "userDetails",
+        key: "additionalDetails",
         label: "3. Additional Details",
         withoutLabel: true,
         populators: {
           inputs: [
             {
               key: "witnessDetails",
+              name: "witnessDetails",
               label: "CS_WITNESS_DETAILS",
               icon: "WitnessDetailsIcon",
               config: [
@@ -119,7 +125,8 @@ export const reviewCaseFileFormConfig = [
             },
             {
               key: "prayerSwornStatement",
-              label: "CS_PRAYER_SWORN_DETAILS",
+              name: "prayerSwornStatement",
+              label: "CS_PRAYER_SWORN_DETAname",
               icon: "PrayerSwornIcon",
               config: [
                 { type: "text", label: "Prayer of Relief", value: "prayer" },
@@ -147,6 +154,7 @@ export const reviewCaseFileFormConfig = [
             },
             {
               key: "advocateDetails",
+              name: "advocateDetails",
               label: "CS_ADVOCATE_DETAILS",
               icon: "AdvocateDetailsIcon",
               config: [

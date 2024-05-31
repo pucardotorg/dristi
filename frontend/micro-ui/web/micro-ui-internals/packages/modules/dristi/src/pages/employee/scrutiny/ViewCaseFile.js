@@ -6,9 +6,16 @@ import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewca
 function ViewCaseFile({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const onSubmit = () => {};
   const onSaveDraft = () => {};
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {};
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
+      setFormdata((prev) => {
+        return { ...prev, data: formData };
+      });
+    }
+  };
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -38,9 +45,7 @@ function ViewCaseFile({ t }) {
             onSubmit={onSubmit}
             onSecondayActionClick={onSaveDraft}
             defaultValues={{}}
-            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-              onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
-            }}
+            onFormValueChange={onFormValueChange}
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
             cardClassName={`e-filing-card-form-style`}
