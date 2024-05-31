@@ -123,6 +123,7 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/registration/enter-adhaar`,
     `${path}/home/registration/aadhar-otp`,
     `${path}/home/registration/additional-details`,
+    `${path}/home/registration/upload-id`,
   ];
   const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
 
@@ -138,7 +139,7 @@ const App = ({ stateCode, tenantId }) => {
     history.push(`${path}/home`);
   }
   if (isUserLoggedIn && registerScreenRoute.includes(location.pathname)) {
-    history.push(`${path}/home`);
+    history.push(`${path}/home/registration/user-name`);
   }
   if (isLoading) {
     return <Loader />;
@@ -148,9 +149,11 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <AppContainer style={{ minWidth: "100%" }}>
-          <div style={{ display: "flex", justifyContent: "align-right", alignItems: "center" }}>
-            <BackButton />
-          </div>
+          {!individualId && (
+            <div style={{ display: "flex", justifyContent: "align-right", alignItems: "center" }}>
+              <BackButton />
+            </div>
+          )}
           <PrivateRoute exact path={`${path}/home`}>
             <CitizenHome tenantId={tenantId} />
           </PrivateRoute>
