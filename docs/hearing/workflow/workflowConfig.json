@@ -19,7 +19,7 @@
               "action": "CREATE",
               "nextState": "SCHEDULED",
               "roles": [
-                "HEARING_CREATOR"
+                "HEARING_SCHEDULER"
               ]
             }
           ]
@@ -34,10 +34,24 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "NEWDATE",
-              "nextState": "FINALIZEDATE",
+              "action": "PROPOSEDATE",
+              "nextState": "NEWDATE",
               "roles": [
-                "HEARING_SCHEDULER"
+                "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "CHECKOUT",
+              "nextState": "CHECKOUTREQUESTED",
+              "roles": [
+                "HEARING_DATE_REQUESTOR"
+              ]
+            },
+            {
+              "action": "START",
+              "nextState": "INPROGRESS",
+              "roles": [
+                "HEARING_START"
               ]
             },
             {
@@ -51,7 +65,7 @@
         },
         {
           "sla": 5,
-          "state": "FINALIZEDATE",
+          "state": "NEWDATE",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
@@ -59,39 +73,14 @@
           "isStateUpdatable": true,
           "actions": [
             {
-              "action": "ACCEPT",
-              "nextState": "SCHEDULEPENDING",
-              "roles": [
-                "HEARING_ACCEPTOR"
-              ]
-            },
-            {
-              "action": "NEWDATE",
-              "nextState": "FINALIZEDATE",
-              "roles": [
-                "HEARING_DATE_REQUESTOR"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "SCHEDULEPENDING",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
               "action": "APPROVE",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_APPROVER"
+              ]
+            },
+            {
+              "action": "REJECT",
               "nextState": "SCHEDULED",
               "roles": [
                 "HEARING_APPROVER"
@@ -107,19 +96,26 @@
           ]
         },
         {
-          "sla": 10,
-          "state": "SCHEDULED",
+          "sla": 5,
+          "state": "CHECKOUTREQUESTED",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": false,
           "isStartState": false,
           "isTerminateState": false,
-          "isStateUpdatable": false,
+          "isStateUpdatable": true,
           "actions": [
             {
-              "action": "START",
-              "nextState": "INPROGRESS",
+              "action": "SETNEWDATE",
+              "nextState": "SCHEDULED",
               "roles": [
-                "HEARING_START"
+                "HEARING_ACCEPTOR"
+              ]
+            },
+            {
+              "action": "REJECT",
+              "nextState": "SCHEDULED",
+              "roles": [
+                "HEARING_ACCEPTOR"
               ]
             },
             {
@@ -144,10 +140,7 @@
               "action": "CLOSE",
               "nextState": "COMPLETED",
               "roles": [
-                "Judge",
-                "Typist",
-                "Benchclerk",
-                "Stenographer"
+                "HEARING_CLOSER"
               ]
             },
             {

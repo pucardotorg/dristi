@@ -1,0 +1,341 @@
+openapi: 3.0.0
+info:
+  title: Case Management Service
+  description: |
+    This is a draft API specification for a case management service that provides value added services on top of the Case registry. 
+    1. The case management service provides APIs to retrieve the summary and history of a case. 
+    2. It updates the master status of the case by looking into the status of all the different entities in the case lifecycle. This is done as per the case classification strategy that was agreed upon. 
+    3. The service also provides a way to group/ungroup cases
+  version: 0.1.0
+tags:
+  - name: Case Management Service
+    description: APIs of the case management service
+  - name: Witness
+    description: APIs to add witnesses to a case
+paths:
+  /casemanager/case/v1/_summary:
+    post:
+      tags:
+        - Case Management Service
+      summary: Provides a summary of the case given a case identifier
+      description: |
+        API to retrieve a case summary. A case summary consists of basic case details, status and the final judgement/order that was passed in the case.
+      requestBody:
+        description: Details for the new court case + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseRequest'
+        required: true
+      responses:
+        '201':
+          description: ResponseInfo with case groups created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseSummaryResponse'
+        '400':
+          description: Court case creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+
+  /casemanager/case/v1/_history:
+    post:
+      tags:
+        - Case Management Service
+      summary: Provides the case file or case history given a case identifier
+      description: |
+        API to retrieve the full case file or history given a case identifier
+      requestBody:
+        description: Details for updating all updatable fields in the court case + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case details updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseFileResponse'
+        '400':
+          description: Error fetching case file
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+  
+  /casemanager/case/v1/_group:
+    post:
+      tags:
+        - Case Management Service
+      summary: Provides the ability to group cases together for operational and/or other purposes.
+      description: |
+        API to create a logical grouping of cases for operational reasons. Cases will continue to be treated as separate entities and orders/judgements will be issued separately. This grouping is primarily meant for hearings to be scheduled together. 
+      requestBody:
+        description: Details of the court cases to be grouped together + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseGroupRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case group created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseGroupResponse'
+        '400':
+          description: Error grouping cases together. 
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+  
+  /casemanager/case/v1/_ungroup:
+    post:
+      tags:
+        - Case Management Service
+      summary: Provides the ability to ungroup one or more cases from a group.
+      description: |
+        API to remove a case or all cases from the logical grouping. 
+      requestBody:
+        description: Details of the court cases to be ungrouped + ResponseInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CaseGroupRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with case group created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CaseGroupResponse'
+        '400':
+          description: Error grouping cases together. 
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+
+components:
+  schemas:
+    CaseGroup:
+      description: Holds a logical grouping of cases
+      required: [caseIds]
+      properties:
+        id:
+          type: string
+          description: Autogenerated UUID of the case group. It is the primary key used to search for the case groups.
+          minLength: 2
+          maxLength: 128
+          readOnly: true 
+        caseIds:
+          type: array
+          description: The UUID of the cases that are to be grouped together logically
+          items:
+            type: string
+          minItems: 1
+    
+    CaseSummary:
+      description: Representation of the case summary. 
+      type: object
+      required:
+        - caseTitle
+        - caseDescription
+        - filingNumber
+        - cnrNumber
+        - registrationDate
+        - caseDetails
+        - caseCategory
+        - natureOfPleading
+        - statutesAndSections
+        - status
+      properties:
+        resolutionMechanism:
+          type: string
+          description: >-
+            The mechanism used for dispute resolution. These can be e-courts,
+            Lok Adalats or some other entity. Values to be defined in master
+            data. The value stored in this field should be a master data ID.
+          example: COURT, ADR.MEDIATION, ADR.CONCILIATION, ODR.ARBITRATION, Lok Adalat
+          minLength: 2
+          maxLength: 128
+        caseTitle:
+          type: string
+          description: A simple one-liner summary title used to refer to the case.
+          minLength: 2
+          maxLength: 512
+          readOnly: true
+        caseDescription:
+          type: string
+          description: Description/summary/prayer for relief
+          minLength: 2
+          maxLength: 10000
+        filingNumber:
+          type: string
+          description: The formatted number given at filing time. When a case gets admitted, it is assigned a case number. In some cases, this may not be applicable.
+          minLength: 2
+          maxLength: 64
+        courCaseNumber:
+          type: string
+          description: a formatted number which helps identify what is the case type and also has a unique sequence number per court establishment, per court complex. The formatting may vary from state to state. Hence for validation, use regex expressions defined on a per state/tenant basis
+          minLength: 10
+          maxLength: 24
+          example: CC/023443/2024
+        cnrNumber:
+          type: string
+          description: >-
+            This refers to the case number record (CNR). This is generated after a case is admitted by the judge with/without an admission hearing. The case number format is different from the filing number format.
+          minLength: 2
+          maxLength: 32
+          example: PBJL01-123556-2024
+        filingDate:
+          type: string
+          format: date
+          description: >-
+            Date of case filing in epoch time. This is the date when the case
+            entered the judicial system.
+          example: 1709542147
+        registrationDate:
+          type: string
+          description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
+        caseDetails:
+          type: object
+          description: Field to store all case type specific details. These can vary depending on case type.
+        caseCategory:
+          type: string
+          description: Case category from master data
+          example: CIVIL, CRIMINAL
+          minLength: 2
+          maxLength: 64
+        statutesAndSections:
+          type: array
+          description: >-
+            The legal provisions -- acts/sections/subsections -- under which a
+            case is filed
+          items:
+            $ref: './case-api-0.1.0.yaml#/components/schemas/StatuteSection'
+        status:
+          type: string
+          description: >-
+            The current status of the case as pulled from the Workflow service.
+            Workflow service will hold the entire history of hte case.
+        remarks:
+          type: string
+          description: This field can hold any other additional remarks about the case
+        judgement:
+          $ref: './order-api-0.1.0.yaml#/components/schemas/Order'
+
+    CaseFile:
+      description: Representation of the case file. This is an aggregation of all the entities across the case lifecycle.
+      required:
+        - case
+      type: object
+      properties:
+        case: 
+          $ref: './case-api-0.1.0.yaml#/components/schemas/CourtCase'
+        hearings:
+          type: array
+          items:
+            $ref: './hearing-api-0.1.0.yaml#/components/schemas/Hearing'
+        witnesses:
+          type: array
+          items:
+            $ref: './hearing-api-0.1.0.yaml#/components/schemas/Hearing'
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderTasks'
+        applications:
+          type: array
+          items:
+            $ref: './application-api-0.1.0.yaml#/components/schemas/Application'
+        evidence:
+          type: array
+          items:
+            $ref: './evidence-api-0.1.0.yaml#/components/schemas/Artifact'
+    
+    OrderTasks:
+      type: object
+      properties:
+        order:
+          $ref: './order-api-0.1.0.yaml#/components/schemas/Order'
+        tasks:
+          type: array
+          items:
+            $ref: './task-api-0.1.0.yaml#/components/schemas/Task'
+
+    CaseRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        caseId:
+          type: string
+          description: The UUID of the case for which the case file is requested.
+        filingNumber:
+          type: string
+          description: The filing number of the case
+        caseNumber:
+          type: string
+          description: The CNR number of the case for which the case file is requested.
+
+
+    CaseFileResponse:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        caseFiles:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseFile'
+    
+    CaseSummaryResponse:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseSummary'
+    
+    CaseGroupRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+        caseGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseGroup'
+    
+    CaseGroupResponse:
+      type: object
+      properties:
+        responseInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+        caseGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseGroup'
+
+
