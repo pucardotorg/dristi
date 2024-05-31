@@ -4,6 +4,7 @@ import MultiUploadWrapper from "./MultiUploadWrapper";
 import CitizenInfoLabel from "./CitizenInfoLabel";
 import { CardText } from "@egovernments/digit-ui-components";
 import useInterval from "../hooks/useInterval";
+import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -11,9 +12,18 @@ const DEFAULT_USER = "digit-user";
 const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   const [removeFile, setRemoveFile] = useState();
   const [timeLeft, setTimeLeft] = useState(10);
+  const [showDoc, setShowDoc] = useState(false);
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const [fileStoreId, setFileStoreID] = useState();
+  const [fileName, setFileName] = useState();
   // const [isUserRegistered, setIsUserRegistered] = useState(true);
   const getUserType = () => window?.Digit.UserService.getType();
   const stateCode = window?.Digit.ULBService.getStateId();
+  const Digit = window.Digit || {};
+  const onDocumentUpload = async (fileData, filename) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
   useInterval(
     () => {
       setTimeLeft(timeLeft - 1);
@@ -69,6 +79,14 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         });
       });
     }
+    numberOfFiles > 0
+      ? onDocumentUpload(filesData[0][1]?.file, filesData[0][0]).then((document) => {
+          setFileName(filesData[0][0]);
+
+          setFileStoreID(document.file?.files?.[0]?.fileStoreId);
+          setShowDoc(true);
+        })
+      : setShowDoc(false);
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
 
@@ -194,6 +212,13 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       requestSpecifcFileRemoval={removeFile}
                     />
                   )}
+                  {showDoc && input?.type === "documentUpload" && (
+                    <div>
+                      <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
+                      </div>
+                    </div>
+                  )}
                   {input?.type === "text" && (
                     <TextInput
                       className="field desktop-w-full"
@@ -221,6 +246,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                 </div>
               </LabelFieldPair>
             )}
+
             {input?.type === "infoBox" && (
               <CitizenInfoLabel
                 style={{ maxWidth: "100%", padding: "0 8px 10px 8px" }}

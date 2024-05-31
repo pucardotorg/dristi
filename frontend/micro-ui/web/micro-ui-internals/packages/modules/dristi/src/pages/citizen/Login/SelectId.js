@@ -1,7 +1,7 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
-function SelectId({ config, t, params, history, onSelect }) {
+function SelectId({ config, t, params, history, onSelect, pathOnRefresh }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const closeToast = () => {
@@ -55,7 +55,7 @@ function SelectId({ config, t, params, history, onSelect }) {
   };
 
   if (!params?.address) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
     <React.Fragment>
