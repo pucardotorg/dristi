@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class AdvocateClerkQueryBuilderTest {
         assertNotNull(query);
         assertTrue(query.contains("SELECT advc.id as id"));
         assertTrue(query.contains("FROM dristi_advocate_clerk advc"));
-        assertTrue(query.contains("LOWER(advc.tenant) = LOWER(?)"));
+        assertTrue(query.contains("LOWER(advc.tenantid) = LOWER(?)"));
         assertEquals(7, preparedStmtList.size());
         assertEquals("123", preparedStmtList.get(0));
         assertEquals("456", preparedStmtList.get(1));
@@ -191,5 +192,62 @@ public class AdvocateClerkQueryBuilderTest {
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(new ArrayList<>(), preparedStmtList);
+    }
+
+    @Test
+    void getAdvocateClerkSearchQuery_Exception() {
+        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria();
+        criteria.setId("123");
+        criteria.setStateRegnNumber("456");
+        criteria.setApplicationNumber("4567");
+        criteria.setIndividualId("indivID");
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            queryBuilder.getAdvocateClerkSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void getAdvocateClerkSearchQueryByStatus_Exception() {
+        String status = "active";
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            queryBuilder.getAdvocateClerkSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void getAdvocateClerkSearchQueryByAppMumber_Exception() {
+        String appNumber = "appNumber";
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            queryBuilder.getAdvocateClerkSearchQueryByAppNumber(appNumber, preparedStmtList, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void getDocumentSearchQuery_Exception() {
+        List<String> ids = List.of("clerk1", "clerk2");
+        List<Object> preparedStmtList = null;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            queryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        });
     }
 }

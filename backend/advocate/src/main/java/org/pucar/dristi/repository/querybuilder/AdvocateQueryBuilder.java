@@ -68,16 +68,15 @@ public class AdvocateQueryBuilder {
                     firstCriteria = false;
                 }
 
-//            if(tenantId != null && !tenantId.isEmpty()){
-//                addClauseIfRequired(query, firstCriteria);
-//                query.append("LOWER(adv.tenantid) = LOWER(?)")
-//                        .append(")");
-//                preparedStmtList.add(tenantId.toLowerCase());
-//            }
-
                 if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getBarRegistrationNumber()!=null && !criteria.getBarRegistrationNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
                         || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
                     query.append(")");
+                }
+
+                if(tenantId != null && !tenantId.isEmpty()){
+                    addClauseIfRequiredForStatus(query, firstCriteria);
+                    query.append("LOWER(adv.tenantid) = LOWER(?)");
+                    preparedStmtList.add(tenantId.toLowerCase());
                 }
             }
 
