@@ -5,6 +5,7 @@ import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
 import { Close } from "@egovernments/digit-ui-svg-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { CloseIconWhite } from "../../../icons/svgIndex";
 
 const SelectOtp = ({
   config,
@@ -58,7 +59,7 @@ const SelectOtp = ({
         ) : (
           <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
             {" "}
-            <Close />{" "}
+            <CloseIconWhite />{" "}
           </div>
         )}
       </div>

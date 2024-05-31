@@ -16,7 +16,7 @@
 
 .user-registration {
   background-color: #eeeeee;
-  min-height: calc(100vh - 113px);
+  min-height: calc(100vh - 74px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -161,6 +161,7 @@
           border-width: 0px 0px 1px 0px !important;
           border-style: solid;
           border-color: #00000026;
+          border-radius: 0px !important;
         }
       }
     }
@@ -200,6 +201,7 @@
             padding-bottom: 32px;
           }
           .radio-wrap {
+            margin: 0px 0px 32px 0px;
             gap: 16px !important;
           }
         }
@@ -213,7 +215,7 @@
             display: flex;
             justify-content: flex-start;
             gap: 16px !important;
-            padding: 16px;
+            padding: 16px !important;
             box-shadow: none;
             border: 1px #d9d9d9 solid;
             border-radius: 8px;
@@ -258,6 +260,7 @@
     }
 
     .user-address {
+      margin: 20px 0px;
       padding: 40px !important;
       background-color: #ffffff;
       box-shadow: none;
@@ -358,6 +361,18 @@
     .header-wrap {
       padding-left: 16px;
       border-bottom: none;
+
+      .header-end {
+        .icon-bg-secondary {
+          width: 44px;
+          height: 44px;
+          svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      }
+
       h1 {
         padding: 28px 0px 16px 0px;
         margin: 0px;
@@ -431,7 +446,15 @@
   }
 }
 
-.citizen-home-footer {
-  position: fixed !important;
-  bottom: 0px;
+.navbar {
+  margin-bottom: 0px;
+  border-bottom: none;
+}
+
+body {
+  margin: 0px;
+}
+
+.main {
+  margin-bottom: 0px !important;
 }
