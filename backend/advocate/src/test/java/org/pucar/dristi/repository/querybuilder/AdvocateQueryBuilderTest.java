@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
 class AdvocateQueryBuilderTest {
 
@@ -171,6 +174,52 @@ class AdvocateQueryBuilderTest {
 
         assertThrows(CustomException.class, () -> {
             advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        });
+    }
+
+    @Test
+    void getAdvocateSearchQuery_Exception() {
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setId("123");
+        criteria.setBarRegistrationNumber("BAR123");
+        criteria.setApplicationNumber("APP456");
+        criteria.setIndividualId("IND789");
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void getAdvocateSearchQueryByStatus_Exception() {
+        String status = "active";
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void getAdvocateSearchQueryByAppMumber_Exception() {
+        String appNumber = "appNumber";
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList, tenantId, limit, offset);
         });
     }
 }
