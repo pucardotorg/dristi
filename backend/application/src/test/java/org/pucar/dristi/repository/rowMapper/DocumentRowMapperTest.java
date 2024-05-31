@@ -73,8 +73,6 @@ public class DocumentRowMapperTest {
     @Test
     void testExtractData_WhenSQLExceptionThrown_ShouldThrowCustomException() throws Exception {
         // Arrange
-//        when(resultSet.next()).thenReturn(true).thenReturn(false);
-
         when(resultSet.next()).thenThrow(new SQLException("Test SQL Exception"));
 
         // Act & Assert
