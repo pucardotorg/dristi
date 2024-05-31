@@ -86,6 +86,7 @@ class AddressScreenState extends State<AddressScreen> {
   // }
 
   late Set<Marker> markersList;
+  late Marker marker;
 
   late GoogleMapController googleMapController;
   Completer<GoogleMapController> _googleMapController = Completer();
@@ -98,10 +99,16 @@ class AddressScreenState extends State<AddressScreen> {
     // fetchStates(selectedCountryISOCode);
     super.initState();
     _defaultLatLng = const LatLng(17.4400802, 78.3489168);
-    markersList = {(Marker(markerId: MarkerId(""), position: _defaultLatLng))};
+    marker = Marker(
+        markerId: const MarkerId("1"),
+        draggable: true,
+        position: _defaultLatLng,
+        onDragEnd: (newPosition) {
+          _draggedLatLng = newPosition;
+        }
+    );
+    markersList = {marker};
     _cameraPosition = CameraPosition(target: _defaultLatLng, zoom: 14.0);
-    // _draggedLatLng = _defaultLatLng;
-    // _getCurrentLocation();
   }
 
   _getCurrentLocation(FormGroup form) async {
@@ -113,10 +120,26 @@ class AddressScreenState extends State<AddressScreen> {
         _currentPosition = position;
         _draggedLatLng = LatLng(_currentPosition.latitude, _currentPosition.longitude);
       });
-      await _goToSpecificPosition(form, _draggedLatLng, "", "");
+      await _goToSpecificPosition(form, _draggedLatLng, "");
+    } else {
+      var position = LatLng(context.read<AuthBloc>().userModel.addressModel.latitude!, context.read<AuthBloc>().userModel.addressModel.longitude!);
 
-      // _goToSpecificPosition(LatLng(_currentPosition.latitude, _currentPosition.longitude), "", "");
-      // _getAddressFromLatLng(form, LatLng(_currentPosition.latitude, _currentPosition.longitude));
+      markersList.add(Marker(
+          markerId: marker.markerId,
+          draggable: true,
+          position: position,
+          infoWindow: const InfoWindow(title: ""),
+          onDragEnd: (newPosition) {
+            _draggedLatLng = newPosition;
+            _getAddressFromLatLng(form, newPosition);
+          }
+      ));
+      GoogleMapController mapController = await _googleMapController.future;
+      mapController.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+              target: position,
+              zoom: 14.0)
+      ));
     }
   }
 
@@ -131,19 +154,22 @@ class AddressScreenState extends State<AddressScreen> {
       context.read<AuthBloc>().userModel.addressModel.latitude = position.latitude;
       context.read<AuthBloc>().userModel.addressModel.longitude = position.longitude;
     });
-
-    // _goToSpecificPosition(position, "", "");
   }
 
-  Future _goToSpecificPosition(FormGroup form, LatLng position, String description, String id) async {
+  Future _goToSpecificPosition(FormGroup form, LatLng position, String description) async {
 
     GoogleMapController mapController = await _googleMapController.future;
-    markersList.clear();
 
     markersList.add(Marker(
-        markerId: MarkerId(id),
-        position: LatLng(position.latitude, position.longitude),
-        infoWindow: InfoWindow(title: description)));
+        markerId: marker.markerId,
+        draggable: true,
+        position: position,
+        infoWindow: InfoWindow(title: description),
+        onDragEnd: (newPosition) {
+          _draggedLatLng = newPosition;
+          _getAddressFromLatLng(form, newPosition);
+        }
+    ));
 
     mapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(
@@ -151,32 +177,6 @@ class AddressScreenState extends State<AddressScreen> {
             zoom: 14.0)
     ));
     await _getAddressFromLatLng(form, position);
-    // googleMapController.animateCamera(CameraUpdate.newLatLngZoom(
-    //     LatLng(position.latitude, position.longitude), 15.0));
-  }
-
-  Future _getAddress(bool dragged, FormGroup form, LatLng position, String description, String id) async {
-    if (context.read<AuthBloc>().userModel.addressModel.longitude != null ||
-        context.read<AuthBloc>().userModel.addressModel.longitude != 0) {
-      GoogleMapController mapController = await _googleMapController.future;
-      markersList.clear();
-
-      markersList.add(Marker(
-          markerId: MarkerId(id),
-          position: LatLng(position.latitude, position.longitude),
-          infoWindow: InfoWindow(title: description)));
-
-      if (!dragged) {
-        mapController.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: position,
-                zoom: 14.0)
-        ));
-      }
-      if (dragged) {
-        await _getAddressFromLatLng(form, position);
-      }
-    }
   }
 
   // Future<void> _fetchDistrict(String pincode) async {
@@ -314,13 +314,12 @@ class AddressScreenState extends State<AddressScreen> {
                                           _googleMapController.complete(controller);
                                           _getCurrentLocation(form);
                                         }
-                                        // googleMapController = controller;
                                       },
                                       onCameraIdle: () {
-                                        _getAddress(true, form, _draggedLatLng, "", "");
+                                        // _getAddress(true, form, _draggedLatLng, "", "");
                                       },
                                       onCameraMove: (position) {
-                                        _draggedLatLng = position.target;
+                                        // _draggedLatLng = position.target;
                                         // _getAddressFromLatLng(form, position.target);
                                       },
                                       gestureRecognizers: <Factory<
@@ -403,7 +402,7 @@ class AddressScreenState extends State<AddressScreen> {
                                       },
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
-                                            RegExp(r'^[a-zA-Z][a-zA-Z ]*$')),
+                                            RegExp(r'^[a-zA-Z][a-zA-Z ]*')),
                                       ],
                                       validationMessages: {
                                         'required': (_) => 'State is required',
@@ -425,7 +424,7 @@ class AddressScreenState extends State<AddressScreen> {
                                       },
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
-                                            RegExp(r'^[a-zA-Z][a-zA-Z ]*$')),
+                                            RegExp(r'^[a-zA-Z][a-zA-Z ]*')),
                                       ],
                                       validationMessages: {
                                         'required': (_) => 'District is required',
@@ -447,7 +446,7 @@ class AddressScreenState extends State<AddressScreen> {
                                       },
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
-                                            RegExp(r'^[a-zA-Z][a-zA-Z ]*$')),
+                                            RegExp(r'^[a-zA-Z][a-zA-Z ]*')),
                                       ],
                                       validationMessages: {
                                         'required': (_) => 'City is required',
@@ -644,7 +643,7 @@ class AddressScreenState extends State<AddressScreen> {
       context.read<AuthBloc>().userModel.addressModel.longitude = double.parse(p.lng!);
     });
 
-    _getAddress(false, form, LatLng(double.parse(p.lat!), double.parse(p.lng!)), p.description!, p.placeId!);
+    _goToSpecificPosition(form, LatLng(double.parse(p.lat!), double.parse(p.lng!)), p.description!);
   }
 
   void extractAddressComponents(List<AddressComponents>? addressComponents, FormGroup form) {
