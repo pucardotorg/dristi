@@ -39,7 +39,6 @@ public class AdvocateRepository {
 
     /** Used to get applications based on search criteria using query
      * @param searchCriteria
-     * @param isIndividualLoggedInUser
      * @param limit
      * @param offset
      * @return list of advocate found in the DB

@@ -65,16 +65,15 @@ public class AdvocateClerkQueryBuilder {
                     preparedStmtList.add(criteria.getIndividualId());
                 }
 
-                if(tenantId != null && !tenantId.isEmpty()){
-                    addClauseIfRequired(query, preparedStmtList);
-                    query.append("LOWER(advc.tenant) = LOWER(?)")
-                            .append(")");
-                    preparedStmtList.add(tenantId.toLowerCase());
-                }
-
                 if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
                         || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
                     query.append(")");
+                }
+
+                if(tenantId != null && !tenantId.isEmpty()){
+                    addClauseIfRequiredForStatus(query, preparedStmtList);
+                    query.append("LOWER(advc.tenantid) = LOWER(?)");
+                    preparedStmtList.add(tenantId.toLowerCase());
                 }
             }
 
