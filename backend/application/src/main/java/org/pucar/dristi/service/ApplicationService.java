@@ -63,7 +63,7 @@ public class ApplicationService {
                     log.error("Error validating existing application {}", e.getMessage());
                     throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
                 }
-                existingApplication.setWorkflow(application.getWorkflow());// TODO check
+                existingApplication.setWorkflow(application.getWorkflow());
 
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
@@ -98,33 +98,4 @@ public class ApplicationService {
                 throw new CustomException(APPLICATION_SEARCH_ERR, e.getMessage());
             }
         }
-
-//        public ApplicationExists getExistingApplications (ApplicationExists applicationExists) {
-//            try {
-//                // Fetch applications from database according to the given search criteria
-//                List<CourtCase> courtCases = caseRepository.getApplications(caseSearchRequests.getCriteria());
-//                log.info("Court Case Applications Size :: {}", courtCases.size());
-//
-//                List<CaseExists> caseExistsList = new ArrayList<>();
-//
-//                for (CaseCriteria caseCriteria : caseSearchRequests.getCriteria()) {
-//                    boolean notExists = courtCases.stream().filter(c -> c.getFilingNumber().equalsIgnoreCase(caseCriteria.getFilingNumber())
-//                            && c.getCaseNumber().equalsIgnoreCase(caseCriteria.getCnrNumber())).toList().isEmpty();
-//                    CaseExists caseExists = new CaseExists(caseCriteria.getCourtCaseNumber(), caseCriteria.getCnrNumber(), caseCriteria.getFilingNumber(), !notExists);
-//                    caseExistsList.add(caseExists);
-//                }
-//
-//                // If no applications are found matching the given criteria, return an empty list
-//                if (CollectionUtils.isEmpty(courtCases))
-//                    return new ArrayList<>();
-//                courtCases.forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
-//                return caseExistsList;
-//            } catch (CustomException e) {
-//                log.error("Custom Exception occurred while searching");
-//                throw e;
-//            } catch (Exception e) {
-//                log.error("Error while fetching to search results");
-//                throw new CustomException(CASE_EXIST_ERR, e.getMessage());
-//            }
-//        }
     }

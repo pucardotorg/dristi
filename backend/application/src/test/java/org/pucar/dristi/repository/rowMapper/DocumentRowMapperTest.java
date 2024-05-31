@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_ROW_MAPPER_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 public class DocumentRowMapperTest {
@@ -82,7 +83,7 @@ public class DocumentRowMapperTest {
         });
 
         // Assert
-        assertEquals(ROW_MAPPER_EXCEPTION, thrown.getCode());
+        assertEquals(DOCUMENT_ROW_MAPPER_EXCEPTION, thrown.getCode());
         assertEquals("Error occurred while processing document ResultSet: Test SQL Exception", thrown.getMessage());
     }
 
@@ -98,7 +99,7 @@ public class DocumentRowMapperTest {
         });
 
         // Assert
-        assertEquals(ROW_MAPPER_EXCEPTION, thrown.getCode());
+        assertEquals(DOCUMENT_ROW_MAPPER_EXCEPTION, thrown.getCode());
         assertEquals("Error occurred while processing document ResultSet: Test Runtime Exception", thrown.getMessage());
     }
 }

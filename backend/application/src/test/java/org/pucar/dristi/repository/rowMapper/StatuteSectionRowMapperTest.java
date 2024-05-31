@@ -14,6 +14,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.STATUTE_ROW_MAPPER_EXCEPTION;
 
 class StatuteSectionRowMapperTest {
 
@@ -103,7 +104,7 @@ class StatuteSectionRowMapperTest {
             statuteSectionRowMapper.extractData(resultSet);
         });
 
-        assertEquals("ROW_MAPPER_EXCEPTION", thrown.getCode());
+        assertEquals(STATUTE_ROW_MAPPER_EXCEPTION, thrown.getCode());
         assertTrue(thrown.getMessage().contains("Test exception"));
     }
 
