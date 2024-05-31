@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * OrderExistsResponse
  */
@@ -25,9 +27,9 @@ public class OrderExistsResponse {
     @Valid
     private ResponseInfo responseInfo = null;
 
-    @JsonProperty("Order")
+    @JsonProperty("orderList")
     @Valid
-    private OrderExists order = null;
+    private List<OrderExists> order = null;
 
 
 }

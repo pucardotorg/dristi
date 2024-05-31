@@ -32,6 +32,54 @@ public class OrderQueryBuilder {
 
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_order_statute_section stse";
 
+    private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders WHERE ";
+
+    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber) {
+        try {
+            StringBuilder query = new StringBuilder(BASE_ORDER_EXIST_QUERY);
+
+            if (orderNumber != null && cnrNumber != null && filingNumber == null) {
+                // orderNumber and cnrNumber are not null, filingNumber is null
+                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(" AND ");
+                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
+
+            } else if (orderNumber != null && cnrNumber == null && filingNumber != null) {
+                // orderNumber and filingNumber are not null, cnrNumber is null
+                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(" AND ");
+                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+
+            } else if (orderNumber == null && cnrNumber != null && filingNumber != null) {
+                // cnrNumber and filingNumber are not null, orderNumber is null
+                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
+                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+
+            } else if (orderNumber != null && cnrNumber == null) {
+                // Only orderNumber is not null, cnrNumber and filingNumber are null
+                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(";");
+
+            } else if (orderNumber == null && cnrNumber != null) {
+                // Only cnrNumber is not null, orderNumber and filingNumber are null
+                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
+
+            } else if (orderNumber == null && filingNumber != null) {
+                // Only filingNumber is not null, orderNumber and cnrNumber are null
+                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+
+            } else if (orderNumber != null) {
+                // All fields are not null
+                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(" AND ");
+                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
+                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+            }
+
+            return query.toString();
+        } catch (Exception e) {
+            log.error("Error while building order exist query");
+            throw new CustomException("ORDER_EXISTS_ERROR", "Error occurred while building the order exist query : " + e.getMessage());
+        }
+    }
+
+
     public String getOrderSearchQuery(String cnrNumber, String filingNumber, String tenantId, String id, String status) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);

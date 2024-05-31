@@ -130,7 +130,7 @@ public class OrderRegistrationServiceTest {
         orderExists.setApplicationNumber("appNum");
         orderExists.setFilingNumber("filingNum");
         orderExists.setCnrNumber("cnrNum");
-        orderExistsRequest.setOrder(orderExists);
+        orderExistsRequest.setOrder(List.of(orderExists));
         User user = User.builder().uuid(UUID.randomUUID().toString()).build();
         RequestInfo requestInfo = RequestInfo.builder().userInfo(user).build();
         orderExistsRequest.setRequestInfo(requestInfo);
@@ -146,7 +146,7 @@ public class OrderRegistrationServiceTest {
         when(orderRepository.getApplications( anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
 
-        OrderExists result = orderRegistrationService.existsOrder(orderExistsRequest);
+        List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);
 
         assertNotNull(result);
     }

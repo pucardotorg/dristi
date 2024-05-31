@@ -64,7 +64,7 @@ public class OrderRegistrationService {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(cnrNumber,filingNumber, tenantId, id, status).stream().filter(o->o.getApplicationNumber().contains(applicationNumber)).toList();
+            List<Order> orderList = orderRepository.getApplications(cnrNumber,filingNumber, tenantId, id, status);
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
@@ -113,18 +113,9 @@ public class OrderRegistrationService {
 
     }
 
-    public OrderExists existsOrder(OrderExistsRequest orderExistsRequest) {
+    public List<OrderExists> existsOrder(OrderExistsRequest orderExistsRequest) {
         try {
-            OrderExists orderExists = orderExistsRequest.getOrder();
-
-            // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(orderExists.getFilingNumber(),
-                    orderExists.getCnrNumber(), orderExistsRequest.getRequestInfo().getUserInfo().getTenantId(), null, null);
-
-            boolean notExists = orderList.stream().filter(c->c.getFilingNumber().equalsIgnoreCase(orderExists.getFilingNumber())
-                      && orderExists.getCnrNumber().equalsIgnoreCase(orderExists.getCnrNumber())).toList().isEmpty();
-
-            return new OrderExists(orderExists.getApplicationNumber(),orderExists.getOrderNumber(),orderExists.getCnrNumber(), orderExists.getFilingNumber(), !notExists);
+            return orderRepository.checkOrderExists(orderExistsRequest.getOrder());
         }
         catch (CustomException e){
             log.error("Custom Exception occurred while searching");

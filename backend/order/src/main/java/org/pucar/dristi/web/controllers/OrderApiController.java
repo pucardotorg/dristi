@@ -10,7 +10,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
-import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.service.OrderRegistrationService;
 import org.pucar.dristi.util.ResponseInfoFactory;
 import org.pucar.dristi.web.models.*;
@@ -23,9 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:13:43.389623100+05:30[Asia/Calcutta]")
 @Controller
@@ -70,7 +67,7 @@ public class OrderApiController {
     @RequestMapping(value = "/order/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<OrderExistsResponse> orderV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the order(S) exists", required = true, schema = @Schema()) @Valid @RequestBody OrderExistsRequest body) {
         try {
-            OrderExists order = orderService.existsOrder(body);
+            List<OrderExists> order = orderService.existsOrder(body);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
             OrderExistsResponse orderExistsResponse = OrderExistsResponse.builder().order(order).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderExistsResponse, HttpStatus.OK);

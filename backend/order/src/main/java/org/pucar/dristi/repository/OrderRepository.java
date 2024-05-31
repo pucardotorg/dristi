@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.OrderQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -91,6 +92,27 @@ public class OrderRepository {
         catch (Exception e){
             log.error("Error while fetching order list");
             throw new CustomException("ORDER_SEARCH_EXCEPTION","Error while fetching order list: "+e.getMessage());
+        }
+    }
+
+    public List<OrderExists> checkOrderExists(List<OrderExists> orderExistsRequest) {
+        try {
+            for (OrderExists orderExists : orderExistsRequest) {
+                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null) {
+                    orderExists.setExists(false);
+                } else {
+                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber());
+                    log.info("Final order exist query: {}", orderExistQuery);
+                    Integer count = jdbcTemplate.queryForObject(orderExistQuery, Integer.class);
+                    orderExists.setExists(count != null && count > 0);
+                }
+            }
+            return orderExistsRequest;
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while checking order exist");
+            throw new CustomException("ORDER_EXIST_ERROR", "Custom exception while checking order exist : " + e.getMessage());
         }
     }
 
