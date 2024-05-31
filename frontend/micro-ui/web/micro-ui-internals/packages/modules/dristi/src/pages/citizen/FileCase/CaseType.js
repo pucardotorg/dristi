@@ -90,7 +90,11 @@ function CaseType({ t }) {
 
     return (
       <div className="submit-bar-div">
-        <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
+        <Button
+          icon={<FileDownload />}
+          className="download-button"
+          label={t("CS_COMMON_DOWNLOAD")}
+        />
         <div className="right-div">
           <Button
             className="cancel-button"

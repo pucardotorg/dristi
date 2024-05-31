@@ -228,9 +228,9 @@ const Login = ({ stateCode }) => {
     }
   };
   return (
-    <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
+    <div className="citizen-form-wrapper">
       <Switch>
-        <AppContainer>
+        <React.Fragment>
           <Route path={`${path}`} exact>
             <SelectMobileNumber
               onSelect={selectMobileNumber}
@@ -255,12 +255,12 @@ const Login = ({ stateCode }) => {
               params={params}
               setParams={setParmas}
               t={t}
-              path={path}
+              path={`${path}/login`}
             />
           </Route>
 
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
-        </AppContainer>
+        </React.Fragment>
       </Switch>
     </div>
   );

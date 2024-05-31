@@ -65,7 +65,9 @@ const SelectOtp = ({
   };
 
   if (!params?.mobileNumber && !isAdhaar) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(path);
+  } else if (!params?.adhaarNumber && isAdhaar) {
+    history.push(path);
   }
 
   if (userType === "employee") {
@@ -96,10 +98,10 @@ const SelectOtp = ({
       isDisabled={!(otp?.length === 6 && canSubmit)}
       formId="modal-action"
       headerBarMain={
-        <div>
+        <React.Fragment>
           <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
-          <CardText style={{ marginLeft: "20px" }}>{cardText}</CardText>
-        </div>
+          <CardText>{cardText}</CardText>
+        </React.Fragment>
       }
       popupStyles={{ width: "580px", alignItems: "center" }}
     >
@@ -113,13 +115,16 @@ const SelectOtp = ({
         <div style={{ display: "flex" }}>
           <OTPInput length={6} onChange={onOtpChange} value={otp} />
         </div>
-        {timeLeft > 0 ? (
-          <CardText style={{ alignSelf: "flex-start" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
-        ) : (
-          <p className="card-text" onClick={handleResendOtp} style={{ backgroundColor: "#fff", color: "#f47738", cursor: "pointer" }}>
-            {t("CS_RESEND_OTP")}
+        <div className="message">
+          <p>
+            {
+              timeLeft > 0 ?
+                <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span>
+                : ""
+            }
+            <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`}>{t("CS_RESEND_OTP")}</span>
           </p>
-        )}
+        </div>
         {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
       </FormStep>
     </Modal>

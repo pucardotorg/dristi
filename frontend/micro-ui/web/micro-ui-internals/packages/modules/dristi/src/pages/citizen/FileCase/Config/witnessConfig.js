@@ -98,7 +98,7 @@ const witnessFormConfig = [
             {
               label: "CORE_COMMON_EMAILS",
               type: "text",
-              name: "mobileNumber",
+              name: "emailId",
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,

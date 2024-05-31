@@ -2,7 +2,7 @@ import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectUserAddress = ({ config, onSelect, t, params }) => {
+const SelectUserAddress = ({ config, onSelect, t, params, pathOnRefresh }) => {
   const history = useHistory();
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -37,10 +37,10 @@ const SelectUserAddress = ({ config, onSelect, t, params }) => {
     }
   };
   if (!params?.name) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
-    <div style={{ minWidth: "100%" }}>
+    <div className="user-address">
       <FormComposerV2
         config={config}
         t={t}
@@ -48,11 +48,9 @@ const SelectUserAddress = ({ config, onSelect, t, params }) => {
         noBoxShadow
         inline
         label={"CS_COMMON_CONTINUE"}
-        onSecondayActionClick={() => {}}
+        onSecondayActionClick={() => { }}
         cardStyle={{ padding: 40, flexDirection: "column" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px", textAlign: "center" }}
         submitInForm
-        buttonStyle={{ alignSelf: "center", minWidth: "100%" }}
         onFormValueChange={onFormValueChange}
         isDisabled={isDisabled}
         defaultValues={params?.address || {}}

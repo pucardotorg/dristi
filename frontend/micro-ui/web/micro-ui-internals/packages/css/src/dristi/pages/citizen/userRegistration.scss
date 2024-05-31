@@ -1,0 +1,375 @@
+.pt-citizen {
+  .back-button-home {
+    position: fixed;
+    left: 40px;
+    margin-top: 20px;
+
+    .back-btn2 {
+      margin: 0px;
+    }
+
+    p {
+      margin: 0px;
+    }
+  }
+}
+
+.user-registration {
+  background-color: #eeeeee;
+  min-height: calc(100vh - 113px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  input {
+    margin: 0px;
+  }
+
+  .citizen-form-wrapper {
+    margin-top: 0px !important;
+
+    .login-form {
+      padding: 40px;
+      margin: 0px;
+      background-color: #ffffff;
+      .card {
+        box-shadow: none;
+        padding: 0px;
+        margin: 0px !important;
+        .card-header {
+          margin: 0px;
+          font-family: Roboto Condensed;
+          font-size: 40px;
+          font-weight: 700;
+          line-height: 46.88px;
+          text-align: center;
+          color: #0b0c0c;
+        }
+        .card-text {
+          margin: 0px;
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 24px;
+          text-align: center;
+          color: #505a5f;
+          padding-bottom: 40px;
+        }
+        div {
+          h2 {
+            margin: 0px;
+            padding-bottom: 8px;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0b0c0c;
+          }
+          .field-container {
+            .citizen-card-input {
+              margin: 0px;
+            }
+
+            input {
+              margin: 0px;
+            }
+          }
+        }
+
+        button {
+          width: 100%;
+          margin-top: 32px;
+          box-shadow: none;
+        }
+      }
+
+      h3 {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        text-align: left;
+        color: #505a5f;
+        margin-top: 32px;
+
+        span {
+          color: #9e400a;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .id-verification {
+      padding: 40px !important;
+      background-color: #ffffff;
+      box-shadow: none;
+      max-width: 553px;
+
+      .card {
+        margin: 0px !important;
+        padding: 0px !important;
+
+        .label-field-pair {
+          .card-header {
+            font-family: Roboto;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 30px;
+            text-align: center;
+            color: #0b0c0c;
+            margin: 0px;
+            width: 100%;
+          }
+          .card-text {
+            margin: 0px;
+            padding-top: 8px;
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 24px;
+            text-align: center;
+            color: #0b0c0c;
+            width: 100%;
+            padding-bottom: 32px;
+          }
+          .radio-wrap {
+            gap: 16px !important;
+          }
+        }
+        .submit-bar {
+          width: 100% !important;
+          box-shadow: none;
+        }
+        .radio-wrap {
+          .card {
+            margin: 0px !important;
+            display: flex;
+            justify-content: flex-start;
+            gap: 16px !important;
+            padding: 16px !important;
+            box-shadow: none;
+            border: 1px #d9d9d9 solid;
+            border-radius: 8px;
+
+            .card-button-wrap {
+              align-items: flex-start !important;
+              gap: 16px;
+              width: 100%;
+              .button-label-main {
+                flex-direction: column;
+                align-items: flex-start;
+                .card-sub-header {
+                  margin: 0px;
+                  font-family: Roboto;
+                  font-size: 16px !important;
+                  font-weight: 500;
+                  line-height: 18.75px;
+                  text-align: left;
+                  color: #0b0c0c;
+                  margin-bottom: 8px;
+                }
+                .card-text {
+                  margin: 0px;
+                  font-family: Roboto;
+                  font-size: 14px !important;
+                  font-weight: 400;
+                  line-height: 20px;
+                  text-align: left;
+                  color: #0b0c0c;
+                }
+              }
+            }
+          }
+        }
+      }
+      .label-field-pair {
+        .field {
+          width: 100% !important;
+        }
+      }
+    }
+
+    .user-address {
+      padding: 40px !important;
+      background-color: #ffffff;
+      box-shadow: none;
+
+      .card {
+        margin: 0px !important;
+        padding: 0px !important;
+
+        .card-section-header {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 30px;
+          text-align: center;
+          color: #0b0c0c;
+          padding-bottom: 32px;
+        }
+
+        .card-label {
+          width: 100%;
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0b0c0c;
+          margin: 0px 0px 8px 0px;
+        }
+        .address-card-input {
+          gap: 16px;
+        }
+
+        button {
+          width: 100%;
+          box-shadow: none;
+          margin-top: 32px;
+        }
+        input {
+          width: 273px;
+        }
+      }
+    }
+
+    .select-name {
+      padding: 40px !important;
+      background-color: #ffffff;
+      box-shadow: none;
+      .card {
+        margin: 0px;
+        padding: 0px;
+        display: flex;
+        align-items: center;
+        .card-header {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 30px;
+          text-align: center;
+          color: #0b0c0c;
+          margin-bottom: 8px;
+        }
+        .card-text {
+          width: 75%;
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 21px;
+          text-align: center;
+          color: #505a5f;
+          margin: 0px;
+        }
+        div {
+          width: 100%;
+          .card-label {
+            margin: 32px 0px 8px 0px;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0b0c0c;
+          }
+
+          input {
+            margin: 0px;
+          }
+        }
+        button {
+          width: 100%;
+          box-shadow: none;
+          margin-top: 32px;
+        }
+      }
+    }
+  }
+
+  .popup-module {
+    .header-wrap {
+      padding-left: 16px;
+      border-bottom: none;
+      h1 {
+        padding: 28px 0px 16px 0px;
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 28.13px;
+        text-align: center;
+        color: #0b0c0c;
+      }
+
+      p {
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 24px;
+        text-align: left;
+        color: #0b0c0c;
+      }
+    }
+
+    .popup-module-main {
+      margin-top: 32px;
+      padding: 0px 16px 16px !important;
+
+      .card {
+        padding: 0px;
+        margin: 0px;
+        align-items: flex-start !important;
+        box-shadow: none;
+
+        .input-otp-wrap {
+          margin-bottom: 0px !important;
+          display: flex;
+          width: 100%;
+          gap: 16px;
+          input {
+            width: 78px !important;
+            margin-bottom: 0px;
+            margin-right: 0px;
+          }
+        }
+
+        .message {
+          p {
+            margin: 0px;
+            margin-bottom: 32px;
+            margin-top: 16px;
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 24px;
+            text-align: left;
+            color: #0b0c0c;
+            .resend-link {
+              color: #0b0c0c;
+              cursor: pointer;
+              &.disabled {
+                color: #bbbbbd;
+                cursor: default;
+              }
+            }
+          }
+        }
+        .card-label-error {
+          margin: 0px;
+        }
+      }
+    }
+  }
+}
+
+.citizen-home-footer {
+  position: fixed !important;
+  bottom: 0px;
+}

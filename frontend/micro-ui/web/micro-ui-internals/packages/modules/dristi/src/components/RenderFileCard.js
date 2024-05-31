@@ -15,6 +15,8 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
           <h3>{fileData?.name}</h3>
         </div>
         <div className="reupload-or-delete-div">
+
+
           <div>
             <FileUploader
               handleChange={(data) => {
@@ -65,6 +67,11 @@ function RenderFileCard({ handleChange, handleDeleteFile, fileData, t, input, in
         >
           <CloseIconWhite />
         </div>
+      </div>
+
+      <div className={`uploaded-file-div-sub-mobile`}>
+        <img src="https://picsum.photos/200" alt="Description" className="image" />
+        <div className="close-button" onClick={() => { handleDeleteFile(input, index); }}><CloseIconWhite /></div>
       </div>
       {!!uploadErrorInfo && (
         <div className="upload-error-div-main">

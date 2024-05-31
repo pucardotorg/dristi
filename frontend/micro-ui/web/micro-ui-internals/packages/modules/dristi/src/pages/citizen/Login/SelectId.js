@@ -1,7 +1,7 @@
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
-function SelectId({ config, t, params, history, onSelect }) {
+function SelectId({ config, t, params, history, onSelect, pathOnRefresh }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const closeToast = () => {
@@ -55,10 +55,10 @@ function SelectId({ config, t, params, history, onSelect }) {
   };
 
   if (!params?.address) {
-    history.push("/digit-ui/citizen/dristi/home/login");
+    history.push(pathOnRefresh);
   }
   return (
-    <React.Fragment>
+    <div className="id-verification">
       <FormComposerV2
         config={config}
         t={t}
@@ -66,7 +66,7 @@ function SelectId({ config, t, params, history, onSelect }) {
         inline
         isDisabled={isDisabled}
         label={t("CS_COMMON_CONTINUE")}
-        onSecondayActionClick={() => {}}
+        onSecondayActionClick={() => { }}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", justifyContent: "center" }}
         sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
@@ -85,7 +85,7 @@ function SelectId({ config, t, params, history, onSelect }) {
         submitInForm
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-    </React.Fragment>
+    </div>
   );
 }
 

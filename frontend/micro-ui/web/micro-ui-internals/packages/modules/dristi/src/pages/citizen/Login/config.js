@@ -74,6 +74,7 @@ export const loginSteps = [
   },
   {
     head: "Id-Verification",
+
     body: [
       {
         type: "component",
