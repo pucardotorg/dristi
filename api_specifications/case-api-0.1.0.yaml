@@ -607,7 +607,7 @@ components:
         RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        cases:
+        case:
             $ref: '#/components/schemas/CourtCase'
     
     CaseResponse:
@@ -691,6 +691,10 @@ components:
         registrationToDate:
           type: string
           format: date
+        responseList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourtCase'
     
     CaseExists:
       type: object
