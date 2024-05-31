@@ -49,6 +49,11 @@ public class CaseApiController {
         this.request = request;
     }
 
+    public void setMockInjects(CaseService caseService, ResponseInfoFactory responseInfoFactory) {
+        this.caseService = caseService;
+        this.responseInfoFactory = responseInfoFactory;
+    }
+
     @RequestMapping(value = "/case/v1/_create", method = RequestMethod.POST)
     public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
 

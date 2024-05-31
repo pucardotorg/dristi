@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.postgresql.util.PGobject;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -71,6 +72,13 @@ class RepresentativeDocumentRowMapperTest {
     void testExceptionHandling() throws Exception {
         when(rs.next()).thenThrow(new RuntimeException("Database error"));
         assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(rs.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
 }
 

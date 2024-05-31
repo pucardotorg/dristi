@@ -9,6 +9,7 @@ import org.postgresql.util.PGobject;
 import org.pucar.dristi.web.models.StatuteSection;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -65,6 +66,13 @@ class StatuteSectionRowMapperTest {
         String input = "Item1|Item2|Item3";
         List<String> result = rowMapper.stringToList(input);
         assertEquals(1, result.size());
+    }
+
+    @Test
+    void testExtractData_Exception() throws Exception {
+        when(rs.next()).thenThrow(new SQLException("Database error"));
+
+        assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
 }
 

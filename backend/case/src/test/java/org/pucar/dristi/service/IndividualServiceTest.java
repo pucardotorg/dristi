@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -53,5 +54,17 @@ public class IndividualServiceTest {
 
         // Assertions
         assertNotNull(result);
+    }
+
+    @Test
+    void testSearchIndividual_Exception() {
+        // Create test data
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(new CourtCase());
+        caseRequest.setRequestInfo(null); // Mock or provide necessary data
+
+        assertThrows(Exception.class, () -> {
+            individualService.searchIndividual(caseRequest.getRequestInfo(),"123");
+        });
     }
 }

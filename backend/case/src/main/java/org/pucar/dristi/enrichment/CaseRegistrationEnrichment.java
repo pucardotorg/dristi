@@ -5,16 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,9 +25,6 @@ public class CaseRegistrationEnrichment {
 
     @Autowired
     private Configuration config;
-
-    @Autowired
-    private UserUtil userUtils;
 
     public void enrichCaseRegistration(CaseRequest caseRequest) {
         try {

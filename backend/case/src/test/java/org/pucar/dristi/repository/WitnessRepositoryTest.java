@@ -17,8 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -43,7 +42,7 @@ public class WitnessRepositoryTest {
     }
 
     @Test
-    public void testGetApplications() {
+    public void testGetApplicationsEmptySuccess() {
         // Mock the behavior of getWitnessesSearchQuery
         List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
         when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
@@ -57,6 +56,43 @@ public class WitnessRepositoryTest {
 
         // Assert
         assertTrue(result.isEmpty(), "Returned witnesses should be empty");
+    }
+
+    @Test
+    public void testGetApplicationsSuccess() {
+        // Mock the behavior of getWitnessesSearchQuery
+        Witness witness = Witness.builder().cnrNumber("cnrNumber").build();
+        List<Witness> list = new ArrayList<>();
+        list.add(witness);
+        List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
+        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+
+        // Mock the behavior of JdbcTemplate to return an empty list
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(WitnessRowMapper.class)))
+                .thenReturn(list);
+
+        // Call the method under test
+        List<Witness> result = witnessRepository.getApplications(searchCriteria);
+
+        // Assert
+        assertTrue(!result.isEmpty(), "Returned witnesses should not be empty");
+    }
+
+    @Test
+    public void testGetApplicationsException() {
+        // Mock the behavior of getWitnessesSearchQuery
+        Witness witness = Witness.builder().cnrNumber("cnrNumber").build();
+        List<Witness> list = new ArrayList<>();
+        list.add(witness);
+        List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
+        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+
+        // Mock the behavior of JdbcTemplate to return an empty list
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(WitnessRowMapper.class)))
+                .thenThrow(new RuntimeException("Error"));
+
+        // Assert
+        assertThrows(Exception.class, () -> witnessRepository.getApplications(searchCriteria));
     }
 
 }

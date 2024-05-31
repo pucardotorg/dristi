@@ -18,7 +18,9 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -50,7 +52,9 @@ public class WorkflowServiceTest {
 
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
-        courtCase.setWorkflow(Workflow.builder().action("APPROVE").build());
+        List<String> list = new ArrayList<>();
+        list.add("assigne1");
+        courtCase.setWorkflow(Workflow.builder().action("APPROVE").assignes(list).build());
 
         when(config.getWfHost()).thenReturn("http://localhost:8080");
         when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
@@ -65,6 +69,48 @@ public class WorkflowServiceTest {
 
         // Execute the method
         assertDoesNotThrow(() -> workflowService.updateWorkflowStatus(caseRequest));
+    }
+
+    @Test
+    void updateWorkflowStatus_Exception() {
+        // Mock AdvocateRequest
+        CourtCase courtCase = new CourtCase();
+        courtCase.setCaseNumber("APP001");
+        courtCase.setTenantId("tenant1");
+
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(courtCase);
+        courtCase.setWorkflow(Workflow.builder().action("APPROVE").build());
+
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(new State());
+        ProcessInstanceResponse workflowRequest = new ProcessInstanceResponse(new ResponseInfo(), Collections.singletonList(processInstance));
+
+        // Mock repository.fetchResult
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(RuntimeException.class);
+
+        // Execute the method
+        assertThrows(Exception.class, () -> {workflowService.updateWorkflowStatus(caseRequest);
+        });
+    }
+
+    @Test
+    void updateWorkflowStatus_ExceptionBis() {
+        // Mock AdvocateRequest
+        CourtCase courtCase = new CourtCase();
+        courtCase.setCaseNumber("APP001");
+        courtCase.setTenantId("tenant1");
+
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(null);
+        courtCase.setWorkflow(Workflow.builder().action("APPROVE").build());
+
+        // Execute the method
+        assertThrows(Exception.class, () -> {workflowService.updateWorkflowStatus(caseRequest);
+        });
     }
 
     @Test
@@ -85,5 +131,63 @@ public class WorkflowServiceTest {
         assertNotNull(processInstanceRequest);
         assertEquals(1, processInstanceRequest.getProcessInstances().size());
         assertEquals("ADV", processInstanceRequest.getProcessInstances().get(0).getBusinessService());
+    }
+
+    @Test
+    void getProcessInstanceForAdvocateRegistrationPayment_Exception() {
+        // Mock AdvocateRequest
+        CourtCase courtCase = new CourtCase();
+        courtCase.setCaseNumber("APP001");
+        courtCase.setTenantId("tenant1");
+
+        CaseRequest updateRequest = new CaseRequest();
+        updateRequest.setRequestInfo(new RequestInfo());
+        updateRequest.setCases(null);
+
+        assertThrows(Exception.class, () -> {workflowService.getProcessInstanceRegistrationPayment(updateRequest);
+        });
+    }
+
+    @Test
+    void getCurrentWorkflow_Success() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        String tenantId = "tenant1";
+        String businessId = "business1";
+        ProcessInstanceResponse processInstanceResponse = new ProcessInstanceResponse();
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstanceResponse.setProcessInstances(Collections.singletonList(processInstance));
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfProcessInstanceSearchPath()).thenReturn("/workflow/transition");
+
+        when(repository.fetchResult(any(), any())).thenReturn(processInstanceResponse);
+        when(mapper.convertValue(processInstanceResponse, ProcessInstanceResponse.class)).thenReturn(processInstanceResponse);
+
+        // Act
+        ProcessInstance result = workflowService.getCurrentWorkflow(requestInfo, tenantId, businessId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(processInstance, result);
+    }
+
+    @Test
+    void getCurrentWorkflow_ProcessInstanceException() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        String tenantId = "tenant1";
+        String businessId = "business1";
+        ProcessInstanceResponse processInstanceResponse = new ProcessInstanceResponse();
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstanceResponse.setProcessInstances(Collections.singletonList(processInstance));
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfProcessInstanceSearchPath()).thenReturn("/workflow/transition");
+
+        when(repository.fetchResult(any(), any())).thenThrow(new RuntimeException("Internal error"));
+
+        // Act and Assert
+        assertThrows(Exception.class, () -> {
+            workflowService.getCurrentWorkflow(requestInfo, tenantId, businessId);
+        });
     }
 }

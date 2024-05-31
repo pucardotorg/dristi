@@ -8,15 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 public class WitnessRegistrationEnrichmentTest {
@@ -26,9 +24,6 @@ public class WitnessRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
-
-    @Mock
-    private UserUtil userUtil;
 
     @BeforeEach
     public void setUp() {
@@ -62,6 +57,22 @@ public class WitnessRegistrationEnrichmentTest {
     }
 
     @Test
+    public void testEnrichCaseRegistration_Exception() {
+        // Arrange
+        WitnessRequest witnessRequest = new WitnessRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid(UUID.randomUUID().toString()); // Mocking UUID
+        requestInfo.setUserInfo(userInfo);
+        witnessRequest.setRequestInfo(requestInfo);
+
+        Witness witness = new Witness();
+        witnessRequest.setWitness(null);
+
+        assertThrows(Exception.class, () -> witnessRegistrationEnrichment.enrichWitnessRegistration(witnessRequest));
+    }
+
+    @Test
     public void testEnrichWitnessApplicationUponUpdate_Success() {
         // Arrange
         WitnessRequest witnessRequest = new WitnessRequest();
@@ -84,6 +95,23 @@ public class WitnessRegistrationEnrichmentTest {
 
         // Assert
         assertEquals(userInfo.getUuid(), witness.getAuditDetails().getLastModifiedBy());
+    }
+
+    @Test
+    public void testEnrichWitnessApplicationUponUpdate_Exception() {
+        // Arrange
+        WitnessRequest witnessRequest = new WitnessRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid(UUID.randomUUID().toString()); // Mocking UUID
+        requestInfo.setUserInfo(userInfo);
+        witnessRequest.setRequestInfo(requestInfo);
+
+        Witness witness = new Witness();
+        witnessRequest.setWitness(null);
+
+        // Assert
+        assertThrows(Exception.class, () -> witnessRegistrationEnrichment.enrichWitnessApplicationUponUpdate(witnessRequest));
     }
 
 }

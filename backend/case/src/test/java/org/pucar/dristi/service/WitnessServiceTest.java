@@ -1,5 +1,6 @@
 package org.pucar.dristi.service;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -61,6 +63,15 @@ public class WitnessServiceTest {
     }
 
     @Test
+    public void testRegisterWitnessRequest_Exception() {
+        WitnessRequest request = null;
+
+        assertThrows(Exception.class, () -> {
+            witnessService.registerWitnessRequest(request);
+        });
+    }
+
+    @Test
     public void testSearchWitnesses() {
         WitnessSearchRequest searchRequest = new WitnessSearchRequest();
 
@@ -71,6 +82,16 @@ public class WitnessServiceTest {
         Assert.notNull(result, "Result should not be null");
         Assert.isTrue(result.isEmpty(), "Result should be empty");
         verify(witnessRepository, times(1)).getApplications(any());
+    }
+
+    @Test
+    public void testSearchWitnesses_Exception() {
+        WitnessSearchRequest searchRequest = new WitnessSearchRequest();
+        when(witnessRepository.getApplications((any()))).thenThrow(new CustomException());;
+
+        assertThrows(Exception.class, () -> {
+            witnessService.searchWitnesses(searchRequest);
+        });
     }
 
     @Test
@@ -87,6 +108,19 @@ public class WitnessServiceTest {
 
         verify(validator, times(1)).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
         verify(enrichmentUtil, times(1)).enrichWitnessApplicationUponUpdate(request);
+    }
+
+    @Test
+    public void testUpdateWitness_Exception() {
+        WitnessRequest request = new WitnessRequest();
+        request.setRequestInfo(new RequestInfo());
+        request.setWitness(null);
+
+        when(validator.validateApplicationExistence(any(), any())).thenThrow(new CustomException());;
+
+        assertThrows(Exception.class, () -> {
+            witnessService.updateWitness(request);
+        });
     }
 
 
