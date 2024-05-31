@@ -1,0 +1,187 @@
+{
+  "BusinessServices": [
+    {
+      "tenantId": "kl",
+      "businessService": "task",
+      "business": "task-summon-services",
+      "businessServiceSla": 30,
+      "states": [
+        {
+          "sla": null,
+          "state": null,
+          "applicationStatus": null,
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CREATE",
+              "nextState": "PAYMENT_PENDING",
+              "roles": [
+                "TASK_CREATOR"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": null,
+          "state": "PAYMENT_PENDING",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": true,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "MAKE PAYMENT",
+              "nextState": "ISSUESUMMON",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "ISSUESUMMON",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SERVE",
+              "nextState": "SUMMONSERVED",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "REISSUE",
+              "nextState": "REISSUESUMMON",
+              "roles": [
+                "TASK_REJECTOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "SUMMONSERVED",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": true,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "CLOSE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "TASK_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "REISSUESUMMON",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SERVE",
+              "nextState": "SUMMONSERVED",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "NOT SERVED",
+              "nextState": "ISSUEWARRANT",
+              "roles": [
+                "TASK_UPDATOR"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 10,
+          "state": "ISSUEWARRANT",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "ISSUE WARRANT",
+              "nextState": "COMPLETED",
+              "roles": [
+                "TASK_CLOSER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "COMPLETED",
+          "applicationStatus": "ACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        },
+        {
+          "sla": 5,
+          "state": "ABATED",
+          "applicationStatus": "INACTIVE",
+          "isStateUpdatable": false,
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": true
+        }
+      ]
+    }
+  ]
+}

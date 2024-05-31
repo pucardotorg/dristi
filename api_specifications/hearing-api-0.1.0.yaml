@@ -1,0 +1,357 @@
+openapi: "3.0.0"
+
+info:
+  title: API specs for Hearing
+  description:
+    Hearing API paths and entity is defined in this file.
+  version: "0.1.0"
+
+tags:
+  - name: Hearing
+    description: APIs required for Hearing related to a Case
+
+paths:
+  /hearing/v1/create:
+    post:
+      tags:
+        - Hearing
+      summary: create hearing requests.
+      requestBody:
+        description: Details for the new hearing + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingRequest'
+        required: true
+      responses:
+        "201":
+          description: success
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingResponse'
+        "400":
+          description: hearing(s) creation failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: hearingRequest
+
+  /hearing/v1/update:
+    post:
+      tags:
+        - Hearing
+      summary: update hearing requests.
+      requestBody:
+        description: Details for the update hearing(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingRequest'
+        required: true
+      responses:
+        "200":
+          description: ResponseInfo with hearing(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingResponse'
+        "400":
+          description: hearing(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: hearingRequest
+
+  /hearing/v1/search:
+    post:
+      tags:
+        - Hearing
+      summary: Get hearing requests
+      description: |
+        Gets the list of hearing requests for a particular ULB based on search criteria.
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: string
+        - name: filingNumber
+          in: query
+          description: Search by filingNumber
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: Search by tenantId of case request
+          schema:
+            type: string
+        - name: cnrNumber
+          in: query
+          description: the cnrNumber of the case whose hearing(s) are being queried
+          required: true
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          description: the applicationNumber of the case whose hearing(s) are being queried
+          required: true
+          schema:
+            type: string
+        - name: fromDate
+          in: query
+          description: search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved
+          schema:
+            type: string
+            format: date
+        - name: toDate
+          in: query
+          description: search hearings within date range
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: No of record return
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: offset
+          schema:
+            type: integer
+        - name: sortBy
+          in: query
+          description: sorted by ascending by default if this parameter is not provided
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ResponseInfo with hearing(s) search successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingListResponse'
+        "400":
+          description: hearing(s) get failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+
+  /hearing/v1/exists:
+    post:
+      tags:
+      - Hearing
+      summary: Hearing exits or not
+      requestBody:
+        description: check if the Hearing(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingExistsRequest'
+        required: true
+      responses:
+        "201":
+          description: ResponseInfo with Hearing(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingExistsResponse'
+        "400":
+          description: failed to find hearing
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    HearingRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        hearing:
+          $ref: '#/components/schemas/Hearing'
+      description: This object holds information about the hearing request
+
+    HearingResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        hearing:
+          $ref: '#/components/schemas/Hearing'
+      description: This object holds information about the hearing response
+
+    HearingListResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        TotalCount:
+          type: integer
+          format: int32
+          minimum: 0
+        HearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Hearing'
+      description: This object holds information about the hearingList response
+
+    HearingExistsRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        hearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/HearingExists'
+    HearingExistsResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        hearingList:
+          type: array
+          items:
+            $ref: '#/components/schemas/HearingExists'
+
+    HearingExists:
+      type: object
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
+      properties:
+        hearingId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        applicationNumber:
+          type: string
+        exists:
+          type: boolean
+
+    Hearing:
+      description: a case can have multiple hearings. this represents one of the many hearings related to the case
+      type: object
+      required: [tenantId, hearingType, status]
+      oneOf:
+        - required: [filingNumber, caseNumber]
+      properties:
+        id:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          readOnly: true
+          description: auto generated primary key for internal reference
+        tenantId:
+          type: string
+          description: This is tenantId of the case
+        filingNumber:
+          type: array
+          items:
+            type: string
+          description: Array of cases for which this hearing is scheduled.
+        cnrNumbers:
+          type: array
+          items:
+            type: string
+          description: The CNR numbers of the associated cases if they exist. If CNR doesn't exist -- as in the case of application hearings -- the caseIds and applicationNumbers will be used to reference the entity.
+        applicationNumbers:
+          type: array
+          items:
+            type: string
+          description: A single hearing can be scheduled for multiple applications. All the application numbers should belong to the same case or case group.
+        hearingType:
+          type: string
+          description: This field holds information about purpose of hearing. Will also help identify if this is a judicial hearing or an admin related hearing. Master Data ID
+          example: admission, trail, judgment, evidence, plea
+        status:
+          type: string
+          description: workflow state being set as hearing status
+          example: scheduled, in progress, in transcription, closed
+        startTime:
+          type: string
+          format: date
+          nullable: true
+          description: This field holds information about start date time of hearing in epoch time.
+        endTime:
+          type: string
+          format: date
+          nullable: true
+          description: This field holds information about end date time of hearing in epoch time. Optional field.
+        presidedBy:
+          description: A hearing is mostly presided by a Judge, but there is discussion on some hearing being presided by an Admin person. Hence this field will store the ID of the specific person
+          type: object
+          properties:
+            benchID:
+              type: string
+            judgeID:
+              type: array
+              items:
+                type: string
+                format: uuid
+                minLength: 36
+                maxLength: 36
+            courtID:
+              type: string
+        attendees:
+          type: array
+          description: This field will contain list of people required and present for the hearing along with also the lawyers that represented the case for this hearing
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: name of the person
+              individualId:
+                type: string
+                description: The individual ID of the attendee if available
+              type:
+                type: string
+                description: the type of the person
+                example: complainant, respondent, lawyer, witness
+              associatedWith:
+                type: string
+                description: Name of the person, this person is associated like for example lawyer of whom, witness of whom?
+              wasPresent:
+                type: boolean
+                description: their attendance status for the hearing. this will updated at the time or after the hearing
+        transcript:
+          type: array
+          items:
+            type: string
+            description: the hearing transcript IDs
+        vcLink:
+          type: string
+          format: url
+          nullable: true
+          description: the link for the online vc for participating in the hearing
+        isActive:
+          type: boolean
+          description: to handle soft delete
+        documents:
+          type: array
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
+
+        additionalDetails:
+          type: string
+          description: This field is meant to hold any extra information that we want to store for a hearing.
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
+        notes:
+          type: string
+          description: summary notes of the hearing
+
+x-original-swagger-version: "2.0"

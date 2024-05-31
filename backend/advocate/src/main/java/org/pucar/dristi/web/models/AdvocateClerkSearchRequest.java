@@ -31,7 +31,7 @@ public class AdvocateClerkSearchRequest {
 
 	@JsonProperty("criteria")
 	@Valid
-	private List<AdvocateClerkSearchCriteria> criteria = null;
+	private List<AdvocateClerkSearchCriteria> criteria = new ArrayList<>();
 
 	@JsonProperty("status")
 	private List<String> status = null;
@@ -40,9 +40,6 @@ public class AdvocateClerkSearchRequest {
 	private String applicationNumber = null;
 
 	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
-		if (this.criteria == null) {
-			this.criteria = new ArrayList<>();
-		}
 		this.criteria.add(criteriaItem);
 		return this;
 	}
