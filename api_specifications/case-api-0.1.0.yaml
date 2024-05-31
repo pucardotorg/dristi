@@ -26,7 +26,7 @@ paths:
         required: true
       responses:
         '201':
-          description: ReponseInfo with case groups created successfully
+          description: ResponseInfo with case groups created successfully
           content:
             '*/*':
               schema:
@@ -54,7 +54,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ReponseInfo with case details updated successfully
+          description: ResponseInfo with case details updated successfully
           content:
             '*/*':
               schema:
@@ -84,7 +84,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CaseResponse'
+                $ref: '#/components/schemas/CaseListResponse'
         '400':
           description: Case search failed. Refer to response body for specifics.
           content:
@@ -102,7 +102,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/CaseSearchRequest'
+              $ref: '#/components/schemas/CaseExistsRequest'
         required: true
       responses:
         '200':
@@ -355,7 +355,7 @@ components:
           description: >-
             This field is meant to hold any extra information that we want to
             store for a case.
-        auditdetails:
+        auditDetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
     
@@ -607,9 +607,7 @@ components:
         RequestInfo:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
-        cases:
-          type: array
-          items:
+        case:
             $ref: '#/components/schemas/CourtCase'
     
     CaseResponse:
@@ -633,6 +631,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CaseCriteria'
+    CaseListResponse:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseCriteria'
+    CaseExistsRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseExists'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
     
     CaseExistsResponse:
       type: object
@@ -670,6 +691,10 @@ components:
         registrationToDate:
           type: string
           format: date
+        responseList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourtCase'
     
     CaseExists:
       type: object

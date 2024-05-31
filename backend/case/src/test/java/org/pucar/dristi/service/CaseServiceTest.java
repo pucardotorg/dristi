@@ -77,9 +77,8 @@ public class CaseServiceTest {
     @Test
     void testSearchCases() {
         // Set up mock responses
-        CourtCase courtCase = new CourtCase(); // Assume filled with test data
-        when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+        List<CaseCriteria> mockCases = new ArrayList<>(); // Assume filled with test data
+        when(caseRepository.getApplications(any())).thenReturn(mockCases);
 
         // Call the method under test
         caseService.searchCases(caseSearchRequest);
@@ -90,15 +89,13 @@ public class CaseServiceTest {
     @Test
     void testSearchCases2() {
         // Set up mock responses
-        List<CaseCriteria> mockCases = new ArrayList<>(); // Assume filled with test data
+        List<CourtCase> mockCases = new ArrayList<>(); // Assume filled with test data
 
-        when(caseRepository.getApplications(any())).thenReturn(List.of(CaseCriteria.builder().cnrNumber("caseNbr").caseId("caseID").build()));
+        when(caseRepository.getApplications(any())).thenReturn(List.of(CaseCriteria.builder().filingNumber("filNo").courtCaseNumber("123").build()));
 
         // Call the method under test
         caseService.searchCases(caseSearchRequest);
 
-        // Assert and verify
-//        assertNotNull(result);
         verify(caseRepository, times(1)).getApplications(any());
     }
 
@@ -216,14 +213,12 @@ public class CaseServiceTest {
 
     }
 
-//    @Test
-//    void testSearchCases_EmptyResult() {
-//        CaseSearchRequest searchRequest = new CaseSearchRequest(); // Setup search request
-//        when(caseRepository.getApplications(any())).thenReturn(Arrays.asList());
-//
-//        caseService.searchCases(searchRequest);
-//
-//        assertTrue(results.isEmpty());
-//    }
+    @Test
+    void testSearchCases_EmptyResult() {
+        CaseSearchRequest searchRequest = new CaseSearchRequest(); // Setup search request
+        when(caseRepository.getApplications(any())).thenReturn(Arrays.asList());
+
+        caseService.searchCases(searchRequest);
+    }
 
 }

@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +17,6 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Component
 @Slf4j
 public class WitnessRegistrationEnrichment {
-
-    @Autowired
-    private IdgenUtil idgenUtil;
-
-    @Autowired
-    private UserUtil userUtils;
 
     public void enrichWitnessRegistration(WitnessRequest witnessRequest) {
         try {

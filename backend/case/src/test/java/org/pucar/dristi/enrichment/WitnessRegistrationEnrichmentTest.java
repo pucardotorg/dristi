@@ -8,12 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.util.UserUtil;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessRequest;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,9 +24,6 @@ public class WitnessRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
-
-    @Mock
-    private UserUtil userUtil;
 
     @BeforeEach
     public void setUp() {

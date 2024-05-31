@@ -1,8 +1,5 @@
 package org.pucar.dristi.repository;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
@@ -15,10 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRepositoryTest {
@@ -109,27 +108,14 @@ class CaseRepositoryTest {
         caseRequest.setCases(courtCase);
 
         // Set the request info in the case request
-        caseRequest.setRequestInfo(requestInfo);    }
-
-//    @Test
-//    void testGetCourtCases() {
-//        List<CaseCriteria> criteria = new ArrayList<>();
-//        String sql = "SELECT * FROM cases";
-//        List<CourtCase> mockedList = new ArrayList<>();
-//        mockedList.add(new CourtCase());
-//
-//        when(queryBuilder.getCasesSearchQuery(criteria, new ArrayList<>())).thenReturn(sql);
-//
-//        List<CourtCase> result = caseRepository.getApplications(criteria);
-//
-//        assertNotNull(result);
-//    }
+        caseRequest.setRequestInfo(requestInfo);
+    }
 
     @Test
     void getApplications_ShouldReturnListOfCourtCases() {
         // Prepare test data
         List<CaseCriteria> searchCriteria = new ArrayList<>();
-        searchCriteria.add(CaseCriteria.builder().caseId("caseId").build());
+        searchCriteria.add(new CaseCriteria());
 
         // Mock dependencies
         Map<UUID, List<LinkedCase>> linkedCasesMap = new HashMap<>();
@@ -201,8 +187,8 @@ class CaseRepositoryTest {
         List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria);
 
         // Verify interactions
-//        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any());
-//        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(CaseRowMapper.class));
+        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(CaseRowMapper.class));
 
         // Assert result
         assertEquals(expectedCourtCaseList, resultCourtCaseList.get(0).getResponseList());
@@ -233,7 +219,6 @@ class CaseRepositoryTest {
         assertEquals(true, result.get(0).getExists()); // Assuming case exists
         assertEquals(false, result.get(1).getExists()); // Assuming case does not exist
     }
-
 
 }
 

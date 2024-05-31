@@ -84,6 +84,4 @@ public class WitnessRowMapperTest {
 
         assertThrows(Exception.class, () -> witnessRowMapper.extractData(resultSet));
     }
-
-    // Add more test cases as necessary
 }

@@ -136,17 +136,6 @@ class CaseQueryBuilderTest {
         assertEquals(expectedQuery, query);
     }
 
-//    @Test()
-//    public void testGetStatuteSectionSearchQuery_Exception() {
-//        // Arrange
-//        List<String> ids = new ArrayList<>();
-//        List<Object> preparedStmtList = null;
-//        ids.add("1");
-//
-//        // Assert
-//        assertThrows(CustomException.class, () -> queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtList));
-//    }
-
     @Test
     void testGetCasesSearchQuery_SingleCriteria() {
         CaseCriteria criteria = new CaseCriteria();
@@ -171,13 +160,11 @@ class CaseQueryBuilderTest {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = null;
         ids.add("1");
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId("12345");
         criteria.setCnrNumber("123");
         criteria.setFilingNumber("9876");
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         // Assert
         assertThrows(CustomException.class, () -> queryBuilder.getCasesSearchQuery(criteria, preparedStmtList));
@@ -185,13 +172,11 @@ class CaseQueryBuilderTest {
 
     @Test
     void testGetCasesSearchQuery_SingleCriteria2() {
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId(null);
         criteria.setCnrNumber("123");
         criteria.setFilingNumber("9876");
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -209,13 +194,11 @@ class CaseQueryBuilderTest {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = null;
         ids.add("1");
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId("12345");
         criteria.setCnrNumber("123");
         criteria.setFilingNumber("9876");
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         // Assert
         assertThrows(CustomException.class, () -> queryBuilder.getCasesSearchQuery(criteria, preparedStmtList));
@@ -223,13 +206,11 @@ class CaseQueryBuilderTest {
 
     @Test
     void testGetCasesSearchQuery_SingleCriteria3() {
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId(null);
         criteria.setCnrNumber(null);
         criteria.setFilingNumber("9876");
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -247,13 +228,11 @@ class CaseQueryBuilderTest {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = null;
         ids.add("1");
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId("12345");
         criteria.setCnrNumber("123");
         criteria.setFilingNumber("9876");
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         // Assert
         assertThrows(CustomException.class, () -> queryBuilder.getCasesSearchQuery(criteria, preparedStmtList));
@@ -261,13 +240,11 @@ class CaseQueryBuilderTest {
 
     @Test
     void testGetCasesSearchQuery_SingleCriteria4() {
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId(null);
         criteria.setCnrNumber(null);
         criteria.setFilingNumber(null);
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -285,13 +262,11 @@ class CaseQueryBuilderTest {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = null;
         ids.add("1");
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId(null);
         criteria.setCnrNumber(null);
         criteria.setFilingNumber(null);
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         // Assert
         assertThrows(CustomException.class, () -> queryBuilder.getCasesSearchQuery(criteria, preparedStmtList));
@@ -299,7 +274,6 @@ class CaseQueryBuilderTest {
 
     @Test
     void testGetCasesSearchQuery_SingleCriteria5() {
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId(null);
         criteria.setCnrNumber(null);
@@ -309,7 +283,6 @@ class CaseQueryBuilderTest {
         criteria.setFilingToDate(LocalDate.parse("2024-05-28"));
         criteria.setRegistrationFromDate(LocalDate.parse("2024-05-28"));
         criteria.setRegistrationToDate(LocalDate.parse("2024-05-28"));
-        criteriaList.add(criteria);
 
         List<Object> preparedStmtList = new ArrayList<>();
 
@@ -327,13 +300,11 @@ class CaseQueryBuilderTest {
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = null;
         ids.add("1");
-        List<CaseCriteria> criteriaList = new ArrayList<>();
         CaseCriteria criteria = new CaseCriteria();
         criteria.setCaseId(null);
         criteria.setCnrNumber(null);
         criteria.setFilingNumber(null);
         criteria.setCourtCaseNumber("456");
-        criteriaList.add(criteria);
 
         // Assert
         assertThrows(CustomException.class, () -> queryBuilder.getCasesSearchQuery(criteria, preparedStmtList));
