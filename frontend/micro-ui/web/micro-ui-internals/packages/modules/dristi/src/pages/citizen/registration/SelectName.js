@@ -6,7 +6,7 @@ const SelectName = ({ config, onSelect, t, isDisabled, params, history, value, i
     history.push("/digit-ui/citizen/dristi/home/login");
   }
   return (
-    <div style={{ minWidth: "100%", display: "flex", justifyContent: "center" }}>
+    <div className="select-name">
       <FormStep
         config={config}
         onSelect={(props) => onSelect(props)}

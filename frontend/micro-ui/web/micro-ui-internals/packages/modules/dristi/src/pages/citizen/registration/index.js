@@ -213,9 +213,9 @@ const Registration = ({ stateCode }) => {
     return <Loader />;
   }
   return (
-    <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
+    <div className="citizen-form-wrapper">
       <Switch>
-        <AppContainer>
+        <React.Fragment>
           <Route path={`${path}/additional-details`}>
             <AdvocateClerkAdditionalDetail setParams={setNewParams} params={newParams} path={path} config={stepItems[9]} />
           </Route>
@@ -289,7 +289,7 @@ const Registration = ({ stateCode }) => {
           </Route>
 
           {error && <Toast error={true} label={error} onClose={closeToast} />}
-        </AppContainer>
+        </React.Fragment>
       </Switch>
     </div>
   );

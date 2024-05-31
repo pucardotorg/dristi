@@ -17,7 +17,7 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors }) => {
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-            ? formData &&
+              ? formData &&
               formData[config.key] &&
               Array.isArray(input.dependentKey[input.isDependentOn]) &&
               input.dependentKey[input.isDependentOn].reduce((res, curr) => {
@@ -25,7 +25,7 @@ const CustomRadioCard = ({ t, config, onSelect, formData = {}, errors }) => {
                 res = formData[config.key][input.isDependentOn][curr];
                 return res;
               }, true)
-            : true;
+              : true;
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}

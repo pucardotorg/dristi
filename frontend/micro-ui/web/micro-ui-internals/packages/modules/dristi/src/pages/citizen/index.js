@@ -147,10 +147,14 @@ const App = ({ stateCode, tenantId }) => {
   return (
     <span className={"pt-citizen"}>
       <Switch>
-        <AppContainer style={{ minWidth: "100%" }}>
-          <div style={{ display: "flex", justifyContent: "align-right", alignItems: "center" }}>
-            <BackButton />
-          </div>
+        <React.Fragment>
+          {
+            !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number")) &&
+            <div className="back-button-home">
+              <BackButton />
+            </div>
+          }
+
           <PrivateRoute exact path={`${path}/home`}>
             <CitizenHome tenantId={tenantId} />
           </PrivateRoute>
@@ -159,22 +163,25 @@ const App = ({ stateCode, tenantId }) => {
           <PrivateRoute path={`${path}/home/file-case`}>
             <FileCase t={t}></FileCase>
           </PrivateRoute>
-          <Route path={`${path}/home/login`}>
-            <Login stateCode={stateCode} />
-          </Route>
+          <div className="user-registration">
+            <Route path={`${path}/home/login`}>
+              <Login stateCode={stateCode} />
+            </Route>
+            <Route path={`${path}/home/registration`}>
+              <Registration stateCode={stateCode} />
+            </Route>
+          </div>
           <Route path={`${path}/home/register`}>
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
-          <Route path={`${path}/home/registration`}>
-            <Registration stateCode={stateCode} />
-          </Route>
+
           <Route path={`${path}/home/response`}>
             <Response refetch={refetch} />
           </Route>
           <Route path={`${path}/landing-page`}>
             <LandingPage />
           </Route>
-        </AppContainer>
+        </React.Fragment>
       </Switch>
     </span>
   );
