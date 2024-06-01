@@ -236,7 +236,7 @@ const ApplicationDetails = ({ location, match }) => {
             <DocumentDetailCard cardData={aadharData} />
             <DocumentDetailCard cardData={personalData} />
           </div>
-          {type === "advocate" && (
+          {type === "advocate" && userType !== "ADVOCATE_CLERK" && (
             <div className="application-bar-info">
               <DocumentDetailCard cardData={barDetails} />
             </div>
