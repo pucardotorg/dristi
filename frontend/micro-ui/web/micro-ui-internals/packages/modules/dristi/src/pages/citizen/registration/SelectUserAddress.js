@@ -40,7 +40,7 @@ const SelectUserAddress = ({ config, onSelect, t, params, pathOnRefresh }) => {
     history.push(pathOnRefresh);
   }
   return (
-    <div style={{ minWidth: "100%" }}>
+    <div className="user-address">
       <FormComposerV2
         config={config}
         t={t}
@@ -48,11 +48,9 @@ const SelectUserAddress = ({ config, onSelect, t, params, pathOnRefresh }) => {
         noBoxShadow
         inline
         label={"CS_COMMON_CONTINUE"}
-        onSecondayActionClick={() => {}}
+        onSecondayActionClick={() => { }}
         cardStyle={{ padding: 40, flexDirection: "column" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px", textAlign: "center" }}
         submitInForm
-        buttonStyle={{ alignSelf: "center", minWidth: "100%" }}
         onFormValueChange={onFormValueChange}
         isDisabled={isDisabled}
         defaultValues={params?.address || {}}

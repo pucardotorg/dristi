@@ -2,7 +2,7 @@ import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRefresh }) => {
+const SelectUserType = ({ config, t, params = {}, setParams = () => { }, pathOnRefresh }) => {
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
@@ -98,9 +98,9 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
     const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : data?.adhaarNumber;
     const identifierIdDetails = uploadedDocument
       ? {
-          fileStoreId: identifierId,
-          filename: uploadedDocument?.filename,
-        }
+        fileStoreId: identifierId,
+        filename: uploadedDocument?.filename,
+      }
       : {};
     console.log(uploadedDocument);
     const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
@@ -117,24 +117,24 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           username: Digit.UserService.getUser()?.info?.userName,
           roles: data?.clientDetails?.selectUserType?.role
             ? [
-                {
-                  code: "CITIZEN",
-                  name: "Citizen",
-                  tenantId: tenantId,
-                },
-                ...data?.clientDetails?.selectUserType?.role?.map((role) => ({
-                  code: role,
-                  name: role,
-                  tenantId: tenantId,
-                })),
-              ]
+              {
+                code: "CITIZEN",
+                name: "Citizen",
+                tenantId: tenantId,
+              },
+              ...data?.clientDetails?.selectUserType?.role?.map((role) => ({
+                code: role,
+                name: role,
+                tenantId: tenantId,
+              })),
+            ]
             : [
-                {
-                  code: "CITIZEN",
-                  name: "Citizen",
-                  tenantId: tenantId,
-                },
-              ],
+              {
+                code: "CITIZEN",
+                name: "Citizen",
+                tenantId: tenantId,
+              },
+            ],
           type: Digit.UserService.getUser()?.info?.type,
         },
         userUuid: Digit.UserService.getUser()?.info?.uuid,
@@ -205,7 +205,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
     history.push(pathOnRefresh);
   }
   return (
-    <React.Fragment>
+    <div className="select-user">
       <FormComposerV2
         config={config}
         t={t}
@@ -231,7 +231,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
         submitInForm
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-    </React.Fragment>
+    </div>
   );
 };
 

@@ -148,36 +148,54 @@ const App = ({ stateCode, tenantId }) => {
   return (
     <span className={"pt-citizen"}>
       <Switch>
-        <AppContainer style={{ minWidth: "100%" }}>
-          {!individualId && (
-            <div style={{ display: "flex", justifyContent: "align-right", alignItems: "center" }}>
+        <React.Fragment>
+          {
+            !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) &&
+            <div className="back-button-home">
               <BackButton />
             </div>
-          )}
-          <PrivateRoute exact path={`${path}/home`}>
-            <CitizenHome tenantId={tenantId} />
-          </PrivateRoute>
+          }
+
+
           <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
-          <PrivateRoute path={`${path}/home/file-case`}>
-            <FileCase t={t}></FileCase>
-          </PrivateRoute>
-          <Route path={`${path}/home/login`}>
-            <Login stateCode={stateCode} />
-          </Route>
+          <div className={
+            location.pathname.includes("/file-case") ? "file-case-main" : ""
+          }>
+            <PrivateRoute path={`${path}/home/file-case`}>
+              <FileCase t={t}></FileCase>
+            </PrivateRoute>
+          </div>
+          <div
+            className={(location.pathname.includes("/response") ||
+              location.pathname.includes("/login") ||
+              location.pathname.includes("/registration") ||
+              location.pathname.endsWith("/home")
+            ) ? `user-registration` : ""
+            }
+          >
+            <PrivateRoute exact path={`${path}/home`}>
+              <CitizenHome tenantId={tenantId} />
+            </PrivateRoute>
+            <Route path={`${path}/home/login`}>
+              <Login stateCode={stateCode} />
+            </Route>
+            <Route path={`${path}/home/registration`}>
+              <Registration stateCode={stateCode} />
+            </Route>
+            <Route path={`${path}/home/response`}>
+              <Response refetch={refetch} />
+            </Route>
+          </div>
           <Route path={`${path}/home/register`}>
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
-          <Route path={`${path}/home/registration`}>
-            <Registration stateCode={stateCode} />
-          </Route>
-          <Route path={`${path}/home/response`}>
-            <Response refetch={refetch} />
-          </Route>
+
+
           <Route path={`${path}/landing-page`}>
             <LandingPage />
           </Route>
-        </AppContainer>
+        </React.Fragment>
       </Switch>
     </span>
   );

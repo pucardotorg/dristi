@@ -224,9 +224,9 @@ const Registration = ({ stateCode }) => {
   const pathOnRefresh = `${path}/user-name`;
   // console.log(newParams);
   return (
-    <div className="citizen-form-wrapper" style={{ minWidth: "100%" }}>
+    <div className="citizen-form-wrapper">
       <Switch>
-        <AppContainer>
+        <React.Fragment>
           <Route path={`${path}/additional-details`}>
             <AdvocateClerkAdditionalDetail
               setParams={setNewParams}
@@ -261,7 +261,8 @@ const Registration = ({ stateCode }) => {
               canSubmit={canSubmitOtp}
               params={newParams}
               path={`${path}/mobile-number`}
-              cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
+              cardText={`${stepItems[4].texts.cardText}`}
+              mobileNumber={newParams.mobileNumber || ""}
               t={t}
             />
           </Route>
@@ -331,7 +332,7 @@ const Registration = ({ stateCode }) => {
             <UploadIdType t={t} config={[stepItems[9]]} pathOnRefresh={pathOnRefresh} onDocumentUpload={onDocumentUpload} params={newParams} />
           </Route>
           {error && <Toast error={true} label={error} onClose={closeToast} />}
-        </AppContainer>
+        </React.Fragment>
       </Switch>
     </div>
   );

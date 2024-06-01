@@ -5,6 +5,7 @@ import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
 import { Close } from "@egovernments/digit-ui-svg-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { CloseIconWhite } from "../../../icons/svgIndex";
 
 const SelectOtp = ({
   config,
@@ -21,6 +22,7 @@ const SelectOtp = ({
   path,
   isAdhaar,
   cardText,
+  mobileNumber,
 }) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
@@ -57,7 +59,7 @@ const SelectOtp = ({
         ) : (
           <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
             {" "}
-            <Close />{" "}
+            <CloseIconWhite />{" "}
           </div>
         )}
       </div>
@@ -98,10 +100,10 @@ const SelectOtp = ({
       isDisabled={!(otp?.length === 6 && canSubmit)}
       formId="modal-action"
       headerBarMain={
-        <div>
+        <React.Fragment>
           <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
-          <CardText style={{ marginLeft: "20px" }}>{cardText}</CardText>
-        </div>
+          <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
+        </React.Fragment>
       }
       popupStyles={{ width: "580px", alignItems: "center" }}
     >
@@ -115,13 +117,16 @@ const SelectOtp = ({
         <div style={{ display: "flex" }}>
           <OTPInput length={6} onChange={onOtpChange} value={otp} />
         </div>
-        {timeLeft > 0 ? (
-          <CardText style={{ alignSelf: "flex-start" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
-        ) : (
-          <p className="card-text" onClick={handleResendOtp} style={{ backgroundColor: "#fff", color: "#f47738", cursor: "pointer" }}>
-            {t("CS_RESEND_OTP")}
+        <div className="message">
+          <p>
+            {
+              timeLeft > 0 ?
+                <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span>
+                : ""
+            }
+            <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`}>{t("CS_RESEND_OTP")}</span>
           </p>
-        )}
+        </div>
         {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
       </FormStep>
     </Modal>

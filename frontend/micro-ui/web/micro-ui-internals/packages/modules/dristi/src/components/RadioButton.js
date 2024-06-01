@@ -19,16 +19,10 @@ const RadioButtons = (props) => {
           return (
             <Card
               style={{
-                position: "relative",
-                display: "flex",
-                flexDirection: "column",
-                // alignItems: "center",
-                justifyContent: "space-evenly",
-                height: "150px",
                 ...props.style,
               }}
             >
-              <div style={{ display: "flex" }} key={ind}>
+              <div className="card-button-wrap" key={ind}>
                 <span className="radio-btn-wrap">
                   <input
                     className="radio-btn"
@@ -42,7 +36,7 @@ const RadioButtons = (props) => {
                   />
                   <span className="radio-btn-checkmark"></span>
                 </span>
-                <div>
+                <div className="button-label-main">
                   <CardSubHeader
                     style={{
                       marginLeft: "10px",
