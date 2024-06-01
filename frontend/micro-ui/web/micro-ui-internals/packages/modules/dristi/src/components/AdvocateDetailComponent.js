@@ -53,24 +53,24 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
 
     numberOfFiles > 0
       ? onDocumentUpload(filesData[0][1]?.file, filesData[0][0]).then((document) => {
-          setFileName(filesData[0][0]);
+        setFileName(filesData[0][0]);
 
-          setFileStoreID(document.file?.files?.[0]?.fileStoreId);
-          setShowDoc(true);
-        })
+        setFileStoreID(document.file?.files?.[0]?.fileStoreId);
+        setShowDoc(true);
+      })
       : setShowDoc(false);
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
 
   return (
-    <div>
+    <React.Fragment>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         const showDependentFields =
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-            ? formData &&
+              ? formData &&
               formData[config.key] &&
               Array.isArray(input.dependentKey[input.isDependentOn]) &&
               input.dependentKey[input.isDependentOn].reduce((res, curr) => {
@@ -78,11 +78,11 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                 res = formData[config.key][input.isDependentOn][curr];
                 return res;
               }, true)
-            : true;
+              : true;
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-            <div style={{ width: "100%" }}>
+            <div className={`${input?.type}`} style={{ width: "100%" }}>
               {input?.type !== "infoBox" && (
                 <CardLabel className="card-label-smaller" style={{ width: "100%", fontSize: "16px" }}>
                   {t(input.label)}
@@ -144,7 +144,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
           </div>
         </div>
       )}
-    </div>
+    </React.Fragment>
   );
 };
 

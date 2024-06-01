@@ -18,69 +18,59 @@ const Response = ({ refetch }) => {
   useGetAccessToken("citizen.refresh-token");
 
   return (
-    <Card style={{ minWidth: "50%", marginLeft: "24px", alignItems: "center" }}>
+    <React.Fragment>
       {location?.state?.response === "success" ? (
-        <SuccessIcon />
+        <div className="response-main">
+          <SuccessIcon />
+          <CardHeader>
+            {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
+          </CardHeader>
+          <CardText>
+            {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS_SUB_TEXT") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
+          </CardText>
+          {location?.state?.response === "success" && (
+            <React.Fragment>
+              <Button
+                onButtonClick={() => {
+                  refetch();
+                  history.push(`/${window?.contextPath}/citizen/dristi/home/file-case`);
+                }}
+                label={t("File a case")}
+                className={"file-a-case"}
+              />
+              <Button
+                onButtonClick={() => {
+                  refetch();
+                  history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                }}
+                label={t("Join a case")}
+                className={"join-a-case"}
+              />
+            </React.Fragment>
+          )}
+
+          <ActionBar>
+            {
+              <SubmitBar
+                label={t("GO TO HOME")}
+                onSubmit={() => {
+                  refetch();
+                  history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                }}
+              />
+              // )
+            }
+          </ActionBar>
+        </div>
       ) : (
         <Banner
           successful={location?.state?.response === "success"}
           message={t("USER_REGISTRATION_FAILURE_MSG")}
-          style={{ minWidth: "100%" }}
+          info={t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
         ></Banner>
       )}
+    </React.Fragment>
 
-      <CardHeader style={{ margin: 0, fontSize: "20px" }}>
-        {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
-      </CardHeader>
-      <CardText style={{ marginBottom: "50px" }}>
-        {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS_SUB_TEXT") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
-      </CardText>
-      {location?.state?.response === "success" && (
-        <React.Fragment>
-          <Button
-            onButtonClick={() => {
-              refetch();
-              history.push(`/${window?.contextPath}/citizen/dristi/home/file-case`);
-            }}
-            label={t("File a case")}
-            style={{
-              flex: 1,
-              maxHeight: "7vh",
-              width: "20vw",
-              margin: "4px",
-            }}
-          />
-          <Button
-            onButtonClick={() => {
-              refetch();
-              history.push(`/${window?.contextPath}/citizen/dristi/home`);
-            }}
-            label={t("Join a case")}
-            style={{
-              flex: 1,
-              maxHeight: "7vh",
-              width: "20vw",
-              margin: "4px",
-              background: "none",
-              color: "#007E7E",
-            }}
-          />
-        </React.Fragment>
-      )}
-
-      <ActionBar>
-        {
-          <SubmitBar
-            label={t("GO TO HOME")}
-            onSubmit={() => {
-              refetch();
-              history.push(`/${window?.contextPath}/citizen/dristi/home`);
-            }}
-          />
-          // )
-        }
-      </ActionBar>
-    </Card>
   );
 };
 

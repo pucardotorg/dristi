@@ -246,7 +246,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     history.push(pathOnRefresh);
   }
   return (
-    <div className="employee-card-wrapper">
+    <div className="advocate-additional-details">
       <FormComposerV2
         config={advocateClerkConfig}
         t={t}
@@ -255,13 +255,9 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         }}
         isDisabled={isDisabled}
         label={"CS_COMMON_CONTINUE"}
-        headingStyle={{ textAlign: "center" }}
-        sectionHeadStyle={{ fontSize: "30px" }}
         defaultValues={{ ...params?.registrationData } || {}}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
         submitInForm
         onFormValueChange={onFormValueChange}
-        buttonStyle={{ margin: "20px", minWidth: "500px" }}
       ></FormComposerV2>
 
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
