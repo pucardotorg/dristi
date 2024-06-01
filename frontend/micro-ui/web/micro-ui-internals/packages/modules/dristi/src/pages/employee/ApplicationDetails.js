@@ -112,7 +112,7 @@ const ApplicationDetails = ({ location, match }) => {
   ]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`][0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
     return searchResult?.[0]?.documents?.[0]?.fileStore;

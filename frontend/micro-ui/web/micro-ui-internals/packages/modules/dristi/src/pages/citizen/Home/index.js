@@ -15,6 +15,7 @@ function CitizenHome({ tenantId }) {
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const [isFetching, setIsFetching] = useState(true);
+
   const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
@@ -44,7 +45,6 @@ function CitizenHome({ tenantId }) {
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-
   const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
@@ -61,7 +61,7 @@ function CitizenHome({ tenantId }) {
   }, [userType]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`][0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
 
   const isApprovalPending = useMemo(() => {
@@ -87,7 +87,6 @@ function CitizenHome({ tenantId }) {
   if (isLoading || isSearchLoading || isFetching) {
     return <Loader />;
   }
-
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
       {individualId &&

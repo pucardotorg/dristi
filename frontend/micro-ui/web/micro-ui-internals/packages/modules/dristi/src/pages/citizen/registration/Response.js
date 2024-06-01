@@ -14,7 +14,6 @@ const Response = ({ refetch }) => {
   // const handleLogout = () => {
   //   Digit.UserService.logout();
   // };
-
   useGetAccessToken("citizen.refresh-token");
 
   return (
@@ -67,19 +66,6 @@ const Response = ({ refetch }) => {
           />
         </React.Fragment>
       )}
-
-      <ActionBar>
-        {
-          <SubmitBar
-            label={t("GO TO HOME")}
-            onSubmit={() => {
-              refetch();
-              history.push(`/${window?.contextPath}/citizen/dristi/home`);
-            }}
-          />
-          // )
-        }
-      </ActionBar>
     </Card>
   );
 };
