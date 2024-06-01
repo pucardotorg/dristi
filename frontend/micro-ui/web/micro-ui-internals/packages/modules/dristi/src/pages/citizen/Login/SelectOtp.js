@@ -5,6 +5,7 @@ import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
 import { Close } from "@egovernments/digit-ui-svg-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { CloseIconWhite } from "../../../icons/svgIndex";
 
 const SelectOtp = ({
   config,
@@ -21,6 +22,7 @@ const SelectOtp = ({
   path,
   isAdhaar,
   cardText,
+  mobileNumber,
 }) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
@@ -57,7 +59,7 @@ const SelectOtp = ({
         ) : (
           <div className={"icon-bg-secondary"} style={{ backgroundColor: "#505A5F" }}>
             {" "}
-            <Close />{" "}
+            <CloseIconWhite />{" "}
           </div>
         )}
       </div>
@@ -100,7 +102,7 @@ const SelectOtp = ({
       headerBarMain={
         <React.Fragment>
           <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
-          <CardText>{cardText}</CardText>
+          <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
         </React.Fragment>
       }
       popupStyles={{ width: "580px", alignItems: "center" }}

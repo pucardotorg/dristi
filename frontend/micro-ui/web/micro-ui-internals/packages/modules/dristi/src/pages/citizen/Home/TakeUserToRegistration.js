@@ -13,8 +13,6 @@ function TakeUserToRegistration({ message }) {
       style={{
         display: "flex",
         flexDirection: "column",
-        width: "90vw",
-        height: "52vh",
         background: "white",
         alignItems: "center",
         marginLeft: "10px",

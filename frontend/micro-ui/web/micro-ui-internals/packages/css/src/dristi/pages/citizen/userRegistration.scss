@@ -16,7 +16,7 @@
 
 .user-registration {
   background-color: #eeeeee;
-  min-height: calc(100vh - 113px);
+  min-height: calc(100vh - 74px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,6 +27,55 @@
 
   .citizen-form-wrapper {
     margin-top: 0px !important;
+
+    .enter-addhar {
+      padding: 40px;
+      margin: 0px;
+      background-color: #ffffff;
+
+      .card {
+        box-shadow: none;
+        padding: 0px;
+        margin: 0px !important;
+        .card-section-header:first-child {
+          margin: 0px !important;
+          font-family: Roboto !important;
+          font-size: 24px !important;
+          font-weight: 700 !important;
+          line-height: 30px !important;
+          text-align: center;
+          color: #0b0c0c !important;
+          margin-bottom: 8px !important;
+        }
+        .card-section-header:nth-child(2) {
+          margin: 0px !important;
+          font-family: Roboto !important;
+          font-size: 16px !important;
+          font-weight: 400 !important;
+          line-height: 24px !important;
+          text-align: center;
+          color: #505a5f !important;
+          padding-bottom: 32px;
+        }
+        .input-otp-wrap {
+          margin-bottom: 0px !important;
+          display: flex;
+          width: 100%;
+          gap: 16px;
+          input {
+            width: 165px !important;
+            margin-bottom: 0px;
+            margin-right: 0px;
+          }
+        }
+
+        button {
+          width: 100%;
+          margin-top: 32px;
+          box-shadow: none;
+        }
+      }
+    }
 
     .login-form {
       padding: 40px;
@@ -105,6 +154,19 @@
       }
     }
 
+    .select-user {
+      .radio-wrap {
+        .card {
+          padding: 16px 0px !important;
+          border-width: 0px 0px 1px 0px !important;
+          border-style: solid;
+          border-color: #00000026;
+          border-radius: 0px !important;
+        }
+      }
+    }
+
+    .select-user,
     .id-verification {
       padding: 40px !important;
       background-color: #ffffff;
@@ -139,6 +201,7 @@
             padding-bottom: 32px;
           }
           .radio-wrap {
+            margin: 0px 0px 32px 0px;
             gap: 16px !important;
           }
         }
@@ -165,17 +228,18 @@
                 flex-direction: column;
                 align-items: flex-start;
                 .card-sub-header {
-                  margin: 0px;
+                  margin: 0px !important;
                   font-family: Roboto;
                   font-size: 16px !important;
                   font-weight: 500;
                   line-height: 18.75px;
                   text-align: left;
                   color: #0b0c0c;
-                  margin-bottom: 8px;
+                  margin-bottom: 8px !important;
                 }
                 .card-text {
-                  margin: 0px;
+                  margin: 0px !important;
+                  padding: 0px !important;
                   font-family: Roboto;
                   font-size: 14px !important;
                   font-weight: 400;
@@ -196,6 +260,7 @@
     }
 
     .user-address {
+      margin: 20px 0px;
       padding: 40px !important;
       background-color: #ffffff;
       box-shadow: none;
@@ -296,6 +361,18 @@
     .header-wrap {
       padding-left: 16px;
       border-bottom: none;
+
+      .header-end {
+        .icon-bg-secondary {
+          width: 44px;
+          height: 44px;
+          svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      }
+
       h1 {
         padding: 28px 0px 16px 0px;
         margin: 0px;
@@ -369,7 +446,15 @@
   }
 }
 
-.citizen-home-footer {
-  position: fixed !important;
-  bottom: 0px;
+.navbar {
+  margin-bottom: 0px;
+  border-bottom: none;
+}
+
+body {
+  margin: 0px;
+}
+
+.main {
+  margin-bottom: 0px !important;
 }

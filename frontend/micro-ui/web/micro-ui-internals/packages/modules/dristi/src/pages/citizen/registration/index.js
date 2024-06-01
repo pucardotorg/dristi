@@ -261,7 +261,8 @@ const Registration = ({ stateCode }) => {
               canSubmit={canSubmitOtp}
               params={newParams}
               path={`${path}/mobile-number`}
-              cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
+              cardText={`${stepItems[4].texts.cardText}`}
+              mobileNumber={newParams.mobileNumber || ""}
               t={t}
             />
           </Route>

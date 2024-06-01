@@ -18,7 +18,7 @@ const Response = ({ refetch }) => {
   useGetAccessToken("citizen.refresh-token");
 
   return (
-    <Card style={{ minWidth: "97%", marginLeft: "24px", alignItems: "center" }}>
+    <Card style={{ minWidth: "50%", marginLeft: "24px", alignItems: "center" }}>
       {location?.state?.response === "success" ? (
         <SuccessIcon />
       ) : (
