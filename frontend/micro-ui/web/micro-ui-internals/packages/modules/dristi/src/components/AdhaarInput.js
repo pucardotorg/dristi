@@ -85,11 +85,11 @@ const AadhaarInput = (props) => {
   };
 
   return (
-    <div>
+    <React.Fragment>
       {inputs.map((input, index1) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         return (
-          <div className="input-otp-wrap" style={{ marginTop: "60px" }}>
+          <div className="input-otp-wrap">
             {boxCount.map((value, index) => (
               <input
                 key={index}
@@ -106,14 +106,14 @@ const AadhaarInput = (props) => {
                 onChange={(e) => handleChange(input.name, e.target.value, index)}
                 onFocus={() => handleFocus(index)}
                 onKeyUp={(e) => handleKeyUp(index, e)}
-                style={{ width: "200px" }}
+                style={{ width: "165px" }}
                 className="input-otp"
               />
             ))}
           </div>
         );
       })}
-    </div>
+    </React.Fragment>
   );
 };
 

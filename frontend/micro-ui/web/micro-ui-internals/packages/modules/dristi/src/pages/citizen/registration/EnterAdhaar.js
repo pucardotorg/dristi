@@ -26,18 +26,16 @@ const EnterAdhaar = ({ t, onSelect, config, params, pathOnRefresh }) => {
   if (!params?.indentity) {
     history.push(pathOnRefresh);
   }
+
   return (
-    <React.Fragment>
+    <div className="enter-addhar">
       <FormComposerV2
         config={config}
         t={t}
         noBoxShadow
         inline
         label={t("GET_OTP")}
-        onSecondayActionClick={() => {}}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
+        onSecondayActionClick={() => { }}
         onSubmit={(data) => {
           if (!validateFormData(data)) {
             setShowErrorToast(!validateFormData(data));
@@ -48,11 +46,10 @@ const EnterAdhaar = ({ t, onSelect, config, params, pathOnRefresh }) => {
         }}
         defaultValues={{ AdhaarInput: { aadharNumber: params?.adhaarNumber } }}
         submitInForm
-        buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
       ></FormComposerV2>
 
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-    </React.Fragment>
+    </div>
   );
 };
 
