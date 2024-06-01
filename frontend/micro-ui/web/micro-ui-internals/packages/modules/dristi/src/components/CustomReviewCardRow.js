@@ -2,7 +2,7 @@ import React, { useRef } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenPopup, titleIndex, index }) => {
+const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenPopup, titleIndex, index, name }) => {
   const ref = useRef();
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
@@ -35,9 +35,10 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             <div
               className="flag"
               onClick={() => {
-                handleOpenPopup(ref);
+                handleOpenPopup(ref, name, index, "title");
               }}
               key={index}
+              ref={ref}
             >
               <FlagIcon />
             </div>
@@ -57,9 +58,10 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             <div
               className="flag"
               onClick={() => {
-                handleOpenPopup(ref);
+                handleOpenPopup(ref, name, index, value);
               }}
               key={index}
+              ref={ref}
             >
               <FlagIcon />
             </div>
@@ -75,9 +77,10 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             <div
               className="flag"
               onClick={() => {
-                handleOpenPopup(ref);
+                handleOpenPopup(ref, name, index, value);
               }}
               key={index}
+              ref={ref}
             >
               <FlagIcon />
             </div>
@@ -97,9 +100,10 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             <div
               className="flag"
               onClick={() => {
-                handleOpenPopup(ref);
+                handleOpenPopup(ref, name, index, value);
               }}
               key={index}
+              ref={ref}
             >
               <FlagIcon />
             </div>
@@ -140,7 +144,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             <div
               className="flag"
               onClick={() => {
-                handleOpenPopup(ref);
+                handleOpenPopup(ref, name, index, value);
               }}
               key={index}
             >
@@ -162,7 +166,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             <div
               className="flag"
               onClick={() => {
-                handleOpenPopup(ref);
+                handleOpenPopup(ref, name, index, value);
               }}
               key={index}
             >

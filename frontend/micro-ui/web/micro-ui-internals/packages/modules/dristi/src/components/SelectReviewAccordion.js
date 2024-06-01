@@ -20,7 +20,8 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const [popupInfo, setPopupInfo] = useState({ position: { top: 0, left: 0 }, name: "", index: null });
+  const [scrutinyError, setScrutinyError] = useState("");
   const ref = useRef();
   const inputs = useMemo(
     () =>
@@ -77,31 +78,45 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
-  const handleOpenPopup = (clickref, type = "section", sectionName = "complaintDetails", fieldName = "name", index) => {
+  const handleOpenPopup = (clickref, name, index = null, fieldName) => {
     if (clickref.current) {
       const rect = clickref.current.getBoundingClientRect();
-      setPopupPosition({
-        top: rect.top + window.scrollY,
-        left: rect.right + window.scrollX,
+      setPopupInfo({
+        position: {
+          top: 0,
+          left: 0,
+        },
+        name,
+        index,
+        fieldName,
       });
     }
     setIsPopupOpen(true);
   };
 
   const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
-  const handleAddError = (input, index, val) => {
-    console.debug(input, index, val);
-    const currentValue = (formData && formData[config.key] && formData[config.key]?.[input.name]) || {
-      scrutinyMessage: "",
-      form: inputs.find((item) => item.name === input.name)?.data?.map(() => ({})),
-    };
-    const newFormData = currentValue;
-    setValue(newFormData, input.name);
+    setScrutinyError("");
     setIsPopupOpen(false);
   };
 
+  const handleAddError = () => {
+    let currentValue =
+      formData && formData[config.key]
+        ? { ...formData[config.key]?.[popupInfo.name] }
+        : {
+            scrutinyMessage: "",
+            form: inputs.find((item) => item.name === popupInfo.name)?.data?.map(() => ({})),
+          };
+    if (popupInfo.index == null) {
+      currentValue.scrutinyMessage = scrutinyError;
+    } else {
+      currentValue.form[popupInfo.index] = { ...currentValue.form[popupInfo.index], [popupInfo.fieldName]: scrutinyError };
+    }
+    setValue(currentValue, popupInfo.name);
+    setIsPopupOpen(false);
+    setScrutinyError("");
+  };
+  console.debug(formData);
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
@@ -134,7 +149,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     ref={ref}
                     style={{ cursor: "pointer" }}
                     onClick={() => {
-                      handleOpenPopup(ref, "section");
+                      handleOpenPopup(ref, input?.name);
                     }}
                     key={index}
                   >
@@ -152,13 +167,15 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     key={index}
                     index={index}
                     isPopupOpen={isPopupOpen}
-                    popupPosition={popupPosition}
+                    popupInfo={popupInfo}
                     t={t}
                     handleClosePopup={handleClosePopup}
                     handleAddError={handleAddError}
                     handleOpenPopup={handleOpenPopup}
                     formData={formData}
                     input={input}
+                    scrutinyError={scrutinyError}
+                    setScrutinyError={setScrutinyError}
                   />
                 ))}
             </div>

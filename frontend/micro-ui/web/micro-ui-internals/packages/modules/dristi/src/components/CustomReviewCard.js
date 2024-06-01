@@ -9,7 +9,7 @@ function CustomReviewCard({
   data,
   isScrutiny,
   isPopupOpen,
-  popupPosition,
+  popupInfo,
   t,
   index,
   handleAddError,
@@ -17,8 +17,9 @@ function CustomReviewCard({
   handleOpenPopup,
   formData,
   input,
+  scrutinyError,
+  setScrutinyError,
 }) {
-  const [error, setError] = useState("");
   let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
   return (
     <div className="item-body">
@@ -33,17 +34,18 @@ function CustomReviewCard({
           isScrutiny={isScrutiny}
           titleIndex={titleIndex}
           index={index}
+          name={input.name}
         />
       ))}
       {isPopupOpen && (
-        <CustomPopUp position={popupPosition}>
+        <CustomPopUp position={popupInfo?.position}>
           <div>
             <div>{t("CS_ERROR_DESCRIPTION")}</div>
             <TextArea
-              value={error}
+              value={scrutinyError}
               onChange={(e) => {
                 const { value } = e.target;
-                setError(value);
+                setScrutinyError(value);
               }}
             ></TextArea>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px" }}>
@@ -51,7 +53,7 @@ function CustomReviewCard({
               <Button
                 label={t("CS_COMMON_UPDATE")}
                 onButtonClick={() => {
-                  handleAddError(input, index, error);
+                  handleAddError();
                 }}
               />
             </div>
