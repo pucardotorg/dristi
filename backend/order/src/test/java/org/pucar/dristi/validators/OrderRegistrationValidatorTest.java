@@ -102,6 +102,7 @@ public class OrderRegistrationValidatorTest {
 
         // Perform validation
         assertDoesNotThrow(() -> validator.validateApplicationExistence(orderRequest));
+        assertEquals("expectedTenantId", existingApplications.get(0).getTenantId());
     }
 
 }
