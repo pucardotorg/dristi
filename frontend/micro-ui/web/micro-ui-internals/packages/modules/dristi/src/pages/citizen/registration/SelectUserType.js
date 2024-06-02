@@ -276,7 +276,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
     history.push(pathOnRefresh);
   }
   return (
-    <React.Fragment>
+    <div className="select-user">
       <FormComposerV2
         config={config}
         t={t}
@@ -302,7 +302,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
         submitInForm
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-    </React.Fragment>
+    </div>
   );
 };
 

@@ -245,7 +245,8 @@ const Login = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/otp`}>
             <SelectOtp
-              cardText={`${stepItems[2].texts.cardText} ${params.mobileNumber || ""}`}
+              cardText={`${stepItems[2].texts.cardText}`}
+              mobileNumber={params.mobileNumber || ""}
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
