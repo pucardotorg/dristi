@@ -148,7 +148,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
         );
       })}
       {showDoc && showDocument}
-    </div>
+    </React.Fragment>
   );
 };
 
