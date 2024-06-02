@@ -14,7 +14,6 @@ const Response = ({ refetch }) => {
   // const handleLogout = () => {
   //   Digit.UserService.logout();
   // };
-
   useGetAccessToken("citizen.refresh-token");
 
   return (
@@ -22,9 +21,7 @@ const Response = ({ refetch }) => {
       {location?.state?.response === "success" ? (
         <div className="response-main">
           <SuccessIcon />
-          <CardHeader>
-            {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
-          </CardHeader>
+          <CardHeader>{location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}</CardHeader>
           <CardText>
             {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS_SUB_TEXT") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
           </CardText>
@@ -70,7 +67,6 @@ const Response = ({ refetch }) => {
         ></Banner>
       )}
     </React.Fragment>
-
   );
 };
 

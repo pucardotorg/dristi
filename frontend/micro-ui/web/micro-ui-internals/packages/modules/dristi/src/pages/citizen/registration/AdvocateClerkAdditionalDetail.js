@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
+import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
 function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOnRefresh }) {
   const { t } = useTranslation();
@@ -111,26 +112,13 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         ) {
           onDocumentUpload(formData?.clientDetails?.barCouncilId[0][1]?.file, formData?.clientDetails?.barCouncilId[0][0]).then((document) => {
             const requestBody = {
-              [data?.selectUserType?.apiDetails?.requestKey]: [
-                {
-                  tenantId: tenantId,
-                  individualId: result?.Individual?.individualId,
-                  isActive: false,
-                  workflow: {
-                    action: "REGISTER",
-                    comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
-                    documents: [
-                      {
-                        id: null,
-                        documentType: document.fileType,
-                        fileStore: document.file?.files?.[0]?.fileStoreId,
-                        documentUid: "",
-                        additionalDetails: {},
-                      },
-                    ],
-                    assignes: [],
-                    rating: null,
-                  },
+              [data?.selectUserType?.apiDetails?.requestKey]: {
+                tenantId: tenantId,
+                individualId: result?.Individual?.individualId,
+                isActive: false,
+                workflow: {
+                  action: "REGISTER",
+                  comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
                   documents: [
                     {
                       id: null,
@@ -140,15 +128,26 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                       additionalDetails: {},
                     },
                   ],
-                  additionalDetails: {
-                    username: oldData?.name?.firstName + " " + oldData?.name?.name,
-                  },
-                  ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                    res[curr] = formData?.clientDetails?.barRegistrationNumber;
-                    return res;
-                  }, {}),
+                  assignes: [],
+                  rating: null,
                 },
-              ],
+                documents: [
+                  {
+                    id: null,
+                    documentType: document.fileType,
+                    fileStore: document.file?.files?.[0]?.fileStoreId,
+                    documentUid: "",
+                    additionalDetails: {},
+                  },
+                ],
+                additionalDetails: {
+                  username: oldData?.name?.firstName + " " + oldData?.name?.name,
+                },
+                ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+                  res[curr] = formData?.clientDetails?.barRegistrationNumber;
+                  return res;
+                }, {}),
+              },
             };
             Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
               roles: [
@@ -161,69 +160,22 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
             })
               .then(() => {
                 setShowSuccess(true);
-                history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                const refreshToken = window.localStorage.getItem("citizen.refresh-token");
+                if (refreshToken) {
+                  getUserDetails(refreshToken).then((res) => {
+                    const { ResponseInfo, UserRequest: info, ...tokens } = res;
+                    const user = { info, ...tokens };
+                    window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                    window?.Digit.UserService.setUser(user);
+                    setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
+                    history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                  });
+                }
               })
               .catch(() => {
                 history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
               });
           });
-        } else {
-          const requestBody = {
-            [data?.selectUserType?.apiDetails?.requestKey]: [
-              {
-                tenantId: tenantId,
-                individualId: result?.Individual?.individualId,
-                isActive: false,
-                workflow: {
-                  action: "REGISTER",
-                  comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
-                  documents: [
-                    {
-                      id: null,
-                      documentType: null,
-                      fileStore: null,
-                      documentUid: "",
-                      additionalDetails: {},
-                    },
-                  ],
-                  assignes: [],
-                  rating: null,
-                },
-                documents: [
-                  {
-                    id: null,
-                    documentType: null,
-                    fileStore: null,
-                    documentUid: "",
-                    additionalDetails: {},
-                  },
-                ],
-                additionalDetails: {
-                  username: data?.userDetails?.firstName + " " + data?.userDetails?.lastName,
-                },
-                ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                  res[curr] = "DEFAULT_VALUE";
-                  return res;
-                }, {}),
-              },
-            ],
-          };
-          Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
-            roles: [
-              {
-                name: "Citizen",
-                code: "CITIZEN",
-                tenantId: tenantId,
-              },
-            ],
-          })
-            .then(() => {
-              setShowSuccess(true);
-              history.push(`/${window?.contextPath}/citizen/dristi/home`);
-            })
-            .catch(() => {
-              history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
-            });
         }
       })
       .catch(() => {
