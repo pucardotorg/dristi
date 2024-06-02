@@ -122,20 +122,68 @@ function EFilingCases({ path }) {
       return formdata.map(() => formConfig);
     }
     return formdata.map(({ data }) => {
-      return formConfig.filter((config) => {
-        const dependentKeys = config?.dependentKey;
-        if (!dependentKeys) {
-          return config;
-        }
-        let show = true;
-        for (const key in dependentKeys) {
-          const nameArray = dependentKeys[key];
-          for (const name of nameArray) {
-            show = show && Boolean(data?.[key]?.[name]);
+      let disableConfigFields = [];
+      return formConfig
+        .filter((config) => {
+          config.body.forEach((body) => {
+            if ("disableConfigFields" in body && "disableConfigKey" in body && "key" in body) {
+              if (!!data?.[body.key]?.[body.disableConfigKey]) {
+                disableConfigFields = [...disableConfigFields, ...body.disableConfigFields];
+              }
+            }
+          });
+          const dependentKeys = config?.dependentKey;
+          if (!dependentKeys) {
+            return config;
           }
-        }
-        return show && config;
-      });
+          let show = true;
+          for (const key in dependentKeys) {
+            const nameArray = dependentKeys[key];
+            for (const name of nameArray) {
+              show = show && Boolean(data?.[key]?.[name]);
+            }
+          }
+          return show && config;
+        })
+        .map((config) => {
+          return {
+            ...config,
+            body: config?.body.map((body) => {
+              if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators.inputs.map((input) => {
+                      if (
+                        disableConfigFields.some((field) => {
+                          if (Array.isArray(input?.name)) return field === input?.key;
+                          return field === input?.name;
+                        })
+                      ) {
+                        return {
+                          ...input,
+                          disable: true,
+                          isDisabled: true,
+                        };
+                      }
+                      return {
+                        ...input,
+                      };
+                    }),
+                  },
+                };
+              } else if ("populators" in body) {
+                return {
+                  ...body,
+                  disable: disableConfigFields.some((field) => field === body?.populators?.name),
+                };
+              }
+              return {
+                ...body,
+              };
+            }),
+          };
+        });
     });
   }, [isDependentEnabled, formdata, formConfig]);
 
@@ -302,7 +350,7 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
-            className={'case-types'}
+            className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>
               {accordion.map((item, index) => (
@@ -397,10 +445,7 @@ function EFilingCases({ path }) {
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div
-              onClick={handleAddForm}
-              className="add-new-form"
-            >
+            <div onClick={handleAddForm} className="add-new-form">
               <CustomAddIcon />
               <span>{t(pageConfig.addFormText)}</span>
             </div>

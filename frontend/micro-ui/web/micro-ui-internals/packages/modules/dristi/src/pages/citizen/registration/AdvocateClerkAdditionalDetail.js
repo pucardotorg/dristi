@@ -111,26 +111,13 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         ) {
           onDocumentUpload(formData?.clientDetails?.barCouncilId[0][1]?.file, formData?.clientDetails?.barCouncilId[0][0]).then((document) => {
             const requestBody = {
-              [data?.selectUserType?.apiDetails?.requestKey]: [
-                {
-                  tenantId: tenantId,
-                  individualId: result?.Individual?.individualId,
-                  isActive: false,
-                  workflow: {
-                    action: "REGISTER",
-                    comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
-                    documents: [
-                      {
-                        id: null,
-                        documentType: document.fileType,
-                        fileStore: document.file?.files?.[0]?.fileStoreId,
-                        documentUid: "",
-                        additionalDetails: {},
-                      },
-                    ],
-                    assignes: [],
-                    rating: null,
-                  },
+              [data?.selectUserType?.apiDetails?.requestKey]: {
+                tenantId: tenantId,
+                individualId: result?.Individual?.individualId,
+                isActive: false,
+                workflow: {
+                  action: "REGISTER",
+                  comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
                   documents: [
                     {
                       id: null,
@@ -140,15 +127,26 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                       additionalDetails: {},
                     },
                   ],
-                  additionalDetails: {
-                    username: oldData?.name?.firstName + " " + oldData?.name?.name,
-                  },
-                  ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                    res[curr] = formData?.clientDetails?.barRegistrationNumber;
-                    return res;
-                  }, {}),
+                  assignes: [],
+                  rating: null,
                 },
-              ],
+                documents: [
+                  {
+                    id: null,
+                    documentType: document.fileType,
+                    fileStore: document.file?.files?.[0]?.fileStoreId,
+                    documentUid: "",
+                    additionalDetails: {},
+                  },
+                ],
+                additionalDetails: {
+                  username: oldData?.name?.firstName + " " + oldData?.name?.name,
+                },
+                ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+                  res[curr] = formData?.clientDetails?.barRegistrationNumber;
+                  return res;
+                }, {}),
+              },
             };
             Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
               roles: [
@@ -169,26 +167,13 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
           });
         } else {
           const requestBody = {
-            [data?.selectUserType?.apiDetails?.requestKey]: [
-              {
-                tenantId: tenantId,
-                individualId: result?.Individual?.individualId,
-                isActive: false,
-                workflow: {
-                  action: "REGISTER",
-                  comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
-                  documents: [
-                    {
-                      id: null,
-                      documentType: null,
-                      fileStore: null,
-                      documentUid: "",
-                      additionalDetails: {},
-                    },
-                  ],
-                  assignes: [],
-                  rating: null,
-                },
+            [data?.selectUserType?.apiDetails?.requestKey]: {
+              tenantId: tenantId,
+              individualId: result?.Individual?.individualId,
+              isActive: false,
+              workflow: {
+                action: "REGISTER",
+                comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
                 documents: [
                   {
                     id: null,
@@ -198,15 +183,26 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                     additionalDetails: {},
                   },
                 ],
-                additionalDetails: {
-                  username: data?.userDetails?.firstName + " " + data?.userDetails?.lastName,
-                },
-                ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                  res[curr] = "DEFAULT_VALUE";
-                  return res;
-                }, {}),
+                assignes: [],
+                rating: null,
               },
-            ],
+              documents: [
+                {
+                  id: null,
+                  documentType: null,
+                  fileStore: null,
+                  documentUid: "",
+                  additionalDetails: {},
+                },
+              ],
+              additionalDetails: {
+                username: data?.userDetails?.firstName + " " + data?.userDetails?.lastName,
+              },
+              ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+                res[curr] = "DEFAULT_VALUE";
+                return res;
+              }, {}),
+            },
           };
           Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
             roles: [

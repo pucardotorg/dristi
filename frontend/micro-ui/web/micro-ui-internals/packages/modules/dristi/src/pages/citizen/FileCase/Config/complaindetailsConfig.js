@@ -60,6 +60,7 @@ const complainantDetailsFormConfig = [
             {
               label: "COMPLAINANT_ID",
               name: "complainantId",
+              verificationOn: "complainantVerification.isUserVerified",
             },
           ],
           customStyle: {
@@ -136,8 +137,10 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         label: "PHONE_NUMBER",
         name: "mobileNumber",
+        disableConfigFields: ["firstName", "middleName", "lastName", "pincode", "locationSearch", "pincode", "state", "district", "city", "locality"],
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
+        disableConfigKey: "isUserVerified",
         validation: {
           required: true,
           minLength: 10,
@@ -159,7 +162,12 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"] },
+            {
+              label: "CS_PIN_LOCATION",
+              type: "LocationSearch",
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
+              key: "locationSearch",
+            },
             {
               label: "PINCODE",
               type: "text",
@@ -201,6 +209,16 @@ const complainantDetailsFormConfig = [
               label: "CITY/TOWN",
               type: "text",
               name: "city",
+              inputFieldClassName: "user-details-form-style",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "ADDRESS",
+              type: "text",
+              name: "locality",
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,

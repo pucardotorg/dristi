@@ -147,7 +147,11 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
           );
         });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: individualData?.Individual?.[0]?.individualId });
+        onSelect(config?.key, {
+          ...formData?.[config.key],
+          individualDetails: individualData?.Individual?.[0]?.individualId,
+          [config?.disableConfigKey]: true,
+        });
       })
       .catch(() => {
         setUser({ info, ...tokens });
