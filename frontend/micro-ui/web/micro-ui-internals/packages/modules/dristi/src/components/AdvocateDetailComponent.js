@@ -62,6 +62,16 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
 
+  const showDocument = useMemo(() => {
+    return (
+      <div>
+        <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
+        </div>
+      </div>
+    );
+  }, [fileStoreId, tenantId, fileName]);
+
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -127,8 +137,8 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                   !["documentUpload", "radioButton"].includes(input.type) &&
                   input.validation &&
                   !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                    <CardLabelError style={{ width: "100%", marginTop: "5px", fontSize: "16px", marginBottom: "12px" }}>
+                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "INVALID_BAR_REG_NUMBER")}</span>
                     </CardLabelError>
                   )}
               </div>
@@ -137,13 +147,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
           </React.Fragment>
         );
       })}
-      {showDoc && (
-        <div>
-          <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
-          </div>
-        </div>
-      )}
+      {showDoc && showDocument}
     </div>
   );
 };

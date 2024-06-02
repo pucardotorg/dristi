@@ -289,6 +289,27 @@
           color: #0b0c0c;
           margin: 0px 0px 8px 0px;
         }
+        .user-address-map-info {
+          display: flex;
+          align-items: center;
+          height: 32px;
+          padding: 8px;
+          gap: 4px;
+          margin: 10px 0px;
+          border-radius: 5px;
+          background-color: #c7e0f1;
+          svg {
+            width: 12px !important;
+            height: 12px !important;
+            path {
+              fill: #3498db;
+            }
+          }
+          span {
+            font-size: 12px;
+            color: #505a5f;
+          }
+        }
         .address-card-input {
           gap: 16px;
         }

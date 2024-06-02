@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import LocationSearch from "./LocationSearch";
+import { ReactComponent as SmallInfoIcon } from "../images/smallInfoIcon.svg";
+
 import Axios from "axios";
 const getLocation = (places, code) => {
   let location = null;
@@ -176,6 +178,10 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
             </div>
           );
         })}
+      <div className="user-address-map-info">
+        <SmallInfoIcon></SmallInfoIcon>
+        <span>{t("MOVE_PIN_ON_MAP_MESSAGE")}</span>
+      </div>
       <div className="address-card-input">
         {inputs
           .filter((input) => input.type !== "LocationSearch")
