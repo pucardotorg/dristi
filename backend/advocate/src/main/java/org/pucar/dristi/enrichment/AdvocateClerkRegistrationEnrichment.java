@@ -32,7 +32,7 @@ public class AdvocateClerkRegistrationEnrichment {
      */
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
-            List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvApplicationNumberConfig(), null, 1);
+            List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvClerkApplicationNumberConfig(), null, 1);
             log.info("Advocate Clerk Application Number :: {}",clerkApplicationNumbers);
             int index = 0;
 
