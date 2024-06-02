@@ -386,7 +386,13 @@ const LocationSearch = (props) => {
       <div className="map-search-bar-wrap">
         {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
         <SearchIconSvg className="map-search-bar-icon" />
-        <input id={"pac-input-" + props?.index} className="map-search-bar" type="text" placeholder="Search Address" autoComplete="off" />
+        <input
+          id={"pac-input-" + props?.index}
+          className="map-search-bar"
+          type="text"
+          placeholder="Search for a building, street, or area"
+          autoComplete="off"
+        />
       </div>
       <div id={"map-" + props?.index} className="map"></div>
     </div>

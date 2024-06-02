@@ -73,7 +73,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
   }, [fileStoreId, tenantId, fileName]);
 
   return (
-    <div>
+    <React.Fragment>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         const showDependentFields =
@@ -92,7 +92,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-            <div style={{ width: "100%" }}>
+            <div className={`${input?.type}`} style={{ width: "100%" }}>
               {input?.type !== "infoBox" && (
                 <CardLabel className="card-label-smaller" style={{ width: "100%", fontSize: "16px" }}>
                   {t(input.label)}

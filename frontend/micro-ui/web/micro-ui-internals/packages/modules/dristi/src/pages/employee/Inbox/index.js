@@ -79,7 +79,12 @@ const Inbox = ({ tenants, parentRoute }) => {
           {type === "advocate" && <InboxSearchComposer customStyle={sectionsParentStyle} configs={newconfigAdvocate}></InboxSearchComposer>}
         </div>
         {message && (
-          <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")} label={message} onClose={() => setMessage(null)} />
+          <Toast
+            style={{ left: `calc(80% - 240px)` }}
+            error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")}
+            label={message}
+            onClose={() => setMessage(null)}
+          />
         )}
       </div>
     </React.Fragment>
