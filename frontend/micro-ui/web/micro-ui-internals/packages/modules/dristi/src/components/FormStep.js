@@ -4,10 +4,6 @@ import PropTypes from "prop-types";
 import { CardLabel, CardLabelError, TextArea, TextInput } from "@egovernments/digit-ui-react-components";
 import InputCard from "./InputCard";
 
-const labelErrorStyle = {
-  marginTop: "-10px",
-};
-
 const FormStep = ({
   t,
   children,
@@ -62,8 +58,8 @@ const FormStep = ({
                 textInputStyle={textInputStyle}
               />
             </div>
+            {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           </div>
-          {errors[input.name] && <CardLabelError style={labelErrorStyle}>{t(input.error)}</CardLabelError>}
         </React.Fragment>
       );
     }
