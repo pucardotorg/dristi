@@ -681,6 +681,24 @@ input[type="number"] {
   }
 }
 
+.langauge-select-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .radio-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  button {
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+  }
+}
+
 @media (min-width: 780px) {
   .citizen-obps-wrapper,
   .selection-card-wrapper,
