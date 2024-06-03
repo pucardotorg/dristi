@@ -4,7 +4,6 @@ import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 
 const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError }) => {
-  const ref = useRef();
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
       return data[key];
@@ -36,11 +35,10 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             {isScrutiny && (
               <div
                 className="flag"
-                onClick={() => {
-                  handleOpenPopup(ref, configKey, name, dataIndex, "title");
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, "title");
                 }}
                 key={dataIndex}
-                ref={ref}
               >
                 {dataError ? <EditPencilIcon /> : <FlagIcon />}
               </div>
@@ -67,13 +65,12 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             {isScrutiny && (
               <div
                 className="flag"
-                onClick={() => {
-                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
                 }}
                 key={dataIndex}
-                ref={ref}
               >
-                <FlagIcon />
+                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
               </div>
             )}
           </div>
@@ -95,13 +92,12 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             {isScrutiny && (
               <div
                 className="flag"
-                onClick={() => {
-                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
                 }}
                 key={dataIndex}
-                ref={ref}
               >
-                <FlagIcon />
+                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
               </div>
             )}
           </div>
@@ -126,13 +122,12 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             {isScrutiny && (
               <div
                 className="flag"
-                onClick={() => {
-                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
                 }}
                 key={dataIndex}
-                ref={ref}
               >
-                <FlagIcon />
+                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
               </div>
             )}
           </div>
@@ -147,10 +142,21 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
     case "image":
       return (
         <div>
-          <div className="image">
-            <div className="label">{label}</div>
-            <div className="value">
-              <DocViewerWrapper />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div className="image">
+              <div className="label">{label}</div>
+              <div className="value">
+                <DocViewerWrapper />
+              </div>
+            </div>
+            <div
+              className="flag"
+              onClick={(e) => {
+                handleOpenPopup(e, configKey, name, dataIndex, value);
+              }}
+              key={dataIndex}
+            >
+              {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
             </div>
           </div>
           {dataError && isScrutiny && (
@@ -186,12 +192,12 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             {isScrutiny && (
               <div
                 className="flag"
-                onClick={() => {
-                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
                 }}
                 key={dataIndex}
               >
-                <FlagIcon />
+                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
               </div>
             )}
           </div>
@@ -216,12 +222,12 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
             {isScrutiny && (
               <div
                 className="flag"
-                onClick={() => {
-                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
                 }}
                 key={dataIndex}
               >
-                <FlagIcon />
+                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
               </div>
             )}
           </div>

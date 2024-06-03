@@ -647,11 +647,7 @@
               width: 10%;
               display: flex;
               justify-content: flex-end;
-              cursor: pointer;
-
-              svg {
-                cursor: pointer;
-              }
+              cursor: pointer !important;
             }
 
             .image {

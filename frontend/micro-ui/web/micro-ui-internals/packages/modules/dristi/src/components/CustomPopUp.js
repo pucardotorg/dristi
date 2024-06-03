@@ -1,18 +1,16 @@
 import React from "react";
+import ReactDOM from "react-dom";
 
-function CustomPopUp({ children, onClose, position }) {
-  const popupStyle = {
-    top: `${position.top}px`,
-    left: `${position.left}px`,
-  };
-
-  return (
+function CustomPopUp({ children, onClose, position, anchorRef }) {
+  if (!anchorRef) return null;
+  return ReactDOM.createPortal(
     <div className="pop-up-class" onClick={onClose}>
-      <div className="popup" style={popupStyle} onClick={(e) => e.stopPropagation()}>
+      <div className="popup" onClick={(e) => e.stopPropagation()}>
         {onClose && <span className="close" onClick={onClose}></span>}
         {children}
       </div>
-    </div>
+    </div>,
+    anchorRef
   );
 }
 

@@ -15,13 +15,13 @@ import CustomPopUp from "./CustomPopUp";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
-  const isScrutiny = true || roles.some((role) => role.code === "CASE_REVIEWER");
+  const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
   const [isOpen, setOpen] = useState(true);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
   const [scrutinyError, setScrutinyError] = useState("");
-  const ref = useRef();
+  const popupAnchor = useRef();
   const popupInfo = useMemo(() => {
     return formData?.scrutinyMessage?.popupInfo;
   }, [formData]);
@@ -42,16 +42,21 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     [config?.populators?.inputs]
   );
 
+  const defaultError = useMemo(() => {
+    if (!popupInfo) {
+      return "";
+    }
+    const { name = null, configKey = null, index = null, fieldName = null } = popupInfo;
+    return fieldName
+      ? formData?.[configKey]?.[name]?.form?.[index]?.[fieldName]?.FSOError
+      : formData?.[configKey]?.[name]?.scrutinyMessage?.FSOError || "";
+  }, [formData, popupInfo]);
+
   useEffect(() => {
     if (isPopupOpen && popupInfo) {
-      const { name = null, configKey = null, index = null, fieldName = null } = popupInfo;
-      setScrutinyError(
-        fieldName
-          ? formData?.[configKey]?.[name]?.formData?.[index]?.[fieldName]?.FSOError
-          : formData?.[configKey]?.[name]?.scrutinyMessage?.FSOError || ""
-      );
+      setScrutinyError(defaultError);
     }
-  }, [isPopupOpen, popupInfo]);
+  }, [defaultError, isPopupOpen, popupInfo]);
 
   function setValue(configkey, value, input) {
     if (Array.isArray(input)) {
@@ -87,14 +92,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
-  const handleOpenPopup = (clickref, configKey, name, index = null, fieldName) => {
+  const handleOpenPopup = (e, configKey, name, index = null, fieldName) => {
+    popupAnchor.current = e.currentTarget;
     setValue(
       "scrutinyMessage",
       {
-        position: {
-          top: 0,
-          left: 0,
-        },
         name,
         index,
         fieldName,
@@ -103,8 +105,12 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       "popupInfo"
     );
   };
-
   const handleClosePopup = () => {
+    setScrutinyError("");
+    setValue("scrutinyMessage", null, "popupInfo");
+  };
+
+  const handleDeleteError = () => {
     const { name, configKey, index, fieldName } = popupInfo;
     let currentMessage =
       formData && formData[configKey]
@@ -129,7 +135,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const handleAddError = () => {
     const { name, configKey, index, fieldName } = popupInfo;
     let currentMessage =
-      formData && formData[configKey]
+      formData && formData[configKey] && formData[config.key]?.[name]
         ? { ...formData[config.key]?.[name] }
         : {
             scrutinyMessage: "",
@@ -139,7 +145,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       currentMessage.scrutinyMessage = { FSOError: scrutinyError };
     } else {
       currentMessage.form[index] = {
-        ...currentMessage.form[index],
+        ...(currentMessage?.form?.[index] || {}),
         [fieldName]: { FSOError: scrutinyError },
       };
     }
@@ -169,11 +175,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   {(!isScrutiny || sectionValue?.scrutinyMessage?.FSOError) && (
                     <div
                       className="header-right"
-                      onClick={() => {
+                      onClick={(e) => {
                         if (!isScrutiny) {
                           history.push(`?caseId=${caseId}&selected=${input?.key}`);
                         } else {
-                          handleOpenPopup(ref, config.key, input?.name);
+                          handleOpenPopup(e, config.key, input?.name);
                         }
                       }}
                     >
@@ -182,10 +188,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   )}
                   {!sectionValue?.scrutinyMessage?.FSOError && isScrutiny && (
                     <div
-                      ref={ref}
                       style={{ cursor: "pointer" }}
-                      onClick={() => {
-                        handleOpenPopup(ref, config.key, input?.name);
+                      onClick={(e) => {
+                        handleOpenPopup(e, config.key, input?.name);
                       }}
                       key={index}
                     >
@@ -225,7 +230,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         </div>
       </div>
       {isPopupOpen && (
-        <CustomPopUp position={popupInfo?.position}>
+        <CustomPopUp anchorRef={popupAnchor.current}>
           <Fragment>
             <div>{t("CS_ERROR_DESCRIPTION")}</div>
             <TextArea
@@ -236,11 +241,15 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
               }}
             ></TextArea>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px" }}>
-              <Button label={t("CS_COMMON_DELETE")} onButtonClick={handleClosePopup} />
+              <Button label={t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
               <Button
-                label={t("CS_COMMON_UPDATE")}
+                label={defaultError === "" ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
                 onButtonClick={() => {
-                  handleAddError();
+                  if (defaultError === scrutinyError) {
+                    handleClosePopup();
+                  } else {
+                    handleAddError();
+                  }
                 }}
               />
             </div>
