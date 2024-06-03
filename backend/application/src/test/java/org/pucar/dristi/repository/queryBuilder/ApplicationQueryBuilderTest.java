@@ -19,6 +19,7 @@ class ApplicationQueryBuilderTest {
     ApplicationQueryBuilderTest() {
         MockitoAnnotations.openMocks(this);
     }
+    private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app WHERE ";
 
     @Test
     void testGetApplicationSearchQuery() {
@@ -268,5 +269,88 @@ class ApplicationQueryBuilderTest {
         assertThrows(CustomException.class, () -> {
             applicationQueryBuilder.getStatuteSectionSearchQuery(null, null);
         });
+    }
+    @Test
+    void testAllParametersProvided() {
+        String filingNumber = "FN123";
+        String cnrNumber = "CNR123";
+        String applicationNumber = "AN123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
+                "app.filingnumber = 'FN123' AND " +
+                "app.cnrnumber = 'CNR123' AND " +
+                "app.applicationnumber = 'AN123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, applicationNumber);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    void testOnlyFilingNumberProvided() {
+        String filingNumber = "FN123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.filingnumber = 'FN123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, null, null);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    void testOnlyCnrNumberProvided() {
+        String cnrNumber = "CNR123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.cnrnumber = 'CNR123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, cnrNumber, null);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    void testOnlyApplicationNumberProvided() {
+        String applicationNumber = "AN123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY + "app.applicationnumber = 'AN123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, null, applicationNumber);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    void testFilingAndCnrNumbersProvided() {
+        String filingNumber = "FN123";
+        String cnrNumber = "CNR123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
+                "app.filingnumber = 'FN123' AND " +
+                "app.cnrnumber = 'CNR123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, cnrNumber, null);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    void testCnrAndApplicationNumbersProvided() {
+        String cnrNumber = "CNR123";
+        String applicationNumber = "AN123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
+                "app.cnrnumber = 'CNR123' AND " +
+                "app.applicationnumber = 'AN123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(null, cnrNumber, applicationNumber);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    void testFilingAndApplicationNumbersProvided() {
+        String filingNumber = "FN123";
+        String applicationNumber = "AN123";
+
+        String expectedQuery = BASE_APPLICATION_EXIST_QUERY +
+                "app.filingnumber = 'FN123' AND " +
+                "app.applicationnumber = 'AN123';";
+
+        String actualQuery = applicationQueryBuilder.checkApplicationExistQuery(filingNumber, null, applicationNumber);
+        assertEquals(expectedQuery, actualQuery);
     }
 }

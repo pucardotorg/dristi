@@ -2,8 +2,7 @@ package org.pucar.dristi.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
-import static org.pucar.dristi.config.ServiceConstants.CREATE_APPLICATION_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
@@ -17,11 +16,10 @@ import org.pucar.dristi.enrichment.ApplicationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.validator.ApplicationValidator;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.RequestInfoBody;
+import org.pucar.dristi.web.models.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,6 +48,10 @@ class ApplicationServiceTest {
 
     @Mock
     private ApplicationRequest applicationRequest;
+
+    @Mock
+    private ApplicationExistsRequest applicationExistsRequest;
+
 
     @Mock
     private Application application;
@@ -152,6 +154,7 @@ class ApplicationServiceTest {
         verify(enrichmentUtil).enrichApplicationUponUpdate(applicationRequest);
         verify(producer, never()).push(anyString(), any());
     }
+
     @Test
     public void testSearchApplication_success() {
         List<Application> applicationList = new ArrayList<>();
@@ -159,15 +162,15 @@ class ApplicationServiceTest {
         mockApplication.setId(UUID.randomUUID());
         applicationList.add(mockApplication);
 
-        when(applicationRepository.getApplications( any(), any(),any(), any(),any(), any(),any()))
+        when(applicationRepository.getApplications(any(), any(), any(), any(), any(), any(), any()))
                 .thenReturn(applicationList);
-        //  when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
 
         List<Application> result = applicationService.searchApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null, null, new RequestInfoBody());
 
         assertNotNull(result);
         verify(applicationRepository, times(1)).getApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null);
     }
+
     @Test
     public void testSearchApplications_NoResults() {
         // Arrange
@@ -198,5 +201,30 @@ class ApplicationServiceTest {
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
         assertEquals("Database error", exception.getMessage());
+    }
+
+    @Test
+    void testExistsApplication_Success() {
+        List<ApplicationExists> expectedResponse = Collections.singletonList(new ApplicationExists("filingNum", "cnr", "app123", true));
+        when(applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists()))
+                .thenReturn(expectedResponse);
+
+        List<ApplicationExists> actualResponse = applicationService.existsApplication(applicationExistsRequest);
+
+        assertEquals(expectedResponse, actualResponse);
+        verify(applicationRepository).checkApplicationExists(applicationExistsRequest.getApplicationExists());
+    }
+
+    @Test
+    void testExistsApplication_CustomException() {
+        when(applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists()))
+                .thenThrow(new RuntimeException("Database error"));
+
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            applicationService.existsApplication(applicationExistsRequest);
+        });
+
+        assertEquals("Database error", thrown.getMessage());
+        verify(applicationRepository).checkApplicationExists(applicationExistsRequest.getApplicationExists());
     }
 }
