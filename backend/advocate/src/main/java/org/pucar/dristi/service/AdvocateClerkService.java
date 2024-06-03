@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -144,15 +143,14 @@ public class AdvocateClerkService {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-            AdvocateClerk advocateClerk = new AdvocateClerk();
             AdvocateClerk existingApplication;
             try {
-                existingApplication = validator.validateApplicationExistence(advocateClerk);
+                existingApplication = validator.validateApplicationExistence(advocateClerkRequest.getClerk());
             } catch (Exception e){
                 log.error("Error validating existing application");
                 throw new CustomException(VALIDATION_EXCEPTION,"Error validating existing application: "+ e.getMessage());
             }
-            existingApplication.setWorkflow(advocateClerk.getWorkflow());
+            existingApplication.setWorkflow(advocateClerkRequest.getClerk().getWorkflow());
 
             advocateClerkRequest.setClerk(existingApplication);
 
@@ -161,9 +159,9 @@ public class AdvocateClerkService {
 
             workflowService.updateWorkflowStatus(advocateClerkRequest);
 
-            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerk.getStatus())) {
+            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateClerkRequest.getClerk().getStatus())) {
                 //setting true once application approved
-                advocateClerk.setIsActive(true);
+                advocateClerkRequest.getClerk().setIsActive(true);
             }
 
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
