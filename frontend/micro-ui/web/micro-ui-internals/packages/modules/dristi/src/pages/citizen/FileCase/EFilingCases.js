@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
@@ -302,7 +302,7 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
-            className={'case-types'}
+            className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>
               {accordion.map((item, index) => (
@@ -397,13 +397,13 @@ function EFilingCases({ path }) {
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div
-              onClick={handleAddForm}
+            <Button
+              variation="secondary"
+              onButtonClick={handleAddForm}
               className="add-new-form"
-            >
-              <CustomAddIcon />
-              <span>{t(pageConfig.addFormText)}</span>
-            </div>
+              icon={<CustomAddIcon />}
+              label={t(pageConfig.addFormText)}
+            ></Button>
           )}
           {openConfigurationModal && (
             <EditFieldsModal
