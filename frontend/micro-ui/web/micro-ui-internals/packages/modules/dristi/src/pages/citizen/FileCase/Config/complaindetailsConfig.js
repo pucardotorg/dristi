@@ -55,6 +55,7 @@ const complainantDetailsFormConfig = [
         component: "VerificationComponent",
         key: "complainantId",
         withoutLabel: true,
+        isMandatory: true,
         populators: {
           inputs: [
             {
@@ -141,6 +142,7 @@ const complainantDetailsFormConfig = [
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
         disableConfigKey: "isUserVerified",
+        isMandatory: true,
         validation: {
           required: true,
           minLength: 10,

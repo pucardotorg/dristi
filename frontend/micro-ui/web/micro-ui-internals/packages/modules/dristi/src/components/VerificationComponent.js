@@ -18,6 +18,14 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
+function generateAadhaar() {
+  let aadhaar = "";
+  for (let i = 0; i < 12; i++) {
+    aadhaar += Math.floor(Math.random() * 10);
+  }
+  return aadhaar;
+}
+
 function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
   const [{ showModal, verificationType, modalData, isAadharVerified }, setState] = useState({
     showModal: false,
@@ -132,6 +140,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                           ...prev,
                           isAadharVerified: true,
                         }));
+                        onSelect(config.key, { ...formData[config.key], [config.key]: generateAadhaar(), verificationType: "AADHAR" });
                       }}
                     />
                     <Button
@@ -183,7 +192,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
               <Modal
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
-                actionCancelOnSubmit={() => { }}
+                actionCancelOnSubmit={() => {}}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });

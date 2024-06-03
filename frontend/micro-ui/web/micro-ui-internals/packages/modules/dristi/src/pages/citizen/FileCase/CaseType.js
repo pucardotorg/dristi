@@ -9,7 +9,7 @@ import { DRISTIService } from "../../../services";
 import { Loader } from "@egovernments/digit-ui-components";
 import { userTypeOptions } from "../registration/config";
 
-const formatDate = (date) => {
+export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
@@ -90,11 +90,7 @@ function CaseType({ t }) {
 
     return (
       <div className="submit-bar-div">
-        <Button
-          icon={<FileDownload />}
-          className="download-button"
-          label={t("CS_COMMON_DOWNLOAD")}
-        />
+        <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
         <div className="right-div">
           <Button
             className="cancel-button"

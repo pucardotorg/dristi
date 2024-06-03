@@ -11,6 +11,7 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
+import { formatDate } from "./CaseType";
 
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
@@ -62,7 +63,7 @@ function EFilingCases({ path }) {
     }
   }, [getAllKeys, selected]);
 
-  const caseDetails = useMemo(() => caseData?.cases?.[0], [caseData]);
+  const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0], [caseData]);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -240,6 +241,11 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
+  const onDocumentUpload = async (fileData, filename) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
+
   const validateData = (data) => {
     let isValid = true;
     formConfig.forEach((config) => {
@@ -276,11 +282,12 @@ function EFilingCases({ path }) {
     return isValid;
   };
 
-  const onSubmit = (props, index) => {
+  const onSubmit = async (props, index) => {
     // if (!validateData(props, index)) {
     //   return null;
     // }
     const data = {};
+    let isMandatoryFields = false;
     if (selected === "complaintDetails") {
       const litigants = [];
       formdata.forEach((data, index) => {
@@ -292,8 +299,18 @@ function EFilingCases({ path }) {
             individualId: data?.data?.complainantVerification?.individualDetails,
             partyType: index === 0 ? "complainant.primary" : "complainant.additional",
           });
+        } else {
+          if (data?.data?.complainantId?.complainantId) {
+            if (data?.data?.complainantId?.complainantId?.verificationType !== "AADHAR") {
+            }
+            // debugger;
+          } else {
+            // setShowErrorToast(true);
+            // return;
+          }
         }
       });
+
       const representatives = [...caseDetails?.representatives]?.map((representative) => ({
         ...representative,
         caseId: caseDetails?.id,
@@ -303,13 +320,87 @@ function EFilingCases({ path }) {
       data.representatives = representatives;
     }
     if (selected === "respondentDetails") {
-      console.debug(formdata);
+      let documentData = {};
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          if (data?.data?.condonationFileUpload?.document) {
+            await onDocumentUpload(data?.data?.condonationFileUpload?.document?.[0], data?.data?.condonationFileUpload?.document?.[0]?.name).then(
+              (data) => {
+                documentData = {
+                  documentType: data.fileType,
+                  fileStore: data.file?.files?.[0]?.fileStoreId,
+                  documentName: data.filename,
+                };
+              }
+            );
+          }
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              condonationFileUpload: {
+                ...data?.data?.condonationFileUpload,
+                document: documentData,
+              },
+            },
+          };
+        })
+      );
+      data.additionalDetails = { respondentDetails: newFormData };
+    }
+    if (selected === "chequeDetails") {
+      const documentData = {};
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          if (data?.data?.bouncedChequeFileUpload?.document) {
+            await onDocumentUpload(data?.data?.bouncedChequeFileUpload?.document?.[0], data?.data?.bouncedChequeFileUpload?.document?.[0]?.name).then(
+              (data) => {
+                documentData.bouncedChequeFileUpload = {
+                  documentType: data.fileType,
+                  fileStore: data.file?.files?.[0]?.fileStoreId,
+                  documentName: data.filename,
+                };
+              }
+            );
+          }
+          if (data?.data?.depositChequeFileUpload?.document) {
+            await onDocumentUpload(data?.data?.depositChequeFileUpload?.document?.[0], data?.data?.depositChequeFileUpload?.document?.[0]?.name).then(
+              (data) => {
+                documentData.depositChequeFileUpload = {
+                  documentType: data.fileType,
+                  fileStore: data.file?.files?.[0]?.fileStoreId,
+                  documentName: data.filename,
+                };
+              }
+            );
+          }
+          if (data?.data?.returnMemoFileUpload?.document) {
+            await onDocumentUpload(data?.data?.returnMemoFileUpload?.document?.[0], data?.data?.returnMemoFileUpload?.document?.[0]?.name).then(
+              (data) => {
+                documentData.returnMemoFileUpload = {
+                  documentType: data.fileType,
+                  fileStore: data.file?.files?.[0]?.fileStoreId,
+                  documentName: data.filename,
+                };
+              }
+            );
+          }
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              ...documentData,
+            },
+          };
+        })
+      );
+      data.caseDetails = { chequeDetails: newFormData };
     }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
       return;
     }
-    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data }, tenantId }, tenantId);
+    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data, filingDate: formatDate(new Date()) }, tenantId }, tenantId);
     history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   };
   const onSaveDraft = (props) => {
