@@ -159,8 +159,10 @@ function EFilingCases({ path }) {
           const updatedBody = config.body
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;
+              const modifiedFormComponent = structuredClone(formComponent);
+              modifiedFormComponent.disable = true;
               if (key in scrutiny[selected].form[index]) {
-                const modifiedFormComponent = structuredClone(formComponent);
+                modifiedFormComponent.disable = false;
                 modifiedFormComponent.withoutLabel = true;
                 return [
                   {
@@ -174,7 +176,7 @@ function EFilingCases({ path }) {
                   modifiedFormComponent,
                 ];
               }
-              return formComponent;
+              return modifiedFormComponent;
             })
             .flat();
           return {
