@@ -41,7 +41,7 @@ public class EvidenceQueryBuilderTest {
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art WHERE art.id = '1' AND art.caseId = 'testCaseId' AND art.application = 'testApplication' " +
-                "AND art.hearing = 'testHearing' AND art.order = 'testOrder' AND art.sourceId = 'testSourceId' " +
+                "AND art.hearing = 'testHearing' AND art.orders = 'testOrder' AND art.sourceId = 'testSourceId' " +
                 "AND art.sourceName = 'testSourceName' ORDER BY art.createdTime DESC ";
 
         // Calling the method under test

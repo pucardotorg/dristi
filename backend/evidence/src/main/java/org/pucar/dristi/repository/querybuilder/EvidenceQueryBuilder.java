@@ -66,7 +66,7 @@ public class EvidenceQueryBuilder {
 
             if (order != null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("art.order = '").append(order).append("'");
+                query.append("art.orders = '").append(order).append("'");
                 firstCriteria = false;
             }
 
