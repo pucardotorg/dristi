@@ -59,7 +59,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                             heading: AppLocalizations.of(context).translate(i18.userSelection.selectUserTypeText),
                             subHeading: AppLocalizations.of(context).translate(i18.userSelection.selectUserTypeSubText),
                             headingStyle: widget.theme.text24W700(),
-                            subHeadingStyle: widget.theme.text14W400Rob(),
+                            subHeadingStyle: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                           ),
                           RadioListTile(
                             title: Padding(
@@ -71,7 +71,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                             ),
                             subtitle: Text(
                               AppLocalizations.of(context).translate(i18.userSelection.litigantSubText),
-                              style: widget.theme.text12W400(),
+                              style: widget.theme.text12W400()?.apply(color: widget.theme.lightGrey),
                             ),
                             value: 'Litigant',
                             groupValue: selectedOption,
@@ -81,7 +81,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 selectedOption = value;
                               });
                             },
-                            fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
+                            activeColor: widget.theme.defaultColor,
                           ),
                           const SizedBox(height: 15,),
                           const Divider(height: 0, thickness: 1,),
@@ -96,7 +96,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                             ),
                             subtitle: Text(
                               AppLocalizations.of(context).translate(i18.userSelection.advocateSubText),
-                              style: widget.theme.text12W400(),
+                              style: widget.theme.text12W400()?.apply(color: widget.theme.lightGrey),
                             ),
                             value: 'Advocate',
                             groupValue: selectedOption,
@@ -106,7 +106,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 selectedOption = value;
                               });
                             },
-                            fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
+                            activeColor: widget.theme.defaultColor,
                           ),
                           const SizedBox(height: 15,),
                           const Divider(height: 0, thickness: 1,),
@@ -121,7 +121,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                             ),
                             subtitle: Text(
                               AppLocalizations.of(context).translate(i18.userSelection.advocateClerkSubText),
-                              style: widget.theme.text12W400(),
+                              style: widget.theme.text12W400()?.apply(color: widget.theme.lightGrey),
                             ),
                             value: 'Advocate_Clerk',
                             groupValue: selectedOption,
@@ -131,7 +131,7 @@ class UserTypeScreenState extends State<UserTypeScreen> {
                                 selectedOption = value;
                               });
                             },
-                            fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
+                            activeColor: widget.theme.defaultColor,
                           ),
                           const SizedBox(height: 15,),
                           const Divider(height: 0, thickness: 1,),

@@ -69,7 +69,7 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                             subHeading: AppLocalizations.of(context)
                                 .translate(i18.idVerification.csVerifyIdentitySubText),
                             headingStyle: widget.theme.text24W700(),
-                            subHeadingStyle: widget.theme.text14W400Rob(),
+                            subHeadingStyle: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                           ),
                           CheckboxTile(
                             value: firstChecked,

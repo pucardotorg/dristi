@@ -76,12 +76,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
     });
   }
 
-  bool _validateMobile(String value) {
-    final RegExp mobileRegex =
-    RegExp(r'^[6789][0-9]{9}$', caseSensitive: false);
-    return mobileRegex.hasMatch(value);
-  }
-
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -158,7 +152,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                       Text(
                         AppLocalizations.of(context)
                             .translate(i18.login.csWelcome),
-                        style: widget.theme.text14W400Rob(),
+                        style: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                       ),
                       const SizedBox(
                         height: 30,
@@ -208,7 +202,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                     'Mobile number should have 10 digits',
                                     'maxLength': (_) =>
                                     'Mobile number should have 10 digits',
-                                    'pattern': (_) => 'Invalid Mobile Number'
+                                    'pattern': (_) => 'Mobile Number is not valid'
                                   },
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
@@ -245,18 +239,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                         FocusScope.of(context).unfocus();
                                         form.markAllAsTouched();
                                         if (!form.valid) return;
-                                        bool isValidNumber = _validateMobile(
-                                            form
-                                                .control(mobileNumberKey)
-                                                .value);
-                                        if (!isValidNumber) {
-                                          widget.theme.showDigitDialog(
-                                              true,
-                                              "Mobile Number is not valid",
-                                              context);
-
-                                          return;
-                                        }
                                         isSubmitting = true;
                                         context.read<AuthBloc>().add(
                                             AuthEvent.requestOtp(context.read<AuthBloc>().userModel.mobileNumber!, appConstants.login)
@@ -275,14 +257,16 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                             style: widget.theme.text16W400Rob(),
                             children: <TextSpan>[
                               TextSpan(
-                                  text:
-                                  AppLocalizations.of(context)
-                                      .translate(i18.login.csRegisterAccount)),
+                                text: AppLocalizations.of(context)
+                                      .translate(i18.login.csRegisterAccount),
+                                style: widget.theme.text16W400Rob()?.apply(color: widget.theme.lightGrey),
+                              ),
+
                               TextSpan(
                                 text: ' ${AppLocalizations.of(context)
                                     .translate(i18.login.csRegisterLink)}',
                                 style:
-                                TextStyle(fontWeight: FontWeight.bold, color: widget.theme.defaultColor),
+                                TextStyle(fontWeight: FontWeight.bold, color: widget.theme.defaultColor, fontSize: 16),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
                                     AutoRouter.of(context)
@@ -302,14 +286,15 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
               child: RichText(
                   text: TextSpan(
                     style: widget.theme.text14W400Rob(),
-                    children: const <TextSpan>[
+                    children: <TextSpan>[
                       TextSpan(
-                          text:
-                          "Powered by"),
+                          text: "Powered by",
+                        style: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
+                      ),
                       TextSpan(
                         text: ' DRISTI',
                         style:
-                        TextStyle(fontWeight: FontWeight.bold),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: widget.theme.lightGrey),
                       ),
                     ],
                   )
@@ -345,50 +330,59 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            titlePadding: EdgeInsets.only(left: 20),
+            insetPadding: const EdgeInsets.all(15),
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.all(
+                    Radius.circular(5))
+            ),
+            titlePadding: const EdgeInsets.only(left: 20),
             title: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        height: 38,
-                        width: 38,
-                        decoration: const BoxDecoration(
-                          color: Color(0XFF505A5F),
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.close),
-                          color: Colors.white,
-                          onPressed: () {
-                            isSubmitting = false;
-                            _focusNodes = List.generate(6, (index) => FocusNode());
-                            _otpControllers = List.generate(6, (index) => TextEditingController());
-                             isSubmit = false;
-                            _timer?.cancel();
-                            _events.close();
-                            _events = StreamController<int>.broadcast();
-                            _events.add(25);
-                            Navigator.of(context).pop();
-                          },
+                      Expanded(
+                        flex: 7,
+                        child: Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 15),
+                              child: Text(
+                                verifyMobile,
+                                style: widget.theme.text20W700(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, top: 10),
-                        child: Text(
-                          verifyMobile,
-                          style: widget.theme.text24W700(),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: 38,
+                          decoration: const BoxDecoration(
+                            color: Color(0XFF505A5F),
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.close),
+                            color: Colors.white,
+                            onPressed: () {
+                              isSubmitting = false;
+                              _focusNodes = List.generate(6, (index) => FocusNode());
+                              _otpControllers = List.generate(6, (index) => TextEditingController());
+                               isSubmit = false;
+                              _timer?.cancel();
+                              _events.close();
+                              _events = StreamController<int>.broadcast();
+                              _events.add(25);
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ]
             ),
-            actionsPadding: const EdgeInsets.only(left: 60, right: 60, bottom: 20),
             content: StreamBuilder<int>(
                 stream: _events.stream,
                 builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -406,7 +400,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                           ],
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: List.generate(
                             6,
                                 (index) =>
@@ -503,7 +497,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                                width: 150,
+                                width: 120,
                                 child: BlocListener<AuthBloc, AuthState>(
                                   bloc: context.read<AuthBloc>(),
                                   listener: (context, state) {

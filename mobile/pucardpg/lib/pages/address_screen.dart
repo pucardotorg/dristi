@@ -244,6 +244,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     googleAPIKey: kGoogleApiKey,
                                     inputDecoration: InputDecoration(
                                       hintText: AppLocalizations.of(context).translate(i18.address.csSearchPlaceMap),
+                                      hintStyle: widget.theme.text16W400Rob()?.apply(color: widget.theme.hintGrey),
                                       border: InputBorder.none,
                                       enabledBorder: InputBorder.none,
                                     ),
@@ -555,37 +556,41 @@ class AddressScreenState extends State<AddressScreen> {
                       ],
                     ),
                   )),
-              DigitElevatedButton(
-                  onPressed: isSubmitting
-                      ? null
-                      : () {
-                    FocusScope.of(context).unfocus();
-                    form.markAllAsTouched();
-                    if (!form.valid) return;
+              const Divider(height: 0, thickness: 2,),
+              DigitCard(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
+                child: DigitElevatedButton(
+                    onPressed: isSubmitting
+                        ? null
+                        : () {
+                      FocusScope.of(context).unfocus();
+                      form.markAllAsTouched();
+                      if (!form.valid) return;
 
-                    if (form.value[pinCodeKey].toString().isNotEmpty &&
-                        int.parse(form.value[pinCodeKey].toString()) <
-                            100000) {
-                      DigitToast.show(
-                        context,
-                        options: DigitToastOptions(
-                          "Enter valid Pincode",
-                          true,
-                          widget.theme.theme(),
-                        ),
-                      );
-                      return;
-                    }
-                    AutoRouter.of(context)
-                        .push(IdentitySelectionRoute());
-                    isSubmitting = false;
-                  },
-                  child: Text(
-                    AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
-                    style: widget.theme.text20W700()?.apply(
-                      color: Colors.white,
-                    ),
-                  )),
+                      if (form.value[pinCodeKey].toString().isNotEmpty &&
+                          int.parse(form.value[pinCodeKey].toString()) <
+                              100000) {
+                        DigitToast.show(
+                          context,
+                          options: DigitToastOptions(
+                            "Enter valid Pincode",
+                            true,
+                            widget.theme.theme(),
+                          ),
+                        );
+                        return;
+                      }
+                      AutoRouter.of(context)
+                          .push(IdentitySelectionRoute());
+                      isSubmitting = false;
+                    },
+                    child: Text(
+                      AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
+                      style: widget.theme.text20W700()?.apply(
+                        color: Colors.white,
+                      ),
+                    )),
+              ),
             ],
           );
         },

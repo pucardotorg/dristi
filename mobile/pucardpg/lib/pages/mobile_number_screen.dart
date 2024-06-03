@@ -111,7 +111,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                           Text(
                             AppLocalizations.of(context).
                             translate(i18.registerMobile.csEnterMobileSubText),
-                            style: widget.theme.text14W400Rob(),
+                            style: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                           ),
                           const SizedBox(
                             height: 20,
@@ -232,50 +232,55 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            titlePadding: EdgeInsets.only(left: 20),
+            insetPadding: const EdgeInsets.all(15),
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.all(
+                    Radius.circular(5))
+            ),
+            titlePadding: const EdgeInsets.only(left: 20),
             title: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        height: 38,
-                        width: 38,
-                        decoration: const BoxDecoration(
-                          color: Color(0XFF505A5F),
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.close),
-                          color: Colors.white,
-                          onPressed: () {
-                            isSubmitting = false;
-                            _focusNodes = List.generate(6, (index) => FocusNode());
-                            _otpControllers = List.generate(6, (index) => TextEditingController());
-                            isSubmit = false;
-                            _timer?.cancel();
-                            _events.close();
-                            _events = StreamController<int>.broadcast();
-                            _events.add(25);
-                            Navigator.of(context).pop();
-                          },
+                      Expanded(
+                        flex: 7,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: Text(
+                            verifyMobile,
+                            style: widget.theme.text20W700(),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, top: 10),
-                        child: Text(
-                          verifyMobile,
-                          style: widget.theme.text24W700(),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: 38,
+                          decoration: const BoxDecoration(
+                            color: Color(0XFF505A5F),
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.close),
+                            color: Colors.white,
+                            onPressed: () {
+                              isSubmitting = false;
+                              _focusNodes = List.generate(6, (index) => FocusNode());
+                              _otpControllers = List.generate(6, (index) => TextEditingController());
+                              isSubmit = false;
+                              _timer?.cancel();
+                              _events.close();
+                              _events = StreamController<int>.broadcast();
+                              _events.add(25);
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ]
             ),
-            actionsPadding: const EdgeInsets.only(left: 60, right: 60, bottom: 20),
             content: StreamBuilder<int>(
                 stream: _events.stream,
                 builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -293,7 +298,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                         ],
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(
                           6,
                               (index) =>
@@ -390,7 +395,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                              width: 150,
+                              width: 120,
                               child: BlocListener<AuthBloc, AuthState>(
                                 bloc: context.read<AuthBloc>(),
                                 listener: (context, state) {

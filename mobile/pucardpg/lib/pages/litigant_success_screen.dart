@@ -63,7 +63,7 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
                 child: Text(
                   AppLocalizations.of(context)
                       .translate(i18.success.csRegisterSuccessSubText),
-                  style: widget.theme.text14W400Rob(),
+                  style: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                   textAlign: TextAlign.center,
                 ),
               ),

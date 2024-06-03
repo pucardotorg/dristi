@@ -126,7 +126,7 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                   heading: AppLocalizations.of(context).translate(i18.idVerification.csUploadId),
                                   subHeading: AppLocalizations.of(context).translate(i18.idVerification.csUploadIdText),
                                   headingStyle: widget.theme.text24W700(),
-                                  subHeadingStyle: widget.theme.text14W400Rob(),
+                                  subHeadingStyle: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                                 ),
                                 DigitReactiveDropdown(
                                   label: AppLocalizations.of(context).translate(i18.idVerification.csTypeOfId),

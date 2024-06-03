@@ -103,7 +103,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                             heading: AppLocalizations.of(context).translate(i18.idVerification.csEnterAadhar),
                             subHeading: AppLocalizations.of(context).translate(i18.idVerification.csEnterAadharText),
                             headingStyle: widget.theme.text24W700(),
-                            subHeadingStyle: widget.theme.text14W400Rob(),
+                            subHeadingStyle: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -208,49 +208,58 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
         barrierDismissible: false,
         builder: (context) {
           return AlertDialog(
-            titlePadding: EdgeInsets.only(left: 20),
+            insetPadding: const EdgeInsets.all(15),
+            shape: const RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.all(
+                    Radius.circular(5))
+            ),
+            titlePadding: const EdgeInsets.only(left: 20),
             title: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Container(
-                        height: 38,
-                        width: 38,
-                        decoration: const BoxDecoration(
-                          color: Color(0XFF505A5F),
-                        ),
-                        child: IconButton(
-                          icon: Icon(Icons.close),
-                          color: Colors.white,
-                          onPressed: () {
-                            _otpFocusNodes = List.generate(6, (index) => FocusNode());
-                            _otpControllers = List.generate(6, (index) => TextEditingController());
-                            isSubmit = false;
-                            _timer?.cancel();
-                            _events.close();
-                            _events = StreamController<int>.broadcast();
-                            _events.add(25);
-                            Navigator.of(context).pop();
-                          },
+                      Expanded(
+                        flex: 7,
+                        child: Row(
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 15),
+                              child: Text(
+                                verifyAadhar,
+                                style: widget.theme.text20W700(),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 10, top: 10),
-                        child: Text(
-                          verifyAadhar,
-                          style: widget.theme.text24W700(),
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: 38,
+                          decoration: const BoxDecoration(
+                            color: Color(0XFF505A5F),
+                          ),
+                          child: IconButton(
+                            icon: Icon(Icons.close),
+                            color: Colors.white,
+                            onPressed: () {
+                              _otpFocusNodes = List.generate(6, (index) => FocusNode());
+                              _otpControllers = List.generate(6, (index) => TextEditingController());
+                              isSubmit = false;
+                              _timer?.cancel();
+                              _events.close();
+                              _events = StreamController<int>.broadcast();
+                              _events.add(25);
+                              Navigator.of(context).pop();
+                            },
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ]
             ),
-            actionsPadding: const EdgeInsets.only(left: 60, right: 60, bottom: 20),
             content: StreamBuilder<int>(
                 stream: _events.stream,
                 builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
@@ -267,7 +276,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           ],
                         ),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: List.generate(
                             6,
                                 (index) =>
@@ -361,7 +370,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              width: 150,
+                              width: 120,
                               child: DigitElevatedButton(
                                   onPressed: isSubmit
                                       ? null

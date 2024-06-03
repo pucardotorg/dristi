@@ -42,7 +42,7 @@ class CheckboxTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   label,
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: theme.textTheme.bodyMedium,
                 ),
               ),
             ],

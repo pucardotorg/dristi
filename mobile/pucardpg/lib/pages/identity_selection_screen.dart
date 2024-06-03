@@ -61,7 +61,7 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                             heading: AppLocalizations.of(context).translate(i18.idVerification.csVerifyIdentity),
                             subHeading: AppLocalizations.of(context).translate(i18.idVerification.csVerifyIdentitySubText),
                             headingStyle: widget.theme.text24W700(),
-                            subHeadingStyle: widget.theme.text14W400Rob(),
+                            subHeadingStyle: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                           ),
                           Container(
                             padding: const EdgeInsets.all(10),
@@ -77,12 +77,12 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Text(
                                   AppLocalizations.of(context).translate(i18.idVerification.csAadhar),
-                                  style: widget.theme.text20W700(),
+                                  style: widget.theme.text16W700Rob(),
                                 ),
                               ),
                               subtitle: Text(
                                 AppLocalizations.of(context).translate(i18.idVerification.csAadharSubText),
-                                style: widget.theme.text12W400(),
+                                style: widget.theme.text14W400Rob(),
                               ),
                               value: 'AADHAR',
                               groupValue: selectedOption,
@@ -92,7 +92,7 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                                   selectedOption = value;
                                 });
                               },
-                              fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
+                              activeColor: widget.theme.defaultColor,
                             ),
                           ),
                           const SizedBox(height: 20,),
@@ -110,12 +110,12 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: Text(
                                   AppLocalizations.of(context).translate(i18.idVerification.csOther),
-                                  style: widget.theme.text20W700(),
+                                  style: widget.theme.text16W700Rob(),
                                 ),
                               ),
                               subtitle: Text(
                                 AppLocalizations.of(context).translate(i18.idVerification.csOtherSubText),
-                                style: widget.theme.text12W400(),
+                                style: widget.theme.text14W400Rob(),
                               ),
                               value: 'OTHER',
                               groupValue: selectedOption,
@@ -125,7 +125,7 @@ class IdentitySelectionScreenState extends State<IdentitySelectionScreen> {
                                   selectedOption = value;
                                 });
                               },
-                              fillColor: MaterialStatePropertyAll(widget.theme.defaultColor),
+                              activeColor: widget.theme.defaultColor,
                             ),
                           ),
                         ],

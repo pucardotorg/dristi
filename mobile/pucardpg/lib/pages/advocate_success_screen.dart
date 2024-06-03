@@ -61,7 +61,7 @@ class AdvocateSuccessScreenState extends State<AdvocateSuccessScreen> {
                 child: Text(
                   AppLocalizations.of(context)
                       .translate(i18.success.advocateSuccessSubText),
-                  style: widget.theme.text14W400Rob(),
+                  style: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                   textAlign: TextAlign.center,
                 ),
               ),

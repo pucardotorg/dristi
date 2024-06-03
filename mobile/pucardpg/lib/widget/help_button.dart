@@ -11,6 +11,9 @@ class DigitHelpButton extends StatelessWidget with AppMixin{
   @override
   Widget build(BuildContext context) {
     return TextButton(
+      style: ButtonStyle(
+        overlayColor: MaterialStateProperty.all(Colors.white)
+      ),
       onPressed: (){
 
       },

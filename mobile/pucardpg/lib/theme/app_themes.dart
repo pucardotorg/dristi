@@ -16,6 +16,7 @@ class AppTheme{
   Color get defaultColor => const Color(0XFF9E400A);
   Color get defaultButtonColor => const Color(0XFF007E7E);
   Color get lightGrey => const Color(0xFF505A5F);
+  Color get hintGrey => const Color(0xFFB1B4B6);
 
   TextStyle? text32W700RobCon() => DigitTheme.instance.mobileTheme.textTheme.displayMedium;
   TextStyle? text24W700() => DigitTheme.instance.mobileTheme.textTheme.headlineLarge;

@@ -72,7 +72,7 @@ class NameDetailsScreenState extends State<NameDetailsScreen> {
                                     heading: AppLocalizations.of(context).translate(i18.userDetails.csEnterName),
                                     subHeading: AppLocalizations.of(context).translate(i18.userDetails.csEnterNameSubText),
                                     headingStyle: widget.theme.text24W700(),
-                                    subHeadingStyle: widget.theme.text14W400Rob(),
+                                    subHeadingStyle: widget.theme.text14W400Rob()?.apply(color: widget.theme.lightGrey),
                                   ),
                                   DigitTextFormField(
                                     label: AppLocalizations.of(context).translate(i18.userDetails.coreCommonFirstName),
