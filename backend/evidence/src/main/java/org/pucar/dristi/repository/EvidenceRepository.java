@@ -7,6 +7,7 @@
     import org.pucar.dristi.repository.rowmapper.*;
     import org.pucar.dristi.web.models.Artifact;
     import org.pucar.dristi.web.models.Comment;
+    import org.pucar.dristi.web.models.EvidenceSearchCriteria;
     import org.springframework.beans.factory.annotation.Autowired;
     import org.springframework.jdbc.core.JdbcTemplate;
     import org.springframework.stereotype.Repository;
@@ -35,13 +36,13 @@
         @Autowired
         private CommentRowMapper commentRowMapper;
 
-        public List<Artifact> getArtifacts(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName) {
+        public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria) {
             try {
                 List<Artifact> artifactList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 List<Object> preparedStmtListCom = new ArrayList<>();
 
-                String artifactQuery = queryBuilder.getArtifactSearchQuery(id, caseId, application, hearing, order, sourceId, sourceName);
+                String artifactQuery = queryBuilder.getArtifactSearchQuery(evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName());
                 log.info("Final artifact query: {}", artifactQuery);
                 artifactList = jdbcTemplate.query(artifactQuery, evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);

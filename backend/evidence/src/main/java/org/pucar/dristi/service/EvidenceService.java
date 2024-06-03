@@ -10,6 +10,8 @@ import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.validators.EvidenceValidator;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
+import org.pucar.dristi.web.models.EvidenceSearchCriteria;
+import org.pucar.dristi.web.models.EvidenceSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -58,23 +60,24 @@ public class EvidenceService {
             throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.getMessage());
         }
     }
-    public List<Artifact> searchEvidence(String id,String tenantId, String caseId, String application, String hearing, String order, String sourceId, String sourceName, RequestInfo requestInfo) {
-
+    public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Artifact> artifacts = repository.getArtifacts(id, caseId, application, hearing, order, sourceId, sourceName);
+            List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
 
             // If no applications are found matching the given criteria, return an empty list
-            if (CollectionUtils.isEmpty(artifacts))
+            if(CollectionUtils.isEmpty(artifacts))
                 return new ArrayList<>();
-
-            artifacts.forEach(artifact -> artifact.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, artifact.getArtifactNumber()))));
-
+            artifacts.forEach(artifact -> artifact.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, artifact.getTenantId(), artifact.getArtifactNumber()))));
             return artifacts;
-
-        } catch (Exception e) {
+        }
+        catch (CustomException e){
+            log.error("Custom Exception occurred while searching");
+            throw e;
+        }
+        catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION", e.getMessage());
+            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION",e.getMessage());
         }
     }
 

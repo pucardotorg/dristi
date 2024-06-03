@@ -12,10 +12,13 @@ import org.pucar.dristi.repository.EvidenceRepository;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.Artifact;
 import org.pucar.dristi.web.models.EvidenceRequest;
+import org.pucar.dristi.web.models.EvidenceSearchCriteria;
 import org.pucar.dristi.web.models.RequestInfoWrapper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,27 +69,60 @@ public class EvidenceValidatorTest {
     }
 
     @Test
-    void validateApplicationExistence_ExistingApplication() {
-        // Mock repository to return existing application
-        List<Artifact> existingApplications = new ArrayList<>();
-        existingApplications.add(new Artifact());
-        when(repository.getArtifacts(any(), any(), any(), any(), any(),  any(),any())).thenReturn(existingApplications);
+    void testValidateApplicationExistence_Success() {
+        // Create test data
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        evidenceRequest.setRequestInfo(requestInfo);
 
-        // Execute the method
+        Artifact artifact = new Artifact();
+        artifact.setCaseId("testCaseId");
+        artifact.setApplication("testApplication");
+        artifact.setHearing("testHearing");
+        artifact.setOrder("testOrder");
+        artifact.setSourceID("testSourceId");
+        artifact.setSourceName("testSourceName");
+        evidenceRequest.setArtifact(artifact);
+
+        List<Artifact> existingApplications = Collections.singletonList(new Artifact());
+
+        // Mock repository response
+        when(repository.getArtifacts(any(EvidenceSearchCriteria.class))).thenReturn(existingApplications);
+
+        // Execute the method under test
         Artifact result = evidenceValidator.validateApplicationExistence(evidenceRequest);
 
-        // Assertions
+        // Verify and assert
         assertNotNull(result);
+        verify(repository, times(1)).getArtifacts(any(EvidenceSearchCriteria.class));
     }
 
     @Test
-    void validateApplicationExistence_NonExistingApplication() {
-        // Mock repository to return empty list (no existing application)
-        when(repository.getArtifacts(any(), any(), any(), any(),any(), any(), any())).thenReturn(new ArrayList<>());
+    void testValidateApplicationExistence_NoExistingApplication() {
+        // Create test data
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        evidenceRequest.setRequestInfo(requestInfo);
 
-        // Execute the method and assert CustomException
-        CustomException exception = assertThrows(CustomException.class, () -> evidenceValidator.validateApplicationExistence(evidenceRequest));
+        Artifact artifact = new Artifact();
+        artifact.setCaseId("testCaseId");
+        artifact.setApplication("testApplication");
+        artifact.setHearing("testHearing");
+        artifact.setOrder("testOrder");
+        artifact.setSourceID("testSourceId");
+        artifact.setSourceName("testSourceName");
+        evidenceRequest.setArtifact(artifact);
+
+        // Mock repository response
+        when(repository.getArtifacts(any(EvidenceSearchCriteria.class))).thenReturn(new ArrayList<>());
+
+        // Execute the method under test and assert exception
+        CustomException exception = assertThrows(CustomException.class, () ->
+                evidenceValidator.validateApplicationExistence(evidenceRequest));
+
+        assertEquals("VALIDATION EXCEPTION", exception.getCode());
         assertEquals("Evidence does not exist", exception.getMessage());
+        verify(repository, times(1)).getArtifacts(any(EvidenceSearchCriteria.class));
     }
 }
 
