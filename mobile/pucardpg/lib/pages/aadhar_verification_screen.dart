@@ -12,6 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import 'package:pucardpg/widget/digit_elevated_card.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import 'package:pucardpg/widget/digit_toast_revised.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
@@ -156,13 +158,9 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                 ),
               ),
             ),
-            const Divider(
-              height: 0,
-              thickness: 2,
-            ),
-            DigitCard(
-              padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-              child: DigitElevatedButton(
+            DigitElevatedCard(
+              margin: EdgeInsets.zero,
+              child: DigitElevatedRevisedButton(
                   onPressed: () {
                     String aadharNumber = '';
                     for (var controller in _aadharControllers) {
@@ -186,9 +184,6 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                   },
                   child: Text(
                     AppLocalizations.of(context).translate(i18.common.coreCommonGetOtp),
-                    style: widget.theme.text20W700()?.apply(
-                      color: Colors.white,
-                    ),
                   )),
             ),
           ],
@@ -371,7 +366,7 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                           children: [
                             Container(
                               width: 120,
-                              child: DigitElevatedButton(
+                              child: DigitElevatedRevisedButton(
                                   onPressed: isSubmit
                                       ? null
                                       : () {
@@ -398,9 +393,6 @@ class AadharVerificationScreenState extends State<AadharVerificationScreen> {
                                   },
                                   child: Text(
                                     verify,
-                                    style: widget.theme.text20W700()?.apply(
-                                      color: Colors.white,
-                                    ),
                                   )),
                             ),
                           ],

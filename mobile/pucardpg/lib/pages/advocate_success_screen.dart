@@ -9,6 +9,7 @@ import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/utils/constants.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 
 @RoutePage()
@@ -68,7 +69,7 @@ class AdvocateSuccessScreenState extends State<AdvocateSuccessScreen> {
               const SizedBox(
                 height: 40,
               ),
-              DigitElevatedButton(
+              DigitElevatedRevisedButton(
                   onPressed: (){
                     AutoRouter.of(context)
                         .push(ApplicationDetailsRoute());
@@ -76,9 +77,6 @@ class AdvocateSuccessScreenState extends State<AdvocateSuccessScreen> {
                   child: Text(
                     AppLocalizations.of(context)
                         .translate(i18.success.viewMyApplication),
-                    style: widget.theme.text20W700()?.apply(
-                      color: Colors.white,
-                    ),
                   )
               ),
             ],

@@ -18,6 +18,7 @@ import 'package:pucardpg/mixin/app_mixin.dart';
 import 'package:pucardpg/model/advocate-clerk-registration-model/advocate_clerk_registration_model.dart';
 import 'package:pucardpg/model/advocate-registration-model/advocate_registration_model.dart';
 import 'package:pucardpg/model/litigant-registration-model/litigant_registration_model.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/utils/constants.dart';
@@ -232,7 +233,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
 
                                     );
                                   },
-                                  child: DigitElevatedButton(
+                                  child: DigitElevatedRevisedButton(
                                       onPressed: isSubmitting
                                           ? null
                                           : () {
@@ -655,7 +656,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                         },
                                     );
                                   },
-                                  child: DigitElevatedButton(
+                                  child: DigitElevatedRevisedButton(
                                       onPressed: isSubmit
                                           ? null
                                           : () {
@@ -685,9 +686,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                       },
                                       child: Text(
                                         verify,
-                                        style: widget.theme.text20W700()?.apply(
-                                          color: Colors.white,
-                                        ),
                                       )),
                                 )
                             ),

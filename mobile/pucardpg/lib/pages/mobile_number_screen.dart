@@ -12,6 +12,8 @@ import 'package:flutter/services.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import 'package:pucardpg/widget/digit_elevated_card.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/routes/routes.dart';
 import 'package:pucardpg/widget/back_button.dart';
@@ -169,7 +171,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                         ),
                       )
                   ),
-                  const Divider(height: 0, thickness: 2,),
                   BlocListener<AuthBloc, AuthState>(
                     bloc: context.read<AuthBloc>(),
                     listener: (context, state) {
@@ -194,9 +195,9 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                     },
                     child: BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, authState){
-                        return DigitCard(
-                          padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                          child: DigitElevatedButton(
+                        return DigitElevatedCard(
+                          margin: EdgeInsets.zero,
+                          child: DigitElevatedRevisedButton(
                               onPressed: isSubmitting
                                   ? null
                                   : () {
@@ -440,7 +441,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                       },
                                   );
                                 },
-                                child: DigitElevatedButton(
+                                child: DigitElevatedRevisedButton(
                                     onPressed: isSubmit
                                         ? null
                                         : () {
@@ -469,9 +470,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                                     },
                                     child: Text(
                                       verify,
-                                      style: widget.theme.text20W700()?.apply(
-                                        color: Colors.white,
-                                      ),
                                     )),
                               )
                           ),

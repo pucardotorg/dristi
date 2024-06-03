@@ -19,6 +19,8 @@ import 'package:google_places_flutter/model/prediction.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import 'package:pucardpg/widget/digit_elevated_card.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:pucardpg/model/pin-address-model/pin_address_model.dart';
 import 'package:pucardpg/routes/routes.dart';
@@ -556,10 +558,9 @@ class AddressScreenState extends State<AddressScreen> {
                       ],
                     ),
                   )),
-              const Divider(height: 0, thickness: 2,),
-              DigitCard(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                child: DigitElevatedButton(
+              DigitElevatedCard(
+                margin: EdgeInsets.zero,
+                child: DigitElevatedRevisedButton(
                     onPressed: isSubmitting
                         ? null
                         : () {
@@ -586,9 +587,6 @@ class AddressScreenState extends State<AddressScreen> {
                     },
                     child: Text(
                       AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
-                      style: widget.theme.text20W700()?.apply(
-                        color: Colors.white,
-                      ),
                     )),
               ),
             ],

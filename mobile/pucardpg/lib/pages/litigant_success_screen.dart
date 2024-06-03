@@ -2,6 +2,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -70,13 +71,12 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
               const SizedBox(
                 height: 40,
               ),
-              DigitElevatedButton(
+              DigitElevatedRevisedButton(
                   onPressed: () {
 
                   },
                   child: Text(AppLocalizations.of(context)
-                      .translate(i18.success.fileACase),
-                    style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                      .translate(i18.success.fileACase))
               ),
               Container(
                 margin: const EdgeInsets.only(

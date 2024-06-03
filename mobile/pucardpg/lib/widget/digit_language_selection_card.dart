@@ -1,6 +1,7 @@
 import 'package:digit_components/digit_components.dart';
 import 'package:digit_components/models/digit_row_card/digit_row_card_model.dart';
 import 'package:flutter/material.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import 'package:pucardpg/widget/digit_language_row_card.dart';
 
 class DigitLanguageSelectionCard extends StatelessWidget {
@@ -46,7 +47,7 @@ class DigitLanguageSelectionCard extends StatelessWidget {
             height: 24,
             width: 0,
           ),
-          DigitElevatedButton(
+          DigitElevatedRevisedButton(
             onPressed: onLanguageSubmit,
             child: Center(
                 child: Text(

@@ -10,6 +10,8 @@ import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/data/secure_storage/secureStore.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import 'package:pucardpg/widget/digit_elevated_card.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:dio/dio.dart';
 import 'package:pucardpg/routes/routes.dart';
@@ -131,7 +133,6 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 ),
               ),
             ),
-            const Divider(height: 0, thickness: 2,),
             BlocListener<AuthBloc, AuthState>(
               bloc: context.read<AuthBloc>(),
               listener: (context, state) {
@@ -176,9 +177,9 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                   }
                 );
               },
-              child: DigitCard(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                child: DigitElevatedButton(
+              child: DigitElevatedCard(
+                margin: EdgeInsets.zero,
+                child: DigitElevatedRevisedButton(
                     onPressed: isSubmitting
                         ? null
                         : () {
@@ -196,9 +197,6 @@ class TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     child: Text(
                       AppLocalizations.of(context)
                           .translate(i18.common.coreCommonContinue),
-                      style: widget.theme.text20W700()?.apply(
-                        color: Colors.white,
-                      ),
                     )),
               ),
             )

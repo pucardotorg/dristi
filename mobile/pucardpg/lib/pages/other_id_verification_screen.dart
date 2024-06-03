@@ -18,6 +18,8 @@ import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
 import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/blocs/file-picker-bloc/file_picker.dart';
 import 'package:pucardpg/mixin/app_mixin.dart';
+import 'package:pucardpg/widget/digit_elevated_card.dart';
+import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import 'package:pucardpg/widget/display_image.dart';
 import 'package:pucardpg/widget/display_pdf.dart';
 import '../utils/i18_key_constants.dart' as i18;
@@ -333,10 +335,9 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                       ),
                     ),
                   ),
-                  const Divider(height: 0, thickness: 2,),
-                  DigitCard(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                    child: DigitElevatedButton(
+                  DigitElevatedCard(
+                    margin: EdgeInsets.zero,
+                    child: DigitElevatedRevisedButton(
                         onPressed: isEnable
                             ? () {
                           FocusScope.of(context).unfocus();
@@ -357,8 +358,7 @@ class OtherIdVerificationScreenState extends State<OtherIdVerificationScreen> {
                                 .push(UserTypeRoute());
                           }
                         } : null,
-                        child: Text(AppLocalizations.of(context).translate(i18.common.coreCommonContinue),
-                          style: widget.theme.text20W700()?.apply(color: Colors.white, ),)
+                        child: Text(AppLocalizations.of(context).translate(i18.common.coreCommonContinue))
                     ),
                   ),
                 ],
