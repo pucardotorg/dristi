@@ -58,7 +58,7 @@ const TopBarSideBar = ({
         logoUrl={logoUrl}
         showLanguageChange={showLanguageChange}
       />
-      {/* {showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}
+      {showDialog && <LogoutDialog onSelect={handleOnSubmit} onCancel={handleOnCancel} onDismiss={handleOnCancel}></LogoutDialog>}
       {showSidebar && (
         <SideBar
           t={t}
@@ -71,7 +71,7 @@ const TopBarSideBar = ({
           linkData={linkData}
           islinkDataLoading={islinkDataLoading}
         />
-      )} */}
+      )}
     </React.Fragment>
   );
 };
