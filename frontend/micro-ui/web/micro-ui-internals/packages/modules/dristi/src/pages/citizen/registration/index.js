@@ -102,11 +102,6 @@ const Registration = ({ stateCode }) => {
     "",
     userInfo?.uuid && isUserLoggedIn
   );
-  const individualId = data?.Individual?.[0]?.individualId;
-
-  if (Boolean(individualId)) {
-    history.push(`/${window?.contextPath}/citizen/dristi/home`);
-  }
   const handleAadharOtpChange = (aadharOtp) => {
     setNewParams({ ...newParams, aadharOtp });
   };
