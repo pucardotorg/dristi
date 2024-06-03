@@ -121,21 +121,67 @@ function EFilingCases({ path }) {
     if (!isDependentEnabled) {
       return formdata.map(() => formConfig);
     }
-    return formdata.map(({ data }) => {
-      return formConfig.filter((config) => {
-        const dependentKeys = config?.dependentKey;
-        if (!dependentKeys) {
-          return config;
-        }
-        let show = true;
-        for (const key in dependentKeys) {
-          const nameArray = dependentKeys[key];
-          for (const name of nameArray) {
-            show = show && Boolean(data?.[key]?.[name]);
+
+    return formdata.map(({ data }, index) => {
+      return formConfig
+        .filter((config) => {
+          const dependentKeys = config?.dependentKey;
+          if (!dependentKeys) {
+            return config;
           }
-        }
-        return show && config;
-      });
+          let show = true;
+          for (const key in dependentKeys) {
+            const nameArray = dependentKeys[key];
+            for (const name of nameArray) {
+              show = show && Boolean(data?.[key]?.[name]);
+            }
+          }
+          return show && config;
+        })
+        .map((config) => {
+          // const { scrutiny } = caseData.additionalDetails;
+          const scrutiny = {
+            complaintDetails: {
+              scrutinyMessage: "",
+              form: [
+                {
+                  firstName: "Name does not match",
+                  lastname: "Doest not match",
+                },
+                {},
+              ],
+            },
+            respondentDetails: {
+              scrutinyMessage: "",
+              form: [{}, {}],
+            },
+          };
+          const updatedBody = config.body
+            .map((formComponent) => {
+              const key = formComponent.key || formComponent.populators?.name;
+              if (key in scrutiny[selected].form[index]) {
+                const modifiedFormComponent = structuredClone(formComponent);
+                modifiedFormComponent.withoutLabel = true;
+                return [
+                  {
+                    type: "component",
+                    component: "ScrutinyInfo",
+                    key: "firstNameScrutiny",
+                    populators: {
+                      scrutinyMessage: scrutiny[selected].form[index][key],
+                    },
+                  },
+                  modifiedFormComponent,
+                ];
+              }
+              return formComponent;
+            })
+            .flat();
+          return {
+            ...config,
+            body: updatedBody,
+          };
+        });
     });
   }, [isDependentEnabled, formdata, formConfig]);
 
