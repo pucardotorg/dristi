@@ -258,6 +258,8 @@ public class CaseRepository {
                 }
             }
             return searchCriteria;
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error while fetching case application list");
             throw new CustomException(SEARCH_CASE_ERR, "Error while fetching case application list: " + e.getMessage());
@@ -277,8 +279,11 @@ public class CaseRepository {
                 }
             }
             return caseExistsRequest;
+        }
+        catch(CustomException e){
+            throw e;
         } catch (Exception e) {
-            log.error("Error while checking case exist");
+            log.error("Error while checking case exist ", e.toString());
             throw new CustomException(SEARCH_CASE_ERR, "Custom exception while checking case exist : " + e.getMessage());
         }
     }

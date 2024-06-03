@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository.rowmapper;
 
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,6 +76,13 @@ class LitigantDocumentRowMapperTest {
         when(resultSet.next()).thenThrow(new SQLException("Database error"));
 
         assertThrows(Exception.class, () -> rowMapper.extractData(resultSet));
+    }
+
+    @Test
+    void testExtractData_CustomException() throws Exception {
+        when(resultSet.next()).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> rowMapper.extractData(resultSet));
     }
 
 }

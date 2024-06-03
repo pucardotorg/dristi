@@ -8,6 +8,7 @@ import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
 import org.egov.common.contract.workflow.State;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -72,7 +73,7 @@ public class WorkflowServiceTest {
     }
 
     @Test
-    void updateWorkflowStatus_Exception() {
+    void updateWorkflowStatus_CustomException() {
         // Mock AdvocateRequest
         CourtCase courtCase = new CourtCase();
         courtCase.setCaseNumber("APP001");
@@ -90,7 +91,32 @@ public class WorkflowServiceTest {
         ProcessInstanceResponse workflowRequest = new ProcessInstanceResponse(new ResponseInfo(), Collections.singletonList(processInstance));
 
         // Mock repository.fetchResult
-        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(RuntimeException.class);
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException("Custom error", ""));
+
+        // Execute the method
+        assertThrows(CustomException.class, () -> {workflowService.updateWorkflowStatus(caseRequest);
+        });
+    }
+
+    @Test
+    void updateWorkflowStatus_Exception() {
+        // Mock AdvocateRequest
+        CourtCase courtCase = new CourtCase();
+        courtCase.setCaseNumber("APP001");
+        courtCase.setTenantId("tenant1");
+
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(courtCase);
+        courtCase.setWorkflow(Workflow.builder().action("APPROVE").build());
+
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(new State());
+
+        // Mock repository.fetchResult
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new RuntimeException());
 
         // Execute the method
         assertThrows(Exception.class, () -> {workflowService.updateWorkflowStatus(caseRequest);

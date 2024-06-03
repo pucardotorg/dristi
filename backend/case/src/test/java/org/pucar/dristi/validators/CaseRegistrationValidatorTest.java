@@ -356,49 +356,51 @@ public class CaseRegistrationValidatorTest {
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
     }
 
-//    @Test
-//    void testValidateApplicationExistence_ExistingApplication_INDIVIDUAL_NOT_FOUND() {
-//        CourtCase courtCase = new CourtCase();
-//        courtCase.setTenantId("pg");
-//        courtCase.setCaseCategory("civil");
-//        Document document = new Document();
-//        document.setFileStore("123");
-//        courtCase.setDocuments(List.of(document));
-//        AdvocateMapping advocateMapping = new AdvocateMapping();
-//        advocateMapping.setAdvocateId("123");
-//        courtCase.setRepresentatives(List.of(advocateMapping));
-//        Party party = new Party();
-//        party.setIndividualId("123");
-//        courtCase.setLitigants(List.of(party));
-//        LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
+    @Test
+    void testValidateApplicationExistence_ExistingApplication_INDIVIDUAL_NOT_FOUND() {
+        CourtCase courtCase = new CourtCase();
+        courtCase.setTenantId("pg");
+        courtCase.setCaseCategory("civil");
+        Document document = new Document();
+        document.setFileStore("123");
+        courtCase.setDocuments(List.of(document));
+        AdvocateMapping advocateMapping = new AdvocateMapping();
+        advocateMapping.setAdvocateId("123");
+        courtCase.setRepresentatives(List.of(advocateMapping));
+        Party party = new Party();
+        party.setIndividualId("123");
+        courtCase.setLitigants(List.of(party));
+        LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
 //        courtCase.setLinkedCases(List.of(linkedCase));
-//        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
-//        courtCase.setFilingDate(LocalDate.parse("2021-12-12"));
-//        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
-//        mdmsRes.put("case", new HashMap<>());
-//        List<String> masterList = new ArrayList<>();
-//        masterList.add("ComplainantType");
-//        masterList.add("CaseCategory");
-//        masterList.add("PaymentMode");
-//        masterList.add("ResolutionMechanism");
-//
-//        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
-//        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
-//        CaseCriteria caseCriteria = new CaseCriteria();
-//        caseCriteria.setCaseId(linkedCase.getId().toString());
-//        caseCriteriaList.add(caseCriteria);
-//        caseSearchRequest.setRequestInfo(new RequestInfo());
-//        caseSearchRequest.setCriteria(caseCriteriaList);
-//
-////        when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
-//
-//        when(individualService.searchIndividual(any(), any())).thenReturn(false);
-//
-////        when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-////                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
-//
-//        assertThrows(Exception.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
-//    }
+        courtCase.setStatutesAndSections(List.of(new StatuteSection()));
+        courtCase.setFilingDate(LocalDate.parse("2021-12-12"));
+        Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
+        mdmsRes.put("case", new HashMap<>());
+        List<String> masterList = new ArrayList<>();
+        masterList.add("ComplainantType");
+        masterList.add("CaseCategory");
+        masterList.add("PaymentMode");
+        masterList.add("ResolutionMechanism");
+
+        CaseSearchRequest caseSearchRequest = new CaseSearchRequest();
+        List<CaseCriteria> caseCriteriaList = new ArrayList<>();
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setCaseId(linkedCase.getId().toString());
+        caseCriteriaList.add(caseCriteria);
+        caseSearchRequest.setRequestInfo(new RequestInfo());
+        caseSearchRequest.setCriteria(caseCriteriaList);
+
+        when(mdmsUtil.fetchMdmsData(new RequestInfo(),"pg","case", masterList)).thenReturn(mdmsRes);
+
+        when(individualService.searchIndividual(new RequestInfo(), "123")).thenThrow(new CustomException());
+        caseService.searchCases(caseSearchRequest);
+        when(configuration.getCaseBusinessServiceName()).thenReturn("case");
+
+        when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+
+        assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
+    }
 
     @Test
     void testValidateApplicationExistence_ExistingApplicationMissingCaseCategory() {

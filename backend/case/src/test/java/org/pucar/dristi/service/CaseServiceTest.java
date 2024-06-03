@@ -100,19 +100,37 @@ public class CaseServiceTest {
     }
 
     @Test
-    void testSearchCases_Exception() {
+    void testSearchCases_CustomException() {
         when(caseRepository.getApplications(any())).thenThrow(CustomException.class);
 
         assertThrows(CustomException.class, () -> caseService.searchCases(caseSearchRequest));
     }
 
     @Test
-    void testRegisterCaseRequest_Exception() {
+    void testSearchCases_Exception() {
+        when(caseRepository.getApplications(any())).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> caseService.searchCases(caseSearchRequest));
+    }
+
+    @Test
+    void testRegisterCaseRequest_CustomException() {
         // Setup
         doThrow(new CustomException("VALIDATION", "Validation failed")).when(validator).validateCaseRegistration(any(CaseRequest.class));
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> {
+            caseService.createCase(caseRequest);
+        });
+    }
+
+    @Test
+    void testRegisterCaseRequest_Exception() {
+        // Setup
+        doThrow(new RuntimeException()).when(validator).validateCaseRegistration(any(CaseRequest.class));
+
+        // Execute & Assert
+        assertThrows(Exception.class, () -> {
             caseService.createCase(caseRequest);
         });
     }
@@ -138,12 +156,36 @@ public class CaseServiceTest {
     }
 
     @Test
-    void testUpdateCase_ValidationException() {
+    void testUpdateCase_Validation_ExistenceException() {
+        // Setup
+        CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
+        caseRequest.setCases(courtCase);
+
+        when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenReturn(false);
+
+        // Execute & Assert
+        assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
+    }
+
+    @Test
+    void testUpdateCase_Validation_CustomException() {
         // Setup
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
         when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
+
+        // Execute & Assert
+        assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
+    }
+
+    @Test
+    void testUpdateCase_Validation_Exception() {
+        // Setup
+        CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
+        caseRequest.setCases(courtCase);
+
+        when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenThrow(new RuntimeException());
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
@@ -187,12 +229,21 @@ public class CaseServiceTest {
     }
 
     @Test
-    void testExistCases_Exception() {
+    void testExistCases_CustomException() {
         // Setup
-        when(caseRepository.checkCaseExists(any())).thenThrow(new RuntimeException("Database error"));
+        when(caseRepository.checkCaseExists(any())).thenThrow(new CustomException("Error code", "Error msg"));
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.existCases(caseExistsRequest));
+    }
+
+    @Test
+    void testExistCases_Exception() {
+        // Setup
+        when(caseRepository.checkCaseExists(any())).thenThrow(new RuntimeException());
+
+        // Execute & Assert
+        assertThrows(Exception.class, () -> caseService.existCases(caseExistsRequest));
     }
 
 

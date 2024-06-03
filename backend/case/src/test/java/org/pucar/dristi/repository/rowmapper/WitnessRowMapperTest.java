@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository.rowmapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -83,5 +84,12 @@ public class WitnessRowMapperTest {
         when(resultSet.next()).thenThrow(new SQLException("Database error"));
 
         assertThrows(Exception.class, () -> witnessRowMapper.extractData(resultSet));
+    }
+
+    @Test
+    void testExtractData_CustomException() throws Exception {
+        when(resultSet.next()).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> witnessRowMapper.extractData(resultSet));
     }
 }

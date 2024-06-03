@@ -61,5 +61,12 @@ class CaseRowMapperTest {
 
         assertThrows(Exception.class, () -> rowMapper.extractData(rs));
     }
+
+    @Test
+    void testExtractData_CustomException() throws Exception {
+        when(rs.next()).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
+    }
 }
 

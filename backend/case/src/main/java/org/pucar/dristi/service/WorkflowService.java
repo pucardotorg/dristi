@@ -45,6 +45,8 @@ public class WorkflowService {
                 String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
                 log.info("Application Status :: {}", applicationStatus);
                 caseRequest.getCases().setStatus(applicationStatus);
+            } catch(CustomException e){
+                throw e;
             } catch (Exception e) {
                 log.error("Error updating workflow status: {}", e.getMessage());
                 throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,"Error updating workflow status: "+e.getMessage());
@@ -57,13 +59,15 @@ public class WorkflowService {
             log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.getMessage());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.getMessage());
         }
     }
 
-    private ProcessInstance getProcessInstance(CourtCase courtCase, RequestInfo requestInfo) {
+    public ProcessInstance getProcessInstance(CourtCase courtCase, RequestInfo requestInfo) {
         try {
             Workflow workflow = courtCase.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -149,6 +153,8 @@ public class WorkflowService {
                     .requestInfo(updateRequest.getRequestInfo())
                     .processInstances(Arrays.asList(process))
                     .build();
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for case registration payment: {}", e.getMessage());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());

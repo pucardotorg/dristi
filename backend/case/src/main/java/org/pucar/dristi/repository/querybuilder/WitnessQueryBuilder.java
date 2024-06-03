@@ -79,8 +79,7 @@ public class WitnessQueryBuilder {
             query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Error while building witness search query");
             throw new CustomException(WITNESS_SEARCH_QUERY_EXCEPTION,"Error occurred while building the witness search query: "+ e.getMessage());
         }
