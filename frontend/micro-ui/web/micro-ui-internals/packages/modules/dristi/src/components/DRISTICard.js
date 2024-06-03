@@ -63,33 +63,31 @@ const DRISTICard = () => {
   }
 
   return (
-    <div style={{ alignContent: "center", width: "100%" }}>
-      <Card className="main-card-home">
-        <Header className="main-card-header">{"What do you wish to do?"}</Header>
-        <div className="main-inner-div">
-          <CustomCard
-            label={"View Registrations"}
-            subLabel={"Review new platform registration requests from Advocates"}
-            buttonLabel={"View Requests"}
-            className="custom-card-style"
-            // showNumber={String(clerkData?.clerks?.length + advocateData?.advocates?.length) || 35}
-            onClick={() => {
-              history.push("/digit-ui/employee/dristi/registration-requests");
-            }}
-          ></CustomCard>
-          <CustomCard
-            label={"View Cases"}
-            subLabel={"Explore cases and support on-going case queries"}
-            buttonLabel={"View Cases"}
-            className="custom-card-style"
-            // showNumber={749}
-            onClick={() => {
-              history.push("/digit-ui/employee/dristi/cases");
-            }}
-          ></CustomCard>
-        </div>
-      </Card>
-    </div>
+    <Card className="main-card-home">
+      <Header className="main-card-header">{"What do you wish to do?"}</Header>
+      <div className="main-inner-div">
+        <CustomCard
+          label={"View Registrations"}
+          subLabel={"Review new platform registration requests from Advocates"}
+          buttonLabel={"View Requests"}
+          className="custom-card-style"
+          // showNumber={String(clerkData?.clerks?.length + advocateData?.advocates?.length) || 35}
+          onClick={() => {
+            history.push("/digit-ui/employee/dristi/registration-requests");
+          }}
+        ></CustomCard>
+        <CustomCard
+          label={"View Cases"}
+          subLabel={"Explore cases and support on-going case queries"}
+          buttonLabel={"View Cases"}
+          className="custom-card-style"
+          // showNumber={749}
+          onClick={() => {
+            history.push("/digit-ui/employee/dristi/cases");
+          }}
+        ></CustomCard>
+      </div>
+    </Card>
   );
 };
 

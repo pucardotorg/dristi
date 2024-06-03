@@ -109,12 +109,12 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
                     Info={
                       code === "OBPS"
                         ? () => (
-                            <CitizenInfoLabel
-                              style={{ margin: "0px", padding: "10px" }}
-                              info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                              text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
-                            />
-                          )
+                          <CitizenInfoLabel
+                            style={{ margin: "0px", padding: "10px" }}
+                            info={t("CS_FILE_APPLICATION_INFO_LABEL")}
+                            text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
+                          />
+                        )
                         : null
                     }
                     isInfo={code === "OBPS" ? true : false}
@@ -132,10 +132,10 @@ const EmployeeHome = ({ modules, additionalComponent }) => {
   return (
     <>
       <div className="employee-app-container">
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "5px" }}>
+        {/* <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "5px" }}>
           <span style={{ color: "#007E7E" }}>Help</span>
           <HelpOutlineIcon />
-        </div>
+        </div> */}
         <div className="ground-container moduleCardWrapper gridModuleWrapper">
           {modules.map(({ code }, index) => {
             const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
