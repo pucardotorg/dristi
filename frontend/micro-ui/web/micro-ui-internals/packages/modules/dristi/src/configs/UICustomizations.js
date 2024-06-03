@@ -217,6 +217,9 @@ export const UICustomizations = {
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
+        case "User Name":
+          const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
+          return displayName;
         default:
           return t("ES_COMMON_NA");
       }

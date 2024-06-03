@@ -111,7 +111,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
         tenantId: tenantId,
         name: {
           givenName: data?.name?.firstName,
-          familyName: data?.name?.name,
+          familyName: data?.name?.lastName,
           otherNames: data?.name?.middleName,
         },
         userDetails: {
