@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Urls } from ".";
 import { ServiceRequest } from "../Utils";
 
-const setCitizenDetail = (userObject, token, tenantId) => {
+export const setCitizenDetail = (userObject, token, tenantId) => {
   let locale = JSON.parse(sessionStorage.getItem("Digit.initData"))?.value?.selectedLanguage;
   localStorage.setItem("Citizen.tenant-id", tenantId);
   localStorage.setItem("tenant-id", tenantId);
@@ -33,19 +33,17 @@ const authenticate = async (details) => {
   }
   return authResponse;
 };
-
+export const getUserDetails = async (refreshToken) => {
+  const mobileNumber = window?.Digit.UserService.getUser()?.info?.mobileNumber;
+  const response = await authenticate({
+    username: mobileNumber,
+    grant_type: "refresh_token",
+    tenantId: window?.Digit.ULBService.getStateId(),
+    refresh_token: refreshToken,
+  });
+  return response;
+};
 export function useGetAccessToken(key) {
-  const getUserDetails = async (refreshToken) => {
-    const mobileNumber = window?.Digit.UserService.getUser()?.info?.mobileNumber;
-    const response = await authenticate({
-      username: mobileNumber,
-      grant_type: "refresh_token",
-      tenantId: window?.Digit.ULBService.getStateId(),
-      refresh_token: refreshToken,
-    });
-    return response;
-  };
-
   useEffect(() => {
     const refreshToken = window.localStorage.getItem(key);
     if (refreshToken) {

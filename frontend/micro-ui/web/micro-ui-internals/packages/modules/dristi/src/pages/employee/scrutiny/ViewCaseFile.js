@@ -6,9 +6,9 @@ import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewca
 function ViewCaseFile({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const onSubmit = () => {};
-  const onSaveDraft = () => {};
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {};
+  const onSubmit = () => { };
+  const onSaveDraft = () => { };
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => { };
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -27,7 +27,7 @@ function ViewCaseFile({ t }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => {}}>
+              <div className="header-icon" onClick={() => { }}>
                 <CustomArrowDownIcon />
               </div>
             </div>
@@ -43,7 +43,7 @@ function ViewCaseFile({ t }) {
             }}
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
-            cardClassName={`e-filing-card-form-style`}
+            cardClassName={`e-filing-card-form-style review-case-file`}
             secondaryLabel={t("CS_SAVE_DRAFT")}
             showSecondaryLabel={true}
             actionClassName="e-filing-action-bar"

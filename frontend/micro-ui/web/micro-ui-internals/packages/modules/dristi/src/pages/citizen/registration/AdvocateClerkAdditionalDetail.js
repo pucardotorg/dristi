@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
+import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
 function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOnRefresh }) {
   const { t } = useTranslation();
@@ -159,67 +160,22 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
             })
               .then(() => {
                 setShowSuccess(true);
-                history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                const refreshToken = window.localStorage.getItem("citizen.refresh-token");
+                if (refreshToken) {
+                  getUserDetails(refreshToken).then((res) => {
+                    const { ResponseInfo, UserRequest: info, ...tokens } = res;
+                    const user = { info, ...tokens };
+                    window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                    window?.Digit.UserService.setUser(user);
+                    setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
+                    history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                  });
+                }
               })
               .catch(() => {
                 history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
               });
           });
-        } else {
-          const requestBody = {
-            [data?.selectUserType?.apiDetails?.requestKey]: {
-              tenantId: tenantId,
-              individualId: result?.Individual?.individualId,
-              isActive: false,
-              workflow: {
-                action: "REGISTER",
-                comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
-                documents: [
-                  {
-                    id: null,
-                    documentType: null,
-                    fileStore: null,
-                    documentUid: "",
-                    additionalDetails: {},
-                  },
-                ],
-                assignes: [],
-                rating: null,
-              },
-              documents: [
-                {
-                  id: null,
-                  documentType: null,
-                  fileStore: null,
-                  documentUid: "",
-                  additionalDetails: {},
-                },
-              ],
-              additionalDetails: {
-                username: data?.userDetails?.firstName + " " + data?.userDetails?.lastName,
-              },
-              ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                res[curr] = "DEFAULT_VALUE";
-                return res;
-              }, {}),
-            },
-          };
-          Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
-            roles: [
-              {
-                name: "Citizen",
-                code: "CITIZEN",
-                tenantId: tenantId,
-              },
-            ],
-          })
-            .then(() => {
-              setShowSuccess(true);
-              history.push(`/${window?.contextPath}/citizen/dristi/home`);
-            })
-            .catch(() => {
-              history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
-            });
         }
       })
       .catch(() => {
@@ -242,7 +198,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     history.push(pathOnRefresh);
   }
   return (
-    <div className="employee-card-wrapper">
+    <div className="advocate-additional-details">
       <FormComposerV2
         config={advocateClerkConfig}
         t={t}
@@ -251,13 +207,9 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         }}
         isDisabled={isDisabled}
         label={"CS_COMMON_CONTINUE"}
-        headingStyle={{ textAlign: "center" }}
-        sectionHeadStyle={{ fontSize: "30px" }}
         defaultValues={{ ...params?.registrationData } || {}}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
         submitInForm
         onFormValueChange={onFormValueChange}
-        buttonStyle={{ margin: "20px", minWidth: "500px" }}
       ></FormComposerV2>
 
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}

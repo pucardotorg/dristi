@@ -112,7 +112,7 @@ const ApplicationDetails = ({ location, match }) => {
   ]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
     return searchResult?.[0]?.documents?.[0]?.fileStore;
@@ -131,7 +131,7 @@ const ApplicationDetails = ({ location, match }) => {
   function takeAction(action) {
     const applications = searchResult;
     applications[0].workflow.action = action;
-    const data = { [userTypeDetail?.apiDetails?.requestKey]: applications };
+    const data = { [userTypeDetail?.apiDetails?.requestKey]: applications?.[0] };
     const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/advocate/v1/_update";
     if (showModal) {
       applications[0].workflow.comments = reasons;
@@ -236,7 +236,7 @@ const ApplicationDetails = ({ location, match }) => {
             <DocumentDetailCard cardData={aadharData} />
             <DocumentDetailCard cardData={personalData} />
           </div>
-          {type === "advocate" && (
+          {type === "advocate" && userType !== "ADVOCATE_CLERK" && (
             <div className="application-bar-info">
               <DocumentDetailCard cardData={barDetails} />
             </div>

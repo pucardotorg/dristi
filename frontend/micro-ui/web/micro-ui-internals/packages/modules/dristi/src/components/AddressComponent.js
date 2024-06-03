@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
 import LocationSearch from "./LocationSearch";
+import { ReactComponent as SmallInfoIcon } from "../images/smallInfoIcon.svg";
+
 import Axios from "axios";
 const getLocation = (places, code) => {
   let location = null;
@@ -21,7 +23,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
       ],
     [config?.populators?.inputs]
   );
-  const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
+  const [coordinateData, setCoordinateData] = useState({ callback: () => { } });
 
   const getLatLngByPincode = async (pincode) => {
     const response = await Axios.get(
@@ -151,19 +153,19 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                         isFirstRender && formData[config.key]
                           ? formData[config.key]["locality"]
                           : (() => {
-                              const plusCode = getLocation(location, "plus_code");
-                              const neighborhood = getLocation(location, "neighborhood");
-                              const sublocality_level_1 = getLocation(location, "sublocality_level_1");
-                              const sublocality_level_2 = getLocation(location, "sublocality_level_2");
-                              return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
-                                .reduce((result, current) => {
-                                  if (current) {
-                                    result.push(current);
-                                  }
-                                  return result;
-                                }, [])
-                                .join(", ");
-                            })(),
+                            const plusCode = getLocation(location, "plus_code");
+                            const neighborhood = getLocation(location, "neighborhood");
+                            const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                            const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                            return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                              .reduce((result, current) => {
+                                if (current) {
+                                  result.push(current);
+                                }
+                                return result;
+                              }, [])
+                              .join(", ");
+                          })(),
                       coordinates,
                       buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
                       doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
@@ -176,6 +178,10 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
             </div>
           );
         })}
+      <div className="user-address-map-info">
+        <SmallInfoIcon></SmallInfoIcon>
+        <span>{t("MOVE_PIN_ON_MAP_MESSAGE")}</span>
+      </div>
       <div className="address-card-input">
         {inputs
           .filter((input) => input.type !== "LocationSearch")
@@ -197,15 +203,15 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                     defaultValue={undefined}
                     {...input.validation}
                   />
+                  {currentValue &&
+                    currentValue.length > 0 &&
+                    input.validation &&
+                    !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
+                      <CardLabelError>
+                        {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}
+                      </CardLabelError>
+                    )}
                 </div>
-                {currentValue &&
-                  currentValue.length > 0 &&
-                  input.validation &&
-                  !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
-                    </CardLabelError>
-                  )}
               </React.Fragment>
             );
           })}

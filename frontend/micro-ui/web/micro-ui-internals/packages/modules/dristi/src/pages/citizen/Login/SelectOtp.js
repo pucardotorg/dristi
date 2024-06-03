@@ -1,5 +1,5 @@
 import { CardLabel, CardLabelError, CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
@@ -92,11 +92,28 @@ const SelectOtp = ({
     );
   }
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      onSelect();
+    }
+  };
+
+  const onModalSubmit = () => {
+    onSelect();
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={onCancel} isMobileView={false} />}
       actionSaveLabel={t("VERIFY")}
-      actionSaveOnSubmit={onSelect}
+      actionSaveOnSubmit={onModalSubmit}
       isDisabled={!(otp?.length === 6 && canSubmit)}
       formId="modal-action"
       headerBarMain={
@@ -119,12 +136,10 @@ const SelectOtp = ({
         </div>
         <div className="message">
           <p>
-            {
-              timeLeft > 0 ?
-                <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span>
-                : ""
-            }
-            <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`}>{t("CS_RESEND_OTP")}</span>
+            {timeLeft > 0 ? <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span> : ""}
+            <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`} onClick={handleResendOtp}>
+              {t("CS_RESEND_OTP")}
+            </span>
           </p>
         </div>
         {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
