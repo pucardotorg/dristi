@@ -269,9 +269,9 @@ const Registration = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/user-name`}>
             <SelectName
-              config={stepItems[3]}
+              config={[stepItems[3]]}
               t={t}
-              onSelect={selectName}
+              onSubmit={selectName}
               params={newParams}
               history={history}
               value={newParams?.name}

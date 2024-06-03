@@ -53,14 +53,24 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
 
     numberOfFiles > 0
       ? onDocumentUpload(filesData[0][1]?.file, filesData[0][0]).then((document) => {
-        setFileName(filesData[0][0]);
+          setFileName(filesData[0][0]);
 
-        setFileStoreID(document.file?.files?.[0]?.fileStoreId);
-        setShowDoc(true);
-      })
+          setFileStoreID(document.file?.files?.[0]?.fileStoreId);
+          setShowDoc(true);
+        })
       : setShowDoc(false);
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
+
+  const showDocument = useMemo(() => {
+    return (
+      <div>
+        <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
+        </div>
+      </div>
+    );
+  }, [fileStoreId, tenantId, fileName]);
 
   return (
     <React.Fragment>
@@ -70,7 +80,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-              ? formData &&
+            ? formData &&
               formData[config.key] &&
               Array.isArray(input.dependentKey[input.isDependentOn]) &&
               input.dependentKey[input.isDependentOn].reduce((res, curr) => {
@@ -78,7 +88,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                 res = formData[config.key][input.isDependentOn][curr];
                 return res;
               }, true)
-              : true;
+            : true;
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
@@ -127,8 +137,8 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                   !["documentUpload", "radioButton"].includes(input.type) &&
                   input.validation &&
                   !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                    <CardLabelError style={{ width: "100%", marginTop: "5px", fontSize: "16px", marginBottom: "12px" }}>
+                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "INVALID_BAR_REG_NUMBER")}</span>
                     </CardLabelError>
                   )}
               </div>
@@ -137,13 +147,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
           </React.Fragment>
         );
       })}
-      {showDoc && (
-        <div>
-          <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
-          </div>
-        </div>
-      )}
+      {showDoc && showDocument}
     </React.Fragment>
   );
 };
