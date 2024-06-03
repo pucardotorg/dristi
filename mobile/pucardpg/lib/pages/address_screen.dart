@@ -369,11 +369,10 @@ class AddressScreenState extends State<AddressScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     DigitTextFormField(
-                                      padding: const EdgeInsets.only(top: 0),
+                                      padding: const EdgeInsets.only(top: 2),
                                       formControlName: pinCodeKey,
                                       label: AppLocalizations.of(context).translate(i18.address.pincode),
                                       keyboardType: TextInputType.number,
-                                      maxLength: 6,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.pincode =
                                             value.value.toString();
@@ -388,14 +387,14 @@ class AddressScreenState extends State<AddressScreen> {
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
                                             RegExp("[0-9]")),
+                                        LengthLimitingTextInputFormatter(6),
                                       ],
                                     ),
                                     DigitTextFormField(
-                                      padding: const EdgeInsets.only(top: 0),
+                                      padding: const EdgeInsets.only(top: 10),
                                       formControlName: stateKey,
                                       label: AppLocalizations.of(context).translate(i18.address.state),
                                       keyboardType: TextInputType.text,
-                                      maxLength: 128,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.state =
                                             value.value.toString();
@@ -406,17 +405,17 @@ class AddressScreenState extends State<AddressScreen> {
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
                                             RegExp(r'^[a-zA-Z][a-zA-Z ]*')),
+                                        LengthLimitingTextInputFormatter(128),
                                       ],
                                       validationMessages: {
                                         'required': (_) => 'State is required',
                                       },
                                     ),
                                     DigitTextFormField(
-                                      padding: const EdgeInsets.only(top: 0),
+                                      padding: const EdgeInsets.only(top: 10),
                                       formControlName: districtKey,
                                       label: AppLocalizations.of(context).translate(i18.address.district),
                                       keyboardType: TextInputType.text,
-                                      maxLength: 128,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.district =
                                             value.value.toString();
@@ -427,17 +426,17 @@ class AddressScreenState extends State<AddressScreen> {
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
                                             RegExp(r'^[a-zA-Z][a-zA-Z ]*')),
+                                        LengthLimitingTextInputFormatter(128),
                                       ],
                                       validationMessages: {
                                         'required': (_) => 'District is required',
                                       },
                                     ),
                                     DigitTextFormField(
-                                      padding: const EdgeInsets.only(top: 0),
+                                      padding: const EdgeInsets.only(top: 10),
                                       formControlName: cityKey,
                                       label: AppLocalizations.of(context).translate(i18.address.cityTown),
                                       keyboardType: TextInputType.text,
-                                      maxLength: 128,
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.city =
                                             value.value.toString();
@@ -448,6 +447,7 @@ class AddressScreenState extends State<AddressScreen> {
                                       inputFormatters: [
                                         FilteringTextInputFormatter.allow(
                                             RegExp(r'^[a-zA-Z][a-zA-Z ]*')),
+                                        LengthLimitingTextInputFormatter(128),
                                       ],
                                       validationMessages: {
                                         'required': (_) => 'City is required',
@@ -507,7 +507,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     //   },
                                     // ),
                                     DigitTextFormField(
-                                        padding: const EdgeInsets.only(top: 0),
+                                        padding: const EdgeInsets.only(top: 10),
                                         formControlName: localityKey,
                                         label: AppLocalizations.of(context).translate(i18.address.localityStreet),
                                         onChanged: (value) {
@@ -515,7 +515,6 @@ class AddressScreenState extends State<AddressScreen> {
                                               value.value.toString();
                                         },
                                         minLength: 2,
-                                        maxLength: 128,
                                         validationMessages: {
                                           'required': (_) =>
                                           'Locality / Street name / Area is required',
@@ -526,10 +525,11 @@ class AddressScreenState extends State<AddressScreen> {
                                         },
                                         inputFormatters: [
                                           FilteringTextInputFormatter.allow(
-                                              RegExp(r"^(?! ).*[a-zA-Z0-9 .,\/\\-_@#']"))
+                                              RegExp(r"^(?! ).*[a-zA-Z0-9 .,\/\\-_@#']")),
+                                          LengthLimitingTextInputFormatter(128),
                                         ]),
                                     DigitTextFormField(
-                                        padding: const EdgeInsets.only(top: 0),
+                                        padding: const EdgeInsets.only(top: 10),
                                         formControlName: doorNoKey,
                                         label: AppLocalizations.of(context).translate(i18.address.buildingDoorNo),
                                         onChanged: (value) {
@@ -538,7 +538,6 @@ class AddressScreenState extends State<AddressScreen> {
                                         },
                                         keyboardType: TextInputType.text,
                                         minLength: 2,
-                                        maxLength: 128,
                                         validationMessages: {
                                           'required': (_) =>
                                           'Door number is required',
@@ -549,7 +548,8 @@ class AddressScreenState extends State<AddressScreen> {
                                         },
                                         inputFormatters: [
                                           FilteringTextInputFormatter.allow(
-                                              RegExp(r"^(?! ).*[a-zA-Z0-9 .,\/\\-_@#']"))
+                                              RegExp(r"^(?! ).*[a-zA-Z0-9 .,\/\\-_@#']")),
+                                          LengthLimitingTextInputFormatter(128),
                                         ]),
                                   ]),
                             ),

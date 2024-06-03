@@ -144,7 +144,6 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                               ),
                             ),
                             formControlName: mobileNumberKey,
-                            maxLength: 10,
                             onChanged: (val) {
                               context.read<AuthBloc>().userModel.mobileNumber = val.value.toString();
                             },
@@ -162,6 +161,7 @@ class MobileNumberScreenState extends State<MobileNumberScreen> {
                             inputFormatters: [
                               FilteringTextInputFormatter.allow(
                                   RegExp(r'[0-9]')),
+                              LengthLimitingTextInputFormatter(10),
                             ],
                           ),
                           const SizedBox(

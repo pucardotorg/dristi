@@ -127,18 +127,22 @@ class AdvocateRegistrationScreenState extends State<AdvocateRegistrationScreen> 
                             headingStyle: widget.theme.text24W700(),
                             subHeadingStyle: widget.theme.text14W400Rob(),
                           ),
-                          DigitTextField(
+                          LabeledField(
+                            labelStyle: Theme.of(context).textTheme.bodyLarge,
                             label: AppLocalizations.of(context).translate(i18.advocateVerification.barRegistrationNumber),
-                            controller: TextEditingController(text: context.read<AuthBloc>().userModel.barRegistrationNumber ?? ''),
-                            onChange: (val) {
-                              context.read<AuthBloc>().userModel.barRegistrationNumber = val;
-                            },
-                            inputFormatter: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp("[a-zA-Z0-9\\/\\']"))
-                            ],
-                            maxLength: 20,
-                            textCapitalization: TextCapitalization.characters,
+                            child: TextFormField(
+                              controller: TextEditingController(text: context.read<AuthBloc>().userModel.barRegistrationNumber ?? ''),
+                              onChanged: (val) {
+                                context.read<AuthBloc>().userModel.barRegistrationNumber = val;
+                              },
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(
+                                    RegExp("[a-zA-Z0-9\\/\\']")),
+                                LengthLimitingTextInputFormatter(20),
+                              ],
+                              textCapitalization: TextCapitalization.characters,
+                              keyboardType: TextInputType.text,
+                            ),
                           ),
                           const SizedBox(height: 20,),
                           Row(

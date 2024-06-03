@@ -190,7 +190,6 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                     ),
                                   ),
                                   formControlName: mobileNumberKey,
-                                  maxLength: 10,
                                   onChanged: (val) {
                                     context.read<AuthBloc>().userModel.mobileNumber = val.value.toString();
                                   },
@@ -208,6 +207,7 @@ class LoginNumberScreenState extends State<LoginNumberScreen> {
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp(r'[0-9]')),
+                                    LengthLimitingTextInputFormatter(10),
                                   ],
                                 ),
                                 BlocListener<AuthBloc, AuthState>(
