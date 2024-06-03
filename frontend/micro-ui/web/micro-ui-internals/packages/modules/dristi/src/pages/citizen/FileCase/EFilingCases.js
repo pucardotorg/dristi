@@ -168,7 +168,8 @@ function EFilingCases({ path }) {
                   {
                     type: "component",
                     component: "ScrutinyInfo",
-                    key: "firstNameScrutiny",
+                    key: `${key}.scrutiny`,
+                    label: modifiedFormComponent.label,
                     populators: {
                       scrutinyMessage: scrutiny[selected].form[index][key],
                     },
