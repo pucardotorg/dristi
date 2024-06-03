@@ -20,10 +20,16 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
-  const [isPopupOpen, setIsPopupOpen] = useState(true);
-  const [popupInfo, setPopupInfo] = useState({ position: { top: 0, left: 0 }, name: "", index: null });
   const [scrutinyError, setScrutinyError] = useState("");
   const ref = useRef();
+  const popupInfo = useMemo(() => {
+    return formData?.scrutinyMessage?.popupInfo;
+  }, [formData]);
+
+  const isPopupOpen = useMemo(() => {
+    return popupInfo?.configKey === config.key;
+  }, [config.key, popupInfo]);
+
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -36,26 +42,28 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     [config?.populators?.inputs]
   );
 
-  function setValue(value, input) {
+  useEffect(() => {
+    if (isPopupOpen && popupInfo) {
+      const { name = null, configKey = null, index = null, fieldName = null } = popupInfo;
+      setScrutinyError(
+        fieldName
+          ? formData?.[configKey]?.[name]?.formData?.[index]?.[fieldName]?.FSOError
+          : formData?.[configKey]?.[name]?.scrutinyMessage?.FSOError || ""
+      );
+    }
+  }, [isPopupOpen, popupInfo]);
+
+  function setValue(configkey, value, input) {
     if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
+      onSelect(configkey, {
+        ...formData[configkey],
         ...input.reduce((res, curr) => {
           res[curr] = value[curr];
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else onSelect(configkey, { ...formData[configkey], [input]: value });
   }
-
-  useEffect(() => {
-    const names = inputs.map((item) => item.name);
-    const values = inputs.reduce((acc, item) => {
-      acc[item.name] = { scrutinyMessage: "", form: item.data.map(() => ({})) };
-      return acc;
-    }, {});
-    setValue(values, names);
-  }, [inputs]);
 
   const Icon = ({ icon }) => {
     switch (icon) {
@@ -80,23 +88,42 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     }
   };
   const handleOpenPopup = (clickref, configKey, name, index = null, fieldName) => {
-    console.debug({ name, index, fieldName, configKey });
-    setPopupInfo({
-      position: {
-        top: 0,
-        left: 0,
+    setValue(
+      "scrutinyMessage",
+      {
+        position: {
+          top: 0,
+          left: 0,
+        },
+        name,
+        index,
+        fieldName,
+        configKey,
       },
-      name,
-      index,
-      fieldName,
-      configKey,
-    });
-    setIsPopupOpen(true);
+      "popupInfo"
+    );
   };
 
   const handleClosePopup = () => {
+    const { name, configKey, index, fieldName } = popupInfo;
+    let currentMessage =
+      formData && formData[configKey]
+        ? { ...formData[config.key]?.[name] }
+        : {
+            scrutinyMessage: "",
+            form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
+          };
+    if (index == null) {
+      currentMessage.scrutinyMessage = { FSOError: "" };
+    } else {
+      currentMessage.form[index] = {
+        ...currentMessage.form[index],
+        [fieldName]: { FSOError: "" },
+      };
+    }
     setScrutinyError("");
-    setIsPopupOpen(false);
+    setValue(config.key, currentMessage, name);
+    setValue("scrutinyMessage", null, "popupInfo");
   };
 
   const handleAddError = () => {
@@ -116,8 +143,8 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         [fieldName]: { FSOError: scrutinyError },
       };
     }
-    setValue(currentMessage, name);
-    setIsPopupOpen(false);
+    setValue(config.key, currentMessage, name);
+    setValue("scrutinyMessage", null, "popupInfo");
     setScrutinyError("");
   };
   return (
@@ -162,23 +189,12 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       }}
                       key={index}
                     >
-                      <FlagIcon style={{ fill: "blue" }} />
+                      <FlagIcon />
                     </div>
                   )}
                 </div>
                 {sectionValue?.scrutinyMessage?.FSOError && (
-                  <div
-                    style={{
-                      display: "flex",
-                      padding: "5px",
-                      borderRadius: "10px",
-                      background: "#FCE8E8",
-                      justifyContent: "flex-start",
-                      alignItems: "center",
-                      gap: "20px",
-                      width: "50%",
-                    }}
-                  >
+                  <div className="scrutiny-error section">
                     <FlagIcon isError={true} />
                     {sectionValue?.scrutinyMessage?.FSOError}
                   </div>

@@ -167,6 +167,13 @@ export const reviewCaseFileFormConfig = [
           ],
         },
       },
+      {
+        key: "scrutinyMessage",
+        type: "component",
+        withoutLabel: true,
+        component: "SelectEmptyComponent",
+        populators: {},
+      },
     ],
   },
 ];

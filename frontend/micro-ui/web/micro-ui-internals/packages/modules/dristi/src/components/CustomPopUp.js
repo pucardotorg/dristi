@@ -7,7 +7,7 @@ function CustomPopUp({ children, onClose, position }) {
   };
 
   return (
-    <div className="pop-up-class" onClick={onClose} style={{ width: "300px", height: "200px" }}>
+    <div className="pop-up-class" onClick={onClose}>
       <div className="popup" style={popupStyle} onClick={(e) => e.stopPropagation()}>
         {onClose && <span className="close" onClick={onClose}></span>}
         {children}

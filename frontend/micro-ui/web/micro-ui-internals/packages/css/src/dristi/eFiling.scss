@@ -549,6 +549,24 @@
           flex-direction: column;
           gap: 16px;
 
+          .scrutiny-error {
+            display: flex !important;
+            padding: 5px 16px;
+            border-radius: 10px;
+            justify-content: flex-start !important;
+            gap: 10px !important;
+            align-items: center !important;
+            width: 50%;
+
+            &.input {
+              background: white;
+            }
+
+            &.section {
+              background: #FFEBEE;
+            }
+          }
+
           .item-header {
             display: flex !important;
             justify-content: space-between;

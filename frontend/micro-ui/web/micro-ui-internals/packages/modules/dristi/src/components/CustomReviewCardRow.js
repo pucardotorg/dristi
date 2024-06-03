@@ -1,8 +1,9 @@
 import React, { useRef } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
+import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 
-const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey }) => {
+const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError }) => {
   const ref = useRef();
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
@@ -29,18 +30,26 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
         title = extractValue(data, value);
       }
       return (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div className="title">{`${titleIndex}. ${title}`}</div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={() => {
-                handleOpenPopup(ref, configKey, name, dataIndex, "title");
-              }}
-              key={dataIndex}
-              ref={ref}
-            >
-              <FlagIcon />
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="title">{`${titleIndex}. ${title}`}</div>
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={() => {
+                  handleOpenPopup(ref, configKey, name, dataIndex, "title");
+                }}
+                key={dataIndex}
+                ref={ref}
+              >
+                {dataError ? <EditPencilIcon /> : <FlagIcon />}
+              </div>
+            )}
+          </div>
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
             </div>
           )}
         </div>
@@ -48,41 +57,58 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
     case "text":
       const textValue = extractValue(data, value);
       return (
-        <div className="text">
-          <div className="label">{label}</div>
-          <div className="value">
-            {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
-            {!Array.isArray(textValue) && textValue}
+        <div>
+          <div className="text">
+            <div className="label">{label}</div>
+            <div className="value">
+              {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
+              {!Array.isArray(textValue) && textValue}
+            </div>
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={() => {
+                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+                ref={ref}
+              >
+                <FlagIcon />
+              </div>
+            )}
           </div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={() => {
-                handleOpenPopup(ref, configKey, name, dataIndex, value);
-              }}
-              key={dataIndex}
-              ref={ref}
-            >
-              <FlagIcon />
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
             </div>
           )}
         </div>
       );
+
     case "amount":
       return (
-        <div className="amount">
-          <div className="label">{label}</div>
-          <div className="value"> {`₹${extractValue(data, value)}`} </div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={() => {
-                handleOpenPopup(ref, configKey, name, dataIndex, value);
-              }}
-              key={dataIndex}
-              ref={ref}
-            >
-              <FlagIcon />
+        <div>
+          <div className="amount">
+            <div className="label">{label}</div>
+            <div className="value"> {`₹${extractValue(data, value)}`} </div>
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={() => {
+                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+                ref={ref}
+              >
+                <FlagIcon />
+              </div>
+            )}
+          </div>
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
             </div>
           )}
         </div>
@@ -90,33 +116,49 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
     case "phonenumber":
       const numbers = extractValue(data, value);
       return (
-        <div className="phone-number">
-          <div className="label">{label}</div>
-          <div className="value">
-            {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-            {!Array.isArray(numbers) && `+91-${numbers}`}
+        <div>
+          <div className="phone-number">
+            <div className="label">{label}</div>
+            <div className="value">
+              {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
+              {!Array.isArray(numbers) && `+91-${numbers}`}
+            </div>
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={() => {
+                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+                ref={ref}
+              >
+                <FlagIcon />
+              </div>
+            )}
           </div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={() => {
-                handleOpenPopup(ref, configKey, name, dataIndex, value);
-              }}
-              key={dataIndex}
-              ref={ref}
-            >
-              <FlagIcon />
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
             </div>
           )}
         </div>
       );
     case "image":
       return (
-        <div className="image">
-          <div className="label">{label}</div>
-          <div className="value">
-            <DocViewerWrapper />
+        <div>
+          <div className="image">
+            <div className="label">{label}</div>
+            <div className="value">
+              <DocViewerWrapper />
+            </div>
           </div>
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
+            </div>
+          )}
         </div>
       );
     case "address":
@@ -133,22 +175,30 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       }
 
       return (
-        <div className="address">
-          <div className="label">{label}</div>
-          <div>
-            {address.map((item) => (
-              <div className="value">{item}</div>
-            ))}
+        <div>
+          <div className="address">
+            <div className="label">{label}</div>
+            <div>
+              {address.map((item) => (
+                <div className="value">{item}</div>
+              ))}
+            </div>
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={() => {
+                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+              >
+                <FlagIcon />
+              </div>
+            )}
           </div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={() => {
-                handleOpenPopup(ref, configKey, name, dataIndex, value);
-              }}
-              key={dataIndex}
-            >
-              <FlagIcon />
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
             </div>
           )}
         </div>
@@ -156,23 +206,29 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
     default:
       const defaulValue = extractValue(data, value);
       return (
-        <div className="text">
-          <div className="label">{label}</div>
-          <div className="value">
-            {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
-            {!Array.isArray(defaulValue) && defaulValue}
-          </div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={() => {
-                handleOpenPopup(ref, configKey, name, dataIndex, value);
-              }}
-              key={dataIndex}
-            >
-              <FlagIcon />
+        <div>
+          <div className="text">
+            <div className="label">{label}</div>
+            <div className="value">
+              {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
+              {!Array.isArray(defaulValue) && defaulValue}
             </div>
-          )}
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={() => {
+                  handleOpenPopup(ref, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+              >
+                <FlagIcon />
+              </div>
+            )}
+          </div>
+          <div className="scrutiny-error input">
+            <FlagIcon isError={true} />
+            {dataError}
+          </div>
         </div>
       );
   }
