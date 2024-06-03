@@ -61,16 +61,16 @@ function CitizenHome({ tenantId }) {
   }, [userType]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`][0]?.responseList;
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
 
   const isApprovalPending = useMemo(() => {
     return (
       userType !== "LITIGANT" &&
       Array.isArray(searchResult) &&
-      searchResult.length > 0 &&
-      searchResult[0]?.isActive === false &&
-      searchResult[0]?.status !== "INACTIVE"
+      searchResult?.length > 0 &&
+      searchResult?.[0]?.isActive === false &&
+      searchResult?.[0]?.status !== "INACTIVE"
     );
   }, [searchResult, userType]);
 
@@ -78,9 +78,9 @@ function CitizenHome({ tenantId }) {
     return (
       userType !== "LITIGANT" &&
       Array.isArray(searchResult) &&
-      searchResult.length > 0 &&
-      searchResult[0]?.isActive === false &&
-      searchResult[0]?.status === "INACTIVE"
+      searchResult?.length > 0 &&
+      searchResult?.[0]?.isActive === false &&
+      searchResult?.[0]?.status === "INACTIVE"
     );
   }, [searchResult, userType]);
 
