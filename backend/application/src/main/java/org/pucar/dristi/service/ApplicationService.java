@@ -65,7 +65,7 @@ public class ApplicationService {
             // Enrich application upon update
             enrichmentUtil.enrichApplicationUponUpdate(applicationRequest);
 
-//            workflowService.updateWorkflowStatus(applicationRequest);// TODO check
+            workflowService.updateWorkflowStatus(applicationRequest);
 
             producer.push(config.getApplicationUpdateTopic(), applicationRequest);
 
