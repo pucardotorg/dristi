@@ -23,9 +23,11 @@ import java.util.List;
 @Builder
 public class AdvocateSearchRequest {
 	@JsonProperty("RequestInfo")
-
-	@Valid
+	@javax.validation.Valid
 	private RequestInfo requestInfo = null;
+
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
 	@JsonProperty("criteria")
 	@Valid

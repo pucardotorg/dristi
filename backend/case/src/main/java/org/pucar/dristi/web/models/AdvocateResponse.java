@@ -23,19 +23,18 @@ import java.util.List;
 @Builder
 public class AdvocateResponse {
 	@JsonProperty("responseInfo")
-
 	@Valid
 	private ResponseInfo responseInfo = null;
 
 	@JsonProperty("advocates")
 	@Valid
-	private List<Advocate> advocates = new ArrayList<>();
+	private List<Advocate> advocates = null;
 
-	@JsonProperty("pagination")
-	@Valid
-	private Pagination pagination = null;
 
 	public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
+		if (this.advocates == null) {
+			this.advocates = new ArrayList<>();
+		}
 		this.advocates.add(advocatesItem);
 		return this;
 	}
