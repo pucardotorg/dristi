@@ -47,6 +47,8 @@ public class WorkflowService {
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
             log.info("Application Status :: {}", applicationStatus);
             advocate.setStatus(applicationStatus);
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e) {
             log.error("Error updating workflow status: {}", e.toString());
@@ -60,6 +62,8 @@ public class WorkflowService {
             log.info("Workflow Response :: {}", optional);
             ProcessInstanceResponse response = mapper.convertValue(optional, ProcessInstanceResponse.class);
             return response.getProcessInstances().get(0).getState();
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error calling workflow: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -78,6 +82,8 @@ public class WorkflowService {
             String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
             log.info("Application Status :: {}", applicationStatus);
             advocateClerk.setStatus(applicationStatus);
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error updating workflow status: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -110,6 +116,8 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for ADVOCATE: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION,e.toString());
@@ -142,6 +150,8 @@ public class WorkflowService {
                 processInstance.setAssignes(users);
             }
             return processInstance;
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting process instance for ADVOCATE: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
@@ -156,6 +166,8 @@ public class WorkflowService {
             if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
                 return response.getProcessInstances().get(0);
             return null;
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error getting current workflow: {}", e.getMessage());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());

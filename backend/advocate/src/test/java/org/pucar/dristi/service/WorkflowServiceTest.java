@@ -8,6 +8,7 @@ import org.egov.common.contract.response.ResponseInfo;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
 import org.egov.common.contract.workflow.State;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -92,8 +93,22 @@ public class WorkflowServiceTest {
         processInstance.setState(new State());
 
         // Mock repository.fetchResult
-        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(RuntimeException.class);
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException());
 
+        // Execute the method
+        assertThrows(CustomException.class, () -> {workflowService.updateWorkflowStatus(advocateRequest);
+        });
+    }
+
+    @Test
+    void updateWorkflowStatus_Exception() {
+        // Mock AdvocateRequest
+        Advocate advocate = new Advocate();
+        advocate.setApplicationNumber("APP001");
+        advocate.setTenantId("tenant1");
+        advocate.setWorkflow(Workflow.builder().action("APPROVE").build());
+
+        AdvocateRequest advocateRequest = null;
         // Execute the method
         assertThrows(Exception.class, () -> {workflowService.updateWorkflowStatus(advocateRequest);
         });
@@ -128,28 +143,49 @@ public class WorkflowServiceTest {
     }
 
     @Test
-    void updateWorkflowStatusClerk_Exception() {
-        // Arrange
-        RequestInfo requestInfo = new RequestInfo();
-        User userInfo = new User();
-        userInfo.setType("EMPLOYEE");
-        userInfo.setUuid(UUID.randomUUID().toString());
-        requestInfo.setUserInfo(userInfo);
-
-        AdvocateClerk advocateClerk = new AdvocateClerk();
-        Workflow workflow = new Workflow();
-        workflow.setAction("APPLY");
-        workflow.setComments("Comments");
+    void updateWorkflowStatusClerk_CustomException() {
+        // Mock AdvocateRequest
+        AdvocateClerk advocate = new AdvocateClerk();
+        advocate.setApplicationNumber("APP001");
+        advocate.setTenantId("tenant1");
         List<String> list = new ArrayList<>();
         list.add("assigne1");
-        workflow.setAssignes(list);
-        advocateClerk.setWorkflow(workflow);
+        advocate.setWorkflow(Workflow.builder().action("APPROVE").assignes(list).build());
 
-        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerkRequest advocateRequest = new AdvocateClerkRequest();
+        advocateRequest.setClerk(advocate);
+
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(new State());
+        ProcessInstanceResponse workflowRequest = new ProcessInstanceResponse(new ResponseInfo(), Collections.singletonList(processInstance));
+
+        // Mock repository.fetchResult
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new CustomException());
 
         // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            workflowService.updateWorkflowStatus(advocateRequest);
+        });
+    }
+
+    @Test
+    void updateWorkflowStatusClerk_Exception() {
+        // Mock AdvocateRequest
+        AdvocateClerk advocate = new AdvocateClerk();
+        advocate.setApplicationNumber("APP001");
+        advocate.setTenantId("tenant1");
+        List<String> list = new ArrayList<>();
+        list.add("assigne1");
+        advocate.setWorkflow(Workflow.builder().action("APPROVE").assignes(list).build());
+
+        AdvocateClerkRequest advocateRequest = new AdvocateClerkRequest();
+        advocateRequest.setClerk(null);
+
         assertThrows(Exception.class, () -> {
-            workflowService.updateWorkflowStatus(advocateClerkRequest);
+            workflowService.updateWorkflowStatus(advocateRequest);
         });
     }
 
