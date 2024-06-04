@@ -24,7 +24,15 @@ const SUPPORTED_FILE_FORMATS = [
   ".xls",
 ];
 
-const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename, selectedDocs = [], docViewerCardClassName, showDownloadOption = true }) => {
+const DocViewerWrapper = ({
+  style,
+  fileStoreId,
+  tenantId,
+  displayFilename,
+  selectedDocs = [],
+  docViewerCardClassName,
+  showDownloadOption = true,
+}) => {
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
@@ -46,7 +54,7 @@ const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename, selectedDocs
               className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
-              style={{ width: 262, height: 206 }}
+              style={{ width: 262, height: 206, ...style }}
               theme={{
                 primary: "#F47738",
                 secondary: "#feefe7",

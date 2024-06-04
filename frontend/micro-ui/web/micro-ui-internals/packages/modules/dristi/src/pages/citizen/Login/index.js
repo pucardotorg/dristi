@@ -199,8 +199,10 @@ const Login = ({ stateCode }) => {
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
-      const { otp, ...temp } = params;
-      setParmas(temp);
+      setParmas((prev) => ({
+        ...prev,
+        otp: "",
+      }));
     }
   };
 

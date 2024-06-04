@@ -92,7 +92,6 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type };
   };
-  console.log(params?.userType?.clientDetails?.selectUserType?.role[0]);
 
   const onSubmit = (formData) => {
     if (!validateFormData(formData)) {
@@ -125,7 +124,9 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                       documentType: document.fileType,
                       fileStore: document.file?.files?.[0]?.fileStoreId,
                       documentUid: "",
-                      additionalDetails: {},
+                      additionalDetails: {
+                        fileName: formData?.clientDetails?.barCouncilId[0][0],
+                      },
                     },
                   ],
                   assignes: [],
@@ -137,14 +138,16 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                     documentType: document.fileType,
                     fileStore: document.file?.files?.[0]?.fileStoreId,
                     documentUid: "",
-                    additionalDetails: {},
+                    additionalDetails: {
+                      fileName: formData?.clientDetails?.barCouncilId[0][0],
+                    },
                   },
                 ],
                 additionalDetails: {
                   username: oldData?.name?.firstName + " " + oldData?.name?.name,
                 },
                 ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
-                  res[curr] = formData?.clientDetails?.barRegistrationNumber;
+                  res[curr] = formData?.clientDetails?.[curr];
                   return res;
                 }, {}),
               },
