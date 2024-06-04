@@ -11,7 +11,7 @@ const getLocation = (places, code) => {
   return location ? location : null;
 };
 const LocationComponent = ({ t, config, onLocationSelect, locationFormData, errors, mapIndex }) => {
-  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => { } });
+  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -121,10 +121,10 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
         return (
           <React.Fragment key={input.label}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-            <LabelFieldPair style={{ width: "100%", display: "flex" }}>
+            <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
-                {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
+                <span>{input?.showOptional && ` (${t("CS_OPTIONAL")})`}</span>
               </CardLabel>
               <div className="field">
                 {input?.type === "LocationSearch" ? (
@@ -156,19 +156,19 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                             isFirstRender && locationFormData?.[config.key]
                               ? locationFormData[config.key]["locality"]
                               : (() => {
-                                const plusCode = getLocation(location, "plus_code");
-                                const neighborhood = getLocation(location, "neighborhood");
-                                const sublocality_level_1 = getLocation(location, "sublocality_level_1");
-                                const sublocality_level_2 = getLocation(location, "sublocality_level_2");
-                                return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
-                                  .reduce((result, current) => {
-                                    if (current) {
-                                      result.push(current);
-                                    }
-                                    return result;
-                                  }, [])
-                                  .join(", ");
-                              })(),
+                                  const plusCode = getLocation(location, "plus_code");
+                                  const neighborhood = getLocation(location, "neighborhood");
+                                  const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                                  const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                                  return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                                    .reduce((result, current) => {
+                                      if (current) {
+                                        result.push(current);
+                                      }
+                                      return result;
+                                    }, [])
+                                    .join(", ");
+                                })(),
                           coordinates,
                         },
                         input.name

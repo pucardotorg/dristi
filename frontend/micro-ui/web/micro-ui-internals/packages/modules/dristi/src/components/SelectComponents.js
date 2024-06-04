@@ -126,7 +126,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[configKey] && formData[configKey][input.name]) || "";
         let isFirstRender = true;
-        console.log(formData);
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
@@ -142,7 +141,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                     position={formData?.[configKey]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
                     disable={input?.isDisabled}
-                    index={formData?.[config.key]?.uuid || uuid}
+                    index={config?.uuid}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {
@@ -175,7 +174,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                                     .join(", ");
                                 })(),
                           coordinates,
-                          uuid: isFirstRender && formData[config.key] ? formData[config.key]["uuid"] : uuid,
                           buildingName: formData && isFirstRender && formData[config.key] ? formData[configKey]["buildingName"] : "",
                           doorNo: formData && isFirstRender && formData[config.key] ? formData[configKey]["doorNo"] : "",
                         },

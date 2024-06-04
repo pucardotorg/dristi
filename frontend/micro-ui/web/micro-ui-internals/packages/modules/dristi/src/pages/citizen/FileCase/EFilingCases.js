@@ -12,6 +12,7 @@ import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
+import { generateUUID } from "../../../Utils";
 
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
@@ -21,7 +22,10 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: () => {}, resetFormData: () => {} });
+  const [{ setFormErrors, resetFormData }, setState] = useState({
+    setFormErrors: () => {},
+    resetFormData: () => {},
+  });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
@@ -63,10 +67,118 @@ function EFilingCases({ path }) {
     }
   }, [getAllKeys, selected]);
 
-  const caseDetails = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0], [caseData]);
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+      additionalDetails: {
+        complaintDetails: [
+          {
+            isenabled: true,
+            data: {
+              complainantType: {
+                code: "INDIVIDUAL",
+                name: "Individual",
+                showCompanyDetails: false,
+                commonFields: true,
+                isEnabled: true,
+              },
+              "addressDetails-select": {
+                pincode: "500032",
+                state: "Telangana",
+                district: "Rangareddy",
+                city: "Kondapur",
+                locality: "F84X+6P6",
+              },
+              complainantId: true,
+              firstName: "fgnf",
+              middleName: "",
+              lastName: "hff",
+              complainantVerification: {
+                mobileNumber: "9304619513",
+                otpNumber: "123456",
+                individualDetails: "IND-2024-04-30-000018",
+                isUserVerified: true,
+              },
+              addressDetails: {
+                pincode: "500032",
+                state: "Telangana",
+                district: "Rangareddy",
+                city: "Kondapur",
+                coordinates: {
+                  longitude: 78.3500765,
+                  latitude: 17.4549784,
+                },
+                locality: "F84X+6P6",
+                uuid: "0a03dfb7-44bd-456b-8402-bc0b28c0a571",
+              },
+            },
+            displayindex: 0,
+          },
+        ],
+        respondentDetails: [
+          {
+            isenabled: true,
+            data: {
+              respondentType: {
+                code: "INDIVIDUAL",
+                name: "Individual",
+                showCompanyDetails: false,
+                commonFields: true,
+                isEnabled: true,
+              },
+              firstName: "dfdfg",
+              lastName: "dfgdfg",
+              phonenumbers: {
+                textfieldValue: "",
+                mobileNumber: ["7546456456"],
+              },
+              emails: {
+                textfieldValue: "",
+                emailId: ["sdfsdf@sdfsdf.dfg"],
+              },
+              addressDetails: [
+                {
+                  id: "0e5bc8e8-702c-46c8-bf9b-e000636ba5b8",
+                  addressDetails: {
+                    pincode: "500032",
+                    state: "Telangana",
+                    district: "Rangareddy",
+                    city: "Kondapur",
+                    coordinates: {
+                      longitude: 78.3500765,
+                      latitude: 17.4549784,
+                    },
+                    locality: "F84X+6P6",
+                    doorNo: "dfgdgdg",
+                  },
+                },
+              ],
+              condonationFileUpload: {
+                document: [
+                  {
+                    documentType: "application/pdf",
+                    fileStore: "f37cdcea-a594-49fd-92c4-b16221127ebd",
+                    documentName: "npm.pdf",
+                  },
+                ],
+              },
+            },
+            displayindex: 0,
+          },
+        ],
+      },
+    }),
+    [caseData]
+  );
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
+
+  useEffect(() => {
+    const data = caseDetails?.additionalDetails?.[selected] ||
+      caseDetails?.caseDetails?.[selected] || [{ isenabled: true, data: {}, displayindex: 0 }];
+    setFormdata(data);
+  }, [selected, caseDetails]);
 
   const accordion = useMemo(() => {
     return sideMenuConfig.map((parent, pIndex) => ({
@@ -122,17 +234,19 @@ function EFilingCases({ path }) {
     if (!isDependentEnabled) {
       return formdata.map(() => formConfig);
     }
-    return formdata.map(({ data }) => {
+    return formdata.map(({ data }, index) => {
       let disableConfigFields = [];
+      formConfig.forEach((config) => {
+        config.body.forEach((body) => {
+          if ("disableConfigFields" in body && "disableConfigKey" in body && "key" in body) {
+            if (!!data?.[body.key]?.[body.disableConfigKey]) {
+              disableConfigFields = [...disableConfigFields, ...body.disableConfigFields];
+            }
+          }
+        });
+      });
       return formConfig
         .filter((config) => {
-          config.body.forEach((body) => {
-            if ("disableConfigFields" in body && "disableConfigKey" in body && "key" in body) {
-              if (!!data?.[body.key]?.[body.disableConfigKey]) {
-                disableConfigFields = [...disableConfigFields, ...body.disableConfigFields];
-              }
-            }
-          });
           const dependentKeys = config?.dependentKey;
           if (!dependentKeys) {
             return config;
@@ -150,6 +264,9 @@ function EFilingCases({ path }) {
           return {
             ...config,
             body: config?.body.map((body) => {
+              if (body?.addUUID) {
+                body.uuid = index;
+              }
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
                   ...body,
@@ -209,9 +326,16 @@ function EFilingCases({ path }) {
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       setFormdata(
         formdata.map((item, i) => {
-          return i === index ? { ...item, data: formData } : item;
+          setValue();
+          return i === index
+            ? {
+                ...item,
+                data: formData,
+              }
+            : item;
         })
       );
+      // setIsFirstRender(false);
     }
     if (!setFormErrors) {
       setState((prev) => ({
@@ -236,8 +360,10 @@ function EFilingCases({ path }) {
     }
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+    if (!!resetFormData) {
+      resetFormData();
+    }
     setIsOpen(false);
-    !!resetFormData && resetFormData();
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -245,41 +371,115 @@ function EFilingCases({ path }) {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
-
-  const validateData = (data) => {
-    let isValid = true;
-    formConfig.forEach((config) => {
-      config?.body?.forEach((body) => {
-        if (body?.type === "component") {
-          body?.populators?.inputs?.forEach((input) => {
-            if (input?.isMandatory) {
-              if (input?.validation) {
-                if (input?.validation?.isArray) {
-                  formdata?.forEach((data) => {
-                    if (!data?.data?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
-                      isValid = false;
-                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                    } else {
-                      // setFormErrors(body.key, { [input.name]: "" });
-                    }
-                  });
-                } else {
-                  formdata?.forEach((data) => {
-                    if (!data?.data?.[body.key]?.[input.name]) {
-                      isValid = false;
-                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                    } else {
-                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                    }
-                  });
-                }
-              }
-            }
-          });
+  // const validateData = (data) => {
+  //   let isValid = true;
+  //   formConfig.forEach((config) => {
+  //     config?.body?.forEach((body) => {
+  //       if (body?.type === "component") {
+  //         body?.populators?.inputs?.forEach((input) => {
+  //           if (input?.isMandatory) {
+  //             if (input?.validation) {
+  //               if (input?.validation?.isArray) {
+  //                 formdata?.forEach((data) => {
+  //                   if (!data?.data?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
+  //                     isValid = false;
+  //                     // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+  //                   } else {
+  //                     // setFormErrors(body.key, { [input.name]: "" });
+  //                   }
+  //                 });
+  //               } else {
+  //                 formdata?.forEach((data) => {
+  //                   if (!data?.data?.[body.key]?.[input.name]) {
+  //                     isValid = false;
+  //                     // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+  //                   } else {
+  //                     // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
+  //                   }
+  //                 });
+  //               }
+  //             }
+  //           }
+  //         });
+  //       }
+  //     });
+  //   });
+  //   return isValid;
+  // };
+  const createIndividualUser = async (data, documentData, verificationType) => {
+    const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.data;
+    const identifierIdDetails = documentData
+      ? {
+          fileStoreId: identifierId,
+          filename: documentData?.filename,
+          documentType: documentData?.fileType,
         }
-      });
-    });
-    return isValid;
+      : {};
+    const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
+    let Individual = {
+      Individual: {
+        tenantId: tenantId,
+        name: {
+          givenName: data?.userDetails?.firstName,
+          familyName: data?.userDetails?.lastName,
+          otherNames: data?.userDetails?.middleName,
+        },
+        userDetails: {
+          username: Digit.UserService.getUser()?.info?.userName,
+          roles: [
+            {
+              code: "CITIZEN",
+              name: "Citizen",
+              tenantId: tenantId,
+            },
+            ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"]?.map((role) => ({
+              code: role,
+              name: role,
+              tenantId: tenantId,
+            })),
+          ],
+
+          type: Digit.UserService.getUser()?.info?.type,
+        },
+        userUuid: Digit.UserService.getUser()?.info?.uuid,
+        userId: Digit.UserService.getUser()?.info?.id,
+        mobileNumber: Digit.UserService.getUser()?.info?.mobileNumber,
+        address: [
+          {
+            tenantId: tenantId,
+            type: "PERMANENT",
+            doorNo: data?.addressDetails?.doorNo,
+            latitude: data?.addressDetails?.coordinates?.latitude,
+            longitude: data?.addressDetails?.coordinates?.longitude,
+            city: data?.addressDetails?.city,
+            pincode: data?.addressDetails?.pincode,
+            addressLine1: data?.addressDetails?.state,
+            addressLine2: data?.addressDetails?.district,
+            buildingName: data?.addressDetails?.buildingName,
+            landmark: data?.addressDetails?.locality,
+          },
+        ],
+        identifiers: [
+          {
+            identifierType: identifierType,
+            identifierId: identifierId,
+          },
+        ],
+        isSystemUser: true,
+        skills: [],
+        additionalFields: {
+          fields: [
+            { key: "userType", value: data?.clientDetails?.selectUserType?.code },
+            { key: "userTypeDetail", value: JSON.stringify(data?.clientDetails?.selectUserType) },
+            // { key: "termsAndCondition", value: termsAndConditionData?.Terms_Conditions },
+            // { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
+          ],
+        },
+        clientAuditDetails: {},
+        auditDetails: {},
+      },
+    };
+    return await Digit.DRISTIService.postIndividualService(Individual, tenantId);
   };
 
   const onSubmit = async (props, index) => {
@@ -287,10 +487,9 @@ function EFilingCases({ path }) {
     //   return null;
     // }
     const data = {};
-    let isMandatoryFields = false;
     if (selected === "complaintDetails") {
       const litigants = [];
-      formdata.forEach((data, index) => {
+      formdata.forEach(async (data, index) => {
         if (data?.data?.complainantVerification?.individualDetails) {
           litigants.push({
             tenantId,
@@ -302,8 +501,13 @@ function EFilingCases({ path }) {
         } else {
           if (data?.data?.complainantId?.complainantId) {
             if (data?.data?.complainantId?.complainantId?.verificationType !== "AADHAR") {
+              const documentData = await onDocumentUpload(
+                data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
+              );
+              debugger;
+              await createIndividualUser(data?.data, documentData, data?.data?.complainantId?.complainantId?.verificationType);
             }
-            // debugger;
           } else {
             // setShowErrorToast(true);
             // return;
@@ -318,20 +522,23 @@ function EFilingCases({ path }) {
       }));
       data.litigants = litigants;
       data.representatives = representatives;
+      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: formdata };
     }
     if (selected === "respondentDetails") {
-      let documentData = {};
       const newFormData = await Promise.all(
         formdata.map(async (data) => {
+          let documentData = [];
           if (data?.data?.condonationFileUpload?.document) {
-            await onDocumentUpload(data?.data?.condonationFileUpload?.document?.[0], data?.data?.condonationFileUpload?.document?.[0]?.name).then(
-              (data) => {
-                documentData = {
-                  documentType: data.fileType,
-                  fileStore: data.file?.files?.[0]?.fileStoreId,
-                  documentName: data.filename,
-                };
-              }
+            documentData = await Promise.all(
+              data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
             );
           }
           return {
@@ -346,45 +553,52 @@ function EFilingCases({ path }) {
           };
         })
       );
-      data.additionalDetails = { respondentDetails: newFormData };
+      data.additionalDetails = { ...caseDetails.additionalDetails, respondentDetails: newFormData };
     }
     if (selected === "chequeDetails") {
       const documentData = {};
       const newFormData = await Promise.all(
         formdata.map(async (data) => {
           if (data?.data?.bouncedChequeFileUpload?.document) {
-            await onDocumentUpload(data?.data?.bouncedChequeFileUpload?.document?.[0], data?.data?.bouncedChequeFileUpload?.document?.[0]?.name).then(
-              (data) => {
-                documentData.bouncedChequeFileUpload = {
-                  documentType: data.fileType,
-                  fileStore: data.file?.files?.[0]?.fileStoreId,
-                  documentName: data.filename,
-                };
-              }
+            documentData.bouncedChequeFileUpload = await Promise.all(
+              data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
             );
           }
           if (data?.data?.depositChequeFileUpload?.document) {
-            await onDocumentUpload(data?.data?.depositChequeFileUpload?.document?.[0], data?.data?.depositChequeFileUpload?.document?.[0]?.name).then(
-              (data) => {
-                documentData.depositChequeFileUpload = {
-                  documentType: data.fileType,
-                  fileStore: data.file?.files?.[0]?.fileStoreId,
-                  documentName: data.filename,
-                };
-              }
+            documentData.depositChequeFileUpload = await Promise.all(
+              data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
             );
           }
           if (data?.data?.returnMemoFileUpload?.document) {
-            await onDocumentUpload(data?.data?.returnMemoFileUpload?.document?.[0], data?.data?.returnMemoFileUpload?.document?.[0]?.name).then(
-              (data) => {
-                documentData.returnMemoFileUpload = {
-                  documentType: data.fileType,
-                  fileStore: data.file?.files?.[0]?.fileStoreId,
-                  documentName: data.filename,
-                };
-              }
+            documentData.returnMemoFileUpload = await Promise.all(
+              data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
             );
           }
+
           return {
             ...data,
             data: {
@@ -394,7 +608,7 @@ function EFilingCases({ path }) {
           };
         })
       );
-      data.caseDetails = { chequeDetails: newFormData };
+      data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: newFormData };
     }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
@@ -499,7 +713,7 @@ function EFilingCases({ path }) {
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
-              <div key={index} className="form-wrapper-d">
+              <div key={selected} className="form-wrapper-d">
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${pageConfig?.formItemName} ${formdata[index]?.displayindex + 1}`}</h1>
@@ -516,11 +730,16 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
+                  key={selected}
                   label={t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
-                  defaultValues={formdata[index]?.data}
+                  defaultValues={
+                    caseDetails?.additionalDetails?.[selected]?.[index]?.data ||
+                    caseDetails?.caseDetails?.[selected]?.[index]?.data ||
+                    formdata[index]?.data
+                  }
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}

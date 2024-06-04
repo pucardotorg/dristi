@@ -382,7 +382,7 @@ const LocationSearch = (props) => {
   }, [coordinates]);
 
   return (
-    <div className="map-wrap" style={props?.locationStyle}>
+    <div className={`map-wrap${props?.disable ? "-disable" : ""}`} style={props?.locationStyle}>
       <div className="map-search-bar-wrap">
         {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
         <SearchIconSvg className="map-search-bar-icon" />

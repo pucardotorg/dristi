@@ -154,13 +154,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             [config?.disableConfigKey]: true,
           });
         } else {
-          debugger;
-          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null });
+          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
         }
       })
       .catch(() => {
         setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
       });
   };
 
@@ -230,7 +229,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             validation={config?.validation}
             ValidationRequired={config?.validation}
             title={config?.validation?.title}
-            disable={isUserVerified}
+            disable={isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] || config.disable}
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
@@ -265,7 +264,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               !formData?.[config.key]?.[config.name] ||
               errors?.[config?.key]?.[config.name] ||
               formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
-              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
+              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength ||
+              formData?.[config.key]?.[config?.disableConfigKey]
             }
             onButtonClick={() => {
               selectMobileNumber(mobileNumber).then(() => {

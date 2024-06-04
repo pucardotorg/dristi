@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
-import Axios from "axios";
 import LocationComponent from "./LocationComponent";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
@@ -65,25 +63,12 @@ const selectCompMultiConfig = {
         },
         isMandatory: true,
       },
-      //   {
-      //     label: "LOCALITY",
-      //     type: "text",
-      //     name: "locality",
-      //     validation: {
-      //       isRequired: true,
-      //     },
-      //     isMandatory: true,
-      //   },
       {
         label: "ADDRESS",
         type: "text",
-        name: "doorNo",
+        name: "locality",
         validation: {
-          errMsg: "ADDRESS_DOOR_NO_INVALID",
-          pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
           isRequired: true,
-          minlength: 2,
-          title: "",
         },
         isMandatory: true,
       },

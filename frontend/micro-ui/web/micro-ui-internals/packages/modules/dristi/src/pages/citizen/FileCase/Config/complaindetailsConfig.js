@@ -161,6 +161,7 @@ const complainantDetailsFormConfig = [
         type: "component",
         component: "SelectComponents",
         key: "addressDetails",
+        addUUID: true,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -211,16 +212,6 @@ const complainantDetailsFormConfig = [
               label: "CITY/TOWN",
               type: "text",
               name: "city",
-              inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
-            },
-            {
-              label: "ADDRESS",
-              type: "text",
-              name: "locality",
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,

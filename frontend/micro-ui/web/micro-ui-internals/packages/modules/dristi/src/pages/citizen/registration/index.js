@@ -199,7 +199,6 @@ const Registration = ({ stateCode }) => {
   };
   const handleIdentitySave = (indentity) => {
     setNewParams({ ...newParams, indentity });
-    console.log(indentity);
     indentity.IdVerification.selectIdType.code === "AADHAR" ? history.push(`${path}/enter-adhaar`) : history.push(`${path}/upload-id`);
   };
   const handleUserTypeSave = (userType) => {

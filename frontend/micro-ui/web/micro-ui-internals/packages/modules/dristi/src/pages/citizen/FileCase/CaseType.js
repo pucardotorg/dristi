@@ -77,11 +77,11 @@ function CaseType({ t }) {
     }, [userType]);
 
     const searchResult = useMemo(() => {
-      return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+      return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`];
     }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
 
     const advocateId = useMemo(() => {
-      return searchResult?.[0]?.id;
+      return searchResult?.[0]?.responseList?.[0]?.id;
     }, [searchResult]);
 
     if (isLoading || isFetching || isSearchLoading) {
@@ -134,14 +134,7 @@ function CaseType({ t }) {
                     representing: [],
                   },
                 ],
-                documents: [
-                  {
-                    documentType: null,
-                    fileStore: null,
-                    documentUid: "",
-                    additionalDetails: {},
-                  },
-                ],
+                documents: [],
                 workflow: {
                   action: "SAVE_DRAFT",
                   comments: null,

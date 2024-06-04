@@ -19,7 +19,7 @@ function ChequeDetails() {
   };
 
   const onSubmit = useCallback((data) => {
-    console.log(data);
+    // console.log(data);
   });
 
   return (
