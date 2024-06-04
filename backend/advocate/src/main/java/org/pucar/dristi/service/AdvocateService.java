@@ -10,7 +10,6 @@ import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.AdvocateRepository;
 import org.pucar.dristi.validators.AdvocateRegistrationValidator;
 import org.pucar.dristi.web.models.Advocate;
-import org.pucar.dristi.web.models.AdvocateClerk;
 import org.pucar.dristi.web.models.AdvocateRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -158,15 +156,14 @@ public class AdvocateService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            Advocate advocate = new Advocate();
             Advocate existingApplication;
             try {
-                existingApplication = validator.validateApplicationExistence(advocate);
+                existingApplication = validator.validateApplicationExistence(advocateRequest.getAdvocate());
             } catch (Exception e) {
                 log.error("Error validating existing application");
                 throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
             }
-            existingApplication.setWorkflow(advocate.getWorkflow());
+            existingApplication.setWorkflow(advocateRequest.getAdvocate().getWorkflow());
             advocateRequest.setAdvocate(existingApplication);
 
             // Enrich application upon update
@@ -174,9 +171,9 @@ public class AdvocateService {
 
             workflowService.updateWorkflowStatus(advocateRequest);
 
-            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocate.getStatus())) {
+            if (APPLICATION_ACTIVE_STATUS.equalsIgnoreCase(advocateRequest.getAdvocate().getStatus())) {
                 //setting true once application approved
-                advocate.setIsActive(true);
+                advocateRequest.getAdvocate().setIsActive(true);
             }
 
             producer.push(config.getAdvocateUpdateTopic(), advocateRequest);
