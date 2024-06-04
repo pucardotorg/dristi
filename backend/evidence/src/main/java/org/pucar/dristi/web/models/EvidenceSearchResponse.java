@@ -19,7 +19,7 @@ public class EvidenceSearchResponse {
     @JsonProperty("ResponseInfo")
     private ResponseInfo responseInfo;
 
-    @JsonProperty("tenantid")
+    @JsonProperty("tenantId")
     private String tenantId;
 
     @JsonProperty("artifacts")

@@ -18,7 +18,7 @@ public class EvidenceSearchRequest {
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
 
-    @JsonProperty("tenantid")
+    @JsonProperty("tenantId")
     private String tenantId;
 
     @JsonProperty("criteria")
