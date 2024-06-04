@@ -230,7 +230,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         </div>
       </div>
       {isPopupOpen && (
-        <CustomPopUp anchorRef={popupAnchor.current}>
+        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: -345 }}>
           <Fragment>
             <div>{t("CS_ERROR_DESCRIPTION")}</div>
             <TextArea
@@ -239,9 +239,17 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 const { value } = e.target;
                 setScrutinyError(value);
               }}
+              style={{ minWidth: "300px", maxWidth: "300px", maxHeight: "150px", minHeight: "50px" }}
             ></TextArea>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "20px" }}>
-              <Button label={t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Button label={defaultError === "" ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
               <Button
                 label={defaultError === "" ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
                 onButtonClick={() => {
