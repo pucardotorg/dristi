@@ -2,10 +2,10 @@ name: dristi workflow
 on:
   push:
     branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
+      - dev_backend_advocate_bis_improve_coverage
+  # pull_request:
+  #   branches:
+  #     - develop
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -40,3 +40,10 @@ jobs:
           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
         working-directory: backend/advocate/src/main/resources/db
+      - name: trigger deployment pipeline
+        run: |
+          curl -X POST \
+          -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+          https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+          -d '{"ref":"Dev-0"}'
