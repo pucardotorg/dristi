@@ -1,0 +1,83 @@
+.employee {
+  .topbar {
+    box-shadow: none;
+  }
+  .main {
+    width: 100%;
+    margin: 84px 0px 0px;
+    padding: 0px;
+    min-height: calc(100vh - 84px);
+
+    .employee-app-wrapper {
+      min-height: calc(100vh - 84px) !important;
+      background-color: #eeeeee;
+
+      .ground-container {
+        min-height: calc(100vh - 84px);
+        padding: 0px;
+        margin: 0px;
+      }
+      .employeeCard.main-card-home {
+        width: fit-content;
+        margin: 0px !important;
+        padding: 0px;
+        padding: 64px 100px 64px 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 64px;
+        header {
+          margin-bottom: 0px;
+        }
+        .main-inner-div {
+          .custom-card-style {
+            box-shadow: none;
+            border: 1px #e2e2e2 solid;
+            border-radius: 8px;
+            .card-label {
+              margin-top: 0px;
+              font-family: Roboto;
+              font-size: 24px;
+              font-weight: 600;
+              line-height: 28.13px;
+              text-align: center;
+              margin-bottom: 8px;
+            }
+            .card-text {
+              margin: 0px;
+              margin-bottom: 24px;
+              text-align: center;
+            }
+            button {
+              box-shadow: none;
+              width: 100%;
+            }
+          }
+        }
+      }
+      .moduleCardWrapper {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+.employee {
+  .back-button-home {
+    display: flex;
+    position: fixed;
+    padding: 20px;
+    width: 100%;
+    justify-content: space-between;
+    .back-btn2 {
+      margin-bottom: 0px;
+      p {
+        margin: 0px;
+      }
+    }
+  }
+  .file-case-main {
+    padding-top: 56px;
+  }
+}

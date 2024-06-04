@@ -188,7 +188,7 @@ const Home = ({
       <div className={`main center-container citizen-home-container mb-25`}>
         {hideSidebar ? null : (
           <div>
-            <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
+            {/* <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} /> */}
           </div>
         )}
 

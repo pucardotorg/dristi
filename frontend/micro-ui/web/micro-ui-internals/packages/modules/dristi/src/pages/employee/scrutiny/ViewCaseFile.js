@@ -34,7 +34,7 @@ function ViewCaseFile({ t }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => {}}>
+              <div className="header-icon" onClick={() => { }}>
                 <CustomArrowDownIcon />
               </div>
             </div>
@@ -48,7 +48,7 @@ function ViewCaseFile({ t }) {
             onFormValueChange={onFormValueChange}
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
-            cardClassName={`e-filing-card-form-style`}
+            cardClassName={`e-filing-card-form-style review-case-file`}
             secondaryLabel={t("CS_SAVE_DRAFT")}
             showSecondaryLabel={true}
             actionClassName="e-filing-action-bar"

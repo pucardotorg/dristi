@@ -64,6 +64,7 @@ const Registration = ({ stateCode }) => {
     }
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
+    localStorage.setItem("citizen.refresh-token", user?.refresh_token);
     setCitizenDetail(user?.info, user?.access_token, stateCode);
     const redirectPath = location.state?.from || `${path}/user-name`;
     // routeToAdditionalDetail(user?.info);
@@ -268,9 +269,9 @@ const Registration = ({ stateCode }) => {
           </Route>
           <Route path={`${path}/user-name`}>
             <SelectName
-              config={stepItems[3]}
+              config={[stepItems[3]]}
               t={t}
-              onSelect={selectName}
+              onSubmit={selectName}
               params={newParams}
               history={history}
               value={newParams?.name}

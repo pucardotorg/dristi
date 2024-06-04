@@ -73,10 +73,10 @@
     .add-new-form {
       margin-top: 24px;
       display: flex;
-      gap: 8px;
       align-items: center;
       justify-content: start;
-
+      align-self: flex-start;
+      border: 0;
       span {
         font-family: Roboto;
         font-size: 16px;
@@ -123,12 +123,14 @@
 
     .form-wrapper-d {
       margin-top: 32px;
-
+      border: none !important;
       .form-item-name {
         width: 100%;
         padding: 12px 32px 12px 32px;
         gap: 20px;
-        border: 1px 1px 0px 1px #bbbbbd solid;
+        border-width: 1px 1px 0px 1px !important;
+        border-style: solid;
+        border-color: #bbbbbd;
         border-bottom: 0px;
         display: flex;
         align-items: center;
@@ -519,7 +521,7 @@
 }
 
 .review-case-file {
-  border: none;
+  border: none !important;
   padding: 0px;
 
   .label-field-pair {
@@ -706,6 +708,7 @@
 
 .file-case-main {
   padding: 0px 20px;
+  background-color: white;
 }
 
 .file-case {
@@ -713,7 +716,7 @@
   gap: 40px;
   flex-direction: row;
   width: 100%;
-
+  margin-bottom: 56px;
   .file-case-side-stepper {
     width: 22.5%;
     display: flex;

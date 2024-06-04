@@ -36,7 +36,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className="back-button-home">
             <BackButton />
 
             {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
@@ -47,7 +47,9 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           </div>
           <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
-          <PrivateRoute exact path={`${path}/cases`} component={(props) => <ViewCaseFile {...props} t={t} />} />
+          <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
+            <PrivateRoute exact path={`${path}/cases`} component={(props) => <ViewCaseFile {...props} t={t} />} />
+          </div>
         </div>
       </React.Fragment>
     </Switch>

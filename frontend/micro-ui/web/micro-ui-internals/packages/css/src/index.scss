@@ -128,6 +128,7 @@
 @import "./dristi/pages/citizen/userRegistration.scss";
 @import "./dristi/components/verifyPhoneNumber.scss";
 @import "./dristi/components/customPopup.scss";
+@import "../src/pages/employee/nyayMitra.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -703,6 +704,24 @@ input[type="number"] {
     padding-left: 15px;
     padding-right: 15px;
     margin-top: 1rem;
+  }
+}
+
+.langauge-select-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .radio-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  button {
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
   }
 }
 
