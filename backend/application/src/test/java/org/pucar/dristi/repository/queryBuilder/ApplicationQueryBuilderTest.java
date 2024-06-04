@@ -16,7 +16,8 @@ class ApplicationQueryBuilderTest {
     @InjectMocks
     private ApplicationQueryBuilder applicationQueryBuilder;
 
-    ApplicationQueryBuilderTest() {
+    @BeforeEach
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
     private static final String BASE_APPLICATION_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_application app WHERE ";
