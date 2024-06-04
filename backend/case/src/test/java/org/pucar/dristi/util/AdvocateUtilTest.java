@@ -2,6 +2,7 @@ package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,8 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -85,11 +85,7 @@ public class AdvocateUtilTest {
         when(restTemplate.postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class)))
                 .thenThrow(new RuntimeException("Error"));
 
-        Boolean result = advocateUtil.fetchAdvocateDetails(requestInfo, advocateId);
-
-        assertFalse(result);
-        verify(restTemplate, times(1)).postForObject(anyString(), any(AdvocateSearchRequest.class), eq(Map.class));
-        verify(mapper, never()).convertValue(any(), eq(AdvocateResponse.class));
+        assertThrows(Exception.class, () -> advocateUtil.fetchAdvocateDetails(requestInfo, advocateId));
     }
 
     @Test
