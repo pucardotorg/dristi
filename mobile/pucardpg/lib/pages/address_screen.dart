@@ -114,8 +114,10 @@ class AddressScreenState extends State<AddressScreen> {
   }
 
   _getCurrentLocation(FormGroup form) async {
-    if (context.read<AuthBloc>().userModel.addressModel.longitude == null ||
-        context.read<AuthBloc>().userModel.addressModel.longitude == 0) {
+    if ((context.read<AuthBloc>().userModel.addressModel.longitude == null ||
+        context.read<AuthBloc>().userModel.addressModel.longitude == 0) &&
+        (context.read<AuthBloc>().userModel.addressModel.pincode == null ||
+        context.read<AuthBloc>().userModel.addressModel.pincode!.isEmpty)  ) {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       setState(() {
@@ -123,26 +125,10 @@ class AddressScreenState extends State<AddressScreen> {
         _draggedLatLng = LatLng(_currentPosition.latitude, _currentPosition.longitude);
       });
       await _goToSpecificPosition(form, _draggedLatLng, "");
+      await _getAddressFromLatLng(form, _draggedLatLng);
     } else {
       var position = LatLng(context.read<AuthBloc>().userModel.addressModel.latitude!, context.read<AuthBloc>().userModel.addressModel.longitude!);
-
-      GoogleMapController mapController = await _googleMapController.future;
-
-      markersList.add(Marker(
-          markerId: marker.markerId,
-          draggable: true,
-          position: position,
-          infoWindow: const InfoWindow(title: ""),
-          onDragEnd: (newPosition) {
-            _draggedLatLng = newPosition;
-            _getAddressFromLatLng(form, newPosition);
-          }
-      ));
-      mapController.animateCamera(CameraUpdate.newCameraPosition(
-          CameraPosition(
-              target: position,
-              zoom: 14.0)
-      ));
+      await _goToSpecificPosition(form, position, '');
     }
   }
 
@@ -179,7 +165,6 @@ class AddressScreenState extends State<AddressScreen> {
             target: position,
             zoom: 14.0)
     ));
-    await _getAddressFromLatLng(form, position);
   }
 
   // Future<void> _fetchDistrict(String pincode) async {
@@ -245,6 +230,8 @@ class AddressScreenState extends State<AddressScreen> {
                                     textEditingController: controller,
                                     googleAPIKey: kGoogleApiKey,
                                     inputDecoration: InputDecoration(
+                                      suffixIcon: controller.text.isEmpty ? Icon(Icons.search, color: widget.theme.lightGrey,) : null,
+                                      suffixIconConstraints: const BoxConstraints(minHeight: 5, minWidth: 5),
                                       hintText: AppLocalizations.of(context).translate(i18.address.csSearchPlaceMap),
                                       hintStyle: widget.theme.text16W400Rob()?.apply(color: widget.theme.hintGrey),
                                       border: InputBorder.none,
@@ -376,9 +363,19 @@ class AddressScreenState extends State<AddressScreen> {
                                       onChanged: (value) {
                                         context.read<AuthBloc>().userModel.addressModel.pincode =
                                             value.value.toString();
-                                        // if (value.value.length == 6) {
-                                        //   _fetchDistrict(value.value);
-                                        // }
+                                        context.read<AuthBloc>().userModel.addressModel.state = null;
+                                        context.read<AuthBloc>().userModel.addressModel.district = null;
+                                        context.read<AuthBloc>().userModel.addressModel.city = null;
+                                        context.read<AuthBloc>().userModel.addressModel.street = null;
+                                        form.control(stateKey).value = null;
+                                        form.control(districtKey).value = null;
+                                        form.control(cityKey).value = null;
+                                        form.control(localityKey).value = null;
+                                        form.control(doorNoKey).value = null;
+
+                                        if (value.value.length == 6) {
+                                          fetchAddress(value.value, form);
+                                        }
                                       },
                                       validationMessages: {
                                         'required': (_) => 'Pincode is required',
@@ -629,6 +626,24 @@ class AddressScreenState extends State<AddressScreen> {
           Validators.maxLength(128)
         ]),
   });
+
+  Future<void> fetchAddress(String pincode, FormGroup form) async {
+    final response = await Dio().get(
+        "https://maps.googleapis.com/maps/api/geocode/json?address=$pincode&key=${kGoogleApiKey}");
+    PlaceDetailsList detailsList = PlaceDetailsList.fromJson(response.data);
+    if (detailsList.results[0].geometry != null) {
+      extractAddressComponents(detailsList.results[0].addressComponents, form);
+
+      final lat = detailsList.results[0].geometry!.location!.lat!;
+      final lng = detailsList.results[0].geometry!.location!.lng!;
+
+      setState(() {
+        context.read<AuthBloc>().userModel.addressModel.latitude = lat;
+        context.read<AuthBloc>().userModel.addressModel.longitude = lng;
+      });
+      _goToSpecificPosition(form, LatLng(lat, lng), '');
+    }
+  }
 
   Future<void> displayPrediction(Prediction p, FormGroup form) async {
     final response = await Dio().get(
