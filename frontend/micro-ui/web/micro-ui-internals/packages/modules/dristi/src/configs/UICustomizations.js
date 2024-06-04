@@ -184,21 +184,14 @@ export const UICustomizations = {
           );
         case "Action":
           return (
-            <Link
-              style={{
-                border: "1px solid #007E7E",
-                color: "#007E7E",
-                padding: "10px",
-                width: "100px",
-                display: "block",
-                textAlign: "center",
-                textDecoration: "none",
-              }}
-              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
-            >
-              {" "}
-              {t("Verify")}
-            </Link>
+            <span className="action-link">
+              <Link
+                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
+              >
+                {" "}
+                {t("Verify")}
+              </Link>
+            </span>
           );
         case "User Type":
           return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
@@ -216,7 +209,10 @@ export const UICustomizations = {
           const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-          return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
+          return <span>{differenceInDays}</span>;
+        case "User Name":
+          const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
+          return displayName;
         default:
           return t("ES_COMMON_NA");
       }

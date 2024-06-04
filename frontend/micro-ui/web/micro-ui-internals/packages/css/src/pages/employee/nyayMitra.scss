@@ -59,6 +59,106 @@
         align-items: center;
         justify-content: center;
       }
+
+      .registration-requests {
+        margin: 24px 16px 24px;
+        background-color: #ffffff;
+        padding: 40px;
+
+        .header-class {
+          display: flex;
+          justify-content: flex-end;
+          margin-bottom: 40px;
+          .employee-select-wrap {
+            margin-bottom: 0px;
+          }
+        }
+
+        .inbox-search-wrapper {
+          .inbox-search-component-wrapper {
+            .sections-parent.inbox {
+              gap: 0px;
+              background-color: #ffffff;
+              .section.search {
+                min-height: 0px;
+                .search-wrapper {
+                  padding: 0px 0px 40px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  header {
+                    margin: 0px;
+                  }
+                  .search-field-wrapper.inbox {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: end;
+                    .label-field-pair {
+                      h2 {
+                        margin-top: 0px;
+                      }
+                      input {
+                        margin-bottom: 0px;
+                        width: 340px;
+                      }
+                    }
+                  }
+                  .search-button-wrapper {
+                    padding-top: 0px;
+                    button {
+                      box-shadow: none;
+                      width: 100px;
+                      header {
+                        font-family: Roboto;
+                        font-size: 16px;
+                        font-weight: 500;
+                        line-height: 24px;
+                        text-align: center;
+                        color: #ffffff;
+                      }
+                    }
+                  }
+                }
+              }
+              .search-component-table {
+                .link {
+                  font-family: Roboto;
+                  font-size: 16px;
+                  font-weight: 400;
+                  line-height: 18.75px;
+                  text-align: left;
+                  color: #f47738;
+                  text-decoration: underline;
+                }
+
+                .action-link {
+                  border: 1px solid #007e7e;
+                  padding: 8px 0px 8px 0px;
+                  text-align: center;
+                  height: 38px;
+                  margin-top: 12px;
+                  margin-bottom: 12px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  a {
+                    color: #007e7e;
+                    text-decoration: none;
+                  }
+                }
+
+                td {
+                  padding: 0px !important;
+                }
+
+                th {
+                  padding: 0px 0px 12px;
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

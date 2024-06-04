@@ -56,7 +56,7 @@ export const newconfigAdvocate = {
           },
         ],
       },
-      label: "",
+      label: "Registration-Requests",
       children: {},
       show: true,
     },
@@ -71,7 +71,8 @@ export const newconfigAdvocate = {
           },
           {
             label: "User Name",
-            jsonPath: "businessObject.advocateDetails.additionalDetails.username",
+            jsonPath: "businessObject.individual.name",
+            additionalCustomization: true,
           },
           {
             label: "User Type",
@@ -159,7 +160,7 @@ export const newconfigClerk = {
           },
         ],
       },
-      label: "",
+      label: "Registration-Requests",
       children: {},
       show: true,
     },
@@ -174,7 +175,8 @@ export const newconfigClerk = {
           },
           {
             label: "User Name",
-            jsonPath: "businessObject.clerkDetails.additionalDetails.username",
+            jsonPath: "businessObject.individual.name",
+            additionalCustomization: true,
           },
           {
             label: "User Type",

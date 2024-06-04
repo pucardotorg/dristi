@@ -36,15 +36,18 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          <div className="back-button-home">
-            <BackButton />
+          {
+            !location.pathname.endsWith("/registration-requests") &&
+            <div className="back-button-home">
+              <BackButton />
 
-            {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
-            <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
-              <span style={{ color: "#f47738" }}>Help</span>
-              <HelpOutlineIcon />
-            </span>
-          </div>
+              {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
+              <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
+                <span style={{ color: "#f47738" }}>Help</span>
+                <HelpOutlineIcon />
+              </span>
+            </div>
+          }
           <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>

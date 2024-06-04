@@ -8,6 +8,7 @@ import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
 import ApplicationDetails from "../employee/ApplicationDetails";
 import BreadCrumb from "../../components/BreadCrumb";
+import { userTypeOptions } from "./registration/config";
 
 const App = ({ stateCode, tenantId }) => {
   const Digit = window?.Digit || {};
@@ -44,6 +45,36 @@ const App = ({ stateCode, tenantId }) => {
   );
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
+
+  const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
+  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+    {
+      criteria: [{ individualId }],
+      tenantId,
+    },
+    { tenantId },
+    moduleCode,
+    Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+  );
+
+  const userTypeDetail = useMemo(() => {
+    return userTypeOptions.find((item) => item.code === userType) || {};
+  }, [userType]);
+
+  const searchResult = useMemo(() => {
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
+  }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
+
+  const isRejected = useMemo(() => {
+    return (
+      userType !== "LITIGANT" &&
+      Array.isArray(searchResult) &&
+      searchResult?.length > 0 &&
+      searchResult?.[0]?.isActive === false &&
+      searchResult?.[0]?.status === "INACTIVE"
+    );
+  }, [searchResult, userType]);
 
   const hideHomeCrumb = [`${path}/home`];
   const citizenCrumbs = [
@@ -130,8 +161,7 @@ const App = ({ stateCode, tenantId }) => {
   if (!isUserLoggedIn && !whiteListedRoutes.includes(location.pathname)) {
     history.push(`${path}/home/login`);
   }
-
-  if (individualId && whiteListedRoutes.includes(location.pathname)) {
+  if (!isRejected && individualId && whiteListedRoutes.includes(location.pathname)) {
     history.push(`${path}/home`);
   }
 
@@ -149,29 +179,27 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
-          {
-            !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) &&
+          {!(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) && (
             <div className="back-button-home">
               <BackButton />
             </div>
-          }
-
+          )}
 
           <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           <PrivateRoute exact path={`${path}/response`} component={Response} />
-          <div className={
-            location.pathname.includes("/file-case") ? "file-case-main" : ""
-          }>
+          <div className={location.pathname.includes("/file-case") ? "file-case-main" : ""}>
             <PrivateRoute path={`${path}/home/file-case`}>
               <FileCase t={t}></FileCase>
             </PrivateRoute>
           </div>
           <div
-            className={(location.pathname.includes("/response") ||
+            className={
+              location.pathname.includes("/response") ||
               location.pathname.includes("/login") ||
               location.pathname.includes("/registration") ||
               location.pathname.endsWith("/home")
-            ) ? `user-registration` : ""
+                ? `user-registration`
+                : ""
             }
           >
             <PrivateRoute exact path={`${path}/home`}>
@@ -190,7 +218,6 @@ const App = ({ stateCode, tenantId }) => {
           <Route path={`${path}/home/register`}>
             <Login stateCode={stateCode} isUserRegistered={false} />
           </Route>
-
 
           <Route path={`${path}/landing-page`}>
             <LandingPage />
