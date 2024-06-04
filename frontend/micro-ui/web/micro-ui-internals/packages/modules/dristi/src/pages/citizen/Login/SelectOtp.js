@@ -137,7 +137,9 @@ const SelectOtp = ({
         <div className="message">
           <p>
             {timeLeft > 0 ? <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span> : ""}
-            <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`}>{t("CS_RESEND_OTP")}</span>
+            <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`} onClick={handleResendOtp}>
+              {t("CS_RESEND_OTP")}
+            </span>
           </p>
         </div>
         {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
