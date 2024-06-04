@@ -467,8 +467,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               )
         );
         await authRepository.registerAdvocateClerk('/advocate/clerk/v1/_create', advocateClerkRegistrationRequest);
+      } else if (userModel.userType == 'LITIGANT') {
+        final secureStore = SecureStore();
+        secureStore.setAccessToken(accesstoken);
+        secureStore.setRefreshToken(_refreshtoken);
+        secureStore.setAccessInfo(_authResponse);
+        emit(const AuthState.profileSuccessState());
       }
-      emit(const AuthState.profileSuccessState());
     }
     catch(e1) {
       emit(const AuthState.profileFailedState(errorMsg: 'Registering Failed'));

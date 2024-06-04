@@ -1,7 +1,9 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:digit_components/digit_components.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pucardpg/blocs/app-localization-bloc/app_localization.dart';
+import 'package:pucardpg/blocs/auth-bloc/authbloc.dart';
 import 'package:pucardpg/widget/digit_elevated_revised_button.dart';
 import '../utils/i18_key_constants.dart' as i18;
 import 'package:flutter/cupertino.dart';
@@ -73,7 +75,9 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
               ),
               DigitElevatedRevisedButton(
                   onPressed: () {
-
+                    context.read<AuthBloc>().add(
+                      const AuthEvent.login(),
+                    );
                   },
                   child: Text(AppLocalizations.of(context)
                       .translate(i18.success.fileACase))
@@ -86,7 +90,9 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
                 constraints: const BoxConstraints(maxHeight: 50, minHeight: 40),
                 child: OutlinedButton(
                   onPressed: () {
-
+                    context.read<AuthBloc>().add(
+                      const AuthEvent.login(),
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     shape: const RoundedRectangleBorder(
@@ -101,7 +107,7 @@ class LitigantSuccessScreenState extends State<LitigantSuccessScreen> {
                         Text(
                             AppLocalizations.of(context)
                                 .translate(i18.success.joinACase),
-                            style: widget.theme.text20W700()?.apply(
+                            style: widget.theme.text16W700Rob()?.apply(
                                 color: widget.theme.colorScheme.secondary)
                         ),
                       ],
