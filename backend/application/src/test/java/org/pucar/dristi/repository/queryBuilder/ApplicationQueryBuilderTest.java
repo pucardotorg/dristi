@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository.queryBuilder;
 
         import org.egov.tracer.model.CustomException;
+        import org.junit.jupiter.api.BeforeEach;
         import org.junit.jupiter.api.Test;
         import org.mockito.InjectMocks;
         import org.mockito.MockitoAnnotations;
