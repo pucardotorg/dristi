@@ -35,7 +35,7 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
           href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
           target="_blank"
           rel="noreferrer"
-          style={{ color: "#007E7E" }}
+          style={{ color: "#F47738" }}
         >
           View on map
         </a>
@@ -117,7 +117,9 @@ const ApplicationDetails = ({ location, match }) => {
   const fileStoreId = useMemo(() => {
     return searchResult?.[0]?.documents?.[0]?.fileStore;
   }, [searchResult]);
-
+  const fileName = useMemo(() => {
+    return searchResult?.[0]?.documents?.[0]?.additionalDetails?.fileName;
+  }, [searchResult]);
   useEffect(() => {
     setIsAction(searchResult?.[0]?.status === "INWORKFLOW");
   }, [searchResult]);
@@ -194,13 +196,19 @@ const ApplicationDetails = ({ location, match }) => {
       {
         title: "Bar Council ID",
         image: true,
-        content: (
+        content: fileName,
+      },
+      {
+        doc: (
           <DocViewerWrapper
+            style={{ maxWidth: "100px", maxHeight: "100px" }}
             fileStoreId={fileStoreId}
             tenantId={tenantId}
-            displayFilename={searchResult?.[0]?.additionalDetails?.filename}
+            displayFilename={" "}
+            docViewerCardClassName={"doc-card"}
           ></DocViewerWrapper>
         ),
+        image: true,
       },
     ];
   }, [fileStoreId, searchResult, tenantId, userTypeDetail?.apiDetails?.AdditionalFields]);
@@ -248,6 +256,7 @@ const ApplicationDetails = ({ location, match }) => {
                 onSubmit={() => {
                   history.push(`/${window?.contextPath}/citizen/dristi/home`);
                 }}
+                className="action-button-width"
               />
             </div>
           )}
