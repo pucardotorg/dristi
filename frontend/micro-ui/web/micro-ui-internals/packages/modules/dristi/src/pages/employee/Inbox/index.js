@@ -55,8 +55,8 @@ const Inbox = ({ tenants, parentRoute }) => {
 
   return (
     <React.Fragment>
-      <div style={{ paddingLeft: "20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
+      <div className="registration-requests">
+        <div className="header-class">
           <Header>{t("Registration-Requests")}</Header>
           <CustomDropdown
             t={t}
