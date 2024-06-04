@@ -60,7 +60,6 @@ public class AdvocateService {
 
             return body.getAdvocate();
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating advocate");
@@ -88,7 +87,6 @@ public class AdvocateService {
 
             return applications;
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results "+ e.getMessage());
@@ -115,7 +113,6 @@ public class AdvocateService {
 
             return applications;
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results");
