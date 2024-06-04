@@ -64,7 +64,7 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
     public List<String> stringToList(String str){
         List<String> list = new ArrayList<>();
         if(str!=null){
-            StringTokenizer st = new StringTokenizer("str","|");
+            StringTokenizer st = new StringTokenizer(str,"|");
             while (st.hasMoreTokens()) {
                 list.add(st.nextToken());
             }
