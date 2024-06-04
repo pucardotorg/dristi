@@ -67,11 +67,8 @@
 
         .header-class {
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           margin-bottom: 40px;
-          header {
-            margin: 0px;
-          }
           .employee-select-wrap {
             margin-bottom: 0px;
           }
@@ -86,13 +83,23 @@
                 min-height: 0px;
                 .search-wrapper {
                   padding: 0px 0px 40px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  header {
+                    margin: 0px;
+                  }
                   .search-field-wrapper.inbox {
+                    display: flex;
+                    justify-content: flex-end;
+                    align-items: end;
                     .label-field-pair {
                       h2 {
                         margin-top: 0px;
                       }
                       input {
                         margin-bottom: 0px;
+                        width: 340px;
                       }
                     }
                   }
@@ -101,6 +108,14 @@
                     button {
                       box-shadow: none;
                       width: 100px;
+                      header {
+                        font-family: Roboto;
+                        font-size: 16px;
+                        font-weight: 500;
+                        line-height: 24px;
+                        text-align: center;
+                        color: #ffffff;
+                      }
                     }
                   }
                 }
