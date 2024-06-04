@@ -132,6 +132,31 @@ class AdvocateClerkRegistrationEnrichmentTest {
     }
 
     @Test
+    public void testEnrichAdvocateClerkRegistration_CustomException() {
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setTenantId("tenantId");
+        advocateClerkRequest.setClerk(clerk);
+        Document document = new Document();
+        document.setId("id");
+        document.setDocumentUid("documentUid");
+        List<Document> list = new ArrayList<>();
+        list.add(document);
+        clerk.setDocuments(list);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        requestInfo.getUserInfo().setTenantId("tenantId");
+        advocateClerkRequest.setRequestInfo(requestInfo);
+
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenThrow(new CustomException());
+
+        // Expect exception due to missing user info
+        assertThrows(CustomException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));
+    }
+
+    @Test
     public void testEnrichAdvocateClerkRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
@@ -149,6 +174,25 @@ class AdvocateClerkRegistrationEnrichmentTest {
 
         // Expect exception to propagate
         assertThrows(RuntimeException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkRegistration(advocateClerkRequest));
+    }
+
+    @Test
+    void enrichAdvocateClerkRegistrationUponUpdateTest_CustomException() {
+        // Setup mock request and expected results
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setTenantId("tenantId");
+        AuditDetails auditDetails = AuditDetails.builder().createdBy("user-uuid-1").createdTime(System.currentTimeMillis()).lastModifiedBy("user-uuid-1").lastModifiedTime(System.currentTimeMillis()).build();
+        clerk.setAuditDetails(auditDetails);
+        advocateClerkRequest.setClerk(null);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid-2");
+        requestInfo.setUserInfo(userInfo);
+        advocateClerkRequest.setRequestInfo(requestInfo);
+
+        // Call the method to test
+        assertThrows(CustomException.class, () -> advocateClerkRegistrationEnrichment.enrichAdvocateClerkApplicationUponUpdate(advocateClerkRequest));
     }
 
 }

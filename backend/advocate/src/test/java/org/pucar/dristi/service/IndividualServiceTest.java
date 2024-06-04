@@ -77,9 +77,6 @@ public class IndividualServiceTest {
         advocateRequest.setAdvocate(advocate);
         Map<String, String> individualUserUUID = new HashMap<>();
 
-//        when(individualUtils.individualCall(any(), any(), anyMap())).thenThrow(RuntimeException.class);
-//        when(configuration.getIndividualSearchEndpoint()).thenThrow(RuntimeException.class);
-
         // Act and Assert
         assertThrows(Exception.class, () -> {
             individualService.searchIndividual(advocateRequest.getRequestInfo(),advocateRequest.getAdvocate().getIndividualId(), new HashMap<>());

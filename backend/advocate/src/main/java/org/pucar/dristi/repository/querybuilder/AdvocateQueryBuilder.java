@@ -26,9 +26,7 @@ public class AdvocateQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
 
     /**   /** To build query using search criteria to search advocate
-     * @param criteriaList
      * @param preparedStmtList
-     * @param isIndividualLoggedInUser
      * @param limit
      * @param offset
      * @return

@@ -75,6 +75,8 @@ public class AdvocateClerkRepository {
                 }
             }
             return searchCriteria.get(0).getResponseList();
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching advocate clerk application list");
@@ -111,6 +113,8 @@ public class AdvocateClerkRepository {
                 });
             }
             return advocateList;
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching advocate clerk application list");
@@ -147,6 +151,8 @@ public class AdvocateClerkRepository {
                 });
             }
             return advocateList;
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching advocate clerk application list");

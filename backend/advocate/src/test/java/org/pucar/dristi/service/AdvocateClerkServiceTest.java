@@ -87,24 +87,18 @@ public class AdvocateClerkServiceTest {
         });
     }
 
-//    @Test
-//    void registerAdvocateClerkRequest_ValidationFailure() {
-//        // Arrange
-//        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
-//        // Set up the request to trigger validation failure
-//        List<AdvocateClerk> list = new ArrayList<>();
-//        AdvocateClerk clerk = new AdvocateClerk();
-//        list.add(clerk);
-//        advocateClerkRequest.setClerks(list);
-//
-////        doThrow(new Exception("Validation failed")).when(validator).validateAdvocateClerkRegistration(any());
-////        when(validator.validateAdvocateClerkRegistration(any())).thenThrow(Exception.class);
-//
-//        // Act and Assert
-//        assertThrows(Exception.class, () -> {
-//            advocateClerkService.registerAdvocateClerkRequest(advocateClerkRequest);
-//        });
-//    }
+    @Test
+    void registerAdvocateClerkRequest_CustomException() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+
+        doThrow(new CustomException()).when(validator).validateAdvocateClerkRegistration(any());
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateClerkService.registerAdvocateClerkRequest(advocateClerkRequest);
+        });
+    }
 
     @Test
     void searchAdvocateClerkApplications_IndividualLoggedInUser() {
@@ -134,6 +128,52 @@ public class AdvocateClerkServiceTest {
         // Assert
         assertNotNull(result);
         // Add assertions to verify the behavior based on your logic
+    }
+
+    @Test
+    void searchAdvocateClerkApplications_Exception() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplications_CustomException() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        });
     }
 
     @Test
@@ -209,6 +249,26 @@ public class AdvocateClerkServiceTest {
         when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
         // Act and Assert
         assertThrows(Exception.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplicationsByAppNumber_CustomException() {
+        // Arrange
+        String applicationNumber = "testAppNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
             advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
         });
     }
@@ -317,6 +377,26 @@ public class AdvocateClerkServiceTest {
     }
 
     @Test
+    void searchAdvocateClerkApplicationsByStatus_CustomException() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset));
+    }
+
+    @Test
     void updateAdvocateClerk_EmptySuccess() {
         // Arrange
         AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
@@ -372,7 +452,7 @@ public class AdvocateClerkServiceTest {
         clerk.setTenantId("tenantId");
         advocateClerkRequest.setClerk(clerk);
 
-        when(validator.validateApplicationExistence(any())).thenThrow(CustomException.class);
+        when(validator.validateApplicationExistence(any())).thenThrow(new CustomException());
 
         // Assert
         assertThrows(CustomException.class, () -> advocateClerkService.updateAdvocateClerk(advocateClerkRequest));
@@ -387,7 +467,7 @@ public class AdvocateClerkServiceTest {
         clerk.setTenantId("tenantId");
         advocateClerkRequest.setClerk(clerk);
 
-        when(validator.validateApplicationExistence(any())).thenThrow(RuntimeException.class);
+        when(validator.validateApplicationExistence(any())).thenThrow(new RuntimeException());
 
         // Assert
         assertThrows(Exception.class, () -> advocateClerkService.updateAdvocateClerk(advocateClerkRequest));

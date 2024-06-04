@@ -61,6 +61,9 @@ public class AdvocateService {
             producer.push(config.getAdvocateCreateTopic(), body);
 
             return body.getAdvocate();
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while searching");
+            throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating advocate");
             throw new CustomException(ADVOCATE_CREATE_EXCEPTION, e.getMessage());

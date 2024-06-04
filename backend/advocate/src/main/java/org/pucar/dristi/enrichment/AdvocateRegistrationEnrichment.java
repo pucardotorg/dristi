@@ -48,7 +48,8 @@ public class AdvocateRegistrationEnrichment {
                     document.setId(String.valueOf(UUID.randomUUID()));
                 });
             }
-
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e) {
             log.error("Error enriching advocate application: {}", e.getMessage());

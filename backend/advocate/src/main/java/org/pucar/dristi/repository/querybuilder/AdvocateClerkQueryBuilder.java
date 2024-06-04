@@ -88,6 +88,9 @@ public class AdvocateClerkQueryBuilder {
 
             return query.toString();
         }
+        catch(CustomException e){
+            throw e;
+        }
         catch (Exception e) {
             log.error("Error while building advocate clerk search query");
             throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());

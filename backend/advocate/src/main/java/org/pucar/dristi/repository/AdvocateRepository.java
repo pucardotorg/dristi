@@ -81,6 +81,9 @@ public class AdvocateRepository {
 
             return searchCriteria; // Use this return validate function used by update API
         }
+        catch(CustomException e){
+            throw e;
+        }
         catch (Exception e){
             log.error("Error while fetching advocate application list");
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
@@ -121,6 +124,9 @@ public class AdvocateRepository {
 
             return advocateList;
         }
+        catch(CustomException e){
+            throw e;
+        }
         catch (Exception e){
             log.error("Error while fetching advocate application list");
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION,"Error while fetching advocate application list: "+e.getMessage());
@@ -160,6 +166,9 @@ public class AdvocateRepository {
             }
 
             return advocateList;
+        }
+        catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching advocate application list");

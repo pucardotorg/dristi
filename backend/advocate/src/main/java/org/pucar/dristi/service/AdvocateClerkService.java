@@ -51,6 +51,8 @@ public class AdvocateClerkService {
 
             producer.push(config.getAdvClerkcreateTopic(), body);
             return body.getClerk();
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e){
             log.error("Error occurred while creating advocate clerk");
             throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
@@ -78,8 +80,9 @@ public class AdvocateClerkService {
 
             // Otherwise return the found applications
             return applications;
+        } catch(CustomException e){
+            throw e;
         }
-
         catch (Exception e){
             log.error("Error while fetching to search results");
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
@@ -106,6 +109,8 @@ public class AdvocateClerkService {
 
             // Otherwise return the found applications
             return applications;
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
@@ -133,6 +138,8 @@ public class AdvocateClerkService {
 
             // Otherwise return the found applications
             return applications;
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
@@ -169,7 +176,8 @@ public class AdvocateClerkService {
             producer.push(config.getAdvClerkUpdateTopic(), advocateClerkRequest);
 
             return advocateClerkRequest.getClerk();
-
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e){
             log.error("Error occurred while updating advocate clerk");
             throw new CustomException(ADVOCATE_CLERK_UPDATE_EXCEPTION,"Error occurred while updating advocate clerk: " + e.getMessage());

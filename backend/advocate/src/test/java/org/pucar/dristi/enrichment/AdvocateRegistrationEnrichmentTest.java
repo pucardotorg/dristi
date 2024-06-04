@@ -149,7 +149,32 @@ class AdvocateRegistrationEnrichmentTest {
         when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("Mocked Exception"));
 
         // Expect exception to propagate
-        assertThrows(RuntimeException.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
+        assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
+    }
+
+    @Test
+    void enrichAdvocateRegistrationTest_CustomException() {
+        // Setup mock request and expected results
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        Advocate advocate = new Advocate();
+        advocate.setTenantId("tenantId");
+        Document document = new Document();
+        document.setId("id");
+        document.setDocumentUid("documentUid");
+        List<Document> list = new ArrayList<>();
+        list.add(document);
+        advocate.setDocuments(list);
+        advocateRequest.setAdvocate(advocate);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid");
+        requestInfo.setUserInfo(userInfo);
+        requestInfo.getUserInfo().setTenantId("tenantId");
+        advocateRequest.setRequestInfo(requestInfo);
+        List<String> idList = List.of("P-2021-01-01-001");
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenThrow(new CustomException());
+
+        assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
     }
 
 

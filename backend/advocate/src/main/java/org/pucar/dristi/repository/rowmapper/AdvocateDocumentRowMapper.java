@@ -47,6 +47,8 @@ public class AdvocateDocumentRowMapper implements ResultSetExtractor<Map<UUID,Li
                     documentMap.put(uuid,documents);
                 }
             }
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error occurred while processing document ResultSet: {}", e.getMessage());

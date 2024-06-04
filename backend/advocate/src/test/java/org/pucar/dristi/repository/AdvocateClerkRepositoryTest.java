@@ -172,4 +172,58 @@ public class AdvocateClerkRepositoryTest {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    public void testGetApplications_Exception() {
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplications_CustomException() {
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByStatus_CustomException() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByStatus_Exception() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumber_CustomException() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumber_Exception() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0));
+    }
+
 }

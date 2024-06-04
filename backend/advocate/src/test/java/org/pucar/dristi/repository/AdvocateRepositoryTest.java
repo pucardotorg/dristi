@@ -148,6 +148,27 @@ public class AdvocateRepositoryTest {
     }
 
     @Test
+    void getApplications_CustomException() {
+        // Arrange
+        List<AdvocateSearchCriteria> searchCriteria = null;
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Mock queryBuilder methods
+        when(queryBuilder.getAdvocateSearchQuery(any(), anyList(), any(), any(), any())).thenReturn("testAdvocateQuery");
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
+
+        // Mock jdbcTemplate methods
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(new ArrayList<Advocate>());
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenThrow(RuntimeException.class);
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateRepository.getApplications(searchCriteria, tenantId, limit, offset));
+    }
+
+    @Test
     void getListApplicationsByStatus_Success() {
         // Arrange
         String status = "testStatus";
@@ -294,40 +315,6 @@ public class AdvocateRepositoryTest {
         assertEquals(listAdvocates, result);
     }
 
-//    @Test
-//    void getListApplicationsByStatus_Exception() {
-//        // Arrange
-//        String status = "testStatus";
-//        String tenantId = "testTenantId";
-//        Integer limit = 10;
-//        Integer offset = 0;
-//
-//        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
-//        // Populate searchCriteria with test data
-//        AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
-//        advocateSearchCriteria.setId("id");
-//        advocateSearchCriteria.setApplicationNumber("appNumber");
-//        advocateSearchCriteria.setIndividualId("individualID");
-//        searchCriteria.add(advocateSearchCriteria);
-//
-//        List<Advocate> listAdvocates = new ArrayList<Advocate>();
-////        Advocate advocate1 = new Advocate();
-////        advocate1.setId(UUID.fromString("id1"));
-//
-//        // Mock queryBuilder methods
-//        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenReturn("testAdvocateQuery");
-//        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn("testDocumentQuery");
-//
-//        // Mock jdbcTemplate methods
-////        List<Advocate> advocateList = new ArrayList<>();
-//        // Populate advocateList with test data
-//        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateRowMapper.class))).thenReturn(listAdvocates);
-//        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateDocumentRowMapper.class))).thenReturn(Collections.emptyMap());
-//
-//        // Assert
-//        assertThrows(Exception.class, () -> advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset));
-//    }
-//
     @Test
     public void testGetListApplicationsByApplicationNumber_WhenNoAdvocatesFound() {
         // Arrange
@@ -346,5 +333,121 @@ public class AdvocateRepositoryTest {
         assertEquals(0, result.size());
         verify(queryBuilder, times(1)).getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateRowMapper.class));
+    }
+
+    @Test
+    void getListApplicationsByStatus_Exception() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
+        // Populate searchCriteria with test data
+        AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+        advocateSearchCriteria.setId("id");
+        advocateSearchCriteria.setApplicationNumber("appNumber");
+        advocateSearchCriteria.setIndividualId("individualID");
+        searchCriteria.add(advocateSearchCriteria);
+
+        List<Advocate> listAdvocates = new ArrayList<Advocate>();
+        Advocate advocate1 = new Advocate();
+        advocate1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
+        Advocate advocate2 = new Advocate();
+        advocate2.setId(UUID.fromString("d747abff-6d5d-47d7-99e2-fc70eaa856cb"));
+        Advocate advocate3 = new Advocate();
+        advocate3.setId(UUID.fromString("681230cd-702d-4add-b5e4-f97e71d9b622"));
+        listAdvocates.add(advocate1);
+        listAdvocates.add(advocate2);
+        listAdvocates.add(advocate3);
+
+        // Mock queryBuilder methods
+        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset));
+    }
+
+    @Test
+    void getListApplicationsByStatus_CustomException() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        List<AdvocateSearchCriteria> searchCriteria = new ArrayList<>();
+        // Populate searchCriteria with test data
+        AdvocateSearchCriteria advocateSearchCriteria = new AdvocateSearchCriteria();
+        advocateSearchCriteria.setId("id");
+        advocateSearchCriteria.setApplicationNumber("appNumber");
+        advocateSearchCriteria.setIndividualId("individualID");
+        searchCriteria.add(advocateSearchCriteria);
+
+        List<Advocate> listAdvocates = new ArrayList<Advocate>();
+        Advocate advocate1 = new Advocate();
+        advocate1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
+        Advocate advocate2 = new Advocate();
+        advocate2.setId(UUID.fromString("d747abff-6d5d-47d7-99e2-fc70eaa856cb"));
+        Advocate advocate3 = new Advocate();
+        advocate3.setId(UUID.fromString("681230cd-702d-4add-b5e4-f97e71d9b622"));
+        listAdvocates.add(advocate1);
+        listAdvocates.add(advocate2);
+        listAdvocates.add(advocate3);
+
+        // Mock queryBuilder methods
+        when(queryBuilder.getAdvocateSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset));
+    }
+
+    @Test
+    void getListApplicationsByApplicationNumber_Exception() {
+        // Arrange
+        String applicationNumber = "APP12345";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        List<Advocate> listAdvocates = new ArrayList<Advocate>();
+        Advocate advocate1 = new Advocate();
+        advocate1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
+        Advocate advocate2 = new Advocate();
+        advocate2.setId(UUID.fromString("d747abff-6d5d-47d7-99e2-fc70eaa856cb"));
+        Advocate advocate3 = new Advocate();
+        advocate3.setId(UUID.fromString("681230cd-702d-4add-b5e4-f97e71d9b622"));
+        listAdvocates.add(advocate1);
+        listAdvocates.add(advocate2);
+        listAdvocates.add(advocate3);
+
+        // Mock queryBuilder methods
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset));
+    }
+
+    @Test
+    void getListApplicationsByApplicationNumber_CustomException() {
+        // Arrange
+        String applicationNumber = "APP12345";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        List<Advocate> listAdvocates = new ArrayList<Advocate>();
+        Advocate advocate1 = new Advocate();
+        advocate1.setId(UUID.fromString("921e3cc0-64df-490f-adc1-91c3492219e6"));
+        Advocate advocate2 = new Advocate();
+        advocate2.setId(UUID.fromString("d747abff-6d5d-47d7-99e2-fc70eaa856cb"));
+        Advocate advocate3 = new Advocate();
+        advocate3.setId(UUID.fromString("681230cd-702d-4add-b5e4-f97e71d9b622"));
+        listAdvocates.add(advocate1);
+        listAdvocates.add(advocate2);
+        listAdvocates.add(advocate3);
+
+        // Mock queryBuilder methods
+        when(queryBuilder.getAdvocateSearchQueryByApplicationNumber(anyString(), anyList(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset));
     }
 }

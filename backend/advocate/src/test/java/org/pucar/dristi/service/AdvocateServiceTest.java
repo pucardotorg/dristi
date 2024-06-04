@@ -84,6 +84,19 @@ public class AdvocateServiceTest {
     }
 
     @Test
+    public void registerAdvocateRequest_CustomException() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+
+        doThrow(new CustomException()).when(validator).validateAdvocateRegistration(any());
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateService.createAdvocate(advocateRequest);
+        });
+    }
+
+    @Test
     public void registerAdvocateRequest_Custom() {
         // Arrange
         AdvocateRequest advocateRequest = new AdvocateRequest();
@@ -472,8 +485,6 @@ public class AdvocateServiceTest {
         advocate.setApplicationNumber("appNum1");
         advocate.setTenantId("tenantId");
         advocateRequest.setAdvocate(advocate);
-
-        when(validator.validateApplicationExistence(any())).thenThrow(RuntimeException.class);
 
         // Assert
         assertThrows(Exception.class, () -> advocateService.updateAdvocate(advocateRequest));

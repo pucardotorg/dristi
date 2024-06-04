@@ -23,7 +23,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
      * @param rs
      * @return list of advocate clerk
      */
-    public List<AdvocateClerk> extractData(ResultSet rs) throws CustomException {
+    public List<AdvocateClerk> extractData(ResultSet rs) {
         Map<String,AdvocateClerk> advocateClerkApplicationMap = new LinkedHashMap<>();
         System.out.println(rs);
         try {
@@ -64,6 +64,8 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
 
                 advocateClerkApplicationMap.put(uuid, advocateClerkApplication);
             }
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error occurred while processing clerk ResultSet: {}", e.getMessage());
@@ -85,6 +87,8 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
             listDocument.add(document);
 
             advocateClerkApplication.setDocuments(listDocument);
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             e.printStackTrace();
