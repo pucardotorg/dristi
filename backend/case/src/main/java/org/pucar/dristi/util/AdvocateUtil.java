@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.web.models.AdvocateListResponse;
 import org.pucar.dristi.web.models.AdvocateResponse;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.pucar.dristi.web.models.AdvocateSearchRequest;
@@ -42,10 +43,10 @@ public class AdvocateUtil {
 		advocateSearchRequest.setCriteria(criteriaList);
 
 		Object response = new HashMap<>();
-		AdvocateResponse advocateResponse = new AdvocateResponse();
+		AdvocateListResponse advocateResponse = new AdvocateListResponse();
 		try {
 			response = restTemplate.postForObject(uri.toString(), advocateSearchRequest, Map.class);
-			advocateResponse = mapper.convertValue(response, AdvocateResponse.class);
+			advocateResponse = mapper.convertValue(response, AdvocateListResponse.class);
 			log.info("Advocate response :: {}", advocateResponse);
 		} catch (Exception e) {
 			log.error(ERROR_WHILE_FETCHING_FROM_ADVOCATE, e);
