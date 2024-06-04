@@ -31,7 +31,7 @@ serviceMaps:
             - jsonPath: $.clerk.documents.*.fileStore
             - jsonPath: $.clerk.documents.*.documentUid
             - jsonPath: $.clerk.documents.*.documentType
-            - jsonPath: $.clerks[?({id} in @.documents[*].id)].id
+            - jsonPath: $.clerk[?({id} in @.documents[*].id)].id
             - jsonPath: $.clerk.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
