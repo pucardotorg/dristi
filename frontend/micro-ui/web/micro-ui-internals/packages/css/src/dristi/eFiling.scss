@@ -77,6 +77,7 @@
       justify-content: start;
       align-self: flex-start;
       border: 0;
+
       span {
         font-family: Roboto;
         font-size: 16px;
@@ -124,6 +125,7 @@
     .form-wrapper-d {
       margin-top: 32px;
       border: none !important;
+
       .form-item-name {
         width: 100%;
         padding: 12px 32px 12px 32px;
@@ -551,6 +553,10 @@
           flex-direction: column;
           gap: 16px;
 
+          &.error {
+            border-left: 2px #BB2C2F solid;
+          }
+
           .scrutiny-error {
             display: flex !important;
             padding: 5px 16px;
@@ -599,7 +605,6 @@
             border-radius: 4px;
 
             .title {
-              padding: 16px;
               font-family: Roboto;
               font-size: 16px;
               font-weight: 700;
@@ -608,25 +613,45 @@
               color: #77787b;
             }
 
+            .title,
             .phone-number,
             .image,
             .text,
             .amount {
               width: 100%;
-              padding: 12px 16px;
-              display: flex;
-              border-bottom: 1px #e8e8e8 solid;
-            }
-
-            .address {
-              width: 100%;
-              padding: 12px 16px;
               display: flex;
               justify-content: space-between;
             }
 
+            .phone-number-main,
+            .text-main,
+            .amount-main,
+            .title-main,
+            .image-main {
+              border-bottom: 1px #e8e8e8 solid;
+              padding: 12px 16px;
+
+              &.error {
+                background-color: #fce8e8;
+              }
+            }
+
+            .address {
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+            }
+
+            .address-main {
+              padding: 12px 16px;
+
+              &.error {
+                background-color: #fce8e8;
+              }
+            }
+
             .label {
-              width: 45%;
+              width: 35%;
               font-family: Roboto;
               font-size: 14px;
               font-weight: 400;
@@ -636,7 +661,7 @@
             }
 
             .value {
-              width: 45%;
+              width: 55%;
               font-family: Roboto;
               font-size: 14px;
               font-weight: 400;
@@ -653,19 +678,31 @@
             }
 
             .image {
-              flex-direction: column !important;
+
+              &.column {
+                flex-direction: column;
+              }
+
               gap: 8px;
 
               .value,
               .label {
-                width: 100% !important;
-
                 .docviewer-wrapper {
                   margin-top: 0px !important;
 
                   .card {
                     max-width: fit-content !important;
                   }
+                }
+              }
+
+              .value {
+                display: grid;
+                grid-template-columns: 50% 50%;
+                gap: 20px;
+
+                &.column {
+                  grid-template-columns: 25% 25% 25% 25% !important;
                 }
               }
             }
@@ -717,6 +754,7 @@
   flex-direction: row;
   width: 100%;
   margin-bottom: 56px;
+
   .file-case-side-stepper {
     width: 22.5%;
     display: flex;

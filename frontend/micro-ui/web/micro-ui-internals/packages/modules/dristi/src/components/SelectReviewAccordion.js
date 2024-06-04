@@ -164,15 +164,16 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
           {inputs.map((input, index) => {
-            let sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
+            const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
+            const sectionError = sectionValue?.scrutinyMessage?.FSOError;
             return (
-              <div className="content-item">
+              <div className={`content-item ${sectionError && isScrutiny && "error"}`}>
                 <div className="item-header">
                   <div className="header-left">
                     {input?.icon && <Icon icon={input?.icon} />}
                     <span>{t(input?.label)}</span>
                   </div>
-                  {(!isScrutiny || sectionValue?.scrutinyMessage?.FSOError) && (
+                  {(!isScrutiny || sectionError) && (
                     <div
                       className="header-right"
                       onClick={(e) => {
@@ -186,7 +187,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       <EditPencilIcon />
                     </div>
                   )}
-                  {!sectionValue?.scrutinyMessage?.FSOError && isScrutiny && (
+                  {!sectionError && isScrutiny && (
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={(e) => {
@@ -198,10 +199,10 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     </div>
                   )}
                 </div>
-                {sectionValue?.scrutinyMessage?.FSOError && (
+                {sectionError && (
                   <div className="scrutiny-error section">
                     <FlagIcon isError={true} />
-                    {sectionValue?.scrutinyMessage?.FSOError}
+                    {sectionError}
                   </div>
                 )}
                 {Array.isArray(input.data) &&

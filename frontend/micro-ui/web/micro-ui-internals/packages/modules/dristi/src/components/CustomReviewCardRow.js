@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
@@ -29,9 +29,9 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
         title = extractValue(data, value);
       }
       return (
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div className="title">{`${titleIndex}. ${title}`}</div>
+        <div className={`title-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
+            <div>{`${titleIndex}. ${title}`}</div>
             {isScrutiny && (
               <div
                 className="flag"
@@ -55,7 +55,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
     case "text":
       const textValue = extractValue(data, value);
       return (
-        <div>
+        <div className={`text-main ${isScrutiny && dataError && "error"}`}>
           <div className="text">
             <div className="label">{label}</div>
             <div className="value">
@@ -85,7 +85,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
 
     case "amount":
       return (
-        <div>
+        <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
           <div className="amount">
             <div className="label">{label}</div>
             <div className="value"> {`₹${extractValue(data, value)}`} </div>
@@ -112,7 +112,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
     case "phonenumber":
       const numbers = extractValue(data, value);
       return (
-        <div>
+        <div className={`phone-number-main ${isScrutiny && dataError && "error"}`}>
           <div className="phone-number">
             <div className="label">{label}</div>
             <div className="value">
@@ -141,13 +141,13 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       );
     case "image":
       return (
-        <div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div className="image">
-              <div className="label">{label}</div>
-              <div className="value">
-                <DocViewerWrapper />
-              </div>
+        <div className={`image-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`image ${!isScrutiny ? "column" : ""}`}>
+            <div className="label">{label}</div>
+            <div className={`value ${!isScrutiny ? "column" : ""}`}>
+              <DocViewerWrapper />
+              <DocViewerWrapper />
+              <DocViewerWrapper />
             </div>
             <div
               className="flag"
@@ -156,7 +156,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
               }}
               key={dataIndex}
             >
-              {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+              {isScrutiny && (dataError ? <EditPencilIcon /> : <FlagIcon />)}
             </div>
           </div>
           {dataError && isScrutiny && (
@@ -181,14 +181,15 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       }
 
       return (
-        <div>
+        <div className={`address-main ${isScrutiny && dataError && "error"}`}>
           <div className="address">
             <div className="label">{label}</div>
-            <div>
+            <div className={`value ${!isScrutiny ? "column" : ""}`}>
               {address.map((item) => (
-                <div className="value">{item}</div>
+                <p>{item}</p>
               ))}
             </div>
+
             {isScrutiny && (
               <div
                 className="flag"
