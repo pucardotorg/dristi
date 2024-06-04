@@ -51,5 +51,12 @@ class RepresentativeRowMapperTest {
 
         assertThrows(Exception.class, () -> rowMapper.extractData(mockResultSet));
     }
+
+    @Test
+    void testExtractData_CustomException() throws Exception {
+        when(mockResultSet.next()).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> rowMapper.extractData(mockResultSet));
+    }
 }
 

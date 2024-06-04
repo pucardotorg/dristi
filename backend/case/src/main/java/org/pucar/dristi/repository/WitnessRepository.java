@@ -47,8 +47,7 @@ public class WitnessRepository {
             }
 
             return witnessList;
-        }
-        catch (CustomException e){
+        } catch(CustomException e){
             throw e;
         }
         catch (Exception e){

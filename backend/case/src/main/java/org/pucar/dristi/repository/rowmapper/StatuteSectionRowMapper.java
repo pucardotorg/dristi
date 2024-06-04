@@ -56,6 +56,8 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Lis
                     statuteSectionMap.put(uuid,statuteSections);
                 }
             }
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
             throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());

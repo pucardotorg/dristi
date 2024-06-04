@@ -54,6 +54,8 @@ public class RepresentativeRowMapper implements ResultSetExtractor<Map<UUID, Lis
                     advocateMap.put(uuid, advocateMappings);
                 }
             }
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
             throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());

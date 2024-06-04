@@ -188,6 +188,8 @@ public class CaseQueryBuilder {
             }
 
             return query.toString();
+        }  catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error while building document search query");
             throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());

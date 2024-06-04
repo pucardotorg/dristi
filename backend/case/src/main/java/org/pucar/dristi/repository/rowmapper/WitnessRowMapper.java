@@ -61,6 +61,8 @@ public class WitnessRowMapper implements ResultSetExtractor<List<Witness>> {
 
                 witnessMap.put(uuid, witness);
             }
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             log.error("Error occurred while processing witness ResultSet: {}", e.getMessage());

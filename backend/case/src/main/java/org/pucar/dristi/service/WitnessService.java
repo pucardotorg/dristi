@@ -45,8 +45,7 @@ public class WitnessService {
             producer.push(config.getWitnessCreateTopic(), body);
 
             return body.getWitness();
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while creating witness");
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating witness");
@@ -94,9 +93,7 @@ public class WitnessService {
             producer.push(config.getWitnessUpdateTopic(), witnessRequest);
 
             return witnessRequest.getWitness();
-
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating witness");
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating witness");

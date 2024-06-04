@@ -56,6 +56,8 @@ public class CaseService {
 
             producer.push(config.getCaseCreateTopic(), body);
             return body.getCases();
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating case");
             throw new CustomException(CREATE_CASE_ERR, e.getMessage());
@@ -72,6 +74,8 @@ public class CaseService {
             for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()){
                 searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber()))));
             }
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results");
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());
@@ -94,6 +98,8 @@ public class CaseService {
 
             return caseRequest.getCases();
 
+        } catch(CustomException e){
+            throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating case");
             throw new CustomException(UPDATE_CASE_ERR, "Error occurred while updating case: " + e.getMessage());
@@ -105,8 +111,7 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             return caseRepository.checkCaseExists(caseExistsRequest.getCriteria());
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while checking case exist");
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to exist case");

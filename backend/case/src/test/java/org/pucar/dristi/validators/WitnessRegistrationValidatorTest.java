@@ -161,7 +161,9 @@ public class WitnessRegistrationValidatorTest {
 
         Witness witness = new Witness();
         witness.setCaseId("nonExistingCaseId");
-//        witness.setIndividualId("nonExistingIndividualId");
+
+        // Mock repository behavior
+        when(witnessRepository.getApplications(any())).thenReturn(List.of(witness));
 
         // Call the method under test and expect CustomException
         assertThrows(Exception.class, () -> {

@@ -3,11 +3,8 @@ package org.pucar.dristi.web.controllers;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
@@ -24,25 +21,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+/**
+* API tests for CaseApiController
+*/
+@SpringBootTest
 public class CaseApiControllerTest {
 
-    @InjectMocks
+    @Autowired
     private CaseApiController caseApiController;
-
-    @Mock
+    @MockBean
     private CaseService caseService;
-
-    @Mock
+    @MockBean
     private WitnessService witnessService;
-
     @Mock
     private ResponseInfoFactory responseInfoFactory;
 
     @BeforeEach
-    void setUp() {
-        caseApiController.setMockInjects(caseService, responseInfoFactory);
-        MockitoAnnotations.initMocks(this);
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -91,10 +87,10 @@ public class CaseApiControllerTest {
     public void caseV1SearchPostSuccess() {
         // Mocking request body
         CaseSearchRequest caseRequest = new CaseSearchRequest(); // Create a mock CaseRequest object
-
+        caseRequest.setCriteria(List.of(CaseCriteria.builder().cnrNumber("cnrNumber").build()));
         // Mocking caseService.createCase method to return a CourtCase object
-        CaseCriteria caseCriteria = new CaseCriteria(); // Create a mock CourtCase object
-       // when(caseService.searchCases(caseRequest)).thenReturn(List.of(courtCase));
+        CourtCase courtCase = new CourtCase(); // Create a mock CourtCase object
+        caseService.searchCases(caseRequest);
 
         // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object
         ResponseInfo responseInfo = new ResponseInfo(); // Create a mock ResponseInfo object
@@ -105,6 +101,7 @@ public class CaseApiControllerTest {
 
         // Verify the response entity
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(caseRequest.getCriteria(), responseEntity.getBody().getCriteria());
     }
     @Test
     public void caseV1UpdatePostSuccess() {
@@ -187,6 +184,7 @@ public class CaseApiControllerTest {
 
         // Verify the response entity
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(witness, responseEntity.getBody().getWitnesses().get(0));
     }
 
 }

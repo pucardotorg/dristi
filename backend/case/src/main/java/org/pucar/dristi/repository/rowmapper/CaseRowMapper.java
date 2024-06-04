@@ -69,18 +69,13 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
 
                 caseMap.put(uuid, courtCase);
             }
-        }
-        catch (Exception e){
+        } catch(CustomException e){
+            throw e;
+        } catch (Exception e){
             log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
             throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing Case ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(caseMap.values());
-    }
-    private UUID toUUID(String toUuid) {
-        if(toUuid == null) {
-            return null;
-        }
-        return UUID.fromString(toUuid);
     }
 
     private LocalDate stringToLocalDate(String str){

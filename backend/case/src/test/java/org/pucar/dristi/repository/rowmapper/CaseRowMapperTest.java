@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,6 +60,13 @@ class CaseRowMapperTest {
         when(rs.next()).thenThrow(new SQLException("Database error"));
 
         assertThrows(Exception.class, () -> rowMapper.extractData(rs));
+    }
+
+    @Test
+    void testExtractData_CustomException() throws Exception {
+        when(rs.next()).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
     }
 }
 

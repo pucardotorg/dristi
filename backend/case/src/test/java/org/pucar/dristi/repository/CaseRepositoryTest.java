@@ -1,12 +1,9 @@
 package org.pucar.dristi.repository;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-import org.checkerframework.checker.units.qual.C;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,10 +13,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CaseRepositoryTest {
@@ -197,6 +197,100 @@ class CaseRepositoryTest {
     }
 
     @Test
+    void getApplications_Exception() {
+        // Prepare test data
+        List<CaseCriteria> searchCriteria = new ArrayList<>();
+        searchCriteria.add(new CaseCriteria());
+
+        // Mock dependencies
+        Map<UUID, List<LinkedCase>> linkedCasesMap = new HashMap<>();
+        linkedCasesMap.put(courtCase.getId(), courtCase.getLinkedCases());
+
+        Map<UUID, List<Party>> litigantMap = new HashMap<>();
+        litigantMap.put(courtCase.getId(), courtCase.getLitigants());
+
+        Map<UUID, List<StatuteSection>> statuteSectionsMap = new HashMap<>();
+        statuteSectionsMap.put(courtCase.getId(), courtCase.getStatutesAndSections());
+
+        Map<UUID, List<AdvocateMapping>> representativeMap = new HashMap<>();
+        representativeMap.put(courtCase.getId(), courtCase.getRepresentatives());
+
+        Map<UUID, List<Party>> representingMap = new HashMap<>();
+        representingMap.put(courtCase.getId(), courtCase.getRepresentatives().get(0).getRepresenting());
+
+        Map<UUID, List<Document>> caseDocumentMap = new HashMap<>();
+        caseDocumentMap.put(courtCase.getId(), courtCase.getDocuments());
+
+        Map<UUID, List<Document>> caseLitigantDocumentMap = new HashMap<>();
+        caseLitigantDocumentMap.put(courtCase.getId(), courtCase.getLitigants().get(0).getDocuments());
+
+        Map<UUID, List<Document>> caseLinkedCaseDocumentMap = new HashMap<>();
+        caseLinkedCaseDocumentMap.put(courtCase.getId(), courtCase.getLinkedCases().get(0).getDocuments());
+
+        Map<UUID, List<Document>> caseRepresentiveDocumentMap = new HashMap<>();
+        caseRepresentiveDocumentMap.put(courtCase.getId(), courtCase.getRepresentatives().get(0).getDocuments());
+
+        Map<UUID, List<Document>> caseRepresentingDocumentMap = new HashMap<>();
+        caseRepresentingDocumentMap.put(courtCase.getId(), courtCase.getRepresentatives().get(0).getRepresenting().get(0).getDocuments());
+
+        List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
+        expectedCourtCaseList.add(courtCase);
+        when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> {
+            caseRepository.getApplications(searchCriteria);
+        });
+    }
+
+    @Test
+    void getApplications_CustomException() {
+        // Prepare test data
+        List<CaseCriteria> searchCriteria = new ArrayList<>();
+        searchCriteria.add(new CaseCriteria());
+
+        // Mock dependencies
+        Map<UUID, List<LinkedCase>> linkedCasesMap = new HashMap<>();
+        linkedCasesMap.put(courtCase.getId(), courtCase.getLinkedCases());
+
+        Map<UUID, List<Party>> litigantMap = new HashMap<>();
+        litigantMap.put(courtCase.getId(), courtCase.getLitigants());
+
+        Map<UUID, List<StatuteSection>> statuteSectionsMap = new HashMap<>();
+        statuteSectionsMap.put(courtCase.getId(), courtCase.getStatutesAndSections());
+
+        Map<UUID, List<AdvocateMapping>> representativeMap = new HashMap<>();
+        representativeMap.put(courtCase.getId(), courtCase.getRepresentatives());
+
+        Map<UUID, List<Party>> representingMap = new HashMap<>();
+        representingMap.put(courtCase.getId(), courtCase.getRepresentatives().get(0).getRepresenting());
+
+        Map<UUID, List<Document>> caseDocumentMap = new HashMap<>();
+        caseDocumentMap.put(courtCase.getId(), courtCase.getDocuments());
+
+        Map<UUID, List<Document>> caseLitigantDocumentMap = new HashMap<>();
+        caseLitigantDocumentMap.put(courtCase.getId(), courtCase.getLitigants().get(0).getDocuments());
+
+        Map<UUID, List<Document>> caseLinkedCaseDocumentMap = new HashMap<>();
+        caseLinkedCaseDocumentMap.put(courtCase.getId(), courtCase.getLinkedCases().get(0).getDocuments());
+
+        Map<UUID, List<Document>> caseRepresentiveDocumentMap = new HashMap<>();
+        caseRepresentiveDocumentMap.put(courtCase.getId(), courtCase.getRepresentatives().get(0).getDocuments());
+
+        Map<UUID, List<Document>> caseRepresentingDocumentMap = new HashMap<>();
+        caseRepresentingDocumentMap.put(courtCase.getId(), courtCase.getRepresentatives().get(0).getRepresenting().get(0).getDocuments());
+
+        List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
+        expectedCourtCaseList.add(courtCase);
+        when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> {
+            caseRepository.getApplications(searchCriteria);
+        });
+    }
+
+    @Test
     void checkCaseExists_ShouldReturnCaseExistsListWithCorrectExistenceStatus() {
         // Prepare test data
         List<CaseExists> caseExistsList = new ArrayList<>();
@@ -220,6 +314,42 @@ class CaseRepositoryTest {
         assertEquals(2, result.size());
         assertEquals(true, result.get(0).getExists()); // Assuming case exists
         assertEquals(false, result.get(1).getExists()); // Assuming case does not exist
+    }
+
+    @Test
+    void checkCaseExists_Exception() {
+        // Prepare test data
+        List<CaseExists> caseExistsList = new ArrayList<>();
+        CaseExists caseExists1 = CaseExists.builder().courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
+        caseExistsList.add(caseExists1);
+        caseExistsList.add(caseExists2);
+
+        // Mock dependencies
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString())).thenThrow(new RuntimeException());
+//        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
+
+        assertThrows(Exception.class, () -> {
+            caseRepository.checkCaseExists(caseExistsList);
+        });
+    }
+
+    @Test
+    void checkCaseExists_CustomException() {
+        // Prepare test data
+        List<CaseExists> caseExistsList = new ArrayList<>();
+        CaseExists caseExists1 = CaseExists.builder().courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
+        caseExistsList.add(caseExists1);
+        caseExistsList.add(caseExists2);
+
+        // Mock dependencies
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString())).thenThrow(new CustomException());
+//        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
+
+        assertThrows(CustomException.class, () -> {
+            caseRepository.checkCaseExists(caseExistsList);
+        });
     }
 
 }

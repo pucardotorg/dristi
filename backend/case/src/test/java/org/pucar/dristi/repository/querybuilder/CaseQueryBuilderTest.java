@@ -4,8 +4,10 @@ import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.slf4j.Logger;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,12 +15,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CaseQueryBuilderTest {
 
     private CaseQueryBuilder queryBuilder;
+
+    @Mock
+    private Logger mockedLogger;
 
     @BeforeEach
     void setUp() {
@@ -136,6 +141,22 @@ class CaseQueryBuilderTest {
         assertEquals(expectedQuery, query);
     }
 
+//    @Test
+//    void checkCaseExistQuery_Exception() {
+//        // Arrange
+//        String courtCaseNumber = null;
+//        String cnrNumber = null;
+//        String filingNumber = "123";
+//
+//        Logger mockedLogger = mock(Logger.class);
+//        doThrow(new RuntimeException()).when(mockedLogger).error(any(String.class));
+//
+//        // Assert
+//        assertThrows(Exception.class, () -> {
+//            queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+//        });
+//    }
+
     @Test
     void testGetCasesSearchQuery_SingleCriteria() {
         CaseCriteria criteria = new CaseCriteria();
@@ -156,6 +177,22 @@ class CaseQueryBuilderTest {
 
     @Test()
     public void testGetCasesSearchQuery_Exception() {
+        // Arrange
+        List<String> ids = new ArrayList<>();
+        List<Object> preparedStmtList = null;
+        ids.add("1");
+        CaseCriteria criteria = new CaseCriteria();
+        criteria.setCaseId("12345");
+        criteria.setCnrNumber("123");
+        criteria.setFilingNumber("9876");
+        criteria.setCourtCaseNumber("456");
+
+        // Assert
+        assertThrows(Exception.class, () -> queryBuilder.getCasesSearchQuery(criteria, preparedStmtList));
+    }
+
+    @Test()
+    public void testGetCasesSearchQuery_CustomException() {
         // Arrange
         List<String> ids = new ArrayList<>();
         List<Object> preparedStmtList = null;

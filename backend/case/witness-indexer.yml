@@ -12,7 +12,7 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.witness
           customJsonMapping:
-            indexMapping: {"Data":{"witnessDetails":{},"history":{}}}
+            indexMapping: { "Data": { "witnessDetails": {}, "history": {} } }
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.witnessDetails.id
@@ -51,7 +51,7 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.witness
           customJsonMapping:
-            indexMapping: {"Data":{"witnessDetails":{},"history":{}}}
+            indexMapping: { "Data": { "witnessDetails": {}, "history": {} } }
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.witnessDetails.id
@@ -79,4 +79,3 @@ ServiceMaps:
                 outJsonPath: $.Data.witnessDetails.lastModifiedTime
               - inJsonPath: $.additionalDetails
                 outJsonPath: $.Data.witnessDetails.additionalDetails
-

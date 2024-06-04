@@ -63,6 +63,18 @@ public class WitnessServiceTest {
     }
 
     @Test
+    public void testRegisterWitnessRequest_CustomException() {
+        WitnessRequest request = new WitnessRequest();
+        request.setWitness(new Witness());
+
+        doThrow(new CustomException()).when(validator).validateCaseRegistration(any());
+
+        assertThrows(Exception.class, () -> {
+            witnessService.registerWitnessRequest(request);
+        });
+    }
+
+    @Test
     public void testRegisterWitnessRequest_Exception() {
         WitnessRequest request = null;
 
@@ -87,7 +99,17 @@ public class WitnessServiceTest {
     @Test
     public void testSearchWitnesses_Exception() {
         WitnessSearchRequest searchRequest = new WitnessSearchRequest();
-        when(witnessRepository.getApplications((any()))).thenThrow(new CustomException());;
+        when(witnessRepository.getApplications((any()))).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> {
+            witnessService.searchWitnesses(searchRequest);
+        });
+    }
+
+    @Test
+    public void testSearchWitnesses_CustomException() {
+        WitnessSearchRequest searchRequest = new WitnessSearchRequest();
+        when(witnessRepository.getApplications((any()))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
             witnessService.searchWitnesses(searchRequest);
@@ -111,12 +133,26 @@ public class WitnessServiceTest {
     }
 
     @Test
-    public void testUpdateWitness_Exception() {
+    public void testUpdateWitness_CustomException() {
         WitnessRequest request = new WitnessRequest();
         request.setRequestInfo(new RequestInfo());
         request.setWitness(null);
 
-        when(validator.validateApplicationExistence(any(), any())).thenThrow(new CustomException());;
+        when(validator.validateApplicationExistence(any(), any())).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> {
+            witnessService.updateWitness(request);
+        });
+    }
+
+    @Test
+    public void testUpdateWitness_Exception() {
+        WitnessRequest request = new WitnessRequest();
+        request.setRequestInfo(new RequestInfo());
+        request.setWitness(new Witness());
+
+        doReturn(null).when(validator).validateApplicationExistence(any(RequestInfo.class) ,any(Witness.class));
+        doThrow(new RuntimeException()).when(enrichmentUtil).enrichWitnessApplicationUponUpdate(request);
 
         assertThrows(Exception.class, () -> {
             witnessService.updateWitness(request);

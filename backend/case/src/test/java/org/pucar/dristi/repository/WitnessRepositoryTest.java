@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository;
 
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -9,6 +10,7 @@ import org.pucar.dristi.repository.querybuilder.WitnessQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.WitnessRowMapper;
 import org.pucar.dristi.web.models.Witness;
 import org.pucar.dristi.web.models.WitnessSearchCriteria;
+import org.slf4j.Logger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 
@@ -93,6 +95,23 @@ public class WitnessRepositoryTest {
 
         // Assert
         assertThrows(Exception.class, () -> witnessRepository.getApplications(searchCriteria));
+    }
+
+    @Test
+    public void testGetApplicationsCustomException() {
+        // Mock the behavior of getWitnessesSearchQuery
+        Witness witness = Witness.builder().cnrNumber("cnrNumber").build();
+        List<Witness> list = new ArrayList<>();
+        list.add(witness);
+        List<WitnessSearchCriteria> searchCriteria = new ArrayList<>();
+        when(queryBuilder.getWitnessesSearchQuery(any(), any())).thenReturn("SELECT * FROM witnesses");
+
+        // Mock the behavior of JdbcTemplate to return an empty list
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(WitnessRowMapper.class)))
+                .thenThrow(new CustomException());
+
+        // Assert
+        assertThrows(CustomException.class, () -> witnessRepository.getApplications(searchCriteria));
     }
 
 }

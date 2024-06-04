@@ -3,6 +3,7 @@ package org.pucar.dristi.service;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.common.models.individual.IndividualResponse;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -54,6 +55,19 @@ public class IndividualServiceTest {
 
         // Assertions
         assertNotNull(result);
+    }
+
+    @Test
+    void testSearchIndividual_CustomException() {
+        // Create test data
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(new CourtCase());
+
+        when(configuration.getIndividualHost()).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> {
+            individualService.searchIndividual(caseRequest.getRequestInfo(),"123");
+        });
     }
 
     @Test

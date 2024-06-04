@@ -97,10 +97,8 @@ public class CaseRegistrationEnrichment {
             courtCase.setFilingNumber(courtCaseRegistrationIdList.get(0));
             courtCase.setCaseNumber(courtCase.getFilingNumber());
 
-        } catch (CustomException e) {
-            log.error("Exception occurred while Enriching case");
-            throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("Error enriching case application: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
         }
