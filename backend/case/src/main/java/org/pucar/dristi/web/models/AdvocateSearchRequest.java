@@ -23,19 +23,15 @@ import java.util.List;
 @Builder
 public class AdvocateSearchRequest {
 	@JsonProperty("RequestInfo")
-
-	@Valid
+	@javax.validation.Valid
 	private RequestInfo requestInfo = null;
+
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
 	@JsonProperty("criteria")
 	@Valid
 	private List<AdvocateSearchCriteria> criteria = new ArrayList<>();
-
-	@JsonProperty("status")
-	private List<String> status = null;
-
-	@JsonProperty("applicationNumber")
-	private String applicationNumber = null;
 
 	public AdvocateSearchRequest addCriteriaItem(AdvocateSearchCriteria criteriaItem) {
 		this.criteria.add(criteriaItem);

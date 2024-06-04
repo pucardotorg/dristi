@@ -1,11 +1,15 @@
 package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * AdvocateSearchCriteria
@@ -18,18 +22,26 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 public class AdvocateSearchCriteria {
 	@JsonProperty("id")
-
 	private String id = null;
 
 	@JsonProperty("barRegistrationNumber")
-
 	private String barRegistrationNumber = null;
 
 	@JsonProperty("applicationNumber")
-
 	private String applicationNumber = null;
 
 	@JsonProperty("individualId")
-
 	private String individualId = null;
+
+	@JsonProperty("responseList")
+	@Valid
+	private List<Advocate> responseList = null;
+
+	public AdvocateSearchCriteria addResponseListItem(Advocate responseListItem) {
+		if (this.responseList == null) {
+			this.responseList = new ArrayList<>();
+		}
+		this.responseList.add(responseListItem);
+		return this;
+	}
 }
