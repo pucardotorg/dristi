@@ -39,7 +39,7 @@ public class ApplicationEnrichment {
                         .build();
                 application.setAuditDetails(auditDetails);
                 application.setId(UUID.randomUUID());
-                application.setApplicationType(null);//FIXME
+//                application.setApplicationType(null);//FIXME
                 application.setApplicationNumber(applicationIdList.get(0));//FIXME
                 application.setIsActive(false);
 

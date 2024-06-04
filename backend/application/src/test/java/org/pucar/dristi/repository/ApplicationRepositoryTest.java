@@ -13,6 +13,7 @@ import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
 import org.pucar.dristi.web.models.Application;
+import org.pucar.dristi.web.models.ApplicationExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -140,5 +141,63 @@ class ApplicationRepositoryTest {
         String expectedMessage = "Error while fetching application list:";
         String actualMessage = exception.getMessage();
         assert actualMessage.contains(expectedMessage);
+    }
+    @Test
+    void testCheckApplicationExists_AllEmpty() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists(null, null, null, null));
+
+        List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
+
+        assertFalse(result.get(0).getExists());
+    }
+    @Test
+    void testCheckApplicationExists_FilingNumber() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists("123", null, null, null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+
+        List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
+
+        assertTrue(result.get(0).getExists());
+    }
+
+    @Test
+    void testCheckApplicationExists_CnrNumber() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists(null, "456", null, null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE cnr_number = '456'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+
+        List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
+
+        assertTrue(result.get(0).getExists());
+    }
+
+    @Test
+    void testCheckApplicationExists_ApplicationNumber() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists(null, null, "789", null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+
+        List<ApplicationExists> result = applicationRepository.checkApplicationExists(applicationExistsList);
+
+        assertTrue(result.get(0).getExists());
+    }
+
+    @Test
+    void testCheckApplicationExists_Exception() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new RuntimeException("Database connection failed"));
+
+        assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
     }
 }
