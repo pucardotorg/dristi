@@ -123,11 +123,8 @@ public class AdvocateClerkServiceTest {
 //        when(individualService.searchIndividual(any(), any(), any())).thenReturn(true);
 
         // Act
-        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
-
-        // Assert
-        assertNotNull(result);
-        // Add assertions to verify the behavior based on your logic
+        advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        verify(advocateClerkRepository, times(1)).getApplications(advocateClerkSearchCriteria, "testTenantId",   10, 0);
     }
 
     @Test
@@ -197,12 +194,11 @@ public class AdvocateClerkServiceTest {
         individualUserUUID.put("userUuid", userInfo.getUuid());
 
         // Act
-        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
 
-        // Assert
-        assertNotNull(result);
+        verify(advocateClerkRepository, times(1)).getApplications(advocateClerkSearchCriteria, "testTenantId",   10, 0);
+
     }
-
     @Test
     void searchAdvocateClerkApplicationsByAppNumber_Success() {
         // Arrange

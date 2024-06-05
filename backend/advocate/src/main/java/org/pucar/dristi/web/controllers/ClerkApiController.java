@@ -62,7 +62,7 @@ public class ClerkApiController {
 			@Min(0) @Max(1000) @ApiParam(value = "Pagination - limit records in response", required = false) @javax.validation.Valid @RequestParam(value = "limit", required = false) Integer limit,
 			@Min(0) @ApiParam(value = "Pagination - offset from which records should be returned in response", required = false) @javax.validation.Valid @RequestParam(value = "offset", required = false) Integer offset) {
 
-				List<AdvocateClerk> applications = advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getTenantId(), limit, offset);
+				advocateClerkService.searchAdvocateClerkApplications(body.getRequestInfo(), body.getCriteria(), body.getTenantId(), limit, offset);
 				ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
 				AdvocateClerkListResponse response = AdvocateClerkListResponse.builder().clerks(body.getCriteria()).responseInfo(responseInfo).build();
 				return new ResponseEntity<>(response,HttpStatus.OK);

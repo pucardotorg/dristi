@@ -53,7 +53,7 @@ public class AdvocateClerkRegistrationEnrichment {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error enriching advocate clerk application: {}", e.getMessage());
+            log.error("Error enriching advocate clerk application :: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service: " + e.getMessage());
         }
     }
@@ -70,7 +70,7 @@ public class AdvocateClerkRegistrationEnrichment {
             advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
             advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
-            log.error("Error enriching advocate clerk  application upon update: {}", e.getMessage());
+            log.error("Error enriching advocate clerk  application upon update :: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service during update: " + e.getMessage());
         }
     }

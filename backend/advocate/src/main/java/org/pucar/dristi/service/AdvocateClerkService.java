@@ -53,12 +53,11 @@ public class AdvocateClerkService {
         } catch(CustomException e){
             throw e;
         } catch (Exception e){
-            log.error("Error occurred while creating advocate clerk");
+            log.error("Error occurred while creating advocate clerk :: {}", e.getMessage());
             throw new CustomException(ADVOCATE_CLERK_CREATE_EXCEPTION,e.getMessage());
         }
     }
-    public List<AdvocateClerk> searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, String tenantId, Integer limit, Integer offset) {
-        List<AdvocateClerk> applications = new ArrayList<>();
+    public void searchAdvocateClerkApplications(RequestInfo requestInfo, List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria, String tenantId, Integer limit, Integer offset) {
 
         try {
             if(limit == null)
@@ -68,22 +67,15 @@ public class AdvocateClerkService {
             // Fetch applications from database according to the given search criteria
             advocateClerkRepository.getApplications(advocateClerkSearchCriteria, tenantId, limit, offset);
 
-            log.info("Application size :: {}", applications.size());
-            // If no applications are found matching the given criteria, return an empty list
-//            if (CollectionUtils.isEmpty(applications))
-//                return new ArrayList<>();
-
             for (AdvocateClerkSearchCriteria searchCriteria : advocateClerkSearchCriteria){
                 searchCriteria.getResponseList().forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             }
 
-            // Otherwise return the found applications
-            return applications;
         } catch(CustomException e){
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching to search results :: {}", e.getMessage());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,e.getMessage());
         }
     }

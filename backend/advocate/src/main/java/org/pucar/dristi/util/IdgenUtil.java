@@ -58,11 +58,11 @@ public class IdgenUtil {
 						IdGenerationResponse.class);
 			}
 			catch (CustomException e) {
-				log.error("Custom Exception occurred in Idgen Utility");
+				log.error("Custom Exception occurred in Idgen Utility :: {}", e.getMessage());
 				throw e;
 			}
 			catch (Exception e) {
-				log.error("Error fetching ID from ID generation service: {}", e.getMessage());
+				log.error("Error fetching ID from ID generation service :: {}", e.toString());
 				throw new CustomException(IDGEN_ERROR, "Error fetching ID from ID generation service");
 			}
 
@@ -73,6 +73,7 @@ public class IdgenUtil {
 
 			return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
 		} catch (CustomException e){
+			log.error("Custom Exception occurred in calling Idgen :: {}", e.getMessage());
 			throw e;
 		} catch (Exception e){
 			throw new CustomException(IDGEN_ERROR,"ERROR in IDGEN Service");

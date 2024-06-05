@@ -62,13 +62,12 @@ public class AdvocateService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating advocate");
+            log.error("Error occurred while creating advocate :: {}", e.getMessage());
             throw new CustomException(ADVOCATE_CREATE_EXCEPTION, e.getMessage());
         }
     }
 
-    public List<Advocate> searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, String tenantId, Integer limit, Integer offset) {
-        List<Advocate> applications = new ArrayList<>();
+    public void searchAdvocate(RequestInfo requestInfo, List<AdvocateSearchCriteria> advocateSearchCriteria, String tenantId, Integer limit, Integer offset) {
 
         try {
             if (limit == null)
@@ -85,11 +84,10 @@ public class AdvocateService {
                 searchCriteria.getResponseList().forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
             }
 
-            return applications;
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results "+ e.getMessage());
+            log.error("Error while fetching to search results : {}", e.getMessage());
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION, e.getMessage());
         }
     }
@@ -115,7 +113,7 @@ public class AdvocateService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching to search results :: {}", e.getMessage());
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION, e.getMessage());
         }
     }
@@ -140,10 +138,10 @@ public class AdvocateService {
             return applications;
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while searching");
+            log.error("Custom Exception occurred while searching :: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching to search results :: {}", e.getMessage());
             throw new CustomException(ADVOCATE_SEARCH_EXCEPTION, e.getMessage());
         }
     }
@@ -157,7 +155,7 @@ public class AdvocateService {
             try {
                 existingApplication = validator.validateApplicationExistence(advocateRequest.getAdvocate());
             } catch (Exception e) {
-                log.error("Error validating existing application");
+                log.error("Error validating existing application :: {}", e.getMessage());
                 throw new CustomException(VALIDATION_EXCEPTION, "Error validating existing application: " + e.getMessage());
             }
             existingApplication.setWorkflow(advocateRequest.getAdvocate().getWorkflow());
@@ -178,10 +176,10 @@ public class AdvocateService {
             return advocateRequest.getAdvocate();
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating advocate");
+            log.error("Custom Exception occurred while updating advocate :: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating advocate");
+            log.error("Error occurred while updating advocate :: {}", e.getMessage());
             throw new CustomException(ADVOCATE_UPDATE_EXCEPTION, "Error occurred while updating advocate: " + e.getMessage());
         }
 

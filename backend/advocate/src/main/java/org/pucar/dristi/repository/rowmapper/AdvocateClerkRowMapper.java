@@ -25,7 +25,7 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
      */
     public List<AdvocateClerk> extractData(ResultSet rs) {
         Map<String,AdvocateClerk> advocateClerkApplicationMap = new LinkedHashMap<>();
-        System.out.println(rs);
+        log.info("ResultSet: {}", rs);
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
