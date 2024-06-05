@@ -12,7 +12,7 @@ import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
-import { generateUUID } from "../../../Utils";
+import { userTypeOptions } from "../registration/config";
 
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
@@ -70,103 +70,103 @@ function EFilingCases({ path }) {
   const caseDetails = useMemo(
     () => ({
       ...caseData?.criteria?.[0]?.responseList?.[0],
-      additionalDetails: {
-        complaintDetails: [
-          {
-            isenabled: true,
-            data: {
-              complainantType: {
-                code: "INDIVIDUAL",
-                name: "Individual",
-                showCompanyDetails: false,
-                commonFields: true,
-                isEnabled: true,
-              },
-              "addressDetails-select": {
-                pincode: "500032",
-                state: "Telangana",
-                district: "Rangareddy",
-                city: "Kondapur",
-                locality: "F84X+6P6",
-              },
-              complainantId: true,
-              firstName: "fgnf",
-              middleName: "",
-              lastName: "hff",
-              complainantVerification: {
-                mobileNumber: "9304619513",
-                otpNumber: "123456",
-                individualDetails: "IND-2024-04-30-000018",
-                isUserVerified: true,
-              },
-              addressDetails: {
-                pincode: "500032",
-                state: "Telangana",
-                district: "Rangareddy",
-                city: "Kondapur",
-                coordinates: {
-                  longitude: 78.3500765,
-                  latitude: 17.4549784,
-                },
-                locality: "F84X+6P6",
-                uuid: "0a03dfb7-44bd-456b-8402-bc0b28c0a571",
-              },
-            },
-            displayindex: 0,
-          },
-        ],
-        respondentDetails: [
-          {
-            isenabled: true,
-            data: {
-              respondentType: {
-                code: "INDIVIDUAL",
-                name: "Individual",
-                showCompanyDetails: false,
-                commonFields: true,
-                isEnabled: true,
-              },
-              firstName: "dfdfg",
-              lastName: "dfgdfg",
-              phonenumbers: {
-                textfieldValue: "",
-                mobileNumber: ["7546456456"],
-              },
-              emails: {
-                textfieldValue: "",
-                emailId: ["sdfsdf@sdfsdf.dfg"],
-              },
-              addressDetails: [
-                {
-                  id: "0e5bc8e8-702c-46c8-bf9b-e000636ba5b8",
-                  addressDetails: {
-                    pincode: "500032",
-                    state: "Telangana",
-                    district: "Rangareddy",
-                    city: "Kondapur",
-                    coordinates: {
-                      longitude: 78.3500765,
-                      latitude: 17.4549784,
-                    },
-                    locality: "F84X+6P6",
-                    doorNo: "dfgdgdg",
-                  },
-                },
-              ],
-              condonationFileUpload: {
-                document: [
-                  {
-                    documentType: "application/pdf",
-                    fileStore: "f37cdcea-a594-49fd-92c4-b16221127ebd",
-                    documentName: "npm.pdf",
-                  },
-                ],
-              },
-            },
-            displayindex: 0,
-          },
-        ],
-      },
+      // additionalDetails: {
+      //   complaintDetails: [
+      //     {
+      //       isenabled: true,
+      //       data: {
+      //         complainantType: {
+      //           code: "INDIVIDUAL",
+      //           name: "Individual",
+      //           showCompanyDetails: false,
+      //           commonFields: true,
+      //           isEnabled: true,
+      //         },
+      //         "addressDetails-select": {
+      //           pincode: "500032",
+      //           state: "Telangana",
+      //           district: "Rangareddy",
+      //           city: "Kondapur",
+      //           locality: "F84X+6P6",
+      //         },
+      //         complainantId: true,
+      //         firstName: "fgnf",
+      //         middleName: "",
+      //         lastName: "hff",
+      //         complainantVerification: {
+      //           mobileNumber: "9304619513",
+      //           otpNumber: "123456",
+      //           individualDetails: "IND-2024-04-30-000018",
+      //           isUserVerified: true,
+      //         },
+      //         addressDetails: {
+      //           pincode: "500032",
+      //           state: "Telangana",
+      //           district: "Rangareddy",
+      //           city: "Kondapur",
+      //           coordinates: {
+      //             longitude: 78.3500765,
+      //             latitude: 17.4549784,
+      //           },
+      //           locality: "F84X+6P6",
+      //           uuid: "0a03dfb7-44bd-456b-8402-bc0b28c0a571",
+      //         },
+      //       },
+      //       displayindex: 0,
+      //     },
+      //   ],
+      //   respondentDetails: [
+      //     {
+      //       isenabled: true,
+      //       data: {
+      //         respondentType: {
+      //           code: "INDIVIDUAL",
+      //           name: "Individual",
+      //           showCompanyDetails: false,
+      //           commonFields: true,
+      //           isEnabled: true,
+      //         },
+      //         firstName: "dfdfg",
+      //         lastName: "dfgdfg",
+      //         phonenumbers: {
+      //           textfieldValue: "",
+      //           mobileNumber: ["7546456456"],
+      //         },
+      //         emails: {
+      //           textfieldValue: "",
+      //           emailId: ["sdfsdf@sdfsdf.dfg"],
+      //         },
+      //         addressDetails: [
+      //           {
+      //             id: "0e5bc8e8-702c-46c8-bf9b-e000636ba5b8",
+      //             addressDetails: {
+      //               pincode: "500032",
+      //               state: "Telangana",
+      //               district: "Rangareddy",
+      //               city: "Kondapur",
+      //               coordinates: {
+      //                 longitude: 78.3500765,
+      //                 latitude: 17.4549784,
+      //               },
+      //               locality: "F84X+6P6",
+      //               doorNo: "dfgdgdg",
+      //             },
+      //           },
+      //         ],
+      //         condonationFileUpload: {
+      //           document: [
+      //             {
+      //               documentType: "application/pdf",
+      //               fileStore: "f37cdcea-a594-49fd-92c4-b16221127ebd",
+      //               documentName: "npm.pdf",
+      //             },
+      //           ],
+      //         },
+      //       },
+      //       displayindex: 0,
+      //     },
+      //   ],
+      // },
     }),
     [caseData]
   );
@@ -298,6 +298,7 @@ function EFilingCases({ path }) {
               }
               return {
                 ...body,
+                disable: disableConfigFields.some((field) => field === body?.name),
               };
             }),
           };
@@ -371,43 +372,10 @@ function EFilingCases({ path }) {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
-  // const validateData = (data) => {
-  //   let isValid = true;
-  //   formConfig.forEach((config) => {
-  //     config?.body?.forEach((body) => {
-  //       if (body?.type === "component") {
-  //         body?.populators?.inputs?.forEach((input) => {
-  //           if (input?.isMandatory) {
-  //             if (input?.validation) {
-  //               if (input?.validation?.isArray) {
-  //                 formdata?.forEach((data) => {
-  //                   if (!data?.data?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
-  //                     isValid = false;
-  //                     // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-  //                   } else {
-  //                     // setFormErrors(body.key, { [input.name]: "" });
-  //                   }
-  //                 });
-  //               } else {
-  //                 formdata?.forEach((data) => {
-  //                   if (!data?.data?.[body.key]?.[input.name]) {
-  //                     isValid = false;
-  //                     // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-  //                   } else {
-  //                     // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-  //                   }
-  //                 });
-  //               }
-  //             }
-  //           }
-  //         });
-  //       }
-  //     });
-  //   });
-  //   return isValid;
-  // };
-  const createIndividualUser = async (data, documentData, verificationType) => {
-    const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.data;
+  console.log(formdata);
+
+  const createIndividualUser = async (data, documentData) => {
+    const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
     const identifierIdDetails = documentData
       ? {
           fileStoreId: identifierId,
@@ -420,12 +388,12 @@ function EFilingCases({ path }) {
       Individual: {
         tenantId: tenantId,
         name: {
-          givenName: data?.userDetails?.firstName,
-          familyName: data?.userDetails?.lastName,
-          otherNames: data?.userDetails?.middleName,
+          givenName: data?.firstName,
+          familyName: data?.lastName,
+          otherNames: data?.middleName,
         },
         userDetails: {
-          username: Digit.UserService.getUser()?.info?.userName,
+          username: data?.complainantVerification?.userDetails?.userName,
           roles: [
             {
               code: "CITIZEN",
@@ -439,23 +407,21 @@ function EFilingCases({ path }) {
             })),
           ],
 
-          type: Digit.UserService.getUser()?.info?.type,
+          type: data?.complainantVerification?.userDetails?.type,
         },
-        userUuid: Digit.UserService.getUser()?.info?.uuid,
-        userId: Digit.UserService.getUser()?.info?.id,
-        mobileNumber: Digit.UserService.getUser()?.info?.mobileNumber,
+        userUuid: data?.complainantVerification?.userDetails?.uuid,
+        userId: data?.complainantVerification?.userDetails?.id,
+        mobileNumber: data?.complainantVerification?.userDetails?.mobileNumber,
         address: [
           {
             tenantId: tenantId,
             type: "PERMANENT",
-            doorNo: data?.addressDetails?.doorNo,
             latitude: data?.addressDetails?.coordinates?.latitude,
             longitude: data?.addressDetails?.coordinates?.longitude,
             city: data?.addressDetails?.city,
             pincode: data?.addressDetails?.pincode,
             addressLine1: data?.addressDetails?.state,
             addressLine2: data?.addressDetails?.district,
-            buildingName: data?.addressDetails?.buildingName,
             landmark: data?.addressDetails?.locality,
           },
         ],
@@ -469,59 +435,70 @@ function EFilingCases({ path }) {
         skills: [],
         additionalFields: {
           fields: [
-            { key: "userType", value: data?.clientDetails?.selectUserType?.code },
-            { key: "userTypeDetail", value: JSON.stringify(data?.clientDetails?.selectUserType) },
-            // { key: "termsAndCondition", value: termsAndConditionData?.Terms_Conditions },
-            // { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
+            { key: "userType", value: userTypeOptions?.[0]?.code },
+            { key: "userTypeDetail", value: JSON.stringify(userTypeOptions) },
+            { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
           ],
         },
         clientAuditDetails: {},
         auditDetails: {},
       },
     };
-    return await Digit.DRISTIService.postIndividualService(Individual, tenantId);
+    const response = await Digit.DRISTIService.postIndividualService(Individual, tenantId);
+    return response;
   };
 
-  const onSubmit = async (props, index) => {
-    // if (!validateData(props, index)) {
-    //   return null;
-    // }
+  const onSubmit = async () => {
     const data = {};
     if (selected === "complaintDetails") {
-      const litigants = [];
-      formdata.forEach(async (data, index) => {
-        if (data?.data?.complainantVerification?.individualDetails) {
-          litigants.push({
-            tenantId,
-            caseId: caseDetails?.id,
-            partyCategory: data?.data?.complainantType?.code,
-            individualId: data?.data?.complainantVerification?.individualDetails,
-            partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-          });
-        } else {
-          if (data?.data?.complainantId?.complainantId) {
-            if (data?.data?.complainantId?.complainantId?.verificationType !== "AADHAR") {
-              const documentData = await onDocumentUpload(
-                data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-                data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
-              );
-              debugger;
-              await createIndividualUser(data?.data, documentData, data?.data?.complainantId?.complainantId?.verificationType);
-            }
+      const litigants = await Promise.all(
+        formdata.map(async (data, index) => {
+          if (data?.data?.complainantVerification?.individualDetails) {
+            return {
+              tenantId,
+              caseId: caseDetails?.id,
+              partyCategory: data?.data?.complainantType?.code,
+              individualId: data?.data?.complainantVerification?.individualDetails,
+              partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+            };
           } else {
-            // setShowErrorToast(true);
-            // return;
+            if (data?.data?.complainantId?.complainantId) {
+              if (data?.data?.complainantId?.verificationType !== "AADHAR") {
+                const documentData = await onDocumentUpload(
+                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
+                );
+                const Individual = await createIndividualUser(data?.data, documentData);
+                return {
+                  tenantId,
+                  caseId: caseDetails?.id,
+                  partyCategory: data?.data?.complainantType?.code,
+                  individualId: Individual?.Individual?.individualId,
+                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                };
+              } else {
+                const Individual = await createIndividualUser(data?.data);
+                return {
+                  tenantId,
+                  caseId: caseDetails?.id,
+                  partyCategory: data?.data?.complainantType?.code,
+                  individualId: Individual?.Individual?.individualId,
+                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                };
+              }
+            }
+            return {};
           }
-        }
-      });
+        })
+      );
 
       const representatives = [...caseDetails?.representatives]?.map((representative) => ({
         ...representative,
         caseId: caseDetails?.id,
         representing: [...litigants],
       }));
-      data.litigants = litigants;
-      data.representatives = representatives;
+      data.litigants = [...litigants];
+      data.representatives = [...representatives];
       data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: formdata };
     }
     if (selected === "respondentDetails") {
@@ -614,7 +591,13 @@ function EFilingCases({ path }) {
       setOpenConfirmCourtModal(true);
       return;
     }
+    if (!!resetFormData) {
+      resetFormData();
+    }
     DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data, filingDate: formatDate(new Date()) }, tenantId }, tenantId);
+    const caseData = caseDetails?.additionalDetails?.[nextSelected] ||
+      caseDetails?.caseDetails?.[nextSelected] || [{ isenabled: true, data: {}, displayindex: 0 }];
+    setFormdata(caseData);
     history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   };
   const onSaveDraft = (props) => {
