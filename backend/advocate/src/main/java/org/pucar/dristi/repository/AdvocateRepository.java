@@ -52,7 +52,7 @@ public class AdvocateRepository {
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String advocateQuery = "";
                 advocateQuery = queryBuilder.getAdvocateSearchQuery(advocateSearchCriteria, preparedStmtList, tenantId, limit, offset);
-                log.info("Final advocate list query: {}", advocateQuery);
+                log.info("Final advocate list query :: {}", advocateQuery);
                 List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
                 log.info("Application size :: {}", list);
                 if (list != null) {
@@ -70,7 +70,7 @@ public class AdvocateRepository {
 
                 String advocateDocumentQuery = "";
                 advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final document query: {}", advocateDocumentQuery);
+                log.info("Final document query :: {}", advocateDocumentQuery);
                 Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
                 if (advocateDocumentMap != null) {
                     advocateSearchCriteria.getResponseList().forEach(advocate -> {
@@ -98,7 +98,7 @@ public class AdvocateRepository {
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String advocateQuery = "";
             advocateQuery = queryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
-            log.info("Final advocate list query: {}", advocateQuery);
+            log.info("Final advocate list query :: {}", advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 advocateList.addAll(list);
@@ -114,7 +114,7 @@ public class AdvocateRepository {
 
             String advocateDocumentQuery = "";
             advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final document query: {}", advocateDocumentQuery);
+            log.info("Final document query :: {}", advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateList.forEach(advocate -> {
@@ -141,7 +141,7 @@ public class AdvocateRepository {
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String advocateQuery = "";
             advocateQuery = queryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
-            log.info("Final advocate list query: {}", advocateQuery);
+            log.info("Final advocate list query :: {}", advocateQuery);
             List<Advocate> list = jdbcTemplate.query(advocateQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 advocateList.addAll(list);
@@ -157,7 +157,7 @@ public class AdvocateRepository {
 
             String advocateDocumentQuery = "";
             advocateDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final document query: {}", advocateDocumentQuery);
+            log.info("Final document query :: {}", advocateDocumentQuery);
             Map<UUID, List<Document>> advocateDocumentMap = jdbcTemplate.query(advocateDocumentQuery, preparedStmtListDoc.toArray(), advocateDocumentRowMapper);
             if (advocateDocumentMap != null) {
                 advocateList.forEach(advocate -> {
