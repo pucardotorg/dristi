@@ -3,6 +3,7 @@ import React, { useMemo, useState } from "react";
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 
 import { config } from "./Config/sendBackModalConfig";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -31,6 +32,9 @@ const CloseBtn = (props) => {
 function SendCaseBack({ t }) {
   const [showModal, setShowModal] = useState(false);
   const [reasons, setReasons] = useState(null);
+  const [page, setPage] = useState(0);
+  const history = useHistory();
+
   const stepItems = useMemo(() =>
     config.map(
       (step) => {
@@ -44,36 +48,48 @@ function SendCaseBack({ t }) {
     )
   );
   console.log(stepItems, config);
+  const onSubmit = (props) => {
+    setPage(1);
+  };
   return (
     <div>
-      <Modal
-        headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
-        headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-        // actionSaveLabel={t("Reject")}
-        // actionSaveOnSubmit={() => {
-        //   handleDelete("REJECT");
-        // }}
-        hideSubmit={true}
-        // isDisabled={!reasons || !reasons.trim()}
-        // style={{ backgroundColor: "#BB2C2F" }}
-      >
-        <FormComposerV2
-          config={[stepItems[0]]}
-          t={t}
-          noBoxShadow
-          inline={false}
-          label={t("CORE_COMMON_CONTINUE")}
-          onSecondayActionClick={() => {}}
-          // onFormValueChange={onFormValueChange}
-          headingStyle={{ textAlign: "center" }}
-          cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-          // onSubmit={(props) => onSubmit(props)}
-          submitInForm
-          // className={"registration-select-name"}
-          secondaryActionLabel={t("CORE_COMMON_CONTINUE")}
-          buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
-        ></FormComposerV2>
-      </Modal>
+      {page == 0 && (
+        <Modal
+          headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
+          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          hideSubmit={true}
+        >
+          <FormComposerV2
+            config={[stepItems[0]]}
+            t={t}
+            noBoxShadow
+            inline={false}
+            label={t("CORE_COMMON_SEND")}
+            onSecondayActionClick={() => {}}
+            // onFormValueChange={onFormValueChange}
+            headingStyle={{ textAlign: "center" }}
+            cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
+            onSubmit={(props) => onSubmit(props)}
+            submitInForm
+            // className={"registration-select-name"}
+            secondaryActionLabel={t("CORE_LOGOUT_CANCEL")}
+            buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
+            actionClassName="e-filing-action-bar"
+          ></FormComposerV2>
+        </Modal>
+      )}
+      {page == 1 && (
+        <Modal
+          headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
+          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          actionSaveLabel={t("NEXT_CASE")}
+          actionCancelLabel={t("BACK_TO_HOME")}
+          actionCancelOnSubmit={() => setPage(0)}
+          className="case-types"
+
+          // actionSaveOnSubmit={onModalSubmit}
+        ></Modal>
+      )}
     </div>
   );
 }
