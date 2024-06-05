@@ -12,7 +12,7 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.application
           customJsonMapping:
-            indexMapping: {"Data":{ applicationDetails:{},"history":{},"auditDetails":{},currentProcessInstance":{}}}
+            indexMapping: {"Data":{ applicationDetails:{},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.applicationDetails.id
@@ -92,7 +92,7 @@ ServiceMaps:
           timeStampField: $.auditDetails.createdTime
           jsonPath: $.application
           customJsonMapping:
-            indexMapping: { "Data": { applicationDetails: {},"history": {},"auditDetails":{},currentProcessInstance": {} } }
+            indexMapping: { "Data": { applicationDetails: {},"history": {},"auditDetails":{},"currentProcessInstance": {} } }
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.applicationDetails.id
