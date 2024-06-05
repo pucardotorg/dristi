@@ -40,7 +40,7 @@ function CaseFileAdmission({ t }) {
             </div>
           </div>
           <FormComposerV2
-            label={t("CS_COMMON_CONTINUE")}
+            label={t("CS_ADMIT_CASE")}
             config={reviewCaseFileFormConfig}
             onSubmit={onSubmit}
             onSecondayActionClick={onSaveDraft}
@@ -49,9 +49,13 @@ function CaseFileAdmission({ t }) {
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
             cardClassName={`e-filing-card-form-style`}
-            secondaryLabel={t("CS_SAVE_DRAFT")}
+            secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
             showSecondaryLabel={true}
-            actionClassName="e-filing-action-bar"
+            actionClassName="admission-action-buttons"
+            showSkip={"FDSJKLDFSJL"}
+            onSkip={() => {
+              console.debug("vaibhav");
+            }}
           />
 
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}

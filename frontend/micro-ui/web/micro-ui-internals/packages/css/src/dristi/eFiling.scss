@@ -825,6 +825,13 @@
   gap: 20px;
 }
 
+.admission-action-buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 20px;
+}
+
 .label-field-pair {
   .field-container {
     max-width: unset !important;
