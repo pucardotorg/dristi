@@ -175,8 +175,8 @@ function EFilingCases({ path }) {
   }, [selected]);
 
   useEffect(() => {
-    const data = caseDetails?.additionalDetails?.[selected] ||
-      caseDetails?.caseDetails?.[selected] || [{ isenabled: true, data: {}, displayindex: 0 }];
+    const data = caseDetails?.additionalDetails?.[selected]?.formdata ||
+      caseDetails?.caseDetails?.[selected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
     setFormdata(data);
   }, [selected, caseDetails]);
 
@@ -187,9 +187,10 @@ function EFilingCases({ path }) {
       children: parent.children.map((child, cIndex) => ({
         ...child,
         checked: child.key === selected,
+        isCompleted: caseDetails?.additionalDetails?.[child.key]?.isCompleted || caseDetails?.caseDetails?.[child.key]?.isCompleted,
       })),
     }));
-  }, [parentOpen, selected]);
+  }, [caseDetails, parentOpen, selected]);
 
   const pageConfig = useMemo(() => {
     return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected))?.children?.find((child) => child.key === selected)
@@ -499,7 +500,7 @@ function EFilingCases({ path }) {
       }));
       data.litigants = [...litigants];
       data.representatives = [...representatives];
-      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: formdata };
+      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata, isCompleted: true } };
     }
     if (selected === "respondentDetails") {
       const newFormData = await Promise.all(
@@ -530,7 +531,7 @@ function EFilingCases({ path }) {
           };
         })
       );
-      data.additionalDetails = { ...caseDetails.additionalDetails, respondentDetails: newFormData };
+      data.additionalDetails = { ...caseDetails.additionalDetails, respondentDetails: { formdata: newFormData, isCompleted: true } };
     }
     if (selected === "chequeDetails") {
       const documentData = {};
@@ -585,7 +586,7 @@ function EFilingCases({ path }) {
           };
         })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: newFormData };
+      data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: { formdata: newFormData, isCompleted: true } };
     }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
@@ -595,8 +596,8 @@ function EFilingCases({ path }) {
       resetFormData();
     }
     DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data, filingDate: formatDate(new Date()) }, tenantId }, tenantId);
-    const caseData = caseDetails?.additionalDetails?.[nextSelected] ||
-      caseDetails?.caseDetails?.[nextSelected] || [{ isenabled: true, data: {}, displayindex: 0 }];
+    const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+      caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
     setFormdata(caseData);
     history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   };
@@ -719,8 +720,8 @@ function EFilingCases({ path }) {
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={
-                    caseDetails?.additionalDetails?.[selected]?.[index]?.data ||
-                    caseDetails?.caseDetails?.[selected]?.[index]?.data ||
+                    caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+                    caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
                     formdata[index]?.data
                   }
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
