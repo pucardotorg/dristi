@@ -192,49 +192,51 @@ function CaseType({ t }) {
                         ],
                       }
                     : {
-                        complaintDetails: [
-                          {
-                            isenabled: true,
-                            data: {
-                              complainantType: {
-                                code: "INDIVIDUAL",
-                                name: "Individual",
-                                showCompanyDetails: false,
-                                commonFields: true,
-                                isEnabled: true,
-                              },
-                              "addressDetails-select": {
-                                pincode: pincode,
-                                district: addressLine2,
-                                city: city,
-                                state: addressLine1,
-                                locality: address,
-                              },
-                              complainantId: true,
-                              firstName: givenName,
-                              middleName: otherNames,
-                              lastName: familyName,
-                              complainantVerification: {
-                                mobileNumber: userInfo?.userName,
-                                otpNumber: "123456",
-                                individualDetails: individualId,
-                                isUserVerified: true,
-                              },
-                              addressDetails: {
-                                pincode: pincode,
-                                district: addressLine2,
-                                city: city,
-                                state: addressLine1,
-                                coordinates: {
-                                  longitude: latitude,
-                                  latitude: longitude,
+                        complaintDetails: {
+                          formdata: [
+                            {
+                              isenabled: true,
+                              data: {
+                                complainantType: {
+                                  code: "INDIVIDUAL",
+                                  name: "Individual",
+                                  showCompanyDetails: false,
+                                  commonFields: true,
+                                  isEnabled: true,
                                 },
-                                locality: address,
+                                "addressDetails-select": {
+                                  pincode: pincode,
+                                  district: addressLine2,
+                                  city: city,
+                                  state: addressLine1,
+                                  locality: address,
+                                },
+                                complainantId: true,
+                                firstName: givenName,
+                                middleName: otherNames,
+                                lastName: familyName,
+                                complainantVerification: {
+                                  mobileNumber: userInfo?.userName,
+                                  otpNumber: "123456",
+                                  individualDetails: individualId,
+                                  isUserVerified: true,
+                                },
+                                addressDetails: {
+                                  pincode: pincode,
+                                  district: addressLine2,
+                                  city: city,
+                                  state: addressLine1,
+                                  coordinates: {
+                                    longitude: latitude,
+                                    latitude: longitude,
+                                  },
+                                  locality: address,
+                                },
                               },
+                              displayindex: 0,
                             },
-                            displayindex: 0,
-                          },
-                        ],
+                          ],
+                        },
                       }),
                 },
               };
