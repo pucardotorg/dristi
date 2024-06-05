@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import ApplicationDetails from "./ApplicationDetails";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import Breadcrumb from "../../components/BreadCrumb";
-import ViewCaseFile from "./scrutiny/ViewCaseFile";
+import CaseFileScrutiny from "./scrutiny/CaseFileScrutiny";
+import CaseFileAdmission from "./admission/CaseFileAdmission";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -36,8 +36,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          {
-            !location.pathname.endsWith("/registration-requests") &&
+          {!location.pathname.endsWith("/registration-requests") && (
             <div className="back-button-home">
               <BackButton />
 
@@ -47,11 +46,14 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
                 <HelpOutlineIcon />
               </span>
             </div>
-          }
+          )}
           <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
-            <PrivateRoute exact path={`${path}/cases`} component={(props) => <ViewCaseFile {...props} t={t} />} />
+            <PrivateRoute exact path={`${path}/cases`} component={(props) => <CaseFileScrutiny {...props} t={t} />} />
+          </div>
+          <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
+            <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} />} />
           </div>
         </div>
       </React.Fragment>

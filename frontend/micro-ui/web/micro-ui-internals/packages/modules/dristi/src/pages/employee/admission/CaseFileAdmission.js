@@ -1,9 +1,9 @@
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
+import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
-function ViewCaseFile({ t }) {
+function CaseFileAdmission({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
@@ -40,7 +40,7 @@ function ViewCaseFile({ t }) {
             </div>
           </div>
           <FormComposerV2
-            label={t("CS_REGISTER_CASE")}
+            label={t("CS_COMMON_CONTINUE")}
             config={reviewCaseFileFormConfig}
             onSubmit={onSubmit}
             onSecondayActionClick={onSaveDraft}
@@ -48,8 +48,8 @@ function ViewCaseFile({ t }) {
             onFormValueChange={onFormValueChange}
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
-            cardClassName={`e-filing-card-form-style review-case-file`}
-            secondaryLabel={t("CS_SAVE_COMMENTS")}
+            cardClassName={`e-filing-card-form-style`}
+            secondaryLabel={t("CS_SAVE_DRAFT")}
             showSecondaryLabel={true}
             actionClassName="e-filing-action-bar"
           />
@@ -61,4 +61,4 @@ function ViewCaseFile({ t }) {
   );
 }
 
-export default ViewCaseFile;
+export default CaseFileAdmission;
