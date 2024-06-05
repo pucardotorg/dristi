@@ -18,28 +18,24 @@ import lombok.NoArgsConstructor;
  * CaseRequest
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T13:54:45.904122+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseRequest   {
-        @JsonProperty("requestInfo")
+public class CaseRequest {
+	@JsonProperty("requestInfo")
 
-          @Valid
-                private RequestInfo requestInfo = null;
+	@Valid
+	private RequestInfo requestInfo = null;
 
-        @JsonProperty("cases")
-          @Valid
-                private List<CourtCase> cases = null;
+	@JsonProperty("cases")
+	@Valid
+	private List<CourtCase> cases = new ArrayList<>();
 
-
-        public CaseRequest addCasesItem(CourtCase casesItem) {
-            if (this.cases == null) {
-            this.cases = new ArrayList<>();
-            }
-        this.cases.add(casesItem);
-        return this;
-        }
+	public CaseRequest addCasesItem(CourtCase casesItem) {
+		this.cases.add(casesItem);
+		return this;
+	}
 
 }

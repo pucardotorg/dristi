@@ -1,0 +1,261 @@
+{
+	"info": {
+		"_postman_id": "7b476c1c-e417-4073-b7dd-1e1cc3fea4eb",
+		"name": "Order",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33009635"
+	},
+	"item": [
+		{
+			"name": "Create Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order\": {\n        \"tenantId\": \"pg\",\n        \"applicationNumber\": [\n            \"ORD-2024-04-29-000124\"\n        ],\n        \"hearingNumber\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n        \"cnrNumber\": \"Surt-546\",\n        \"filingNumber\": \"Surt-546\",\n        \"statuteSection\": {\n            \"tenantId\": \"pg\",\n            \"auditDetails\": {\n                \"createdBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n                \"lastModifiedBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n                \"createdTime\": 1714384374834,\n                \"lastModifiedTime\": 1714384374834\n            }\n        },\n        \"status\": \"INWORKFLOW\",\n        \"isActive\": true,\n        \"createdDate\": \"2024-05-17\",\n        \"workflow\": {\n            \"action\": \"CREATE\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [{\n                \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"documentType\": \"application/pdf\",\n                \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"additionalDetails\": {}\n            }],\n            \"assignes\": null,\n            \"rating\": null\n        },\n        \"documents\": [\n            {\n                \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"documentType\": \"application/pdf\",\n                \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"additionalDetails\": {}\n            }\n        ],\n        \"auditDetails\": {\n            \"createdBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n            \"lastModifiedBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n            \"createdTime\": 1714384374834,\n            \"lastModifiedTime\": 1714384374834\n        },\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"c5ab4e53-471a-49ea-9863-7c134ae5af5a\",\n        \"userInfo\": {\n            \"id\": 155,\n            \"uuid\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"userName\": \"devorder\",\n            \"name\": \"Ram babu\",\n            \"mobileNumber\": \"3989999999\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9091/order/order/v1/create",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"order",
+						"order",
+						"v1",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"order\": {\n        \"id\": \"349c691b-4349-44a4-9f76-8b43a082e789\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"Surt-546\",\n        \"cnrNumber\": \"Surt-546\",\n        \"applicationNumber\": [\n            \"ORD-2024-04-29-000124\"\n        ],\n        \"hearingNumber\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n        \"orderNumber\": \"ORDER-NO-2024-05-23-000035\",\n        \"createdDate\": \"2024-05-17\",\n        \"issuedBy\": null,\n        \"orderType\": [\"3244d158-c5cb-4769-801f-a0f94f383679\"],\n        \"orderCategory\": null,\n        \"status\": \"INWORKFLOW\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"4eab8068-c377-46a3-89bc-2795f4e11359\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n                \"lastModifiedBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n                \"createdTime\": 1716446901298,\n                \"lastModifiedTime\": 1716446901298\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": [\n            {\n                \"id\": \"c426b104-d6ce-4233-be70-e6fc51027986\",\n                \"documentType\": \"application/pdf\",\n                \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                \"documentUid\": \"c426b104-d6ce-4233-be70-e6fc51027986\",\n                \"additionalDetails\": {}\n            }\n        ],\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"lastModifiedBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"createdTime\": 1716446901298,\n            \"lastModifiedTime\": 1716446901298\n        },\n        \"workflow\": {\n            \"action\": \"APPROVE\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"c5ab4e53-471a-49ea-9863-7c134ae5af5a\",\n        \"userInfo\":         {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9091/order/order/v1/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"order",
+						"order",
+						"v1",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Order",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"c5ab4e53-471a-49ea-9863-7c134ae5af5a\",\n        \"userInfo\":         {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9091/order/order/v1/search?applicationNumber=ORD-2024-04-29-000124&filingNumber=Surt-546&cnrNumber=Surt-546",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9091",
+					"path": [
+						"order",
+						"order",
+						"v1",
+						"search"
+					],
+					"query": [
+						{
+							"key": "applicationNumber",
+							"value": "ORD-2024-04-29-000124"
+						},
+						{
+							"key": "filingNumber",
+							"value": "Surt-546"
+						},
+						{
+							"key": "cnrNumber",
+							"value": "Surt-546"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
