@@ -22,16 +22,12 @@ public class ResponseInfoFactory {
 				ts = requestInfo.getTs();
 			final String resMsgId = RES_MSG_ID;
 			final String msgId = requestInfo != null ? requestInfo.getMsgId() : "";
-			return ResponseInfo.builder()
-					.apiId(apiId)
-					.ver(ver)
-					.ts(ts)
-					.resMsgId(resMsgId)
-					.msgId(msgId)
-					.status(success ? SUCCESSFUL : FAILED)
-					.build();
+			final String responseStatus = success ? SUCCESSFUL : FAILED;
+
+			return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId).resMsgId(resMsgId)
+					.status(responseStatus).build();
 		} catch (Exception e) {
-			log.error("Error while preparing response info object from request info.");
+			log.error("Error while preparing response info object from request info :: {}", e.toString());
 			throw new CustomException(RESPONSE_INFO_FACTORY_EXCEPTION,"Error while preparing response info object from request info: "+e.getMessage());
 		}
 	}

@@ -8,11 +8,12 @@ import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.Valid;
 
 /**
  * AdvocateSearchRequest
@@ -25,19 +26,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AdvocateSearchRequest {
 	@JsonProperty("RequestInfo")
-
-	@Valid
+	@javax.validation.Valid
 	private RequestInfo requestInfo = null;
+
+	@JsonProperty("tenantId")
+	private String tenantId = null;
 
 	@JsonProperty("criteria")
 	@Valid
 	private List<AdvocateSearchCriteria> criteria = new ArrayList<>();
-
-	@JsonProperty("status")
-	private List<String> status = null;
-
-	@JsonProperty("applicationNumber")
-	private String applicationNumber = null;
 
 	public AdvocateSearchRequest addCriteriaItem(AdvocateSearchCriteria criteriaItem) {
 		this.criteria.add(criteriaItem);

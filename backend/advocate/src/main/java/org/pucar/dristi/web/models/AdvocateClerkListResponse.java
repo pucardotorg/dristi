@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.Data;
 import lombok.Builder;
 
 /**
- * AdvocateClerkSearchRequest
+ * AdvocateClerkResponse
  */
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T05:55:27.937918+05:30[Asia/Kolkata]")
@@ -21,23 +21,25 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdvocateClerkSearchRequest {
-	@JsonProperty("RequestInfo")
+public class AdvocateClerkListResponse {
+	@JsonProperty("responseInfo")
 	@Valid
-	private RequestInfo requestInfo = null;
+	private ResponseInfo responseInfo = null;
 
-	@JsonProperty("tenantId")
-	private String tenantId = null;
-
-	@JsonProperty("criteria")
+	@JsonProperty("clerks")
 	@Valid
-	private List<AdvocateClerkSearchCriteria> criteria = new ArrayList<>();
+	private List<AdvocateClerkSearchCriteria> clerks = null;
 
-	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
-		if (this.criteria == null) {
-			this.criteria = new ArrayList<>();
+	@JsonProperty("pagination")
+
+	@Valid
+	private Pagination pagination = null;
+
+	public AdvocateClerkListResponse addClerksItem(AdvocateClerkSearchCriteria clerksItem) {
+		if (this.clerks == null) {
+			this.clerks = new ArrayList<>();
 		}
-		this.criteria.add(criteriaItem);
+		this.clerks.add(clerksItem);
 		return this;
 	}
 

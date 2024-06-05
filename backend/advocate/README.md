@@ -15,3 +15,6 @@ Federated & decentralized allowing data to remain where it’s been collected.
 
 Privacy & Security by Design: Managing security and privacy of data is crucial to building and maintaining trust between ecosystem participants and thus will be a critical design principle. All data access is through API calls to only authenticated and authorized stakeholders to ensure only those with necessary permissions can see/consume data. Standard and certifications for data privacy and security are ensured and all personal information is stored in an encrypted format. 
 
+Workflows related to advocate module:
+1. [advocateregistration-workflowConfig.json](../../docs/Advocate/worfkow/advocateregistration-workflowConfig.json)
+2. [advocateclerkregistration-workflowConfig - Copy.json](..%2F..%2Fdocs%2FAdvocate%2Fworfkow%2Fadvocateclerkregistration-workflowConfig%20-%20Copy.json)

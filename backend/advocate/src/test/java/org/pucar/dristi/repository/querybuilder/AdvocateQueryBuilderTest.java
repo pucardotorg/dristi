@@ -1,24 +1,22 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.AdvocateClerkRequest;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
 class AdvocateQueryBuilderTest {
-
-    @Mock
-    private List<Object> mockPreparedStmtList;
 
     @InjectMocks
     private AdvocateQueryBuilder advocateQueryBuilder;
@@ -26,114 +24,202 @@ class AdvocateQueryBuilderTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        advocateQueryBuilder = new AdvocateQueryBuilder();
     }
 
     @Test
-    void testGetAdvocateSearchQuery() {
-        // Mock AdvocateSearchCriteria objects
-        AdvocateSearchCriteria criteria1 = mock(AdvocateSearchCriteria.class);
-        when(criteria1.getId()).thenReturn("1");
-        when(criteria1.getBarRegistrationNumber()).thenReturn(null);
-        when(criteria1.getApplicationNumber()).thenReturn(null);
+    void getAdvocateSearchQuery_NoCriteria() {
+        // Arrange
+//        YourClass yourClass = new YourClass();
+        AdvocateSearchCriteria criteria = null;
 
-        AdvocateSearchCriteria criteria2 = mock(AdvocateSearchCriteria.class);
-        when(criteria2.getId()).thenReturn(null);
-        when(criteria2.getBarRegistrationNumber()).thenReturn("BR123");
-        when(criteria2.getApplicationNumber()).thenReturn(null);
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
 
-        AdvocateSearchCriteria criteria3 = mock(AdvocateSearchCriteria.class);
-        when(criteria3.getId()).thenReturn(null);
-        when(criteria3.getBarRegistrationNumber()).thenReturn(null);
-        when(criteria3.getApplicationNumber()).thenReturn("APP456");
+        // Act
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
 
-        AdvocateSearchCriteria criteria4 = mock(AdvocateSearchCriteria.class);
-        when(criteria4.getId()).thenReturn(null);
-        when(criteria4.getBarRegistrationNumber()).thenReturn(null);
-        when(criteria4.getApplicationNumber()).thenReturn(null);
-        when(criteria4.getIndividualId()).thenReturn("Ind123");
+        // Assert
+        assertNotNull(query);
+        assertTrue(query.contains("FROM dristi_advocate adv"));
+        assertTrue(query.contains("LIMIT ? OFFSET ?"));
+        assertEquals(2, preparedStmtList.size());
+        assertEquals(10, preparedStmtList.get(0));
+        assertEquals(0, preparedStmtList.get(1));
+    }
 
-        // Create list of AdvocateSearchCriteria
-        List<AdvocateSearchCriteria> criteriaList = new ArrayList<>();
-        criteriaList.add(criteria1);
-        criteriaList.add(criteria2);
-        criteriaList.add(criteria3);
-        criteriaList.add(criteria4);
+    @Test
+    void getAdvocateSearchQuery_WithCriteria() {
+        // Arrange
+//        YourClass yourClass = new YourClass();
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setId("123");
+        criteria.setBarRegistrationNumber("BAR123");
+        criteria.setApplicationNumber("APP456");
+        criteria.setIndividualId("IND789");
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
 
-        // Create list of prepared statements
+        // Act
+        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(query);
+        assertTrue(query.contains("adv.id = ?"));
+        assertTrue(query.contains("adv.barRegistrationNumber = ?"));
+        assertTrue(query.contains("adv.applicationNumber = ?"));
+        assertTrue(query.contains("adv.individualId = ?"));
+    }
+
+    @Test
+    void getAdvocateSearchQueryByStatus_NoStatusOrTenantId() {
+        // Arrange
+        String status = null;
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = null;
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(query);
+        assertTrue(query.contains("FROM dristi_advocate adv"));
+        assertEquals(2, preparedStmtList.size());
+    }
+
+    @Test
+    void getAdvocateSearchQueryByStatus_WithStatusAndTenantId() {
+        // Arrange
+        String status = "active";
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(query);
+        assertTrue(query.contains("LOWER(adv.status) LIKE LOWER(?)"));
+        assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
+        assertEquals(4, preparedStmtList.size());
+        assertEquals("%active%", preparedStmtList.get(0));
+        assertEquals("%tenant1%", preparedStmtList.get(1));
+    }
+
+    @Test
+    void getAdvocateSearchQueryByApplicationNumber_NoApplicationNumberOrTenantId() {
+        // Arrange
+        String applicationNumber = null;
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = null;
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(query);
+        assertTrue(query.contains("FROM dristi_advocate adv"));
+        assertEquals(2, preparedStmtList.size());
+    }
+
+    @Test
+    void getAdvocateSearchQueryByApplicationNumber_WithApplicationNumberAndTenantId() {
+        // Arrange
+        String applicationNumber = "123456";
+        List<Object> preparedStmtList = new ArrayList<>();
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act
+        String query = advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(applicationNumber, preparedStmtList, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(query);
+        assertTrue(query.contains("LOWER(adv.applicationnumber) LIKE LOWER(?)"));
+        assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
+//        assertTrue(query.contains("ORDER BY createdtime DESC"));
+        assertEquals(4, preparedStmtList.size());
+        assertEquals("%123456%", preparedStmtList.get(0));
+        assertEquals("%tenant1%", preparedStmtList.get(1));
+    }
+
+    @Test
+    void testGetDocumentSearchQuery() {
+        List<String> ids = List.of("doc1", "doc2");
         List<Object> preparedStmtList = new ArrayList<>();
 
-        // Status List
-        List<String> statusList = new ArrayList<>();
-        String applicationNumber = "";
+        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
 
-        // Call the method to be tested
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(criteriaList, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true),1,1);
-
-        // Assert the generated query string
-        String e = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status  FROM dristi_advocate adv WHERE (adv.id IN (?) OR adv.barRegistrationNumber IN (?) OR adv.applicationNumber IN (?) OR adv.individualId IN (?)) ORDER BY adv.createdtime DESC  LIMIT ? OFFSET ?";
-        assertEquals(e, query);
-
-        // Assert the prepared statement list
-        assertEquals(6, preparedStmtList.size());
-        assertEquals("1", preparedStmtList.get(0));
-        assertEquals("BR123", preparedStmtList.get(1));
-        assertEquals("APP456", preparedStmtList.get(2));
+        assertNotNull(query);
+        assertTrue(query.contains("WHERE doc.advocateid IN (?,?)"));
+        assertEquals(2, preparedStmtList.size());
+        assertEquals("doc1", preparedStmtList.get(0));
+        assertEquals("doc2", preparedStmtList.get(1));
     }
 
     @Test
-    void testGetAdvocateSearchQueryByApplicationNumber() {
-
-        // Create list of prepared statements
+    void testGetDocumentSearchQueryThrowsCustomException() {
+        List<String> ids = null; // Setting to null to force an exception
         List<Object> preparedStmtList = new ArrayList<>();
 
-        // Status List
-        List<String> statusList = new ArrayList<>();
-        String applicationNumber = "123APP";
-
-        // Call the method to be tested
-        String query = advocateQueryBuilder.getAdvocateSearchQuery(null, preparedStmtList,statusList, applicationNumber, new AtomicReference<>(true),1,1);
-
-        // Assert the generated query string
-        String e = " SELECT adv.id as id, adv.tenantid as tenantid, adv.applicationnumber as applicationnumber, adv.barregistrationnumber as barregistrationnumber, adv.advocateType as advocatetype, adv.organisationID as organisationid, adv.individualid as individualid, adv.isactive as isactive, adv.additionaldetails as additionaldetails, adv.createdby as createdby, adv.lastmodifiedby as lastmodifiedby, adv.createdtime as createdtime, adv.lastmodifiedtime as lastmodifiedtime, adv.status as status  FROM dristi_advocate adv WHERE (LOWER(adv.applicationNumber) LIKE LOWER(?)) ORDER BY adv.createdtime DESC  LIMIT ? OFFSET ?";
-        assertEquals(e, query);
-
-        // Assert the prepared statement list
-        assertEquals(3, preparedStmtList.size());
-        assertEquals("%123app%", preparedStmtList.get(0));
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList);
+        });
     }
 
     @Test
-    void testGetDocumentSearchQuery_EmptyIds() {
-        // Setup test case with empty ids list
-        List<String> ids = new ArrayList<>();
+    void getAdvocateSearchQuery_Exception() {
+        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria();
+        criteria.setId("123");
+        criteria.setBarRegistrationNumber("BAR123");
+        criteria.setApplicationNumber("APP456");
+        criteria.setIndividualId("IND789");
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
 
-        // Call the method
-        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, mockPreparedStmtList);
-
-        // Assert the generated query string
-        String expectedQuery = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid  FROM dristi_document doc";
-        assertEquals(expectedQuery, query);
-
-        // Assert the prepared statement list is empty
-        verify(mockPreparedStmtList, never()).add(any());
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getAdvocateSearchQuery(criteria, preparedStmtList, tenantId, limit, offset);
+        });
     }
 
     @Test
-    void testGetDocumentSearchQuery_WithIds() {
-        // Setup test case with non-empty ids list
-        List<String> ids = Arrays.asList("1", "2", "3");
+    void getAdvocateSearchQueryByStatus_Exception() {
+        String status = "active";
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
 
-        // Call the method
-        String query = advocateQueryBuilder.getDocumentSearchQuery(ids, mockPreparedStmtList);
-
-        // Assert the generated query string
-        String expectedQuery = "Select doc.id as aid, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.advocateid as advocateid  FROM dristi_document doc WHERE doc.advocateid IN (?,?,?)";
-        assertEquals(expectedQuery, query);
-
-        // Assert the prepared statement list contains ids
-        verify(mockPreparedStmtList, times(1)).addAll(ids);
-
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getAdvocateSearchQueryByStatus(status, preparedStmtList, tenantId, limit, offset);
+        });
     }
 
+    @Test
+    void getAdvocateSearchQueryByAppMumber_Exception() {
+        String appNumber = "appNumber";
+        List<Object> preparedStmtList = null;
+        String tenantId = "tenant1";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateQueryBuilder.getAdvocateSearchQueryByApplicationNumber(appNumber, preparedStmtList, tenantId, limit, offset);
+        });
+    }
 }

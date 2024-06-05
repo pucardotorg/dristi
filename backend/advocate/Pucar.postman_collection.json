@@ -1,0 +1,963 @@
+{
+	"info": {
+		"_postman_id": "15e668b3-11b9-47ec-a315-42495aaa433f",
+		"name": "Pucar",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31752715"
+	},
+	"item": [
+		{
+			"name": "Advocate",
+			"item": [
+				{
+					"name": "Create Advocate",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "fee9c3a7-70a2-4f40-ba50-bfc3fbbc04a3"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "456223d5-6077-4309-8eb2-69a5cbfc6684"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"55468efb-78ab-4c29-a6c1-ff833631c042\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a32\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"advocate\":\n        {\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"15434133\",\n            \"barRegistrationNumber\":\"234\",\n            \"advocateType\":\"CRIMINAL\",\n            \"organisationID\":\"a8aa6be8-2aa5-4a2a-b3f7-4c5e9f0b9354\",\n            \"individualId\":\"IND-2024-05-30-000493\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"REGISTER\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADV registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n    \n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/advocate/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"advocate",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Advocate",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "324dabed-d775-4c7f-bc0d-1241804585bc"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "354fe642-5eaa-4bf6-9caa-cf44349966ee"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"55468efb-78ab-4c29-a6c1-ff833631c042\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a32\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"advocate\":\n        {\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"15434133\",\n            \"barRegistrationNumber\":\"234\",\n            \"advocateType\":\"CRIMINAL\",\n            \"organisationID\":\"a8aa6be8-2aa5-4a2a-b3f7-4c5e9f0b9354\",\n            \"individualId\":\"IND-2024-05-30-000493\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"APPROVE\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADV registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n    \n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/advocate/v1/_update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"advocate",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Advocate",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "2685cab3-18a4-45e4-a639-27e412087545"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "7ea16c69-b26b-4be0-8943-744ebbbf73d5"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/advocate/v1/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"advocate",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Advocate Status",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "e8a0070b-2f93-4499-90c9-d6f43679cfe3"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "6157a29f-b3f3-40bb-ae2f-fe73f1b0fe9d"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/advocate/v1/status/_search?status=INWORKFLOW&tenantId=pg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"advocate",
+								"v1",
+								"status",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "INWORKFLOW"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Advocate Application Number",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "049326fa-3053-410d-a572-ee96b696ecba"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "dd8a9330-84e6-46cc-a2f7-4aa04a0e7425"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/advocate/v1/applicationnumber/_search?applicationNumber=Any&tenantId=pg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"advocate",
+								"v1",
+								"applicationnumber",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "applicationNumber",
+									"value": "Any"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search clerk",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "04ea30e1-0ff4-46cc-a0f9-69ff02a406a3"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "bc4b6c8a-c526-430c-b2ac-39365ad4eb7f"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"CLERK-APP-2024-05-06-000118\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/clerk/v1/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Clerk Status",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "55b6c716-001f-4b72-99a6-b29198dd7c8d"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "bba8220a-bab8-4097-916e-be1a6f58290f"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/clerk/v1/status/_search?status=INWORKFLOW&tenantId=pg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"status",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "INWORKFLOW"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Clerk Application Number",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "61173f80-4a20-4b03-af26-07c4bd53512f"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "890effef-7900-48c9-b4a5-b43924863894"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/clerk/v1/applicationnumber/_search?applicationNumber=Any&tenantId=pg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"applicationnumber",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "applicationNumber",
+									"value": "Any"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workflow advocate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "9da41691-1e21-40f8-9f82-5610b8fb0010"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/2023.5.8",
+								"uuid": "d5b62f0a-7239-45c3-bd99-a2177111a059"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"RequestInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\n        \"userInfo\": {\n            \"id\": 181,\n            \"userName\": \"TestEggMUSTAKIMNK\",\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"name\": \"mustak\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"System user\",\n                    \"code\": \"SYSTEM\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": \"Kaikoo\"\n        },\n        \"authToken\": \"bc71214a-f092-4f08-a22f-56b875452702\"\n    },\n  \"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"advocate\",\n      \"business\": \"advocate-services\",\n      \"businessServiceSla\": 30,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": true,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"REGISTER\",\n              \"nextState\": \"VERIFICATIONREQUESTED\",\n              \"roles\": [\n                \"CITIZEN\",\n                \"EMPLOYEE\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"VERIFICATIONREQUESTED\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"APPROVE\",\n              \"nextState\": \"REGISTERED\",\n              \"roles\": [\n                \"ADVOCATE_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n                \"ADVOCATE_APPROVER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REGISTERED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REJECTED\",\n          \"applicationStatus\": \"INACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        }\n      ]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"egov-workflow-v2",
+								"egov-wf",
+								"businessservice",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Workflow clerk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "976b2bd3-7acf-471f-85bb-ccf8497e677e"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/2023.5.8",
+								"uuid": "4e0173c1-101d-40a6-8c30-e0030369f7df"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"RequestInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\n        \"userInfo\": {\n            \"id\": 181,\n            \"userName\": \"TestEggMUSTAKIMNK\",\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"name\": \"mustak\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"System user\",\n                    \"code\": \"SYSTEM\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": \"Kaikoo\"\n        },\n        \"authToken\": \"bc71214a-f092-4f08-a22f-56b875452702\"\n    },\n  \"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"advocateclerk\",\n      \"business\": \"advocateclerk-services\",\n      \"businessServiceSla\": 30,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": true,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"REGISTER\",\n              \"nextState\": \"VERIFICATIONREQUESTED\",\n              \"roles\": [\n                \"CITIZEN\",\n                \"EMPLOYEE\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"VERIFICATIONREQUESTED\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"APPROVE\",\n              \"nextState\": \"REGISTERED\",\n              \"roles\": [\n                \"ADVOCATECLERK_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n                \"ADVOCATECLERK_APPROVER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REGISTERED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REJECTED\",\n          \"applicationStatus\": \"INACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        }\n      ]\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"egov-workflow-v2",
+								"egov-wf",
+								"businessservice",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Clerk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "a777e4ca-af0d-4a67-9700-ca809b3d41c8"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "ca7e0c48-52bf-4836-b9d4-92a218cfe3d2"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\":   {\n            \"id\": 207,\n            \"userName\": \"rajatUser2\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"75c1c2c4-d647-4d0c-b0c8-ca4743a37d01\",\n            \"createdDate\": \"06-05-2024 18:40:35\",\n            \"lastModifiedDate\": \"06-05-2024 18:40:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 18:40:35\"\n        },\n        \"authToken\": \"495839a7-fc7c-4645-93b6-ef7a8c7b50ef\"\n    },\n    \"clerk\":{\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"1543413bfg3\",\n            \"stateRegnNumber\":\"234sfdgsfg\",\n            \"individualId\":\"IND-2024-05-06-000070\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"REGISTER\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADVClerk registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/clerk/v1/_create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"_create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Clerk",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "e91103bc-a56a-4982-93e9-45eb5dbbbd80"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "efd27be4-7a01-4693-b1f0-942dd791d3bc"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\":   {\n            \"id\": 207,\n            \"userName\": \"rajatUser2\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"75c1c2c4-d647-4d0c-b0c8-ca4743a37d01\",\n            \"createdDate\": \"06-05-2024 18:40:35\",\n            \"lastModifiedDate\": \"06-05-2024 18:40:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 18:40:35\"\n        },\n        \"authToken\": \"495839a7-fc7c-4645-93b6-ef7a8c7b50ef\"\n    },\n    \"clerk\":{\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"1543413bfg3\",\n            \"stateRegnNumber\":\"234sfdgsfg\",\n            \"individualId\":\"IND-2024-05-06-000070\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"APPROVE\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADVClerk registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/clerk/v1/_update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search clerk",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "a23d7923-8c15-4e3d-893d-47ea5dcd095b"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "f6424136-a55d-4375-bfa0-7a029be0709d"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"CLERK-APP-2024-05-06-000118\"\n        }\n       \n    ]\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/advocate/clerk/v1/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "c4ada83d-0ad9-45c1-ad54-dca2acbf7cff"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"requestInfo\": {\n        \"authToken\": \"242e079f-e419-4d75-a1ed-86d1a0b7f9d9\"\n    },\n    \"user\": {\n        \"userName\": \"ApproverUser3\",\n        \"name\": \"Rajat\",\n        \"mobileNumber\": \"9996301590\",\n        \"gender\": \"Male\",\n        \"type\": \"EMPLOYEE\",\n        \"active\": true,\n        \"password\": \"Beehyv@123\",\n        \"roles\": [\n            {\n                \"code\": \"EMPLOYEE\",\n                \"name\": \"EMPLOYEE\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"CITIZEN\",\n                \"name\": \"CITIZEN\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"ADVOCATE_APPROVER\",\n                \"name\": \"ADVOCATE_APPROVER\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"SUPERUSER\",\n                \"name\": \"Super User\",\n                \"tenantId\": \"pg\"\n            }\n        ],\n        \"tenantId\": \"pg\"\n    }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8086/user/users/_createnovalidate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8086",
+							"path": [
+								"user",
+								"users",
+								"_createnovalidate"
+							]
+						},
+						"description": "Add whatever roles you want to add."
+					},
+					"response": []
+				},
+				{
+					"name": "Workflow Search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "11707167-a9a6-447d-81d2-5cfefff866a8"
+							},
+							{
+								"key": "User-Agent",
+								"value": "insomnia/2023.5.8",
+								"uuid": "4da5377c-6d9a-4a79-91cc-102ebf9e5086"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"action\": \"\",\n    \"did\": 1,\n    \"key\": \"\",\n    \"msgId\": \"20170310130900|en_IN\",\n    \"requesterId\": \"\",\n    \"ts\": 1513579888683,\n    \"ver\": \".01\",\n    \"authToken\": \"2b4ed963-f05b-43a6-ba91-bc3976181880\",\n    \"userInfo\": {\n      \"id\": 73,\n      \"userName\": null,\n      \"name\": null,\n      \"type\": \"EMPLOYEE\",\n      \"mobileNumber\": null,\n      \"emailId\": null,\n      \"roles\": [\n        {\n          \"id\": 2,\n          \"name\": \"Customer Support Representative\",\n          \"code\": null,\n          \"tenantId\": null\n        }\n      ],\n      \"tenantId\": null,\n      \"uuid\": \"uuid\"\n    }\n  }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_search?tenantId=pg&businessServices=hearing",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"egov-workflow-v2",
+								"egov-wf",
+								"businessservice",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "tenantId",
+									"value": "pg"
+								},
+								{
+									"key": "businessServices",
+									"value": "hearing"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Individual",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "e866a22f-9ed7-4b4b-a9ff-4bc294bd72f3"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"81980555-67a7-472d-ba95-c7dfffbcea21\"\n    },\n    \"Individual\": {\n        // \"userUuid\":[\"1d3825ff-d09b-47b2-a63e-b19b1ff0c1d6\"]\n    \"individualId\":\"IND-2024-04-23-000063\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://dristi-dev.pucar.org/individual/v1/_search?limit=1000&offset=0&tenantId=pg&includeDeleted=true",
+							"protocol": "https",
+							"host": [
+								"dristi-dev",
+								"pucar",
+								"org"
+							],
+							"path": [
+								"individual",
+								"v1",
+								"_search"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "1000"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg"
+								},
+								{
+									"key": "includeDeleted",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Workflow update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"BusinessServices\");\r",
+									"});\r",
+									"pm.test(\"Body matches string\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"uuid\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var tenantId;\r",
+									"var businessService;\r",
+									"\r",
+									"pm.test(\"Your test name\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"\r",
+									"   tenantId=jsonData.BusinessServices[0].tenantId;\r",
+									"   businessService=jsonData.BusinessServices[0].businessService;\r",
+									"   \r",
+									"});\r",
+									"pm.collectionVariables.set(\"businessService_CWF2_UPDATED\",businessService );\r",
+									"pm.collectionVariables.set(\"tenant_CWF2_UPDATED\",tenantId );\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": null,\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": \"POST\",\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\r\n        \"userInfo\": {\r\n            \"id\": 181,\r\n            \"userName\": \"TestEggMUSTAKIMNK\",\r\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n            \"locale\": \"string\",\r\n            \"type\": \"EMPLOYEE\",\r\n            \"name\": \"mustak\",\r\n            \"mobileNumber\": \"1234567890\",\r\n            \"alternatemobilenumber\": null,\r\n            \"emailId\": \"xyz@egovernments.org\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"System user\",\r\n                    \"code\": \"SYSTEM\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"Super User\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pg\",\r\n            \"permanentCity\": \"Kaikoo\"\r\n        },\r\n        \"authToken\": \"bc71214a-f092-4f08-a22f-56b875452702\"\r\n    },\r\n    \"BusinessServices\": [\r\n        {\r\n            \"tenantId\": \"pg\",\r\n            \"uuid\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n            \"businessService\": \"advocateclerk\",\r\n            \"business\": \"advocateclerk-services\",\r\n            \"businessServiceSla\": 30,\r\n            \"states\": [\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714663426692\r\n                    },\r\n                    \"uuid\": \"4ca040f9-b934-451c-af98-d9babc44dc01\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": null,\r\n                    \"state\": null,\r\n                    \"applicationStatus\": null,\r\n                    \"docUploadRequired\": true,\r\n                    \"isStartState\": true,\r\n                    \"isTerminateState\": false,\r\n                    \"isStateUpdatable\": true,\r\n                    \"actions\": [\r\n                        {\r\n                            \"auditDetails\": {\r\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"createdTime\": 1714652996954,\r\n                                \"lastModifiedTime\": 1714663426692\r\n                            },\r\n                            \"uuid\": \"d2e8bef9-f0c3-474c-beb0-75a85600c6fd\",\r\n                            \"tenantId\": \"pg\",\r\n                            \"currentState\": \"4ca040f9-b934-451c-af98-d9babc44dc01\",\r\n                            \"action\": \"REGISTER\",\r\n                            \"nextState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                            \"roles\": [\r\n                                \"CITIZEN\",\r\n                                \"EMPLOYEE\"\r\n                            ],\r\n                            \"active\": true\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714663426692\r\n                    },\r\n                    \"uuid\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": null,\r\n                    \"state\": \"VERIFICATIONREQUESTED\",\r\n                    \"applicationStatus\": \"INWORKFLOW\",\r\n                    \"docUploadRequired\": false,\r\n                    \"isStartState\": false,\r\n                    \"isTerminateState\": false,\r\n                    \"isStateUpdatable\": true,\r\n                    \"actions\": [\r\n                        {\r\n                            \"auditDetails\": {\r\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"createdTime\": 1714652996954,\r\n                                \"lastModifiedTime\": 1714663426692\r\n                            },\r\n                            \"uuid\": \"124baabb-de86-4be3-9bfd-7d8c53845194\",\r\n                            \"tenantId\": \"pg\",\r\n                            \"currentState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                            \"action\": \"APPROVE\",\r\n                            \"nextState\": \"a1d54e4c-c446-4ebd-9d4e-913afb2a5401\",\r\n                            \"roles\": [\r\n                                \"ADVOCATE_CLERK_APPROVER\"\r\n                            ],\r\n                            \"active\": true\r\n                        },\r\n                        {\r\n                            \"auditDetails\": {\r\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"createdTime\": 1714652996954,\r\n                                \"lastModifiedTime\": 1714663426692\r\n                            },\r\n                            \"uuid\": \"f8f6987c-96e7-4576-9517-d8d38175be3e\",\r\n                            \"tenantId\": \"pg\",\r\n                            \"currentState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                            \"action\": \"REJECT\",\r\n                            \"nextState\": \"65d76d67-44e1-4c27-81fe-6d9868850642\",\r\n                            \"roles\": [\r\n                                \"ADVOCATE_CLERK_APPROVER\"\r\n                            ],\r\n                            \"active\": true\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714663426692\r\n                    },\r\n                    \"uuid\": \"a1d54e4c-c446-4ebd-9d4e-913afb2a5401\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": 5,\r\n                    \"state\": \"REGISTERED\",\r\n                    \"applicationStatus\": \"ACTIVE\",\r\n                    \"docUploadRequired\": false,\r\n                    \"isStartState\": false,\r\n                    \"isTerminateState\": true,\r\n                    \"isStateUpdatable\": false,\r\n                    \"actions\": null\r\n                },\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714663426692\r\n                    },\r\n                    \"uuid\": \"65d76d67-44e1-4c27-81fe-6d9868850642\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": 5,\r\n                    \"state\": \"REJECTED\",\r\n                    \"applicationStatus\": \"INACTIVE\",\r\n                    \"docUploadRequired\": false,\r\n                    \"isStartState\": false,\r\n                    \"isTerminateState\": true,\r\n                    \"isStateUpdatable\": false,\r\n                    \"actions\": null\r\n                }\r\n            ],\r\n            \"auditDetails\": {\r\n                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                \"createdTime\": 1714652996954,\r\n                \"lastModifiedTime\": 1714663426692\r\n            }\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8088",
+							"path": [
+								"egov-workflow-v2",
+								"egov-wf",
+								"businessservice",
+								"_update"
+							]
+						},
+						"description": "Use search workflow response object in its body to update that with required changes"
+					},
+					"response": [
+						{
+							"name": "Workflow update-clerk update",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n   \"RequestInfo\": {\r\n        \"apiId\": null,\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": \"POST\",\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\r\n        \"userInfo\": {\r\n            \"id\": 181,\r\n            \"userName\": \"TestEggMUSTAKIMNK\",\r\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n            \"locale\": \"string\",\r\n            \"type\": \"EMPLOYEE\",\r\n            \"name\": \"mustak\",\r\n            \"mobileNumber\": \"1234567890\",\r\n            \"alternatemobilenumber\": null,\r\n            \"emailId\": \"xyz@egovernments.org\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"System user\",\r\n                    \"code\": \"SYSTEM\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"Super User\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pg\",\r\n            \"permanentCity\": \"Kaikoo\"\r\n        },\r\n        \"authToken\": \"bc71214a-f092-4f08-a22f-56b875452702\"\r\n    },\r\n  \"BusinessServices\": [\r\n    {\r\n            \"tenantId\": \"pg\",\r\n            \"uuid\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n            \"businessService\": \"advocateclerk\",\r\n            \"business\": \"advocateclerk-services\",\r\n            \"businessServiceSla\": 30,\r\n            \"states\": [\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714652996954\r\n                    },\r\n                    \"uuid\": \"4ca040f9-b934-451c-af98-d9babc44dc01\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": null,\r\n                    \"state\": null,\r\n                    \"applicationStatus\": null,\r\n                    \"docUploadRequired\": true,\r\n                    \"isStartState\": true,\r\n                    \"isTerminateState\": false,\r\n                    \"isStateUpdatable\": true,\r\n                    \"actions\": [\r\n                        {\r\n                            \"auditDetails\": {\r\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"createdTime\": 1714652996954,\r\n                                \"lastModifiedTime\": 1714652996954\r\n                            },\r\n                            \"uuid\": \"d2e8bef9-f0c3-474c-beb0-75a85600c6fd\",\r\n                            \"tenantId\": \"pg\",\r\n                            \"currentState\": \"4ca040f9-b934-451c-af98-d9babc44dc01\",\r\n                            \"action\": \"REGISTER\",\r\n                            \"nextState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                            \"roles\": [\r\n                                \"CITIZEN\",\r\n                                \"EMPLOYEE\"\r\n                            ],\r\n                            \"active\": true\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714652996954\r\n                    },\r\n                    \"uuid\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": null,\r\n                    \"state\": \"VERIFICATIONREQUESTED\",\r\n                    \"applicationStatus\": \"INWORKFLOW\",\r\n                    \"docUploadRequired\": false,\r\n                    \"isStartState\": false,\r\n                    \"isTerminateState\": false,\r\n                    \"isStateUpdatable\": true,\r\n                    \"actions\": [\r\n                        {\r\n                            \"auditDetails\": {\r\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"createdTime\": 1714652996954,\r\n                                \"lastModifiedTime\": 1714652996954\r\n                            },\r\n                            \"uuid\": \"124baabb-de86-4be3-9bfd-7d8c53845194\",\r\n                            \"tenantId\": \"pg\",\r\n                            \"currentState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                            \"action\": \"APPROVE\",\r\n                            \"nextState\": \"a1d54e4c-c446-4ebd-9d4e-913afb2a5401\",\r\n                            \"roles\": [\r\n                                \"ADVOCATECLERK_APPROVER\"\r\n                            ],\r\n                            \"active\": true\r\n                        },\r\n                        {\r\n                            \"auditDetails\": {\r\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                                \"createdTime\": 1714652996954,\r\n                                \"lastModifiedTime\": 1714652996954\r\n                            },\r\n                            \"uuid\": \"f8f6987c-96e7-4576-9517-d8d38175be3e\",\r\n                            \"tenantId\": \"pg\",\r\n                            \"currentState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\r\n                            \"action\": \"REJECT\",\r\n                            \"nextState\": \"65d76d67-44e1-4c27-81fe-6d9868850642\",\r\n                            \"roles\": [\r\n                                \"ADVOCATECLERK_APPROVER\"\r\n                            ],\r\n                            \"active\": true\r\n                        }\r\n                    ]\r\n                },\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714652996954\r\n                    },\r\n                    \"uuid\": \"a1d54e4c-c446-4ebd-9d4e-913afb2a5401\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": 5,\r\n                    \"state\": \"REGISTERED\",\r\n                    \"applicationStatus\": \"ACTIVE\",\r\n                    \"docUploadRequired\": false,\r\n                    \"isStartState\": false,\r\n                    \"isTerminateState\": true,\r\n                    \"isStateUpdatable\": false,\r\n                    \"actions\": null\r\n                },\r\n                {\r\n                    \"auditDetails\": {\r\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                        \"createdTime\": 1714652996954,\r\n                        \"lastModifiedTime\": 1714652996954\r\n                    },\r\n                    \"uuid\": \"65d76d67-44e1-4c27-81fe-6d9868850642\",\r\n                    \"tenantId\": \"pg\",\r\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\r\n                    \"sla\": 5,\r\n                    \"state\": \"REJECTED\",\r\n                    \"applicationStatus\": \"INACTIVE\",\r\n                    \"docUploadRequired\": false,\r\n                    \"isStartState\": false,\r\n                    \"isTerminateState\": true,\r\n                    \"isStateUpdatable\": false,\r\n                    \"actions\": null\r\n                }\r\n            ],\r\n            \"auditDetails\": {\r\n                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n                \"createdTime\": 1714652996954,\r\n                \"lastModifiedTime\": 1714652996954\r\n            }\r\n        }\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_update",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8088",
+									"path": [
+										"egov-workflow-v2",
+										"egov-wf",
+										"businessservice",
+										"_update"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 02 May 2024 15:23:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"ResponseInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": null,\n        \"resMsgId\": \"uief87324\",\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\n        \"status\": \"successful\"\n    },\n    \"BusinessServices\": [\n        {\n            \"tenantId\": \"pg\",\n            \"uuid\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\n            \"businessService\": \"advocateclerk\",\n            \"business\": \"advocateclerk-services\",\n            \"businessServiceSla\": 30,\n            \"states\": [\n                {\n                    \"auditDetails\": {\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"createdTime\": 1714663426692,\n                        \"lastModifiedTime\": 1714663426692\n                    },\n                    \"uuid\": \"4ca040f9-b934-451c-af98-d9babc44dc01\",\n                    \"tenantId\": \"pg\",\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\n                    \"sla\": null,\n                    \"state\": null,\n                    \"applicationStatus\": null,\n                    \"docUploadRequired\": true,\n                    \"isStartState\": true,\n                    \"isTerminateState\": false,\n                    \"isStateUpdatable\": true,\n                    \"actions\": [\n                        {\n                            \"auditDetails\": {\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                                \"createdTime\": 1714663426692,\n                                \"lastModifiedTime\": 1714663426692\n                            },\n                            \"uuid\": \"d2e8bef9-f0c3-474c-beb0-75a85600c6fd\",\n                            \"tenantId\": \"pg\",\n                            \"currentState\": \"4ca040f9-b934-451c-af98-d9babc44dc01\",\n                            \"action\": \"REGISTER\",\n                            \"nextState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\n                            \"roles\": [\n                                \"CITIZEN\",\n                                \"EMPLOYEE\"\n                            ],\n                            \"active\": true\n                        }\n                    ]\n                },\n                {\n                    \"auditDetails\": {\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"createdTime\": 1714663426692,\n                        \"lastModifiedTime\": 1714663426692\n                    },\n                    \"uuid\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\n                    \"tenantId\": \"pg\",\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\n                    \"sla\": null,\n                    \"state\": \"VERIFICATIONREQUESTED\",\n                    \"applicationStatus\": \"INWORKFLOW\",\n                    \"docUploadRequired\": false,\n                    \"isStartState\": false,\n                    \"isTerminateState\": false,\n                    \"isStateUpdatable\": true,\n                    \"actions\": [\n                        {\n                            \"auditDetails\": {\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                                \"createdTime\": 1714663426692,\n                                \"lastModifiedTime\": 1714663426692\n                            },\n                            \"uuid\": \"124baabb-de86-4be3-9bfd-7d8c53845194\",\n                            \"tenantId\": \"pg\",\n                            \"currentState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\n                            \"action\": \"APPROVE\",\n                            \"nextState\": \"a1d54e4c-c446-4ebd-9d4e-913afb2a5401\",\n                            \"roles\": [\n                                \"ADVOCATECLERK_APPROVER\"\n                            ],\n                            \"active\": true\n                        },\n                        {\n                            \"auditDetails\": {\n                                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                                \"createdTime\": 1714663426692,\n                                \"lastModifiedTime\": 1714663426692\n                            },\n                            \"uuid\": \"f8f6987c-96e7-4576-9517-d8d38175be3e\",\n                            \"tenantId\": \"pg\",\n                            \"currentState\": \"7d731327-dd3e-4e01-8041-667db577c09e\",\n                            \"action\": \"REJECT\",\n                            \"nextState\": \"65d76d67-44e1-4c27-81fe-6d9868850642\",\n                            \"roles\": [\n                                \"ADVOCATECLERK_APPROVER\"\n                            ],\n                            \"active\": true\n                        }\n                    ]\n                },\n                {\n                    \"auditDetails\": {\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"createdTime\": 1714663426692,\n                        \"lastModifiedTime\": 1714663426692\n                    },\n                    \"uuid\": \"a1d54e4c-c446-4ebd-9d4e-913afb2a5401\",\n                    \"tenantId\": \"pg\",\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\n                    \"sla\": 5,\n                    \"state\": \"REGISTERED\",\n                    \"applicationStatus\": \"ACTIVE\",\n                    \"docUploadRequired\": false,\n                    \"isStartState\": false,\n                    \"isTerminateState\": true,\n                    \"isStateUpdatable\": false,\n                    \"actions\": null\n                },\n                {\n                    \"auditDetails\": {\n                        \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                        \"createdTime\": 1714663426692,\n                        \"lastModifiedTime\": 1714663426692\n                    },\n                    \"uuid\": \"65d76d67-44e1-4c27-81fe-6d9868850642\",\n                    \"tenantId\": \"pg\",\n                    \"businessServiceId\": \"14d535e5-e89f-4f93-bea9-d3362bcaccb4\",\n                    \"sla\": 5,\n                    \"state\": \"REJECTED\",\n                    \"applicationStatus\": \"INACTIVE\",\n                    \"docUploadRequired\": false,\n                    \"isStartState\": false,\n                    \"isTerminateState\": true,\n                    \"isStateUpdatable\": false,\n                    \"actions\": null\n                }\n            ],\n            \"auditDetails\": {\n                \"createdBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                \"lastModifiedBy\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n                \"createdTime\": 1714663426692,\n                \"lastModifiedTime\": 1714663426692\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "MDMS search",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "8198f8e7-aff5-479f-ba3c-a46afd6d117e"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": null,\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": \"POST\",\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\r\n        \"userInfo\": {\r\n            \"id\": 181,\r\n            \"userName\": \"TestEggMUSTAKIMNK\",\r\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n            \"locale\": \"string\",\r\n            \"type\": \"EMPLOYEE\",\r\n            \"name\": \"mustak\",\r\n            \"mobileNumber\": \"1234567890\",\r\n            \"alternatemobilenumber\": null,\r\n            \"emailId\": \"xyz@egovernments.org\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"System user\",\r\n                    \"code\": \"SYSTEM\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"Super User\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pg\",\r\n            \"permanentCity\": \"Kaikoo\"\r\n        },\r\n        \"authToken\": \"{{Token1}}\"\r\n    },\r\n    \"MdmsCriteria\": {\r\n        \"tenantId\": \"pg\",\r\n        \"moduleDetails\": [\r\n            {\r\n                \"moduleName\": \"ACCESSCONTROL-ROLES\",\r\n                \"masterDetails\": [\r\n                    {\r\n                        \"name\": \"roles\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    }\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8085/egov-mdms-service/v1/_search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8085",
+							"path": [
+								"egov-mdms-service",
+								"v1",
+								"_search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filestore search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "8a16d344-1b87-4b77-af37-4ab13da810c9"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8082/filestore/v1/files/id?fileStoreId=45f327ed-f71b-4061-a491-d94c69730029&tenantId=pg",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"filestore",
+								"v1",
+								"files",
+								"id"
+							],
+							"query": [
+								{
+									"key": "tag",
+									"value": "first tag2",
+									"disabled": true
+								},
+								{
+									"key": "fileStoreId",
+									"value": "45f327ed-f71b-4061-a491-d94c69730029"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "FileStore_upload_pdf_File",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/bhlp0071/Downloads/maa_notaryFee.pdf"
+								},
+								{
+									"key": "tenantId",
+									"value": "pg",
+									"type": "text"
+								},
+								{
+									"key": "module",
+									"value": "test",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "first tag1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8082/filestore/v1/files",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"filestore",
+								"v1",
+								"files"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

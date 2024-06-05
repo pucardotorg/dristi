@@ -62,4 +62,14 @@ public class AdvocateRowMapperTest {
         // Act & Assert
         assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
     }
+
+    @Test
+    void shouldHandleException() throws SQLException {
+        // Setup
+        when(rs.next()).thenThrow(new CustomException());
+
+        // Execution & Verification
+        assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
+//        assertTrue(exception.getMessage().contains("Error occurred while processing document ResultSet: Database error"));
+    }
 }
