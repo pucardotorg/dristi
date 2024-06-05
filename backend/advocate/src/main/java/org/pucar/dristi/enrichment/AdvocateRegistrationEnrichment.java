@@ -34,7 +34,6 @@ public class AdvocateRegistrationEnrichment {
         try {
             List<String> advocateApplicationNumbers = idgenUtil.getIdList(advocateRequest.getRequestInfo(), advocateRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvApplicationNumberConfig(), null, 1);
             log.info("Advocate Application Number :: {}",advocateApplicationNumbers);
-            int index = 0;
             Advocate advocate =  advocateRequest.getAdvocate();
             AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             advocate.setAuditDetails(auditDetails);
@@ -42,7 +41,7 @@ public class AdvocateRegistrationEnrichment {
             //setting false unless the application is approved
             advocate.setIsActive(false);
             //setting generated application number
-            advocate.setApplicationNumber(advocateApplicationNumbers.get(index++));
+            advocate.setApplicationNumber(advocateApplicationNumbers.get(0));
             if (advocate.getDocuments() != null) {
                 advocate.getDocuments().forEach(document -> {
                     document.setId(String.valueOf(UUID.randomUUID()));

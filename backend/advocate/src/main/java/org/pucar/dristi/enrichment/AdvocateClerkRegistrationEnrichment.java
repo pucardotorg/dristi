@@ -34,7 +34,6 @@ public class AdvocateClerkRegistrationEnrichment {
         try {
             List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvClerkApplicationNumberConfig(), null, 1);
             log.info("Advocate Clerk Application Number :: {}",clerkApplicationNumbers);
-            int index = 0;
 
             AdvocateClerk advocateClerk = advocateClerkRequest.getClerk();
             AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
@@ -49,7 +48,7 @@ public class AdvocateClerkRegistrationEnrichment {
                 });
 
             //setting generated application number
-            advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(index++));
+            advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(0));
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
