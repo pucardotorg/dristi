@@ -169,7 +169,7 @@ public class WorkflowService {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error getting current workflow for tenant ID {} and business ID {}: {}", tenantId, businessId, e.getMessage());
+            log.error("Error getting current workflow for tenant ID {} and business ID {}: {}", tenantId, businessId, e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
     }

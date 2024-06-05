@@ -79,7 +79,7 @@ public class AdvocateClerkRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate clerk application list :: {}", e.getMessage());
+            log.error("Error while fetching advocate clerk application list :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
         }
     }
@@ -117,7 +117,7 @@ public class AdvocateClerkRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate clerk application list :: {}", e.getMessage());
+            log.error("Error while fetching advocate clerk application list :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
         }
     }
@@ -155,7 +155,7 @@ public class AdvocateClerkRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching advocate clerk application list :: {}", e.getMessage());
+            log.error("Error while fetching advocate clerk application list :: {}", e.toString());
             throw new CustomException(ADVOCATE_CLERK_SEARCH_EXCEPTION,"Error while fetching advocate clerk application list: "+e.getMessage());
         }
     }

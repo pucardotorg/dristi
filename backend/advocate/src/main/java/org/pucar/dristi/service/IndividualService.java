@@ -40,7 +40,7 @@ public class IndividualService {
             throw e;
         }
         catch (Exception e){
-            log.error("Error in search individual service :: {}", e.getMessage());
+            log.error("Error in search individual service :: {}", e.toString());
             throw new CustomException(INDIVIDUAL_SERVICE_EXCEPTION,"Error in search individual service"+e.getMessage());
         }
     }

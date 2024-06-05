@@ -92,8 +92,8 @@ public class AdvocateClerkQueryBuilder {
             throw e;
         }
         catch (Exception e) {
-            log.error("Error while building advocate clerk search query :: {}",e.getMessage());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+            log.error("Error while building advocate clerk search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
@@ -128,8 +128,8 @@ public class AdvocateClerkQueryBuilder {
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building advocate clerk search query :: {}", e.getMessage());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+            log.error("Error while building advocate clerk search query :: {}", e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
@@ -164,8 +164,8 @@ public class AdvocateClerkQueryBuilder {
             return query.toString();
         }
         catch (Exception e) {
-            log.error("Error while building advocate clerk search query :: {}",e.getMessage());
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+            log.error("Error while building advocate clerk search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
@@ -211,8 +211,8 @@ public class AdvocateClerkQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building clerk document search query :: {}",e.getMessage());
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the clerk document query: "+ e.getMessage());
+            log.error("Error while building clerk document search query :: {}",e.toString());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the clerk document query: "+ e.getMessage());
         }
     }
 }

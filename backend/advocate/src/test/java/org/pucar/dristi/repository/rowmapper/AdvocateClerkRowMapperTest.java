@@ -114,7 +114,6 @@ public class AdvocateClerkRowMapperTest {
         assertDoesNotThrow(() -> {
             rowMapper.addDocumentToApplication(rs, advocateClerk);
         });
-        // Add assertions for exception handling if needed
     }
 
     @Test

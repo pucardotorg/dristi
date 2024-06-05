@@ -68,8 +68,8 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
             throw e;
         }
         catch (Exception e){
-            log.error("Error occurred while processing clerk ResultSet: {}", e.getMessage());
-            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing clerk ResultSet: "+ e.getMessage());
+            log.error("Error occurred while processing clerk ResultSet :: {}", e.toString());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Exception occurred while processing clerk ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(advocateClerkApplicationMap.values());
     }

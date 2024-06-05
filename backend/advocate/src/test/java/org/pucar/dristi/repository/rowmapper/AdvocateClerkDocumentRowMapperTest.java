@@ -59,7 +59,7 @@ public class AdvocateClerkDocumentRowMapperTest {
 
         // Execution & Verification
         Exception exception = assertThrows(CustomException.class, () -> rowMapper.extractData(rs));
-        assertTrue(exception.getMessage().contains("Error occurred while processing document ResultSet: Database error"));
+        assertTrue(exception.getMessage().contains("Exception occurred while processing document ResultSet: Database error"));
     }
 
     @Test

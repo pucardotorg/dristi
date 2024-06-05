@@ -27,7 +27,7 @@ public class ResponseInfoFactory {
 			return ResponseInfo.builder().apiId(apiId).ver(ver).ts(ts).resMsgId(resMsgId).msgId(msgId).resMsgId(resMsgId)
 					.status(responseStatus).build();
 		} catch (Exception e) {
-			log.error("Error while preparing response info object from request info :: {}", e.getMessage());
+			log.error("Error while preparing response info object from request info :: {}", e.toString());
 			throw new CustomException(RESPONSE_INFO_FACTORY_EXCEPTION,"Error while preparing response info object from request info: "+e.getMessage());
 		}
 	}

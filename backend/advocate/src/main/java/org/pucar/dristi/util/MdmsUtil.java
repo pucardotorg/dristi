@@ -45,7 +45,7 @@ public class MdmsUtil {
 			mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
 		}
 		catch (CustomException e) {
-			log.error("Custom Exception occurred in MDMS Utility :: {}", e.getMessage());
+			log.error("Custom Exception occurred in MDMS Utility :: {}", e.toString());
 			throw e;
 		}
 		catch (Exception e) {
