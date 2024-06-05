@@ -148,7 +148,6 @@ public class AdvocateQueryBuilder {
             if(tenantId != null && !tenantId.isEmpty()){
                 addClauseIfRequiredForTenantId(query, firstCriteria);
                 query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
-//                        .append(")");
                 preparedStmtList.add("%" + tenantId.toLowerCase() + "%");
                 firstCriteria = false;
             }
