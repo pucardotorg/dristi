@@ -7,32 +7,32 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: INSERT INTO dristi_advocate_clerk(id, tenantId, applicationNumber,status, individualId, stateRegnNumber,isActive , createdBy, lastModifiedBy, createdTime, lastModifiedTime,additionalDetails) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?,?,?);
-          basePath: clerks.*
+          basePath: clerk
           jsonMaps:
-            - jsonPath: $.clerks.*.id
-            - jsonPath: $.clerks.*.tenantId
-            - jsonPath: $.clerks.*.applicationNumber
-            - jsonPath: $.clerks.*.status
-            - jsonPath: $.clerks.*.individualId
-            - jsonPath: $.clerks.*.stateRegnNumber
-            - jsonPath: $.clerks.*.isActive
-            - jsonPath: $.clerks.*.auditDetails.createdBy
-            - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
-            - jsonPath: $.clerks.*.auditDetails.createdTime
-            - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
-            - jsonPath: $.clerks.*.additionalDetails
+            - jsonPath: $.clerk.id
+            - jsonPath: $.clerk.tenantId
+            - jsonPath: $.clerk.applicationNumber
+            - jsonPath: $.clerk.status
+            - jsonPath: $.clerk.individualId
+            - jsonPath: $.clerk.stateRegnNumber
+            - jsonPath: $.clerk.isActive
+            - jsonPath: $.clerk.auditDetails.createdBy
+            - jsonPath: $.clerk.auditDetails.lastModifiedBy
+            - jsonPath: $.clerk.auditDetails.createdTime
+            - jsonPath: $.clerk.auditDetails.lastModifiedTime
+            - jsonPath: $.clerk.additionalDetails
               type: JSON
               dbType: JSONB
 
         - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType ,clerk_id,additionalDetails) VALUES (?,?, ?,?,?,?);
-          basePath: $.clerks.*.documents.*
+          basePath: $.clerk.documents.*
           jsonMaps:
-            - jsonPath: $.clerks.*.documents.*.id
-            - jsonPath: $.clerks.*.documents.*.fileStore
-            - jsonPath: $.clerks.*.documents.*.documentUid
-            - jsonPath: $.clerks.*.documents.*.documentType
-            - jsonPath: $.clerks[*][?({id} in @.documents[*].id)].id
-            - jsonPath: $.clerks.*.documents.*.additionalDetails
+            - jsonPath: $.clerk.documents.*.id
+            - jsonPath: $.clerk.documents.*.fileStore
+            - jsonPath: $.clerk.documents.*.documentUid
+            - jsonPath: $.clerk.documents.*.documentType
+            - jsonPath: $.clerk[?({id} in @.documents[*].id)].id
+            - jsonPath: $.clerk.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
     - version: 1.0
@@ -41,10 +41,10 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: UPDATE  dristi_advocate_clerk SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
-          basePath: clerks.*
+          basePath: clerk
           jsonMaps:
-            - jsonPath: $.clerks.*.status
-            - jsonPath: $.clerks.*.isActive
-            - jsonPath: $.clerks.*.auditDetails.lastModifiedBy
-            - jsonPath: $.clerks.*.auditDetails.lastModifiedTime
-            - jsonPath: $.clerks.*.id
+            - jsonPath: $.clerk.status
+            - jsonPath: $.clerk.isActive
+            - jsonPath: $.clerk.auditDetails.lastModifiedBy
+            - jsonPath: $.clerk.auditDetails.lastModifiedTime
+            - jsonPath: $.clerk.id

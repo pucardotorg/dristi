@@ -65,10 +65,12 @@ public class AdvocateRowMapper implements ResultSetExtractor<List<Advocate>> {
 
                 advocateMap.put(uuid, advocate);
             }
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
-            log.error("Error occurred while processing Advocate ResultSet: {}", e.getMessage());
-            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing Advocate ResultSet: "+ e.getMessage());
+            log.error("Error occurred while processing Advocate ResultSet :: {}", e.toString());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Exception occurred while processing Advocate ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(advocateMap.values());
     }

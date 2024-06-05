@@ -23,17 +23,11 @@ import lombok.Builder;
 @Builder
 public class AdvocateClerkRequest {
 	@JsonProperty("RequestInfo")
-
 	@Valid
 	private RequestInfo requestInfo = null;
 
-	@JsonProperty("clerks")
+	@JsonProperty("clerk")
 	@Valid
-	private List<AdvocateClerk> clerks = new ArrayList<>();
-
-	public AdvocateClerkRequest addClerksItem(AdvocateClerk clerksItem) {
-		this.clerks.add(clerksItem);
-		return this;
-	}
+	private AdvocateClerk clerk = null;
 
 }

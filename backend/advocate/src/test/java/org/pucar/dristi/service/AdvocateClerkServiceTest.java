@@ -1,31 +1,40 @@
 package org.pucar.dristi.service;
-
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.AdvocateClerkRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.AdvocateClerkRepository;
 import org.pucar.dristi.validators.AdvocateClerkRegistrationValidator;
-import org.pucar.dristi.web.models.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import org.pucar.dristi.web.models.AdvocateClerk;
+import org.pucar.dristi.web.models.AdvocateClerkRequest;
+import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.pucar.dristi.config.ServiceConstants.TEST_EXCEPTION;
 
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
 public class AdvocateClerkServiceTest {
+
+    @InjectMocks
+    private AdvocateClerkService advocateClerkService;
+
+    @Mock
+    private AdvocateClerkRepository advocateClerkRepository;
 
     @Mock
     private AdvocateClerkRegistrationValidator validator;
@@ -37,172 +46,428 @@ public class AdvocateClerkServiceTest {
     private WorkflowService workflowService;
 
     @Mock
-    private AdvocateClerkRepository advocateClerkRepository;
+    private IndividualService individualService;
 
     @Mock
     private Producer producer;
 
-    @InjectMocks
-    private AdvocateClerkService service;
     @Mock
     private Configuration config;
 
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+    }
+
     @Test
     public void testRegisterAdvocateClerkRequest_Success() {
-        // Prepare request
+        // Mock data
         AdvocateClerkRequest request = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
-        AdvocateClerk clerk = new AdvocateClerk();
-        clerks.add(clerk);
-        request.setClerks(clerks);
-
-        // Call the method
-        List<AdvocateClerk> response = service.registerAdvocateClerkRequest(request);
-
-        // Verify results
-        assertEquals(request.getClerks(), response);
-        verify(validator, times(1)).validateAdvocateClerkRegistration(request);
-        verify(enrichmentUtil, times(1)).enrichAdvocateClerkRegistration(request);
-        verify(workflowService, times(1)).updateWorkflowStatus(request);
-        verify(producer, times(1)).push(config.getAdvClerkcreateTopic(), request);
+        // Setup mocks
+        when(config.getAdvClerkcreateTopic()).thenReturn("advClerkCreateTopic");
+        // Test method
+        advocateClerkService.registerAdvocateClerkRequest(request);
+        // Verify interactions
+        verify(validator).validateAdvocateClerkRegistration(request);
+        verify(enrichmentUtil).enrichAdvocateClerkRegistration(request);
+        verify(workflowService).updateWorkflowStatus(request);
+        verify(producer).push("advClerkCreateTopic", request);
     }
 
-    @Test()
-    public void testRegisterAdvocateClerkRequest_CustomException() {
-        // Prepare request
-        AdvocateClerkRequest request = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
-        AdvocateClerk clerk = new AdvocateClerk();
-        clerks.add(clerk);
-        request.setClerks(clerks);
+    @Test
+    void registerAdvocateClerkRequest_Exception() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
 
-        // Mock exception during validation
-        doThrow(new CustomException(TEST_EXCEPTION,"Mock test")).when(validator).validateAdvocateClerkRegistration(request);
+        doThrow(new RuntimeException("Internal error")).when(validator).validateAdvocateClerkRegistration(any());
 
-        // Call the method
-        try {
-            service.registerAdvocateClerkRequest(request);
-        }
-        catch (Exception e){
-            assertTrue(e instanceof CustomException);
-            assertEquals("Mock test", e.getMessage());
-        }
+        // Act and Assert
+        assertThrows(Exception.class, () -> {
+            advocateClerkService.registerAdvocateClerkRequest(advocateClerkRequest);
+        });
     }
-    @Test()
-    public void testRegisterAdvocateClerkRequest_GenericException() {
-        // Prepare request
-        AdvocateClerkRequest request = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
-        AdvocateClerk clerk = new AdvocateClerk();
-        clerks.add(clerk);
-        request.setClerks(clerks);
 
-        // Mock successful validation, exception during enrichment
-        doThrow(new CustomException(TEST_EXCEPTION,"Mock test")).when(enrichmentUtil).enrichAdvocateClerkRegistration(request);
+    @Test
+    void registerAdvocateClerkRequest_CustomException() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
 
-        // Call the method
-        try {
-            service.registerAdvocateClerkRequest(request);
-        }
-        catch (Exception e){
-            assertTrue(e instanceof CustomException);
-            assertEquals("Mock test", e.getMessage());
-            verify(validator, times(1)).validateAdvocateClerkRegistration(request);
-        }
+        doThrow(new CustomException()).when(validator).validateAdvocateClerkRegistration(any());
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateClerkService.registerAdvocateClerkRequest(advocateClerkRequest);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplications_IndividualLoggedInUser() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
+        Map<String, String> individualUserUUID = new HashMap<>();
+        individualUserUUID.put("userUuid", userInfo.getUuid());
+
+//        when(individualService.searchIndividual(any(), any(), any())).thenReturn(true);
+
+        // Act
+        advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        verify(advocateClerkRepository, times(1)).getApplications(advocateClerkSearchCriteria, "testTenantId",   10, 0);
+    }
+
+    @Test
+    void searchAdvocateClerkApplications_Exception() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplications_CustomException() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        when(advocateClerkRepository.getApplications(any(), any(), any(), any())).thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplications_IndividualLoggedInUserEmploye() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerkSearchCriteria> advocateClerkSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
+        Map<String, String> individualUserUUID = new HashMap<>();
+        individualUserUUID.put("userUuid", userInfo.getUuid());
+
+        // Act
+        advocateClerkService.searchAdvocateClerkApplications(requestInfo, advocateClerkSearchCriteria, tenantId, limit, offset);
+
+        verify(advocateClerkRepository, times(1)).getApplications(advocateClerkSearchCriteria, "testTenantId",   10, 0);
+
     }
     @Test
-    public void testSearchAdvocateClerkApplications_Success() {
-        // Prepare search criteria
-        RequestInfo requestInfo = new RequestInfo();
-        User user = new User();
-        user.setType("CITIZEN");
-        requestInfo.setUserInfo(user);
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
+    void searchAdvocateClerkApplicationsByAppNumber_Success() {
+        // Arrange
+        String applicationNumber = "testAppNumber";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
 
-        // Mock successful repository call
         List<AdvocateClerk> applications = new ArrayList<>();
-        when(advocateClerkRepository.getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any())).thenReturn(applications);
-
-        // Call the method
-        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria,statusList,applicationNumber, null, null);
-
-        // Verify results
-        assertEquals(applications, response);
-        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any());
-        verify(workflowService, times(0)).getWorkflowFromProcessInstance(any()); // No workflows to fetch for empty applications
-    }
-
-    @Test
-    public void testSearchAdvocateClerkApplications_EmptyResults() {
-        // Prepare search criteria
-        RequestInfo requestInfo = new RequestInfo();
-        User user = new User();
-        user.setType("CITIZEN");
-        requestInfo.setUserInfo(user);
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
-        AdvocateClerkSearchCriteria criteria = new AdvocateClerkSearchCriteria(null, "APP123", null, null);
-        searchCriteria.add(criteria);
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
-
-        // Mock successful repository call with empty results
-        List<AdvocateClerk> applications = Collections.emptyList();
-        when(advocateClerkRepository.getApplications(any(), any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
-
-        // Call the method
-        List<AdvocateClerk> response = service.searchAdvocateClerkApplications(requestInfo, searchCriteria, statusList, applicationNumber, null, null);
-
-        // Verify results
-        assertEquals(applications, response);
-        verify(advocateClerkRepository, times(1)).getApplications(eq(searchCriteria), eq(statusList), eq(applicationNumber), any(), any(), any());
-        verify(workflowService, times(0)).getWorkflowFromProcessInstance(any()); // No workflows to fetch for empty applications
-    }
-
-    @Test
-    public void testUpdateAdvocateClerk_Success() {
-        // Prepare request
-        AdvocateClerkRequest request = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
         AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setApplicationNumber("appNum1");
         clerk.setTenantId("tenantId");
-        clerks.add(clerk);
-        request.setClerks(clerks);
+        applications.add(clerk);
 
-        // Mock successful behavior
-        when(validator.validateApplicationExistence(clerk)).thenReturn(clerk); // Existing application found
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
-        // Call the method
-        List<AdvocateClerk> response = service.updateAdvocateClerk(request);
+        when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
 
-        // Verify results
-        assertEquals(request.getClerks(), response);
-        verify(validator, times(1)).validateApplicationExistence(clerk); // Verify for each clerk
-        verify(enrichmentUtil, times(1)).enrichAdvocateClerkApplicationUponUpdate(request);
-        verify(workflowService, times(1)).updateWorkflowStatus(request);
-        verify(producer, times(1)).push(config.getAdvClerkUpdateTopic(), request);
+        // Act
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(applications, result);
     }
 
-    @Test()
-    public void testUpdateAdvocateClerk_ValidateApplicationExistenceException() {
-        // Prepare request
-        AdvocateClerkRequest request = new AdvocateClerkRequest();
-        List<AdvocateClerk> clerks = new ArrayList<>();
+    @Test
+    void searchAdvocateClerkApplicationsByAppNumber_Exception() {
+        // Arrange
+        String applicationNumber = "testAppNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
+        // Act and Assert
+        assertThrows(Exception.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplicationsByAppNumber_CustomException() {
+        // Arrange
+        String applicationNumber = "testAppNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+        });
+    }
+
+    @Test
+    void searchAdvocateClerkApplicationsByAppNumber_EmptySuccess() {
+        // Arrange
+        String applicationNumber = "testAppNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerk> applications = new ArrayList<>();
+        // Populate applications with test data
+
+        when(advocateClerkRepository.getApplicationsByAppNumber(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
+
+        // Act
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByAppNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(applications, result);
+    }
+
+    @Test
+    void searchAdvocateClerkApplicationsByStatus_Success() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        List<AdvocateClerk> applications = new ArrayList<>();
         AdvocateClerk clerk = new AdvocateClerk();
-        clerks.add(clerk);
-        request.setClerks(clerks);
+        clerk.setApplicationNumber("appNum1");
+        clerk.setTenantId("tenantId");
+        applications.add(clerk);
 
-        // Mock exception during validation
-        when(validator.validateApplicationExistence(clerk)).thenThrow(new CustomException(TEST_EXCEPTION,"Mock test"));
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
 
-        // Call the method
-        try{
-            service.updateAdvocateClerk(request);
-        }
-        catch (Exception e){
-        assertTrue(e instanceof CustomException);
-        assertEquals("Error validating existing application: Mock test", e.getMessage());
-        }
+        when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
+
+        // Act
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(applications, result);
     }
+
+    @Test
+    void searchAdvocateClerkApplicationsByStatus_EmptySuccess() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateClerk> applications = new ArrayList<>();
+        // Populate applications with test data
+
+        when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenReturn(applications);
+
+        // Act
+        List<AdvocateClerk> result = advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(applications, result);
+    }
+
+    @Test
+    void searchAdvocateClerkApplicationsByStatus_Exception() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(new RuntimeException());
+
+        // Assert
+        assertThrows(Exception.class, () -> advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset));
+    }
+
+    @Test
+    void searchAdvocateClerkApplicationsByStatus_CustomException() {
+        // Arrange
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateClerkRepository.getApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(new CustomException());
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateClerkService.searchAdvocateClerkApplicationsByStatus(requestInfo, status, tenantId, limit, offset));
+    }
+
+    @Test
+    void updateAdvocateClerk_EmptySuccess() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        // Populate clerks with test data
+        advocateClerkRequest.setClerk(clerk);
+
+        when(validator.validateApplicationExistence(any())).thenReturn(new AdvocateClerk());
+        doNothing().when(enrichmentUtil).enrichAdvocateClerkApplicationUponUpdate(any());
+        doNothing().when(workflowService).updateWorkflowStatus((AdvocateClerkRequest) any());
+        when(config.getAdvClerkUpdateTopic()).thenReturn("testTopic");
+        doNothing().when(producer).push(anyString(), any());
+
+        // Act
+        AdvocateClerk result = advocateClerkService.updateAdvocateClerk(advocateClerkRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(clerk, result);
+        // Add more assertions as needed
+    }
+
+    @Test
+    void updateAdvocateClerk_Success() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setApplicationNumber("appNum1");
+        clerk.setTenantId("tenantId");
+        advocateClerkRequest.setClerk(clerk);
+
+        when(validator.validateApplicationExistence(any())).thenReturn(clerk);
+        doNothing().when(enrichmentUtil).enrichAdvocateClerkApplicationUponUpdate(any());
+        doNothing().when(workflowService).updateWorkflowStatus((AdvocateClerkRequest) any());
+        when(config.getAdvClerkUpdateTopic()).thenReturn("testTopic");
+        doNothing().when(producer).push(anyString(), any());
+
+        // Act
+        AdvocateClerk result = advocateClerkService.updateAdvocateClerk(advocateClerkRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(clerk, result);
+        // Add more assertions as needed
+    }
+
+    @Test
+    void updateAdvocate_ValidationCustomException() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setApplicationNumber("appNum1");
+        clerk.setTenantId("tenantId");
+        advocateClerkRequest.setClerk(clerk);
+
+        when(validator.validateApplicationExistence(any())).thenThrow(new CustomException());
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateClerkService.updateAdvocateClerk(advocateClerkRequest));
+    }
+
+    @Test
+    void updateAdvocateClerk_ValidationException() {
+        // Arrange
+        AdvocateClerkRequest advocateClerkRequest = new AdvocateClerkRequest();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setApplicationNumber("appNum1");
+        clerk.setTenantId("tenantId");
+        advocateClerkRequest.setClerk(clerk);
+
+        when(validator.validateApplicationExistence(any())).thenThrow(new RuntimeException());
+
+        // Assert
+        assertThrows(Exception.class, () -> advocateClerkService.updateAdvocateClerk(advocateClerkRequest));
+    }
+
 }
+
