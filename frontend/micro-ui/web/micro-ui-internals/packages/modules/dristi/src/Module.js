@@ -1,0 +1,96 @@
+import { Loader } from "@egovernments/digit-ui-react-components";
+import React from "react";
+import { useRouteMatch } from "react-router-dom";
+import CitizenApp from "./pages/citizen";
+import SelectComponents from "./components/SelectComponents";
+import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
+import Registration from "./pages/citizen/registration";
+import EmployeeApp from "./pages/employee";
+import DRISTICard from "./components/DRISTICard";
+import Inbox from "./pages/employee/Inbox";
+import Login from "./pages/citizen/Login";
+import CitizenResponse from "./pages/citizen/registration/Response";
+import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
+import FileCase from "./pages/citizen/FileCase";
+import { CustomizedHooks } from "./hooks";
+import { UICustomizations } from "./configs/UICustomizations";
+const Digit = window?.Digit || {};
+
+export const DRISTIModule = ({ stateCode, userType, tenants }) => {
+  const { path } = useRouteMatch();
+  const moduleCode = "DRISTI";
+  const tenantID = tenants?.[0]?.code?.split(".")?.[0];
+  const language = Digit.StoreData.getCurrentLanguage();
+  const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  if (isLoading) {
+    return <Loader />;
+  }
+  Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
+
+  if (userType === "citizen") {
+    return <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />;
+  }
+  return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants}></EmployeeApp>;
+};
+
+const componentsToRegister = {
+  SelectComponents,
+  SelectUserTypeComponent,
+  DRISTIModule,
+  DRISTIRegistration: Registration,
+  DRISTICard,
+  Inbox,
+  DRISTILogin: Login,
+  DRISTICitizenResponse: CitizenResponse,
+  AdvocateClerkAdditionalDetail,
+  FileCase,
+};
+
+const overrideHooks = () => {
+  Object.keys(CustomizedHooks).forEach((ele) => {
+    if (ele === "Hooks") {
+      Object.keys(CustomizedHooks[ele]).forEach((hook) => {
+        Object.keys(CustomizedHooks[ele][hook]).forEach((method) => {
+          setupHooks(hook, method, CustomizedHooks[ele][hook][method]);
+        });
+      });
+    } else if (ele === "Utils") {
+      Object.keys(CustomizedHooks[ele]).forEach((hook) => {
+        Object.keys(CustomizedHooks[ele][hook]).forEach((method) => {
+          setupHooks(hook, method, CustomizedHooks[ele][hook][method], false);
+        });
+      });
+    } else {
+      Object.keys(CustomizedHooks[ele]).forEach((method) => {
+        setupLibraries(ele, method, CustomizedHooks[ele][method]);
+      });
+    }
+  });
+};
+
+/* To Overide any existing hook we need to use similar method */
+const setupHooks = (HookName, HookFunction, method, isHook = true) => {
+  window.Digit = window.Digit || {};
+  window.Digit[isHook ? "Hooks" : "Utils"] = window.Digit[isHook ? "Hooks" : "Utils"] || {};
+  window.Digit[isHook ? "Hooks" : "Utils"][HookName] = window.Digit[isHook ? "Hooks" : "Utils"][HookName] || {};
+  window.Digit[isHook ? "Hooks" : "Utils"][HookName][HookFunction] = method;
+};
+/* To Overide any existing libraries  we need to use similar method */
+const setupLibraries = (Library, service, method) => {
+  window.Digit = window.Digit || {};
+  window.Digit[Library] = window.Digit[Library] || {};
+  window.Digit[Library][service] = method;
+};
+
+/* To Overide any existing config/middlewares  we need to use similar method */
+const updateCustomConfigs = () => {
+  setupLibraries("Customizations", "commonUiConfig", { ...window?.Digit?.Customizations?.commonUiConfig, ...UICustomizations });
+};
+
+export const initDRISTIComponents = () => {
+  overrideHooks();
+  updateCustomConfigs();
+  Object.entries(componentsToRegister).forEach(([key, value]) => {
+    Digit.ComponentRegistryService.setComponent(key, value);
+  });
+};
