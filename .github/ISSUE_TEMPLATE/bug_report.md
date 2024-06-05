@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: 'bug'
-projects: 'PUCAR v1.0 Court Case Management System'
-assignees: ''
+title: "[BUG]: [Title]"
+labels: bug
+assignees: krishnaprasadsannidhi
 
 ---
 
