@@ -3,6 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: "[BUG]: [Title]"
 labels: bug
+projects: ["pucardotorg/1"]
 assignees: krishnaprasadsannidhi
 
 ---
