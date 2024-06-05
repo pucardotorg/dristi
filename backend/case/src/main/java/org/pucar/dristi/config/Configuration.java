@@ -45,9 +45,17 @@ public class Configuration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
-	@Value("${egov.idgen.caseFilingNumber}")
-	private String caseFilingNumber;
+	@Value("${egov.idgen.caseFilingNumberCp}")
+	private String caseFilingNumberCp;
 
+	@Value("${egov.idgen.caseFilingNumberNia}")
+	private String caseFilingNumberNia;
+
+	@Value("${egov.idgen.caseNumberCc}")
+	private String caseNumberCc;
+
+	@Value("${egov.idgen.caseNumberWp}")
+	private String caseNumberWp;
 
 	// Filestore Config
 	@Value("${egov.filestore.host}")
