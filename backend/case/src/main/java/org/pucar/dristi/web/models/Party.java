@@ -21,83 +21,66 @@ import lombok.NoArgsConstructor;
  * Party
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T13:54:45.904122+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Party   {
-        @JsonProperty("id")
+public class Party {
+	@JsonProperty("id")
 
-        @Size(min=36,max=36)         private String id = null;
+	@Size(min = 2, max = 128)
+	private String id = null;
 
-        @JsonProperty("tenantId")
-          @NotNull
+	@JsonProperty("tenantId")
+	@NotNull
 
-        @Size(min=2,max=64)         private String tenantId = null;
+	private String tenantId = null;
 
-        @JsonProperty("caseId")
-          @NotNull
+	@JsonProperty("caseId")
 
-        @Size(min=2,max=36)         private String caseId = null;
+	private String caseId = null;
 
-        @JsonProperty("partyCategory")
-          @NotNull
+	@JsonProperty("partyCategory")
+	@NotNull
 
-                private String partyCategory = null;
+	private String partyCategory = null;
 
-        @JsonProperty("organisationID")
+	@JsonProperty("organisationID")
 
-                private String organisationID = null;
+	private String organisationID = null;
 
-        @JsonProperty("individualId")
+	@JsonProperty("individualId")
 
-                private String individualId = null;
+	private String individualId = null;
 
-        @JsonProperty("partyType")
+	@JsonProperty("partyType")
 
-                private String partyType = null;
+	private String partyType = null;
 
-        @JsonProperty("representationType")
+	@JsonProperty("isActive")
 
-                private String representationType = null;
+	private Boolean isActive = true;
 
-        @JsonProperty("representativeId")
+	@JsonProperty("documents")
+	@Valid
+	private List<Document> documents = null;
 
-                private List<String> representativeId = null;
+	@JsonProperty("auditDetails")
 
-        @JsonProperty("isActive")
+	@Valid
+	private AuditDetails auditDetails = null;
 
-                private Boolean isActive = true;
+	@JsonProperty("additionalDetails")
 
-        @JsonProperty("documents")
-          @Valid
-                private List<Document> documents = null;
+	private Object additionalDetails = null;
 
-        @JsonProperty("auditDetails")
-
-          @Valid
-                private AuditDetails auditDetails = null;
-
-        @JsonProperty("additionalDetails")
-
-                private Object additionalDetails = null;
-
-
-        public Party addRepresentativeIdItem(String representativeIdItem) {
-            if (this.representativeId == null) {
-            this.representativeId = new ArrayList<>();
-            }
-        this.representativeId.add(representativeIdItem);
-        return this;
-        }
-
-        public Party addDocumentsItem(Document documentsItem) {
-            if (this.documents == null) {
-            this.documents = new ArrayList<>();
-            }
-        this.documents.add(documentsItem);
-        return this;
-        }
+	public Party addDocumentsItem(Document documentsItem) {
+		if (this.documents == null) {
+			this.documents = new ArrayList<>();
+		}
+		this.documents.add(documentsItem);
+		return this;
+	}
 
 }

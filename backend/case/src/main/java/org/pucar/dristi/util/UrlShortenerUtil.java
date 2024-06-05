@@ -13,27 +13,26 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class UrlShortenerUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+	@Autowired
+	private RestTemplate restTemplate;
 
-    @Autowired
-    private Configuration configs;
+	@Autowired
+	private Configuration configs;
 
+	public String getShortenedUrl(String url) {
 
-    public String getShortenedUrl(String url){
+		HashMap<String, String> body = new HashMap<>();
+		body.put(URL, url);
+		StringBuilder builder = new StringBuilder(configs.getUrlShortnerHost());
+		builder.append(configs.getUrlShortnerEndpoint());
+		String res = restTemplate.postForObject(builder.toString(), body, String.class);
 
-        HashMap<String,String> body = new HashMap<>();
-        body.put(URL,url);
-        StringBuilder builder = new StringBuilder(configs.getUrlShortnerHost());
-        builder.append(configs.getUrlShortnerEndpoint());
-        String res = restTemplate.postForObject(builder.toString(), body, String.class);
-
-        if(StringUtils.isEmpty(res)){
-            log.error(URL_SHORTENING_ERROR_CODE, URL_SHORTENING_ERROR_MESSAGE + url);
-            return url;
-        }
-        else return res;
-    }
-
+		if (StringUtils.isEmpty(res)) {
+			log.error(URL_SHORTENING_ERROR_CODE, URL_SHORTENING_ERROR_MESSAGE + url);
+			;
+			return url;
+		} else
+			return res;
+	}
 
 }

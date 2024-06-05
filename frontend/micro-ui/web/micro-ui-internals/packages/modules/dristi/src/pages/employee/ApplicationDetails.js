@@ -265,7 +265,7 @@ const ApplicationDetails = ({ location, match }) => {
               {actions.map((option, index) => (
                 <SubmitBar
                   key={index}
-                  label={option}
+                  label={option == "REJECT" ? "Reject Request" : "Accept Request"}
                   style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
                   onSubmit={(data) => {
                     onActionSelect(option);
