@@ -239,7 +239,7 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "CORE_REQUIRED_FIELD_ERROR_FIRST_NAME",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -272,7 +272,7 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "CORE_REQUIRED_FIELD_ERROR_LAST_NAME",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",

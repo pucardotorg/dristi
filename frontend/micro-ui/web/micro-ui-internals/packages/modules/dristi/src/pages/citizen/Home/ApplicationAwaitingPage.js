@@ -8,7 +8,7 @@ function ApplicationAwaitingPage({ individualId }) {
   const { t } = useTranslation();
   const history = useHistory();
   return (
-    <Card style={{ display: "flex", flexDirection: "column", width: "90vw", height: "52vh", background: "white", alignItems: "center" }}>
+    <Card className="response-main">
       <div style={{ maxHeight: "40vh" }}>
         <WaitIcon />
       </div>
@@ -16,7 +16,9 @@ function ApplicationAwaitingPage({ individualId }) {
         <CardHeader> {t("APPROVAL_WAITING")}</CardHeader>
       </div>
       <div style={{ "text-align": "center", maxWidth: "50%" }}>
-        <CardText> {t("APPROVAL_WAITING_SUBTEXT")}</CardText>
+        <CardText>
+          {`Your registration (ID: ${individualId}) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.`}
+        </CardText>
       </div>
       <div>
         <Button
