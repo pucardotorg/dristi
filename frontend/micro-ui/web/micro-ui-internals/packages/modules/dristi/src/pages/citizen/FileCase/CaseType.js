@@ -9,7 +9,7 @@ import { DRISTIService } from "../../../services";
 import { Loader } from "@egovernments/digit-ui-components";
 import { userTypeOptions } from "../registration/config";
 
-const formatDate = (date) => {
+export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
@@ -57,6 +57,22 @@ function CaseType({ t }) {
     );
     const individualId = individualData?.Individual?.[0]?.individualId;
 
+    const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
+    const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
+    const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+    const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+    const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+    const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+    const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
+    const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
+    const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
+
+    const address = `${doorNo} ${buildingName} ${landmark}`.trim();
+
+    const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
+    const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
+    const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
+
     const userType = useMemo(() => individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [
       individualData?.Individual,
     ]);
@@ -69,7 +85,7 @@ function CaseType({ t }) {
       {},
       individualId,
       userType,
-      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : ""
     );
 
     if (userType === "ADVOCATE" && searchData) {
@@ -86,11 +102,11 @@ function CaseType({ t }) {
     }, [userType]);
 
     const searchResult = useMemo(() => {
-      return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+      return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`];
     }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
 
     const advocateId = useMemo(() => {
-      return searchResult?.[0]?.id;
+      return searchResult?.[0]?.responseList?.[0]?.id;
     }, [searchResult]);
 
     if (isLoading || isFetching || isSearchLoading) {
@@ -111,7 +127,7 @@ function CaseType({ t }) {
           <Button
             className="start-filling-button"
             label={t("CS_START_FILLING")}
-            isDisabled={false}
+            isDisabled={isDisabled}
             onButtonClick={() => {
               setIsDisabled(true);
               const cases = {
@@ -138,19 +154,12 @@ function CaseType({ t }) {
                 ],
                 representatives: [
                   {
-                    advocateId: advocateId,
+                    advocateId: advocateId ? advocateId : null,
                     tenantId,
                     representing: [],
                   },
                 ],
-                documents: [
-                  {
-                    documentType: null,
-                    fileStore: null,
-                    documentUid: "",
-                    additionalDetails: {},
-                  },
-                ],
+                documents: [],
                 workflow: {
                   action: "SAVE_DRAFT",
                   comments: null,
@@ -164,7 +173,55 @@ function CaseType({ t }) {
                     },
                   ],
                 },
-                additionalDetails: {},
+                additionalDetails: {
+                  ...(advocateId
+                    ? {}
+                    : {
+                        complaintDetails: [
+                          {
+                            isenabled: true,
+                            data: {
+                              complainantType: {
+                                code: "INDIVIDUAL",
+                                name: "Individual",
+                                showCompanyDetails: false,
+                                commonFields: true,
+                                isEnabled: true,
+                              },
+                              "addressDetails-select": {
+                                pincode: pincode,
+                                district: addressLine2,
+                                city: city,
+                                state: addressLine1,
+                                locality: address,
+                              },
+                              complainantId: true,
+                              firstName: givenName,
+                              middleName: otherNames,
+                              lastName: familyName,
+                              complainantVerification: {
+                                mobileNumber: userInfo?.userName,
+                                otpNumber: "123456",
+                                individualDetails: individualId,
+                                isUserVerified: true,
+                              },
+                              addressDetails: {
+                                pincode: pincode,
+                                district: addressLine2,
+                                city: city,
+                                state: addressLine1,
+                                coordinates: {
+                                  longitude: latitude,
+                                  latitude: longitude,
+                                },
+                                locality: address,
+                              },
+                            },
+                            displayindex: 0,
+                          },
+                        ],
+                      }),
+                },
               };
               DRISTIService.caseCreateService({ cases, tenantId })
                 .then((res) => {
@@ -173,12 +230,6 @@ function CaseType({ t }) {
                 .finally(() => setIsDisabled(false));
             }}
           />
-          {/* <ButtonSelector
-            label={t("CS_START_FILLING")}
-            onSubmit={() => {
-              history.push(`${path}/case`);
-            }}
-          /> */}
         </div>
       </div>
     );

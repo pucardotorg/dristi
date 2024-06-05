@@ -121,7 +121,7 @@ const debtLiabilityFromconfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "condonationFileUpload",
+        key: "debtLiabilityFileUpload",
         populators: {
           inputs: [
             {

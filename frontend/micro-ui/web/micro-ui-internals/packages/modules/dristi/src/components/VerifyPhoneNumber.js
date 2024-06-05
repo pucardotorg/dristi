@@ -107,51 +107,59 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
     )
       .then((individualData) => {
         setUser({ info, ...tokens });
-        const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
-        const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
-        const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
-        const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
-        const city = individualData?.Individual?.[0]?.address[0]?.city || "";
-        const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
-        const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
-        const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
-        const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
+        if (Array.isArray(individualData?.Individual) && individualData?.Individual?.length > 0) {
+          const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
+          const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
+          const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
+          const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+          const city = individualData?.Individual?.[0]?.address[0]?.city || "";
+          const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
+          const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
+          const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
+          const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
 
-        const address = `${doorNo} ${buildingName} ${landmark}`.trim();
+          const address = `${doorNo} ${buildingName} ${landmark}`.trim();
 
-        const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
-        const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
-        const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
+          const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
+          const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
+          const familyName = individualData?.Individual?.[0]?.name?.familyName || "";
 
-        const data = {
-          addressDetailsSelect: {
-            pincode: pincode,
-            district: addressLine2,
-            city: city,
-            state: addressLine1,
-            coordinates: {
-              longitude: latitude,
-              latitude: longitude,
+          const data = {
+            "addressDetails-select": {
+              pincode: pincode,
+              district: addressLine2,
+              city: city,
+              state: addressLine1,
+              coordinates: {
+                longitude: latitude,
+                latitude: longitude,
+              },
+              locality: address,
             },
-            locality: address,
-          },
-          firstName: givenName,
-          lastName: familyName,
-          middleName: otherNames,
-          complainantId: true,
-        };
+            firstName: givenName,
+            lastName: familyName,
+            middleName: otherNames,
+            complainantId: true,
+          };
 
-        ["addressDetailsSelect", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
-          onSelect(
-            `${key}`,
-            typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
-          );
-        });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: individualData?.Individual?.[0]?.individualId });
+          ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
+            onSelect(
+              `${key}`,
+              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
+            );
+          });
+          onSelect(config?.key, {
+            ...formData?.[config.key],
+            individualDetails: individualData?.Individual?.[0]?.individualId,
+            [config?.disableConfigKey]: true,
+          });
+        } else {
+          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+        }
       })
       .catch(() => {
         setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
       });
   };
 
@@ -221,7 +229,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             validation={config?.validation}
             ValidationRequired={config?.validation}
             title={config?.validation?.title}
-            disable={isUserVerified}
+            disable={isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] || config.disable}
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
@@ -256,7 +264,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               !formData?.[config.key]?.[config.name] ||
               errors?.[config?.key]?.[config.name] ||
               formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
-              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
+              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength ||
+              formData?.[config.key]?.[config?.disableConfigKey]
             }
             onButtonClick={() => {
               selectMobileNumber(mobileNumber).then(() => {

@@ -103,7 +103,6 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           filename: uploadedDocument?.filename,
         }
       : {};
-    console.log(uploadedDocument);
     const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     setParams({ ...params, userType });
     let Individual = {
@@ -183,7 +182,6 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
         ...userType,
       },
     });
-    console.log(data);
     if (userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") {
       const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
       Digit.DRISTIService.postIndividualService(Individual, tenantId)
