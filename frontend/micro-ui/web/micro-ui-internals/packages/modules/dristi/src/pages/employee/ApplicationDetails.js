@@ -237,18 +237,16 @@ const ApplicationDetails = ({ location, match }) => {
   }
   return (
     <React.Fragment>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Card style={{ paddingLeft: "20px", minWidth: "100%" }}>
+      <div className="view-application">
+        <div className="application-main" >
           <Header className="application-header">{header}</Header>
           <div className="application-card">
             <DocumentDetailCard cardData={aadharData} />
             <DocumentDetailCard cardData={personalData} />
-          </div>
-          {type === "advocate" && userType !== "ADVOCATE_CLERK" && (
-            <div className="application-bar-info">
+            {type === "advocate" && userType !== "ADVOCATE_CLERK" && (
               <DocumentDetailCard cardData={barDetails} />
-            </div>
-          )}
+            )}
+          </div>
           {!applicationNo && (
             <div className="action-button-application">
               <SubmitBar
@@ -292,7 +290,7 @@ const ApplicationDetails = ({ location, match }) => {
               </Card>
             </Modal>
           )}
-        </Card>
+        </div>
       </div>
     </React.Fragment>
   );

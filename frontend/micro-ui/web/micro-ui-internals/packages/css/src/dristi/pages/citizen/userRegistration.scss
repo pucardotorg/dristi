@@ -590,7 +590,7 @@ body {
     margin: 0px !important;
     padding: 0px !important;
     display: flex !important;
-    align-items: center !important;
+    align-items: flex-start !important;
     .card-header {
       font-family: Roboto !important;
       font-size: 24px !important;
@@ -599,6 +599,7 @@ body {
       text-align: center !important;
       color: #0b0c0c !important;
       margin-bottom: 8px !important;
+      width: 100%;
     }
     #select-name-subtext_DES {
       width: 75% !important;
@@ -632,9 +633,9 @@ body {
       margin-top: 32px;
     }
     .card-label-error {
-      width: 80% !important;
+      width: 100% !important;
       display: flex !important;
-      justify-content: center !important;
+      justify-content: flex-start !important;
       position: relative !important;
       margin-top: 0px !important;
       margin-bottom: -15px !important;

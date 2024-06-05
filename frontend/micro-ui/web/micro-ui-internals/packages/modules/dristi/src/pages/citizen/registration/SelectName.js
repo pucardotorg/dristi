@@ -41,7 +41,7 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
         noBoxShadow
         inline={false}
         label={t("CORE_COMMON_CONTINUE")}
-        onSecondayActionClick={() => {}}
+        onSecondayActionClick={() => { }}
         onFormValueChange={onFormValueChange}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
