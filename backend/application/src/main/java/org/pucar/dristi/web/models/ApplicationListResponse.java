@@ -38,7 +38,7 @@ public class ApplicationListResponse   {
                 private List<Application> applicationList = null;
 
 
-        public ApplicationListResponse addHearingListItem(Application applicationListItem) {
+        public ApplicationListResponse addApplicationListItem(Application applicationListItem) {
             if (this.applicationList == null) {
             this.applicationList = new ArrayList<>();
             }
