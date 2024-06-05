@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -28,6 +28,29 @@ function EFilingCases({ path }) {
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
+  const [onFormSelect, setOnFormSelect] = useState(() => () => {});
+
+  useEffect(() => {
+    if (selected === "advocateDetails") {
+      if (window?.Digit.SessionStorage.get("isAdvocateAndApproved")) {
+        const obj = {
+          isAdvocateRepresenting: {
+            code: "YES",
+            name: "Yes",
+            showForm: true,
+            isEnabled: true,
+          },
+        };
+        onFormSelect("isAdvocateRepresenting", {
+          code: "YES",
+          name: "Yes",
+          showForm: true,
+          isEnabled: true,
+        });
+      }
+    }
+  }, [selected, onFormSelect]);
+
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -157,6 +180,9 @@ function EFilingCases({ path }) {
   };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+    if (onFormSelect !== setValue) {
+      setOnFormSelect(() => setValue);
+    }
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       setFormdata(
         formdata.map((item, i) => {
@@ -274,6 +300,12 @@ function EFilingCases({ path }) {
     setOpenConfirmCourtModal(false);
   };
 
+  const getFormClassName = useCallback(() => {
+    if (formdata && formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.isDisable) {
+      return "disable-form";
+    } else return "";
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading) {
     return <Loader />;
@@ -302,7 +334,7 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
-            className={'case-types'}
+            className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>
               {accordion.map((item, index) => (
@@ -391,16 +423,14 @@ function EFilingCases({ path }) {
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
+                  className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
                 />
               </div>
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div
-              onClick={handleAddForm}
-              className="add-new-form"
-            >
+            <div onClick={handleAddForm} className="add-new-form">
               <CustomAddIcon />
               <span>{t(pageConfig.addFormText)}</span>
             </div>

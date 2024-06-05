@@ -72,6 +72,15 @@ function CaseType({ t }) {
       userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
     );
 
+    if (userType === "ADVOCATE" && searchData) {
+      const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
+      if (advocateBarRegNumber) {
+        window?.Digit.SessionStorage.set("isAdvocateAndApproved", true);
+      } else {
+        window?.Digit.SessionStorage.set("isAdvocateAndApproved", false);
+      }
+    }
+
     const userTypeDetail = useMemo(() => {
       return userTypeOptions.find((item) => item.code === userType) || {};
     }, [userType]);
@@ -90,11 +99,7 @@ function CaseType({ t }) {
 
     return (
       <div className="submit-bar-div">
-        <Button
-          icon={<FileDownload />}
-          className="download-button"
-          label={t("CS_COMMON_DOWNLOAD")}
-        />
+        <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
         <div className="right-div">
           <Button
             className="cancel-button"
