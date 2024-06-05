@@ -1,17 +1,17 @@
 #created using websequencedigrams.com
 
-title Update Hearing
+title Update Order
 
-UI->Hearing: Update Hearing
+UI->Order: Update Order
 
-Hearing->Hearing: valdiate HearingId 
+Order->Order: valdiate orderId 
+Order->Order: Save Order udpates 
 
-Hearing->Workflow: set Workflow status
-Workflow-->Hearing: return Workflow status
+Order->Workflow: set Workflow status
+Workflow-->Order: return Workflow status
 
-Hearing->Hearing: enrich HearingId 
-Hearing->UI: Hearing updated
+Order->UI: Order updated
 
-Hearing -> Kafka: Push Hearing payload to topic
+Order -> Kafka: Push Order payload to topic
 Persister -> Kafka: Read payload
 Persister -> Postgres: Create records in DB

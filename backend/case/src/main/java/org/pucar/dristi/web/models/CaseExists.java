@@ -16,23 +16,26 @@ import lombok.Builder;
  * CaseExists
  */
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T13:54:45.904122+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseExists   {
-        @JsonProperty("cnrNumber")
+public class CaseExists {
+	@JsonProperty("courtCaseNumber")
 
-                private String cnrNumber = null;
+	private String courtCaseNumber = null;
 
-        @JsonProperty("filingNumber")
+	@JsonProperty("cnrNumber")
 
-                private String filingNumber = null;
+	private String cnrNumber = null;
 
-        @JsonProperty("exists")
+	@JsonProperty("filingNumber")
 
-                private Boolean exists = null;
+	private String filingNumber = null;
 
+	@JsonProperty("exists")
+
+	private Boolean exists = null;
 
 }

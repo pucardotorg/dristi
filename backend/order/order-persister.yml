@@ -1,0 +1,114 @@
+serviceMaps:
+  serviceName: order-services
+  mappings:
+    - version: 1.0
+      description: Persists order details in tables
+      fromTopic: save-order-application
+      isTransaction: true
+      module: ORDER
+      objectIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.order
+      queryMaps:
+
+        - query: INSERT INTO dristi_orders(id, tenantid, filingnumber, hearingnumber, applicationnumber,ordernumber, cnrnumber, comments, status, isactive, issuedBy, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: order
+          jsonMaps:
+            - jsonPath: $.order.id
+            - jsonPath: $.order.tenantId
+            - jsonPath: $.order.filingNumber
+            - jsonPath: $.order.hearingNumber
+            - jsonPath: $.order.applicationNumber
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.orderNumber
+            - jsonPath: $.order.cnrNumber
+            - jsonPath: $.order.comments
+            - jsonPath: $.order.status
+            - jsonPath: $.order.isActive
+            - jsonPath: $.order.issuedBy
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.auditDetails.createdBy
+            - jsonPath: $.order.auditDetails.lastModifiedBy
+            - jsonPath: $.order.auditDetails.createdTime
+            - jsonPath: $.order.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_order_document(id, filestore, documentuid, documenttype, order_id, additionaldetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: order.documents.*
+          jsonMaps:
+            - jsonPath: $.order.documents.*.id
+            - jsonPath: $.order.documents.*.fileStore
+            - jsonPath: $.order.documents.*.documentUid
+            - jsonPath: $.order.documents.*.documentType
+            - jsonPath: $.order.id
+            - jsonPath: $.order.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_order_statute_section(id, tenantId, statute, sections, subsections, strsections, strsubsections, order_id, additionalDetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: order.statuteSection
+          jsonMaps:
+            - jsonPath: $.order.statuteSection.id
+            - jsonPath: $.order.statuteSection.tenantId
+            - jsonPath: $.order.statuteSection.statute
+            - jsonPath: $.order.statuteSection.sections
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.statuteSection.subsections
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.statuteSection.strSections
+            - jsonPath: $.order.statuteSection.strSubsections
+            - jsonPath: $.order.id
+            - jsonPath: $.order.statuteSection.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.statuteSection.auditDetails.createdBy
+            - jsonPath: $.order.statuteSection.auditDetails.lastModifiedBy
+            - jsonPath: $.order.statuteSection.auditDetails.createdTime
+            - jsonPath: $.order.statuteSection.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Update order details in tables
+      fromTopic: update-order-application
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO dristi_orders(id, tenantid, filingnumber, hearingnumber, applicationnumber, ordernumber, cnrnumber, comments, status, isactive, issuedBy, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, filingnumber = EXCLUDED.filingnumber, hearingnumber = EXCLUDED.hearingnumber, applicationnumber = EXCLUDED.applicationnumber, ordernumber = EXCLUDED.ordernumber, cnrnumber = EXCLUDED.cnrnumber,  comments = EXCLUDED.comments, status = EXCLUDED.status, isactive = EXCLUDED.isactive, issuedBy = EXCLUDED.issuedBy, additionaldetails = EXCLUDED.additionaldetails, createdby = EXCLUDED.createdby, lastmodifiedby = EXCLUDED.lastmodifiedby, createdtime = EXCLUDED.createdtime, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: order
+          jsonMaps:
+            - jsonPath: $.order.id
+            - jsonPath: $.order.tenantId
+            - jsonPath: $.order.filingNumber
+            - jsonPath: $.order.hearingNumber
+            - jsonPath: $.order.applicationNumber
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.orderNumber
+            - jsonPath: $.order.cnrNumber
+            - jsonPath: $.order.comments
+            - jsonPath: $.order.status
+            - jsonPath: $.order.isActive
+            - jsonPath: $.order.issuedBy
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.auditDetails.createdBy
+            - jsonPath: $.order.auditDetails.lastModifiedBy
+            - jsonPath: $.order.auditDetails.createdTime
+            - jsonPath: $.order.auditDetails.lastModifiedTime
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,325 @@
+openapi: "3.0.0"
+
+info:
+  title: API specs for Task
+  description:
+    Task API paths and entity is defined in this file.
+  version: "0.1.0"
+
+servers:
+  - url: ""
+
+tags:
+  - name: Task
+    description: APIs required for Summons related to a Case
+
+paths:
+  /task/v1/create:
+    post:
+      tags:
+        - Task
+      summary: create a new Task
+      requestBody:
+        description: details for the creation of task
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+      responses:
+        "201":
+          description: ResponseInfo with task created successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        "400":
+          description: Task(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: taskRequest
+
+  /task/v1/update:
+    post:
+      tags:
+        - Task
+      summary: update a Task
+      requestBody:
+        description: details for the update of task
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TaskRequest'
+      responses:
+        "200":
+          description: ResponseInfo with summons updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+        "400":
+          description: task(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: taskRequest
+
+  /task/v1/search:
+    post:
+      tags:
+        - Task
+      summary: search for task(s)
+      description: |
+        search task(s) based on different parameters
+      parameters:
+        - name: id
+          in: query
+          description: id of the task(s) being searched
+          schema:
+            type: string
+        - name: tenantId
+          in: query
+          description: tenantId whose task(s) are being searched
+          schema:
+            type: string
+        - name: orderId
+          in: query
+          description: the order ID whose task(s) are being queried
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: cnrNumber
+          in: query
+          description: the cnrNumber of the case whose task(s) are being queried
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: the status of the task(s) being searched
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ResponseInfo with list of task(s)
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TaskListResponse'
+        "400":
+          description: status update
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+
+  /task/v1/exists:
+    post:
+      tags:
+        - Task
+      summary: task exits or not
+      requestBody:
+        description: check if the task(S) exists
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/TaskExistsRequest'
+        required: true
+      responses:
+        "201":
+          description: ResponseInfo with task(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/TaskExistsResponse'
+        "400":
+          description: failed to find task
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    TaskRequest:
+      type: object
+      properties:
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: ID of the order, this task is associated with
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        task:
+          $ref: '#/components/schemas/Task'
+    TaskResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        task:
+          $ref: '#/components/schemas/Task'
+
+    TaskListResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        TotalCount:
+          type: integer
+        list:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+
+    TaskExistsRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        taskList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskExists'
+    TaskExistsResponse:
+      type: object
+      properties:
+        ResponseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
+        taskList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskExists'
+
+    TaskExists:
+      type: object
+      description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
+      properties:
+        taskId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        exists:
+          type: boolean
+
+    Task:
+      description: A task is created as part of an Order. It will always be linked to an order
+      required: [tenantId, orderId, taskType, createdDate, status]
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: auto generated primary for internal reference
+          readOnly: true
+        tenantId:
+          type: string
+          description: This is tenantId of the case
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+          description: the associated order
+        filingNumber:
+          type: string
+          description: the associated case
+        cnrNumber:
+          type: string
+          description: The CNR number of the associated case. helps in faster search
+        createdDate:
+          type: string
+          format: date
+          description: the date on which the task was created. Can be treated as the start date also
+        dateCloseBy:
+          type: string
+          format: date
+          description: the date by which the task needs to be closed
+        dateClosed:
+          type: string
+          format: date
+          nullable: true
+          description: the date on which the task was actually closed
+        taskDescription:
+          type: string
+          description: details of the specific task to be done
+        taskType:
+          type: string
+          description: there will be various types of tasks, that will define their own schema for information required. This type will help identify what schema to pick from MDMS
+          example: document submission, summons, bail.cash, bail.surety warrant
+        taskDetails:
+          type: object
+          description: fields specific to task type like summons, bail, warrant, based on schema defined in MDMS. It will also have details for things like delivery channel like ePost, NSTEP, iCoPs, etc
+
+        amount:
+          $ref: '#/components/schemas/Amount'
+          
+        status:
+          type: string
+          description: workflow status
+        assignedTo:
+          type: object
+          description: details of person this task is assigned to. For example in case of document upload, this could be litigant or lawyer. in case of summon task, this will be person to whom summon is issued
+          properties:
+            individualId:
+              type: string
+              format: uuid
+              minLength: 36
+              maxLength: 36
+              description: ID of the person if the person is in the system, in which case the name field can be left blank
+            name:
+              type: string
+              description: name of the person if not in the system
+        isActive:
+          type: boolean
+          description: to handle soft delete
+        documents:
+          type: array
+          description: documents related to the task, for example the summon PDF when issuing summon and also the evidence that summon was delivered
+          items:
+            $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document'
+        additionalDetails:
+          type: string
+          description: This field is meant to hold any extra information that we want to store.
+        auditDetails:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails'
+        workflow:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow'
+
+    Amount:
+      type: object
+      required: [amount, type, status]
+      description: amount in form of fees or penalty
+      properties:
+        id:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
+        amount:
+          type: string
+          description: This field holds information about amount to be paid
+        type:
+          type: string
+          example: fees, fine, refund
+        paymentRefNumber:
+          type: string
+          description: reference number for the payment made like GRN number from Treasury
+        additionalDetails:
+          type: string
+          description: any extra information like bank reference number for the payment
+        status:
+          type: string
+          description: status of payment
