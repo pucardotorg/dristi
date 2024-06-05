@@ -72,7 +72,7 @@ public class AdvocateQueryBuilder {
                 }
 
                 if(tenantId != null && !tenantId.isEmpty()){
-                    addClauseIfRequiredForStatus(query, firstCriteria);
+                    addClauseIfRequiredForTenantId(query, firstCriteria);
                     query.append("LOWER(adv.tenantid) = LOWER(?)");
                     preparedStmtList.add(tenantId.toLowerCase());
                 }
@@ -146,7 +146,7 @@ public class AdvocateQueryBuilder {
                 firstCriteria = false;
             }
             if(tenantId != null && !tenantId.isEmpty()){
-                addClauseIfRequiredForStatus(query, firstCriteria);
+                addClauseIfRequiredForTenantId(query, firstCriteria);
                 query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
 //                        .append(")");
                 preparedStmtList.add("%" + tenantId.toLowerCase() + "%");
