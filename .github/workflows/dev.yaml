@@ -2,10 +2,10 @@ name: dristi workflow
 on:
   push:
     branches:
-      - dev_backend_advocate_bis_improve_coverage
-  # pull_request:
-  #   branches:
-  #     - develop
+      - develop
+  pull_request:
+    branches:
+      - develop
   workflow_dispatch:
 jobs:
   docker_image-build:
