@@ -588,6 +588,34 @@ function EFilingCases({ path }) {
       );
       data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: { formdata: newFormData, isCompleted: true } };
     }
+    if (selected === "debtLiabilityDetails") {
+      const debtDocumentData = {};
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          if (data?.data?.debtLiabilityFileUpload?.document) {
+            debtDocumentData.debtLiabilityFileUpload = await Promise.all(
+              data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
+            );
+          }
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              ...debtDocumentData,
+            },
+          };
+        })
+      );
+      data.caseDetails = { ...caseDetails.caseDetails, debtLiabilityDetails: { formdata: newFormData, isCompleted: true } };
+    }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
       return;
