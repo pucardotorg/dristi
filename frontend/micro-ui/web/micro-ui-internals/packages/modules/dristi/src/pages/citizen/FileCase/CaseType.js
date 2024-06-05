@@ -85,8 +85,17 @@ function CaseType({ t }) {
       {},
       individualId,
       userType,
-      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : ""
+      "/advocate/advocate/v1/_search"
     );
+
+    if (userType === "ADVOCATE" && searchData) {
+      const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
+      if (advocateBarRegNumber) {
+        window?.Digit.SessionStorage.set("isAdvocateAndApproved", true);
+      } else {
+        window?.Digit.SessionStorage.set("isAdvocateAndApproved", false);
+      }
+    }
 
     const userTypeDetail = useMemo(() => {
       return userTypeOptions.find((item) => item.code === userType) || {};
@@ -166,7 +175,22 @@ function CaseType({ t }) {
                 },
                 additionalDetails: {
                   ...(advocateId
-                    ? {}
+                    ? {
+                        advocateDetails: [
+                          {
+                            isenabled: true,
+                            displayindex: 0,
+                            data: {
+                              isAdvocateRepresenting: {
+                                code: "YES",
+                                name: "Yes",
+                                showForm: true,
+                                isEnabled: true,
+                              },
+                            },
+                          },
+                        ],
+                      }
                     : {
                         complaintDetails: {
                           formdata: [

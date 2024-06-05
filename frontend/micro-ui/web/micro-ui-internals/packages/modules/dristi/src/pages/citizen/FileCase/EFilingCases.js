@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -33,6 +33,7 @@ function EFilingCases({ path }) {
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
+
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -70,103 +71,6 @@ function EFilingCases({ path }) {
   const caseDetails = useMemo(
     () => ({
       ...caseData?.criteria?.[0]?.responseList?.[0],
-      // additionalDetails: {
-      //   complaintDetails: [
-      //     {
-      //       isenabled: true,
-      //       data: {
-      //         complainantType: {
-      //           code: "INDIVIDUAL",
-      //           name: "Individual",
-      //           showCompanyDetails: false,
-      //           commonFields: true,
-      //           isEnabled: true,
-      //         },
-      //         "addressDetails-select": {
-      //           pincode: "500032",
-      //           state: "Telangana",
-      //           district: "Rangareddy",
-      //           city: "Kondapur",
-      //           locality: "F84X+6P6",
-      //         },
-      //         complainantId: true,
-      //         firstName: "fgnf",
-      //         middleName: "",
-      //         lastName: "hff",
-      //         complainantVerification: {
-      //           mobileNumber: "9304619513",
-      //           otpNumber: "123456",
-      //           individualDetails: "IND-2024-04-30-000018",
-      //           isUserVerified: true,
-      //         },
-      //         addressDetails: {
-      //           pincode: "500032",
-      //           state: "Telangana",
-      //           district: "Rangareddy",
-      //           city: "Kondapur",
-      //           coordinates: {
-      //             longitude: 78.3500765,
-      //             latitude: 17.4549784,
-      //           },
-      //           locality: "F84X+6P6",
-      //           uuid: "0a03dfb7-44bd-456b-8402-bc0b28c0a571",
-      //         },
-      //       },
-      //       displayindex: 0,
-      //     },
-      //   ],
-      //   respondentDetails: [
-      //     {
-      //       isenabled: true,
-      //       data: {
-      //         respondentType: {
-      //           code: "INDIVIDUAL",
-      //           name: "Individual",
-      //           showCompanyDetails: false,
-      //           commonFields: true,
-      //           isEnabled: true,
-      //         },
-      //         firstName: "dfdfg",
-      //         lastName: "dfgdfg",
-      //         phonenumbers: {
-      //           textfieldValue: "",
-      //           mobileNumber: ["7546456456"],
-      //         },
-      //         emails: {
-      //           textfieldValue: "",
-      //           emailId: ["sdfsdf@sdfsdf.dfg"],
-      //         },
-      //         addressDetails: [
-      //           {
-      //             id: "0e5bc8e8-702c-46c8-bf9b-e000636ba5b8",
-      //             addressDetails: {
-      //               pincode: "500032",
-      //               state: "Telangana",
-      //               district: "Rangareddy",
-      //               city: "Kondapur",
-      //               coordinates: {
-      //                 longitude: 78.3500765,
-      //                 latitude: 17.4549784,
-      //               },
-      //               locality: "F84X+6P6",
-      //               doorNo: "dfgdgdg",
-      //             },
-      //           },
-      //         ],
-      //         condonationFileUpload: {
-      //           document: [
-      //             {
-      //               documentType: "application/pdf",
-      //               fileStore: "f37cdcea-a594-49fd-92c4-b16221127ebd",
-      //               documentName: "npm.pdf",
-      //             },
-      //           ],
-      //         },
-      //       },
-      //       displayindex: 0,
-      //     },
-      //   ],
-      // },
     }),
     [caseData]
   );
@@ -639,6 +543,12 @@ function EFilingCases({ path }) {
     setOpenConfirmCourtModal(false);
   };
 
+  const getFormClassName = useCallback(() => {
+    if (formdata && formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.isDisable) {
+      return "disable-form";
+    } else return "";
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading) {
     return <Loader />;
@@ -761,6 +671,7 @@ function EFilingCases({ path }) {
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
+                  className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
                 />
               </div>
