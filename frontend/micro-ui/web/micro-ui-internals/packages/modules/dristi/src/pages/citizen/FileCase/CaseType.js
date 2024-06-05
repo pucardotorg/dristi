@@ -85,7 +85,7 @@ function CaseType({ t }) {
       {},
       individualId,
       userType,
-      userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : ""
+      "/advocate/advocate/v1/_search"
     );
 
     if (userType === "ADVOCATE" && searchData) {
@@ -175,7 +175,22 @@ function CaseType({ t }) {
                 },
                 additionalDetails: {
                   ...(advocateId
-                    ? {}
+                    ? {
+                        advocateDetails: [
+                          {
+                            isenabled: true,
+                            displayindex: 0,
+                            data: {
+                              isAdvocateRepresenting: {
+                                code: "YES",
+                                name: "Yes",
+                                showForm: true,
+                                isEnabled: true,
+                              },
+                            },
+                          },
+                        ],
+                      }
                     : {
                         complaintDetails: [
                           {

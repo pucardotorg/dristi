@@ -4,10 +4,9 @@ const advocateDetailsFormConfig = [
       {
         type: "radio",
         key: "isAdvocateRepresenting",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_IF_ADVOCATE_IS_COMPLAINANT",
         isMandatory: true,
         populators: {
-          label: "CS_ADVOCATE_REPRESENTING",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
