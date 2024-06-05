@@ -8,9 +8,7 @@ function CustomReviewCard({ titleIndex, config, data, isScrutiny, t, dataIndex, 
         const dataError = Array.isArray(item.value) ? dataErrors?.[item.type]?.FSOError : dataErrors?.[item.value]?.FSOError;
         return (
           <CustomReviewCardRow
-            type={item.type}
-            label={item?.label}
-            value={item.value}
+            config={item}
             key={i}
             data={data}
             handleOpenPopup={handleOpenPopup}
@@ -20,6 +18,7 @@ function CustomReviewCard({ titleIndex, config, data, isScrutiny, t, dataIndex, 
             name={input.name}
             configKey={configKey}
             dataError={dataError}
+            t={t}
           />
         );
       })}

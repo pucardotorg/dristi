@@ -133,6 +133,10 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   };
 
   const handleAddError = () => {
+    const trimmedError = scrutinyError.trim();
+    if (!trimmedError) {
+      return;
+    }
     const { name, configKey, index, fieldName } = popupInfo;
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
@@ -142,11 +146,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
           };
     if (index == null) {
-      currentMessage.scrutinyMessage = { FSOError: scrutinyError };
+      currentMessage.scrutinyMessage = { FSOError: trimmedError };
     } else {
       currentMessage.form[index] = {
         ...(currentMessage?.form?.[index] || {}),
-        [fieldName]: { FSOError: scrutinyError },
+        [fieldName]: { FSOError: trimmedError },
       };
     }
     setValue(config.key, currentMessage, name);
@@ -250,9 +254,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 gap: "20px",
               }}
             >
-              <Button label={defaultError === "" ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
+              <Button label={!defaultError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
               <Button
-                label={defaultError === "" ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
+                label={!defaultError ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
                 onButtonClick={() => {
                   if (defaultError === scrutinyError) {
                     handleClosePopup();

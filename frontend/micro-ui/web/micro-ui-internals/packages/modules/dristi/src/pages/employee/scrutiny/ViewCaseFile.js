@@ -34,13 +34,13 @@ function ViewCaseFile({ t }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => { }}>
+              <div className="header-icon" onClick={() => {}}>
                 <CustomArrowDownIcon />
               </div>
             </div>
           </div>
           <FormComposerV2
-            label={t("CS_COMMON_CONTINUE")}
+            label={t("CS_REGISTER_CASE")}
             config={reviewCaseFileFormConfig}
             onSubmit={onSubmit}
             onSecondayActionClick={onSaveDraft}
@@ -49,7 +49,7 @@ function ViewCaseFile({ t }) {
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
             cardClassName={`e-filing-card-form-style review-case-file`}
-            secondaryLabel={t("CS_SAVE_DRAFT")}
+            secondaryLabel={t("CS_SAVE_COMMENTS")}
             showSecondaryLabel={true}
             actionClassName="e-filing-action-bar"
           />

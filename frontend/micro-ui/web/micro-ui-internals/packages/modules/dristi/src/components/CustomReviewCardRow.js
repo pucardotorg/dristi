@@ -3,7 +3,8 @@ import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 
-const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError }) => {
+const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError, t, config }) => {
+  const { type = null, label = null, value = null, badgeType = null } = config;
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
       return data[key];
@@ -36,10 +37,11 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
               <div
                 className="flag"
                 onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, "title");
+                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value);
                 }}
                 key={dataIndex}
               >
+                {/* {badgeType && <div>{extractValue(data, badgeType)}</div>} */}
                 {dataError ? <EditPencilIcon /> : <FlagIcon />}
               </div>
             )}
@@ -57,7 +59,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       return (
         <div className={`text-main ${isScrutiny && dataError && "error"}`}>
           <div className="text">
-            <div className="label">{label}</div>
+            <div className="label">{t(label)}</div>
             <div className="value">
               {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
               {!Array.isArray(textValue) && textValue}
@@ -87,7 +89,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       return (
         <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
           <div className="amount">
-            <div className="label">{label}</div>
+            <div className="label">{t(label)}</div>
             <div className="value"> {`₹${extractValue(data, value)}`} </div>
             {isScrutiny && (
               <div
@@ -114,7 +116,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       return (
         <div className={`phone-number-main ${isScrutiny && dataError && "error"}`}>
           <div className="phone-number">
-            <div className="label">{label}</div>
+            <div className="label">{t(label)}</div>
             <div className="value">
               {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
               {!Array.isArray(numbers) && `+91-${numbers}`}
@@ -143,7 +145,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       return (
         <div className={`image-main ${isScrutiny && dataError && "error"}`}>
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
-            <div className="label">{label}</div>
+            <div className="label">{t(label)}</div>
             <div className={`value ${!isScrutiny ? "column" : ""}`}>
               <DocViewerWrapper />
               <DocViewerWrapper />
@@ -183,7 +185,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       return (
         <div className={`address-main ${isScrutiny && dataError && "error"}`}>
           <div className="address">
-            <div className="label">{label}</div>
+            <div className="label">{t(label)}</div>
             <div className={`value ${!isScrutiny ? "column" : ""}`}>
               {address.map((item) => (
                 <p>{item}</p>
@@ -215,7 +217,7 @@ const CustomReviewCardRow = ({ type, label, value, isScrutiny, data, handleOpenP
       return (
         <div>
           <div className="text">
-            <div className="label">{label}</div>
+            <div className="label">{t(label)}</div>
             <div className="value">
               {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
               {!Array.isArray(defaulValue) && defaulValue}
