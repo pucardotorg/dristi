@@ -470,6 +470,18 @@
   .select-wrap {
     margin: 0px !important;
     max-width: 100%;
+
+    .options-card {
+      .profile-dropdown--item {
+        span {
+          display: none;
+        }
+        span.icon {
+          width: 100%;
+          display: flex !important;
+        }
+      }
+    }
   }
 
   header {
@@ -518,6 +530,15 @@
           color: #0a0a0a;
         }
       }
+    }
+  }
+}
+
+.advocate-detail {
+  &.disable-form {
+    .select-wrap {
+      pointer-events: none;
+      background-color: #eee !important;
     }
   }
 }

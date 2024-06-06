@@ -104,6 +104,13 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
           return res;
         }, {}),
       });
+      onSelect(config.key, {
+        ...formData[config.key],
+        ...input.reduce((res, curr) => {
+          res[curr] = value[curr];
+          return res;
+        }, {}),
+      });
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
     }
@@ -133,7 +140,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                     locationStyle={{ maxWidth: "100%" }}
                     position={formData?.[configKey]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
-                    index={formData?.[config.key]?.uuid || uuid}
+                    disable={input?.isDisabled}
+                    index={config?.uuid}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {
@@ -166,9 +174,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                                     .join(", ");
                                 })(),
                           coordinates,
-                          uuid: isFirstRender && formData[config.key] ? formData[config.key]["uuid"] : uuid,
-                          buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
-                          doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
+                          buildingName: formData && isFirstRender && formData[config.key] ? formData[configKey]["buildingName"] : "",
+                          doorNo: formData && isFirstRender && formData[config.key] ? formData[configKey]["doorNo"] : "",
                         },
                         input.name
                       );

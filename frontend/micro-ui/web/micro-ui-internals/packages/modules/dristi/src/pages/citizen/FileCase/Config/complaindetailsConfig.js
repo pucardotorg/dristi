@@ -6,6 +6,7 @@ const complainantDetailsFormConfig = [
         key: "complainantType",
         label: "CS_RESPONDENT_TYPE",
         isMandatory: true,
+        name: "complainantType",
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
           type: "radioButton",
@@ -55,11 +56,13 @@ const complainantDetailsFormConfig = [
         component: "VerificationComponent",
         key: "complainantId",
         withoutLabel: true,
+        isMandatory: true,
         populators: {
           inputs: [
             {
               label: "COMPLAINANT_ID",
               name: "complainantId",
+              verificationOn: "complainantVerification.isUserVerified",
             },
           ],
           customStyle: {
@@ -136,8 +139,23 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         label: "PHONE_NUMBER",
         name: "mobileNumber",
+        disableConfigFields: [
+          "complainantType",
+          "firstName",
+          "middleName",
+          "lastName",
+          "pincode",
+          "locationSearch",
+          "pincode",
+          "state",
+          "district",
+          "city",
+          "locality",
+        ],
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
+        disableConfigKey: "isUserVerified",
+        isMandatory: true,
         validation: {
           required: true,
           minLength: 10,
@@ -156,10 +174,16 @@ const complainantDetailsFormConfig = [
         type: "component",
         component: "SelectComponents",
         key: "addressDetails",
+        addUUID: true,
         withoutLabel: true,
         populators: {
           inputs: [
-            { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"] },
+            {
+              label: "CS_PIN_LOCATION",
+              type: "LocationSearch",
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
+              key: "locationSearch",
+            },
             {
               label: "PINCODE",
               type: "text",

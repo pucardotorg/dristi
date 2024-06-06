@@ -4,6 +4,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "text",
         label: "CS_DISHONOURED_CHEQUE_SIGNATORY_NAME",
+        isMandatory: true,
         populators: {
           name: "chequeSignatoryName",
         },
@@ -40,6 +41,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "text",
         label: "CS_NAME_ON_CHEQUE",
+        isMandatory: true,
         populators: {
           name: "name",
         },
@@ -51,6 +53,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "text",
         label: "CS_CHEQUE_NUMBER",
+        isMandatory: true,
         populators: {
           name: "chequeNumber",
         },
@@ -62,6 +65,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "date",
         label: "CS_DATE_OF_ISSUANCE",
+        isMandatory: true,
         populators: {
           name: "issuanceDate",
         },
@@ -73,6 +77,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "text",
         label: "CS_BANK_NAME",
+        isMandatory: true,
         populators: {
           name: "bankName",
         },
@@ -84,6 +89,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "text",
         label: "CS_IFSC_CODE",
+        isMandatory: true,
         populators: {
           name: "ifsc",
         },
@@ -96,6 +102,7 @@ export const chequeDetailsFormConfig = [
         type: "amount",
         component: "CustomInput",
         label: "CS_CHEQUE_AMOUNT",
+        isMandatory: true,
         populators: {
           componentInFront: "₹",
           name: "chequeAmount",
@@ -108,6 +115,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "date",
         label: "CS_DATE_OF_CHEQUE_DEPOSIT",
+        isMandatory: true,
         populators: {
           name: "depositDate",
         },
@@ -119,7 +127,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "bouncedChequeFileUpload",
+        key: "depositChequeFileUpload",
         withoutLabel: true,
         populators: {
           inputs: [
@@ -145,7 +153,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "bouncedChequeFileUpload",
+        key: "returnMemoFileUpload",
         withoutLabel: true,
         populators: {
           inputs: [
@@ -171,6 +179,7 @@ export const chequeDetailsFormConfig = [
       {
         type: "textarea",
         label: "CS_CHEQUE_ADDITIONAL_DETAILS",
+        isMandatory: true,
         populators: {
           name: "chequeAdditionalDetails",
         },
@@ -186,5 +195,5 @@ export const chequeDetailsConfig = {
   isOptional: false,
   addFormText: "ADD_CHEQUE",
   formItemName: "Cheque",
-  className: "cheque"
+  className: "cheque",
 };

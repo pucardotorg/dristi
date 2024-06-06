@@ -382,15 +382,16 @@ const LocationSearch = (props) => {
   }, [coordinates]);
 
   return (
-    <div className="map-wrap" style={props?.locationStyle}>
+    <div className={`map-wrap${props?.disable ? "-disable" : ""}`} style={props?.locationStyle}>
       <div className="map-search-bar-wrap">
         {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
         <SearchIconSvg className="map-search-bar-icon" />
         <input
+          disabled={props?.disable}
           id={"pac-input-" + props?.index}
           className="map-search-bar"
           type="text"
-          placeholder="Search for a building, street, or area"
+          placeholder="Search Address"
           autoComplete="off"
         />
       </div>

@@ -14,7 +14,6 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
   const [showSuccess, setShowSuccess] = useState(false);
 
   const tenantId = Digit.ULBService.getCurrentTenantId();
-  console.log(params);
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -187,14 +186,12 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
       .finally(() => {
         setShowSuccess(true);
 
-        console.log("FINALLY");
         setParams({});
       });
     setParams({
       ...params,
       ...formData,
     });
-    console.log(showSuccess);
     // history.push(`${path}/additional-details/terms-conditions`);
   };
   if (!params?.Individual && showSuccess == false) {

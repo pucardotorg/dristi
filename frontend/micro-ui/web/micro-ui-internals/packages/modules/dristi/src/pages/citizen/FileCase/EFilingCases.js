@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
@@ -11,6 +11,8 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
+import { formatDate } from "./CaseType";
+import { userTypeOptions } from "../registration/config";
 
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
@@ -20,7 +22,10 @@ function EFilingCases({ path }) {
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
-  const [{ setFormErrors, resetFormData }, setState] = useState({ setFormErrors: () => {}, resetFormData: () => {} });
+  const [{ setFormErrors, resetFormData }, setState] = useState({
+    setFormErrors: () => {},
+    resetFormData: () => {},
+  });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
@@ -28,6 +33,7 @@ function EFilingCases({ path }) {
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
+
   const { data: caseData, isLoading } = useSearchCaseService(
     {
       criteria: [
@@ -62,10 +68,21 @@ function EFilingCases({ path }) {
     }
   }, [getAllKeys, selected]);
 
-  const caseDetails = useMemo(() => caseData?.cases?.[0], [caseData]);
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
+
+  useEffect(() => {
+    const data = caseDetails?.additionalDetails?.[selected]?.formdata ||
+      caseDetails?.caseDetails?.[selected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+    setFormdata(data);
+  }, [selected, caseDetails]);
 
   const accordion = useMemo(() => {
     return sideMenuConfig.map((parent, pIndex) => ({
@@ -74,9 +91,10 @@ function EFilingCases({ path }) {
       children: parent.children.map((child, cIndex) => ({
         ...child,
         checked: child.key === selected,
+        isCompleted: caseDetails?.additionalDetails?.[child.key]?.isCompleted || caseDetails?.caseDetails?.[child.key]?.isCompleted,
       })),
     }));
-  }, [parentOpen, selected]);
+  }, [caseDetails, parentOpen, selected]);
 
   const pageConfig = useMemo(() => {
     return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected))?.children?.find((child) => child.key === selected)
@@ -208,9 +226,16 @@ function EFilingCases({ path }) {
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       setFormdata(
         formdata.map((item, i) => {
-          return i === index ? { ...item, data: formData } : item;
+          setValue();
+          return i === index
+            ? {
+                ...item,
+                data: formData,
+              }
+            : item;
         })
       );
+      // setIsFirstRender(false);
     }
     if (!setFormErrors) {
       setState((prev) => ({
@@ -235,81 +260,274 @@ function EFilingCases({ path }) {
     }
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+    if (!!resetFormData) {
+      resetFormData();
+    }
     setIsOpen(false);
-    !!resetFormData && resetFormData();
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
-  const validateData = (data) => {
-    let isValid = true;
-    formConfig.forEach((config) => {
-      config?.body?.forEach((body) => {
-        if (body?.type === "component") {
-          body?.populators?.inputs?.forEach((input) => {
-            if (input?.isMandatory) {
-              if (input?.validation) {
-                if (input?.validation?.isArray) {
-                  formdata?.forEach((data) => {
-                    if (!data?.data?.[body.key]?.[input.name] || formdata?.[body.key]?.[input.name]?.length === 0) {
-                      isValid = false;
-                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                    } else {
-                      // setFormErrors(body.key, { [input.name]: "" });
-                    }
-                  });
-                } else {
-                  formdata?.forEach((data) => {
-                    if (!data?.data?.[body.key]?.[input.name]) {
-                      isValid = false;
-                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                    } else {
-                      // setFormErrors(body.key, { [input.name]: "Please Enter the mandatory field" });
-                    }
-                  });
-                }
-              }
-            }
-          });
+  const onDocumentUpload = async (fileData, filename) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
+  };
+  console.log(formdata);
+
+  const createIndividualUser = async (data, documentData) => {
+    const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
+    const identifierIdDetails = documentData
+      ? {
+          fileStoreId: identifierId,
+          filename: documentData?.filename,
+          documentType: documentData?.fileType,
         }
-      });
-    });
-    return isValid;
+      : {};
+    const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
+    let Individual = {
+      Individual: {
+        tenantId: tenantId,
+        name: {
+          givenName: data?.firstName,
+          familyName: data?.lastName,
+          otherNames: data?.middleName,
+        },
+        userDetails: {
+          username: data?.complainantVerification?.userDetails?.userName,
+          roles: [
+            {
+              code: "CITIZEN",
+              name: "Citizen",
+              tenantId: tenantId,
+            },
+            ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"]?.map((role) => ({
+              code: role,
+              name: role,
+              tenantId: tenantId,
+            })),
+          ],
+
+          type: data?.complainantVerification?.userDetails?.type,
+        },
+        userUuid: data?.complainantVerification?.userDetails?.uuid,
+        userId: data?.complainantVerification?.userDetails?.id,
+        mobileNumber: data?.complainantVerification?.userDetails?.mobileNumber,
+        address: [
+          {
+            tenantId: tenantId,
+            type: "PERMANENT",
+            latitude: data?.addressDetails?.coordinates?.latitude,
+            longitude: data?.addressDetails?.coordinates?.longitude,
+            city: data?.addressDetails?.city,
+            pincode: data?.addressDetails?.pincode,
+            addressLine1: data?.addressDetails?.state,
+            addressLine2: data?.addressDetails?.district,
+            landmark: data?.addressDetails?.locality,
+          },
+        ],
+        identifiers: [
+          {
+            identifierType: identifierType,
+            identifierId: identifierId,
+          },
+        ],
+        isSystemUser: true,
+        skills: [],
+        additionalFields: {
+          fields: [
+            { key: "userType", value: userTypeOptions?.[0]?.code },
+            { key: "userTypeDetail", value: JSON.stringify(userTypeOptions) },
+            { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
+          ],
+        },
+        clientAuditDetails: {},
+        auditDetails: {},
+      },
+    };
+    const response = await Digit.DRISTIService.postIndividualService(Individual, tenantId);
+    return response;
   };
 
-  const onSubmit = (props, index) => {
-    // if (!validateData(props, index)) {
-    //   return null;
-    // }
+  const onSubmit = async () => {
     const data = {};
     if (selected === "complaintDetails") {
-      const litigants = [];
-      formdata.forEach((data, index) => {
-        if (data?.data?.complainantVerification?.individualDetails) {
-          litigants.push({
-            tenantId,
-            caseId: caseDetails?.id,
-            partyCategory: data?.data?.complainantType?.code,
-            individualId: data?.data?.complainantVerification?.individualDetails,
-            partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-          });
-        }
-      });
+      const litigants = await Promise.all(
+        formdata.map(async (data, index) => {
+          if (data?.data?.complainantVerification?.individualDetails) {
+            return {
+              tenantId,
+              caseId: caseDetails?.id,
+              partyCategory: data?.data?.complainantType?.code,
+              individualId: data?.data?.complainantVerification?.individualDetails,
+              partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+            };
+          } else {
+            if (data?.data?.complainantId?.complainantId) {
+              if (data?.data?.complainantId?.verificationType !== "AADHAR") {
+                const documentData = await onDocumentUpload(
+                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
+                );
+                const Individual = await createIndividualUser(data?.data, documentData);
+                return {
+                  tenantId,
+                  caseId: caseDetails?.id,
+                  partyCategory: data?.data?.complainantType?.code,
+                  individualId: Individual?.Individual?.individualId,
+                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                };
+              } else {
+                const Individual = await createIndividualUser(data?.data);
+                return {
+                  tenantId,
+                  caseId: caseDetails?.id,
+                  partyCategory: data?.data?.complainantType?.code,
+                  individualId: Individual?.Individual?.individualId,
+                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                };
+              }
+            }
+            return {};
+          }
+        })
+      );
+
       const representatives = [...caseDetails?.representatives]?.map((representative) => ({
         ...representative,
         caseId: caseDetails?.id,
         representing: [...litigants],
       }));
-      data.litigants = litigants;
-      data.representatives = representatives;
+      data.litigants = [...litigants];
+      data.representatives = [...representatives];
+      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata, isCompleted: true } };
     }
     if (selected === "respondentDetails") {
-      console.debug(formdata);
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          let documentData = [];
+          if (data?.data?.condonationFileUpload?.document) {
+            documentData = await Promise.all(
+              data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
+            );
+          }
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              condonationFileUpload: {
+                ...data?.data?.condonationFileUpload,
+                document: documentData,
+              },
+            },
+          };
+        })
+      );
+      data.additionalDetails = { ...caseDetails.additionalDetails, respondentDetails: { formdata: newFormData, isCompleted: true } };
+    }
+    if (selected === "chequeDetails") {
+      const documentData = {};
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          if (data?.data?.bouncedChequeFileUpload?.document) {
+            documentData.bouncedChequeFileUpload = await Promise.all(
+              data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
+            );
+          }
+          if (data?.data?.depositChequeFileUpload?.document) {
+            documentData.depositChequeFileUpload = await Promise.all(
+              data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
+            );
+          }
+          if (data?.data?.returnMemoFileUpload?.document) {
+            documentData.returnMemoFileUpload = await Promise.all(
+              data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
+            );
+          }
+
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              ...documentData,
+            },
+          };
+        })
+      );
+      data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: { formdata: newFormData, isCompleted: true } };
+    }
+    if (selected === "debtLiabilityDetails") {
+      const debtDocumentData = {};
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          if (data?.data?.debtLiabilityFileUpload?.document) {
+            debtDocumentData.debtLiabilityFileUpload = await Promise.all(
+              data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
+                return await onDocumentUpload(document, document.name).then((data) => {
+                  return {
+                    documentType: data.fileType,
+                    fileStore: data.file?.files?.[0]?.fileStoreId,
+                    documentName: data.filename,
+                  };
+                });
+              })
+            );
+          }
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              ...debtDocumentData,
+            },
+          };
+        })
+      );
+      data.caseDetails = { ...caseDetails.caseDetails, debtLiabilityDetails: { formdata: newFormData, isCompleted: true } };
+    }
+    if (selected === "witnessDetails") {
+      data.additionalDetails = { ...caseDetails.additionalDetails, witnessDetails: { formdata: formdata, isCompleted: true } };
     }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
       return;
     }
-    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data }, tenantId }, tenantId);
+    if (!!resetFormData) {
+      resetFormData();
+    }
+    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data, filingDate: formatDate(new Date()) }, tenantId }, tenantId);
+    const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+      caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+    setFormdata(caseData);
     history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   };
   const onSaveDraft = (props) => {
@@ -321,6 +539,12 @@ function EFilingCases({ path }) {
     console.debug(data);
     setOpenConfirmCourtModal(false);
   };
+
+  const getFormClassName = useCallback(() => {
+    if (formdata && formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.isDisable) {
+      return "disable-form";
+    } else return "";
+  });
 
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading) {
@@ -350,6 +574,7 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
+            className={"case-types"}
             className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>
@@ -408,7 +633,7 @@ function EFilingCases({ path }) {
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
-              <div key={index} className="form-wrapper-d">
+              <div key={selected} className="form-wrapper-d">
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${pageConfig?.formItemName} ${formdata[index]?.displayindex + 1}`}</h1>
@@ -425,11 +650,16 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
+                  key={selected}
                   label={t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
-                  defaultValues={formdata[index]?.data}
+                  defaultValues={
+                    caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+                    caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
+                    formdata[index]?.data
+                  }
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
@@ -439,6 +669,7 @@ function EFilingCases({ path }) {
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
                   actionClassName="e-filing-action-bar"
+                  className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
                 />
               </div>
