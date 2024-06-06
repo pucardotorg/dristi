@@ -9,15 +9,7 @@ function TakeUserToRegistration({ message }) {
   const { t } = useTranslation();
   const history = useHistory();
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        background: "white",
-        alignItems: "center",
-        marginLeft: "10px",
-      }}
-    >
+    <div className="take-user-to-registration" >
       <div style={{ maxHeight: "40vh" }}>
         <RegisterImage></RegisterImage>
       </div>
@@ -33,16 +25,8 @@ function TakeUserToRegistration({ message }) {
             history.push(`/digit-ui/citizen/dristi/home/registration/user-name`);
           }}
           label={t("Register")}
-          style={{
-            flex: 1,
-            maxHeight: "7vh",
-            width: "20vw",
-            background: "none",
-            color: "#007E7E",
-            boxShadow: "none",
-          }}
         >
-          <RightArrow />
+          <div className="svg-div"> <RightArrow /></div>
         </Button>
       </div>
     </div>
