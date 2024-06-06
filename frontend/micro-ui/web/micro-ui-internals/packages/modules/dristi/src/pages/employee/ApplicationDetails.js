@@ -7,6 +7,7 @@ import DocViewerWrapper from "./docViewerWrapper";
 import { ReactComponent as LocationOnMapIcon } from "../../images/location_onmap.svg";
 import { userTypeOptions } from "../citizen/registration/config";
 import Menu from "../../components/Menu";
+import { useToast } from "../../components/Toast/useToast";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -49,6 +50,8 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 
 const ApplicationDetails = ({ location, match }) => {
   const urlParams = new URLSearchParams(window.location.search);
+
+  const toast = useToast();
 
   const individualId = urlParams.get("individualId");
   const applicationNo = urlParams.get("applicationNo");
@@ -141,11 +144,18 @@ const ApplicationDetails = ({ location, match }) => {
     window?.Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
-        history.push(`/digit-ui/employee/dristi/registration-requests?actions=${action}`);
+        if (action === "APPROVE") {
+          toast.success(t("ES_USER_APPROVED"));
+        } else if (action === "REJECT") {
+          toast.error(t("ES_USER_REJECTED"));
+        }
       })
       .catch(() => {
         setShowModal(false);
-        history.push(`/digit-ui/employee/dristi/registration-requests?actions="ERROR"`);
+        toast.error(t("ES_API_ERROR"));
+      })
+      .then(() => {
+        history.push(`/digit-ui/employee/dristi/registration-requests`);
       });
   }
 
