@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import ApplicationDetails from "./ApplicationDetails";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import CaseFileScrutiny from "./scrutiny/CaseFileScrutiny";
 import CaseFileAdmission from "./admission/CaseFileAdmission";
+import ScrutinyHomePage from "./scrutiny/ScrutinyHomePage";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -50,7 +50,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
-            <PrivateRoute exact path={`${path}/cases`} component={(props) => <CaseFileScrutiny {...props} t={t} />} />
+            <PrivateRoute exact path={`${path}/cases`} component={(props) => <ScrutinyHomePage {...props} t={t} />} />
           </div>
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
             <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} />} />
