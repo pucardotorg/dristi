@@ -1,5 +1,5 @@
 import { AppContainer, BackButton, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Switch, useRouteMatch } from "react-router-dom";
 
 import { useTranslation } from "react-i18next";
@@ -76,6 +76,8 @@ const App = ({ stateCode, tenantId }) => {
     );
   }, [searchResult, userType]);
 
+  const [hideBack, setHideBack] = useState(false);
+
   const hideHomeCrumb = [`${path}/home`];
 
   const whiteListedRoutes = [
@@ -119,7 +121,7 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
-          {!(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) && (
+          {!hideBack && !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) && (
             <div className="back-button-home">
               <BackButton />
             </div>
@@ -145,7 +147,7 @@ const App = ({ stateCode, tenantId }) => {
             }
           >
             <PrivateRoute exact path={`${path}/home`}>
-              <CitizenHome tenantId={tenantId} />
+              <CitizenHome tenantId={tenantId} setHideBack={setHideBack} />
             </PrivateRoute>
             <Route path={`${path}/home/login`}>
               <Login stateCode={stateCode} />
@@ -154,7 +156,7 @@ const App = ({ stateCode, tenantId }) => {
               <Registration stateCode={stateCode} />
             </Route>
             <Route path={`${path}/home/response`}>
-              <Response refetch={refetch} />
+              <Response refetch={refetch} setHideBack={setHideBack} />
             </Route>
           </div>
           <Route path={`${path}/home/register`}>

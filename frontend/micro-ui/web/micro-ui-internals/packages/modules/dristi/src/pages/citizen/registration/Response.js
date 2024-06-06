@@ -1,12 +1,12 @@
 import { ActionBar, Banner, Button, Card, CardHeader, CardLabel, CardText, SubmitBar } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { useGetAccessToken } from "../../../hooks/useGetAccessToken";
 import { SuccessIcon } from "../../../icons/svgIndex";
 
-const Response = ({ refetch }) => {
+const Response = ({ refetch, setHideBack }) => {
   const { t } = useTranslation();
   const location = useLocation();
   const history = useHistory();
@@ -15,6 +15,13 @@ const Response = ({ refetch }) => {
   //   Digit.UserService.logout();
   // };
   useGetAccessToken("citizen.refresh-token");
+
+  useEffect(() => {
+    setHideBack(true);
+    return () => {
+      setHideBack(false);
+    };
+  }, []);
 
   return (
     <React.Fragment>

@@ -495,7 +495,7 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[0-9A-Z/]+$/,
+                pattern: /^[0-9A-Z/]{2,20}$/,
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
                 maxlength: 20,
               },
