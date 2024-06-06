@@ -154,6 +154,9 @@ export const UICustomizations = {
     }
   },
   registrationRequestsConfig: {
+    customValidationCheck: (data) => {
+      return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
+    },
     preProcess: (requestCriteria, additionalDetails) => {
       const moduleSearchCriteria = {
         ...requestCriteria?.body?.inbox?.moduleSearchCriteria,

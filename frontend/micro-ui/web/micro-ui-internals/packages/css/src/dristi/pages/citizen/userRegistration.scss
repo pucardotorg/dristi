@@ -11,6 +11,10 @@
     p {
       margin: 0px;
     }
+
+    &.disable-back-button {
+      pointer-events: none;
+    }
   }
 }
 
