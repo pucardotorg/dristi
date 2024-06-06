@@ -1,14 +1,21 @@
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
+import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
-function ViewCaseFile({ t }) {
+function CaseFileAdmission({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const onSubmit = () => { };
-  const onSaveDraft = () => { };
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => { };
+  const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
+  const onSubmit = () => {};
+  const onSaveDraft = () => {};
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+    if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
+      setFormdata((prev) => {
+        return { ...prev, data: formData };
+      });
+    }
+  };
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -27,26 +34,28 @@ function ViewCaseFile({ t }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => { }}>
+              <div className="header-icon" onClick={() => {}}>
                 <CustomArrowDownIcon />
               </div>
             </div>
           </div>
           <FormComposerV2
-            label={t("CS_COMMON_CONTINUE")}
+            label={t("CS_ADMIT_CASE")}
             config={reviewCaseFileFormConfig}
             onSubmit={onSubmit}
             onSecondayActionClick={onSaveDraft}
             defaultValues={{}}
-            onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-              onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues);
-            }}
+            onFormValueChange={onFormValueChange}
             cardStyle={{ minWidth: "100%" }}
             isDisabled={isDisabled}
-            cardClassName={`e-filing-card-form-style review-case-file`}
-            secondaryLabel={t("CS_SAVE_DRAFT")}
+            cardClassName={`e-filing-card-form-style`}
+            secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
             showSecondaryLabel={true}
-            actionClassName="e-filing-action-bar"
+            actionClassName="admission-action-buttons"
+            showSkip={"FDSJKLDFSJL"}
+            onSkip={() => {
+              console.debug("vaibhav");
+            }}
           />
 
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
@@ -56,4 +65,4 @@ function ViewCaseFile({ t }) {
   );
 }
 
-export default ViewCaseFile;
+export default CaseFileAdmission;

@@ -127,6 +127,7 @@
 @import "./dristi/pages/citizen/caseType.scss";
 @import "./dristi/pages/citizen/userRegistration.scss";
 @import "./dristi/components/verifyPhoneNumber.scss";
+@import "./dristi/components/customPopup.scss";
 @import "../src/pages/employee/nyayMitra.scss";
 
 .wbh-header-container {
@@ -141,14 +142,18 @@
   align-items: center;
   justify-content: space-between;
   margin: 1rem 0.5rem -0.5rem 0.3rem;
+
   .header-icon-container {
     cursor: pointer;
+
     h4 {
       margin: 0px !important;
     }
+
     color: #007e7e;
     display: flex !important;
     align-items: center;
+
     svg {
       margin: 0 0 0 0.1rem;
     }
@@ -180,6 +185,7 @@ h6 {
 .display-flex-gap-2 {
   @apply flex gap-3;
 }
+
 .rm-mb {
   margin-bottom: unset !important;
 }
@@ -291,6 +297,7 @@ h6 {
     position: unset;
   }
 }
+
 .application-table-container {
   @apply mt-lg ml-lg flex-1;
 }
@@ -357,14 +364,17 @@ input[readonly] {
 .react-time-picker {
   width: 194px;
   height: 2.5rem;
+
   &__wrapper {
     border: 2px solid theme(colors.text.primary);
     padding-left: 16px;
   }
+
   &__inputGroup__input {
     @apply px-sm;
     line-height: 2.5rem;
     min-width: 16px;
+
     &:focus {
       outline: 2px solid black;
     }
@@ -381,6 +391,7 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type="number"] {
   -moz-appearance: textfield;
 }
@@ -393,8 +404,10 @@ input[type="number"] {
     flex: 1;
     max-height: 75vh;
     overflow: scroll;
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 
     &::-webkit-scrollbar {
       display: none;
@@ -497,6 +510,7 @@ input[type="number"] {
     text-indent: 5px;
     padding: 6px 0px;
   }
+
   button {
     @apply outline-none;
     border: 0px;
@@ -507,6 +521,7 @@ input[type="number"] {
 
 .text-input {
   @apply relative w-full;
+
   input {
     &:hover {
       @apply border-2 border-solid border-primary-main;
@@ -594,16 +609,19 @@ input[type="number"] {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
   .error-container {
     display: flex;
     width: 400px;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+
     h1 {
       font-size: 32px;
       font-weight: bold;
     }
+
     button {
       height: 40px;
       width: 153px;
@@ -629,14 +647,17 @@ input[type="number"] {
 .full-width-card {
   width: 92vw !important;
 }
+
 .full-employee-card-link {
   width: 100% !important;
   margin: 7px 0px;
+
   a {
     color: inherit;
     text-decoration: inherit;
   }
 }
+
 .full-employee-card-height {
   height: unset !important;
 }
@@ -645,15 +666,18 @@ input[type="number"] {
   .full-employee-card-height {
     height: 196px !important;
   }
+
   .full-employee-card-link {
     width: 30% !important;
   }
+
   .full-width-card {
     @apply w-full !important;
   }
 }
-.applications-list-container {
-}
+
+.applications-list-container {}
+
 .complaint-summary {
   @media (min-width: 780px) {
     flex: 1 0 auto;
@@ -674,6 +698,7 @@ input[type="number"] {
     margin-top: 1rem;
   }
 }
+
 @media (min-width: 780px) {
   .citizen-card-container {
     padding-left: 15px;
@@ -701,6 +726,7 @@ input[type="number"] {
 }
 
 @media (min-width: 780px) {
+
   .citizen-obps-wrapper,
   .selection-card-wrapper,
   .pgr-citizen-wrapper,
@@ -719,12 +745,15 @@ input[type="number"] {
     margin-top: 1rem;
   }
 }
+
 @media only screen and (max-width: 768px) {
+
   /* For mobile phones: */
   .error-boundary {
     height: 75vh;
   }
 }
+
 .employee-app-wrapper {
   min-height: calc(100vh - 8em);
 }
@@ -735,9 +764,11 @@ input[type="number"] {
     flex-direction: row-reverse !important;
     width: 100% !important;
     align-items: center;
+
     button {
       width: 240px !important;
     }
+
     p {
       width: unset;
       margin-right: 1rem;
@@ -762,6 +793,7 @@ input[type="number"] {
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
+
   .row {
     color: #b1b4b6;
     font-weight: 700;
@@ -780,11 +812,13 @@ input[type="number"] {
 .connection-details-old-value-wrapper,
 .plumber-details-old-value-wrapper {
   flex: 1 1 auto;
+
   .old-value-null-wrapper {
     visibility: hidden;
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
+
   .row {
     color: #b1b4b6;
     font-weight: 700;
@@ -796,6 +830,7 @@ input[type="number"] {
   padding: 1rem;
   font-weight: 400;
 }
+
 .modal-body-ws {
   padding: 1rem;
   font-weight: 700;
@@ -803,9 +838,11 @@ input[type="number"] {
   font-size: 24px;
   margin-bottom: 1rem;
 }
+
 .privacy-icon {
   cursor: pointer;
 }
+
 .privacy-icon:hover {
   path {
     fill: rgba(244, 119, 56, 1);
@@ -815,6 +852,7 @@ input[type="number"] {
 .privacy-icon-2 {
   cursor: pointer;
 }
+
 .privacy-icon-2:hover {
   path {
     fill: none;
@@ -828,8 +866,10 @@ input[type="number"] {
   max-height: 120px;
   margin-top: 90px;
 }
+
 .localisation-info {
   max-width: 100%;
+
   .info-banner-wrap {
     max-width: 100%;
     margin: 0%;
@@ -851,14 +891,17 @@ input[type="number"] {
   margin: auto;
   width: calc(100% - 5rem);
 }
+
 .actionBarClass {
   display: flex;
   justify-content: space-between;
   flex-direction: row-reverse;
 }
+
 .previous-button {
   margin-left: 4rem;
 }
+
 .view-composer-header-section {
   display: flex;
   justify-content: space-between;

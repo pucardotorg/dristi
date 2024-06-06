@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
@@ -121,21 +121,69 @@ function EFilingCases({ path }) {
     if (!isDependentEnabled) {
       return formdata.map(() => formConfig);
     }
-    return formdata.map(({ data }) => {
-      return formConfig.filter((config) => {
-        const dependentKeys = config?.dependentKey;
-        if (!dependentKeys) {
-          return config;
-        }
-        let show = true;
-        for (const key in dependentKeys) {
-          const nameArray = dependentKeys[key];
-          for (const name of nameArray) {
-            show = show && Boolean(data?.[key]?.[name]);
+
+    return formdata.map(({ data }, index) => {
+      return formConfig
+        .filter((config) => {
+          const dependentKeys = config?.dependentKey;
+          if (!dependentKeys) {
+            return config;
           }
-        }
-        return show && config;
-      });
+          let show = true;
+          for (const key in dependentKeys) {
+            const nameArray = dependentKeys[key];
+            for (const name of nameArray) {
+              show = show && Boolean(data?.[key]?.[name]);
+            }
+          }
+          return show && config;
+        })
+        .map((config) => {
+          // const { scrutiny } = caseData.additionalDetails;
+          const scrutiny = {
+            complaintDetails: {
+              scrutinyMessage: "",
+              form: [
+                {
+                  firstName: "Name does not match",
+                  lastname: "Doest not match",
+                },
+                {},
+              ],
+            },
+            respondentDetails: {
+              scrutinyMessage: "",
+              form: [{}, {}],
+            },
+          };
+          const updatedBody = config.body
+            .map((formComponent) => {
+              const key = formComponent.key || formComponent.populators?.name;
+              const modifiedFormComponent = structuredClone(formComponent);
+              modifiedFormComponent.disable = true;
+              if (key in scrutiny[selected].form[index]) {
+                modifiedFormComponent.disable = false;
+                modifiedFormComponent.withoutLabel = true;
+                return [
+                  {
+                    type: "component",
+                    component: "ScrutinyInfo",
+                    key: "firstNameScrutiny",
+                    populators: {
+                      scrutinyMessage: scrutiny[selected].form[index][key],
+                    },
+                  },
+                  modifiedFormComponent,
+                ];
+              }
+              return modifiedFormComponent;
+            })
+            .flat();
+          return {
+            ...config,
+            body: updatedBody,
+          };
+        });
     });
   }, [isDependentEnabled, formdata, formConfig]);
 
@@ -302,7 +350,7 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
-            className={'case-types'}
+            className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>
               {accordion.map((item, index) => (
@@ -397,13 +445,13 @@ function EFilingCases({ path }) {
             ) : null;
           })}
           {pageConfig?.addFormText && (
-            <div
-              onClick={handleAddForm}
+            <Button
+              variation="secondary"
+              onButtonClick={handleAddForm}
               className="add-new-form"
-            >
-              <CustomAddIcon />
-              <span>{t(pageConfig.addFormText)}</span>
-            </div>
+              icon={<CustomAddIcon />}
+              label={t(pageConfig.addFormText)}
+            ></Button>
           )}
           {openConfigurationModal && (
             <EditFieldsModal

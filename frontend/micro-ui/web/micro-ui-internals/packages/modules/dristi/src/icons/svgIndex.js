@@ -325,9 +325,12 @@ const PrayerSwornIcon = () => (
 
 const FileIcon = () => (
   <svg width="16" height="20" viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10 0H2C0.9 0 0.0100002 0.9 0.0100002 2L0 18C0 19.1 0.89 20 1.99 20H14C15.1 20 16 19.1 16 18V6L10 0ZM12 16H4V14H12V16ZM12 12H4V10H12V12ZM9 7V1.5L14.5 7H9Z" fill="#3D3C3C" />
+    <path
+      d="M10 0H2C0.9 0 0.0100002 0.9 0.0100002 2L0 18C0 19.1 0.89 20 1.99 20H14C15.1 20 16 19.1 16 18V6L10 0ZM12 16H4V14H12V16ZM12 12H4V10H12V12ZM9 7V1.5L14.5 7H9Z"
+      fill="#3D3C3C"
+    />
   </svg>
-)
+);
 
 const FileUploadIcon = () => (
   <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -371,9 +374,12 @@ const LitigentIcon = () => (
 
 const InfoIconRed = () => (
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M6.9987 0.333374C3.3187 0.333374 0.332031 3.32004 0.332031 7.00004C0.332031 10.68 3.3187 13.6667 6.9987 13.6667C10.6787 13.6667 13.6654 10.68 13.6654 7.00004C13.6654 3.32004 10.6787 0.333374 6.9987 0.333374ZM7.66536 10.3334H6.33203V6.33337H7.66536V10.3334ZM7.66536 5.00004H6.33203V3.66671H7.66536V5.00004Z" fill="#BB2C2F" />
+    <path
+      d="M6.9987 0.333374C3.3187 0.333374 0.332031 3.32004 0.332031 7.00004C0.332031 10.68 3.3187 13.6667 6.9987 13.6667C10.6787 13.6667 13.6654 10.68 13.6654 7.00004C13.6654 3.32004 10.6787 0.333374 6.9987 0.333374ZM7.66536 10.3334H6.33203V6.33337H7.66536V10.3334ZM7.66536 5.00004H6.33203V3.66671H7.66536V5.00004Z"
+      fill="#BB2C2F"
+    />
   </svg>
-)
+);
 
 const ErrorInfoIcon = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -621,6 +627,23 @@ const WaitIcon = () => (
     />
   </svg>
 );
+
+const FSOErrorIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_4178_3003)">
+      <path
+        d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"
+        fill="#BB2C2F"
+      />
+    </g>
+    <defs>
+      <clipPath id="clip0_4178_3003">
+        <rect width="24" height="24" fill="white" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 export {
   RegisterIcon,
   LoginIcon,
@@ -656,4 +679,5 @@ export {
   UploadIcon,
   WaitIcon,
   InfoIconRed,
+  FSOErrorIcon,
 };

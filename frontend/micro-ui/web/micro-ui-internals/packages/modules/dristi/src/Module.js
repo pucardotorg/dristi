@@ -33,6 +33,8 @@ import SelectReviewAccordion from "./components/SelectReviewAccordion";
 import SelectSignature from "./components/SelectSignature";
 import SelectUploadFiles from "./components/SelectUploadFiles";
 import SelectUploadDocWithName from "./components/SelectUploadDocWithName";
+import SelectEmptyComponent from "./components/SelectEmptyComponent";
+import ScrutinyInfo from "./components/ScrutinyInfo";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -80,6 +82,8 @@ const componentsToRegister = {
   AdvocateDetailComponent,
   SelectUploadFiles,
   SelectUploadDocWithName,
+  SelectEmptyComponent,
+  ScrutinyInfo,
 };
 
 const overrideHooks = () => {
