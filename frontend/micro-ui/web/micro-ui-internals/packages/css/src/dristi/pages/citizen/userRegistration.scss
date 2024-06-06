@@ -25,6 +25,33 @@
     margin: 0px;
   }
 
+  .take-user-to-registration {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    align-items: center;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+
+    button {
+      background: none;
+      color: #007e7e;
+      box-shadow: none;
+      max-width: 273px;
+
+      .svg-div {
+        display: flex;
+        align-items: center;
+        svg {
+          margin: 0px 0px 0px 15px;
+        }
+      }
+    }
+  }
+
   .response-main {
     padding: 40px;
     margin-top: 20px;
