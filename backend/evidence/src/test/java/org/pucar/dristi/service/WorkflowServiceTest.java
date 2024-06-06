@@ -10,10 +10,12 @@ import org.egov.common.contract.workflow.ProcessInstanceRequest;
 import org.egov.common.contract.workflow.ProcessInstanceResponse;
 import org.egov.common.contract.workflow.State;
 import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
@@ -30,7 +32,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTION;
 
 @ExtendWith(MockitoExtension.class)
 public class WorkflowServiceTest {
@@ -247,5 +250,37 @@ public class WorkflowServiceTest {
             assertEquals(assignees.get(i), assigneesList.get(i).getUuid());
         }
     }
+    @Test
+    public void testGetProcessInstanceForArtifact_CustomException() {
+        // Mock Artifact and Workflow
+        Artifact artifact = mock(Artifact.class);
+        Workflow workflow = mock(Workflow.class);
+        when(artifact.getWorkflow()).thenReturn(workflow);
+        when(workflow.getAction()).thenThrow(new CustomException("CUSTOM_ERROR", "Custom exception occurred"));
 
+        // Invoke the method and verify the exception
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            workflowService.getProcessInstanceForArtifact(artifact, new RequestInfo());
+        });
+
+        assertEquals("CUSTOM_ERROR", exception.getCode());
+        assertEquals("Custom exception occurred", exception.getMessage());
+    }
+
+    @Test
+    public void testGetProcessInstanceForArtifact_GeneralException() {
+        // Mock Artifact and Workflow
+        Artifact artifact = mock(Artifact.class);
+        Workflow workflow = mock(Workflow.class);
+        when(artifact.getWorkflow()).thenReturn(workflow);
+        when(workflow.getAction()).thenThrow(new RuntimeException("General exception occurred"));
+
+        // Invoke the method and verify the exception
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            workflowService.getProcessInstanceForArtifact(artifact, new RequestInfo());
+        });
+
+        assertEquals("WORKFLOW_SERVICE_EXCEPTION", exception.getCode());
+        assertEquals("General exception occurred", exception.getMessage());
+    }
 }
