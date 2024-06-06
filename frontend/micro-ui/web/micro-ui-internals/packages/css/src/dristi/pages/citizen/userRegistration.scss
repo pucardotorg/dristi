@@ -442,6 +442,9 @@
         }
         .address-card-input {
           gap: 16px;
+          .field {
+            width: 273px;
+          }
         }
 
         button {
@@ -450,7 +453,7 @@
           margin-top: 32px;
         }
         input {
-          width: 273px;
+          width: 100%;
         }
       }
 
@@ -627,8 +630,8 @@ body {
     margin: 0px !important;
     padding: 0px !important;
     display: flex !important;
-    align-items: flex-start !important;
-    .card-header {
+    align-items: center !important;
+    .card-section-header {
       font-family: Roboto !important;
       font-size: 24px !important;
       font-weight: 700 !important;
