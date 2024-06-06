@@ -97,20 +97,24 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
       return;
     }
     if (Array.isArray(input)) {
-      onSelect(configKey, {
-        ...formData[configKey],
-        ...input.reduce((res, curr) => {
-          res[curr] = value[curr];
-          return res;
-        }, {}),
-      });
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...input.reduce((res, curr) => {
-          res[curr] = value[curr];
-          return res;
-        }, {}),
-      });
+      if (configKey in formData) {
+        onSelect(configKey, {
+          ...formData[configKey],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        });
+      }
+      if (config.key in formData) {
+        onSelect(config.key, {
+          ...formData[config.key],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        });
+      }
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
     }
@@ -120,7 +124,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
     const isEmpty = /^\s*$/.test(currentValue);
     return isEmpty || !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
   };
-
   return (
     <div>
       {inputs?.map((input, index) => {
