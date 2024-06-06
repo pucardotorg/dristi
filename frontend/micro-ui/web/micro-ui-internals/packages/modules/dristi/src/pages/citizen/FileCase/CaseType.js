@@ -112,7 +112,7 @@ function CaseType({ t }) {
     if (isLoading || isFetching || isSearchLoading) {
       return <Loader />;
     }
-
+    debugger;
     return (
       <div className="submit-bar-div">
         <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />

@@ -34,7 +34,7 @@ function EFilingCases({ path }) {
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
 
-  const { data: caseData, isLoading } = useSearchCaseService(
+  const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -85,6 +85,7 @@ function EFilingCases({ path }) {
   }, [selected, caseDetails]);
 
   const accordion = useMemo(() => {
+    debugger;
     return sideMenuConfig.map((parent, pIndex) => ({
       ...parent,
       isOpen: pIndex === parentOpen,
@@ -517,6 +518,45 @@ function EFilingCases({ path }) {
     if (selected === "witnessDetails") {
       data.additionalDetails = { ...caseDetails.additionalDetails, witnessDetails: { formdata: formdata, isCompleted: true } };
     }
+    if (selected === "demandNoticeDetails") {
+      const documentData = {};
+      const newFormData = await Promise.all(
+        formdata.map(async (data) => {
+          if (
+            data?.data?.SelectCustomDragDrop &&
+            typeof data?.data?.SelectCustomDragDrop === "object" &&
+            Object.keys(data?.data?.SelectCustomDragDrop).length > 0
+          ) {
+            documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).forEach(async (res, curr) => {
+              const result = await res;
+              result[curr] = await Promise.all(
+                data?.data?.SelectCustomDragDrop?.[curr]?.document?.map(async (document) => {
+                  return await onDocumentUpload(document, document.name).then((data) => {
+                    return {
+                      documentType: data.fileType,
+                      fileStore: data.file?.files?.[0]?.fileStoreId,
+                      documentName: data.filename,
+                    };
+                  });
+                })
+              );
+              return result;
+            }, Promise.resolve({}));
+          }
+          return {
+            ...data,
+            data: {
+              ...data.data,
+              SelectCustomDragDrop: {
+                ...data?.data?.SelectCustomDragDrop,
+                ...documentData.SelectCustomDragDrop,
+              },
+            },
+          };
+        })
+      );
+      data.caseDetails = { ...caseDetails.caseDetails, demandNoticeDetails: { formdata: newFormData, isCompleted: true } };
+    }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
       return;
@@ -524,11 +564,28 @@ function EFilingCases({ path }) {
     if (!!resetFormData) {
       resetFormData();
     }
-    DRISTIService.caseUpdateService({ cases: { ...caseDetails, ...data, filingDate: formatDate(new Date()) }, tenantId }, tenantId);
-    const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-      caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
-    setFormdata(caseData);
-    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...caseDetails,
+          ...data,
+          filingDate: formatDate(new Date()),
+          workflow: {
+            ...caseDetails?.workflow,
+            action: "SAVE_DRAFT",
+          },
+        },
+        tenantId,
+      },
+      tenantId
+    ).then(() => {
+      refetchCaseData().then(() => {
+        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+        setFormdata(caseData);
+        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+      });
+    });
   };
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
@@ -544,7 +601,7 @@ function EFilingCases({ path }) {
     if (formdata && formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.isDisable) {
       return "disable-form";
     } else return "";
-  });
+  }, [formdata]);
 
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading) {
