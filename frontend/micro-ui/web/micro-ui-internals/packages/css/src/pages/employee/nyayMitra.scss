@@ -84,8 +84,12 @@
                   display: flex;
                   justify-content: space-between;
                   align-items: center;
-                  header {
+                  .h1 {
                     margin: 0px;
+                    width: 50%;
+                  }
+                  form {
+                    width: 50%;
                   }
                   .search-field-wrapper.inbox {
                     display: flex;
