@@ -3,7 +3,6 @@ import React, { Fragment, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
-import { Close } from "@egovernments/digit-ui-svg-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CloseIconWhite } from "../../../icons/svgIndex";
 
