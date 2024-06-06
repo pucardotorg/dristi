@@ -520,6 +520,9 @@ function EFilingCases({ path }) {
       );
       data.caseDetails = { ...caseDetails.caseDetails, debtLiabilityDetails: { formdata: newFormData, isCompleted: true } };
     }
+    if (selected === "witnessDetails") {
+      data.additionalDetails = { ...caseDetails.additionalDetails, witnessDetails: { formdata: formdata, isCompleted: true } };
+    }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
       return;
