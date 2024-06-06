@@ -109,8 +109,8 @@ class AdvocateQueryBuilderTest {
         assertTrue(query.contains("LOWER(adv.status) LIKE LOWER(?)"));
         assertTrue(query.contains("LOWER(adv.tenantid) LIKE LOWER(?)"));
         assertEquals(4, preparedStmtList.size());
-        assertEquals("%active%", preparedStmtList.get(0));
-        assertEquals("%tenant1%", preparedStmtList.get(1));
+        assertEquals("active", preparedStmtList.get(0));
+        assertEquals("tenant1", preparedStmtList.get(1));
     }
 
     @Test
