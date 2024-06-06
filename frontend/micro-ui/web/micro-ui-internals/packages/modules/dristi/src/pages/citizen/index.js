@@ -120,7 +120,7 @@ const App = ({ stateCode, tenantId }) => {
     <span className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
-          {!hideBack && !(location.pathname.includes("/login") || location.pathname.includes("/registration/mobile-number") || individualId) && (
+          {!hideBack && !(location.pathname.includes("/login") || individualId) && (
             <div className="back-button-home">
               <BackButton />
             </div>

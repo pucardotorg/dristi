@@ -22,6 +22,7 @@ const SelectOtp = ({
   isAdhaar,
   cardText,
   mobileNumber,
+  setIsOtpValid,
 }) => {
   const history = useHistory();
   const token = window.localStorage.getItem("token");
@@ -45,7 +46,7 @@ const SelectOtp = ({
       aadharOtp: "",
       adhaarNumber: "",
     });
-
+    setIsOtpValid(true);
     history.goBack();
   };
   const Heading = (props) => {
