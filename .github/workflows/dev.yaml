@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - develop
+      - dev_backend_evidence_bis
   pull_request:
     branches:
       - develop
@@ -40,6 +40,22 @@ jobs:
           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
         working-directory: backend/advocate/src/main/resources/db
+      - name: Build and analyze evidence
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/evidence/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_evidence -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+      - name: Build and Push Docker image for evidence
+        run: |
+          docker build --build-arg WORK_DIR="backend/evidence" -t pucar_evidence:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_evidence:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_evidence:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for evidence_DB
+        run: |
+          docker build  -t pucar_evidence_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
+           docker tag pucar_evidence_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
+           docker push pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/evidence/src/main/resources/db
       - name: trigger deployment pipeline
         run: |
           curl -X POST \
