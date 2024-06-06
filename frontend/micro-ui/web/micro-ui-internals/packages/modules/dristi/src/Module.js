@@ -1,38 +1,39 @@
 import { Loader } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useRouteMatch } from "react-router-dom";
-import CitizenApp from "./pages/citizen";
-import SelectComponents from "./components/SelectComponents";
 import AddressComponent from "./components/AddressComponent";
+import SelectComponents from "./components/SelectComponents";
+import CitizenApp from "./pages/citizen";
 
-import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
-import CustomRadioCard from "./components/CustomRadioCard";
 import AdhaarInput from "./components/AdhaarInput";
 import AdvocateDetailComponent from "./components/AdvocateDetailComponent";
+import CustomRadioCard from "./components/CustomRadioCard";
+import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
 
-import Registration from "./pages/citizen/registration";
-import EmployeeApp from "./pages/employee";
-import DRISTICard from "./components/DRISTICard";
-import Inbox from "./pages/employee/Inbox";
-import Login from "./pages/citizen/Login";
-import CitizenResponse from "./pages/citizen/registration/Response";
-import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
-import FileCase from "./pages/citizen/FileCase";
-import { CustomizedHooks } from "./hooks";
-import { UICustomizations } from "./configs/UICustomizations";
-import VerificationComponent from "./components/VerificationComponent";
 import CustomInput from "./components/CustomInput";
-import SelectBulkInputs from "./components/SelectBulkInputs";
-import SelectCustomNote from "./components/SelectCustomNote";
-import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
-import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
-import SelectCustomTextArea from "./components/SelectCustomTextArea";
+import DRISTICard from "./components/DRISTICard";
 import IdProofUploadComponent from "./components/IdProofUploadComponent";
+import SelectBulkInputs from "./components/SelectBulkInputs";
 import SelectComponentsMulti from "./components/SelectComponentsMulti";
+import SelectCustomDragDrop from "./components/SelectCustomDragDrop";
+import SelectCustomNote from "./components/SelectCustomNote";
+import SelectCustomTextArea from "./components/SelectCustomTextArea";
 import SelectReviewAccordion from "./components/SelectReviewAccordion";
 import SelectSignature from "./components/SelectSignature";
-import SelectUploadFiles from "./components/SelectUploadFiles";
 import SelectUploadDocWithName from "./components/SelectUploadDocWithName";
+import SelectUploadFiles from "./components/SelectUploadFiles";
+import { ToastProvider } from "./components/Toast/useToast";
+import VerificationComponent from "./components/VerificationComponent";
+import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
+import { UICustomizations } from "./configs/UICustomizations";
+import { CustomizedHooks } from "./hooks";
+import FileCase from "./pages/citizen/FileCase";
+import Login from "./pages/citizen/Login";
+import Registration from "./pages/citizen/registration";
+import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
+import CitizenResponse from "./pages/citizen/registration/Response";
+import EmployeeApp from "./pages/employee";
+import Inbox from "./pages/employee/Inbox";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -49,7 +50,11 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   if (userType === "citizen") {
     return <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />;
   }
-  return <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants}></EmployeeApp>;
+  return (
+    <ToastProvider>
+      <EmployeeApp path={path} stateCode={stateCode} userType={userType} tenants={tenants}></EmployeeApp>
+    </ToastProvider>
+  );
 };
 
 const componentsToRegister = {

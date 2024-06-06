@@ -144,7 +144,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       ))}
       <Button
         label={"Add Location"}
-        style={{ alignItems: "center" }}
+        className={'add-location-btn'}
         onButtonClick={() => {
           handleAdd();
         }}

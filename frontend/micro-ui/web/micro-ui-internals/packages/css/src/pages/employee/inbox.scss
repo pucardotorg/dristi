@@ -604,11 +604,15 @@
   line-height: 42.19px;
   justify-content: center;
   font-size: 36px;
+  margin-bottom: 0px !important;
 }
 
 .application-card {
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  padding-right: 40px;
+  column-gap: 40px;
+  row-gap: 24px;
 }
 
 .application-bar-info {
@@ -629,7 +633,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px;
+  gap: 40px;
+  margin: 0px !important;
 }
 
 .action-button-width {
@@ -641,7 +646,7 @@
   font-weight: 600;
   line-height: 28.13px;
   text-align: center;
-  margin-bottom: 8px;
+  margin: 0px !important;
 }
 .main-card-home {
   padding: 80px;
@@ -682,8 +687,8 @@
     line-height: 42.19px;
   }
   .application-card {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 100%;
+    padding-right: 0px;
   }
   .application-bar-info {
     width: 100%;
@@ -706,7 +711,7 @@
     font-weight: 600;
     line-height: 28.13px;
     text-align: center;
-    margin-bottom: 8px;
+    margin: 20px;
     box-shadow: none;
   }
   .popup-module {
