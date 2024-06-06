@@ -11,6 +11,7 @@ import BreadCrumb from "../../components/BreadCrumb";
 import { userTypeOptions } from "./registration/config";
 
 const App = ({ stateCode, tenantId }) => {
+  const [hideBack, setHideBack] = useState(false);
   const Digit = window?.Digit || {};
   const { path } = useRouteMatch();
   const location = useLocation();
@@ -75,8 +76,6 @@ const App = ({ stateCode, tenantId }) => {
       searchResult?.[0]?.status === "INACTIVE"
     );
   }, [searchResult, userType]);
-
-  const [hideBack, setHideBack] = useState(false);
 
   const hideHomeCrumb = [`${path}/home`];
 
