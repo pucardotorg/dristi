@@ -187,7 +187,7 @@ export const newConfig = [
               type: "text",
               name: "doorNo",
               validation: {
-                errMsg: "ADDRESS_DOOR_NO_INVALID",
+                errMsg: "This field is mandatory and requires atleast 2 characters.",
                 pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
                 isRequired: true,
                 minlength: 2,
@@ -239,7 +239,7 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "CORE_REQUIRED_FIELD_ERROR_FIRST_NAME",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -272,7 +272,7 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "CORE_REQUIRED_FIELD_ERROR_LAST_NAME",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",

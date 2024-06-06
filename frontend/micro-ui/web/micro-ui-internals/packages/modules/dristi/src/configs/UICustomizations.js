@@ -154,6 +154,31 @@ export const UICustomizations = {
     }
   },
   registrationRequestsConfig: {
+    customValidationCheck: (data) => {
+      return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
+    },
+    preProcess: (requestCriteria, additionalDetails) => {
+      const moduleSearchCriteria = {
+        ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
+        ...requestCriteria?.state?.searchForm,
+        tenantId: window?.Digit.ULBService.getStateId(),
+      };
+      if (additionalDetails in moduleSearchCriteria && !moduleSearchCriteria[additionalDetails]) {
+        delete moduleSearchCriteria[additionalDetails];
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          inbox: {
+            ...requestCriteria?.body?.inbox,
+            moduleSearchCriteria: {
+              ...moduleSearchCriteria,
+            },
+          },
+        },
+      };
+    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
