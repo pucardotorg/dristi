@@ -10,11 +10,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.ApplicationRepository;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +28,8 @@ public class ApplicationValidatorTest {
 
     @Mock
     private ApplicationRepository repository;
+    @Mock
+    private CaseUtil caseUtil;
 
     @InjectMocks
     private ApplicationValidator validator;
@@ -56,12 +60,15 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnrNumber");
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         assertDoesNotThrow(() -> validator.validateApplication(applicationRequest));
     }
 
     @Test
     public void testValidateApplication_MissingTenantId() {
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
+
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("tenantId is mandatory for creating application", exception.getMessage());
     }
@@ -69,6 +76,7 @@ public class ApplicationValidatorTest {
     @Test
     public void testValidateApplication_MissingCreatedDate() {
         application.setTenantId("tenantId");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("createdDate is mandatory for creating application", exception.getMessage());
@@ -79,6 +87,7 @@ public class ApplicationValidatorTest {
         application.setTenantId("tenantId");
         application.setCreatedDate("2024-05-01");
         application.setCreatedBy(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("user info is mandatory for creating application", exception.getMessage());
@@ -93,7 +102,7 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnrNumber");
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
-
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("onBehalfOf is mandatory for creating application", exception.getMessage());
     }
@@ -109,6 +118,7 @@ public class ApplicationValidatorTest {
         application.setOnBehalfOf(onBehalfOf);
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("cnrNumber is mandatory for creating application", exception.getMessage());
@@ -125,6 +135,7 @@ public class ApplicationValidatorTest {
         application.setOnBehalfOf(onBehalfOf);
         application.setCnrNumber("cnrNumber");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("filingNumber is mandatory for creating application", exception.getMessage());
@@ -141,6 +152,7 @@ public class ApplicationValidatorTest {
         application.setOnBehalfOf(onBehalfOf);
         application.setFilingNumber("filingNumber");
         application.setCnrNumber("cnrNumber");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
@@ -150,6 +162,7 @@ public class ApplicationValidatorTest {
     public void testValidateApplication_MissingCreatedBy() {
         application.setTenantId("tenantId");
         application.setCreatedDate("2024-05-01");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplication(applicationRequest));
         assertEquals("createdBy is mandatory for creating application", exception.getMessage());
@@ -164,6 +177,7 @@ public class ApplicationValidatorTest {
         application.setReferenceId(UUID.randomUUID());
         List<Application> existingApplications = new ArrayList<>();
         existingApplications.add(application);
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         when(repository.getApplications(any(), anyString(), anyString(), any(), any(), eq(null), eq(null)))
                 .thenReturn(existingApplications);
@@ -177,6 +191,7 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnrNumber");
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(requestInfo, application));
         assertEquals("id is mandatory for updating application", exception.getMessage());
@@ -188,6 +203,7 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnrNumber");
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         when(repository.getApplications(any(), anyString(), anyString(), any(), any(), any(), any()))
                 .thenReturn(null);
@@ -201,6 +217,7 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnr123");
         application.setFilingNumber("file123");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(new RequestInfo(), application));
@@ -214,6 +231,7 @@ public class ApplicationValidatorTest {
         application.setId(UUID.randomUUID());
         application.setFilingNumber("file123");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(new RequestInfo(), application));
@@ -227,6 +245,7 @@ public class ApplicationValidatorTest {
         application.setId(UUID.randomUUID());
         application.setCnrNumber("cnr123");
         application.setReferenceId(UUID.randomUUID());
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(new RequestInfo(), application));
@@ -240,6 +259,7 @@ public class ApplicationValidatorTest {
         application.setId(UUID.randomUUID());
         application.setCnrNumber("cnr123");
         application.setFilingNumber("file123");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
         CustomException exception = assertThrows(CustomException.class,
                 () -> validator.validateApplicationExistence(new RequestInfo(), application));
