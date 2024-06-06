@@ -28,7 +28,6 @@ function ApplicationAwaitingPage({ individualId }) {
           label={t("View My Application")}
           style={{
             flex: 1,
-            width: "20vw",
             boxShadow: "none",
           }}
         ></Button>

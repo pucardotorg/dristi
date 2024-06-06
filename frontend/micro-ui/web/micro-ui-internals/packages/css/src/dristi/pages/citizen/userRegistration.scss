@@ -163,10 +163,10 @@
         margin: 0px !important;
         .card-header {
           margin: 0px;
-          font-family: Roboto Condensed;
-          font-size: 40px;
+          font-family: Roboto;
+          font-size: 24px;
           font-weight: 700;
-          line-height: 46.88px;
+          line-height: 30px;
           text-align: center;
           color: #0b0c0c;
         }
@@ -634,6 +634,7 @@ body {
   padding: 40px !important;
   background-color: #ffffff !important;
   box-shadow: none !important;
+  margin: 24px;
   .card {
     margin: 0px !important;
     padding: 0px !important;
