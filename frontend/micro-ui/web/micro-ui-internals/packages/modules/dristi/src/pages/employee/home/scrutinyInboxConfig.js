@@ -6,11 +6,7 @@ export const scrutinyInboxConfig = {
     requestParam: {},
     requestBody: {
       tenantId: "pg",
-      criteria: [
-        {
-          individualId: "IND-2024-06-05-000726",
-        },
-      ],
+      criteria: [{}],
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",

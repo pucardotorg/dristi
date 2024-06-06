@@ -10,7 +10,7 @@ const sectionsParentStyle = {
   gap: "1rem",
 };
 
-function ScrutinyHomePage() {
+function Home() {
   return (
     <React.Fragment>
       <div className="registration-requests">
@@ -22,4 +22,4 @@ function ScrutinyHomePage() {
   );
 }
 
-export default ScrutinyHomePage;
+export default Home;
