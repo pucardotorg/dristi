@@ -7,7 +7,7 @@ import { userTypeOptions } from "../registration/config";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CaseInProgressIcon, ClosedCasesIcon, FileCaseIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "../../../icons/svgIndex";
 
-function CitizenHome({ tenantId }) {
+function CitizenHome({ tenantId, setHideBack }) {
   const Digit = window?.Digit || {};
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
@@ -84,9 +84,18 @@ function CitizenHome({ tenantId }) {
     );
   }, [searchResult, userType]);
 
+  const userHasIncompleteRegistration = !individualId || isRejected;
+  useEffect(() => {
+    setHideBack(userHasIncompleteRegistration);
+    return () => {
+      setHideBack(false);
+    };
+  }, [userHasIncompleteRegistration]);
+
   if (isLoading || isSearchLoading || isFetching) {
     return <Loader />;
   }
+
   return (
     <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
       {individualId &&
@@ -108,7 +117,7 @@ function CitizenHome({ tenantId }) {
           );
         })}
       {individualId && isApprovalPending && !isRejected && <ApplicationAwaitingPage individualId={individualId} />}
-      {(!individualId || isRejected) && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
+      {userHasIncompleteRegistration && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
     </div>
   );
 }
