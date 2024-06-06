@@ -95,7 +95,6 @@ function CustomReviewCard({ index, config, data, isScrutiny }) {
       case "address":
         const addressDetails = extractValue(data, value);
         let address = [""];
-        debugger;
         if (Array.isArray(addressDetails)) {
           address = addressDetails.map(({ addressDetails }) => {
             return `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`;
