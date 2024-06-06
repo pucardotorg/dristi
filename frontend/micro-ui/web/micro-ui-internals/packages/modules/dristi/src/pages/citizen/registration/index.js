@@ -244,6 +244,7 @@ const Registration = ({ stateCode }) => {
               path={path}
               isUserLoggedIn={isUserLoggedIn}
               history={history}
+              className={"register"}
             />
           </Route>
           <Route path={`${path}/otp`}>

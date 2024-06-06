@@ -686,6 +686,9 @@ input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: calc(100vh - 84px);
+  width: 100% !important;
+  background-color: #eeeeee;
 
   .radio-wrap {
     display: flex;

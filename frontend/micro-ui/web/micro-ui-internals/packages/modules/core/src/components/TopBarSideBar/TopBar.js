@@ -196,7 +196,7 @@ const TopBar = ({
                   showArrow={true}
                   freeze={true}
                   style={mobileView ? { right: 0 } : {}}
-                  optionCardStyles={{ overflow: "revert", display: "table" }}
+                  optionCardStyles={{ overflow: "revert", display: "table", marginRight: '50px' }}
                   topbarOptionsClassName={"topbarOptionsClassName"}
                   customSelector={
                     profilePic == null ? (
