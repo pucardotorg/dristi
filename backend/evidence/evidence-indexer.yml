@@ -8,7 +8,7 @@ ServiceMaps:
         - name: artifact-index
           type: general
           id: $.id
-          isBulk: true
+          isBulk: false
           timeStampField: $.auditdetails.createdTime
           jsonPath: $.artifact
           customJsonMapping:
@@ -78,7 +78,7 @@ ServiceMaps:
         - name: artifact-index
           type: general
           id: $.id
-          isBulk: true
+          isBulk: false
           timeStampField: $.auditdetails.createdTime
           jsonPath: $.artifact
           customJsonMapping:
