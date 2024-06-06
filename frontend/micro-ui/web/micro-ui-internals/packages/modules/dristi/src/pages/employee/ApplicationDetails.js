@@ -204,7 +204,6 @@ const ApplicationDetails = ({ location, match }) => {
             style={{ maxWidth: "100px", maxHeight: "100px" }}
             fileStoreId={fileStoreId}
             tenantId={tenantId}
-            displayFilename={" "}
             docViewerCardClassName={"doc-card"}
           ></DocViewerWrapper>
         ),
