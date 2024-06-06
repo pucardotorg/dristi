@@ -1,16 +1,20 @@
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { advocateClerkConfig } from "./config";
+import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
-function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
+function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOnRefresh }) {
   const { t } = useTranslation();
   const Digit = window.Digit || {};
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
+  const tenantId = Digit.ULBService.getCurrentTenantId();
+  console.log(params);
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -84,34 +88,120 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
       setIsDisabled(false);
     }
   };
-
-  const onSubmit = (data) => {
-    if (!validateFormData(data)) {
-      setShowErrorToast(!validateFormData(data));
-      return;
-    }
-    setParams({
-      ...params,
-      registrationData: {
-        ...params?.registrationData,
-        clientDetails: {
-          ...params?.registrationData?.clientDetails,
-          ...data?.clientDetails,
-        },
-      },
-    });
-    history.push(`${path}/additional-details/terms-conditions`);
+  const onDocumentUpload = async (fileData) => {
+    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
+    return { file: fileUploadRes?.data, fileType: fileData.type };
   };
 
-  if (!params?.registrationData || !params?.registrationData?.clientDetails) {
-    history.push(`${path}`);
-  }
+  const onSubmit = (formData) => {
+    if (!validateFormData(formData)) {
+      setShowErrorToast(!validateFormData(formData));
+      return;
+    }
+    const data = params?.userType?.clientDetails;
+    const Individual = params?.Individual;
+    const oldData = params;
+    Digit.DRISTIService.postIndividualService(Individual, tenantId)
+      .then((result) => {
+        if (
+          data?.selectUserType?.apiDetails &&
+          data?.selectUserType?.apiDetails?.serviceName &&
+          result &&
+          data?.selectUserType?.role[0] === "ADVOCATE_ROLE"
+        ) {
+          onDocumentUpload(formData?.clientDetails?.barCouncilId[0][1]?.file, formData?.clientDetails?.barCouncilId[0][0]).then((document) => {
+            const requestBody = {
+              [data?.selectUserType?.apiDetails?.requestKey]: {
+                tenantId: tenantId,
+                individualId: result?.Individual?.individualId,
+                isActive: false,
+                workflow: {
+                  action: "REGISTER",
+                  comments: `Applying for ${data?.selectUserType?.apiDetails?.requestKey} registration`,
+                  documents: [
+                    {
+                      id: null,
+                      documentType: document.fileType,
+                      fileStore: document.file?.files?.[0]?.fileStoreId,
+                      documentUid: "",
+                      additionalDetails: {
+                        fileName: formData?.clientDetails?.barCouncilId[0][0],
+                      },
+                    },
+                  ],
+                  assignes: [],
+                  rating: null,
+                },
+                documents: [
+                  {
+                    id: null,
+                    documentType: document.fileType,
+                    fileStore: document.file?.files?.[0]?.fileStoreId,
+                    documentUid: "",
+                    additionalDetails: {
+                      fileName: formData?.clientDetails?.barCouncilId[0][0],
+                    },
+                  },
+                ],
+                additionalDetails: {
+                  username: oldData?.name?.firstName + " " + oldData?.name?.name,
+                },
+                ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+                  res[curr] = formData?.clientDetails?.[curr];
+                  return res;
+                }, {}),
+              },
+            };
+            Digit.DRISTIService.advocateClerkService(data?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
+              roles: [
+                {
+                  name: "Citizen",
+                  code: "CITIZEN",
+                  tenantId: tenantId,
+                },
+              ],
+            })
+              .then(() => {
+                setShowSuccess(true);
+                const refreshToken = window.localStorage.getItem("citizen.refresh-token");
+                if (refreshToken) {
+                  getUserDetails(refreshToken).then((res) => {
+                    const { ResponseInfo, UserRequest: info, ...tokens } = res;
+                    const user = { info, ...tokens };
+                    window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                    window?.Digit.UserService.setUser(user);
+                    setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
+                    history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                  });
+                }
+              })
+              .catch(() => {
+                history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
+              });
+          });
+        }
+      })
+      .catch(() => {
+        history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error", createType: "LITIGANT" });
+      })
+      .finally(() => {
+        setShowSuccess(true);
 
+        console.log("FINALLY");
+        setParams({});
+      });
+    setParams({
+      ...params,
+      ...formData,
+    });
+    console.log(showSuccess);
+    // history.push(`${path}/additional-details/terms-conditions`);
+  };
+  if (!params?.Individual && showSuccess == false) {
+    history.push(pathOnRefresh);
+  }
   return (
-    <div className="employee-card-wrapper">
-      <div className="header-content">
-        <Header>{t("CS_COMMON_ADDITIONAL_DETAILS")}</Header>
-      </div>
+    <div className="advocate-additional-details">
       <FormComposerV2
         config={advocateClerkConfig}
         t={t}
@@ -119,12 +209,12 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path }) {
           onSubmit(props);
         }}
         isDisabled={isDisabled}
-        label={"CS_COMMONS_NEXT"}
-        headingStyle={{ textAlign: "center" }}
+        label={"CS_COMMON_CONTINUE"}
         defaultValues={{ ...params?.registrationData } || {}}
-        cardStyle={{ minWidth: "100%" }}
+        submitInForm
         onFormValueChange={onFormValueChange}
       ></FormComposerV2>
+
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );

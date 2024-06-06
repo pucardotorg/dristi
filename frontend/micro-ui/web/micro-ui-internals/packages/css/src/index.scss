@@ -97,6 +97,7 @@
 @import "./pages/employee/iframe.scss";
 
 @import "./pages/citizen/payment/payment-type.scss";
+@import "./pages/citizen/dristi/VerificationComponent.scss";
 @import "./pages/citizen/container.scss";
 @import "./pages/citizen/HomePageWrapper.scss";
 @import "./pages/citizen/CitizenEngagementNotificationWrapper.scss";
@@ -111,6 +112,22 @@
 @import "./components/inboxv2/index.scss";
 @import "./components//sidebar.scss";
 @import "./components/loaderWithGap.scss";
+
+/* @import "./dristi"; */
+@import "./dristi/components/customDragDrop.scss";
+@import "./dristi/components/delayApplication.scss";
+@import "./dristi/components/chequeDetails.scss";
+@import "./dristi/components/customTextArea.scss";
+@import "./dristi/components/customNote.scss";
+@import "./dristi/components/customUploadButton.scss";
+@import "./dristi/components/customRadioSelector.scss";
+@import "./dristi/components/customErrorTooltip.scss";
+@import "./dristi/eFiling.scss";
+@import "./dristi/components/selectUserTypeComponent.scss";
+@import "./dristi/pages/citizen/caseType.scss";
+@import "./dristi/pages/citizen/userRegistration.scss";
+@import "./dristi/components/verifyPhoneNumber.scss";
+@import "../src/pages/employee/nyayMitra.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -129,7 +146,7 @@
     h4 {
       margin: 0px !important;
     }
-    color: #f47738;
+    color: #007e7e;
     display: flex !important;
     align-items: center;
     svg {
@@ -645,14 +662,16 @@ input[type="number"] {
   }
 }
 
+.citizen-form-wrapper {
+  padding: 0px !important;
+}
+
 @media (min-width: 780px) {
   .citizen-form-wrapper {
     width: calc(100% - 219px);
     display: flex;
     justify-content: center;
     margin-top: 1rem;
-    padding-left: 16px;
-    padding-right: 16px;
   }
 }
 @media (min-width: 780px) {
@@ -660,6 +679,24 @@ input[type="number"] {
     padding-left: 15px;
     padding-right: 15px;
     margin-top: 1rem;
+  }
+}
+
+.langauge-select-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .radio-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  button {
+    width: 100%;
+    max-width: 100%;
+    box-shadow: none;
   }
 }
 
@@ -677,7 +714,7 @@ input[type="number"] {
   .ws-citizen-wrapper,
   .tl-citizen {
     width: calc(100% - 90px);
-    padding-left: 60px;
+    padding-left: 0px;
     padding-right: 16px;
     margin-top: 1rem;
   }
@@ -826,4 +863,8 @@ input[type="number"] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.dristi-font-bold {
+  font-weight: 700;
 }

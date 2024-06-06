@@ -1,7 +1,8 @@
 .navbar {
-  @apply text-white bg-secondary p-md w-full;
+  @apply text-white bg-white p-md w-full;
   position: fixed;
   z-index: 9999;
+  border-bottom: 1px solid #e8e8e8;
 
   img {
     display: inline-block;
@@ -23,6 +24,14 @@
 
   h3 {
     @apply inline-block border-l border-solid border-white pl-sm ml-sm;
+  }
+
+  .user-img-txt {
+    background: theme(colors.primary.main);
+    padding: 10px 15px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
   }
 }
 
@@ -97,7 +106,7 @@
       float: left;
       margin-top: 12px;
     }
-    .edit-btn-ico{
+    .edit-btn-ico {
       height: 17px;
       width: 17px;
       margin-top: 16px;
@@ -125,7 +134,7 @@
       cursor: pointer;
       display: flex;
       flex-direction: column;
-      
+
       .sidebar-link {
         display: flex;
         justify-content: space-between;
@@ -237,7 +246,7 @@
         cursor: pointer;
         display: flex;
         flex-direction: column;
-        
+
         .sidebar-link {
           display: flex;
           justify-content: space-between;

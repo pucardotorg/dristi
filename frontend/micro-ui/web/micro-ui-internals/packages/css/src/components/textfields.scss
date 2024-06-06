@@ -90,7 +90,9 @@
   width: fit-content !important;
   display: flex;
   align-items: center;
+  justify-content: center;
   background: theme(colors.grey.mid);
   border-right: 0;
-  padding-right: 5px;
+  padding: 0;
+  min-width: 40px;
 }
