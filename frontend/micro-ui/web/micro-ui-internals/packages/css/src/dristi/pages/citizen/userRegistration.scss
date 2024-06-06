@@ -27,6 +27,7 @@
 
   .response-main {
     padding: 40px;
+    margin-top: 20px;
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
@@ -305,7 +306,7 @@
         }
         .submit-bar {
           width: 100% !important;
-          box-shadow: none;
+          box-shadow: none !important;
         }
         .radio-wrap {
           .card {
@@ -420,6 +421,11 @@
         input {
           width: 273px;
         }
+      }
+
+      .submit-bar {
+        width: 100% !important;
+        box-shadow: none !important;
       }
     }
 

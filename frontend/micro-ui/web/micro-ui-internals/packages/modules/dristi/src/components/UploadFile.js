@@ -137,7 +137,7 @@ const UploadFile = (props) => {
         className="upload-file-div-main"
         style={{ display: "flex", maxWidth: "540px", gap: "2%", alignItems: "center", justifyContent: "space-between" }}
       >
-        <div className="upload-file-div-sub" style={{ minWidth: "73%" }}>
+        <div className="upload-file-div-sub" style={{ minWidth: "75%" }}>
           <div
             className={`upload-file ${user_type === "employee" ? "" : "upload-file-max-width"} ${props.disabled ? " disabled" : ""}`}
             style={extraStyles?.uploadFile ? extraStyles?.uploadFile : {}}
@@ -176,7 +176,7 @@ const UploadFile = (props) => {
         </div>
         <div
           className="upload-file-upload-button-div"
-          style={{ maxWidth: "25%", height: "40px", border: "solid 1px #007E7E", display: "flex", alignItems: "center" }}
+          style={{ minWidth: "25%", height: "40px", border: "solid 1px #007E7E", display: "flex", alignItems: "center" }}
         >
           <input
             type="file"
@@ -190,7 +190,7 @@ const UploadFile = (props) => {
               target.value = "";
             }}
             ref={inpRef}
-            style={{ opacity: 0, maxWidth: "100%", minHeight: "40px" }}
+            style={{ opacity: 0, display: "none", maxWidth: "100%", minHeight: "40px" }}
           />
           <span style={{ minWidth: "100%", cursor: "pointer", alignItems: "center" }} onClick={handleReupload}>
             <span

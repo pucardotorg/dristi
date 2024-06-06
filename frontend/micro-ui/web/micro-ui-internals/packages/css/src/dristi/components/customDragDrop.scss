@@ -274,7 +274,7 @@
       justify-content: space-between;
 
       .file-count-class {
-        width: calc(100% - 107px);
+        width: 66.66%;
         height: 40px;
         border: 1px #505a5f solid;
         padding: 8px 24px;
@@ -297,7 +297,8 @@
       }
 
       .button-class {
-        width: 102px;
+        width: 33.33%;
+        height: 40px;
         display: flex;
         padding: 8px 24px;
         gap: 4px;
