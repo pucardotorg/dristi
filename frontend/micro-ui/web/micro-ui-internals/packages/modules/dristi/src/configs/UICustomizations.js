@@ -153,6 +153,35 @@ export const UICustomizations = {
       return inboxModuleNameMap;
     }
   },
+  getAdvocateNameUsingBarRegistrationNumber: {
+    getNames: () => {
+      return {
+        url: "/advocate/advocate/v1/status/_search",
+        params: { status: "ACTIVE", tenantId: "pg" },
+        body: {
+          tenantId: "pg",
+        },
+        config: {
+          select: (data) => {
+            return data.advocates.map((adv) => {
+              return {
+                icon: (
+                  <span className="icon" style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span className="icon">{adv?.barRegistrationNumber}</span>
+                    <span className="icon" style={{ justifyContent: "end" }}>
+                      {adv?.additionalDetails?.username}
+                    </span>
+                  </span>
+                ),
+                barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
+                advocateName: adv?.additionalDetails?.username,
+              };
+            });
+          },
+        },
+      };
+    },
+  },
   registrationRequestsConfig: {
     additionalValidations: (type, data, keys) => {
       if (type === "date") {

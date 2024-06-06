@@ -66,6 +66,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
     // if (fileType && !input.fileTypes.includes(fileType)) {
     //   return { [input?.name]: "Invalid File Type", ...uploadErrorInfo };
     // }
+    if (file?.fileStore) return null;
     const maxFileSize = input?.maxFileSize * 1024 * 1024;
     return file.size > maxFileSize ? t(input?.maxFileErrorMessage) : null;
   };
@@ -109,9 +110,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             children={<DragDropJSX t={t} currentValue={currentValue} />}
             key={input?.name}
           />
-          <div className="upload-guidelines-div">
-            {input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}
-          </div>
+          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
         </div>
 
         {currentValue.map((file, index) => (

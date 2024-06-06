@@ -4,10 +4,9 @@ const advocateDetailsFormConfig = [
       {
         type: "radio",
         key: "isAdvocateRepresenting",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_IF_ADVOCATE_IS_COMPLAINANT",
         isMandatory: true,
         populators: {
-          label: "CS_ADVOCATE_REPRESENTING",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
@@ -36,34 +35,72 @@ const advocateDetailsFormConfig = [
     ],
   },
   {
-    head: "CS_ADVOCATE_BASIC_DETAIL",
     dependentKey: { isAdvocateRepresenting: ["showForm"] },
     body: [
       {
-        type: "dropdown",
-        key: "advocatedetails",
+        type: "apidropdown",
+        key: "advocateBarRegistrationNumber",
         label: "CS_BAR_REGISTRATION",
         isMandatory: true,
         populators: {
-          label: "SELECT_RESPONDENT_TYPE",
-          type: "radioButton",
-          optionsKey: "name",
-          error: "sample required message",
-          required: false,
+          allowMultiSelect: false,
+          name: "advocateBarRegNumberWithName",
           isMandatory: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
-          options: [
+          validation: {},
+          masterName: "commonUiConfig",
+          moduleName: "getAdvocateNameUsingBarRegistrationNumber",
+          customfn: "getNames",
+          optionsKey: "barRegistrationNumber",
+          optionsCustomStyle: { marginTop: "40px", justifyContent: "space-between", flexDirection: "row-reverse" },
+        },
+      },
+    ],
+  },
+  {
+    dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    body: [
+      {
+        type: "component",
+        component: "AdvocateNameDetails",
+        key: "AdvocateNameDetails",
+        withoutLabel: true,
+        populators: {
+          inputs: [
             {
-              code: "BH-1231-FD",
-              name: "BH-1231-FD",
-              isEnabled: true,
+              label: "FIRST_NAME",
+              type: "text",
+              name: "firstName",
+              isDisabled: true,
+              inputFieldClassName: "user-details-form-style",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
             },
             {
-              code: "BH-1231-FD",
-              name: "Sales Agreement",
-              isEnabled: true,
+              label: "MIDDLE_NAME",
+              type: "text",
+              name: "middleName",
+              isDisabled: true,
+              inputFieldClassName: "user-details-form-style",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
+            {
+              label: "LAST_NAME",
+              type: "text",
+              name: "lastName",
+              isDisabled: true,
+              inputFieldClassName: "user-details-form-style",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
             },
           ],
+          validation: {},
         },
       },
     ],
@@ -101,5 +138,5 @@ export const advocateDetailsConfig = {
   formconfig: advocateDetailsFormConfig,
   header: "CS_ADVOCATE_DETAILS_HEADING",
   subtext: "CS_ADVOCATE_DETAILS_SUBTEXT",
-  className: "advocate-detail"
+  className: "advocate-detail",
 };
