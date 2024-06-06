@@ -127,13 +127,10 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}
-                    // {...input.validation}
-                    validation={{
-                      isRequired: true,
-                      pattern: /^[0-9A-Z/]+$/,
-                      errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
-                      maxlength: 20,
-                    }}
+                    isRequired={input.validation.isRequired}
+                    pattern={input.validation.pattern}
+                    errMsg={input.validation.errMsg}
+                    maxlength={input.validation.maxlength}
                     style={{ minWidth: "500px" }}
                   />
                 )}
