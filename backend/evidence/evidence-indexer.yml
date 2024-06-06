@@ -9,7 +9,7 @@ ServiceMaps:
           type: general
           id: $.id
           isBulk: true
-          timeStampField: $.auditDetails.createdTime
+          timeStampField: $.auditdetails.createdTime
           jsonPath: $.artifact
           customJsonMapping:
             indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
@@ -79,7 +79,7 @@ ServiceMaps:
           type: general
           id: $.id
           isBulk: true
-          timeStampField: $.auditDetails.createdTime
+          timeStampField: $.auditdetails.createdTime
           jsonPath: $.artifact
           customJsonMapping:
             indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
