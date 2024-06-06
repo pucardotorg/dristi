@@ -1,5 +1,5 @@
 import { CardLabel, CardLabelError, CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
@@ -43,6 +43,7 @@ const SelectOtp = ({
       ...params,
       otp: "",
       aadharOtp: "",
+      adhaarNumber: "",
     });
 
     history.goBack();

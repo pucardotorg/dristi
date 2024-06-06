@@ -85,12 +85,13 @@ function CitizenHome({ tenantId, setHideBack }) {
   }, [searchResult, userType]);
 
   const userHasIncompleteRegistration = !individualId || isRejected;
+  const registrationIsDoneApprovalIsPending = individualId && isApprovalPending && !isRejected;
   useEffect(() => {
-    setHideBack(userHasIncompleteRegistration);
+    setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
     return () => {
       setHideBack(false);
     };
-  }, [userHasIncompleteRegistration]);
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
 
   if (isLoading || isSearchLoading || isFetching) {
     return <Loader />;
@@ -116,7 +117,7 @@ function CitizenHome({ tenantId, setHideBack }) {
             ></CustomCard>
           );
         })}
-      {individualId && isApprovalPending && !isRejected && <ApplicationAwaitingPage individualId={individualId} />}
+      {registrationIsDoneApprovalIsPending && <ApplicationAwaitingPage individualId={individualId} />}
       {userHasIncompleteRegistration && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
     </div>
   );
