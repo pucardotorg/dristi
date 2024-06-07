@@ -258,7 +258,7 @@ const Login = ({ stateCode }) => {
               params={params}
               setParams={setParmas}
               t={t}
-              path={`${path}/login`}
+              path={`${path}`}
             />
           </Route>
 
