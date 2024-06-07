@@ -99,7 +99,7 @@ public class IndividualUtilTest {
             individualUtil.individualCall(request, uri);
         });
 
-        assertTrue(thrown.getMessage().contains("Error in individual utility service: Error"));
+        assertTrue(thrown.getMessage().contains("Exception in individual utility service: Error"));
         verify(serviceRequestRepository, times(1)).fetchResult(any(), any());
     }
 }
