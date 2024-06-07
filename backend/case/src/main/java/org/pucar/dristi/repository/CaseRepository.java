@@ -179,9 +179,11 @@ public class CaseRepository {
                 Map<UUID, List<Party>> representingMap = jdbcTemplate.query(representingQuery, preparedStmtListDoc.toArray(), representingRowMapper);
                 if (representingMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
-                        courtCase.getRepresentatives().forEach(representative -> {
-                            representative.setRepresenting(representingMap.get(UUID.fromString(representative.getId())));
-                        });
+                        if(courtCase.getRepresentatives()!=null){
+                            courtCase.getRepresentatives().forEach(representative -> {
+                                representative.setRepresenting(representingMap.get(UUID.fromString(representative.getId())));
+                            });
+                        }
                     });
                 }
 
@@ -202,9 +204,11 @@ public class CaseRepository {
                 Map<UUID, List<Document>> caseLitigantDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), litigantDocumentRowMapper);
                 if (caseLitigantDocumentMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
-                        courtCase.getLitigants().forEach(litigant -> {
-                            litigant.setDocuments(caseLitigantDocumentMap.get(litigant.getId()));
-                        });
+                        if(courtCase.getLitigants()!=null){
+                            courtCase.getLitigants().forEach(litigant -> {
+                                litigant.setDocuments(caseLitigantDocumentMap.get(litigant.getId()));
+                            });
+                        }
                     });
                 }
 
