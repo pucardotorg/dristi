@@ -15,6 +15,7 @@ function CitizenHome({ tenantId, setHideBack }) {
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingAdvoacte, setIsFetchingAdvocate] = useState(true);
 
   const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
@@ -28,12 +29,6 @@ function CitizenHome({ tenantId, setHideBack }) {
     userInfo?.uuid && isUserLoggedIn
   );
 
-  useEffect(() => {
-    refetch().then(() => {
-      setIsFetching(false);
-    });
-  }, []);
-
   const cardIcons = [
     { Icon: <FileCaseIcon />, label: "File a Case", path: "/digit-ui/citizen/dristi/home/file-case" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -45,7 +40,7 @@ function CitizenHome({ tenantId, setHideBack }) {
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+  const { data: searchData, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
       tenantId,
@@ -55,6 +50,14 @@ function CitizenHome({ tenantId, setHideBack }) {
     Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
+  useEffect(() => {
+    refetch().then(() => {
+      refetchAdvocateClerk().then(() => {
+        setIsFetchingAdvocate(false);
+      });
+      setIsFetching(false);
+    });
+  }, []);
 
   const userTypeDetail = useMemo(() => {
     return userTypeOptions.find((item) => item.code === userType) || {};
@@ -93,7 +96,14 @@ function CitizenHome({ tenantId, setHideBack }) {
     };
   }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
 
-  if (isLoading || isSearchLoading || isFetching) {
+  useEffect(() => {
+    setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
+    return () => {
+      setHideBack(false);
+    };
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
+
+  if (isLoading || isSearchLoading || isFetching || isFetchingAdvoacte) {
     return <Loader />;
   }
 
@@ -117,8 +127,16 @@ function CitizenHome({ tenantId, setHideBack }) {
             ></CustomCard>
           );
         })}
+
       {registrationIsDoneApprovalIsPending && <ApplicationAwaitingPage individualId={individualId} />}
-      {userHasIncompleteRegistration && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
+      {userHasIncompleteRegistration && (
+        <TakeUserToRegistration
+          message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"}
+          isRejected={isRejected}
+          data={data}
+          userType={searchResult?.[0]?.additionalDetails?.userType}
+        />
+      )}
     </div>
   );
 }
