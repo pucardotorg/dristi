@@ -62,7 +62,7 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
     history.push(pathOnRefresh);
   }
   return (
-    <div className="advocate-additional-details">
+    <div className="advocate-additional-details upload-id">
       <FormComposerV2
         config={config}
         t={t}
