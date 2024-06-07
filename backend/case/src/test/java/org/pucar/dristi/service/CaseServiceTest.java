@@ -3,14 +3,12 @@ package org.pucar.dristi.service;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
@@ -59,7 +57,7 @@ public class CaseServiceTest {
     void testCreateCase() {
         // Set up mock responses
         doNothing().when(validator).validateCaseRegistration(any());
-        doNothing().when(enrichmentUtil).enrichCaseRegistration(any());
+        doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any());
         doNothing().when(workflowService).updateWorkflowStatus(any());
         doNothing().when(producer).push(any(), any()); // Stubbing to accept any arguments
 
@@ -69,7 +67,7 @@ public class CaseServiceTest {
         // Assert and verify
         assertNotNull(result);
         verify(validator, times(1)).validateCaseRegistration(any());
-        verify(enrichmentUtil, times(1)).enrichCaseRegistration(any());
+        verify(enrichmentUtil, times(1)).enrichCaseRegistrationOnCreate(any());
         verify(workflowService, times(1)).updateWorkflowStatus(any());
         verify(producer, times(1)).push(any(), any()); // Verifying the method was called with any arguments
     }
@@ -253,7 +251,7 @@ public class CaseServiceTest {
         CourtCase cases = new CourtCase(); // Mock court case list
         caseRequest.setCases(cases);
         doNothing().when(validator).validateCaseRegistration(any(CaseRequest.class));
-        doNothing().when(enrichmentUtil).enrichCaseRegistration(any(CaseRequest.class));
+        doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
 
 

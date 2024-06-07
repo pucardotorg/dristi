@@ -1,5 +1,4 @@
 package org.pucar.dristi.enrichment;
-import jakarta.servlet.http.Part;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
@@ -92,7 +91,7 @@ class CaseRegistrationEnrichmentTest {
     }
 
     @Test
-    void testEnrichCaseRegistration() {
+    void testEnrichCaseRegistrationOnCreate() {
         // Mock the config to return specific values
         when(config.getCaseFilingNumber()).thenReturn("caseFilingNumber");
 
@@ -102,7 +101,7 @@ class CaseRegistrationEnrichmentTest {
                 .thenReturn(idList);
 
         // Call the method to test
-        caseRegistrationEnrichment.enrichCaseRegistration(caseRequest);
+        caseRegistrationEnrichment.enrichCaseRegistrationOnCreate(caseRequest);
 
         // Verify the behavior and assert the results
         verify(idgenUtil).getIdList(any(RequestInfo.class), eq("tenant-id"), eq("caseFilingNumber"), eq(null), eq(1));
@@ -115,24 +114,30 @@ class CaseRegistrationEnrichmentTest {
     }
 
     @Test
-    void enrichCaseRegistration_ShouldThrowCustomException_WhenErrorOccurs() {
+    void enrichCaseRegistration_OnCreate_ShouldThrowCustomException_WhenErrorOccurs() {
 
         when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("Error"));
 
         // Invoke the method and assert that it throws CustomException
-        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistration(caseRequest));
+        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistrationOnCreate(caseRequest));
     }
 
     @Test
     void enrichCaseApplicationUponUpdate_ShouldEnrichAuditDetails() {
         userInfo.setUuid("user123");
+        courtCase.setId(UUID.randomUUID());
         courtCase.setAuditdetails(new AuditDetails());
+        String oldLastModifiedBy = "oldUser";
+        courtCase.getAuditdetails().setLastModifiedBy(oldLastModifiedBy);
+        Long oldLastModifiedTime = 123456789L;
+        courtCase.getAuditdetails().setLastModifiedTime(oldLastModifiedTime);
 
         // Invoke the method
         caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest);
 
         // Assert the enriched audit details
-        assertEquals(System.currentTimeMillis(), courtCase.getAuditdetails().getLastModifiedTime());
+        assertNotEquals(oldLastModifiedTime, courtCase.getAuditdetails().getLastModifiedTime());
+        assertNotEquals(oldLastModifiedBy, courtCase.getAuditdetails().getLastModifiedBy());
         assertEquals("user123", courtCase.getAuditdetails().getLastModifiedBy());
     }
 
@@ -140,7 +145,7 @@ class CaseRegistrationEnrichmentTest {
     void enrichCaseApplicationUponUpdate_ShouldEnrichAuditDetailsException() {
         caseRequest.setCases(null);
 
-        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistration(caseRequest));
+        assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseRegistrationOnCreate(caseRequest));
     }
 
     @Test
