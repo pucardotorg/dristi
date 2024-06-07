@@ -70,6 +70,9 @@ public class CaseRegistrationEnrichment {
 
     private static void enrichRepresentativesOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         String courCaseId = courtCase.getId().toString();
+        if (courtCase.getRepresentatives() == null) {
+            return;
+        }
         List<AdvocateMapping> representativesListToCreate = courtCase.getRepresentatives().stream().filter(representative -> representative.getId() == null).toList();
         representativesListToCreate.forEach(advocateMapping -> {
             advocateMapping.setId(String.valueOf(UUID.randomUUID()));
@@ -77,19 +80,23 @@ public class CaseRegistrationEnrichment {
             if (advocateMapping.getDocuments() != null) {
                 advocateMapping.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
-
-            advocateMapping.getRepresenting().forEach(party -> {
-                party.setId((UUID.randomUUID()));
-                party.setCaseId(courCaseId);
-                party.setAuditDetails(auditDetails);
-                if (party.getDocuments() != null) {
-                    party.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
-                }
-            });
+            if(advocateMapping.getRepresenting() != null) {
+                advocateMapping.getRepresenting().forEach(party -> {
+                    party.setId((UUID.randomUUID()));
+                    party.setCaseId(courCaseId);
+                    party.setAuditDetails(auditDetails);
+                    if (party.getDocuments() != null) {
+                        party.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
+                    }
+                });
+            }
         });
     }
 
     private static void enrichLitigantsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+        if(courtCase.getLitigants() == null) {
+            return;
+        }
         List<Party> litigantsListToCreate = courtCase.getLitigants().stream().filter(litigant -> litigant.getId() == null).toList();
         litigantsListToCreate.forEach(party -> {
             party.setId((UUID.randomUUID()));
@@ -101,6 +108,9 @@ public class CaseRegistrationEnrichment {
     }
 
     private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+        if(courtCase.getStatutesAndSections() == null) {
+            return;
+        }
         List<StatuteSection> statutesAndSectionsListToCreate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() == null).toList();
         statutesAndSectionsListToCreate.forEach(statuteSection -> {
             statuteSection.setId(UUID.randomUUID());
@@ -111,11 +121,16 @@ public class CaseRegistrationEnrichment {
     }
 
     private static void enrichLinkedCaseOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+        if(courtCase.getLinkedCases() == null) {
+            return;
+        }
         List<LinkedCase> linkedCasesListToCreate = courtCase.getLinkedCases().stream().filter(linkedCase -> linkedCase.getId() == null).toList();
         linkedCasesListToCreate.forEach(linkedCase -> {
             linkedCase.setId(UUID.randomUUID());
             linkedCase.setAuditdetails(auditDetails);
-            linkedCase.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
+            if(linkedCase.getDocuments() != null) {
+                linkedCase.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
+            }
         });
     }
 
