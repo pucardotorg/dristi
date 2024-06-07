@@ -202,16 +202,15 @@ const ApplicationDetails = ({ location, match }) => {
   );
   const barDetails = useMemo(() => {
     return [
-      { title: "Bar Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
+      { title: "BAR Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
       {
-        title: "Bar Council ID",
+        title: "BAR Council ID",
         image: true,
         content: fileName,
       },
       {
         doc: (
           <DocViewerWrapper
-            style={{ maxWidth: "100px", maxHeight: "100px" }}
             fileStoreId={fileStoreId}
             tenantId={tenantId}
             docViewerCardClassName={"doc-card"}

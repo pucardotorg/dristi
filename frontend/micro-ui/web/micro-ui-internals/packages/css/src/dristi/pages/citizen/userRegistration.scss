@@ -153,10 +153,19 @@
       }
     }
 
+    .login-form.register {
+      .card {
+        .card-header {
+          font-size: 24px !important;
+        }
+      }
+    }
+
     .login-form {
       padding: 40px;
       margin: 0px;
       background-color: #ffffff;
+
       .card {
         box-shadow: none;
         padding: 0px;
@@ -164,11 +173,12 @@
         .card-header {
           margin: 0px;
           font-family: Roboto;
-          font-size: 24px;
+          font-size: 40px;
           font-weight: 700;
           line-height: 30px;
           text-align: center;
           color: #0b0c0c;
+          padding-bottom: 12px;
         }
         .card-text {
           margin: 0px;
@@ -245,7 +255,7 @@
     .advocate-additional-details {
       padding: 40px !important;
       background-color: #ffffff;
-      max-width: 593px;
+      width: 593px;
       margin: 24px;
 
       .card {
@@ -635,6 +645,7 @@ body {
   background-color: #ffffff !important;
   box-shadow: none !important;
   margin: 24px;
+  flex-direction: column !important;
   .card {
     margin: 0px !important;
     padding: 0px !important;
