@@ -5,11 +5,11 @@ import { useHistory } from "react-router-dom";
 import { ReactComponent as RegisterImage } from "./ImageUpload/image/register.svg";
 import { ReactComponent as RightArrow } from "./ImageUpload/image/arrow_forward.svg";
 
-function TakeUserToRegistration({ message }) {
+function TakeUserToRegistration({ message, isRejected, data, userType }) {
   const { t } = useTranslation();
   const history = useHistory();
   return (
-    <div className="take-user-to-registration" >
+    <div className="take-user-to-registration">
       <div style={{ maxHeight: "40vh" }}>
         <RegisterImage></RegisterImage>
       </div>
@@ -22,11 +22,15 @@ function TakeUserToRegistration({ message }) {
             sessionStorage.removeItem("Digit.UploadedDocument");
             sessionStorage.removeItem("Digit.aadharNumber");
             sessionStorage.removeItem("Digit.isAadharNumberVerified");
-            history.push(`/digit-ui/citizen/dristi/home/registration/user-name`);
+            !isRejected
+              ? history.push(`/digit-ui/citizen/dristi/home/registration/user-name`)
+              : history.push(`/digit-ui/citizen/dristi/home/registration/user-type`, { newParams: data, userType: userType, isRejected: isRejected });
           }}
           label={t("Register")}
         >
-          <div className="svg-div"> <RightArrow /></div>
+          <div className="svg-div">
+            <RightArrow />
+          </div>
         </Button>
       </div>
     </div>

@@ -36,6 +36,8 @@ const Registration = ({ stateCode }) => {
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
   const [newParams, setNewParams] = useState(history.location.state?.newParams || {});
+  const [userTypeRegister, setUserTypeRegister] = useState(history.location.state?.userType || {});
+
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
@@ -145,8 +147,10 @@ const Registration = ({ stateCode }) => {
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
-      const { otp, ...temp } = newParams;
-      setNewParams(temp);
+      setParmas((prev) => ({
+        ...prev,
+        otp: "",
+      }));
     }
   };
   const handleOtpChange = (otp) => {
@@ -322,6 +326,7 @@ const Registration = ({ stateCode }) => {
               setParams={setNewParams}
               pathOnRefresh={pathOnRefresh}
               params={newParams}
+              userTypeRegister={userTypeRegister}
               onSelect={handleUserTypeSave}
             />
           </Route>
