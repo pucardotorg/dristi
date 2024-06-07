@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.util.AdvocateUtil;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
@@ -26,12 +28,17 @@ public class CaseRegistrationEnrichment {
     @Autowired
     private Configuration config;
 
+    @Autowired
+    private CaseUtil caseUtil;
+
     public void enrichCaseRegistration(CaseRequest caseRequest) {
         try {
             CourtCase courtCase = caseRequest.getCases();
 
-            List<String> courtCaseRegistrationIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumber(), null, 1);
-            log.info("Court Case Registration Id List :: {}", courtCaseRegistrationIdList);
+            List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumberCp(), null, 1);
+            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseNumberCc(), null, 1);
+            log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
+            log.info("Court Case Registration Case Number CC Id List :: {}", courtCaseRegistrationCaseNumberIdList);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             courtCase.setAuditdetails(auditDetails);
 
@@ -94,8 +101,9 @@ public class CaseRegistrationEnrichment {
                 });
             }
 
-            courtCase.setFilingNumber(courtCaseRegistrationIdList.get(0));
-            courtCase.setCaseNumber(courtCase.getFilingNumber());
+            courtCase.setFilingNumber(courtCaseRegistrationFillingNumberIdList.get(0));
+            courtCase.setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            courtCase.setCourCaseNumber(caseUtil.getCNRNumber(courtCase.getFilingNumber()));
 
         } catch (Exception e) {
             e.printStackTrace();
