@@ -3,7 +3,7 @@ import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { CloseIconWhite } from "../../../icons/svgIndex";
 
 const SelectOtp = ({
@@ -25,6 +25,7 @@ const SelectOtp = ({
   setIsOtpValid,
 }) => {
   const history = useHistory();
+  const location = useLocation();
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(25);
@@ -46,7 +47,9 @@ const SelectOtp = ({
       aadharOtp: "",
       adhaarNumber: "",
     });
-    setIsOtpValid(true);
+    if (!location.pathname.includes("/registration/aadhar-otp")) {
+      setIsOtpValid(true);
+    }
     history.goBack();
   };
   const Heading = (props) => {

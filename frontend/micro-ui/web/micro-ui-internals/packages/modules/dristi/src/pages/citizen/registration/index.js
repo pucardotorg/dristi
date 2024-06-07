@@ -189,7 +189,7 @@ const Registration = ({ stateCode }) => {
 
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    setNewParams({ ...newParams, aadharOtp: "" });
+    setNewParams({ ...newParams, aadharOtp: "", adhaarNumber: "" });
     history.replace(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
@@ -209,7 +209,16 @@ const Registration = ({ stateCode }) => {
   };
   const onDocumentUpload = async (filename, filedata, IdType) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
-    setNewParams({ ...newParams, indentity: "OTHER" });
+    const identityObj = {
+      IdVerification: {
+        selectIdType: {
+          code: "OTHER ID",
+          name: "CS_OTHER",
+          subText: "CS_OTHER_SUB_TEXT",
+        },
+      },
+    };
+    setNewParams({ ...newParams, indentity: identityObj });
 
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
     Digit.SessionStorage.del("aadharNumber");
