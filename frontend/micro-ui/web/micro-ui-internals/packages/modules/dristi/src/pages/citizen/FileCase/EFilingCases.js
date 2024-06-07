@@ -158,29 +158,29 @@ function EFilingCases({ path }) {
           return show && config;
         })
         .map((config) => {
-          // const { scrutiny } = caseData.additionalDetails;
-          const scrutiny = {
-            complaintDetails: {
-              scrutinyMessage: "",
-              form: [
-                {
-                  firstName: "Name does not match",
-                  lastname: "Doest not match",
-                },
-                {},
-              ],
-            },
-            respondentDetails: {
-              scrutinyMessage: "",
-              form: [{}, {}],
-            },
-          };
+          const { scrutiny } = caseDetails.additionalDetails || { scrutiny: {} };
+          // const scrutiny = {
+          //   complaintDetails: {
+          //     scrutinyMessage: "",
+          //     form: [
+          //       {
+          //         firstName: "Name does not match",
+          //         lastname: "Doest not match",
+          //       },
+          //       {},
+          //     ],
+          //   },
+          //   respondentDetails: {
+          //     scrutinyMessage: "",
+          //     form: [{}, {}],
+          //   },
+          // };
           const updatedBody = config.body
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;
               const modifiedFormComponent = structuredClone(formComponent);
               modifiedFormComponent.disable = true;
-              if (key in scrutiny[selected].form[index]) {
+              if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
                 modifiedFormComponent.disable = false;
                 modifiedFormComponent.withoutLabel = true;
                 return [
@@ -189,7 +189,7 @@ function EFilingCases({ path }) {
                     component: "ScrutinyInfo",
                     key: "firstNameScrutiny",
                     populators: {
-                      scrutinyMessage: scrutiny[selected].form[index][key],
+                      scrutinyMessage: scrutiny?.[selected].form[index][key],
                     },
                   },
                   modifiedFormComponent,
@@ -204,7 +204,7 @@ function EFilingCases({ path }) {
           };
         });
     });
-  }, [isDependentEnabled, formdata, formConfig]);
+  }, [isDependentEnabled, formdata, formConfig, caseDetails.additionalDetails, selected]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
@@ -631,7 +631,6 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
-            className={"case-types"}
             className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>

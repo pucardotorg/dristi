@@ -1,0 +1,24 @@
+.home-screen-wrapper {
+  min-height: "calc(100vh - 90px)";
+  width: "100%";
+  padding: "30px";
+  .header-class {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .header {
+      font-size: 40px;
+      font-weight: 600;
+    }
+    .button-field {
+      display: flex;
+      justify-content: flex-end;
+      gap: 30px;
+
+      .tertiary-button-selector {
+        background-color: #007e7e !important;
+        box-shadow: none;
+      }
+    }
+  }
+}
