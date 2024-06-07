@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.CaseRequest;
 import org.pucar.dristi.web.models.CourtCase;
@@ -36,63 +37,17 @@ public class CaseRegistrationEnrichment {
             courtCase.setAuditdetails(auditDetails);
 
             courtCase.setId(UUID.randomUUID());
-            courtCase.getLinkedCases().forEach(linkedCase -> {
-                linkedCase.setId(UUID.randomUUID());
-                linkedCase.setAuditdetails(auditDetails);
-                linkedCase.getDocuments().forEach(document -> {
-                    document.setId(String.valueOf(UUID.randomUUID()));
-                    document.setDocumentUid(document.getId());
-                });
-            });
 
-            courtCase.getStatutesAndSections().forEach(statuteSection -> {
-                statuteSection.setId(UUID.randomUUID());
-                statuteSection.setStrSections(listToString(statuteSection.getSections()));
-                statuteSection.setStrSubsections(listToString(statuteSection.getSubsections()));
-                statuteSection.setAuditdetails(auditDetails);
-            });
+            CaseUtil.enrichLinkedCaseForUpdate(courtCase, auditDetails);
 
-            courtCase.getLitigants().forEach(party -> {
-                party.setId((UUID.randomUUID()));
-                party.setAuditDetails(auditDetails);
-                if (party.getDocuments() != null) {
-                    party.getDocuments().forEach(document -> {
-                        document.setId(String.valueOf(UUID.randomUUID()));
-                        document.setDocumentUid(document.getId());
-                    });
-                }
-            });
+            CaseUtil.enrichStatutAndSectionsForUpdate(courtCase, auditDetails);
 
-            courtCase.getRepresentatives().forEach(advocateMapping -> {
-                advocateMapping.setId(String.valueOf(UUID.randomUUID()));
-                advocateMapping.setAuditDetails(auditDetails);
-                if (advocateMapping.getDocuments() != null) {
-                    advocateMapping.getDocuments().forEach(document -> {
-                        document.setId(String.valueOf(UUID.randomUUID()));
-                        document.setDocumentUid(document.getId());
-                    });
-                }
+            CaseUtil.enrichLitigantsForUpdate(courtCase, auditDetails);
 
-                advocateMapping.getRepresenting().forEach(party -> {
-                    party.setId((UUID.randomUUID()));
-                    party.setCaseId(courtCase.getId().toString());
-                    party.setAuditDetails(auditDetails);
-                    if (party.getDocuments() != null) {
-                        party.getDocuments().forEach(document -> {
-                            document.setId(String.valueOf(UUID.randomUUID()));
-                            document.setDocumentUid(document.getId());
-                        });
-                    }
-                });
-            });
+            CaseUtil.enrichRepresentivesForUpdate(courtCase, auditDetails);
 
 //                    courtCase.setIsActive(false);
-            if (courtCase.getDocuments() != null) {
-                courtCase.getDocuments().forEach(document -> {
-                    document.setId(String.valueOf(UUID.randomUUID()));
-                    document.setDocumentUid(document.getId());
-                });
-            }
+            CaseUtil.enrichDocumentsForUpdate(courtCase);
 
             courtCase.setFilingNumber(courtCaseRegistrationIdList.get(0));
             courtCase.setCaseNumber(courtCase.getFilingNumber());
@@ -104,25 +59,20 @@ public class CaseRegistrationEnrichment {
         }
     }
 
-    public String listToString(List<String> list) {
-        StringBuilder stB = new StringBuilder();
-        boolean isFirst = true;
-        for (String doc : list) {
-            if (isFirst) {
-                isFirst = false;
-                stB.append(doc);
-            } else {
-                stB.append("," + doc);
-            }
-        }
-
-        return stB.toString();
-    }
-
     public void enrichCaseApplicationUponUpdate(CaseRequest caseRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
             CourtCase courtCase = caseRequest.getCases();
+            CaseUtil.enrichLinkedCaseForUpdate(courtCase, courtCase.getAuditdetails());
+
+            CaseUtil.enrichStatutAndSectionsForUpdate(courtCase, courtCase.getAuditdetails());
+
+            CaseUtil.enrichLitigantsForUpdate(courtCase, courtCase.getAuditdetails());
+
+            CaseUtil.enrichRepresentivesForUpdate(courtCase, courtCase.getAuditdetails());
+
+            CaseUtil.enrichDocumentsForUpdate(courtCase);
+
             courtCase.getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
             courtCase.getAuditdetails().setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
 
