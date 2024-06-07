@@ -252,6 +252,15 @@
       }
     }
 
+    .upload-id {
+      .upload-file-upload-button-div {
+        width: 25%;
+        input {
+          display: none;
+        }
+      }
+    }
+
     .advocate-additional-details {
       padding: 40px !important;
       background-color: #ffffff;
@@ -263,6 +272,9 @@
         padding: 0px;
         margin: 0px !important;
         align-items: center;
+        div {
+          width: 100% !important;
+        }
         .card-section-header:first-child {
           margin: 0px !important;
           font-family: Roboto Condensed;
