@@ -66,6 +66,9 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if(pgObject!=null)
                     courtCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                PGobject caseDetailsObject = (PGobject) rs.getObject("casedetails");
+                if(caseDetailsObject!=null)
+                    courtCase.setCaseDetails(objectMapper.readTree(caseDetailsObject.getValue()));
 
                 caseMap.put(uuid, courtCase);
             }
