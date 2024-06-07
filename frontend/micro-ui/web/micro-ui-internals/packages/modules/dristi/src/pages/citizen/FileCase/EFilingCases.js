@@ -85,7 +85,6 @@ function EFilingCases({ path }) {
   }, [selected, caseDetails]);
 
   const accordion = useMemo(() => {
-    debugger;
     return sideMenuConfig.map((parent, pIndex) => ({
       ...parent,
       isOpen: pIndex === parentOpen,
@@ -142,6 +141,16 @@ function EFilingCases({ path }) {
     }
 
     return formdata.map(({ data }, index) => {
+      let disableConfigFields = [];
+      formConfig.forEach((config) => {
+        config.body.forEach((body) => {
+          if ("disableConfigFields" in body && "disableConfigKey" in body && "key" in body) {
+            if (!!data?.[body.key]?.[body.disableConfigKey]) {
+              disableConfigFields = [...disableConfigFields, ...body.disableConfigFields];
+            }
+          }
+        });
+      });
       return formConfig
         .filter((config) => {
           const dependentKeys = config?.dependentKey;
@@ -156,6 +165,49 @@ function EFilingCases({ path }) {
             }
           }
           return show && config;
+        })
+        .map((config) => {
+          return {
+            ...config,
+            body: config?.body.map((body) => {
+              if (body?.addUUID) {
+                body.uuid = index;
+              }
+              if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators.inputs.map((input) => {
+                      if (
+                        disableConfigFields.some((field) => {
+                          if (Array.isArray(input?.name)) return field === input?.key;
+                          return field === input?.name;
+                        })
+                      ) {
+                        return {
+                          ...input,
+                          disable: true,
+                          isDisabled: true,
+                        };
+                      }
+                      return {
+                        ...input,
+                      };
+                    }),
+                  },
+                };
+              } else if ("populators" in body) {
+                return {
+                  ...body,
+                  disable: disableConfigFields.some((field) => field === body?.populators?.name),
+                };
+              }
+              return {
+                ...body,
+                disable: disableConfigFields.some((field) => field === body?.name),
+              };
+            }),
+          };
         })
         .map((config) => {
           const { scrutiny } = caseDetails.additionalDetails || { scrutiny: {} };
@@ -179,7 +231,7 @@ function EFilingCases({ path }) {
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;
               const modifiedFormComponent = structuredClone(formComponent);
-              modifiedFormComponent.disable = true;
+              if (scrutiny?.[selected]) modifiedFormComponent.disable = true;
               if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
                 modifiedFormComponent.disable = false;
                 modifiedFormComponent.withoutLabel = true;
@@ -392,11 +444,13 @@ function EFilingCases({ path }) {
         })
       );
 
-      const representatives = [...caseDetails?.representatives]?.map((representative) => ({
-        ...representative,
-        caseId: caseDetails?.id,
-        representing: [...litigants],
-      }));
+      const representatives = [...caseDetails?.representatives]
+        ?.filter((representative) => representative?.advocateId)
+        .map((representative) => ({
+          ...representative,
+          caseId: caseDetails?.id,
+          representing: representative?.advocateId ? [...litigants] : [],
+        }));
       data.litigants = [...litigants];
       data.representatives = [...representatives];
       data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata, isCompleted: true } };
@@ -569,6 +623,7 @@ function EFilingCases({ path }) {
         cases: {
           ...caseDetails,
           ...data,
+          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
