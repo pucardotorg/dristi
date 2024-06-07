@@ -187,8 +187,8 @@ export const newConfig = [
               type: "text",
               name: "doorNo",
               validation: {
-                errMsg: "This field is mandatory and requires atleast 2 characters.",
-                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
+                errMsg: "DOOR_NUMBER_ERROR_MESSAGE",
+                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{0,100}$/i,
                 isRequired: true,
                 minlength: 2,
                 title: "",
@@ -495,7 +495,7 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[0-9A-Z/]{2,20}$/,
+                pattern: /^[0-9A-Z/]{0,20}$/,
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
                 maxlength: 20,
               },

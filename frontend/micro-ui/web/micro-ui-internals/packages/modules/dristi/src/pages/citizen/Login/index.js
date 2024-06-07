@@ -254,6 +254,7 @@ const Login = ({ stateCode }) => {
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
+              setIsOtpValid={setIsOtpValid}
               otp={params.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}
