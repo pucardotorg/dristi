@@ -91,6 +91,7 @@ const TopBar = ({
         cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
         onNotificationIconClick={onNotificationIconClick}
         hideNotificationIconOnSomeUrlsWhenNotLoggedIn={true}
+        hideChangeLangOnSomeUrlsWhenNotLoggedIn={location.pathname.includes("/select-language") ? true : false}
         changeLanguage={
           !mobileView ? (
             <ChangeLanguage
