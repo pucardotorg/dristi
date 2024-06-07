@@ -184,7 +184,9 @@
   flex-direction: column;
   gap: 12px;
   .drag-drop-heading-main {
+    width: 100%;
     .drag-drop-heading {
+      width: 100%;
       display: flex;
       align-items: center;
       margin-left: 10px;
@@ -194,8 +196,11 @@
       }
 
       h1 {
-        height: 20px;
-        font-weight: 700;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: center;
       }
 
       h3 {
@@ -204,8 +209,12 @@
       }
 
       span {
-        padding-left: 3px;
-        padding-top: 5px;
+        padding: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: center;
         cursor: pointer;
       }
     }
