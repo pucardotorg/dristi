@@ -131,6 +131,7 @@ const Login = ({ stateCode }) => {
   };
 
   const selectMobileNumber = async (mobileNumber) => {
+    setIsOtpValid(true);
     setCanSubmitNo(false);
     setParmas({ ...params, ...mobileNumber });
     const data = {
@@ -207,6 +208,7 @@ const Login = ({ stateCode }) => {
   };
 
   const resendOtp = async () => {
+    setIsOtpValid(true);
     setParmas({ ...params, otp: "" });
     const { mobileNumber } = params;
     const data = {
