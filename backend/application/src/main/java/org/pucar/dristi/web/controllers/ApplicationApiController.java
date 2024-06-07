@@ -54,29 +54,18 @@ public class ApplicationApiController{
 
     @RequestMapping(value="/application/v1/create", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new application + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
-        String accept = request.getHeader("Accept");
-                try {
                     Application application = applicationService.createApplication(body);
                     ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
                     ApplicationResponse applicationResponse = ApplicationResponse.builder().application(application).responseInfo(responseInfo).build();
                     return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<ApplicationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
     }
 
     @RequestMapping(value="/application/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<ApplicationExistsResponse> applicationV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the application(S) exists", required=true, schema=@Schema()) @Valid @RequestBody ApplicationExistsRequest body) {
-        try {
             List<ApplicationExists> applicationExistsList = applicationService.existsApplication(body);
             ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
             ApplicationExistsResponse applicationExistsResponse = ApplicationExistsResponse.builder().applicationExists(applicationExistsList).responseInfo(responseInfo).build();
             return new ResponseEntity<>(applicationExistsResponse, HttpStatus.OK);
-        } catch (Exception e) {
-            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false);
-            ApplicationExistsResponse applicationExistsResponse = ApplicationExistsResponse.builder().applicationExists(null).responseInfo(responseInfo).build();
-            return new ResponseEntity<>(applicationExistsResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @RequestMapping(value="/application/v1/search", method = RequestMethod.POST)
@@ -92,27 +81,19 @@ public class ApplicationApiController{
             schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy,
             @Parameter(in = ParameterIn.QUERY, schema=@Schema()) @Valid @RequestParam(value = "status", required = false) String status,
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody RequestInfoBody requestInfoBody) {
-            try {
                 List<Application> applicationList = applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset, sortBy, requestInfoBody);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoBody.getRequestInfo(), true);
                 ApplicationListResponse applicationListResponse = ApplicationListResponse.builder().applicationList(applicationList).totalCount(applicationList.size()).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(applicationListResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<ApplicationListResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
         }
 
 
     @RequestMapping(value="/application/v1/update", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update application(s) + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
-            try {
                 Application application = applicationService.updateApplication(body);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
                 ApplicationResponse applicationResponse = ApplicationResponse.builder().application(application).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
-            } catch (Exception e) {
-                return new ResponseEntity<ApplicationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
     }
 
 }
