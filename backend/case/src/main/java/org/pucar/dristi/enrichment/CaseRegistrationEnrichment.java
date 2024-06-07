@@ -99,7 +99,7 @@ public class CaseRegistrationEnrichment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("Error enriching case application: {}", e.getMessage());
+            log.error("Error enriching case application :: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
         }
     }
@@ -127,7 +127,7 @@ public class CaseRegistrationEnrichment {
             courtCase.getAuditdetails().setLastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid());
 
         } catch (Exception e) {
-            log.error("Error enriching case application upon update: {}", e.getMessage());
+            log.error("Error enriching case application upon update :: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service during case update process: " + e.getMessage());
         }
     }

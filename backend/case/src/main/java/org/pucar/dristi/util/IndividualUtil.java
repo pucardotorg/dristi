@@ -47,10 +47,10 @@ public class IndividualUtil {
             }
             return false;
         } catch (CustomException e) {
-            log.error("Custom Exception occurred in individual Utility");
+            log.error("Custom Exception occurred in individual Utility :: {}",e.toString());
             throw e;
         } catch (Exception e){
-            throw new CustomException(INDIVIDUAL_UTILITY_EXCEPTION,"Error in individual utility service: "+e.getMessage());
+            throw new CustomException(INDIVIDUAL_UTILITY_EXCEPTION,"Exception in individual utility service: "+e.getMessage());
         }
     }
 }

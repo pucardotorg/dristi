@@ -40,7 +40,7 @@ public class WitnessRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             String casesQuery = "";
             casesQuery = queryBuilder.getWitnessesSearchQuery(searchCriteria, preparedStmtList);
-            log.info("Final case query: {}", casesQuery);
+            log.info("Final case query :: {}", casesQuery);
             List<Witness> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
             if (list != null) {
                 witnessList.addAll(list);
@@ -51,8 +51,8 @@ public class WitnessRepository {
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching witness application list");
-            throw new CustomException(SEARCH_WITNESS_ERR,"Error while fetching witness application list: "+e.getMessage());
+            log.error("Error while fetching witness application list :: {}", e.toString());
+            throw new CustomException(SEARCH_WITNESS_ERR,"Exception while fetching witness application list: "+e.getMessage());
         }
     }
 

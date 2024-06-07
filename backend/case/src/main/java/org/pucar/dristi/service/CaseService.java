@@ -59,7 +59,7 @@ public class CaseService {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating case");
+            log.error("Error occurred while creating case :: {}", e.toString());
             throw new CustomException(CREATE_CASE_ERR, e.getMessage());
         }
     }
@@ -77,7 +77,7 @@ public class CaseService {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
+            log.error("Error while fetching to search results :: {}",e.toString());
             throw new CustomException(SEARCH_CASE_ERR, e.getMessage());
         }
     }
@@ -101,8 +101,8 @@ public class CaseService {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating case");
-            throw new CustomException(UPDATE_CASE_ERR, "Error occurred while updating case: " + e.getMessage());
+            log.error("Error occurred while updating case :: {}",e.toString());
+            throw new CustomException(UPDATE_CASE_ERR, "Exception occurred while updating case: " + e.getMessage());
         }
 
     }
@@ -114,7 +114,7 @@ public class CaseService {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist case");
+            log.error("Error while fetching to exist case :: {}",e.toString());
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }
     }

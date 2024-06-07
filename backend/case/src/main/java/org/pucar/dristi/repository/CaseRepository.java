@@ -71,11 +71,11 @@ public class CaseRepository {
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String casesQuery = "";
                 casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList);
-                log.info("Final case query: {}", casesQuery);
+                log.info("Final case query :: {}", casesQuery);
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
                 if (list != null) {
                     caseCriteria.setResponseList(list);
-                    log.info("Case list size : {}",list.size());
+                    log.info("Case list size :: {}",list.size());
                 }
 
                 List<String> ids = new ArrayList<>();
@@ -131,7 +131,7 @@ public class CaseRepository {
                 String linkedCaseQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 linkedCaseQuery = queryBuilder.getLinkedCaseSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final linked case query: {}", linkedCaseQuery);
+                log.info("Final linked case query :: {}", linkedCaseQuery);
                 Map<UUID, List<LinkedCase>> linkedCasesMap = jdbcTemplate.query(linkedCaseQuery, preparedStmtListDoc.toArray(), linkedCaseRowMapper);
                 if (linkedCasesMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -142,7 +142,7 @@ public class CaseRepository {
                 String litigantQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 litigantQuery = queryBuilder.getLitigantSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final litigant query: {}", litigantQuery);
+                log.info("Final litigant query :: {}", litigantQuery);
                 Map<UUID, List<Party>> litigantMap = jdbcTemplate.query(litigantQuery, preparedStmtListDoc.toArray(), litigantRowMapper);
                 if (litigantMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -153,7 +153,7 @@ public class CaseRepository {
                 String statueAndSectionQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final statute and sections query: {}", statueAndSectionQuery);
+                log.info("Final statute and sections query :: {}", statueAndSectionQuery);
                 Map<UUID, List<StatuteSection>> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListDoc.toArray(), statuteSectionRowMapper);
                 if (statuteSectionsMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -164,7 +164,7 @@ public class CaseRepository {
                 String representativeQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 representativeQuery = queryBuilder.getRepresentativesSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final representative query: {}", representativeQuery);
+                log.info("Final representative query :: {}", representativeQuery);
                 Map<UUID, List<AdvocateMapping>> representativeMap = jdbcTemplate.query(representativeQuery, preparedStmtListDoc.toArray(), representativeRowMapper);
                 if (representativeMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -175,7 +175,7 @@ public class CaseRepository {
                 String representingQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 representingQuery = queryBuilder.getRepresentingSearchQuery(idsRepresentative, preparedStmtListDoc);
-                log.info("Final representing query: {}", representativeQuery);
+                log.info("Final representing query :: {}", representativeQuery);
                 Map<UUID, List<Party>> representingMap = jdbcTemplate.query(representingQuery, preparedStmtListDoc.toArray(), representingRowMapper);
                 if (representingMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -187,7 +187,7 @@ public class CaseRepository {
 
                 String casesDocumentQuery = "";
                 casesDocumentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-                log.info("Final document query: {}", casesDocumentQuery);
+                log.info("Final document query :: {}", casesDocumentQuery);
                 Map<UUID, List<Document>> caseDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), caseDocumentRowMapper);
                 if (caseDocumentMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -198,7 +198,7 @@ public class CaseRepository {
                 casesDocumentQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 casesDocumentQuery = queryBuilder.getLitigantDocumentSearchQuery(idsLitigant, preparedStmtListDoc);
-                log.info("Final document query: {}", casesDocumentQuery);
+                log.info("Final document query :: {}", casesDocumentQuery);
                 Map<UUID, List<Document>> caseLitigantDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), litigantDocumentRowMapper);
                 if (caseLitigantDocumentMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -211,7 +211,7 @@ public class CaseRepository {
                 casesDocumentQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 casesDocumentQuery = queryBuilder.getLinkedCaseDocumentSearchQuery(idsLinkedCases, preparedStmtListDoc);
-                log.info("Final document query: {}", casesDocumentQuery);
+                log.info("Final document query :: {}", casesDocumentQuery);
                 Map<UUID, List<Document>> caseLinkedCaseDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), linkedCaseDocumentRowMapper);
                 if (caseLinkedCaseDocumentMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -226,7 +226,7 @@ public class CaseRepository {
                 casesDocumentQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 casesDocumentQuery = queryBuilder.getRepresentativeDocumentSearchQuery(idsRepresentative, preparedStmtListDoc);
-                log.info("Final document query: {}", casesDocumentQuery);
+                log.info("Final document query :: {}", casesDocumentQuery);
                 Map<UUID, List<Document>> caseRepresentiveDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), representativeDocumentRowMapper);
                 if (caseRepresentiveDocumentMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -241,7 +241,7 @@ public class CaseRepository {
                 casesDocumentQuery = "";
                 preparedStmtListDoc = new ArrayList<>();
                 casesDocumentQuery = queryBuilder.getRepresentingDocumentSearchQuery(idsRepresenting, preparedStmtListDoc);
-                log.info("Final document query: {}", casesDocumentQuery);
+                log.info("Final document query :: {}", casesDocumentQuery);
                 Map<UUID, List<Document>> caseRepresentingDocumentMap = jdbcTemplate.query(casesDocumentQuery, preparedStmtListDoc.toArray(), representingDocumentRowMapper);
                 if (caseRepresentingDocumentMap != null) {
                     caseCriteria.getResponseList().forEach(courtCase -> {
@@ -261,8 +261,8 @@ public class CaseRepository {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching case application list");
-            throw new CustomException(SEARCH_CASE_ERR, "Error while fetching case application list: " + e.getMessage());
+            log.error("Error while fetching case application list :: {}", e.toString());
+            throw new CustomException(SEARCH_CASE_ERR, "Exception while fetching case application list: " + e.getMessage());
         }
     }
 
@@ -273,7 +273,7 @@ public class CaseRepository {
                     caseExists.setExists(false);
                 } else {
                     String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
-                    log.info("Final case exist query: {}", casesExistQuery);
+                    log.info("Final case exist query :: {}", casesExistQuery);
                     Integer count = jdbcTemplate.queryForObject(casesExistQuery, Integer.class);
                     caseExists.setExists(count != null && count > 0);
                 }
@@ -283,7 +283,7 @@ public class CaseRepository {
         catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error while checking case exist ", e.toString());
+            log.error("Error while checking case exist :: {}", e.toString());
             throw new CustomException(SEARCH_CASE_ERR, "Custom exception while checking case exist : " + e.getMessage());
         }
     }
