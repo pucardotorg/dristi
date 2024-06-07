@@ -11,11 +11,8 @@ import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -50,7 +47,7 @@ public class CaseService {
         try {
             validator.validateCaseRegistration(body);
 
-            enrichmentUtil.enrichCaseRegistration(body);
+            enrichmentUtil.enrichCaseRegistrationOnCreate(body);
 
             workflowService.updateWorkflowStatus(body);
 
