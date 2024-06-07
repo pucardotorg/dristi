@@ -80,8 +80,8 @@ public class WitnessQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building witness search query");
-            throw new CustomException(WITNESS_SEARCH_QUERY_EXCEPTION,"Error occurred while building the witness search query: "+ e.getMessage());
+            log.error("Error while building witness search query :: {}",e.toString());
+            throw new CustomException(WITNESS_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the witness search query: "+ e.getMessage());
         }
     }
 
@@ -89,7 +89,7 @@ public class WitnessQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
-            query.append(" OR ");
+            query.append(" AND ");
         }
     }
 }

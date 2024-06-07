@@ -59,8 +59,8 @@ public class RepresentingRowMapper implements ResultSetExtractor<Map<UUID, List<
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing Case ResultSet :: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Exception occurred while processing Case ResultSet: " + e.getMessage());
         }
         return partyMap;
     }
