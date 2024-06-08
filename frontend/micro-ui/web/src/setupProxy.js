@@ -28,5 +28,6 @@ module.exports = function (app) {
     "/clerk",
     "/case",
     "/individual",
+    "/evidence",
   ].forEach((location) => app.use(location, createProxy));
 };

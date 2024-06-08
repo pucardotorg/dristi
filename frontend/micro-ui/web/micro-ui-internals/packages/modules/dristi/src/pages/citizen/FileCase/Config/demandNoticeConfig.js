@@ -250,7 +250,6 @@ const demandNoticeFormConfig = [
     ],
   },
   {
-    dependentKey: { proofOfService: ["showProofOfReply"] },
     body: [
       {
         type: "date",
