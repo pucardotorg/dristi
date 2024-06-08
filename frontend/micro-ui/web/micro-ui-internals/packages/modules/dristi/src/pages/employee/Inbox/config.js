@@ -100,6 +100,7 @@ export const newconfigAdvocate = {
     },
   },
   additionalSections: {},
+  additionalDetails: "applicationNumber",
 };
 
 export const newconfigClerk = {
@@ -204,6 +205,7 @@ export const newconfigClerk = {
     },
   },
   additionalSections: {},
+  additionalDetails: "applicationNumber",
 };
 
 // export const configAdvocate = {

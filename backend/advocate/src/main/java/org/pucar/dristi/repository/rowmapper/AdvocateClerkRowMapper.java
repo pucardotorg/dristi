@@ -23,9 +23,9 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
      * @param rs
      * @return list of advocate clerk
      */
-    public List<AdvocateClerk> extractData(ResultSet rs) throws CustomException {
+    public List<AdvocateClerk> extractData(ResultSet rs) {
         Map<String,AdvocateClerk> advocateClerkApplicationMap = new LinkedHashMap<>();
-        log.debug("ResultSet: {}", rs); // Logging the ResultSet
+        log.info("ResultSet: {}", rs);
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
@@ -64,15 +64,17 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
 
                 advocateClerkApplicationMap.put(uuid, advocateClerkApplication);
             }
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
-            log.error("Error occurred while processing clerk ResultSet: {}", e.getMessage());
-            throw new CustomException(ROW_MAPPER_EXCEPTION,"Error occurred while processing clerk ResultSet: "+ e.getMessage());
+            log.error("Error occurred while processing clerk ResultSet :: {}", e.toString());
+            throw new CustomException(ROW_MAPPER_EXCEPTION,"Exception occurred while processing clerk ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(advocateClerkApplicationMap.values());
     }
 
-    private void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) {
+    public void addDocumentToApplication(ResultSet rs, AdvocateClerk advocateClerkApplication) {
         List<Document> listDocument = new ArrayList<>();
         try {
             Document document = Document.builder()
@@ -85,6 +87,8 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
             listDocument.add(document);
 
             advocateClerkApplication.setDocuments(listDocument);
+        } catch(CustomException e){
+            throw e;
         }
         catch (Exception e){
             e.printStackTrace();

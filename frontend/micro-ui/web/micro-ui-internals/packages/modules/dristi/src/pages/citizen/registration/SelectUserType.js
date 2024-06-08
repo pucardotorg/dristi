@@ -8,6 +8,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showUsename, setshowUsename] = useState(false);
 
   const closeToast = () => {
     setShowErrorToast(false);
@@ -235,6 +236,8 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
               ],
             })
               .then(() => {
+                setshowUsename(true);
+
                 const refreshToken = window.localStorage.getItem("citizen.refresh-token");
                 if (refreshToken) {
                   getUserDetails(refreshToken).then((res) => {
@@ -264,13 +267,14 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
         })
         .finally(() => {
+          setshowUsename(true);
           setParams({});
         });
     } else {
       history.push(`/digit-ui/citizen/dristi/home/registration/additional-details`);
     }
   };
-  if (!params?.indentity) {
+  if (!params?.indentity && showUsename == false) {
     history.push(pathOnRefresh);
   }
   return (

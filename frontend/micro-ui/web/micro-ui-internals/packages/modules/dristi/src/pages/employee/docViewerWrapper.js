@@ -39,7 +39,6 @@ const DocViewerWrapper = ({
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   // const [selectedDocs, setSelectedDocs] = useState([]);
-  debugger;
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const documents = fileStoreId
     ? [{ uri: uri || "", fileName: "fileName" }]

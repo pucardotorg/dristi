@@ -6,36 +6,35 @@ serviceMaps:
       fromTopic: save-advocate-application
       isTransaction: true
       queryMaps:
-
         - query: INSERT INTO dristi_advocate(id,tenantId,applicationNumber,status,barRegistrationNumber,advocateType,organisationID,individualId,isActive, additionalDetails,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?);
-          basePath: advocates.*
+          basePath: advocate
           jsonMaps:
-            - jsonPath: $.advocates.*.id
-            - jsonPath: $.advocates.*.tenantId
-            - jsonPath: $.advocates.*.applicationNumber
-            - jsonPath: $.advocates.*.status
-            - jsonPath: $.advocates.*.barRegistrationNumber
-            - jsonPath: $.advocates.*.advocateType
-            - jsonPath: $.advocates.*.organisationID
-            - jsonPath: $.advocates.*.individualId
-            - jsonPath: $.advocates.*.isActive
-            - jsonPath: $.advocates.*.additionalDetails
+            - jsonPath: $.advocate.id
+            - jsonPath: $.advocate.tenantId
+            - jsonPath: $.advocate.applicationNumber
+            - jsonPath: $.advocate.status
+            - jsonPath: $.advocate.barRegistrationNumber
+            - jsonPath: $.advocate.advocateType
+            - jsonPath: $.advocate.organisationID
+            - jsonPath: $.advocate.individualId
+            - jsonPath: $.advocate.isActive
+            - jsonPath: $.advocate.additionalDetails
               type: JSON
               dbType: JSONB
-            - jsonPath: $.advocates.*.auditDetails.createdBy
-            - jsonPath: $.advocates.*.auditDetails.lastModifiedBy
-            - jsonPath: $.advocates.*.auditDetails.createdTime
-            - jsonPath: $.advocates.*.auditDetails.lastModifiedTime
+            - jsonPath: $.advocate.auditDetails.createdBy
+            - jsonPath: $.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.advocate.auditDetails.createdTime
+            - jsonPath: $.advocate.auditDetails.lastModifiedTime
 
         - query: INSERT INTO dristi_document(id,fileStore,documentUid,documentType,advocateId,additionalDetails) VALUES (?,?, ?, ?, ?, ?);
-          basePath: advocates.*.documents.*
+          basePath: advocate.documents.*
           jsonMaps:
-            - jsonPath: $.advocates.*.documents.*.id
-            - jsonPath: $.advocates.*.documents.*.fileStore
-            - jsonPath: $.advocates.*.documents.*.documentUid
-            - jsonPath: $.advocates.*.documents.*.documentType
-            - jsonPath: $.advocates[*][?({id} in @.documents[*].id)].id
-            - jsonPath: $.advocates.*.documents.*.additionalDetails
+            - jsonPath: $.advocate.documents.*.id
+            - jsonPath: $.advocate.documents.*.fileStore
+            - jsonPath: $.advocate.documents.*.documentUid
+            - jsonPath: $.advocate.documents.*.documentType
+            - jsonPath: $.advocate[?({id} in @.documents[*].id)].id
+            - jsonPath: $.advocate.documents.*.additionalDetails
               type: JSON
               dbType: JSONB
 
@@ -45,10 +44,10 @@ serviceMaps:
       isTransaction: true
       queryMaps:
         - query: UPDATE  dristi_advocate SET status =?, isActive =?,lastModifiedBy =?,lastModifiedTime = ? where id =?;
-          basePath: advocates.*
+          basePath: advocate
           jsonMaps:
-            - jsonPath: $.advocates.*.status
-            - jsonPath: $.advocates.*.isActive
-            - jsonPath: $.advocates.*.auditDetails.lastModifiedBy
-            - jsonPath: $.advocates.*.auditDetails.lastModifiedTime
-            - jsonPath: $.advocates.*.id
+            - jsonPath: $.advocate.status
+            - jsonPath: $.advocate.isActive
+            - jsonPath: $.advocate.auditDetails.lastModifiedBy
+            - jsonPath: $.advocate.auditDetails.lastModifiedTime
+            - jsonPath: $.advocate.id

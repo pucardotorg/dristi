@@ -387,11 +387,10 @@ const LocationSearch = (props) => {
         {/* <img src={searchicon} className="map-search-bar-icon" alt=""/> */}
         <SearchIconSvg className="map-search-bar-icon" />
         <input
-          disabled={props?.disable}
           id={"pac-input-" + props?.index}
           className="map-search-bar"
           type="text"
-          placeholder="Search Address"
+          placeholder="Search for a building, street, or area"
           autoComplete="off"
         />
       </div>

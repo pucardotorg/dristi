@@ -47,7 +47,7 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
         sectionHeadStyle={{ fontSize: "24px", lineHeight: "30px" }}
         onSubmit={(props) => onSubmit(props)}
-        defaultValues={{ AdhaarInput: { aadharNumber: params?.adhaarNumber } }}
+        defaultValues={params?.name || {}}
         submitInForm
         className={"registration-select-name"}
         buttonStyle={{ alignSelf: "center", minWidth: "50%" }}

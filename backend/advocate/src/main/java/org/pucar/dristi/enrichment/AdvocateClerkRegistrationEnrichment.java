@@ -32,27 +32,27 @@ public class AdvocateClerkRegistrationEnrichment {
      */
     public void enrichAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) {
         try {
-            List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvApplicationNumberConfig(), null, advocateClerkRequest.getClerks().size());
-            log.info("Advocate Clerk Application Number :: {}", clerkApplicationNumbers);
-            int index = 0;
-            for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
-                AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-                advocateClerk.setAuditDetails(auditDetails);
+            List<String> clerkApplicationNumbers = idgenUtil.getIdList(advocateClerkRequest.getRequestInfo(), advocateClerkRequest.getRequestInfo().getUserInfo().getTenantId(), configuration.getAdvClerkApplicationNumberConfig(), null, 1);
+            log.info("Advocate Clerk Application Number :: {}",clerkApplicationNumbers);
 
-                advocateClerk.setId(UUID.randomUUID());
-                // setting false unless the application is approved
-                advocateClerk.setIsActive(false);
-                if (advocateClerk.getDocuments() != null)
-                    advocateClerk.getDocuments().forEach(document -> document.setId(String.valueOf(UUID.randomUUID())));
+            AdvocateClerk advocateClerk = advocateClerkRequest.getClerk();
+            AuditDetails auditDetails = AuditDetails.builder().createdBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+            advocateClerk.setAuditDetails(auditDetails);
 
-                // setting generated application number
-                advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(index++));
-            }
-        } catch (CustomException e) {
-            log.error("Custom Exception occurred while Enriching advocate clerk");
+            advocateClerk.setId(UUID.randomUUID());
+            //setting false unless the application is approved
+            advocateClerk.setIsActive(false);
+            if (advocateClerk.getDocuments() != null)
+                advocateClerk.getDocuments().forEach(document -> {
+                    document.setId(String.valueOf(UUID.randomUUID()));
+                });
+
+            //setting generated application number
+            advocateClerk.setApplicationNumber(clerkApplicationNumbers.get(0));
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error enriching advocate clerk application: {}", e.getMessage());
+            log.error("Error enriching advocate clerk application :: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service: " + e.getMessage());
         }
     }
@@ -65,12 +65,11 @@ public class AdvocateClerkRegistrationEnrichment {
     public void enrichAdvocateClerkApplicationUponUpdate(AdvocateClerkRequest advocateClerkRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update
-            for (AdvocateClerk advocateClerk : advocateClerkRequest.getClerks()) {
-                advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
-                advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
-            }
+            AdvocateClerk advocateClerk = advocateClerkRequest.getClerk();
+            advocateClerk.getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
+            advocateClerk.getAuditDetails().setLastModifiedBy(advocateClerkRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
-            log.error("Error enriching advocate clerk  application upon update: {}", e.getMessage());
+            log.error("Error enriching advocate clerk  application upon update :: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in clerk enrichment service during update: " + e.getMessage());
         }
     }

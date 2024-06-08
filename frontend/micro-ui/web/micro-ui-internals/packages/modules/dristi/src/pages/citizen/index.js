@@ -77,67 +77,6 @@ const App = ({ stateCode, tenantId }) => {
   }, [searchResult, userType]);
 
   const hideHomeCrumb = [`${path}/home`];
-  const citizenCrumbs = [
-    {
-      path: isUserLoggedIn ? `${path}/home` : "",
-      content: t("ES_COMMON_HOME"),
-      show: !hideHomeCrumb.includes(location.pathname),
-    },
-    {
-      path: !isUserLoggedIn ? `${path}/home/login` : "",
-      content: t("ES_COMMON_LOGIN"),
-      show: !isUserLoggedIn && location.pathname.includes("/home/login"),
-      isLast: !location.pathname.includes("/login"),
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/login/user-name` : "",
-      content: t("ES_COMMON_USER_NAME"),
-      show: location.pathname.includes("/home/login/user-name"),
-      isLast: true,
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/login/id-verification` : "",
-      content: t("ES_COMMON_ID_VERIFICATION"),
-      show: location.pathname.includes("/home/login/id-verification"),
-      isLast: true,
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/login/aadhar-otp` : "",
-      content: t("ES_COMMON_ID_VERIFICATION"),
-      show: location.pathname.includes("/home/login/aadhar-otp"),
-      isLast: true,
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/register` : "",
-      content: t("ES_COMMON_REGISTER"),
-      show: location.pathname.includes("/home/register"),
-      isLast: true,
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/registration` : "",
-      content: t("ES_COMMON_REGISTER"),
-      show: location.pathname.includes("/home/registration"),
-      isLast: !location.pathname.includes("/registration"),
-    },
-    // {
-    //   path: isUserLoggedIn ? `${path}/home/registration/additional-details` : "",
-    //   content: t("ES_COMMON_USER_ADDITIONAL_DETAILS"),
-    //   show: location.pathname.includes("/home/registration/additional-details"),
-    //   isLast: !location.pathname.includes("/registration"),
-    // },
-    {
-      path: isUserLoggedIn ? `${path}/home/registration/additional-details/terms-conditions` : "",
-      content: t("ES_COMMON_USER_TERMS_AND_CONDITIONS"),
-      show: location.pathname.includes("/home/registration/additional-details/terms-conditions"),
-      isLast: true,
-    },
-    {
-      path: isUserLoggedIn ? `${path}/home/registration/terms-conditions` : "",
-      content: t("ES_COMMON_USER_TERMS_AND_CONDITIONS"),
-      show: location.pathname.includes("/home/registration/terms-conditions"),
-      isLast: true,
-    },
-  ];
   const whiteListedRoutes = [
     `${path}/home/response`,
     `${path}/home/register`,
@@ -185,7 +124,9 @@ const App = ({ stateCode, tenantId }) => {
             </div>
           )}
 
-          <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
+          {userType !== "LITIGANT" && (
+            <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
+          )}
           <PrivateRoute exact path={`${path}/response`} component={Response} />
           <div className={location.pathname.includes("/file-case") ? "file-case-main" : ""}>
             <PrivateRoute path={`${path}/home/file-case`}>

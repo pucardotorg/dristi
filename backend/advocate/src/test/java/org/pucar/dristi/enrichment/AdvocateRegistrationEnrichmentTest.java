@@ -1,6 +1,7 @@
 package org.pucar.dristi.enrichment;
 
 import org.egov.common.contract.models.AuditDetails;
+import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
@@ -39,11 +40,15 @@ class AdvocateRegistrationEnrichmentTest {
     void enrichAdvocateRegistrationTest() {
         // Setup mock request and expected results
         AdvocateRequest advocateRequest = new AdvocateRequest();
-        List<Advocate> advocates = new ArrayList<>();
         Advocate advocate = new Advocate();
         advocate.setTenantId("tenantId");
-        advocates.add(advocate);
-        advocateRequest.setAdvocates(advocates);
+        Document document = new Document();
+        document.setId("id");
+        document.setDocumentUid("documentUid");
+        List<Document> list = new ArrayList<>();
+        list.add(document);
+        advocate.setDocuments(list);
+        advocateRequest.setAdvocate(advocate);
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid");
@@ -61,26 +66,24 @@ class AdvocateRegistrationEnrichmentTest {
                 null, 1);
 
         // Assert that each advocate has been enriched as expected
-        assertNotNull(advocates.get(0).getId());
-        assertNotNull(advocates.get(0).getAuditDetails());
-        assertEquals(false, advocates.get(0).getIsActive());
-        assertEquals("user-uuid", advocates.get(0).getAuditDetails().getCreatedBy());
-        assertNotNull(advocates.get(0).getAuditDetails().getCreatedTime());
-        assertEquals("user-uuid", advocates.get(0).getAuditDetails().getLastModifiedBy());
-        assertNotNull(advocates.get(0).getAuditDetails().getLastModifiedTime());
+        assertNotNull(advocate.getId());
+        assertNotNull(advocate.getAuditDetails());
+        assertEquals(false, advocate.getIsActive());
+        assertEquals("user-uuid", advocate.getAuditDetails().getCreatedBy());
+        assertNotNull(advocate.getAuditDetails().getCreatedTime());
+        assertEquals("user-uuid", advocate.getAuditDetails().getLastModifiedBy());
+        assertNotNull(advocate.getAuditDetails().getLastModifiedTime());
     }
 
     @Test
     void enrichAdvocateRegistrationUponUpdateTest() {
         // Setup mock request and expected results
         AdvocateRequest advocateRequest = new AdvocateRequest();
-        List<Advocate> advocates = new ArrayList<>();
         Advocate advocate = new Advocate();
         advocate.setTenantId("tenantId");
         AuditDetails auditDetails = AuditDetails.builder().createdBy("user-uuid-1").createdTime(System.currentTimeMillis()).lastModifiedBy("user-uuid-1").lastModifiedTime(System.currentTimeMillis()).build();
         advocate.setAuditDetails(auditDetails);
-        advocates.add(advocate);
-        advocateRequest.setAdvocates(advocates);
+        advocateRequest.setAdvocate(advocate);
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid-2");
@@ -91,31 +94,51 @@ class AdvocateRegistrationEnrichmentTest {
         advocateRegistrationEnrichment.enrichAdvocateApplicationUponUpdate(advocateRequest);
 
         // Assert that each advocate has been enriched as expected
-        assertNotNull(advocates.get(0).getAuditDetails());
-        assertEquals("user-uuid-2", advocates.get(0).getAuditDetails().getLastModifiedBy());
-        assertNotNull(advocates.get(0).getAuditDetails().getLastModifiedTime());
+        assertNotNull(advocate.getAuditDetails());
+        assertEquals("user-uuid-2", advocate.getAuditDetails().getLastModifiedBy());
+        assertNotNull(advocate.getAuditDetails().getLastModifiedTime());
+    }
+
+    @Test
+    void enrichAdvocateRegistrationUponUpdateExceptionTest() {
+        // Setup mock request and expected results
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        Advocate advocate = new Advocate();
+        advocate.setTenantId("tenantId");
+        AuditDetails auditDetails = AuditDetails.builder().createdBy("user-uuid-1").createdTime(System.currentTimeMillis()).lastModifiedBy("user-uuid-1").lastModifiedTime(System.currentTimeMillis()).build();
+        advocate.setAuditDetails(auditDetails);
+        advocateRequest.setAdvocate(null);
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setUuid("user-uuid-2");
+        requestInfo.setUserInfo(userInfo);
+        advocateRequest.setRequestInfo(requestInfo);
+
+        // Assert that each advocate has been enriched as expected
+        assertThrows(Exception.class, () -> {
+            advocateRegistrationEnrichment.enrichAdvocateApplicationUponUpdate(advocateRequest);
+        });
     }
 
     @Test
     public void testEnrichAdvocateRegistration_MissingUserInfo() {
         // Setup request with missing user info
         AdvocateRequest advocateRequest = new AdvocateRequest();
-        advocateRequest.setAdvocates(Collections.singletonList(new Advocate()));
+        advocateRequest.setAdvocate(new Advocate());
         advocateRequest.setRequestInfo(new RequestInfo());
 
         // Expect exception due to missing user info
         assertThrows(CustomException.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
+        assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
     }
 
     @Test
     public void testEnrichAdvocateRegistration_IdgenUtilException() {
         // Setup mock request
         AdvocateRequest advocateRequest = new AdvocateRequest();
-        List<Advocate> advocates = new ArrayList<>();
         Advocate advocate = new Advocate();
         advocate.setTenantId("tenantId");
-        advocates.add(advocate);
-        advocateRequest.setAdvocates(advocates);
+        advocateRequest.setAdvocate(advocate);
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid");
@@ -126,23 +149,32 @@ class AdvocateRegistrationEnrichmentTest {
         when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenThrow(new RuntimeException("Mocked Exception"));
 
         // Expect exception to propagate
-        assertThrows(RuntimeException.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
+        assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
     }
 
     @Test
-    public void testEnrichAdvocateRegistration_EmptyAdvocateList() {
-        // Setup request with empty advocate list
+    void enrichAdvocateRegistrationTest_CustomException() {
+        // Setup mock request and expected results
         AdvocateRequest advocateRequest = new AdvocateRequest();
-        advocateRequest.setRequestInfo(new RequestInfo());
+        Advocate advocate = new Advocate();
+        advocate.setTenantId("tenantId");
+        Document document = new Document();
+        document.setId("id");
+        document.setDocumentUid("documentUid");
+        List<Document> list = new ArrayList<>();
+        list.add(document);
+        advocate.setDocuments(list);
+        advocateRequest.setAdvocate(advocate);
+        RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setUuid("user-uuid");
-        advocateRequest.getRequestInfo().setUserInfo(userInfo);
-        advocateRequest.setAdvocates(new ArrayList<>());
+        requestInfo.setUserInfo(userInfo);
+        requestInfo.getUserInfo().setTenantId("tenantId");
+        advocateRequest.setRequestInfo(requestInfo);
+        List<String> idList = List.of("P-2021-01-01-001");
+        when(idgenUtil.getIdList(any(), anyString(), any(), any(), anyInt())).thenThrow(new CustomException());
 
-        // Call the method
-        advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest);
-
-        // No assertions needed, method should not throw exceptions
+        assertThrows(Exception.class, () -> advocateRegistrationEnrichment.enrichAdvocateRegistration(advocateRequest));
     }
 
 

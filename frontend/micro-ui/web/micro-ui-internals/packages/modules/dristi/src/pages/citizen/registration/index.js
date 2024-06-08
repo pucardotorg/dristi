@@ -154,7 +154,7 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
-    history.push(`${path}/aadhar-otp`);
+    history.replace(`${path}/aadhar-otp`);
   };
   const resendOtp = async () => {
     setNewParams({ ...newParams, otp: "", aadharOtp: "" });
@@ -190,7 +190,7 @@ const Registration = ({ stateCode }) => {
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
     setNewParams({ ...newParams, aadharOtp: "" });
-    history.push(`${path}/user-type`);
+    history.replace(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
   const handleAddressSave = (address) => {
@@ -199,7 +199,9 @@ const Registration = ({ stateCode }) => {
   };
   const handleIdentitySave = (indentity) => {
     setNewParams({ ...newParams, indentity });
-    indentity.IdVerification.selectIdType.code === "AADHAR" ? history.push(`${path}/enter-adhaar`) : history.push(`${path}/upload-id`);
+    indentity.IdVerification.selectIdType.code === "AADHAR"
+      ? history.push(`${path}/enter-adhaar`, { comingFrom: "Aadhaar" })
+      : history.push(`${path}/upload-id`, { comingFrom: "otherId" });
   };
   const handleUserTypeSave = (userType) => {
     setNewParams({ ...newParams, userType });
@@ -211,13 +213,12 @@ const Registration = ({ stateCode }) => {
 
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
     Digit.SessionStorage.del("aadharNumber");
-    history.push(`${path}/user-type`);
+    history.replace(`${path}/user-type`);
   };
   if (isLoading || isFetching) {
     return <Loader />;
   }
   const pathOnRefresh = `${path}/user-name`;
-  // console.log(newParams);
   return (
     <div className="citizen-form-wrapper">
       <Switch>
