@@ -32,11 +32,14 @@ const DocViewerWrapper = ({
   selectedDocs = [],
   docViewerCardClassName,
   showDownloadOption = true,
+  docWidth = "262px",
+  docHeight = "206px",
 }) => {
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
   // const [selectedDocs, setSelectedDocs] = useState([]);
+  debugger;
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const documents = fileStoreId
     ? [{ uri: uri || "", fileName: "fileName" }]
@@ -54,7 +57,7 @@ const DocViewerWrapper = ({
               className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
-              style={{ width: 262, height: 206, ...style }}
+              style={{ width: docWidth, height: docHeight, ...style }}
               theme={{
                 primary: "#F47738",
                 secondary: "#feefe7",

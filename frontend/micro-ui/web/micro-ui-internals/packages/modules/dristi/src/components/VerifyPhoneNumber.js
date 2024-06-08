@@ -242,7 +242,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             }}
           />
         </div>
-        {isUserVerified ? (
+        {isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] ? (
           <div
             style={{
               display: "flex",
@@ -264,8 +264,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               !formData?.[config.key]?.[config.name] ||
               errors?.[config?.key]?.[config.name] ||
               formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
-              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength ||
-              formData?.[config.key]?.[config?.disableConfigKey]
+              formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
             }
             onButtonClick={() => {
               selectMobileNumber(mobileNumber).then(() => {

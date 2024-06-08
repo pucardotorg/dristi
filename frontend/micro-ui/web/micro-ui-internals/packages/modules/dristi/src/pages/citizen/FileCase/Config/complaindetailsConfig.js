@@ -130,6 +130,43 @@ const complainantDetailsFormConfig = [
     ],
   },
   {
+    head: "CS_RESPONDENT_COMPANY_DETAIL",
+    dependentKey: { complainantType: ["showCompanyDetails"] },
+    body: [
+      {
+        type: "text",
+        key: "company_Name",
+        label: "company_Name",
+        isMandatory: true,
+        populators: {
+          name: "companyName",
+          styles: { minWidth: "100%" },
+          labelStyles: { padding: "8px" },
+          customStyle: { minWidth: "100%" },
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "companyDetailsUpload",
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              name: "document",
+              documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: true,
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
     dependentKey: { complainantType: ["commonFields"] },
     body: [
       {

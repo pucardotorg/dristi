@@ -100,19 +100,6 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           {input.documentSubText && <p>{t(input.documentSubText)}</p>}
         </div>
 
-        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
-          <FileUploader
-            handleChange={(data) => {
-              handleChange(data, input);
-            }}
-            name="file"
-            types={input?.fileTypes}
-            children={<DragDropJSX t={t} currentValue={currentValue} />}
-            key={input?.name}
-          />
-          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
-        </div>
-
         {currentValue.map((file, index) => (
           <RenderFileCard
             key={`${input?.name}${index}`}
@@ -125,6 +112,19 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             input={input}
           />
         ))}
+
+        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
+          <FileUploader
+            handleChange={(data) => {
+              handleChange(data, input);
+            }}
+            name="file"
+            types={input?.fileTypes}
+            children={<DragDropJSX t={t} currentValue={currentValue} />}
+            key={input?.name}
+          />
+          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
+        </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
           {input?.downloadTemplateText && t(input?.downloadTemplateText)}

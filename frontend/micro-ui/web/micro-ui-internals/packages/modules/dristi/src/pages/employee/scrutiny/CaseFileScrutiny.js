@@ -17,7 +17,6 @@ function CaseFileScrutiny({ t }) {
 
     Object.keys(section)?.forEach((key) => {
       if (section[key]) {
-        debugger;
         if (section[key]?.scrutinyMessage) {
           count++;
         }

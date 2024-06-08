@@ -24,9 +24,9 @@ export const reviewCaseFileFormConfig = [
               icon: "ComplainantDetailsIcon",
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "complainantType.name" },
-                { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "phone" },
-                { type: "image", label: "CS_ID_PROOF", value: "id" },
-                { type: "address", label: "CS_ADDRESS", value: "addressDetailsSelect" },
+                { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "complainantVerification.mobileNumber" },
+                { type: "image", label: "CS_ID_PROOF", value: "companyDetailsUpload" },
+                { type: "address", label: "CS_ADDRESS", value: "addressDetails-select" },
               ],
               data: ComplainantDummy,
             },
@@ -36,7 +36,7 @@ export const reviewCaseFileFormConfig = [
               label: "CS_RESPONDENT_DETAILS",
               icon: "RespondentDetailsIcon",
               config: [
-                { type: "title", value: ["firstName", "lastName"], badgeType: ["respondentType.name"] },
+                { type: "title", value: ["firstName", "lastName"], badgeType: "respondentType.name" },
                 { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
                 { type: "text", label: "CS_EMAIL", value: "emails.emailId" },
                 { type: "address", label: "CS_ADDRESS", value: "addressDetails" },
@@ -126,7 +126,7 @@ export const reviewCaseFileFormConfig = [
             {
               key: "prayerSwornStatement",
               name: "prayerSwornStatement",
-              label: "CS_PRAYER_SWORN_DETAname",
+              label: "CS_PRAYER_SWORN_DETAIL_NAME",
               icon: "PrayerSwornIcon",
               config: [
                 { type: "text", label: "CS_PRAYER_RELIEF", value: "prayer" },

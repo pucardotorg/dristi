@@ -137,7 +137,29 @@ function EFilingCases({ path }) {
 
   const modifiedFormConfig = useMemo(() => {
     if (!isDependentEnabled) {
-      return formdata.map(() => formConfig);
+      return formdata.map(() => {
+        if (selected === "reviewCaseFile") {
+          return formConfig.map((config) => {
+            return {
+              ...config,
+              body: config?.body?.map((body) => {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators?.inputs?.map((input) => {
+                      return {
+                        ...input,
+                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                      };
+                    }),
+                  },
+                };
+              }),
+            };
+          });
+        }
+        return formConfig;
+      });
     }
 
     return formdata.map(({ data }, index) => {
@@ -256,7 +278,7 @@ function EFilingCases({ path }) {
           };
         });
     });
-  }, [isDependentEnabled, formdata, formConfig, caseDetails.additionalDetails, selected]);
+  }, [isDependentEnabled, formdata, selected, formConfig, caseDetails.additionalDetails, caseDetails?.caseDetails]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
@@ -451,6 +473,37 @@ function EFilingCases({ path }) {
           })
       );
 
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            let documentData = [];
+            if (data?.data?.companyDetailsUpload?.document) {
+              documentData = await Promise.all(
+                data?.data?.companyDetailsUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  debugger;
+                  return {
+                    documentType: uploadedData.fileType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId,
+                    documentName: uploadedData.filename,
+                  };
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                companyDetailsUpload: {
+                  ...data?.data?.companyDetailsUpload,
+                  document: documentData,
+                },
+              },
+            };
+          })
+      );
+      debugger;
       const representatives = [...caseDetails?.representatives]
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
@@ -460,7 +513,7 @@ function EFilingCases({ path }) {
         }));
       data.litigants = [...litigants];
       data.representatives = [...representatives];
-      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata, isCompleted: true } };
+      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata: newFormData, isCompleted: true } };
     }
     if (selected === "respondentDetails") {
       const newFormData = await Promise.all(
@@ -677,7 +730,6 @@ function EFilingCases({ path }) {
                         },
                       ];
                     });
-                    debugger;
                     return {
                       document: document,
                       docName: docWithNameData?.docName,
