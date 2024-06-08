@@ -1,15 +1,26 @@
 .employee {
   .topbar {
     box-shadow: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .hambuger-back-wrapper {
+      display: flex !important;
+      gap: 16px;
+      img {
+        width: fit-content !important;
+      }
+    }
   }
   .main {
     width: 100%;
     margin: 84px 0px 0px;
     padding: 0px;
-    min-height: calc(100vh - 84px);
+    min-height: calc(100vh - 84px) !important;
 
     .employee-app-wrapper {
-      min-height: calc(100vh - 84px) !important;
+      min-height: calc(100vh - 84px);
       background-color: #eeeeee;
       .ground-container {
         min-height: calc(100vh - 84px) !important;
@@ -77,6 +88,12 @@
             .sections-parent.inbox {
               gap: 0px;
               background-color: #ffffff;
+              .no-data-found {
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                margin: 24px;
+              }
               .section.search {
                 min-height: 0px;
                 .search-wrapper {
@@ -140,6 +157,11 @@
                   align-items: center;
                   justify-content: center;
                   a {
+                    font-family: Roboto;
+                    font-size: 19px;
+                    font-weight: 600;
+                    line-height: 22.27px;
+                    text-align: left;
                     color: #007e7e;
                     text-decoration: none;
                   }
@@ -147,10 +169,16 @@
 
                 td {
                   padding: 0px !important;
+                  width: 16.66%;
                 }
 
                 th {
                   padding: 0px 0px 12px;
+                  width: 16.66;
+                }
+
+                th:last-child {
+                  text-align: center !important;
                 }
               }
             }

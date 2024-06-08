@@ -36,6 +36,8 @@ const Registration = ({ stateCode }) => {
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
   const [newParams, setNewParams] = useState(history.location.state?.newParams || {});
+  const [userTypeRegister, setUserTypeRegister] = useState(history.location.state?.userType || {});
+
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
@@ -117,6 +119,7 @@ const Registration = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (!err) {
       setCanSubmitNo(true);
+      setIsOtpValid(true);
       history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
       return;
     } else {
@@ -145,8 +148,10 @@ const Registration = ({ stateCode }) => {
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
-      const { otp, ...temp } = newParams;
-      setNewParams(temp);
+      setParmas((prev) => ({
+        ...prev,
+        otp: "",
+      }));
     }
   };
   const handleOtpChange = (otp) => {
@@ -154,6 +159,7 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
+    setIsOtpValid(true);
     history.replace(`${path}/aadhar-otp`);
   };
   const resendOtp = async () => {
@@ -198,7 +204,7 @@ const Registration = ({ stateCode }) => {
     history.push(`${path}/id-verification`);
   };
   const handleIdentitySave = (indentity) => {
-    setNewParams({ ...newParams, indentity });
+    setNewParams({ ...newParams, indentity, adhaarNumber: "" });
     indentity.IdVerification.selectIdType.code === "AADHAR"
       ? history.push(`${path}/enter-adhaar`, { comingFrom: "Aadhaar" })
       : history.push(`${path}/upload-id`, { comingFrom: "otherId" });
@@ -209,7 +215,16 @@ const Registration = ({ stateCode }) => {
   };
   const onDocumentUpload = async (filename, filedata, IdType) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
-    setNewParams({ ...newParams, indentity: "OTHER" });
+    const identityObj = {
+      IdVerification: {
+        selectIdType: {
+          code: "OTHER ID",
+          name: "CS_OTHER",
+          subText: "CS_OTHER_SUB_TEXT",
+        },
+      },
+    };
+    setNewParams({ ...newParams, indentity: identityObj });
 
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
     Digit.SessionStorage.del("aadharNumber");
@@ -244,6 +259,7 @@ const Registration = ({ stateCode }) => {
               path={path}
               isUserLoggedIn={isUserLoggedIn}
               history={history}
+              className={"register"}
             />
           </Route>
           <Route path={`${path}/otp`}>
@@ -321,6 +337,7 @@ const Registration = ({ stateCode }) => {
               setParams={setNewParams}
               pathOnRefresh={pathOnRefresh}
               params={newParams}
+              userTypeRegister={userTypeRegister}
               onSelect={handleUserTypeSave}
             />
           </Route>

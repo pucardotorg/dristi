@@ -371,6 +371,25 @@
   }
 }
 
+.complainant {
+  .label-field-pair {
+    .field {
+      div {
+        .button-field {
+          width: 100% !important;
+          .jk-digit-secondary-btn.secondary-button-selector {
+            width: fit-content;
+          }
+        }
+        .label-field-pair {
+        }
+      }
+    }
+  }
+}
+
+.complainant,
+.respondent,
 .cheque,
 .debt-liability,
 .demand-notice {
@@ -807,7 +826,7 @@
         margin: 10px 0px 0px 0px;
 
         .act-name {
-          text-decoration: underline;
+          color: #3d3c3c !important;
         }
 
         .place-name {

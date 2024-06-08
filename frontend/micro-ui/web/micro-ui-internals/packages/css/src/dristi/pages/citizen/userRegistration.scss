@@ -29,6 +29,33 @@
     margin: 0px;
   }
 
+  .take-user-to-registration {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    align-items: center;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+
+    button {
+      background: none;
+      color: #007e7e;
+      box-shadow: none;
+      max-width: 273px;
+
+      .svg-div {
+        display: flex;
+        align-items: center;
+        svg {
+          margin: 0px 0px 0px 15px;
+        }
+      }
+    }
+  }
+
   .response-main {
     padding: 40px;
     background-color: #ffffff;
@@ -126,22 +153,32 @@
       }
     }
 
+    .login-form.register {
+      .card {
+        .card-header {
+          font-size: 24px !important;
+        }
+      }
+    }
+
     .login-form {
       padding: 40px;
       margin: 0px;
       background-color: #ffffff;
+
       .card {
         box-shadow: none;
         padding: 0px;
         margin: 0px !important;
         .card-header {
           margin: 0px;
-          font-family: Roboto Condensed;
+          font-family: Roboto;
           font-size: 40px;
           font-weight: 700;
-          line-height: 46.88px;
+          line-height: 30px;
           text-align: center;
           color: #0b0c0c;
+          padding-bottom: 12px;
         }
         .card-text {
           margin: 0px;
@@ -215,18 +252,31 @@
       }
     }
 
+    .upload-id {
+      .upload-file-upload-button-div {
+        width: 25%;
+        input {
+          display: none;
+        }
+      }
+    }
+
     .advocate-additional-details {
       padding: 40px !important;
       background-color: #ffffff;
-      max-width: 593px;
+      width: 593px;
+      margin: 24px;
 
       .card {
         box-shadow: none;
         padding: 0px;
         margin: 0px !important;
         align-items: center;
+        div {
+          width: 100% !important;
+        }
         .card-section-header:first-child {
-          margin: 0px;
+          margin: 0px !important;
           font-family: Roboto Condensed;
           font-size: 24px;
           font-weight: 700;
@@ -257,6 +307,17 @@
             }
             .documentUpload {
               margin-top: 24px;
+              .upload-file-div-main {
+                .upload-file-div-sub {
+                  width: 75%;
+                }
+                .upload-file-upload-button-div {
+                  width: 25%;
+                  input {
+                    display: none;
+                  }
+                }
+              }
             }
           }
         }
@@ -274,6 +335,7 @@
       background-color: #ffffff;
       box-shadow: none;
       max-width: 553px;
+      margin: 24px;
 
       .card {
         margin: 0px !important;
@@ -309,7 +371,7 @@
         }
         .submit-bar {
           width: 100% !important;
-          box-shadow: none;
+          box-shadow: none !important;
         }
         .radio-wrap {
           .card {
@@ -414,15 +476,18 @@
         }
         .address-card-input {
           gap: 16px;
+          .field {
+            width: 273px;
+          }
         }
 
         button {
           width: 100%;
-          box-shadow: none;
+          box-shadow: none !important;
           margin-top: 32px;
         }
         input {
-          width: 273px;
+          width: 100%;
         }
       }
     }
@@ -554,7 +619,8 @@
             text-align: left;
             color: #0b0c0c;
             .resend-link {
-              color: #0b0c0c;
+              color: #007e7e;
+              text-decoration: underline;
               cursor: pointer;
               &.disabled {
                 color: #bbbbbd;
@@ -590,12 +656,14 @@ body {
   padding: 40px !important;
   background-color: #ffffff !important;
   box-shadow: none !important;
+  margin: 24px;
+  flex-direction: column !important;
   .card {
     margin: 0px !important;
     padding: 0px !important;
     display: flex !important;
-    align-items: flex-start !important;
-    .card-header {
+    align-items: center !important;
+    .card-section-header {
       font-family: Roboto !important;
       font-size: 24px !important;
       font-weight: 700 !important;

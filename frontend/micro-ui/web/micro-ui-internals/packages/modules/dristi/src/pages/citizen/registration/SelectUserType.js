@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
-const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRefresh }) => {
+const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRefresh, userTypeRegister }) => {
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
@@ -176,15 +176,14 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
     };
     setParams({
       ...params,
-      Individual: {
+      IndividualPayload: {
         ...Individual,
       },
       userType: {
         ...userType,
       },
     });
-    if (userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") {
-      const aadhaarNumber = Digit?.SessionStorage?.get("aadharNumber");
+    if ((userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") && !data?.Individual?.[0]?.individualId) {
       Digit.DRISTIService.postIndividualService(Individual, tenantId)
         .then((result) => {
           if (userType?.clientDetails?.selectUserType?.apiDetails && userType?.clientDetails?.selectUserType?.apiDetails?.serviceName && result) {
@@ -219,6 +218,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
                 ],
                 additionalDetails: {
                   username: data?.name?.firstName + " " + data?.name?.name,
+                  userType: userType,
                 },
                 ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
                   res[curr] = "DEFAULT_VALUE";
@@ -270,13 +270,90 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           setshowUsename(true);
           setParams({});
         });
+    } else if ((userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") && data?.Individual?.[0]?.individualId) {
+      if (userType?.clientDetails?.selectUserType?.apiDetails && userType?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
+        const requestBody = {
+          [userType?.clientDetails?.selectUserType?.apiDetails?.requestKey]: {
+            tenantId: tenantId,
+            individualId: data?.Individual?.[0]?.individualId,
+            isActive: false,
+            workflow: {
+              action: "REGISTER",
+              comments: `Applying for ${userType?.clientDetails?.selectUserType?.apiDetails?.requestKey} registration`,
+              documents: [
+                {
+                  id: null,
+                  documentType: null,
+                  fileStore: null,
+                  documentUid: "",
+                  additionalDetails: {},
+                },
+              ],
+              assignes: [],
+              rating: null,
+            },
+            documents: [
+              {
+                id: null,
+                documentType: null,
+                fileStore: null,
+                documentUid: "",
+                additionalDetails: {},
+              },
+            ],
+            additionalDetails: {
+              username: data?.name?.firstName + " " + data?.name?.name,
+              userType: userType,
+            },
+            ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
+              res[curr] = "DEFAULT_VALUE";
+              return res;
+            }, {}),
+          },
+        };
+        Digit.DRISTIService.advocateClerkService(userType?.clientDetails?.selectUserType?.apiDetails?.serviceName, requestBody, tenantId, true, {
+          roles: [
+            {
+              name: "Citizen",
+              code: "CITIZEN",
+              tenantId: tenantId,
+            },
+          ],
+        })
+          .then(() => {
+            setshowUsename(true);
+
+            const refreshToken = window.localStorage.getItem("citizen.refresh-token");
+            if (refreshToken) {
+              getUserDetails(refreshToken).then((res) => {
+                const { ResponseInfo, UserRequest: info, ...tokens } = res;
+                const user = { info, ...tokens };
+                window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
+                window?.Digit.UserService.setUser(user);
+                setCitizenDetail(user?.info, user?.access_token, window?.Digit.ULBService.getStateId());
+                history.push(`/${window?.contextPath}/citizen/dristi/home`);
+              });
+            }
+          })
+          .catch(() => {
+            history.push(`/digit-ui/citizen/dristi/home/response`, { response: "error" });
+          })
+          .finally(() => {
+            setParams({});
+          });
+      } else {
+        history.push(`/digit-ui/citizen/dristi/home/response`, {
+          response: "success",
+          createType: data?.userType?.clientDetails?.selectUserType?.code,
+        });
+      }
     } else {
       history.push(`/digit-ui/citizen/dristi/home/registration/additional-details`);
     }
   };
-  if (!params?.indentity && showUsename == false) {
-    history.push(pathOnRefresh);
-  }
+  // if (!params?.indentity && showUsename == false && !params?.Individual?.[0]?.additionalFields) {
+  //   history.push(pathOnRefresh);
+  // }
   return (
     <div className="select-user">
       <FormComposerV2
@@ -295,8 +372,8 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
         }}
         onFormValueChange={onFormValueChange}
         isDisabled={isDisabled}
-        value={params?.userType || {}}
-        defaultValues={params?.userType || {}}
+        value={params?.userType || (userTypeRegister && userTypeRegister) || {}}
+        defaultValues={params?.userType || (userTypeRegister && userTypeRegister) || {}}
         headingStyle={{ textAlign: "center" }}
         cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column" }}
         sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}

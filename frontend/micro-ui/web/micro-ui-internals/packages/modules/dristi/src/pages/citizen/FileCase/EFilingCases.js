@@ -856,6 +856,14 @@ function EFilingCases({ path }) {
   if (isLoading) {
     return <Loader />;
   }
+
+  const caseType = {
+    cateogry: "Criminal",
+    act: "Negotiable Instruments Act",
+    section: "138",
+    courtName: "Kollam S 138 Special Court",
+  };
+
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -865,9 +873,8 @@ function EFilingCases({ path }) {
             <span>You are filing a case</span>
           </div>
           <p>
-            Under
-            <span className="act-name"> S-138, Negotiable Instrument Act</span> In
-            <span className="place-name"> Kollam S 138 Special Court</span>
+            Under <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> In
+            <span className="place-name">{` ${caseType.courtName}.`}</span>
           </p>
         </div>
         {isOpen && (

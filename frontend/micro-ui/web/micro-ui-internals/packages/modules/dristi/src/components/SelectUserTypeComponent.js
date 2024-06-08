@@ -126,6 +126,16 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     }
   };
 
+  const showUploadedDocument = useMemo(() => {
+    return (
+      <div>
+        <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
+        </div>
+      </div>
+    );
+  }, [fileStoreId, tenantId, fileName]);
+
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -212,13 +222,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                       requestSpecifcFileRemoval={removeFile}
                     />
                   )}
-                  {showDoc && input?.type === "documentUpload" && (
-                    <div>
-                      <div className="documentDetails_row_items" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                        <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} displayFilename={fileName} />
-                      </div>
-                    </div>
-                  )}
+                  {showDoc && input?.type === "documentUpload" && showUploadedDocument}
                   {input?.type === "text" && (
                     <TextInput
                       className="field desktop-w-full"

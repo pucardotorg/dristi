@@ -131,6 +131,7 @@ const Login = ({ stateCode }) => {
   };
 
   const selectMobileNumber = async (mobileNumber) => {
+    setIsOtpValid(true);
     setCanSubmitNo(false);
     setParmas({ ...params, ...mobileNumber });
     const data = {
@@ -141,6 +142,7 @@ const Login = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
     if (!err) {
       setCanSubmitNo(true);
+      setIsOtpValid(true);
       history.push(`${path}/otp`);
       return;
     } else {
@@ -207,6 +209,7 @@ const Login = ({ stateCode }) => {
   };
 
   const resendOtp = async () => {
+    setIsOtpValid(true);
     setParmas({ ...params, otp: "" });
     const { mobileNumber } = params;
     const data = {
@@ -258,7 +261,7 @@ const Login = ({ stateCode }) => {
               params={params}
               setParams={setParmas}
               t={t}
-              path={`${path}/login`}
+              path={`${path}`}
             />
           </Route>
 

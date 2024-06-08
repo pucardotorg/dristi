@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - develop
+      - user-registration-uat
   pull_request:
     branches:
       - develop

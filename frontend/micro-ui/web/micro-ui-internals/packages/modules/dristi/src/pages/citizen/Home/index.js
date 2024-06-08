@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CaseInProgressIcon, ClosedCasesIcon, FileCaseIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "../../../icons/svgIndex";
 import Home from "./litigantHome";
 
-function CitizenHome({ tenantId }) {
+function CitizenHome({ tenantId, setHideBack }) {
   const Digit = window?.Digit || {};
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
@@ -16,6 +16,7 @@ function CitizenHome({ tenantId }) {
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingAdvoacte, setIsFetchingAdvocate] = useState(true);
 
   const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
@@ -29,12 +30,6 @@ function CitizenHome({ tenantId }) {
     userInfo?.uuid && isUserLoggedIn
   );
 
-  useEffect(() => {
-    refetch().then(() => {
-      setIsFetching(false);
-    });
-  }, []);
-
   const cardIcons = [
     { Icon: <FileCaseIcon />, label: "File a Case", path: "/digit-ui/citizen/dristi/home/file-case" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -46,7 +41,7 @@ function CitizenHome({ tenantId }) {
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+  const { data: searchData, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
       tenantId,
@@ -56,6 +51,14 @@ function CitizenHome({ tenantId }) {
     Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
+  useEffect(() => {
+    refetch().then(() => {
+      refetchAdvocateClerk().then(() => {
+        setIsFetchingAdvocate(false);
+      });
+      setIsFetching(false);
+    });
+  }, []);
 
   const userTypeDetail = useMemo(() => {
     return userTypeOptions.find((item) => item.code === userType) || {};
@@ -85,9 +88,26 @@ function CitizenHome({ tenantId }) {
     );
   }, [searchResult, userType]);
 
-  if (isLoading || isSearchLoading || isFetching) {
+  const userHasIncompleteRegistration = !individualId || isRejected;
+  const registrationIsDoneApprovalIsPending = individualId && isApprovalPending && !isRejected;
+  useEffect(() => {
+    setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
+    return () => {
+      setHideBack(false);
+    };
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
+
+  useEffect(() => {
+    setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
+    return () => {
+      setHideBack(false);
+    };
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
+
+  if (isLoading || isSearchLoading || isFetching || isFetchingAdvoacte) {
     return <Loader />;
   }
+
   return (
     <div
       style={{
@@ -117,8 +137,15 @@ function CitizenHome({ tenantId }) {
         // })}
         <Home />
       )}
-      {individualId && isApprovalPending && !isRejected && <ApplicationAwaitingPage individualId={individualId} />}
-      {(!individualId || isRejected) && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
+      {registrationIsDoneApprovalIsPending && <ApplicationAwaitingPage individualId={individualId} />}
+      {userHasIncompleteRegistration && (
+        <TakeUserToRegistration
+          message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"}
+          isRejected={isRejected}
+          data={data}
+          userType={searchResult?.[0]?.additionalDetails?.userType}
+        />
+      )}
     </div>
   );
 }

@@ -25,9 +25,11 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
     for (const key in formDataCopy) {
       if (Object.hasOwnProperty.call(formDataCopy, key)) {
         const value = formDataCopy[key];
-
-        if (typeof value === "string" && value.trim() === "" && value !== value.trim()) {
-          setValue(key, value.trim());
+        if (typeof value === "string") {
+          const updatedValue = value.trimStart().replace(/ +/g, " ");
+          if (updatedValue !== value) {
+            setValue(key, updatedValue);
+          }
         }
       }
     }
@@ -43,14 +45,10 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
         label={t("CORE_COMMON_CONTINUE")}
         onSecondayActionClick={() => {}}
         onFormValueChange={onFormValueChange}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-        sectionHeadStyle={{ fontSize: "24px", lineHeight: "30px" }}
         onSubmit={(props) => onSubmit(props)}
         defaultValues={params?.name || {}}
         submitInForm
         className={"registration-select-name"}
-        buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
       ></FormComposerV2>
     </React.Fragment>
   );
