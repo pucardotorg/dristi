@@ -22,7 +22,6 @@ const SelectOtp = ({
   isAdhaar,
   cardText,
   mobileNumber,
-  setIsOtpValid,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -47,9 +46,6 @@ const SelectOtp = ({
       aadharOtp: "",
       adhaarNumber: "",
     });
-    if (!location.pathname.includes("/registration/aadhar-otp")) {
-      setIsOtpValid(true);
-    }
     history.goBack();
   };
   const Heading = (props) => {

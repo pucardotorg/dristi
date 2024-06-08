@@ -119,6 +119,7 @@ const Registration = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (!err) {
       setCanSubmitNo(true);
+      setIsOtpValid(true);
       history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
       return;
     } else {
@@ -158,6 +159,7 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
+    setIsOtpValid(true);
     history.replace(`${path}/aadhar-otp`);
   };
   const resendOtp = async () => {
@@ -193,7 +195,7 @@ const Registration = ({ stateCode }) => {
 
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    setNewParams({ ...newParams, aadharOtp: "", adhaarNumber: "" });
+    setNewParams({ ...newParams, aadharOtp: "" });
     history.replace(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
@@ -202,7 +204,7 @@ const Registration = ({ stateCode }) => {
     history.push(`${path}/id-verification`);
   };
   const handleIdentitySave = (indentity) => {
-    setNewParams({ ...newParams, indentity });
+    setNewParams({ ...newParams, indentity, adhaarNumber: "" });
     indentity.IdVerification.selectIdType.code === "AADHAR"
       ? history.push(`${path}/enter-adhaar`, { comingFrom: "Aadhaar" })
       : history.push(`${path}/upload-id`, { comingFrom: "otherId" });
