@@ -158,6 +158,36 @@ function EFilingCases({ path }) {
             };
           });
         }
+        if (selected === "addSignature") {
+          return formConfig.map((config) => {
+            return {
+              ...config,
+              body: config?.body?.map((body) => {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators?.inputs?.map((input) => {
+                      return {
+                        ...input,
+                        data:
+                          input.key === "advocateDetails"
+                            ? [
+                                {
+                                  name:
+                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                                },
+                              ] || [{ name: "" }]
+                            : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
+                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                              })),
+                      };
+                    }),
+                  },
+                };
+              }),
+            };
+          });
+        }
         return formConfig;
       });
     }
@@ -329,23 +359,6 @@ function EFilingCases({ path }) {
     setParentOpen(index);
   };
 
-  const handlePageChange = (key, isConfirm) => {
-    if (key === selected) {
-      return;
-    }
-    if (!isConfirm) {
-      setOpenConfigurationModal(key);
-      return;
-    }
-    setParmas({ ...params, [pageConfig.key]: formdata });
-    setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
-    if (!!resetFormData) {
-      resetFormData();
-    }
-    setIsOpen(false);
-    history.push(`?caseId=${caseId}&selected=${key}`);
-  };
-
   const onDocumentUpload = async (fileData, filename) => {
     if (fileData?.fileStore) return fileData;
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
@@ -427,7 +440,7 @@ function EFilingCases({ path }) {
     return response;
   };
 
-  const onSubmit = async () => {
+  const updateCaseDetails = async (isCompleted) => {
     const data = {};
     if (selected === "complaintDetails") {
       const litigants = await Promise.all(
@@ -482,11 +495,10 @@ function EFilingCases({ path }) {
               documentData = await Promise.all(
                 data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                   const uploadedData = await onDocumentUpload(document, document.name);
-                  debugger;
                   return {
-                    documentType: uploadedData.fileType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId,
-                    documentName: uploadedData.filename,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
                 })
               );
@@ -503,7 +515,6 @@ function EFilingCases({ path }) {
             };
           })
       );
-      debugger;
       const representatives = [...caseDetails?.representatives]
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
@@ -513,7 +524,13 @@ function EFilingCases({ path }) {
         }));
       data.litigants = [...litigants];
       data.representatives = [...representatives];
-      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata: newFormData, isCompleted: true } };
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        complaintDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "respondentDetails") {
       const newFormData = await Promise.all(
@@ -524,13 +541,12 @@ function EFilingCases({ path }) {
             if (data?.data?.condonationFileUpload?.document) {
               documentData = await Promise.all(
                 data?.data?.condonationFileUpload?.document?.map(async (document) => {
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
                 })
               );
             }
@@ -546,7 +562,13 @@ function EFilingCases({ path }) {
             };
           })
       );
-      data.additionalDetails = { ...caseDetails.additionalDetails, respondentDetails: { formdata: newFormData, isCompleted: true } };
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        respondentDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "chequeDetails") {
       const documentData = {
@@ -561,39 +583,36 @@ function EFilingCases({ path }) {
             if (data?.data?.bouncedChequeFileUpload?.document) {
               documentData.bouncedChequeFileUpload.document = await Promise.all(
                 data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
                 })
               );
             }
             if (data?.data?.depositChequeFileUpload?.document) {
               documentData.depositChequeFileUpload.document = await Promise.all(
                 data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
                 })
               );
             }
             if (data?.data?.returnMemoFileUpload?.document) {
               documentData.returnMemoFileUpload.document = await Promise.all(
                 data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
                 })
               );
             }
@@ -607,7 +626,13 @@ function EFilingCases({ path }) {
             };
           })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: { formdata: newFormData, isCompleted: true } };
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        chequeDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "debtLiabilityDetails") {
       const debtDocumentData = { debtLiabilityFileUpload: {} };
@@ -618,13 +643,12 @@ function EFilingCases({ path }) {
             if (data?.data?.debtLiabilityFileUpload?.document) {
               debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
                 data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType || data?.documentType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
-                      documentName: data.filename || data?.documentName,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || data?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || data?.fileStore,
+                    documentName: uploadedData.filename || data?.documentName,
+                  };
                 })
               );
             }
@@ -637,12 +661,21 @@ function EFilingCases({ path }) {
             };
           })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, debtLiabilityDetails: { formdata: newFormData, isCompleted: true } };
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        debtLiabilityDetails: {
+          formdata: newFormData,
+          isCompleted: "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "witnessDetails") {
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
-        witnessDetails: { formdata: formdata.filter((item) => item.isenabled), isCompleted: true },
+        witnessDetails: {
+          formdata: formdata.filter((item) => item.isenabled),
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
       };
     }
     if (selected === "demandNoticeDetails") {
@@ -660,13 +693,12 @@ function EFilingCases({ path }) {
                 const result = await res;
                 result[curr] = await Promise.all(
                   data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                    return await onDocumentUpload(document, document.name).then((data) => {
-                      return {
-                        documentType: data.fileType,
-                        fileStore: data.file?.files?.[0]?.fileStoreId,
-                        documentName: data.filename,
-                      };
-                    });
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
                   })
                 );
                 return result;
@@ -684,7 +716,13 @@ function EFilingCases({ path }) {
             };
           })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, demandNoticeDetails: { formdata: newFormData, isCompleted: true } };
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        demandNoticeDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "prayerSwornStatement") {
       const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
@@ -750,13 +788,12 @@ function EFilingCases({ path }) {
                 result[curr] = await Promise.all(
                   data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
                     if (!document.name) return {};
-                    return await onDocumentUpload(document, document.name).then((data) => {
-                      return {
-                        documentType: data.fileType,
-                        fileStore: data.file?.files?.[0]?.fileStoreId,
-                        documentName: data.filename,
-                      };
-                    });
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
                   })
                 );
                 return result;
@@ -766,13 +803,12 @@ function EFilingCases({ path }) {
               documentData.memorandumOfComplaint.document = await Promise.all(
                 data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
                   if (!document.name) return {};
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
                 })
               );
             }
@@ -780,13 +816,12 @@ function EFilingCases({ path }) {
               documentData.prayerForRelief.document = await Promise.all(
                 data?.data?.prayerForRelief?.document?.map(async (document) => {
                   if (!document.name) return {};
-                  return await onDocumentUpload(document, document.name).then((data) => {
-                    return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
-                    };
-                  });
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
                 })
               );
             }
@@ -803,16 +838,18 @@ function EFilingCases({ path }) {
             };
           })
       );
-      data.additionalDetails = { ...caseDetails.additionalDetails, prayerSwornStatement: { formdata: newFormData, isCompleted: true } };
-    }
-    if (selected === "addSignature") {
-      setOpenConfirmCourtModal(true);
-      return;
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        prayerSwornStatement: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (!!resetFormData) {
       resetFormData();
     }
-    DRISTIService.caseUpdateService(
+    return DRISTIService.caseUpdateService(
       {
         cases: {
           ...caseDetails,
@@ -827,22 +864,48 @@ function EFilingCases({ path }) {
         tenantId,
       },
       tenantId
-    ).then(() => {
-      refetchCaseData().then(() => {
-        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
-        setFormdata(caseData);
-        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
-      });
-    });
+    );
   };
+
+  const onSubmit = async () => {
+    if (selected === "addSignature") {
+      setOpenConfirmCourtModal(true);
+    } else {
+      updateCaseDetails(true).then(() => {
+        refetchCaseData().then(() => {
+          const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+          setFormdata(caseData);
+          history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+        });
+      });
+    }
+  };
+
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
+    updateCaseDetails();
+  };
+
+  const handlePageChange = (key, isConfirm) => {
+    if (key === selected) {
+      return;
+    }
+    if (!isConfirm) {
+      setOpenConfigurationModal(key);
+      return;
+    }
+    setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+    if (!!resetFormData) {
+      resetFormData();
+    }
+    setIsOpen(false);
+    updateCaseDetails("PAGE_CHANGE");
+    history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
   const onSubmitCase = (data) => {
-    console.debug(data);
     setOpenConfirmCourtModal(false);
   };
 
@@ -963,7 +1026,7 @@ function EFilingCases({ path }) {
                 )}
                 <FormComposerV2
                   key={selected}
-                  label={t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}

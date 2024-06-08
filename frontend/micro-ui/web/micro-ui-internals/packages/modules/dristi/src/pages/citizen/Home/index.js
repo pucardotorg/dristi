@@ -95,14 +95,14 @@ function CitizenHome({ tenantId, setHideBack }) {
     return () => {
       setHideBack(false);
     };
-  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending, setHideBack]);
 
   useEffect(() => {
     setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
     return () => {
       setHideBack(false);
     };
-  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending]);
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending, setHideBack]);
 
   if (isLoading || isSearchLoading || isFetching || isFetchingAdvoacte) {
     return <Loader />;
