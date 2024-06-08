@@ -142,6 +142,7 @@ const Login = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
     if (!err) {
       setCanSubmitNo(true);
+      setIsOtpValid(true);
       history.push(`${path}/otp`);
       return;
     } else {
@@ -254,7 +255,6 @@ const Login = ({ stateCode }) => {
               onOtpChange={handleOtpChange}
               onResend={resendOtp}
               onSelect={selectOtp}
-              setIsOtpValid={setIsOtpValid}
               otp={params.otp}
               error={isOtpValid}
               canSubmit={canSubmitOtp}

@@ -119,6 +119,7 @@ const Registration = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (!err) {
       setCanSubmitNo(true);
+      setIsOtpValid(true);
       history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
       return;
     } else {
@@ -158,6 +159,7 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
+    setIsOtpValid(true);
     history.replace(`${path}/aadhar-otp`);
   };
   const resendOtp = async () => {
