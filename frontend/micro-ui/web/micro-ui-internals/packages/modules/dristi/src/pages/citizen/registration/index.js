@@ -193,7 +193,7 @@ const Registration = ({ stateCode }) => {
 
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
-    setNewParams({ ...newParams, aadharOtp: "", adhaarNumber: "" });
+    setNewParams({ ...newParams, aadharOtp: "" });
     history.replace(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
@@ -202,7 +202,7 @@ const Registration = ({ stateCode }) => {
     history.push(`${path}/id-verification`);
   };
   const handleIdentitySave = (indentity) => {
-    setNewParams({ ...newParams, indentity });
+    setNewParams({ ...newParams, indentity, adhaarNumber: "" });
     indentity.IdVerification.selectIdType.code === "AADHAR"
       ? history.push(`${path}/enter-adhaar`, { comingFrom: "Aadhaar" })
       : history.push(`${path}/upload-id`, { comingFrom: "otherId" });
