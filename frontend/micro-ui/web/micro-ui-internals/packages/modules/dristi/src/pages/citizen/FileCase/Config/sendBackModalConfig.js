@@ -1,4 +1,4 @@
-export const config = [
+export const modalConfig = [
   {
     headModal: "Send Case Back",
     body: [

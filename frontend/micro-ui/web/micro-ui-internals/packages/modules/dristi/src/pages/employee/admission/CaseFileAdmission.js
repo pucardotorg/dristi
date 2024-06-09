@@ -2,13 +2,76 @@ import React, { useState } from "react";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
+import SendCaseBack from "./SendCaseBack";
 
 function CaseFileAdmission({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
-  const onSubmit = () => {};
-  const onSaveDraft = () => {};
+  const [showModal, setShowModal] = useState(false);
+  const [modalData, setModalData] = useState(null);
+  const [submitModalInfo, setSubmitModalInfo] = useState(null);
+  const onSubmit = () => {
+    setSubmitModalInfo({
+      header: "The case file has been admitted successfully.",
+      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      caseInfo: [
+        {
+          key: "Case Number",
+          value: "FSM-2019-04-23-898898",
+        },
+        {
+          key: "Case Category",
+          value: "Criminal",
+        },
+        {
+          key: "Case Type",
+          value: "NIA S138",
+        },
+        {
+          key: "Court Name",
+          value: "Kerala City Criminal Court",
+        },
+        {
+          key: "Submitted on",
+          value: "23 Jan 2024",
+        },
+      ],
+      backButtonText: "Back to Home",
+      nextButtonText: "Schedule next hearing",
+      isArrow: false,
+      showTable: true,
+    });
+
+    // setModalInfo({ type: "schedule", page: "0" });
+    setShowModal(true);
+  };
+  const onSaveDraft = () => {
+    setSubmitModalInfo({
+      header: "The case file has been sent back for correction",
+      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      caseInfo: {
+        key: "Case File Number",
+        value: "KA08293928392",
+      },
+      backButtonText: "Back to Home",
+      nextButtonText: "Next Case",
+      isArrow: true,
+    });
+    setShowModal(true);
+  };
+  const onSendBack = () => {
+    setSubmitModalInfo({
+      header: "The case file has been sent back for correction",
+      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      caseInfo: [{ key: "Case File Number", value: "KA08293928392" }],
+      backButtonText: "Back to Home",
+      nextButtonText: "Next Case",
+      isArrow: true,
+      showCopytext: true,
+    });
+    setShowModal(true);
+  };
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
       setFormdata((prev) => {
@@ -19,6 +82,18 @@ function CaseFileAdmission({ t }) {
   const closeToast = () => {
     setShowErrorToast(false);
   };
+  console.log(showModal);
+
+  const handleCloseModal = () => {
+    setModalData(null);
+    setSubmitModalInfo(null);
+  };
+  // {
+  //   modalInfo.type === "Schedule" && modalInfo.page === 0 && <Modal1 modalData={modalData} setModalData={setModalData} />;
+  // }
+  if (showModal) {
+    return <SendCaseBack t={t} setShowModal={setShowModal} setSubmitModalInfo={setSubmitModalInfo} submitModalInfo={submitModalInfo}></SendCaseBack>;
+  }
 
   return (
     <div className="file-case">
@@ -53,11 +128,8 @@ function CaseFileAdmission({ t }) {
             showSecondaryLabel={true}
             actionClassName="admission-action-buttons"
             showSkip={"FDSJKLDFSJL"}
-            onSkip={() => {
-              console.debug("vaibhav");
-            }}
+            onSkip={onSendBack}
           />
-
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>

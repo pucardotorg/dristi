@@ -73,7 +73,7 @@ function CitizenHome({ tenantId }) {
       searchResult?.[0]?.status !== "INACTIVE"
     );
   }, [searchResult, userType]);
-
+  console.log(isApprovalPending);
   const isRejected = useMemo(() => {
     return (
       userType !== "LITIGANT" &&

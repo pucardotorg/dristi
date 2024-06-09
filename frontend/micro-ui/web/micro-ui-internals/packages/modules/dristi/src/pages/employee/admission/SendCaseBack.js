@@ -1,10 +1,12 @@
-import { Card, CardText, Modal, TextArea } from "@egovernments/digit-ui-react-components";
+import { ArrowForward, ArrowRightInbox, Banner, Card, CardText, Modal, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 
-import { config } from "./Config/sendBackModalConfig";
+import { modalConfig } from "../../citizen/FileCase/Config/sendBackModalConfig";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomSubmitModal from "./CustomSubmitModal";
 
+import { ReactComponent as RightArrow } from "../../citizen/Home/ImageUpload/image/arrow_forward.svg";
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
@@ -29,14 +31,12 @@ const CloseBtn = (props) => {
     </div>
   );
 };
-function SendCaseBack({ t }) {
-  const [showModal, setShowModal] = useState(false);
+function SendCaseBack({ t, setShowModal, setSubmitModalInfo, submitModalInfo }) {
   const [reasons, setReasons] = useState(null);
   const [page, setPage] = useState(0);
   const history = useHistory();
-
   const stepItems = useMemo(() =>
-    config.map(
+    modalConfig.map(
       (step) => {
         const texts = {};
         for (const key in step.texts) {
@@ -44,10 +44,10 @@ function SendCaseBack({ t }) {
         }
         return { ...step, texts };
       },
-      [config]
+      [modalConfig]
     )
   );
-  console.log(stepItems, config);
+  console.log(stepItems);
   const onSubmit = (props) => {
     setPage(1);
   };
@@ -65,7 +65,9 @@ function SendCaseBack({ t }) {
             noBoxShadow
             inline={false}
             label={t("CORE_COMMON_SEND")}
-            onSecondayActionClick={() => {}}
+            onSecondayActionClick={() => {
+              setShowModal(false);
+            }}
             // onFormValueChange={onFormValueChange}
             headingStyle={{ textAlign: "center" }}
             cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
@@ -80,15 +82,24 @@ function SendCaseBack({ t }) {
       )}
       {page == 1 && (
         <Modal
-          headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
-          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-          actionSaveLabel={t("NEXT_CASE")}
-          actionCancelLabel={t("BACK_TO_HOME")}
-          actionCancelOnSubmit={() => setPage(0)}
+          // headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
+          // headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          actionSaveLabel={
+            <div>
+              {t(submitModalInfo?.nextButtonText)}
+              {submitModalInfo?.isArrow && <ArrowRightInbox />}
+            </div>
+          }
+          actionCancelLabel={t(submitModalInfo?.backButtonText)}
+          actionCancelOnSubmit={() => {
+            setShowModal(false);
+          }}
           className="case-types"
 
           // actionSaveOnSubmit={onModalSubmit}
-        ></Modal>
+        >
+          <CustomSubmitModal submitModalInfo={submitModalInfo} />
+        </Modal>
       )}
     </div>
   );
