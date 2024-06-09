@@ -229,6 +229,18 @@
     &.show-file-uploader {
       display: block;
     }
+
+    &.select-UploadFiles {
+      .file-uploader {
+        border: solid 1px #d6d5d4;
+        .drag-drop-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+    }
     .drag-drop-container-desktop {
       width: 100%;
       background-color: #fafafa;
