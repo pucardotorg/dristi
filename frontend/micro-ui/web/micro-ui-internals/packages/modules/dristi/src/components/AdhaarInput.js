@@ -27,7 +27,7 @@ const AadhaarInput = (props) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!inputRefs.some((ref) => ref.current.contains(event.target))) {
+      if (!inputRefs?.some((ref) => ref.current.contains(event.target))) {
         if (focusedInput !== null) {
           inputRefs[focusedInput].current.focus();
         }
