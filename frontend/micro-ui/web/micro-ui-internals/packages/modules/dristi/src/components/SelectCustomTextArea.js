@@ -54,6 +54,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
         </div>
         <div>
           <textarea
+            value={formData?.[config.key]?.[input.name]}
             onChange={(data) => {
               handleChange(data, input);
             }}
