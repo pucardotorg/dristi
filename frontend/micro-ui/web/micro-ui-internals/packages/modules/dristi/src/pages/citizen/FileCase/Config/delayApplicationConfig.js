@@ -46,6 +46,7 @@ const delayApplicationFormConfig = [
         populators: {
           inputs: [
             {
+              name: "reasonForDelay",
               textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
               type: "TextAreaComponent",
               headerClassName: "text-area-header",

@@ -364,7 +364,6 @@ function EFilingCases({ path }) {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
-  console.log(formdata, modifiedFormConfig);
 
   const createIndividualUser = async (data, documentData) => {
     const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
@@ -724,6 +723,41 @@ function EFilingCases({ path }) {
         },
       };
     }
+    if (selected === "delayApplications") {
+      const condonationDocumentData = { condonationFileUpload: {} };
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.condonationFileUpload?.document) {
+              condonationDocumentData.condonationFileUpload.document = await Promise.all(
+                data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || data?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || data?.fileStore,
+                    documentName: uploadedData.filename || data?.documentName,
+                  };
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...condonationDocumentData,
+              },
+            };
+          })
+      );
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        delayApplications: {
+          formdata: newFormData,
+          isCompleted: "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
+    }
     if (selected === "prayerSwornStatement") {
       const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
       const newFormData = await Promise.all(
@@ -787,7 +821,6 @@ function EFilingCases({ path }) {
                 const result = await res;
                 result[curr] = await Promise.all(
                   data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                    if (!document.name) return {};
                     const uploadedData = await onDocumentUpload(document, document.name);
                     return {
                       documentType: uploadedData.fileType || document?.documentType,
@@ -802,7 +835,6 @@ function EFilingCases({ path }) {
             if (data?.data?.memorandumOfComplaint?.document) {
               documentData.memorandumOfComplaint.document = await Promise.all(
                 data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
-                  if (!document.name) return {};
                   const uploadedData = await onDocumentUpload(document, document.name);
                   return {
                     documentType: uploadedData.fileType || document?.documentType,
@@ -811,11 +843,12 @@ function EFilingCases({ path }) {
                   };
                 })
               );
+            } else if (data?.data?.memorandumOfComplaint?.text) {
+              documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
             }
             if (data?.data?.prayerForRelief?.document) {
               documentData.prayerForRelief.document = await Promise.all(
                 data?.data?.prayerForRelief?.document?.map(async (document) => {
-                  if (!document.name) return {};
                   const uploadedData = await onDocumentUpload(document, document.name);
                   return {
                     documentType: uploadedData.fileType || document?.documentType,
@@ -824,6 +857,8 @@ function EFilingCases({ path }) {
                   };
                 })
               );
+            } else if (data?.data?.prayerForRelief?.text) {
+              documentData.prayerForRelief.text = data?.data?.prayerForRelief?.text;
             }
             return {
               ...data,
@@ -841,6 +876,50 @@ function EFilingCases({ path }) {
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
         prayerSwornStatement: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
+    }
+    if (selected === "advocateDetails") {
+      const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.vakalatnamaFileUpload?.document) {
+              vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
+                data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...vakalatnamaDocumentData,
+              },
+            };
+          })
+      );
+      // const representatives = [...caseDetails?.representatives]
+      //   ?.filter((representative) => representative?.advocateId)
+      //   .map((representative) => ({
+      //     ...representative,
+      //     caseId: caseDetails?.id,
+      //     representing: representative?.advocateId ? [...litigants] : [],
+      //   }));
+      // data.litigants = [...litigants];
+      // data.representatives = [...representatives];
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        advocateDetails: {
           formdata: newFormData,
           isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
         },

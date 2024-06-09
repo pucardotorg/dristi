@@ -111,7 +111,7 @@ const advocateDetailsFormConfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "condonationFileUpload",
+        key: "vakalatnamaFileUpload",
         populators: {
           inputs: [
             {
