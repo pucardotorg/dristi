@@ -14,6 +14,10 @@ import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
 import { userTypeOptions } from "../registration/config";
 
+const Heading = (props) => {
+  return <h1 className="heading-m">{props.label}</h1>;
+};
+
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
@@ -33,6 +37,8 @@ function EFilingCases({ path }) {
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
+  const [deleteFormIndex, setDeleteFormIndex] = useState(null);
 
   const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
@@ -57,6 +63,14 @@ function EFilingCases({ path }) {
       });
     });
     return keys;
+  }, []);
+
+  const deleteWarningText = useCallback((pageName) => {
+    return (
+      <div>
+        <h3>{`This will permanently delete all the details entered for this ${pageName}. This action cannot be undone.`}</h3>
+      </div>
+    );
   }, []);
 
   const nextSelected = useMemo(() => {
@@ -324,6 +338,7 @@ function EFilingCases({ path }) {
       isenabled: index === i ? false : item.isenabled,
       displayindex: i < index ? item.displayindex : i === index ? -Infinity : item.displayindex - 1,
     }));
+    setConfirmDeleteModal(true);
     setFormdata(newArray);
   };
 
@@ -994,6 +1009,17 @@ function EFilingCases({ path }) {
     } else return "";
   }, [formdata]);
 
+  const handleConfirmDeleteForm = () => {
+    const index = deleteFormIndex;
+    const newArray = formdata.map((item, i) => ({
+      ...item,
+      isenabled: index === i ? false : item.isenabled,
+      displayindex: i < index ? item.displayindex : i === index ? -Infinity : item.displayindex - 1,
+    }));
+    setConfirmDeleteModal(false);
+    setFormdata(newArray);
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   if (isLoading) {
     return <Loader />;
@@ -1095,7 +1121,8 @@ function EFilingCases({ path }) {
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
-                          handleDeleteForm(index);
+                          setConfirmDeleteModal(true);
+                          setDeleteFormIndex(index);
                         }}
                       >
                         <CustomDeleteIcon />
@@ -1129,6 +1156,18 @@ function EFilingCases({ path }) {
               </div>
             ) : null;
           })}
+          {confirmDeleteModal && (
+            <Modal
+              // hideSubmit={true}
+              headerBarMain={<Heading label={t("Are you sure?")} />}
+              headerBarEnd={<CloseBtn onClick={() => setConfirmDeleteModal(false)} />}
+              actionCancelLabel="Cancel"
+              actionCancelOnSubmit={() => setConfirmDeleteModal(false)}
+              actionSaveLabel={`Remove ${pageConfig?.formItemName}`}
+              children={deleteWarningText(`${pageConfig?.formItemName}`)}
+              actionSaveOnSubmit={handleConfirmDeleteForm}
+            ></Modal>
+          )}
           {pageConfig?.addFormText && (
             <Button
               variation="secondary"
