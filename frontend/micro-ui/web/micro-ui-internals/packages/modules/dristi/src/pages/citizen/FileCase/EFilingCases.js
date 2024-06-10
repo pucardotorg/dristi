@@ -502,7 +502,6 @@ function EFilingCases({ path }) {
                 })
               );
             }
-            debugger;
             return {
               ...data,
               data: {
