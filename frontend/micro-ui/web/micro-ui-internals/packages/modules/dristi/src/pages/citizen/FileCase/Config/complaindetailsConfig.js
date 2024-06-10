@@ -188,6 +188,7 @@ const complainantDetailsFormConfig = [
           "district",
           "city",
           "locality",
+          'addressDetails'
         ],
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
@@ -218,7 +219,7 @@ const complainantDetailsFormConfig = [
             {
               label: "CS_PIN_LOCATION",
               type: "LocationSearch",
-              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid", ],
               key: "locationSearch",
             },
             {
