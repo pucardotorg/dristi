@@ -1,3 +1,4 @@
+.popup-module.otp-modal-class,
 .popup-module.case-types {
   width: 536px;
   max-height: 544px;
@@ -139,6 +140,7 @@
 }
 
 @media (max-width: 450px) {
+  .popup-module.otp-modal-class,
   .popup-module.case-types {
     margin: auto 16px;
     max-height: 564px;
@@ -153,6 +155,7 @@
       .case-types-main-div {
         max-height: 300px;
       }
+
       .submit-bar-div {
         display: flex;
         flex-direction: column-reverse;

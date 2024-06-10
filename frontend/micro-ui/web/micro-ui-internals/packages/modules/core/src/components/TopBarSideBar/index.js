@@ -38,7 +38,7 @@ const TopBarSideBar = ({
   const userOptions = CITIZEN
     ? [{ name: t("CORE_COMMON_LOGOUT"), icon: <LogoutIcon className="icon" />, func: handleLogout }]
     : [
-      { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
+      // { name: t("EDIT_PROFILE"), icon: <EditPencilIcon className="icon" />, func: userProfile },
       { name: t("CORE_COMMON_LOGOUT"), icon: <LogoutIcon className="icon" />, func: handleLogout },
     ];
   return (

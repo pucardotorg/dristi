@@ -137,9 +137,9 @@ const App = ({ stateCode, tenantId }) => {
           <div
             className={
               location.pathname.includes("/response") ||
-              location.pathname.includes("/login") ||
-              location.pathname.includes("/registration") ||
-              location.pathname.endsWith("/home")
+                location.pathname.includes("/login") ||
+                location.pathname.includes("/registration") ||
+                location.pathname.endsWith("/home")
                 ? `user-registration`
                 : ""
             }
