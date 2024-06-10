@@ -7,6 +7,7 @@ import DelayApplication from "./DelayApplication";
 import EFilingCases from "./EFilingCases";
 import WitnessDetails from "./WitnessDetails";
 import SendCaseBack from "./SendCaseBack";
+import EFilingPayment from "./EFilingPayment";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -22,7 +23,7 @@ function FileCase({ t }) {
             <DelayApplication />
           </Route>
           <Route path={`${path}/case`}>
-            <EFilingCases t={t} />
+            <EFilingCases t={t} path={path} />
           </Route>
           <Route path={`${path}/witness-details`}>
             <WitnessDetails />
@@ -32,6 +33,9 @@ function FileCase({ t }) {
           </Route>
           <Route path={`${path}/send-case-back`}>
             <SendCaseBack t={t} />
+          </Route>
+          <Route path={`${path}/e-filing-payment`}>
+            <EFilingPayment t={t} />
           </Route>
         </AppContainer>
       </Switch>

@@ -25,7 +25,7 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "complainantType.name" },
                 { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "complainantVerification.mobileNumber" },
-                { type: "image", label: "CS_ID_PROOF", value: "companyDetailsUpload" },
+                { type: "image", label: "CS_ID_PROOF", value: ["individualDetails.document", "companyDetailsUpload.document"] },
                 { type: "address", label: "CS_ADDRESS", value: "addressDetails-select" },
               ],
               data: ComplainantDummy,
@@ -79,8 +79,8 @@ export const reviewCaseFileFormConfig = [
               icon: "DebtLiabilityIcon",
               config: [
                 { type: "text", label: "CS_NATURE_OF_DEBT", value: "liabilityNature.name" },
-                { type: "text", label: "CS_CHEQUE_RECIEVED_FOR", value: "receivedfor" },
-                { type: "image", label: "Documents", value: "document" },
+                { type: "text", label: "CS_CHEQUE_RECIEVED_FOR", value: "liabilityType.name" },
+                { type: "image", label: "Documents", value: ["debtLiabilityFileUpload.document"] },
               ],
               data: DebtDummy,
             },
@@ -91,11 +91,20 @@ export const reviewCaseFileFormConfig = [
               icon: "DemandDetailsNoticeIcon",
               config: [
                 { type: "text", label: "CS_MODE_OF_DISPATCH", value: "SelectUserTypeComponent.modeOfDispatchType.name" },
-                { type: "text", label: "CS_DISPATCHED_ON", value: "SelectUserTypeComponent.dateOfDispatch" },
-                { type: "text", label: "CS_SERVICES_ON", value: "SelectUserTypeComponent.dateOfService" },
-                { type: "text", label: "CS_RECIEVED_REPLY_ON", value: "recievedon" },
-                { type: "text", label: "CS_CAUSE_ACTION_ON", value: "causeon" },
-                { type: "image", label: "CS_DOCUMENT", value: "document" },
+                { type: "text", label: "CS_DISPATCHED_ON", value: "dateOfDispatch" },
+                { type: "text", label: "CS_SERVICES_ON", value: "dateOfService" },
+                { type: "text", label: "CS_RECIEVED_REPLY_ON", value: "dateOfReply" },
+                { type: "text", label: "CS_CAUSE_ACTION_ON", value: "dateOfAccrual" },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: [
+                    "SelectCustomDragDrop.legalDemandNoticeFileUpload",
+                    "SelectCustomDragDrop.proofOfAcknowledgmentFileUpload",
+                    "SelectCustomDragDrop.proofOfDispatchFileUpload",
+                    "SelectCustomDragDrop.proofOfReplyFileUpload",
+                  ],
+                },
               ],
               data: DemandDummy,
             },
@@ -129,8 +138,18 @@ export const reviewCaseFileFormConfig = [
               label: "CS_PRAYER_SWORN_DETAIL_NAME",
               icon: "PrayerSwornIcon",
               config: [
-                { type: "text", label: "CS_PRAYER_RELIEF", value: "prayer" },
-                { type: "address", label: "CS_ADDRESS", value: "addressDetails" },
+                { type: "text", label: "CS_PRAYER_RELIEF", value: "prayerForRelief.text" },
+                { type: "text", label: "CS_ADDRESS", value: "addressDetails" },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: [
+                    "SelectCustomDragDrop.swornStatement",
+                    "memorandumOfComplaint.document",
+                    "prayerForRelief.document",
+                    "SelectUploadDocWithName",
+                  ],
+                },
               ],
               data: [
                 {
@@ -158,9 +177,9 @@ export const reviewCaseFileFormConfig = [
               label: "CS_ADVOCATE_DETAILS",
               icon: "AdvocateDetailsIcon",
               config: [
-                { type: "title", value: "name" },
-                { type: "text", label: "CS_BAR_REGISTRATION", value: "bar" },
-                { type: "image", label: "CS_ID_PROOF", value: "id" },
+                { type: "title", value: "advocateName" },
+                { type: "text", label: "CS_BAR_REGISTRATION", value: "barRegistrationNumber" },
+                { type: "image", label: "CS_ID_PROOF", value: ["vakalatnamaFileUpload.document"] },
               ],
               data: AdvocateDummy,
             },
