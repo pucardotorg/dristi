@@ -14,6 +14,7 @@ const getLocation = (places, code) => {
 
 const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
   const configKey = `${config.key}-select`;
+  debugger;
   // const configKey = config.key;
   const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
   const { inputs, uuid } = useMemo(
