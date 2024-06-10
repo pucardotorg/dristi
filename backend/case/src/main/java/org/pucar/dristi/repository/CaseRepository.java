@@ -276,7 +276,7 @@ public class CaseRepository {
                 if (caseExists.getCourtCaseNumber() == null && caseExists.getCnrNumber() == null && caseExists.getFilingNumber() == null) {
                     caseExists.setExists(false);
                 } else {
-                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
+                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCaseId(), caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
                     log.info("Final case exist query :: {}", casesExistQuery);
                     Integer count = jdbcTemplate.queryForObject(casesExistQuery, Integer.class);
                     caseExists.setExists(count != null && count > 0);
