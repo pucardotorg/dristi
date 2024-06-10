@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
@@ -406,7 +406,7 @@ function EFilingCases({ path }) {
               name: "Citizen",
               tenantId: tenantId,
             },
-            ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"]?.map((role) => ({
+            ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"]?.map((role) => ({
               code: role,
               name: role,
               tenantId: tenantId,
@@ -428,7 +428,7 @@ function EFilingCases({ path }) {
             pincode: data?.addressDetails?.pincode,
             addressLine1: data?.addressDetails?.state,
             addressLine2: data?.addressDetails?.district,
-            landmark: data?.addressDetails?.locality,
+            street: data?.addressDetails?.locality,
           },
         ],
         identifiers: [
@@ -466,7 +466,7 @@ function EFilingCases({ path }) {
                 tenantId,
                 caseId: caseDetails?.id,
                 partyCategory: data?.data?.complainantType?.code,
-                individualId: data?.data?.complainantVerification?.individualDetails,
+                individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
                 partyType: index === 0 ? "complainant.primary" : "complainant.additional",
               };
             } else {
@@ -517,6 +517,7 @@ function EFilingCases({ path }) {
                 })
               );
             }
+            debugger;
             return {
               ...data,
               data: {
@@ -524,6 +525,9 @@ function EFilingCases({ path }) {
                 companyDetailsUpload: {
                   ...data?.data?.companyDetailsUpload,
                   document: documentData,
+                },
+                individualDetails: {
+                  ...data?.data?.complainantVerification?.individualDetails,
                 },
               },
             };
@@ -659,9 +663,9 @@ function EFilingCases({ path }) {
                 data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
                   const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: uploadedData.fileType || data?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || data?.fileStore,
-                    documentName: uploadedData.filename || data?.documentName,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
                 })
               );
@@ -679,7 +683,7 @@ function EFilingCases({ path }) {
         ...caseDetails.caseDetails,
         debtLiabilityDetails: {
           formdata: newFormData,
-          isCompleted: "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
         },
       };
     }
@@ -749,9 +753,9 @@ function EFilingCases({ path }) {
                 data?.data?.condonationFileUpload?.document?.map(async (document) => {
                   const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: uploadedData.fileType || data?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || data?.fileStore,
-                    documentName: uploadedData.filename || data?.documentName,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
                 })
               );
@@ -769,7 +773,7 @@ function EFilingCases({ path }) {
         ...caseDetails.caseDetails,
         delayApplications: {
           formdata: newFormData,
-          isCompleted: "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
         },
       };
     }
@@ -919,19 +923,30 @@ function EFilingCases({ path }) {
               data: {
                 ...data.data,
                 ...vakalatnamaDocumentData,
+                advocateBarRegNumberWithName: data?.data?.advocateBarRegNumberWithName?.map((item) => {
+                  return {
+                    barRegistrationNumber: item?.barRegistrationNumber,
+                    advocateName: item?.advocateName,
+                    advocateId: item?.advocateId,
+                  };
+                }),
+                advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
               },
             };
           })
       );
-      // const representatives = [...caseDetails?.representatives]
-      //   ?.filter((representative) => representative?.advocateId)
-      //   .map((representative) => ({
-      //     ...representative,
-      //     caseId: caseDetails?.id,
-      //     representing: representative?.advocateId ? [...litigants] : [],
-      //   }));
-      // data.litigants = [...litigants];
-      // data.representatives = [...representatives];
+      const representatives = formdata
+        .filter((item) => item.isenabled)
+        .map((data) => {
+          return {
+            ...caseDetails?.representative,
+            caseId: caseDetails?.id,
+            representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId ? [...caseDetails?.litigants] : [],
+            advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+          };
+        });
+      data.representatives = [...representatives];
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
         advocateDetails: {
@@ -978,7 +993,13 @@ function EFilingCases({ path }) {
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails();
+    updateCaseDetails().then(() => {
+      refetchCaseData().then(() => {
+        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+        setFormdata(caseData);
+      });
+    });
   };
 
   const handlePageChange = (key, isConfirm) => {
@@ -995,12 +1016,19 @@ function EFilingCases({ path }) {
       resetFormData();
     }
     setIsOpen(false);
-    updateCaseDetails("PAGE_CHANGE");
+    updateCaseDetails("PAGE_CHANGE").then(() => {
+      refetchCaseData().then(() => {
+        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+        setFormdata(caseData);
+      });
+    });
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
   const onSubmitCase = (data) => {
     setOpenConfirmCourtModal(false);
+    history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };
 
   const getFormClassName = useCallback(() => {

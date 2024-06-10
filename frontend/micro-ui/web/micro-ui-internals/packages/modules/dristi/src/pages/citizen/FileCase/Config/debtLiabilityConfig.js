@@ -126,7 +126,7 @@ const debtLiabilityFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Aadhar",
+              documentHeader: "PROOF_OF_DL",
               isOptional: "optional",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
@@ -146,11 +146,11 @@ const debtLiabilityFromconfig = [
       {
         type: "component",
         component: "SelectCustomTextArea",
-        key: "delayApplicationReason",
+        key: "additionalDebtLiabilityDetails",
         populators: {
           inputs: [
             {
-              textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+              textAreaHeader: "CS_TEXTAREA_HEADER_ADDITIONAL_DL_DETAILS",
               type: "TextAreaComponent",
             },
           ],

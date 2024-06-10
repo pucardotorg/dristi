@@ -144,6 +144,8 @@
                   text-align: left;
                   color: #f47738;
                   text-decoration: underline;
+                  word-wrap: break-word;
+                  white-space: break-spaces;
                 }
 
                 .action-link {
@@ -151,8 +153,7 @@
                   padding: 8px 0px 8px 0px;
                   text-align: center;
                   height: 38px;
-                  margin-top: 12px;
-                  margin-bottom: 12px;
+                  margin: 12px 0px 12px 12px !important;
                   display: flex;
                   align-items: center;
                   justify-content: center;
@@ -168,17 +169,22 @@
                 }
 
                 td {
-                  padding: 0px !important;
+                  padding: 0px 12px 0px 0px !important;
                   width: 16.66%;
+                  max-width: 16.66%;
+                  min-width: 16.66%;
                 }
 
                 th {
-                  padding: 0px 0px 12px;
-                  width: 16.66;
+                  padding: 0px 12px 12px 0px;
+                  width: 16.66%;
+                  max-width: 16.66%;
+                  min-width: 16.66%;
                 }
 
                 th:last-child {
                   text-align: center !important;
+                  padding-left: 12px !important;
                 }
               }
             }

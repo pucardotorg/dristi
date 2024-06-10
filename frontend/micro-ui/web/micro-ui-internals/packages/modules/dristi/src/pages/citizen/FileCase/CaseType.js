@@ -60,14 +60,17 @@ function CaseType({ t }) {
     const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
     const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
     const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
-    const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+    const street = individualData?.Individual?.[0]?.address[0]?.street || "";
     const city = individualData?.Individual?.[0]?.address[0]?.city || "";
     const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
     const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
     const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
     const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
-
-    const address = `${doorNo} ${buildingName} ${landmark}`.trim();
+    const idType = individualData?.Individual?.[0]?.identifiers[0]?.identifierType || "";
+    const identifierIdDetails = JSON.parse(
+      individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
+    );
+    const address = `${doorNo} ${buildingName} ${street}`.trim();
 
     const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
     const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
@@ -217,7 +220,12 @@ function CaseType({ t }) {
                                 complainantVerification: {
                                   mobileNumber: userInfo?.userName,
                                   otpNumber: "123456",
-                                  individualDetails: individualId,
+                                  individualDetails: {
+                                    individualId: individualId,
+                                    document: identifierIdDetails?.fileStoreId
+                                      ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                                      : null,
+                                  },
                                   isUserVerified: true,
                                 },
                                 addressDetails: {

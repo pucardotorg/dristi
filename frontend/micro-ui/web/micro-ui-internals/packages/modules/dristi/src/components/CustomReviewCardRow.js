@@ -150,17 +150,47 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
             <div className="label">{t(label)}</div>
             <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll" }}>
-              {data?.[value]
-                ? data?.[value]?.document?.map((data, index) => (
-                    <DocViewerWrapper
-                      key={`${value}-${index}`}
-                      fileStoreId={data?.fileStore}
-                      displayFilename={data?.fileName}
-                      tenantId={tenantId}
-                      docWidth="250px"
-                    />
-                  ))
-                : t("CA_NOT_AVAILABLE")}
+              {Array.isArray(value)
+                ? value?.map((value) =>
+                    extractValue(data, value) && Array.isArray(extractValue(data, value)) ? (
+                      extractValue(data, value)?.map((data, index) => {
+                        if (data?.fileStore) {
+                          return (
+                            <DocViewerWrapper
+                              key={`${value}-${index}`}
+                              fileStoreId={data?.fileStore}
+                              displayFilename={data?.fileName}
+                              tenantId={tenantId}
+                              docWidth="250px"
+                            />
+                          );
+                        } else if (data?.document) {
+                          return data?.document?.map((data, index) => {
+                            return (
+                              <DocViewerWrapper
+                                key={`${value}-${index}`}
+                                fileStoreId={data?.fileStore}
+                                displayFilename={data?.fileName}
+                                tenantId={tenantId}
+                                docWidth="250px"
+                              />
+                            );
+                          });
+                        } else {
+                          return null;
+                        }
+                      })
+                    ) : extractValue(data, value) ? (
+                      <DocViewerWrapper
+                        key={`${value}-${extractValue(data, value)?.name}`}
+                        fileStoreId={extractValue(data, value)?.fileStore}
+                        displayFilename={extractValue(data, value)?.fileName}
+                        tenantId={tenantId}
+                        docWidth="250px"
+                      />
+                    ) : null
+                  )
+                : null}
             </div>
             <div
               className="flag"

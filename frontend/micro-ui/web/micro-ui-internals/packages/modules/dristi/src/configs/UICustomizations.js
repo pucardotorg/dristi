@@ -175,6 +175,7 @@ export const UICustomizations = {
                 ),
                 barRegistrationNumber: `${adv?.barRegistrationNumber} (${adv?.additionalDetails?.username})`,
                 advocateName: adv?.additionalDetails?.username,
+                advocateId: adv?.id,
               };
             });
           },

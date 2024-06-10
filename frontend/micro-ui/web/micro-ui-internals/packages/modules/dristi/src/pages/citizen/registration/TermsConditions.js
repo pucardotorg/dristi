@@ -108,7 +108,7 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
             addressLine1: data?.addressDetails?.state,
             addressLine2: data?.addressDetails?.district,
             buildingName: data?.addressDetails?.buildingName,
-            landmark: data?.addressDetails?.locality,
+            street: data?.addressDetails?.locality,
           },
         ],
         identifiers: [

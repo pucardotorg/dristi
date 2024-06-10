@@ -41,6 +41,7 @@ const Registration = ({ stateCode }) => {
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
+  const [{ showOtpModal, isAdhaar }, setState] = useState({ showOtpModal: false, isAdhaar: false });
   const getUserType = () => Digit.UserService.getType();
   const { t } = useTranslation();
   const location = useLocation();
@@ -120,7 +121,10 @@ const Registration = ({ stateCode }) => {
     if (!err) {
       setCanSubmitNo(true);
       setIsOtpValid(true);
-      history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+      setState((prev) => ({
+        ...prev,
+        showOtpModal: true,
+      }));
       return;
     } else {
       setError(t("ES_ERROR_USER_ALREADY_REGISTERED"));
@@ -144,7 +148,11 @@ const Registration = ({ stateCode }) => {
         info.tenantId = Digit.ULBService.getStateId();
       }
       setUser({ info, ...tokens });
-      // history.push(`${path}/user-name`)
+      setState((prev) => ({
+        ...prev,
+        showOtpModal: false,
+      }));
+      history.push(`${path}/user-name`);
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
@@ -160,7 +168,11 @@ const Registration = ({ stateCode }) => {
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
     setIsOtpValid(true);
-    history.replace(`${path}/aadhar-otp`);
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: true,
+      isAdhaar: true,
+    }));
   };
   const resendOtp = async () => {
     setNewParams({ ...newParams, otp: "", aadharOtp: "" });
@@ -196,6 +208,11 @@ const Registration = ({ stateCode }) => {
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
     setNewParams({ ...newParams, aadharOtp: "" });
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: false,
+      isAdhaar: false,
+    }));
     history.replace(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
@@ -262,22 +279,6 @@ const Registration = ({ stateCode }) => {
               className={"register"}
             />
           </Route>
-          <Route path={`${path}/otp`}>
-            <SelectOtp
-              onOtpChange={handleOtpChange}
-              onResend={resendOtp}
-              onSelect={selectOtp}
-              setParams={setNewParams}
-              otp={newParams?.otp}
-              error={isOtpValid}
-              canSubmit={canSubmitOtp}
-              params={newParams}
-              path={`${path}/mobile-number`}
-              cardText={`${stepItems[4].texts.cardText}`}
-              mobileNumber={newParams.mobileNumber || ""}
-              t={t}
-            />
-          </Route>
           <Route path={`${path}/user-name`}>
             <SelectName
               config={[stepItems[3]]}
@@ -314,22 +315,24 @@ const Registration = ({ stateCode }) => {
               adhaarNumber={newParams?.adhaarNumber}
             />
           </Route>
-          <Route path={`${path}/aadhar-otp`}>
+          {showOtpModal && (
             <SelectOtp
-              cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
-              onOtpChange={handleAadharOtpChange}
+              onOtpChange={!isAdhaar ? handleOtpChange : handleAadharOtpChange}
               onResend={resendOtp}
-              onSelect={onAadharOtpSelect}
+              onSelect={!isAdhaar ? selectOtp : onAadharOtpSelect}
               setParams={setNewParams}
-              otp={newParams?.aadharOtp}
+              otp={!isAdhaar ? newParams?.otp : newParams?.aadharOtp}
               error={isOtpValid}
-              canSubmit={canSubmitAadharOtp}
+              canSubmit={!isAdhaar ? canSubmitOtp : canSubmitAadharOtp}
               params={newParams}
-              path={pathOnRefresh}
-              isAdhaar={true}
+              path={!isAdhaar ? `${path}/mobile-number` : pathOnRefresh}
+              cardText={!isAdhaar ? `${stepItems[4].texts.cardText}` : `${stepItems[7].texts.cardText}`}
+              mobileNumber={newParams.mobileNumber || ""}
+              isAdhaar={!isAdhaar ? false : true}
               t={t}
+              setState={setState}
             />
-          </Route>
+          )}
           <Route path={`${path}/user-type`}>
             <SelectUserType
               config={[stepItems[2]]}
