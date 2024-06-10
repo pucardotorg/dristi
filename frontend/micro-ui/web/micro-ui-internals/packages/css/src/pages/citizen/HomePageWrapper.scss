@@ -46,7 +46,7 @@
     }
   }
 
-  .WhatsAppBanner{
+  .WhatsAppBanner {
     width: 100%;
     padding: 0px 20px 0px 20px;
     margin: auto;
@@ -130,12 +130,11 @@
 
     .WhatsAppBanner {
       width: 100%;
-      img{
+      img {
         height: 20vw;
         width: 100%;
       }
     }
-
   }
   .moduleLinkHomePage {
     img {
@@ -155,4 +154,9 @@
   .moduleLinkHomePageModuleLinks {
     width: 100%;
   }
+}
+.address-card-input {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }

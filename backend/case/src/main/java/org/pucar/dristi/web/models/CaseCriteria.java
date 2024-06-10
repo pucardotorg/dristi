@@ -1,12 +1,13 @@
 package org.pucar.dristi.web.models;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Data;
@@ -22,44 +23,40 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class CaseCriteria {
-    @JsonProperty("caseId")
-    private String caseId = null;
+	@JsonProperty("caseId")
 
-    @JsonProperty("cnrNumber")
-    private String cnrNumber = null;
+	private String caseId = null;
 
-    @JsonProperty("filingNumber")
-    private String filingNumber = null;
+	@JsonProperty("cnrNumber")
 
-    @JsonProperty("courtCaseNumber")
-    private String courtCaseNumber = null;
+	private String cnrNumber = null;
 
-    @JsonProperty("filingFromDate")
-    @Valid
-    private LocalDate filingFromDate = null;
+	@JsonProperty("filingNumber")
 
-    @JsonProperty("filingToDate")
-    @Valid
-    private LocalDate filingToDate = null;
+	private String filingNumber = null;
 
-    @JsonProperty("registrationFromDate")
-    @Valid
-    private LocalDate registrationFromDate = null;
+	@JsonProperty("courtCaseNumber")
 
-    @JsonProperty("registrationToDate")
-    @Valid
-    private LocalDate registrationToDate = null;
+	private String courtCaseNumber = null;
 
-    @JsonProperty("responseList")
-    @Valid
-    private List<CourtCase> responseList = null;
+	@JsonProperty("filingFromDate")
 
-    public CaseCriteria addResponseListItem(CourtCase responseListItem) {
-        if (this.responseList == null) {
-            this.responseList = new ArrayList<>();
-        }
-        this.responseList.add(responseListItem);
-        return this;
-    }
+	@Valid
+	private LocalDate filingFromDate = null;
+
+	@JsonProperty("filingToDate")
+
+	@Valid
+	private LocalDate filingToDate = null;
+
+	@JsonProperty("registrationFromDate")
+
+	@Valid
+	private LocalDate registrationFromDate = null;
+
+	@JsonProperty("registrationToDate")
+
+	@Valid
+	private LocalDate registrationToDate = null;
 
 }

@@ -1,44 +1,46 @@
 package org.pucar.dristi.web.models;
 
+import org.springframework.validation.annotation.Validated;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * Pagination details
  */
 @Schema(description = "Pagination details")
 @Validated
-@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T05:55:27.937918+05:30[Asia/Kolkata]")
+@jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-04T13:54:45.904122+05:30[Asia/Kolkata]")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Pagination {
-	@JsonProperty("limit")
+public class Pagination   {
+        @JsonProperty("limit")
 
-	@DecimalMax("100")
-	private Double limit = 10d;
+         @DecimalMax("100")         private Double limit = 10d;
 
-	@JsonProperty("offSet")
+        @JsonProperty("offSet")
 
-	private Double offSet = 0d;
+                private Double offSet = 0d;
 
-	@JsonProperty("totalCount")
+        @JsonProperty("totalCount")
 
-	private Double totalCount = null;
+                private Double totalCount = null;
 
-	@JsonProperty("sortBy")
+        @JsonProperty("sortBy")
 
-	private String sortBy = null;
+                private String sortBy = null;
 
-	@JsonProperty("order")
+        @JsonProperty("order")
 
-	private Order order = null;
+                private Order order = null;
+
 
 }

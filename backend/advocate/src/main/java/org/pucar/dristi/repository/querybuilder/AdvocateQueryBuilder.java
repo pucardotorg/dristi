@@ -12,8 +12,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -27,103 +26,59 @@ public class AdvocateQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
 
     /**   /** To build query using search criteria to search advocate
-     * @param criteriaList
      * @param preparedStmtList
-     * @param statusList
-     * @param applicationNumber
-     * @param isIndividualLoggedInUser
      * @param limit
      * @param offset
      * @return
      */
-    public String getAdvocateSearchQuery(List<AdvocateSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset) {
+    public String getAdvocateSearchQuery(AdvocateSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_ADVOCATES_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
-            if(criteriaList != null && !criteriaList.isEmpty()) {
-
-                // Collecting ids, application numbers, and bar registration numbers
-                List<String> ids = criteriaList.stream()
-                        .map(AdvocateSearchCriteria::getId)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> barRegistrationNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null)
-                        .map(AdvocateSearchCriteria::getBarRegistrationNumber)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> applicationNumbers = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null)
-                        .map(AdvocateSearchCriteria::getApplicationNumber)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                List<String> individualIds = criteriaList.stream()
-                        .filter(criteria -> criteria.getId() == null && criteria.getBarRegistrationNumber() == null && criteria.getApplicationNumber() == null)
-                        .map(AdvocateSearchCriteria::getIndividualId)
-                        .filter(Objects::nonNull)
-                        .toList();
-
-                if (!ids.isEmpty()) {
+            if(criteria != null) {
+                if (criteria.getId()!=null && !criteria.getId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.id IN (")
-                            .append(ids.stream().map(id -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(ids);
+                    query.append("adv.id = ?");
+                    preparedStmtList.add(criteria.getId());
                     firstCriteria = false; // Update firstCriteria flag
                 }
 
-                if (!barRegistrationNumbers.isEmpty()) {
+                if (criteria.getBarRegistrationNumber()!=null && !criteria.getBarRegistrationNumber().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.barRegistrationNumber IN (")
-                            .append(barRegistrationNumbers.stream().map(reg -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(barRegistrationNumbers);
+                    query.append("adv.barRegistrationNumber = ?");
+                    preparedStmtList.add(criteria.getBarRegistrationNumber());
                     firstCriteria = false; // Update firstCriteria flag
 
                 }
 
-                if (!applicationNumbers.isEmpty()) {
+                if (criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.applicationNumber IN (")
-                            .append(applicationNumbers.stream().map(num -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(applicationNumbers);
+                    query.append("adv.applicationNumber = ?");
+                    preparedStmtList.add(criteria.getApplicationNumber());
                     firstCriteria = false;
                 }
 
-                if (!individualIds.isEmpty()) {
+                if (criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("adv.individualId IN (")
-                            .append(individualIds.stream().map(num -> "?").collect(Collectors.joining(",")))
-                            .append(")");
-                    preparedStmtList.addAll(individualIds);
+                    query.append("adv.individualId = ?");
+                    preparedStmtList.add(criteria.getIndividualId());
                     firstCriteria = false;
                 }
 
-                if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(barRegistrationNumbers) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
+                if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getBarRegistrationNumber()!=null && !criteria.getBarRegistrationNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
+                        || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
                     query.append(")");
                 }
-            }
-            else if(applicationNumber != null && !applicationNumber.isEmpty()){
-                addClauseIfRequired(query, firstCriteria);
-                query.append("LOWER(adv.applicationNumber) LIKE LOWER(?)")
-                        .append(")");
-                preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
-                firstCriteria = false;
-            }
-            if (statusList != null && !statusList.isEmpty()) {
-                addClauseIfRequiredForStatus(query, firstCriteria);
-                query.append("adv.status IN (")
-                        .append(statusList.stream().map(num -> "?").collect(Collectors.joining(",")))
-                        .append(")");
-                preparedStmtList.addAll(statusList);
-            }
-            query.append(isIndividualLoggedInUser.get() ? ORDERBY_CREATEDTIME_DESC : ORDERBY_CREATEDTIME_ASC);
 
+                if(tenantId != null && !tenantId.isEmpty()){
+                    addClauseIfRequiredForTenantId(query, firstCriteria);
+                    query.append("LOWER(adv.tenantid) = LOWER(?)");
+                    preparedStmtList.add(tenantId.toLowerCase());
+                }
+            }
+
+            query.append(ORDERBY_CREATEDTIME_DESC);
 
             // Adding Pagination
             if (limit != null && offset != null) {
@@ -135,8 +90,82 @@ public class AdvocateQueryBuilder {
             return query.toString();
         }
          catch (Exception e) {
-            log.error("Error while building advocate search query");
-            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+            log.error("Error while building advocate search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+        }
+    }
+
+    public String getAdvocateSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_ADVOCATES_TABLE);
+            boolean firstCriteria = true; // To check if it's the first criteria
+
+            if(status != null && !status.isEmpty()){
+                addClauseIfRequiredForStatus(query, firstCriteria);
+                query.append("LOWER(adv.status) LIKE LOWER(?)")
+                        .append(")");
+                preparedStmtList.add(status.toLowerCase());
+                firstCriteria = false;
+            }
+            if(tenantId != null && !tenantId.isEmpty()){
+                addClauseIfRequiredForTenantId(query, firstCriteria);
+                query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
+                preparedStmtList.add(tenantId.toLowerCase());
+                firstCriteria = false;
+            }
+
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
+            }
+
+            return query.toString();
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+        }
+    }
+
+    public String getAdvocateSearchQueryByApplicationNumber(String applicationNumber, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_ADVOCATES_TABLE);
+            boolean firstCriteria = true; // To check if it's the first criteria
+
+            if(applicationNumber != null && !applicationNumber.isEmpty()){
+                addClauseIfRequiredForStatus(query, firstCriteria);
+                query.append("LOWER(adv.applicationnumber) LIKE LOWER(?)")
+                        .append(")");
+                preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
+                firstCriteria = false;
+            }
+            if(tenantId != null && !tenantId.isEmpty()){
+                addClauseIfRequiredForTenantId(query, firstCriteria);
+                query.append("LOWER(adv.tenantid) LIKE LOWER(?)");
+                preparedStmtList.add("%" + tenantId.toLowerCase() + "%");
+                firstCriteria = false;
+            }
+
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
+            }
+
+            return query.toString();
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
@@ -149,6 +178,14 @@ public class AdvocateQueryBuilder {
     }
 
     private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
+        if (isFirstCriteria) {
+            query.append(" WHERE (");
+        } else {
+            query.append(" AND ");
+        }
+    }
+
+    private void addClauseIfRequiredForTenantId(StringBuilder query, boolean isFirstCriteria) {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
@@ -169,8 +206,8 @@ public class AdvocateQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
+            log.error("Error while building document search query :: {}",e.toString());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the query: "+ e.getMessage());
         }
     }
 }

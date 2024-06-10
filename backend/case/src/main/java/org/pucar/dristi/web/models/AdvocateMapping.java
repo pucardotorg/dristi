@@ -27,10 +27,10 @@ import java.util.List;
 public class AdvocateMapping   {
         @JsonProperty("id")
 
-        @Valid         private String id = null;
+        @Size(min=2,max=64)         private String id = null;
 
         @JsonProperty("tenantId")
-        //  @NotNull
+          @NotNull
 
                 private String tenantId = null;
 
@@ -44,8 +44,7 @@ public class AdvocateMapping   {
 
         @JsonProperty("representing")
           @Valid
-       // @Size(min=1)
-        private List<Party> representing = null;
+        @Size(min=1)         private List<Party> representing = null;
 
         @JsonProperty("isActive")
 

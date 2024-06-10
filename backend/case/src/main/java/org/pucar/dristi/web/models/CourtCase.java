@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
@@ -34,57 +33,58 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CourtCase {
-
 	@JsonProperty("id")
+
 	@Valid
 	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	//@NotNull
-	//@Size(min = 2, max = 64)
+	@NotNull
+
+	@Size(min = 2, max = 64)
 	private String tenantId = null;
 
 	@JsonProperty("resolutionMechanism")
-	//@Size(min = 2, max = 128)
+
+	@Size(min = 2, max = 128)
 	private String resolutionMechanism = null;
 
 	@JsonProperty("caseTitle")
-	//@Size(min = 2, max = 512)
+
+	@Size(min = 2, max = 512)
 	private String caseTitle = null;
 
-	@JsonProperty("isActive")
-	private Boolean isActive = true;
-
 	@JsonProperty("caseDescription")
-	//@Size(min = 2, max = 10000)
+
+	@Size(min = 2, max = 10000)
 	private String caseDescription = null;
 
 	@JsonProperty("filingNumber")
-	//@Size(min = 2, max = 64)
+
+	@Size(min = 2, max = 64)
 	private String filingNumber = null;
 
 	@JsonProperty("courtCaseNumber")
-	//@Size(min=10,max=24)
-	private String courCaseNumber = null;
 
+	@Size(min=10,max=24)
+	private String courCaseNumber = null;
 	@JsonProperty("caseNumber")
 
-	//@Size(min = 2, max = 32)
+	@Size(min = 2, max = 32)
 	private String caseNumber = null;
 
-	@JsonProperty("cnrNumber")
-	//@Size(min = 2, max = 32)
-	private String cnrNumber = null;
-
 	@JsonProperty("accessCode")
+
 	private String accessCode = null;
 
 	@JsonProperty("courtId")
-	//@Size(min = 2, max = 64)
+
+	@Size(min = 2, max = 64)
 	private String courtId = null;
 
 	@JsonProperty("benchId")
-	//@Size(min = 2, max = 64)
+
+	@Size(min = 2, max = 64)
 	private String benchId = null;
 
 	@JsonProperty("linkedCases")
@@ -92,36 +92,39 @@ public class CourtCase {
 	private List<LinkedCase> linkedCases = new ArrayList<>();
 
 	@JsonProperty("filingDate")
-	//@NotNull
+	@NotNull
+
 	@Valid
-	@JsonFormat(pattern = "dd-MM-yyyy")
 	private LocalDate filingDate = null;
 
 	@JsonProperty("registrationDate")
-	@JsonFormat(pattern = "dd-MM-yyyy")
-	private LocalDate registrationDate = null;
+
+	private String registrationDate = null;
 
 	@JsonProperty("caseDetails")
+
 	private Object caseDetails = null;
 
 	@JsonProperty("caseCategory")
-	//@NotNull
-	//@Size(min = 2, max = 64)
+	@NotNull
+
+	@Size(min = 2, max = 64)
 	private String caseCategory = null;
 
 	@JsonProperty("natureOfPleading")
-	//@Size(min = 2, max = 64)
+
+	@Size(min = 2, max = 64)
 	private String natureOfPleading = null;
 
 	@JsonProperty("statutesAndSections")
-	//@NotNull
+	@NotNull
 	@Valid
 	private List<StatuteSection> statutesAndSections = new ArrayList<>();
 
 	@JsonProperty("litigants")
-	//@NotNull
+	@NotNull
 	@Valid
-	//@Size(min = 2) //FIX
+	@Size(min = 2)
 	private List<Party> litigants = new ArrayList<>();
 
 	@JsonProperty("representatives")
@@ -129,6 +132,7 @@ public class CourtCase {
 	private List<AdvocateMapping> representatives = new ArrayList<>();
 
 	@JsonProperty("status")
+
 	private String status = null;
 
 	@JsonProperty("documents")
@@ -136,16 +140,20 @@ public class CourtCase {
 	private List<Document> documents = new ArrayList<>();
 
 	@JsonProperty("remarks")
+
 	private String remarks = null;
 
 	@JsonProperty("workflow")
+
 	@Valid
 	private Workflow workflow = null;
 
 	@JsonProperty("additionalDetails")
+
 	private Object additionalDetails = null;
 
-	@JsonProperty("auditDetails")
+	@JsonProperty("auditdetails")
+
 	@Valid
 	private AuditDetails auditdetails = null;
 

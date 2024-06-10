@@ -4,10 +4,6 @@ import PropTypes from "prop-types";
 import { CardLabel, CardLabelError, TextArea, TextInput } from "@egovernments/digit-ui-react-components";
 import InputCard from "./InputCard";
 
-const labelErrorStyle = {
-  marginTop: "-10px",
-};
-
 const FormStep = ({
   t,
   children,
@@ -42,26 +38,28 @@ const FormStep = ({
     if (input.type === "text") {
       return (
         <React.Fragment key={index}>
-          <CardLabel>{t(input.label)}</CardLabel>
-          <div className="field-container" style={{ justifyContent: "left" }}>
-            {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
-            <TextInput
-              key={index}
-              name={input.name}
-              defaultValue={defaultValue}
-              value={value}
-              onChange={onChange}
-              minlength={input.validation.minlength}
-              maxlength={input.validation.maxlength}
-              pattern={input.validation?.pattern}
-              title={input.validation?.title}
-              inputRef={register(input.validation)}
-              isMandatory={errors[input.name]}
-              disable={input.disable ? input.disable : false}
-              textInputStyle={textInputStyle}
-            />
+          <div>
+            <CardLabel>{t(input.label)}</CardLabel>
+            <div className="field-container">
+              {componentInFront ? <span className="citizen-card-input citizen-card-input--front">{componentInFront}</span> : null}
+              <TextInput
+                key={index}
+                name={input.name}
+                defaultValue={defaultValue && defaultValue[input.name]}
+                value={value}
+                onChange={onChange}
+                minlength={input.validation.minlength}
+                maxlength={input.validation.maxlength}
+                pattern={input.validation?.pattern}
+                title={input.validation?.title}
+                inputRef={register(input.validation)}
+                isMandatory={errors[input.name]}
+                disable={input.disable ? input.disable : false}
+                textInputStyle={textInputStyle}
+              />
+            </div>
+            {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
           </div>
-          {errors[input.name] && <CardLabelError style={labelErrorStyle}>{t(input.error)}</CardLabelError>}
         </React.Fragment>
       );
     }

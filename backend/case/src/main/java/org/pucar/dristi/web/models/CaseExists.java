@@ -22,17 +22,20 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class CaseExists {
-
 	@JsonProperty("courtCaseNumber")
+
 	private String courtCaseNumber = null;
 
 	@JsonProperty("cnrNumber")
+
 	private String cnrNumber = null;
 
 	@JsonProperty("filingNumber")
+
 	private String filingNumber = null;
 
 	@JsonProperty("exists")
+
 	private Boolean exists = null;
 
 }

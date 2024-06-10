@@ -1,4 +1,4 @@
-import { Header, Card, Loader, ActionBar, SubmitBar, Modal, CardText, Toast, TextArea } from "@egovernments/digit-ui-react-components";
+import { Header, Card, Loader, ActionBar, SubmitBar, Modal, CardText, Toast, TextArea, BackButton } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
@@ -7,6 +7,7 @@ import DocViewerWrapper from "./docViewerWrapper";
 import { ReactComponent as LocationOnMapIcon } from "../../images/location_onmap.svg";
 import { userTypeOptions } from "../citizen/registration/config";
 import Menu from "../../components/Menu";
+import { useToast } from "../../components/Toast/useToast";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -49,6 +50,8 @@ const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
 
 const ApplicationDetails = ({ location, match }) => {
   const urlParams = new URLSearchParams(window.location.search);
+
+  const toast = useToast();
 
   const individualId = urlParams.get("individualId");
   const applicationNo = urlParams.get("applicationNo");
@@ -112,21 +115,28 @@ const ApplicationDetails = ({ location, match }) => {
   ]);
 
   const searchResult = useMemo(() => {
-    return searchData?.[userTypeDetail?.apiDetails?.requestKey];
+    return searchData?.[`${userTypeDetail?.apiDetails?.requestKey}s`]?.[0]?.responseList;
   }, [searchData, userTypeDetail?.apiDetails?.requestKey]);
   const fileStoreId = useMemo(() => {
     return searchResult?.[0]?.documents?.[0]?.fileStore;
   }, [searchResult]);
-
+  const fileName = useMemo(() => {
+    return searchResult?.[0]?.documents?.[0]?.additionalDetails?.fileName;
+  }, [searchResult]);
   useEffect(() => {
     setIsAction(searchResult?.[0]?.status === "INWORKFLOW");
   }, [searchResult]);
+
+  const applicationNumber = useMemo(() => {
+    return searchResult?.[0]?.applicationNumber;
+  }, [searchResult]);
+
   // let isMobile = window.Digit.Utils.browser.isMobile();
 
   function takeAction(action) {
     const applications = searchResult;
     applications[0].workflow.action = action;
-    const data = { [userTypeDetail?.apiDetails?.requestKey]: applications };
+    const data = { [userTypeDetail?.apiDetails?.requestKey]: applications?.[0] };
     const url = userType === "ADVOCATE_CLERK" ? "/advocate/clerk/v1/_update" : "/advocate/advocate/v1/_update";
     if (showModal) {
       applications[0].workflow.comments = reasons;
@@ -134,17 +144,23 @@ const ApplicationDetails = ({ location, match }) => {
     window?.Digit.DRISTIService.advocateClerkService(url, data, tenantId, true, {})
       .then(() => {
         setShowModal(false);
-        setMessage(action === "APPROVE" ? t("ES_USER_APPROVED") : t("ES_USER_REJECTED"));
-        setIsAction(false);
+        if (action === "APPROVE") {
+          toast.success(t("ES_USER_APPROVED"));
+        } else if (action === "REJECT") {
+          toast.error(t("ES_USER_REJECTED"));
+        }
       })
       .catch(() => {
         setShowModal(false);
-        setMessage(t("ES_API_ERROR"));
-        setIsAction(false);
+        toast.error(t("ES_API_ERROR"));
+      })
+      .then(() => {
+        history.push(`/digit-ui/employee/dristi/registration-requests`);
       });
   }
 
   function onActionSelect(action) {
+    console.log(action);
     if (action === "APPROVE") {
       takeAction(action);
     }
@@ -190,13 +206,18 @@ const ApplicationDetails = ({ location, match }) => {
       {
         title: "Bar Council ID",
         image: true,
-        content: (
+        content: fileName,
+      },
+      {
+        doc: (
           <DocViewerWrapper
+            style={{ maxWidth: "100px", maxHeight: "100px" }}
             fileStoreId={fileStoreId}
             tenantId={tenantId}
-            displayFilename={searchResult?.[0]?.additionalDetails?.filename}
+            docViewerCardClassName={"doc-card"}
           ></DocViewerWrapper>
         ),
+        image: true,
       },
     ];
   }, [fileStoreId, searchResult, tenantId, userTypeDetail?.apiDetails?.AdditionalFields]);
@@ -216,69 +237,71 @@ const ApplicationDetails = ({ location, match }) => {
     ];
   }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
 
+  const header = useMemo(() => {
+    return applicationNo || applicationNumber ? t(`Application Number ${applicationNo || applicationNumber}`) : "My Application";
+  }, [applicationNo, applicationNumber, t]);
+
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
     return <Loader />;
   }
-
-  const header = applicationNo ? t(`Application Number ${applicationNo}`) : "My Application";
   return (
-    <div style={{ paddingLeft: "20px" }}>
-      <Header>{header}</Header>
-      <DocumentDetailCard cardData={aadharData} />
-      <DocumentDetailCard cardData={personalData} header={"Personal Details"} />
-      {type === "advocate" && userType !== "ADVOCATE_CLERK" && <DocumentDetailCard cardData={barDetails} header={"BAR Details"} />}
-      {applicationNo && (
-        <ActionBar>
-          {displayMenu && applicationNo ? (
-            <Menu
-              menuItemStyle={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
+    <React.Fragment>
+      <div className="view-application">
+        <div className="application-main" >
+          <Header className="application-header">{header}</Header>
+          <div className="application-card">
+            <DocumentDetailCard cardData={aadharData} />
+            <DocumentDetailCard cardData={personalData} />
+            {type === "advocate" && userType !== "ADVOCATE_CLERK" && (
+              <DocumentDetailCard cardData={barDetails} />
+            )}
+          </div>
+          {!applicationNo && (
+            <div className="action-button-application">
+              <SubmitBar
+                label={t("Go_Back_Home")}
+                onSubmit={() => {
+                  history.push(`/${window?.contextPath}/citizen/dristi/home`);
+                }}
+                className="action-button-width"
+              />
+            </div>
+          )}
+          {applicationNo && (
+            <div className="action-button-application">
+              {actions.map((option, index) => (
+                <SubmitBar
+                  key={index}
+                  label={option == "REJECT" ? "Reject Request" : "Accept Request"}
+                  style={{ margin: "20px", backgroundColor: option == "REJECT" ? "#BB2C2F" : "#007E7E" }}
+                  onSubmit={(data) => {
+                    onActionSelect(option);
+                  }}
+                  className="action-button-width"
+                />
+              ))}
+            </div>
+          )}
+          {showModal && (
+            <Modal
+              headerBarMain={<Heading label={t("Confirm Reject Application")} />}
+              headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+              actionSaveLabel={t("Reject")}
+              actionSaveOnSubmit={() => {
+                handleDelete("REJECT");
               }}
-              localeKeyPrefix={"BR"}
-              options={actions}
-              t={t}
-              onSelect={onActionSelect}
-            />
-          ) : null}
-          <SubmitBar
-            label={isAction ? t("Take_Action") : t("Go_Back_Home")}
-            onSubmit={() => {
-              if (isAction) {
-                setDisplayMenu(!displayMenu);
-              } else {
-                history.push(`/digit-ui/employee/dristi/registration-requests?type=${type}`);
-              }
-            }}
-          />
-        </ActionBar>
-      )}
-      {showModal && (
-        <Modal
-          headerBarMain={<Heading label={t("Confirm Reject Application")} />}
-          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-          actionCancelLabel={t("Cancel")}
-          actionCancelOnSubmit={() => {
-            setShowModal(false);
-          }}
-          actionSaveLabel={t("Reject")}
-          actionSaveOnSubmit={() => {
-            handleDelete("REJECT");
-          }}
-          isDisabled={!reasons || !reasons.trim()}
-        >
-          <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
-            <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
-            <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
-          </Card>
-        </Modal>
-      )}
-      {message && (
-        <Toast error={message === t("ES_API_ERROR") || message === t("ES_USER_REJECTED")} label={message} onClose={() => setMessage(null)} />
-      )}
-    </div>
+              isDisabled={!reasons || !reasons.trim()}
+              style={{ backgroundColor: "#BB2C2F" }}
+            >
+              <Card style={{ boxShadow: "none", padding: "2px 16px 2px 16px", marginBottom: "2px" }}>
+                <CardText style={{ margin: "2px 0px" }}>{t(`REASON_FOR_REJECTION`)}</CardText>
+                <TextArea rows={"3"} onChange={(e) => setReasons(e.target.value)} style={{ maxWidth: "100%", height: "auto" }}></TextArea>
+              </Card>
+            </Modal>
+          )}
+        </div>
+      </div>
+    </React.Fragment>
   );
 };
 

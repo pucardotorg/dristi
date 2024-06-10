@@ -102,18 +102,19 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
               if (mdmsDataObj?.links?.length > 0) {
                 return (
                   <CitizenHomeCard
+                    key={code}
                     header={t(mdmsDataObj?.header)}
                     links={mdmsDataObj?.links?.filter((ele) => ele?.link)?.sort((x, y) => x?.orderNumber - y?.orderNumber)}
                     Icon={() => iconSelector(code)}
                     Info={
                       code === "OBPS"
                         ? () => (
-                            <CitizenInfoLabel
-                              style={{ margin: "0px", padding: "10px" }}
-                              info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                              text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
-                            />
-                          )
+                          <CitizenInfoLabel
+                            style={{ margin: "0px", padding: "10px" }}
+                            info={t("CS_FILE_APPLICATION_INFO_LABEL")}
+                            text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
+                          />
+                        )
                         : null
                     }
                     isInfo={code === "OBPS" ? true : false}
@@ -131,10 +132,10 @@ const EmployeeHome = ({ modules, additionalComponent }) => {
   return (
     <>
       <div className="employee-app-container">
-        <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "5px" }}>
-          <span style={{ color: "#f47738" }}>Help</span>
+        {/* <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "5px" }}>
+          <span style={{ color: "#007E7E" }}>Help</span>
           <HelpOutlineIcon />
-        </div>
+        </div> */}
         <div className="ground-container moduleCardWrapper gridModuleWrapper">
           {modules.map(({ code }, index) => {
             const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);

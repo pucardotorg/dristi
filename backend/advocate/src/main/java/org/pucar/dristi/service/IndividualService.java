@@ -23,7 +23,7 @@ public class IndividualService {
     @Autowired
     private  Configuration config;
 
-    public Boolean searchIndividual(RequestInfo requestInfo , String individualId, Map<String, String> individualUserUUID ) {
+    public Boolean searchIndividual(RequestInfo requestInfo , String individualId, Map<String, String> individualUserUUID ){
         try {
             IndividualSearchRequest individualSearchRequest = new IndividualSearchRequest();
             individualSearchRequest.setRequestInfo(requestInfo);
@@ -31,21 +31,17 @@ public class IndividualService {
             log.info("Individual Id :: {}", individualId);
             individualSearch.setIndividualId(individualId);
             individualSearchRequest.setIndividual(individualSearch);
+            StringBuilder uri = new StringBuilder(config.getIndividualHost()).append(config.getIndividualSearchEndpoint());
+            uri.append("?limit=1000").append("&offset=0").append("&tenantId=").append(requestInfo.getUserInfo().getTenantId()).append("&includeDeleted=true");
+            Boolean isIndividualValid = individualUtils.individualCall(individualSearchRequest, uri, individualUserUUID);
+            return isIndividualValid;
 
-            StringBuilder uri = new StringBuilder(config.getIndividualHost())
-                    .append(config.getIndividualSearchEndpoint())
-                    .append("?limit=1000")
-                    .append("&offset=0")
-                    .append("&tenantId=")
-                    .append(requestInfo.getUserInfo().getTenantId())
-                    .append("&includeDeleted=true");
-
-            return individualUtils.individualCall(individualSearchRequest, uri, individualUserUUID);
-        } catch (CustomException e) {
+        } catch(CustomException e){
             throw e;
-        } catch (Exception e) {
-            log.error("Error in search individual service");
-            throw new CustomException(INDIVIDUAL_SERVICE_EXCEPTION, "Error in search individual service" + e.getMessage());
+        }
+        catch (Exception e){
+            log.error("Error in search individual service :: {}", e.toString());
+            throw new CustomException(INDIVIDUAL_SERVICE_EXCEPTION,"Error in search individual service"+e.getMessage());
         }
     }
-    }
+}

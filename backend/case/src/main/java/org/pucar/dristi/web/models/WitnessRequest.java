@@ -21,14 +21,23 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WitnessRequest {
+public class WitnessRequest   {
+        @JsonProperty("requestInfo")
 
-    @JsonProperty("RequestInfo")
-    @Valid
-    private RequestInfo requestInfo = null;
+          @Valid
+                private RequestInfo requestInfo = null;
 
-    @JsonProperty("witness")
-    @Valid
-    private Witness witness = null;
+        @JsonProperty("witnesses")
+          @Valid
+                private List<Witness> witnesses = null;
+
+
+        public WitnessRequest addWitnessesItem(Witness witnessesItem) {
+            if (this.witnesses == null) {
+            this.witnesses = new ArrayList<>();
+            }
+        this.witnesses.add(witnessesItem);
+        return this;
+        }
 
 }

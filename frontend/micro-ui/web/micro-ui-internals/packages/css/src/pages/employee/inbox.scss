@@ -28,9 +28,9 @@
     .link {
       @apply p-sm text-primary-main items-center;
       display: flex !important;
-      a{
+      a {
         color: inherit;
-        text-decoration: inherit
+        text-decoration: inherit;
       }
     }
 
@@ -544,11 +544,11 @@
 
   .search-tab-head-selected {
     padding: 10px 35px;
-    color: rgb(244, 119, 56);
+    color: #007e7e;
     background-color: #fff;
-    border: 1px solid #f47738;
+    border: 1px solid #007e7e;
     border-radius: 0.5rem 0.5rem 0 0;
-    border-bottom: 4px solid rgb(244, 119, 56);
+    border-bottom: 4px solid #007e7e;
     font-weight: 700;
     font-size: 1.125rem;
     margin-bottom: -1rem;
@@ -589,5 +589,162 @@
         text-align: center;
       }
     }
+  }
+}
+
+.details-container .detail .name {
+  padding-top: 16px;
+  color: #0b0c0c !important;
+  text-decoration: none !important;
+}
+
+.application-header {
+  display: flex;
+  font-weight: 700;
+  line-height: 42.19px;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 0px !important;
+}
+
+.application-card {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  padding-right: 40px;
+  column-gap: 40px;
+  row-gap: 24px;
+}
+
+.application-bar-info {
+  width: 50%;
+}
+
+.docViewer-image {
+  width: 262px;
+  height: 206px;
+}
+.inbox-search-component-wrapper {
+  a {
+    text-decoration: none;
+  }
+}
+
+.action-button-application {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  margin: 0px !important;
+}
+
+.action-button-width {
+  box-shadow: none;
+  width: 30%;
+  margin-top: 0px;
+  font-family: Roboto !important;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 28.13px;
+  text-align: center;
+  margin: 0px !important;
+}
+.main-card-home {
+  padding: 80px;
+  margin: 40px;
+}
+.main-card-header {
+  display: flex;
+  justify-content: center;
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+.main-inner-div {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 64px;
+  cursor: pointer;
+  justify-content: center;
+}
+.custom-card-style {
+  width: 300px;
+  cursor: pointer;
+}
+.card-label {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+.doc-card {
+  box-shadow: none;
+}
+@media screen and (max-width: 400px) {
+  .application-header {
+    display: flex;
+    justify-content: left;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 42.19px;
+  }
+  .application-card {
+    grid-template-columns: 100%;
+    padding-right: 0px;
+  }
+  .application-bar-info {
+    width: 100%;
+  }
+  .docViewer-image {
+    width: 100px;
+    height: 100px;
+  }
+  .action-button-application {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    flex-direction: column;
+  }
+  .action-button-width {
+    width: 90%;
+    font-family: Roboto !important;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 28.13px;
+    text-align: center;
+    margin: 20px;
+    box-shadow: none;
+  }
+  .popup-module {
+    margin-top: 50vh;
+    max-height: 250px;
+    width: 480px;
+    margin: 0 auto;
+    --bg-opacity: 1;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, var(--bg-opacity));
+  }
+  .popup-wrap {
+    background: rgba(0, 0, 0, 0.7);
+    display: -ms-flexbox;
+    display: flex;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    align-items: center;
+  }
+  .main-card-home {
+    padding: 80px 10px;
+    margin: 0px;
+  }
+  .main-card-header {
+    font-size: 24px;
+  }
+  .custom-card-style {
+    width: 100%;
+    cursor: pointer;
+  }
+  .card-label {
+    margin-top: 0;
   }
 }

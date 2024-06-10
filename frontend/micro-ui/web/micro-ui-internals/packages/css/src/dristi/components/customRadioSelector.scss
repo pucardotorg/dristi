@@ -1,0 +1,31 @@
+.custom-radio-button-div .radio-wrap .radio-btn-wrap {
+  transform: scale(0.5);
+}
+
+.custom-radio-button-div .radio-wrap .radio-btn-wrap input:checked ~ .radio-btn-checkmark {
+  border-width: 1px !important;
+  border-color: #007e7e !important;
+}
+
+.custom-radio-button-div .radio-wrap .radio-btn-wrap input:checked ~ .radio-btn-checkmark:after {
+  background-color: #007e7e !important;
+}
+
+.custom-radio-button-div .radio-wrap .radio-btn-wrap:hover .radio-btn-checkmark {
+  border-width: 1px !important;
+  border-color: #007e7e !important;
+}
+
+.custom-radio-question-div {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+
+  span {
+    padding-top: 3px;
+
+    :hover {
+      cursor: pointer;
+    }
+  }
+}

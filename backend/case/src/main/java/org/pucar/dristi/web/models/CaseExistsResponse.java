@@ -24,10 +24,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CaseExistsResponse {
+	@JsonProperty("requestInfo")
 
-	@JsonProperty("ResponseInfo")
 	@Valid
-	private ResponseInfo responseInfo = null;
+	private ResponseInfo requestInfo = null;
 
 	@JsonProperty("criteria")
 	@Valid
