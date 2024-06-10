@@ -34,6 +34,4 @@ public class TaskExistsRequest   {
         @JsonProperty("task")
         @Valid
         private TaskExists task = null;
-
-
 }

@@ -4,6 +4,7 @@ CREATE TABLE dristi_task (
                               orderId varchar(64) NULL,
                               filingNumber VARCHAR(64),
                               cnrNumber varchar(64) NULL,
+                              taskNumber varchar(64) NULL,
                               createdDate varchar(64) NULL,
                               dateCloseBy varchar(64) NULL,
                               dateClosed varchar(64) NULL,

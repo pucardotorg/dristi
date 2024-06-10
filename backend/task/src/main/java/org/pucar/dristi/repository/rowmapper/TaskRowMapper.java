@@ -19,20 +19,19 @@ import java.util.*;
 @Slf4j
 public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
     public List<Task> extractData(ResultSet rs) {
-        Map<String, Task> caseMap = new LinkedHashMap<>();
+        Map<String, Task> taskMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String uuid = rs.getString("casenumber");
-                Task courtCase = caseMap.get(uuid);
+                String uuid = rs.getString("tasknumber");
+                Task task = taskMap.get(uuid);
 
-                if (courtCase == null) {
+                if (task == null) {
                     Long lastModifiedTime = rs.getLong("lastmodifiedtime");
                     if (rs.wasNull()) {
                         lastModifiedTime = null;
                     }
-
 
                     AuditDetails auditdetails = AuditDetails.builder()
                             .createdBy(rs.getString("createdby"))
@@ -40,37 +39,49 @@ public class TaskRowMapper implements ResultSetExtractor<List<Task>> {
                             .lastModifiedBy(rs.getString("lastmodifiedby"))
                             .lastModifiedTime(lastModifiedTime)
                             .build();
-                    courtCase = Task.builder()
+
+                    task = Task.builder()
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
+                            .orderId(UUID.fromString(rs.getString("orderid")))
                             .filingNumber(rs.getString("filingnumber"))
+                            .taskNumber(rs.getString("tasknumber"))
+                            .cnrNumber(rs.getString("cnrnumber"))
+                            .createdDate(stringToLocalDate(rs.getString("createddate")))
+                            .dateCloseBy(stringToLocalDate(rs.getString("datecloseby")))
+                            .dateClosed(stringToLocalDate(rs.getString("dateclosed")))
+                            .taskDescription(rs.getString("taskdescription"))
+                            .taskDetails(rs.getString("taskdetails"))
+                            .taskType(rs.getString("tasktype"))
+                            .assignedTo(rs.getString("assignedto"))
                             .status(rs.getString("status"))
+                            .isActive(Boolean.valueOf(rs.getString("isactive")))
                             .auditDetails(auditdetails)
                             .build();
                 }
 
-                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
-                if(pgObject!=null)
-                    courtCase.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
+                if (pgObject != null)
+                    task.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                caseMap.put(uuid, courtCase);
+                taskMap.put(uuid, task);
             }
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
-        } catch (Exception e){
-            log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing Case ResultSet: "+ e.getMessage());
+        } catch (Exception e) {
+            log.error("Error occurred while processing task ResultSet :: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Task ResultSet: " + e.getMessage());
         }
-        return new ArrayList<>(caseMap.values());
+        return new ArrayList<>(taskMap.values());
     }
 
     private LocalDate stringToLocalDate(String str){
         LocalDate localDate = null;
         if(str!=null)
-        try {
-            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            localDate = LocalDate.parse(str, pattern);
-        } catch (DateTimeParseException e) {}
+            try {
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                localDate = LocalDate.parse(str, pattern);
+            } catch (DateTimeParseException e) {}
 
         return localDate;
     }

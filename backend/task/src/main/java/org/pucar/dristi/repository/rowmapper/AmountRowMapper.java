@@ -16,51 +16,35 @@ import java.util.*;
 @Slf4j
 public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
     public Map<UUID, Amount> extractData(ResultSet rs) {
-        Map<UUID, Amount> statuteSectionMap = new LinkedHashMap<>();
+        Map<UUID, Amount> amountMap = new LinkedHashMap<>();
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("case_id");
+                String id = rs.getString("task_id");
                 UUID uuid = UUID.fromString(id!=null ? id : "00000000-0000-0000-0000-000000000000");
 
-                Long lastModifiedTime = rs.getLong("lastmodifiedtime");
-
-                AuditDetails auditdetails = AuditDetails.builder()
-                        .createdBy(rs.getString("createdby"))
-                        .createdTime(rs.getLong("createdtime"))
-                        .lastModifiedBy(rs.getString("lastmodifiedby"))
-                        .lastModifiedTime(lastModifiedTime)
-                        .build();
                 Amount amount = Amount.builder()
                         .id(UUID.fromString(rs.getString("id")))
+                        .type(rs.getString("type"))
+                        .status(rs.getString("status"))
+                        .amount(rs.getString("amount"))
+                        .paymentRefNumber(rs.getString("paymentrefnumber"))
                         .build();
 
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if (pgObject != null)
                     amount.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                statuteSectionMap.get(uuid);
+                amountMap.get(uuid);
             }
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing Task ResultSet :: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Task ResultSet: " + e.getMessage());
         }
-        return statuteSectionMap;
-    }
-
-    public List<String> stringToList(String str){
-        List<String> list = new ArrayList<>();
-        if(str!=null){
-            StringTokenizer st = new StringTokenizer("str",",");
-            while (st.hasMoreTokens()) {
-                list.add(st.nextToken());
-            }
-        }
-
-        return list;
+        return amountMap;
     }
 
 }
