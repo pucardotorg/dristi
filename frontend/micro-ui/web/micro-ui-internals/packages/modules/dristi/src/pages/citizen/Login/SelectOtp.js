@@ -22,6 +22,7 @@ const SelectOtp = ({
   isAdhaar,
   cardText,
   mobileNumber,
+  setState,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -40,13 +41,16 @@ const SelectOtp = ({
     setTimeLeft(25);
   };
   const onCancel = () => {
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: false,
+    }));
     setParams({
       ...params,
       otp: "",
       aadharOtp: "",
       adhaarNumber: "",
     });
-    history.goBack();
   };
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -65,12 +69,6 @@ const SelectOtp = ({
       </div>
     );
   };
-
-  if (!params?.mobileNumber && !isAdhaar) {
-    history.push(path);
-  } else if (!params?.adhaarNumber && isAdhaar) {
-    history.push(path);
-  }
 
   if (userType === "employee") {
     return (
@@ -93,6 +91,7 @@ const SelectOtp = ({
   }
 
   const handleKeyDown = (e) => {
+    e.stopPropagation();
     if (e.key === "Enter") {
       onSelect();
     }
