@@ -18,7 +18,7 @@
     background-color: white;
     border: 1px solid var(--Grey-200, #bbbbbd);
 
-    >h2 {
+    > h2 {
       font-weight: 700;
       font-size: 24px;
       border-bottom: 1px solid var(--Grey-200, #bbbbbd);
@@ -371,6 +371,25 @@
   }
 }
 
+.complainant {
+  .label-field-pair {
+    .field {
+      div {
+        .button-field {
+          width: 100% !important;
+          .jk-digit-secondary-btn.secondary-button-selector {
+            width: fit-content;
+          }
+        }
+        .label-field-pair {
+        }
+      }
+    }
+  }
+}
+
+.complainant,
+.respondent,
 .cheque,
 .debt-liability,
 .demand-notice {
@@ -575,7 +594,7 @@
           gap: 16px;
 
           &.error {
-            border-left: 2px #BB2C2F solid;
+            border-left: 2px #bb2c2f solid;
           }
 
           .scrutiny-error {
@@ -699,7 +718,6 @@
             }
 
             .image {
-
               &.column {
                 flex-direction: column;
               }
@@ -723,7 +741,8 @@
                 gap: 20px;
 
                 &.column {
-                  grid-template-columns: 25% 25% 25% 25% !important;
+                  display: flex;
+                  gap: 20px;
                 }
               }
             }
@@ -807,7 +826,7 @@
         margin: 10px 0px 0px 0px;
 
         .act-name {
-          text-decoration: underline;
+          color: #3d3c3c !important;
         }
 
         .place-name {

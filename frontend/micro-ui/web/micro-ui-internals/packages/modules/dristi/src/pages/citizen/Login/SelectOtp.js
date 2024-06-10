@@ -1,10 +1,9 @@
 import { CardLabel, CardLabelError, CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
-import { Close } from "@egovernments/digit-ui-svg-components";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { CloseIconWhite } from "../../../icons/svgIndex";
 
 const SelectOtp = ({
@@ -23,8 +22,10 @@ const SelectOtp = ({
   isAdhaar,
   cardText,
   mobileNumber,
+  setState,
 }) => {
   const history = useHistory();
+  const location = useLocation();
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(25);
@@ -40,13 +41,16 @@ const SelectOtp = ({
     setTimeLeft(25);
   };
   const onCancel = () => {
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: false,
+    }));
     setParams({
       ...params,
       otp: "",
       aadharOtp: "",
+      adhaarNumber: "",
     });
-
-    history.goBack();
   };
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -65,12 +69,6 @@ const SelectOtp = ({
       </div>
     );
   };
-
-  if (!params?.mobileNumber && !isAdhaar) {
-    history.push(path);
-  } else if (!params?.adhaarNumber && isAdhaar) {
-    history.push(path);
-  }
 
   if (userType === "employee") {
     return (
@@ -93,6 +91,7 @@ const SelectOtp = ({
   }
 
   const handleKeyDown = (e) => {
+    e.stopPropagation();
     if (e.key === "Enter") {
       onSelect();
     }

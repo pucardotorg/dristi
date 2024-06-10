@@ -8,7 +8,7 @@ import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
 
 function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
-  const [documentData, setDocumentData] = useState([]);
+  const [documentData, setDocumentData] = useState(formData?.[config.key] ? formData?.[config.key] : []);
 
   const inputs = useMemo(
     () =>
@@ -109,19 +109,15 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
             return (
               <div key={index} style={{ border: "solid 1px #BBBBBD" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "solid 1px #BBBBBD" }}>
-                  <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${documentData.length}`}</h1>
-                  <Button
-                    onButtonClick={() => {
+                  <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${index + 1}`}</h1>
+                  <span
+                    onClick={() => {
                       handleDeleteDocument(index);
                     }}
-                    icon={
-                      <div>
-                        <DeleteFileIcon />
-                      </div>
-                    }
-                    className="delete-button"
-                    label={t("Delete")}
-                  />
+                    style={{ cursor: "pointer" }}
+                  >
+                    <DeleteFileIcon />
+                  </span>
                 </div>
                 <div style={{ padding: "0px 5px 10px 5px" }}>
                   {inputs.map((input) => {

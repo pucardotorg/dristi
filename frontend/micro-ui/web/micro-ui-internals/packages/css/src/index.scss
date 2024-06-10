@@ -129,6 +129,7 @@
 @import "./dristi/components/verifyPhoneNumber.scss";
 @import "./dristi/components/customPopup.scss";
 @import "../src/pages/employee/nyayMitra.scss";
+@import "../src/dristi/pages/citizen/Home/litigantHome.scss";
 
 .wbh-header-container {
   display: flex !important;
@@ -676,7 +677,8 @@ input[type="number"] {
   }
 }
 
-.applications-list-container {}
+.applications-list-container {
+}
 
 .complaint-summary {
   @media (min-width: 780px) {
@@ -711,6 +713,9 @@ input[type="number"] {
   display: flex;
   align-items: center;
   justify-content: center;
+  height: calc(100vh - 84px);
+  width: 100% !important;
+  background-color: #eeeeee;
 
   .radio-wrap {
     display: flex;
@@ -726,7 +731,6 @@ input[type="number"] {
 }
 
 @media (min-width: 780px) {
-
   .citizen-obps-wrapper,
   .selection-card-wrapper,
   .pgr-citizen-wrapper,
@@ -747,7 +751,6 @@ input[type="number"] {
 }
 
 @media only screen and (max-width: 768px) {
-
   /* For mobile phones: */
   .error-boundary {
     height: 75vh;

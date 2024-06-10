@@ -1,16 +1,19 @@
-import { BackButton, HelpOutlineIcon, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, HelpOutlineIcon, PrivateRoute, Toast } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
-import ApplicationDetails from "./ApplicationDetails";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
-import CaseFileScrutiny from "./scrutiny/CaseFileScrutiny";
 import CaseFileAdmission from "./admission/CaseFileAdmission";
+import Home from "./home";
+import { useToast } from "../../components/Toast/useToast";
+import ApplicationDetails from "./ApplicationDetails";
+import ViewCaseFile from "./scrutiny/ViewCaseFile";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
   const location = useLocation();
-  const Inbox = Digit?.ComponentRegistryService?.getComponent("Inbox");
+  const { toastMessage, toastType, closeToast } = useToast();
+  const Inbox = window?.Digit?.ComponentRegistryService?.getComponent("Inbox");
   const hideHomeCrumb = [`${path}/cases`];
   const employeeCrumbs = [
     {
@@ -47,15 +50,24 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
               </span>
             </div>
           )}
-          <PrivateRoute exact path={`${path}/registration-requests`} component={(props) => <Inbox {...props} />} />
+          <PrivateRoute exact path={`${path}/registration-requests`} component={Inbox} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
-            <PrivateRoute exact path={`${path}/cases`} component={(props) => <CaseFileScrutiny {...props} t={t} />} />
+            <PrivateRoute exact path={`${path}/cases`} component={(props) => <Home {...props} t={t} />} />
           </div>
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
             <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} />} />
+            <PrivateRoute exact path={`${path}/cases`} component={(props) => <ViewCaseFile {...props} t={t} />} />
           </div>
         </div>
+        {toastMessage && (
+          <Toast
+            style={{ right: 24, left: "unset" }}
+            label={toastMessage}
+            onClose={closeToast}
+            {...(toastType !== "success" && { [toastType]: true })}
+          />
+        )}
       </React.Fragment>
     </Switch>
   );

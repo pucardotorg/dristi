@@ -8,7 +8,7 @@ import MultiUploadWrapper from "./MultiUploadWrapper";
 import Modal from "./Modal";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-const textAreaJSX = (t, input, handleChange) => {
+const textAreaJSX = (value, t, input, handleChange) => {
   return (
     <div className="custom-text-area-main-div" style={input?.style}>
       <div className="custom-text-area-header-div">
@@ -28,6 +28,7 @@ const textAreaJSX = (t, input, handleChange) => {
       </div>
       <div>
         <textarea
+          value={value}
           onChange={(data) => {
             handleChange(data, input);
           }}
@@ -53,10 +54,20 @@ const Heading = (props) => {
 };
 
 function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
-  // const [onStartingPage, setOnStartingPage] = useState(true);
-  const [showTextArea, setShowTextArea] = useState(true);
+  const checkIfTextPresent = () => {
+    if (formData && formData?.[config.key]?.document) {
+      return false;
+    } else return true;
+  };
+
+  const checkIfFilesPresent = () => {
+    if (formData && formData?.[config.key]?.document) {
+      return true;
+    } else return false;
+  };
+  const [showTextArea, setShowTextArea] = useState(checkIfTextPresent);
   const [showModal, setShowModal] = useState(false);
-  const [isFileAdded, setIsFileAdded] = useState(false);
+  const [isFileAdded, setIsFileAdded] = useState(checkIfFilesPresent);
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
 
   const inputs = useMemo(
@@ -156,7 +167,9 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   }
 
   const handleTextChange = (data, input) => {
-    onSelect(config.key, { ...formData[config.key], [input.name]: data.target.value });
+    const formDataCopy = structuredClone(formData);
+    delete formDataCopy[config.key]?.document;
+    onSelect(config.key, { ...formDataCopy[config.key], [input.name]: data.target.value });
     return;
   };
 
@@ -165,7 +178,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     if (input.type === "TextAreaComponent" && showTextArea) {
       return (
         <div>
-          {textAreaJSX(t, input, handleTextChange)}
+          {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange)}
           {!isFileAdded && (
             <div>
               <p>want to upload a file instead?</p>
@@ -176,8 +189,9 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           )}
         </div>
       );
-    } else {
-      const currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    }
+    if (input.type === "DragDropComponent") {
+      const currentValue = (formData && formData[config.key] && formData[config.key].document) || [];
       let fileErrors = [];
       if (currentValue.length > 0) {
         fileErrors = currentValue.map((file) => fileValidator(file, input));
@@ -208,16 +222,18 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                 />
               ))}
               {showFileUploader && (
-                <div className="file-uploader-div-main">
-                  <FileUploader
-                    handleChange={(data) => {
-                      handleChange(data, input);
-                    }}
-                    name="file"
-                    types={input?.fileTypes}
-                    children={dragDropJSX}
-                    key={input?.name}
-                  />
+                <div className={`file-uploader-div-main show-file-uploader select-UploadFiles`}>
+                  <div className="file-uploader">
+                    <FileUploader
+                      handleChange={(data) => {
+                        handleChange(data, input);
+                      }}
+                      name="file"
+                      types={input?.fileTypes}
+                      children={dragDropJSX}
+                      key={input?.name}
+                    />
+                  </div>
                   <div className="upload-guidelines-div">
                     <p>{t(input?.uploadGuidelines)}</p>
                   </div>

@@ -127,7 +127,10 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}
-                    {...input.validation}
+                    isRequired={input.validation.isRequired}
+                    pattern={input.validation.pattern}
+                    errMsg={input.validation.errMsg}
+                    maxlength={input.validation.maxlength}
                     style={{ minWidth: "500px" }}
                   />
                 )}

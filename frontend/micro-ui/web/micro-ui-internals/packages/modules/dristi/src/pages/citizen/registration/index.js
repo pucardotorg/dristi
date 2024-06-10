@@ -36,9 +36,12 @@ const Registration = ({ stateCode }) => {
   const isUserLoggedIn = Boolean(token);
   const moduleCode = "DRISTI";
   const [newParams, setNewParams] = useState(history.location.state?.newParams || {});
+  const [userTypeRegister, setUserTypeRegister] = useState(history.location.state?.userType || {});
+
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
+  const [{ showOtpModal, isAdhaar }, setState] = useState({ showOtpModal: false, isAdhaar: false });
   const getUserType = () => Digit.UserService.getType();
   const { t } = useTranslation();
   const location = useLocation();
@@ -117,7 +120,11 @@ const Registration = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
     if (!err) {
       setCanSubmitNo(true);
-      history.push(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
+      setIsOtpValid(true);
+      setState((prev) => ({
+        ...prev,
+        showOtpModal: true,
+      }));
       return;
     } else {
       setError(t("ES_ERROR_USER_ALREADY_REGISTERED"));
@@ -141,12 +148,18 @@ const Registration = ({ stateCode }) => {
         info.tenantId = Digit.ULBService.getStateId();
       }
       setUser({ info, ...tokens });
-      // history.push(`${path}/user-name`)
+      setState((prev) => ({
+        ...prev,
+        showOtpModal: false,
+      }));
+      history.push(`${path}/user-name`);
     } catch (err) {
       setCanSubmitOtp(true);
       setIsOtpValid(false);
-      const { otp, ...temp } = newParams;
-      setNewParams(temp);
+      setParmas((prev) => ({
+        ...prev,
+        otp: "",
+      }));
     }
   };
   const handleOtpChange = (otp) => {
@@ -154,7 +167,12 @@ const Registration = ({ stateCode }) => {
   };
   const handleAdhaarChange = (adhaarNumber) => {
     setNewParams({ ...newParams, adhaarNumber });
-    history.push(`${path}/aadhar-otp`);
+    setIsOtpValid(true);
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: true,
+      isAdhaar: true,
+    }));
   };
   const resendOtp = async () => {
     setNewParams({ ...newParams, otp: "", aadharOtp: "" });
@@ -190,7 +208,12 @@ const Registration = ({ stateCode }) => {
   const onAadharOtpSelect = () => {
     setCanSubmitAadharOtp(false);
     setNewParams({ ...newParams, aadharOtp: "" });
-    history.push(`${path}/user-type`);
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: false,
+      isAdhaar: false,
+    }));
+    history.replace(`${path}/user-type`);
     setCanSubmitAadharOtp(true);
   };
   const handleAddressSave = (address) => {
@@ -198,8 +221,10 @@ const Registration = ({ stateCode }) => {
     history.push(`${path}/id-verification`);
   };
   const handleIdentitySave = (indentity) => {
-    setNewParams({ ...newParams, indentity });
-    indentity.IdVerification.selectIdType.code === "AADHAR" ? history.push(`${path}/enter-adhaar`) : history.push(`${path}/upload-id`);
+    setNewParams({ ...newParams, indentity, adhaarNumber: "" });
+    indentity.IdVerification.selectIdType.code === "AADHAR"
+      ? history.push(`${path}/enter-adhaar`, { comingFrom: "Aadhaar" })
+      : history.push(`${path}/upload-id`, { comingFrom: "otherId" });
   };
   const handleUserTypeSave = (userType) => {
     setNewParams({ ...newParams, userType });
@@ -207,17 +232,25 @@ const Registration = ({ stateCode }) => {
   };
   const onDocumentUpload = async (filename, filedata, IdType) => {
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", filedata, Digit.ULBService.getStateId());
-    setNewParams({ ...newParams, indentity: "OTHER" });
+    const identityObj = {
+      IdVerification: {
+        selectIdType: {
+          code: "OTHER ID",
+          name: "CS_OTHER",
+          subText: "CS_OTHER_SUB_TEXT",
+        },
+      },
+    };
+    setNewParams({ ...newParams, indentity: identityObj });
 
     Digit.SessionStorage.set("UploadedDocument", { filedata: fileUploadRes?.data, IdType, filename });
     Digit.SessionStorage.del("aadharNumber");
-    history.push(`${path}/user-type`);
+    history.replace(`${path}/user-type`);
   };
   if (isLoading || isFetching) {
     return <Loader />;
   }
   const pathOnRefresh = `${path}/user-name`;
-  // console.log(newParams);
   return (
     <div className="citizen-form-wrapper">
       <Switch>
@@ -243,22 +276,7 @@ const Registration = ({ stateCode }) => {
               path={path}
               isUserLoggedIn={isUserLoggedIn}
               history={history}
-            />
-          </Route>
-          <Route path={`${path}/otp`}>
-            <SelectOtp
-              onOtpChange={handleOtpChange}
-              onResend={resendOtp}
-              onSelect={selectOtp}
-              setParams={setNewParams}
-              otp={newParams?.otp}
-              error={isOtpValid}
-              canSubmit={canSubmitOtp}
-              params={newParams}
-              path={`${path}/mobile-number`}
-              cardText={`${stepItems[4].texts.cardText}`}
-              mobileNumber={newParams.mobileNumber || ""}
-              t={t}
+              className={"register"}
             />
           </Route>
           <Route path={`${path}/user-name`}>
@@ -297,22 +315,24 @@ const Registration = ({ stateCode }) => {
               adhaarNumber={newParams?.adhaarNumber}
             />
           </Route>
-          <Route path={`${path}/aadhar-otp`}>
+          {showOtpModal && (
             <SelectOtp
-              cardText={`${stepItems[4].texts.cardText} ${newParams.mobileNumber || ""}`}
-              onOtpChange={handleAadharOtpChange}
+              onOtpChange={!isAdhaar ? handleOtpChange : handleAadharOtpChange}
               onResend={resendOtp}
-              onSelect={onAadharOtpSelect}
+              onSelect={!isAdhaar ? selectOtp : onAadharOtpSelect}
               setParams={setNewParams}
-              otp={newParams?.aadharOtp}
+              otp={!isAdhaar ? newParams?.otp : newParams?.aadharOtp}
               error={isOtpValid}
-              canSubmit={canSubmitAadharOtp}
+              canSubmit={!isAdhaar ? canSubmitOtp : canSubmitAadharOtp}
               params={newParams}
-              path={pathOnRefresh}
-              isAdhaar={true}
+              path={!isAdhaar ? `${path}/mobile-number` : pathOnRefresh}
+              cardText={!isAdhaar ? `${stepItems[4].texts.cardText}` : `${stepItems[7].texts.cardText}`}
+              mobileNumber={newParams.mobileNumber || ""}
+              isAdhaar={!isAdhaar ? false : true}
               t={t}
+              setState={setState}
             />
-          </Route>
+          )}
           <Route path={`${path}/user-type`}>
             <SelectUserType
               config={[stepItems[2]]}
@@ -320,6 +340,7 @@ const Registration = ({ stateCode }) => {
               setParams={setNewParams}
               pathOnRefresh={pathOnRefresh}
               params={newParams}
+              userTypeRegister={userTypeRegister}
               onSelect={handleUserTypeSave}
             />
           </Route>

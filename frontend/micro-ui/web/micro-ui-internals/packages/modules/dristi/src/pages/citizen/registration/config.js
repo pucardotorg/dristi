@@ -4,7 +4,7 @@ export const userTypeOptions = [
     name: "LITIGANT_TEXT",
     showBarDetails: false,
     isVerified: false,
-    role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
+    role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
     subText: "LITIGANT_SUB_TEXT",
   },
   {
@@ -13,7 +13,7 @@ export const userTypeOptions = [
     showBarDetails: true,
     isVerified: true,
     hasBarRegistrationNo: true,
-    role: ["ADVOCATE_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
+    role: ["ADVOCATE_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
     apiDetails: {
       serviceName: "/advocate/advocate/v1/_create",
       requestKey: "advocate",
@@ -27,7 +27,7 @@ export const userTypeOptions = [
     showBarDetails: true,
     hasStateRegistrationNo: true,
     isVerified: true,
-    role: ["ADVOCATE_CLERK_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER"],
+    role: ["ADVOCATE_CLERK_ROLE", "CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
     apiDetails: {
       serviceName: "/advocate/clerk/v1/_create",
       requestKey: "clerk",
@@ -187,8 +187,8 @@ export const newConfig = [
               type: "text",
               name: "doorNo",
               validation: {
-                errMsg: "ADDRESS_DOOR_NO_INVALID",
-                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{2,50}$/i,
+                errMsg: "DOOR_NUMBER_ERROR_MESSAGE",
+                pattern: /^[^\$\"'<>?~`!@$%^={}\[\]*:;“”‘’]{0,100}$/i,
                 isRequired: true,
                 minlength: 2,
                 title: "",
@@ -239,7 +239,7 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -272,7 +272,7 @@ export const newConfig = [
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -495,7 +495,7 @@ export const advocateClerkConfig = [
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
-                pattern: /^[0-9A-Z/]+$/,
+                pattern: /^[0-9A-Z/]{0,20}$/,
                 errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
                 maxlength: 20,
               },

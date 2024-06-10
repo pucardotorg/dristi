@@ -112,7 +112,6 @@ function CaseType({ t }) {
     if (isLoading || isFetching || isSearchLoading) {
       return <Loader />;
     }
-    debugger;
     return (
       <div className="submit-bar-div">
         <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
@@ -257,7 +256,7 @@ function CaseType({ t }) {
       { header: "Case Category", subtext: "Criminal", serialNumber: "01." },
       {
         header: "Status / Act",
-        subtext: "Negotiable Insruments Act",
+        subtext: "Negotiable Instruments Act",
         serialNumber: "02.",
       },
       { header: "Section", subtext: "138", serialNumber: "03." },

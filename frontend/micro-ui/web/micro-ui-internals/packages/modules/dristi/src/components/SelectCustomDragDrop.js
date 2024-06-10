@@ -91,26 +91,11 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">
           <div className="drag-drop-heading">
-            <span>
-              <h2 className="card-label">{t(input?.documentHeader)}</h2>
-              {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`(${t(input?.isOptional)})`}</span>}
-            </span>
+            <h1 className="card-label">{t(input?.documentHeader)}</h1>
+            {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`(${t(input?.isOptional)})`}</span>}
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
           {input.documentSubText && <p>{t(input.documentSubText)}</p>}
-        </div>
-
-        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
-          <FileUploader
-            handleChange={(data) => {
-              handleChange(data, input);
-            }}
-            name="file"
-            types={input?.fileTypes}
-            children={<DragDropJSX t={t} currentValue={currentValue} />}
-            key={input?.name}
-          />
-          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
         </div>
 
         {currentValue.map((file, index) => (
@@ -125,6 +110,19 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
             input={input}
           />
         ))}
+
+        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
+          <FileUploader
+            handleChange={(data) => {
+              handleChange(data, input);
+            }}
+            name="file"
+            types={input?.fileTypes}
+            children={<DragDropJSX t={t} currentValue={currentValue} />}
+            key={input?.name}
+          />
+          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
+        </div>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
           {input?.downloadTemplateText && t(input?.downloadTemplateText)}

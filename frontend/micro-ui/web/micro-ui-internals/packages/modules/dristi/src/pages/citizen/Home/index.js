@@ -6,8 +6,9 @@ import TakeUserToRegistration from "./TakeUserToRegistration";
 import { userTypeOptions } from "../registration/config";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CaseInProgressIcon, ClosedCasesIcon, FileCaseIcon, JoinCaseIcon, MyHearingsIcon, PendingActionsIcon } from "../../../icons/svgIndex";
+import Home from "./litigantHome";
 
-function CitizenHome({ tenantId }) {
+function CitizenHome({ tenantId, setHideBack }) {
   const Digit = window?.Digit || {};
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
@@ -15,6 +16,7 @@ function CitizenHome({ tenantId }) {
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const [isFetching, setIsFetching] = useState(true);
+  const [isFetchingAdvoacte, setIsFetchingAdvocate] = useState(true);
 
   const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
     {
@@ -28,12 +30,6 @@ function CitizenHome({ tenantId }) {
     userInfo?.uuid && isUserLoggedIn
   );
 
-  useEffect(() => {
-    refetch().then(() => {
-      setIsFetching(false);
-    });
-  }, []);
-
   const cardIcons = [
     { Icon: <FileCaseIcon />, label: "File a Case", path: "/digit-ui/citizen/dristi/home/file-case" },
     { Icon: <CaseInProgressIcon />, label: "Case in Progress", path: "/digit-ui/employee/citizen/dristi/case-progress" },
@@ -45,7 +41,7 @@ function CitizenHome({ tenantId }) {
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+  const { data: searchData, isLoading: isSearchLoading, refetch: refetchAdvocateClerk } = Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
       tenantId,
@@ -55,6 +51,14 @@ function CitizenHome({ tenantId }) {
     Boolean(isUserLoggedIn && individualId && userType !== "LITIGANT"),
     userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
   );
+  useEffect(() => {
+    refetch().then(() => {
+      refetchAdvocateClerk().then(() => {
+        setIsFetchingAdvocate(false);
+      });
+      setIsFetching(false);
+    });
+  }, []);
 
   const userTypeDetail = useMemo(() => {
     return userTypeOptions.find((item) => item.code === userType) || {};
@@ -84,31 +88,64 @@ function CitizenHome({ tenantId }) {
     );
   }, [searchResult, userType]);
 
-  if (isLoading || isSearchLoading || isFetching) {
+  const userHasIncompleteRegistration = !individualId || isRejected;
+  const registrationIsDoneApprovalIsPending = individualId && isApprovalPending && !isRejected;
+  useEffect(() => {
+    setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
+    return () => {
+      setHideBack(false);
+    };
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending, setHideBack]);
+
+  useEffect(() => {
+    setHideBack(userHasIncompleteRegistration || registrationIsDoneApprovalIsPending);
+    return () => {
+      setHideBack(false);
+    };
+  }, [userHasIncompleteRegistration, registrationIsDoneApprovalIsPending, setHideBack]);
+
+  if (isLoading || isSearchLoading || isFetching || isFetchingAdvoacte) {
     return <Loader />;
   }
+
   return (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", cursor: "pointer", justifyContent: "space-evenly" }}>
-      {individualId &&
-        !isApprovalPending &&
-        !isRejected &&
-        cardIcons.map((card, index) => {
-          return (
-            <CustomCard
-              key={index}
-              label={card.label}
-              Icon={card.Icon}
-              style={{ width: "400px", height: "150px" }}
-              onClick={() => {
-                if (card.label === "File a Case") {
-                  history.push(card.path);
-                }
-              }}
-            ></CustomCard>
-          );
-        })}
-      {individualId && isApprovalPending && !isRejected && <ApplicationAwaitingPage individualId={individualId} />}
-      {(!individualId || isRejected) && <TakeUserToRegistration message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"} />}
+    <div
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: "30px",
+        cursor: "pointer",
+        justifyContent: "space-evenly",
+        width: "100%",
+      }}
+    >
+      {individualId && !isApprovalPending && !isRejected && (
+        // cardIcons.map((card, index) => {
+        //   return (
+        //     <CustomCard
+        //       key={index}
+        //       label={card.label}
+        //       Icon={card.Icon}
+        //       style={{ width: "400px", height: "150px" }}
+        //       onClick={() => {
+        //         if (card.label === "File a Case") {
+        //           history.push(card.path);
+        //         }
+        //       }}
+        //     ></CustomCard>
+        //   );
+        // })}
+        <Home />
+      )}
+      {registrationIsDoneApprovalIsPending && <ApplicationAwaitingPage individualId={individualId} />}
+      {userHasIncompleteRegistration && (
+        <TakeUserToRegistration
+          message={isRejected ? "CS_REJECT_MESSAGE" : "CS_REGISTRATION_MESSAGE"}
+          isRejected={isRejected}
+          data={data}
+          userType={searchResult?.[0]?.additionalDetails?.userType}
+        />
+      )}
     </div>
   );
 }

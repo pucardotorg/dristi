@@ -85,7 +85,6 @@ function EFilingCases({ path }) {
   }, [selected, caseDetails]);
 
   const accordion = useMemo(() => {
-    debugger;
     return sideMenuConfig.map((parent, pIndex) => ({
       ...parent,
       isOpen: pIndex === parentOpen,
@@ -138,10 +137,72 @@ function EFilingCases({ path }) {
 
   const modifiedFormConfig = useMemo(() => {
     if (!isDependentEnabled) {
-      return formdata.map(() => formConfig);
+      return formdata.map(() => {
+        if (selected === "reviewCaseFile") {
+          return formConfig.map((config) => {
+            return {
+              ...config,
+              body: config?.body?.map((body) => {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators?.inputs?.map((input) => {
+                      return {
+                        ...input,
+                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                      };
+                    }),
+                  },
+                };
+              }),
+            };
+          });
+        }
+        if (selected === "addSignature") {
+          return formConfig.map((config) => {
+            return {
+              ...config,
+              body: config?.body?.map((body) => {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators?.inputs?.map((input) => {
+                      return {
+                        ...input,
+                        data:
+                          input.key === "advocateDetails"
+                            ? [
+                                {
+                                  name:
+                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                                },
+                              ] || [{ name: "" }]
+                            : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
+                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                              })),
+                      };
+                    }),
+                  },
+                };
+              }),
+            };
+          });
+        }
+        return formConfig;
+      });
     }
 
     return formdata.map(({ data }, index) => {
+      let disableConfigFields = [];
+      formConfig.forEach((config) => {
+        config.body.forEach((body) => {
+          if ("disableConfigFields" in body && "disableConfigKey" in body && "key" in body) {
+            if (!!data?.[body.key]?.[body.disableConfigKey]) {
+              disableConfigFields = [...disableConfigFields, ...body.disableConfigFields];
+            }
+          }
+        });
+      });
       return formConfig
         .filter((config) => {
           const dependentKeys = config?.dependentKey;
@@ -158,29 +219,72 @@ function EFilingCases({ path }) {
           return show && config;
         })
         .map((config) => {
-          // const { scrutiny } = caseData.additionalDetails;
-          const scrutiny = {
-            complaintDetails: {
-              scrutinyMessage: "",
-              form: [
-                {
-                  firstName: "Name does not match",
-                  lastname: "Doest not match",
-                },
-                {},
-              ],
-            },
-            respondentDetails: {
-              scrutinyMessage: "",
-              form: [{}, {}],
-            },
+          return {
+            ...config,
+            body: config?.body.map((body) => {
+              if (body?.addUUID) {
+                body.uuid = index;
+              }
+              if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
+                return {
+                  ...body,
+                  populators: {
+                    inputs: body?.populators.inputs.map((input) => {
+                      if (
+                        disableConfigFields.some((field) => {
+                          if (Array.isArray(input?.name)) return field === input?.key;
+                          return field === input?.name;
+                        })
+                      ) {
+                        return {
+                          ...input,
+                          disable: true,
+                          isDisabled: true,
+                        };
+                      }
+                      return {
+                        ...input,
+                      };
+                    }),
+                  },
+                };
+              } else if ("populators" in body) {
+                return {
+                  ...body,
+                  disable: disableConfigFields.some((field) => field === body?.populators?.name),
+                };
+              }
+              return {
+                ...body,
+                disable: disableConfigFields.some((field) => field === body?.name),
+              };
+            }),
           };
+        })
+        .map((config) => {
+          const { scrutiny } = caseDetails.additionalDetails || { scrutiny: {} };
+          // const scrutiny = {
+          //   complaintDetails: {
+          //     scrutinyMessage: "",
+          //     form: [
+          //       {
+          //         firstName: "Name does not match",
+          //         lastname: "Doest not match",
+          //       },
+          //       {},
+          //     ],
+          //   },
+          //   respondentDetails: {
+          //     scrutinyMessage: "",
+          //     form: [{}, {}],
+          //   },
+          // };
           const updatedBody = config.body
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;
               const modifiedFormComponent = structuredClone(formComponent);
-              modifiedFormComponent.disable = true;
-              if (key in scrutiny[selected].form[index]) {
+              if (scrutiny?.[selected]) modifiedFormComponent.disable = true;
+              if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
                 modifiedFormComponent.disable = false;
                 modifiedFormComponent.withoutLabel = true;
                 return [
@@ -189,7 +293,7 @@ function EFilingCases({ path }) {
                     component: "ScrutinyInfo",
                     key: "firstNameScrutiny",
                     populators: {
-                      scrutinyMessage: scrutiny[selected].form[index][key],
+                      scrutinyMessage: scrutiny?.[selected].form[index][key],
                     },
                   },
                   modifiedFormComponent,
@@ -204,7 +308,7 @@ function EFilingCases({ path }) {
           };
         });
     });
-  }, [isDependentEnabled, formdata, formConfig]);
+  }, [isDependentEnabled, formdata, selected, formConfig, caseDetails.additionalDetails, caseDetails?.caseDetails]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
@@ -215,7 +319,11 @@ function EFilingCases({ path }) {
   };
 
   const handleDeleteForm = (index) => {
-    const newArray = formdata.map((item, i) => ({ ...item, isenabled: index === i ? false : item.isenabled, displayindex: i < index ? i : i - 1 }));
+    const newArray = formdata.map((item, i) => ({
+      ...item,
+      isenabled: index === i ? false : item.isenabled,
+      displayindex: i < index ? item.displayindex : i === index ? -Infinity : item.displayindex - 1,
+    }));
     setFormdata(newArray);
   };
 
@@ -251,28 +359,11 @@ function EFilingCases({ path }) {
     setParentOpen(index);
   };
 
-  const handlePageChange = (key, isConfirm) => {
-    if (key === selected) {
-      return;
-    }
-    if (!isConfirm) {
-      setOpenConfigurationModal(key);
-      return;
-    }
-    setParmas({ ...params, [pageConfig.key]: formdata });
-    setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
-    if (!!resetFormData) {
-      resetFormData();
-    }
-    setIsOpen(false);
-    history.push(`?caseId=${caseId}&selected=${key}`);
-  };
-
   const onDocumentUpload = async (fileData, filename) => {
+    if (fileData?.fileStore) return fileData;
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
     return { file: fileUploadRes?.data, fileType: fileData.type, filename };
   };
-  console.log(formdata);
 
   const createIndividualUser = async (data, documentData) => {
     const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
@@ -348,227 +439,501 @@ function EFilingCases({ path }) {
     return response;
   };
 
-  const onSubmit = async () => {
+  const updateCaseDetails = async (isCompleted) => {
     const data = {};
     if (selected === "complaintDetails") {
       const litigants = await Promise.all(
-        formdata.map(async (data, index) => {
-          if (data?.data?.complainantVerification?.individualDetails) {
-            return {
-              tenantId,
-              caseId: caseDetails?.id,
-              partyCategory: data?.data?.complainantType?.code,
-              individualId: data?.data?.complainantVerification?.individualDetails,
-              partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-            };
-          } else {
-            if (data?.data?.complainantId?.complainantId) {
-              if (data?.data?.complainantId?.verificationType !== "AADHAR") {
-                const documentData = await onDocumentUpload(
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
-                );
-                const Individual = await createIndividualUser(data?.data, documentData);
-                return {
-                  tenantId,
-                  caseId: caseDetails?.id,
-                  partyCategory: data?.data?.complainantType?.code,
-                  individualId: Individual?.Individual?.individualId,
-                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                };
-              } else {
-                const Individual = await createIndividualUser(data?.data);
-                return {
-                  tenantId,
-                  caseId: caseDetails?.id,
-                  partyCategory: data?.data?.complainantType?.code,
-                  individualId: Individual?.Individual?.individualId,
-                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                };
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data, index) => {
+            if (data?.data?.complainantVerification?.individualDetails) {
+              return {
+                tenantId,
+                caseId: caseDetails?.id,
+                partyCategory: data?.data?.complainantType?.code,
+                individualId: data?.data?.complainantVerification?.individualDetails,
+                partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+              };
+            } else {
+              if (data?.data?.complainantId?.complainantId) {
+                if (data?.data?.complainantId?.verificationType !== "AADHAR") {
+                  const documentData = await onDocumentUpload(
+                    data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                    data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
+                  );
+                  const Individual = await createIndividualUser(data?.data, documentData);
+                  return {
+                    tenantId,
+                    caseId: caseDetails?.id,
+                    partyCategory: data?.data?.complainantType?.code,
+                    individualId: Individual?.Individual?.individualId,
+                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                  };
+                } else {
+                  const Individual = await createIndividualUser(data?.data);
+                  return {
+                    tenantId,
+                    caseId: caseDetails?.id,
+                    partyCategory: data?.data?.complainantType?.code,
+                    individualId: Individual?.Individual?.individualId,
+                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                  };
+                }
               }
+              return {};
             }
-            return {};
-          }
-        })
+          })
       );
 
-      const representatives = [...caseDetails?.representatives]?.map((representative) => ({
-        ...representative,
-        caseId: caseDetails?.id,
-        representing: [...litigants],
-      }));
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            let documentData = [];
+            if (data?.data?.companyDetailsUpload?.document) {
+              documentData = await Promise.all(
+                data?.data?.companyDetailsUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                companyDetailsUpload: {
+                  ...data?.data?.companyDetailsUpload,
+                  document: documentData,
+                },
+              },
+            };
+          })
+      );
+      const representatives = [...caseDetails?.representatives]
+        ?.filter((representative) => representative?.advocateId)
+        .map((representative) => ({
+          ...representative,
+          caseId: caseDetails?.id,
+          representing: representative?.advocateId ? [...litigants] : [],
+        }));
       data.litigants = [...litigants];
       data.representatives = [...representatives];
-      data.additionalDetails = { ...caseDetails.additionalDetails, complaintDetails: { formdata, isCompleted: true } };
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        complaintDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "respondentDetails") {
       const newFormData = await Promise.all(
-        formdata.map(async (data) => {
-          let documentData = [];
-          if (data?.data?.condonationFileUpload?.document) {
-            documentData = await Promise.all(
-              data?.data?.condonationFileUpload?.document?.map(async (document) => {
-                return await onDocumentUpload(document, document.name).then((data) => {
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            let documentData = [];
+            if (data?.data?.condonationFileUpload?.document) {
+              documentData = await Promise.all(
+                data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: data.fileType,
-                    fileStore: data.file?.files?.[0]?.fileStoreId,
-                    documentName: data.filename,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
-                });
-              })
-            );
-          }
-          return {
-            ...data,
-            data: {
-              ...data.data,
-              condonationFileUpload: {
-                ...data?.data?.condonationFileUpload,
-                document: documentData,
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                condonationFileUpload: {
+                  ...data?.data?.condonationFileUpload,
+                  document: documentData,
+                },
               },
-            },
-          };
-        })
+            };
+          })
       );
-      data.additionalDetails = { ...caseDetails.additionalDetails, respondentDetails: { formdata: newFormData, isCompleted: true } };
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        respondentDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "chequeDetails") {
-      const documentData = {};
+      const documentData = {
+        bouncedChequeFileUpload: {},
+        depositChequeFileUpload: {},
+        returnMemoFileUpload: {},
+      };
       const newFormData = await Promise.all(
-        formdata.map(async (data) => {
-          if (data?.data?.bouncedChequeFileUpload?.document) {
-            documentData.bouncedChequeFileUpload = await Promise.all(
-              data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
-                return await onDocumentUpload(document, document.name).then((data) => {
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.bouncedChequeFileUpload?.document) {
+              documentData.bouncedChequeFileUpload.document = await Promise.all(
+                data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: data.fileType,
-                    fileStore: data.file?.files?.[0]?.fileStoreId,
-                    documentName: data.filename,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
-                });
-              })
-            );
-          }
-          if (data?.data?.depositChequeFileUpload?.document) {
-            documentData.depositChequeFileUpload = await Promise.all(
-              data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
-                return await onDocumentUpload(document, document.name).then((data) => {
+                })
+              );
+            }
+            if (data?.data?.depositChequeFileUpload?.document) {
+              documentData.depositChequeFileUpload.document = await Promise.all(
+                data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: data.fileType,
-                    fileStore: data.file?.files?.[0]?.fileStoreId,
-                    documentName: data.filename,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
-                });
-              })
-            );
-          }
-          if (data?.data?.returnMemoFileUpload?.document) {
-            documentData.returnMemoFileUpload = await Promise.all(
-              data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
-                return await onDocumentUpload(document, document.name).then((data) => {
+                })
+              );
+            }
+            if (data?.data?.returnMemoFileUpload?.document) {
+              documentData.returnMemoFileUpload.document = await Promise.all(
+                data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: data.fileType,
-                    fileStore: data.file?.files?.[0]?.fileStoreId,
-                    documentName: data.filename,
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                   };
-                });
-              })
-            );
-          }
+                })
+              );
+            }
 
-          return {
-            ...data,
-            data: {
-              ...data.data,
-              ...documentData,
-            },
-          };
-        })
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...documentData,
+              },
+            };
+          })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, chequeDetails: { formdata: newFormData, isCompleted: true } };
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        chequeDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "debtLiabilityDetails") {
-      const debtDocumentData = {};
+      const debtDocumentData = { debtLiabilityFileUpload: {} };
       const newFormData = await Promise.all(
-        formdata.map(async (data) => {
-          if (data?.data?.debtLiabilityFileUpload?.document) {
-            debtDocumentData.debtLiabilityFileUpload = await Promise.all(
-              data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
-                return await onDocumentUpload(document, document.name).then((data) => {
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.debtLiabilityFileUpload?.document) {
+              debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
+                data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
                   return {
-                    documentType: data.fileType,
-                    fileStore: data.file?.files?.[0]?.fileStoreId,
-                    documentName: data.filename,
+                    documentType: uploadedData.fileType || data?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || data?.fileStore,
+                    documentName: uploadedData.filename || data?.documentName,
                   };
-                });
-              })
-            );
-          }
-          return {
-            ...data,
-            data: {
-              ...data.data,
-              ...debtDocumentData,
-            },
-          };
-        })
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...debtDocumentData,
+              },
+            };
+          })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, debtLiabilityDetails: { formdata: newFormData, isCompleted: true } };
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        debtLiabilityDetails: {
+          formdata: newFormData,
+          isCompleted: "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "witnessDetails") {
-      data.additionalDetails = { ...caseDetails.additionalDetails, witnessDetails: { formdata: formdata, isCompleted: true } };
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        witnessDetails: {
+          formdata: formdata.filter((item) => item.isenabled),
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (selected === "demandNoticeDetails") {
       const documentData = {};
       const newFormData = await Promise.all(
-        formdata.map(async (data) => {
-          if (
-            data?.data?.SelectCustomDragDrop &&
-            typeof data?.data?.SelectCustomDragDrop === "object" &&
-            Object.keys(data?.data?.SelectCustomDragDrop).length > 0
-          ) {
-            documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).forEach(async (res, curr) => {
-              const result = await res;
-              result[curr] = await Promise.all(
-                data?.data?.SelectCustomDragDrop?.[curr]?.document?.map(async (document) => {
-                  return await onDocumentUpload(document, document.name).then((data) => {
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (
+              data?.data?.SelectCustomDragDrop &&
+              typeof data?.data?.SelectCustomDragDrop === "object" &&
+              Object.keys(data?.data?.SelectCustomDragDrop).length > 0
+            ) {
+              documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).reduce(async (res, curr) => {
+                const result = await res;
+                result[curr] = await Promise.all(
+                  data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
+                    const uploadedData = await onDocumentUpload(document, document.name);
                     return {
-                      documentType: data.fileType,
-                      fileStore: data.file?.files?.[0]?.fileStoreId,
-                      documentName: data.filename,
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
                     };
-                  });
+                  })
+                );
+                return result;
+              }, Promise.resolve({}));
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                SelectCustomDragDrop: {
+                  ...data?.data?.SelectCustomDragDrop,
+                  ...documentData.SelectCustomDragDrop,
+                },
+              },
+            };
+          })
+      );
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        demandNoticeDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
+    }
+    if (selected === "delayApplications") {
+      const condonationDocumentData = { condonationFileUpload: {} };
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.condonationFileUpload?.document) {
+              condonationDocumentData.condonationFileUpload.document = await Promise.all(
+                data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || data?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || data?.fileStore,
+                    documentName: uploadedData.filename || data?.documentName,
+                  };
                 })
               );
-              return result;
-            }, Promise.resolve({}));
-          }
-          return {
-            ...data,
-            data: {
-              ...data.data,
-              SelectCustomDragDrop: {
-                ...data?.data?.SelectCustomDragDrop,
-                ...documentData.SelectCustomDragDrop,
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...condonationDocumentData,
               },
-            },
-          };
-        })
+            };
+          })
       );
-      data.caseDetails = { ...caseDetails.caseDetails, demandNoticeDetails: { formdata: newFormData, isCompleted: true } };
+      data.caseDetails = {
+        ...caseDetails.caseDetails,
+        delayApplications: {
+          formdata: newFormData,
+          isCompleted: "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
-    if (selected === "addSignature") {
-      setOpenConfirmCourtModal(true);
-      return;
+    if (selected === "prayerSwornStatement") {
+      const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.SelectUploadDocWithName) {
+              documentData.SelectUploadDocWithName = await Promise.all(
+                data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
+                  if (!docWithNameData?.document[0]?.fileStore) {
+                    const document = await onDocumentUpload(docWithNameData?.document[0], docWithNameData?.document[0]?.name).then(async (data) => {
+                      const evidenceData = await DRISTIService.createEvidence({
+                        artifact: {
+                          caseId: caseDetails?.id,
+                          tenantId,
+                          comments: [],
+                          file: {
+                            documentType: data.fileType || data?.documentType,
+                            fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
+                            additionalDetails: {
+                              name: docWithNameData?.docName,
+                            },
+                          },
+                          workflow: {
+                            action: "TYPE DEPOSITION",
+                            documents: [
+                              {
+                                documentType: data.fileType,
+                                fileName: data.fileName,
+                                fileStoreId: data.file?.files?.[0]?.fileStoreId,
+                              },
+                            ],
+                          },
+                        },
+                      });
+                      return [
+                        {
+                          documentType: data.fileType || data?.documentType,
+                          fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
+                          documentName: data.filename || data?.documentName,
+                          artifactId: evidenceData?.artifact?.id,
+                        },
+                      ];
+                    });
+                    return {
+                      document: document,
+                      docName: docWithNameData?.docName,
+                    };
+                  } else {
+                    return docWithNameData;
+                  }
+                })
+              );
+            }
+            if (
+              data?.data?.SelectCustomDragDrop &&
+              typeof data?.data?.SelectCustomDragDrop === "object" &&
+              Object.keys(data?.data?.SelectCustomDragDrop).length > 0
+            ) {
+              documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).reduce(async (res, curr) => {
+                const result = await res;
+                result[curr] = await Promise.all(
+                  data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  })
+                );
+                return result;
+              }, Promise.resolve({}));
+            }
+            if (data?.data?.memorandumOfComplaint?.document) {
+              documentData.memorandumOfComplaint.document = await Promise.all(
+                data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
+                })
+              );
+            } else if (data?.data?.memorandumOfComplaint?.text) {
+              documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
+            }
+            if (data?.data?.prayerForRelief?.document) {
+              documentData.prayerForRelief.document = await Promise.all(
+                data?.data?.prayerForRelief?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
+                })
+              );
+            } else if (data?.data?.prayerForRelief?.text) {
+              documentData.prayerForRelief.text = data?.data?.prayerForRelief?.text;
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...documentData,
+                SelectCustomDragDrop: {
+                  ...data?.data?.SelectCustomDragDrop,
+                  ...documentData.SelectCustomDragDrop,
+                },
+              },
+            };
+          })
+      );
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        prayerSwornStatement: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
+    }
+    if (selected === "advocateDetails") {
+      const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
+      const newFormData = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data) => {
+            if (data?.data?.vakalatnamaFileUpload?.document) {
+              vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
+                data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
+                  const uploadedData = await onDocumentUpload(document, document.name);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                  };
+                })
+              );
+            }
+            return {
+              ...data,
+              data: {
+                ...data.data,
+                ...vakalatnamaDocumentData,
+              },
+            };
+          })
+      );
+      // const representatives = [...caseDetails?.representatives]
+      //   ?.filter((representative) => representative?.advocateId)
+      //   .map((representative) => ({
+      //     ...representative,
+      //     caseId: caseDetails?.id,
+      //     representing: representative?.advocateId ? [...litigants] : [],
+      //   }));
+      // data.litigants = [...litigants];
+      // data.representatives = [...representatives];
+      data.additionalDetails = {
+        ...caseDetails.additionalDetails,
+        advocateDetails: {
+          formdata: newFormData,
+          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
+        },
+      };
     }
     if (!!resetFormData) {
       resetFormData();
     }
-    DRISTIService.caseUpdateService(
+    return DRISTIService.caseUpdateService(
       {
         cases: {
           ...caseDetails,
           ...data,
+          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
@@ -578,22 +943,48 @@ function EFilingCases({ path }) {
         tenantId,
       },
       tenantId
-    ).then(() => {
-      refetchCaseData().then(() => {
-        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
-        setFormdata(caseData);
-        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
-      });
-    });
+    );
   };
+
+  const onSubmit = async () => {
+    if (selected === "addSignature") {
+      setOpenConfirmCourtModal(true);
+    } else {
+      updateCaseDetails(true).then(() => {
+        refetchCaseData().then(() => {
+          const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+          setFormdata(caseData);
+          history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+        });
+      });
+    }
+  };
+
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
+    updateCaseDetails();
+  };
+
+  const handlePageChange = (key, isConfirm) => {
+    if (key === selected) {
+      return;
+    }
+    if (!isConfirm) {
+      setOpenConfigurationModal(key);
+      return;
+    }
+    setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
+    if (!!resetFormData) {
+      resetFormData();
+    }
+    setIsOpen(false);
+    updateCaseDetails("PAGE_CHANGE");
+    history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
   const onSubmitCase = (data) => {
-    console.debug(data);
     setOpenConfirmCourtModal(false);
   };
 
@@ -607,6 +998,14 @@ function EFilingCases({ path }) {
   if (isLoading) {
     return <Loader />;
   }
+
+  const caseType = {
+    cateogry: "Criminal",
+    act: "Negotiable Instruments Act",
+    section: "138",
+    courtName: "Kollam S 138 Special Court",
+  };
+
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -616,9 +1015,8 @@ function EFilingCases({ path }) {
             <span>You are filing a case</span>
           </div>
           <p>
-            Under
-            <span className="act-name"> S-138, Negotiable Instrument Act</span> In
-            <span className="place-name"> Kollam S 138 Special Court</span>
+            Under <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> In
+            <span className="place-name">{` ${caseType.courtName}.`}</span>
           </p>
         </div>
         {isOpen && (
@@ -631,7 +1029,6 @@ function EFilingCases({ path }) {
               />
             }
             hideSubmit={true}
-            className={"case-types"}
             className={"case-types"}
           >
             <div style={{ padding: "8px 16px" }}>
@@ -690,7 +1087,7 @@ function EFilingCases({ path }) {
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
-              <div key={selected} className="form-wrapper-d">
+              <div key={`${selected}-${index}`} className="form-wrapper-d">
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${pageConfig?.formItemName} ${formdata[index]?.displayindex + 1}`}</h1>
@@ -708,7 +1105,7 @@ function EFilingCases({ path }) {
                 )}
                 <FormComposerV2
                   key={selected}
-                  label={t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}

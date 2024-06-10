@@ -5,6 +5,7 @@ import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 
 const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError, t, config }) => {
   const { type = null, label = null, value = null, badgeType = null } = config;
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
       return data[key];
@@ -33,6 +34,8 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
         <div className={`title-main ${isScrutiny && dataError && "error"}`}>
           <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
             <div>{`${titleIndex}. ${title}`}</div>
+            {badgeType && <div>{extractValue(data, badgeType)}</div>}
+
             {isScrutiny && (
               <div
                 className="flag"
@@ -146,10 +149,18 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
         <div className={`image-main ${isScrutiny && dataError && "error"}`}>
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
             <div className="label">{t(label)}</div>
-            <div className={`value ${!isScrutiny ? "column" : ""}`}>
-              <DocViewerWrapper />
-              <DocViewerWrapper />
-              <DocViewerWrapper />
+            <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll" }}>
+              {data?.[value]
+                ? data?.[value]?.document?.map((data, index) => (
+                    <DocViewerWrapper
+                      key={`${value}-${index}`}
+                      fileStoreId={data?.fileStore}
+                      displayFilename={data?.fileName}
+                      tenantId={tenantId}
+                      docWidth="250px"
+                    />
+                  ))
+                : t("CA_NOT_AVAILABLE")}
             </div>
             <div
               className="flag"

@@ -84,7 +84,10 @@ function SelectId({ config, t, params, history, onSelect, pathOnRefresh }) {
         }}
         submitInForm
       ></FormComposerV2>
-      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      {
+        showErrorToast &&
+        <Toast error={true} label={t("ID_NOT_SELECTED_ERROR_MESSAGE")} isDleteBtn={true} onClose={closeToast} />
+      }
     </div>
   );
 }

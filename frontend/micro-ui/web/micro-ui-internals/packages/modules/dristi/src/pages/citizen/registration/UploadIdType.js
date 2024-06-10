@@ -62,7 +62,7 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
     history.push(pathOnRefresh);
   }
   return (
-    <React.Fragment>
+    <div className="advocate-additional-details upload-id">
       <FormComposerV2
         config={config}
         t={t}
@@ -84,16 +84,11 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
         inline
         label={"CS_COMMON_CONTINUE"}
         // onFormValueChange={onFormValueChange}
-        onSecondayActionClick={() => {}}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
-        // cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
+        onSecondayActionClick={() => { }}
         submitInForm
-        buttonStyle={{ alignSelf: "center", minWidth: "30%" }}
       ></FormComposerV2>
       {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-    </React.Fragment>
+    </div>
   );
 }
 export default UploadIdType;
