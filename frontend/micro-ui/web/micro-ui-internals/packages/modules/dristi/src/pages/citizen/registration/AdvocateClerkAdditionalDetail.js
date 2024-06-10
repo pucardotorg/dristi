@@ -145,7 +145,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                     },
                   ],
                   additionalDetails: {
-                    username: oldData?.name?.firstName + " " + oldData?.name?.name,
+                    username: oldData?.name?.firstName + " " + oldData?.name?.lastName,
                     userType: params?.userType,
                   },
                   ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -233,7 +233,7 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
                 },
               ],
               additionalDetails: {
-                username: oldData?.name?.firstName + " " + oldData?.name?.name,
+                username: oldData?.name?.firstName + " " + oldData?.name?.lastName,
                 userType: params?.userType,
               },
               ...data?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {

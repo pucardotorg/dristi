@@ -219,7 +219,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
                   },
                 ],
                 additionalDetails: {
-                  username: data?.name?.firstName + " " + data?.name?.name,
+                  username: data?.name?.firstName + " " + data?.name?.lastName,
                   userType: userType,
                 },
                 ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -272,7 +272,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           setshowUsename(true);
           setParams({});
         });
-    } else if ((userTypeSelcted === "LITIGANT" || userTypeSelcted === "ADVOCATE_CLERK") && data?.Individual?.[0]?.individualId) {
+    } else if (userTypeSelcted === "ADVOCATE_CLERK" && data?.Individual?.[0]?.individualId) {
       if (userType?.clientDetails?.selectUserType?.apiDetails && userType?.clientDetails?.selectUserType?.apiDetails?.serviceName) {
         const requestBody = {
           [userType?.clientDetails?.selectUserType?.apiDetails?.requestKey]: {
@@ -304,7 +304,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
               },
             ],
             additionalDetails: {
-              username: data?.name?.firstName + " " + data?.name?.name,
+              username: data?.name?.firstName + " " + data?.name?.lastName,
               userType: userType,
             },
             ...userType?.clientDetails?.selectUserType?.apiDetails?.AdditionalFields?.reduce((res, curr) => {
@@ -353,9 +353,9 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
       history.push(`/digit-ui/citizen/dristi/home/registration/additional-details`);
     }
   };
-  // if (!params?.indentity && showUsename == false && !params?.Individual?.[0]?.additionalFields) {
-  //   history.push(pathOnRefresh);
-  // }
+  if (!params?.indentity && showUsename == false && !params?.Individual?.[0]?.additionalFields) {
+    history.push(pathOnRefresh);
+  }
   return (
     <div className="select-user">
       <FormComposerV2
