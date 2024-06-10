@@ -57,14 +57,14 @@ public class TaskService {
 
             enrichmentUtil.enrichTaskRegistration(body);
 
-           // workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getCnrNumber(),
-            //        config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
+            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getCnrNumber(),
+                    config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
 
             producer.push(config.getTaskCreateTopic(), body);
 
             return body.getTask();
 
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while creating case");
@@ -72,17 +72,18 @@ public class TaskService {
         }
     }
 
-    public List<Task> searchTask(String id, String tenantId, String status, UUID orderId, String cnrNumber, RequestInfo requestInfo ) {
+    public List<Task> searchTask(String id, String tenantId, String status, UUID orderId, String cnrNumber, RequestInfo requestInfo) {
 
         try {
             // Fetch applications from database according to the given search criteria
-             List<Task> tasks = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber);
+            List<Task> tasks = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber);
 
             // If no applications are found matching the given criteria, return an empty list
-            // tasks.forEach(task -> task.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, tenantId, task.getTaskNumber()))));;
+            tasks.forEach(task -> task.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, tenantId, task.getTaskNumber()))));
+            ;
 
             return tasks;
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results");
@@ -100,14 +101,14 @@ public class TaskService {
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(taskRequest);
 
-          //  workflowUtil.updateWorkflowStatus(taskRequest.getRequestInfo(), taskRequest.getTask().getTenantId(),
-           //         taskRequest.getTask().getTaskNumber(), config.getTaskBusinessServiceName(), taskRequest.getTask().getWorkflow(), config.getTaskBusinessName());
+            workflowUtil.updateWorkflowStatus(taskRequest.getRequestInfo(), taskRequest.getTask().getTenantId(),
+                    taskRequest.getTask().getTaskNumber(), config.getTaskBusinessServiceName(), taskRequest.getTask().getWorkflow(), config.getTaskBusinessName());
 
             producer.push(config.getTaskCreateTopic(), taskRequest);
 
             return taskRequest.getTask();
 
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating task");
@@ -119,7 +120,7 @@ public class TaskService {
     public TaskExists existTask(TaskExistsRequest taskExistsRequest) {
         try {
             return taskRepository.checkTaskExists(taskExistsRequest.getTask());
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to exist task");
