@@ -70,7 +70,7 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
-                private List<UUID> applicationType = new ArrayList<>();
+                private UUID applicationType = null;
 
         @JsonProperty("applicationNumber")
 
@@ -123,11 +123,6 @@ public class Application   {
             this.onBehalfOf = new ArrayList<>();
             }
         this.onBehalfOf.add(onBehalfOfItem);
-        return this;
-        }
-
-        public Application addApplicationTypeItem(UUID applicationTypeItem) {
-        this.applicationType.add(applicationTypeItem);
         return this;
         }
 
