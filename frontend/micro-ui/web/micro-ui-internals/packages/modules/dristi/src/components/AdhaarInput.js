@@ -106,7 +106,6 @@ const AadhaarInput = (props) => {
                 onChange={(e) => handleChange(input.name, e.target.value, index)}
                 onFocus={() => handleFocus(index)}
                 onKeyUp={(e) => handleKeyUp(index, e)}
-                style={{ width: "165px" }}
                 className="input-otp"
               />
             ))}
