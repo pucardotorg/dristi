@@ -2,6 +2,7 @@ package org.pucar.dristi.web.models;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
@@ -29,11 +30,11 @@ import lombok.NoArgsConstructor;
 public class Party {
 	@JsonProperty("id")
 
-	@Size(min = 2, max = 128)
-	private String id = null;
+	@Valid
+	private UUID id = null;
 
 	@JsonProperty("tenantId")
-	@NotNull
+	//@NotNull
 
 	private String tenantId = null;
 
@@ -42,7 +43,7 @@ public class Party {
 	private String caseId = null;
 
 	@JsonProperty("partyCategory")
-	@NotNull
+	//@NotNull
 
 	private String partyCategory = null;
 
