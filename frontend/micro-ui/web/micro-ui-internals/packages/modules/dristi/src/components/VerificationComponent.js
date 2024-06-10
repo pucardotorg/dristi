@@ -177,14 +177,14 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
 
                 <InfoCard
                   variant={isUserVerified ? "success" : "default"}
-                  label={isUserVerified ? "CS_AADHAR_VERIFIED" : "CS_COMMON_NOTE"}
+                  label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
                   style={{ margin: "16px 0 0 0", backgroundColor: isUserVerified ? "#E4F2E4" : "#ECF3FD" }}
                   additionalElements={{}}
                   inline
                   text={
                     isUserVerified
-                      ? "Adhaar verification is instant and can help increase the speed of case filing"
-                      : "Your Id was already verified during user registration."
+                      ? t("CS_ID_VERIFIED_NOTE")
+                      : t("CS_AADHAR_VERIFICATION_NOTE")
                   }
                   textStyle={{}}
                   className={"adhaar-verification-info-card"}
@@ -220,7 +220,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                   }));
                 }}
                 formId="modal-action"
-                headerBarMain={<Heading label={t("UPLOAD_ID_PROOF_HEADER")} />}
+                headerBarMain={<Heading label={t("VERIFY_ID_PROOF")} />}
                 submitTextClassName={"verification-button-text-modal"}
                 className={"case-types"}
               >

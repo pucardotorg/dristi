@@ -58,6 +58,21 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
     return isValid;
   };
   const onFormValueChange = (setValue, formData, formState) => {
+    const formDataCopy = structuredClone(formData);
+    for (const key in formDataCopy) {
+      if (Object.hasOwnProperty.call(formDataCopy, key) && key === "clientDetails") {
+        if (typeof formDataCopy?.clientDetails?.barRegistrationNumber === "string") {
+          const clientValue = formDataCopy.clientDetails;
+          let oldValue = clientValue.barRegistrationNumber || "";
+          let value = oldValue.toUpperCase();
+          const updatedValue = value.replace(/[^A-Z0-9\/]/g, "");
+          if (updatedValue !== oldValue) {
+            clientValue.barRegistrationNumber = updatedValue;
+            setValue(key, clientValue);
+          }
+        }
+      }
+    }
     let isDisabled = false;
     advocateClerkConfig.forEach((curr) => {
       if (isDisabled) return;
