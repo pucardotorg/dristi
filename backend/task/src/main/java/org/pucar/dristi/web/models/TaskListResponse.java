@@ -28,19 +28,17 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class TaskListResponse   {
-        @JsonProperty("responseInfo")
 
-          @Valid
-                private ResponseInfo responseInfo = null;
+        @JsonProperty("ResponseInfo")
+        @Valid
+        private ResponseInfo responseInfo = null;
 
         @JsonProperty("TotalCount")
-
-                private Integer totalCount = null;
+        private Integer totalCount = null;
 
         @JsonProperty("list")
-          @Valid
-                private List<Task> list = null;
-
+        @Valid
+        private List<Task> list = null;
 
         public TaskListResponse addListItem(Task listItem) {
             if (this.list == null) {

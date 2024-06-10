@@ -46,5 +46,10 @@ public class ServiceConstants {
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
 
+    public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+
+    public static final String VALIDATION_ERR = "VALIDATION_EXCEPTION";
+    public static final String CREATE_TASK_ERR = "Error creating task";
+
 
 }

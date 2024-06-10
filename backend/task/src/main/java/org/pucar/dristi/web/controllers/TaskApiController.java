@@ -1,10 +1,10 @@
 package org.pucar.dristi.web.controllers;
 
-import org.pucar.dristi.web.models.TaskExistsRequest;
-import org.pucar.dristi.web.models.TaskExistsResponse;
-import org.pucar.dristi.web.models.TaskListResponse;
-import org.pucar.dristi.web.models.TaskRequest;
-import org.pucar.dristi.web.models.TaskResponse;
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.TaskService;
+import org.pucar.dristi.util.ResponseInfoFactory;
+import org.pucar.dristi.web.models.*;
+
 import java.util.UUID;
     import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,6 +31,7 @@ import java.util.*;
     import jakarta.validation.Valid;
     import jakarta.servlet.http.HttpServletRequest;
         import java.util.Optional;
+
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-18T11:14:50.003326400+05:30[Asia/Calcutta]")
 @Controller
 @RequestMapping("")
@@ -41,6 +42,12 @@ public class TaskApiController{
     private final HttpServletRequest request;
 
     @Autowired
+    private TaskService taskService;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
     public TaskApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -48,16 +55,10 @@ public class TaskApiController{
 
     @RequestMapping(value="/task/v1/create", method = RequestMethod.POST)
     public ResponseEntity<TaskResponse> taskV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "details for the creation of task", schema=@Schema()) @Valid @RequestBody TaskRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<TaskResponse>(objectMapper.readValue("{  \"ResponseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"task\" : {    \"dateCloseBy\" : \"2000-01-23\",    \"filingNumber\" : \"filingNumber\",    \"amount\" : {      \"amount\" : \"amount\",      \"paymentRefNumber\" : \"paymentRefNumber\",      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"type\" : \"fees, fine, refund\",      \"additionalDetails\" : \"additionalDetails\",      \"status\" : \"status\"    },    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"orderId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"taskDescription\" : \"taskDescription\",    \"cnrNumber\" : \"cnrNumber\",    \"dateClosed\" : \"2000-01-23\",    \"isActive\" : true,    \"additionalDetails\" : \"additionalDetails\",    \"assignedTo\" : {      \"name\" : \"name\",      \"individualId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\"    },    \"taskType\" : \"document submission, summons, bail.cash, bail.surety warrant\",    \"createdDate\" : \"2000-01-23\",    \"auditDetails\" : {      \"lastModifiedTime\" : 1,      \"createdBy\" : \"createdBy\",      \"lastModifiedBy\" : \"lastModifiedBy\",      \"createdTime\" : 6    },    \"tenantId\" : \"tenantId\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"taskDetails\" : { },    \"status\" : \"status\"  }}", TaskResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<TaskResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<TaskResponse>(HttpStatus.NOT_IMPLEMENTED);
+        Task task = taskService.createCase(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        TaskResponse taskResponse = TaskResponse.builder().task(task).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(taskResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value="/task/v1/exists", method = RequestMethod.POST)
