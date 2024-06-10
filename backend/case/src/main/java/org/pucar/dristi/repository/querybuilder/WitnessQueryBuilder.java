@@ -2,15 +2,15 @@ package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.CaseCriteria;
 import org.pucar.dristi.web.models.WitnessSearchCriteria;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.CASE_SEARCH_QUERY_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.WITNESS_SEARCH_QUERY_EXCEPTION;
 
 @Component
@@ -26,6 +26,7 @@ public class WitnessQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_WITNESS_QUERY);
             query.append(FROM_WITNESS_TABLE);
+            AtomicBoolean includeInactive = new AtomicBoolean(false); // Check if return inactive witness
             boolean firstCriteria = true; // To check if it's the first criteria
             if(criteriaList != null && !criteriaList.isEmpty()) {
 
@@ -40,11 +41,19 @@ public class WitnessQueryBuilder {
                         .filter(Objects::nonNull)
                         .toList();
 
-                List<Boolean> includeInactives = criteriaList.stream()
+                List<Boolean> includeInactives = new ArrayList<>(criteriaList.stream()
                         .filter(criteria -> criteria.getCaseId() == null && criteria.getIndividualId() == null)
-                        .map(WitnessSearchCriteria::getIncludeInactive)
+                        .map(witnessSearchCriteria -> {
+                            if (!witnessSearchCriteria.getIncludeInactive())
+                                witnessSearchCriteria.setIncludeInactive(!witnessSearchCriteria.getIncludeInactive());
+                            else
+                                includeInactive.set(true);
+                            return witnessSearchCriteria.getIncludeInactive();
+                        })
                         .filter(Objects::nonNull)
-                        .toList();
+                        .toList());
+                if(includeInactive.get())
+                    includeInactives.add(false);
 
                 if (!ids.isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
@@ -67,7 +76,7 @@ public class WitnessQueryBuilder {
 
                 if (!includeInactives.isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("witness.filingnumber IN (")
+                    query.append("witness.isactive IN (")
                             .append(includeInactives.stream().map(num -> "?").collect(Collectors.joining(",")))
                             .append(")");
                     preparedStmtList.addAll(includeInactives);
