@@ -51,6 +51,7 @@ class AddressModel{
   String? street;
   String? district;
   String? state;
+  String? buildingName;
 
   AddressModel({
     this.doorNo,
@@ -61,7 +62,8 @@ class AddressModel{
     this.pincode,
     this.street,
     this.district,
-    this.state
+    this.state,
+    this.buildingName
   });
 
 }

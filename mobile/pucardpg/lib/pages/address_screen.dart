@@ -48,6 +48,7 @@ class AddressScreenState extends State<AddressScreen> {
   String cityKey = 'city';
   String localityKey = 'locality';
   String doorNoKey = 'doorNo';
+  String buildingNameKey = 'buildingName';
   bool isSubmitting = false;
   // List<String> state = [];
   // List<String> district = ['District'];
@@ -372,6 +373,7 @@ class AddressScreenState extends State<AddressScreen> {
                                         form.control(cityKey).value = null;
                                         form.control(localityKey).value = null;
                                         form.control(doorNoKey).value = null;
+                                        form.control(buildingNameKey).value = null;
 
                                         if (value.value.length == 6) {
                                           fetchAddress(value.value, form);
@@ -528,7 +530,7 @@ class AddressScreenState extends State<AddressScreen> {
                                     DigitTextFormField(
                                         padding: const EdgeInsets.only(top: 10),
                                         formControlName: doorNoKey,
-                                        label: AppLocalizations.of(context).translate(i18.address.buildingDoorNo),
+                                        label: AppLocalizations.of(context).translate(i18.address.doorNo),
                                         onChanged: (value) {
                                           context.read<AuthBloc>().userModel.addressModel.doorNo =
                                               value.value.toString();
@@ -538,6 +540,29 @@ class AddressScreenState extends State<AddressScreen> {
                                         validationMessages: {
                                           'required': (_) =>
                                           'Door number is required',
+                                          'minLength': (_) =>
+                                          'Min length should be 2',
+                                          'maxLength': (_) =>
+                                          'Max length should be 128'
+                                        },
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter.allow(
+                                              RegExp(r"^(?! ).*[a-zA-Z0-9 .,\/\\-_@#']")),
+                                          LengthLimitingTextInputFormatter(128),
+                                        ]),
+                                    DigitTextFormField(
+                                        padding: const EdgeInsets.only(top: 10),
+                                        formControlName: buildingNameKey,
+                                        label: AppLocalizations.of(context).translate(i18.address.buildingName),
+                                        onChanged: (value) {
+                                          context.read<AuthBloc>().userModel.addressModel.buildingName =
+                                              value.value.toString();
+                                        },
+                                        keyboardType: TextInputType.text,
+                                        minLength: 2,
+                                        validationMessages: {
+                                          'required': (_) =>
+                                          'Building Name is required',
                                           'minLength': (_) =>
                                           'Min length should be 2',
                                           'maxLength': (_) =>
@@ -620,6 +645,13 @@ class AddressScreenState extends State<AddressScreen> {
         ]),
     doorNoKey: FormControl<String>(
         value: context.read<AuthBloc>().userModel.addressModel.doorNo,
+        validators: [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(128)
+        ]),
+    buildingNameKey: FormControl<String>(
+        value: context.read<AuthBloc>().userModel.addressModel.buildingName,
         validators: [
           Validators.required,
           Validators.minLength(2),

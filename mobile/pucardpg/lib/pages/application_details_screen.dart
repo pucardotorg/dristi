@@ -181,7 +181,7 @@ class ApplicationDetailsScreenState extends State<ApplicationDetailsScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            context.read<AuthBloc>().userModel.addressModel.doorNo ?? "",
+                                            "${context.read<AuthBloc>().userModel.addressModel.doorNo ?? ""} ${context.read<AuthBloc>().userModel.addressModel.buildingName ?? ""}",
                                             style: widget.theme.text16W400Rob(),
                                             textAlign: TextAlign.end,
                                           ),

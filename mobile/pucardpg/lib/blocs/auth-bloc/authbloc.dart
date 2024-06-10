@@ -140,7 +140,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         userModel.addressModel.city = address.city;
         userModel.addressModel.pincode = address.pincode;
         userModel.addressModel.street = address.street;
-        userModel.addressModel.district = address.district;
+        userModel.addressModel.buildingName = address.buildingName;
+        userModel.addressModel.state = address.addressLine1;
+        userModel.addressModel.district = address.addressLine2;
         userModel.addressModel.latitude = address.latitude;
         userModel.addressModel.longitude = address.longitude;
 
@@ -386,9 +388,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             latitude: userModel.addressModel.latitude ?? 0.0,
             longitude: userModel.addressModel.longitude ?? 0.0,
             city: userModel.addressModel.city ?? "",
-            district: userModel.addressModel.district ?? "",
+            addressLine1: userModel.addressModel.state ?? "",
+            addressLine2: userModel.addressModel.district ?? "",
             street: userModel.addressModel.street ?? "",
-            pincode: userModel.addressModel.pincode ?? ""
+            pincode: userModel.addressModel.pincode ?? "",
+            buildingName: userModel.addressModel.buildingName ?? ""
         )],
         identifiers: userModel.identifierId == null ? [] :
         [Identifier(
@@ -472,8 +476,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         secureStore.setAccessToken(accesstoken);
         secureStore.setRefreshToken(_refreshtoken);
         secureStore.setAccessInfo(_authResponse);
-        emit(const AuthState.profileSuccessState());
       }
+      emit(const AuthState.profileSuccessState());
     }
     catch(e1) {
       emit(const AuthState.profileFailedState(errorMsg: 'Registering Failed'));

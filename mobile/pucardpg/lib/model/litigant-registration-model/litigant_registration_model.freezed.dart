@@ -190,8 +190,14 @@ mixin _$Address {
   String get tenantId => throw _privateConstructorUsedError;
   @JsonKey(name: 'type')
   String get type => throw _privateConstructorUsedError;
+  @JsonKey(name: 'addressLine1')
+  String? get addressLine1 => throw _privateConstructorUsedError;
+  @JsonKey(name: 'addressLine2')
+  String? get addressLine2 => throw _privateConstructorUsedError;
   @JsonKey(name: 'doorNo')
   String? get doorNo => throw _privateConstructorUsedError;
+  @JsonKey(name: 'buildingName')
+  String? get buildingName => throw _privateConstructorUsedError;
   @JsonKey(name: 'latitude')
   double? get latitude => throw _privateConstructorUsedError;
   @JsonKey(name: 'longitude')
@@ -202,8 +208,6 @@ mixin _$Address {
   String? get street => throw _privateConstructorUsedError;
   @JsonKey(name: 'pincode')
   String? get pincode => throw _privateConstructorUsedError;
-  @JsonKey(name: 'district')
-  String? get district => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -218,13 +222,15 @@ abstract class $AddressCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'tenantId') String tenantId,
       @JsonKey(name: 'type') String type,
+      @JsonKey(name: 'addressLine1') String? addressLine1,
+      @JsonKey(name: 'addressLine2') String? addressLine2,
       @JsonKey(name: 'doorNo') String? doorNo,
+      @JsonKey(name: 'buildingName') String? buildingName,
       @JsonKey(name: 'latitude') double? latitude,
       @JsonKey(name: 'longitude') double? longitude,
       @JsonKey(name: 'city') String? city,
       @JsonKey(name: 'street') String? street,
-      @JsonKey(name: 'pincode') String? pincode,
-      @JsonKey(name: 'district') String? district});
+      @JsonKey(name: 'pincode') String? pincode});
 }
 
 /// @nodoc
@@ -242,13 +248,15 @@ class _$AddressCopyWithImpl<$Res, $Val extends Address>
   $Res call({
     Object? tenantId = null,
     Object? type = null,
+    Object? addressLine1 = freezed,
+    Object? addressLine2 = freezed,
     Object? doorNo = freezed,
+    Object? buildingName = freezed,
     Object? latitude = freezed,
     Object? longitude = freezed,
     Object? city = freezed,
     Object? street = freezed,
     Object? pincode = freezed,
-    Object? district = freezed,
   }) {
     return _then(_value.copyWith(
       tenantId: null == tenantId
@@ -259,9 +267,21 @@ class _$AddressCopyWithImpl<$Res, $Val extends Address>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      addressLine1: freezed == addressLine1
+          ? _value.addressLine1
+          : addressLine1 // ignore: cast_nullable_to_non_nullable
+              as String?,
+      addressLine2: freezed == addressLine2
+          ? _value.addressLine2
+          : addressLine2 // ignore: cast_nullable_to_non_nullable
+              as String?,
       doorNo: freezed == doorNo
           ? _value.doorNo
           : doorNo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      buildingName: freezed == buildingName
+          ? _value.buildingName
+          : buildingName // ignore: cast_nullable_to_non_nullable
               as String?,
       latitude: freezed == latitude
           ? _value.latitude
@@ -282,10 +302,6 @@ class _$AddressCopyWithImpl<$Res, $Val extends Address>
       pincode: freezed == pincode
           ? _value.pincode
           : pincode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      district: freezed == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
   }
@@ -301,13 +317,15 @@ abstract class _$$AddressImplCopyWith<$Res> implements $AddressCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'tenantId') String tenantId,
       @JsonKey(name: 'type') String type,
+      @JsonKey(name: 'addressLine1') String? addressLine1,
+      @JsonKey(name: 'addressLine2') String? addressLine2,
       @JsonKey(name: 'doorNo') String? doorNo,
+      @JsonKey(name: 'buildingName') String? buildingName,
       @JsonKey(name: 'latitude') double? latitude,
       @JsonKey(name: 'longitude') double? longitude,
       @JsonKey(name: 'city') String? city,
       @JsonKey(name: 'street') String? street,
-      @JsonKey(name: 'pincode') String? pincode,
-      @JsonKey(name: 'district') String? district});
+      @JsonKey(name: 'pincode') String? pincode});
 }
 
 /// @nodoc
@@ -323,13 +341,15 @@ class __$$AddressImplCopyWithImpl<$Res>
   $Res call({
     Object? tenantId = null,
     Object? type = null,
+    Object? addressLine1 = freezed,
+    Object? addressLine2 = freezed,
     Object? doorNo = freezed,
+    Object? buildingName = freezed,
     Object? latitude = freezed,
     Object? longitude = freezed,
     Object? city = freezed,
     Object? street = freezed,
     Object? pincode = freezed,
-    Object? district = freezed,
   }) {
     return _then(_$AddressImpl(
       tenantId: null == tenantId
@@ -340,9 +360,21 @@ class __$$AddressImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      addressLine1: freezed == addressLine1
+          ? _value.addressLine1
+          : addressLine1 // ignore: cast_nullable_to_non_nullable
+              as String?,
+      addressLine2: freezed == addressLine2
+          ? _value.addressLine2
+          : addressLine2 // ignore: cast_nullable_to_non_nullable
+              as String?,
       doorNo: freezed == doorNo
           ? _value.doorNo
           : doorNo // ignore: cast_nullable_to_non_nullable
+              as String?,
+      buildingName: freezed == buildingName
+          ? _value.buildingName
+          : buildingName // ignore: cast_nullable_to_non_nullable
               as String?,
       latitude: freezed == latitude
           ? _value.latitude
@@ -364,10 +396,6 @@ class __$$AddressImplCopyWithImpl<$Res>
           ? _value.pincode
           : pincode // ignore: cast_nullable_to_non_nullable
               as String?,
-      district: freezed == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String?,
     ));
   }
 }
@@ -378,13 +406,15 @@ class _$AddressImpl implements _Address {
   const _$AddressImpl(
       {@JsonKey(name: 'tenantId') this.tenantId = "pg",
       @JsonKey(name: 'type') this.type = "PERMANENT",
+      @JsonKey(name: 'addressLine1') required this.addressLine1,
+      @JsonKey(name: 'addressLine2') required this.addressLine2,
       @JsonKey(name: 'doorNo') required this.doorNo,
+      @JsonKey(name: 'buildingName') required this.buildingName,
       @JsonKey(name: 'latitude') required this.latitude,
       @JsonKey(name: 'longitude') required this.longitude,
       @JsonKey(name: 'city') required this.city,
       @JsonKey(name: 'street') required this.street,
-      @JsonKey(name: 'pincode') required this.pincode,
-      @JsonKey(name: 'district') required this.district});
+      @JsonKey(name: 'pincode') required this.pincode});
 
   factory _$AddressImpl.fromJson(Map<String, dynamic> json) =>
       _$$AddressImplFromJson(json);
@@ -396,8 +426,17 @@ class _$AddressImpl implements _Address {
   @JsonKey(name: 'type')
   final String type;
   @override
+  @JsonKey(name: 'addressLine1')
+  final String? addressLine1;
+  @override
+  @JsonKey(name: 'addressLine2')
+  final String? addressLine2;
+  @override
   @JsonKey(name: 'doorNo')
   final String? doorNo;
+  @override
+  @JsonKey(name: 'buildingName')
+  final String? buildingName;
   @override
   @JsonKey(name: 'latitude')
   final double? latitude;
@@ -413,13 +452,10 @@ class _$AddressImpl implements _Address {
   @override
   @JsonKey(name: 'pincode')
   final String? pincode;
-  @override
-  @JsonKey(name: 'district')
-  final String? district;
 
   @override
   String toString() {
-    return 'Address(tenantId: $tenantId, type: $type, doorNo: $doorNo, latitude: $latitude, longitude: $longitude, city: $city, street: $street, pincode: $pincode, district: $district)';
+    return 'Address(tenantId: $tenantId, type: $type, addressLine1: $addressLine1, addressLine2: $addressLine2, doorNo: $doorNo, buildingName: $buildingName, latitude: $latitude, longitude: $longitude, city: $city, street: $street, pincode: $pincode)';
   }
 
   @override
@@ -430,22 +466,37 @@ class _$AddressImpl implements _Address {
             (identical(other.tenantId, tenantId) ||
                 other.tenantId == tenantId) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.addressLine1, addressLine1) ||
+                other.addressLine1 == addressLine1) &&
+            (identical(other.addressLine2, addressLine2) ||
+                other.addressLine2 == addressLine2) &&
             (identical(other.doorNo, doorNo) || other.doorNo == doorNo) &&
+            (identical(other.buildingName, buildingName) ||
+                other.buildingName == buildingName) &&
             (identical(other.latitude, latitude) ||
                 other.latitude == latitude) &&
             (identical(other.longitude, longitude) ||
                 other.longitude == longitude) &&
             (identical(other.city, city) || other.city == city) &&
             (identical(other.street, street) || other.street == street) &&
-            (identical(other.pincode, pincode) || other.pincode == pincode) &&
-            (identical(other.district, district) ||
-                other.district == district));
+            (identical(other.pincode, pincode) || other.pincode == pincode));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, tenantId, type, doorNo, latitude,
-      longitude, city, street, pincode, district);
+  int get hashCode => Object.hash(
+      runtimeType,
+      tenantId,
+      type,
+      addressLine1,
+      addressLine2,
+      doorNo,
+      buildingName,
+      latitude,
+      longitude,
+      city,
+      street,
+      pincode);
 
   @JsonKey(ignore: true)
   @override
@@ -465,13 +516,15 @@ abstract class _Address implements Address {
   const factory _Address(
           {@JsonKey(name: 'tenantId') final String tenantId,
           @JsonKey(name: 'type') final String type,
+          @JsonKey(name: 'addressLine1') required final String? addressLine1,
+          @JsonKey(name: 'addressLine2') required final String? addressLine2,
           @JsonKey(name: 'doorNo') required final String? doorNo,
+          @JsonKey(name: 'buildingName') required final String? buildingName,
           @JsonKey(name: 'latitude') required final double? latitude,
           @JsonKey(name: 'longitude') required final double? longitude,
           @JsonKey(name: 'city') required final String? city,
           @JsonKey(name: 'street') required final String? street,
-          @JsonKey(name: 'pincode') required final String? pincode,
-          @JsonKey(name: 'district') required final String? district}) =
+          @JsonKey(name: 'pincode') required final String? pincode}) =
       _$AddressImpl;
 
   factory _Address.fromJson(Map<String, dynamic> json) = _$AddressImpl.fromJson;
@@ -483,8 +536,17 @@ abstract class _Address implements Address {
   @JsonKey(name: 'type')
   String get type;
   @override
+  @JsonKey(name: 'addressLine1')
+  String? get addressLine1;
+  @override
+  @JsonKey(name: 'addressLine2')
+  String? get addressLine2;
+  @override
   @JsonKey(name: 'doorNo')
   String? get doorNo;
+  @override
+  @JsonKey(name: 'buildingName')
+  String? get buildingName;
   @override
   @JsonKey(name: 'latitude')
   double? get latitude;
@@ -500,9 +562,6 @@ abstract class _Address implements Address {
   @override
   @JsonKey(name: 'pincode')
   String? get pincode;
-  @override
-  @JsonKey(name: 'district')
-  String? get district;
   @override
   @JsonKey(ignore: true)
   _$$AddressImplCopyWith<_$AddressImpl> get copyWith =>

@@ -21,26 +21,30 @@ _$AddressImpl _$$AddressImplFromJson(Map<String, dynamic> json) =>
     _$AddressImpl(
       tenantId: json['tenantId'] as String? ?? "pg",
       type: json['type'] as String? ?? "PERMANENT",
+      addressLine1: json['addressLine1'] as String?,
+      addressLine2: json['addressLine2'] as String?,
       doorNo: json['doorNo'] as String?,
+      buildingName: json['buildingName'] as String?,
       latitude: (json['latitude'] as num?)?.toDouble(),
       longitude: (json['longitude'] as num?)?.toDouble(),
       city: json['city'] as String?,
       street: json['street'] as String?,
       pincode: json['pincode'] as String?,
-      district: json['district'] as String?,
     );
 
 Map<String, dynamic> _$$AddressImplToJson(_$AddressImpl instance) =>
     <String, dynamic>{
       'tenantId': instance.tenantId,
       'type': instance.type,
+      'addressLine1': instance.addressLine1,
+      'addressLine2': instance.addressLine2,
       'doorNo': instance.doorNo,
+      'buildingName': instance.buildingName,
       'latitude': instance.latitude,
       'longitude': instance.longitude,
       'city': instance.city,
       'street': instance.street,
       'pincode': instance.pincode,
-      'district': instance.district,
     };
 
 _$IdentifierImpl _$$IdentifierImplFromJson(Map<String, dynamic> json) =>

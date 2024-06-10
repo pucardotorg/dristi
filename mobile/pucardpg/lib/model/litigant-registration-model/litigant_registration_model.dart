@@ -23,13 +23,15 @@ class Address with _$Address {
   const factory Address({
     @JsonKey(name: 'tenantId') @Default("pg") String tenantId,
     @JsonKey(name: 'type') @Default("PERMANENT") String type,
+    @JsonKey(name: 'addressLine1') required String? addressLine1,
+    @JsonKey(name: 'addressLine2') required String? addressLine2,
     @JsonKey(name: 'doorNo') required String? doorNo,
+    @JsonKey(name: 'buildingName') required String? buildingName,
     @JsonKey(name: 'latitude') required double? latitude,
     @JsonKey(name: 'longitude') required double? longitude,
     @JsonKey(name: 'city') required String? city,
     @JsonKey(name: 'street') required String? street,
     @JsonKey(name: 'pincode') required String? pincode,
-    @JsonKey(name: 'district') required String? district,
   }) = _Address ;
 
   factory Address.fromJson(Map<String, dynamic> json) => _$AddressFromJson(json);

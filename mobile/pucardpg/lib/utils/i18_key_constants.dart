@@ -145,6 +145,8 @@ class AddressText {
   String get cityTown => 'CITY/TOWN';
   String get localityStreet => 'LOCALITY_STREET';
   String get buildingDoorNo => 'BUILDING_DOOR_NO';
+  String get buildingName => 'BUILDING_NAME';
+  String get doorNo => 'DOOR_NUMBER';
 }
 
 class IdVerification {
