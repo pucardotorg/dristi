@@ -65,7 +65,7 @@ public class WitnessQueryBuilderTest {
         String query = witnessQueryBuilder.getWitnessesSearchQuery(criteriaList, preparedStmtList);
 
         // Assert
-        assertEquals(" SELECT witness.id as id, witness.caseid as caseid, witness.filingnumber as filingnumber, witness.cnrnumber as cnrnumber, witness.witnessidentifier as witnessidentifier, witness.individualid as individualid,  witness.remarks as remarks, witness.isactive as isactive, witness.additionaldetails as additionaldetails, witness.createdby as createdby, witness.lastmodifiedby as lastmodifiedby, witness.createdtime as createdtime, witness.lastmodifiedtime as lastmodifiedtime  FROM dristi_witness witness WHERE witness.filingnumber IN (?) ORDER BY witness.createdtime DESC ", query);
+        assertEquals(" SELECT witness.id as id, witness.caseid as caseid, witness.filingnumber as filingnumber, witness.cnrnumber as cnrnumber, witness.witnessidentifier as witnessidentifier, witness.individualid as individualid,  witness.remarks as remarks, witness.isactive as isactive, witness.additionaldetails as additionaldetails, witness.createdby as createdby, witness.lastmodifiedby as lastmodifiedby, witness.createdtime as createdtime, witness.lastmodifiedtime as lastmodifiedtime  FROM dristi_witness witness WHERE witness.isactive IN (?) ORDER BY witness.createdtime DESC ", query);
     }
 
     @Test
