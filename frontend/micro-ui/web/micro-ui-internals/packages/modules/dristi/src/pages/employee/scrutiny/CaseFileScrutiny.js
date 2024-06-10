@@ -65,7 +65,7 @@ function CaseFileScrutiny({ t }) {
     <div className="file-case">
       <div className="file-case-side-stepper">
         <div className="file-case-select-form-section">
-          <div className="accordion-wrapper">{`Litigent Details ${}`}</div>
+          <div className="accordion-wrapper">{`Litigent Details`}</div>
           <div className="accordion-wrapper">{`Case Specific Details`}</div>
           <div className="accordion-wrapper">{`Additional Details`}</div>
         </div>

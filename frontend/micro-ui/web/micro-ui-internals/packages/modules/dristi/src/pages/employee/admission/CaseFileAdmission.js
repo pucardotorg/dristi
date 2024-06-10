@@ -3,8 +3,11 @@ import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-comp
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
+const DIGIT = window.Digit;
+
 function CaseFileAdmission({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const { caseId } = DIGIT.hooks.useQueryParams();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const onSubmit = () => {};
@@ -43,6 +46,7 @@ function CaseFileAdmission({ t }) {
             label={t("CS_ADMIT_CASE")}
             config={reviewCaseFileFormConfig}
             onSubmit={onSubmit}
+            // defaultValues={}
             onSecondayActionClick={onSaveDraft}
             defaultValues={{}}
             onFormValueChange={onFormValueChange}
