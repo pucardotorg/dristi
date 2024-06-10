@@ -26,7 +26,7 @@ paths:
         required: true
       responses:
         '201':
-          description: ReponseInfo with case groups created successfully
+          description: ResponseInfo with case groups created successfully
           content:
             '*/*':
               schema:
@@ -37,7 +37,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/v1/_update:
     post:
       tags:
@@ -54,7 +54,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ReponseInfo with case details updated successfully
+          description: ResponseInfo with case details updated successfully
           content:
             '*/*':
               schema:
@@ -65,7 +65,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/v1/_search:
     post:
       tags:
@@ -84,14 +84,14 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/CaseResponse'
+                $ref: '#/components/schemas/CaseListResponse'
         '400':
           description: Case search failed. Refer to response body for specifics.
           content:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/v1/_exists:
     post:
       tags:
@@ -117,7 +117,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/witness/v1/_create:
     post:
       tags:
@@ -145,7 +145,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/witness/v1/_update:
      post:
       tags:
@@ -173,7 +173,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   
   /case/witness/v1/_search:
      post:
@@ -202,7 +202,7 @@ paths:
             '*/*':
               schema:
                 $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
 
 components:
   schemas:
@@ -343,21 +343,21 @@ components:
           type: array
           items:
             $ref: >-
-              https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
         remarks:
           type: string
           description: This field can hold any other additional remarks about the case
         workflow:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Workflow
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Workflow
         additionalDetails:
           type: object
           description: >-
             This field is meant to hold any extra information that we want to
             store for a case.
-        auditdetails:
+        auditDetails:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
     
     StatuteSection:
       type: object
@@ -400,7 +400,7 @@ components:
             part of this entity.
         auditdetails:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
     LinkedCase:
       type: object
       properties:
@@ -425,7 +425,7 @@ components:
           description: This can be used to store any documents related to the linked cases
           items:
             $ref: >-
-              https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
         additionalDetails:
           type: string
           description: >-
@@ -433,7 +433,7 @@ components:
             part of this entity.
         auditdetails:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
     
     AdvocateMapping:
       type: object
@@ -473,10 +473,10 @@ components:
             between advocate and party.
           items:
             $ref: >-
-              https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
         auditDetails:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
           description: >-
@@ -538,10 +538,10 @@ components:
             between advocate and party.
           items:
             $ref: >-
-              https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/Document
+              https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Document
         auditDetails:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
           description: >-
@@ -594,7 +594,7 @@ components:
           default: true
         auditDetails:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/AuditDetails
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
         additionalDetails:
           type: object
           description: >-
@@ -606,10 +606,8 @@ components:
       properties:
         RequestInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
-        cases:
-          type: array
-          items:
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        case:
             $ref: '#/components/schemas/CourtCase'
     
     CaseResponse:
@@ -617,7 +615,7 @@ components:
       properties:
         ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         cases:
           type: array
           items:
@@ -628,31 +626,41 @@ components:
       properties:
         RequestInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
-        tenantId:
-          type: string
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
           type: array
           items:
             $ref: '#/components/schemas/CaseCriteria'
-
+    CaseListResponse:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
+        criteria:
+          type: array
+          items:
+            $ref: '#/components/schemas/CaseCriteria'
     CaseExistsRequest:
       type: object
       properties:
-        ResponseInfo:
+        RequestInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         criteria:
           type: array
           items:
             $ref: '#/components/schemas/CaseExists'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination
     
     CaseExistsResponse:
       type: object
       properties:
         ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         criteria:
           type: array
           items:
@@ -683,6 +691,10 @@ components:
         registrationToDate:
           type: string
           format: date
+        responseList:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourtCase'
     
     CaseExists:
       type: object
@@ -712,7 +724,7 @@ components:
       properties:
         requestInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         witnesses:
           type: array
           items:
@@ -723,7 +735,7 @@ components:
       properties:
         ResponseInfo:
           $ref: >-
-            https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ResponseInfo
         witnesses:
           type: array
           items:
@@ -733,8 +745,8 @@ components:
       type: object
       properties:
         RequestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
-
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
         searchCriteria:
           type: array
           items:
