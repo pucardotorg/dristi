@@ -23,35 +23,77 @@ public class EvidenceEnrichment {
 
     public void enrichEvidenceRegistration(EvidenceRequest evidenceRequest) {
         try {
-            if(evidenceRequest.getRequestInfo().getUserInfo() != null) {
-                List<String> aetifactRegistrationIdList = idgenUtil.getIdList(evidenceRequest.getRequestInfo(), evidenceRequest.getRequestInfo().getUserInfo().getTenantId(), "artifact.artifact_number", null, 1);
+            if (evidenceRequest.getRequestInfo().getUserInfo() != null) {
+                // Determine the ID format based on artifact type
+                String artifactType = evidenceRequest.getArtifact().getArtifactType();
+                String idFormat;
+
+                switch (artifactType) {
+                    case "complainant":
+                        idFormat = "document.evidence_complainant";
+                        break;
+                    case "accused":
+                        idFormat = "document.evidence_accused";
+                        break;
+                    case "court":
+                        idFormat = "document.evidence_court";
+                        break;
+                    case "witness_complainant":
+                        idFormat = "document.witness_complainant";
+                        break;
+                    case "witness_accused":
+                        idFormat = "document.witness_accused";
+                        break;
+                    case "witness_court":
+                        idFormat = "document.witness_court";
+                        break;
+                    default:
+                        throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type provided");
+                }
+
+                // Generate the artifact number using the determined ID format
+                List<String> artifactRegistrationIdList = idgenUtil.getIdList(
+                        evidenceRequest.getRequestInfo(),
+                        evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
+                        idFormat,
+                        null,
+                        1
+                );
+
                 int index = 0;
-                    AuditDetails auditDetails = AuditDetails.builder().createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+                AuditDetails auditDetails = AuditDetails.builder()
+                        .createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())
+                        .createdTime(System.currentTimeMillis())
+                        .lastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())
+                        .lastModifiedTime(System.currentTimeMillis())
+                        .build();
+
                 evidenceRequest.getArtifact().setAuditdetails(auditDetails);
                 evidenceRequest.getArtifact().setId(UUID.randomUUID());
-                    for (Comment comment : evidenceRequest.getArtifact().getComments()) {
-                        comment.setId(UUID.randomUUID());
-                    }
-                evidenceRequest.getArtifact().setIsActive(false);
-                evidenceRequest.getArtifact().setArtifactNumber(aetifactRegistrationIdList.get(index++));
-                    if(evidenceRequest.getArtifact().getFile()!=null){
-                        evidenceRequest.getArtifact().getFile().setId(String.valueOf(UUID.randomUUID()));
-                        evidenceRequest.getArtifact().getFile().setDocumentUid(evidenceRequest.getArtifact().getFile().getId());
-                    }
+
+                for (Comment comment : evidenceRequest.getArtifact().getComments()) {
+                    comment.setId(UUID.randomUUID());
                 }
-            else{
-                throw new CustomException(ENRICHMENT_EXCEPTION,"User info not found!!!");
+
+                evidenceRequest.getArtifact().setIsActive(false);
+                evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(index++));
+
+                if (evidenceRequest.getArtifact().getFile() != null) {
+                    evidenceRequest.getArtifact().getFile().setId(String.valueOf(UUID.randomUUID()));
+                    evidenceRequest.getArtifact().getFile().setDocumentUid(evidenceRequest.getArtifact().getFile().getId());
+                }
+            } else {
+                throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
             }
-        } catch (CustomException e){
-            log.error("Custom Exception occurred while Enriching evidence");
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while Enriching evidence: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Error enriching evidence application: {}", e.getMessage());
-            // Handle the exception or throw a custom exception
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error evidence in enrichment service: "+ e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in evidence enrichment service: " + e.getMessage());
         }
-
     }
+
     public void enrichEvidenceRegistrationUponUpdate(EvidenceRequest evidenceRequest) {
         try {
             // Enrich lastModifiedTime and lastModifiedBy in case of update

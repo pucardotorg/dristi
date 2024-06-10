@@ -19,7 +19,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.pucar.dristi.config.ServiceConstants.EVIDENCE_CREATE_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Slf4j
 @Service
 public class EvidenceService {
@@ -99,7 +100,9 @@ public class EvidenceService {
             enrichmentUtil.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
             workflowService.updateWorkflowStatus(evidenceRequest);
-
+            if (ACTIVE_STATUS.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
+                evidenceRequest.getArtifact().setIsActive(true);
+            }
             producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
 
             return evidenceRequest.getArtifact();
