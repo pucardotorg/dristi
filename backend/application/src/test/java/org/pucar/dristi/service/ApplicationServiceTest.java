@@ -105,7 +105,7 @@ class ApplicationServiceTest {
         // Arrange
         when(applicationRequest.getApplication()).thenReturn(application);
         when(applicationRequest.getRequestInfo()).thenReturn(requestInfo);
-        when(validator.validateApplicationExistence(any(), any())).thenReturn(application);
+        when(validator.validateApplicationExistence(any(), any())).thenReturn(true);
         when(config.getApplicationUpdateTopic()).thenReturn("update-application");
 
         // Act
@@ -130,7 +130,7 @@ class ApplicationServiceTest {
             applicationService.updateApplication(applicationRequest);
         });
 
-        assertEquals("Error validating existing application: Validation failed", exception.getMessage());
+        assertEquals("Error occurred while updating application: Validation failed", exception.getMessage());
         verify(validator).validateApplicationExistence(requestInfo, application);
         verify(enrichmentUtil, never()).enrichApplicationUponUpdate(applicationRequest);
         verify(producer, never()).push(anyString(), any());
@@ -141,7 +141,7 @@ class ApplicationServiceTest {
         // Arrange
         when(applicationRequest.getApplication()).thenReturn(application);
         when(applicationRequest.getRequestInfo()).thenReturn(requestInfo);
-        when(validator.validateApplicationExistence(any(), any())).thenReturn(application);
+        when(validator.validateApplicationExistence(any(), any())).thenReturn(true);
         doThrow(new RuntimeException("Unexpected error")).when(enrichmentUtil).enrichApplicationUponUpdate(any());
 
         // Act & Assert

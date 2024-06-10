@@ -6,10 +6,7 @@ import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.CaseExists;
-import org.pucar.dristi.web.models.CaseExistsRequest;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -49,9 +46,9 @@ public class ApplicationValidator {
         if(ObjectUtils.isEmpty(application.getOnBehalfOf())){
                 throw new CustomException(CREATE_APPLICATION_ERR, "onBehalfOf is mandatory for creating application");
             }
-        if(ObjectUtils.isEmpty(application.getCnrNumber())){
-                throw new CustomException(CREATE_APPLICATION_ERR, "cnrNumber is mandatory for creating application");
-            }
+//        if(ObjectUtils.isEmpty(application.getCnrNumber())){
+//                throw new CustomException(CREATE_APPLICATION_ERR, "cnrNumber is mandatory for creating application");
+//            }
         if(ObjectUtils.isEmpty(application.getFilingNumber())){
                 throw new CustomException(CREATE_APPLICATION_ERR, "filingNumber is mandatory for creating application");
             }
@@ -61,7 +58,7 @@ public class ApplicationValidator {
 
             //TODO ADD ALL THE VALIDATION FOR CREATING APPLICATION
     }
-    public Application validateApplicationExistence(RequestInfo requestInfo ,Application application) {
+    public Boolean validateApplicationExistence(RequestInfo requestInfo ,Application application) {
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
 
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
@@ -70,24 +67,26 @@ public class ApplicationValidator {
         if(ObjectUtils.isEmpty(application.getId())){
             throw new CustomException(UPDATE_APPLICATION_ERR, "id is mandatory for updating application");
         }
-        if(ObjectUtils.isEmpty(application.getCnrNumber())){
-            throw new CustomException(UPDATE_APPLICATION_ERR, "cnrNumber is mandatory for updating application");
-        }
+//        if(ObjectUtils.isEmpty(application.getCnrNumber())){
+//            throw new CustomException(UPDATE_APPLICATION_ERR, "cnrNumber is mandatory for updating application");
+//        }
         if(ObjectUtils.isEmpty(application.getFilingNumber())){
             throw new CustomException(UPDATE_APPLICATION_ERR, "filingNumber is mandatory for updating application");
         }
         if(ObjectUtils.isEmpty(application.getReferenceId())){
             throw new CustomException(UPDATE_APPLICATION_ERR, "referenceId is mandatory for updating application");
         }
-        //TODO REMAINING VALIDATIONS FOR UPDATE APPLICATION
 
-        List<Application> existingApplication = repository.getApplications(String.valueOf(application.getId()), application.getFilingNumber(),
-                application.getCnrNumber(), application.getTenantId(), application.getStatus(), null, null);//fixme pass limit and offset
 
-        if(existingApplication == null) {
-            throw new CustomException(VALIDATION_ERR, "Application does not exist");
-        }
-        return existingApplication.get(0);
+        ApplicationExists applicationExists = new ApplicationExists();
+        applicationExists.setFilingNumber(application.getFilingNumber());
+        applicationExists.setCnrNumber(application.getCnrNumber());
+        applicationExists.setApplicationNumber(application.getApplicationNumber());
+        List<ApplicationExists> criteriaList = new ArrayList<>();
+        criteriaList.add(applicationExists);
+        List<ApplicationExists> applicationExistsList = repository.checkApplicationExists(criteriaList);
+
+        return applicationExistsList.get(0).getExists();
     }
     public CaseExistsRequest createCaseExistsRequest(RequestInfo requestInfo, Application application){
         CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
