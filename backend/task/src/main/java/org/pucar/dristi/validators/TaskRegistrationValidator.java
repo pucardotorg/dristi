@@ -30,9 +30,6 @@ public class TaskRegistrationValidator {
     private MdmsUtil mdmsUtil;
 
     @Autowired
-    private FileStoreUtil fileStoreUtil;
-
-    @Autowired
     private Configuration config;
 
     /*  To do validation->

@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -55,14 +56,17 @@ public class Task {
     @JsonProperty("createdDate")
     @NotNull
     @Valid
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdDate = null;
 
     @JsonProperty("dateCloseBy")
     @Valid
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateCloseBy = null;
 
     @JsonProperty("dateClosed")
     @Valid
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateClosed = null;
 
     @JsonProperty("taskDescription")
