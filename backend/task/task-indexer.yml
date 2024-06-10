@@ -54,7 +54,7 @@ ServiceMaps:
                 outJsonPath: $.Data.taskDetails.additionalDetails
             externalUriMapping:
               - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
-                queryParam: businessIds=$.caseNumber,tenantId=$.tenantId,history=true
+                queryParam: businessIds=$.taskNumber,tenantId=$.tenantId,history=true
                 apiRequest:
                   {
                     "RequestInfo":
@@ -145,7 +145,7 @@ ServiceMaps:
                 outJsonPath: $.Data.taskDetails.additionalDetails
             externalUriMapping:
               - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
-                queryParam: businessIds=$.caseNumber,tenantId=$.tenantId,history=true
+                queryParam: businessIds=$.taskNumber,tenantId=$.tenantId,history=true
                 apiRequest:
                   {
                     "RequestInfo":
