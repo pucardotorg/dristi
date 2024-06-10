@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - e-filing-api-changes
+      - dev-env
   pull_request:
     branches:
       - develop
