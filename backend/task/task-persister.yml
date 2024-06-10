@@ -26,6 +26,8 @@ serviceMaps:
             - jsonPath: $.task.taskDescription
             - jsonPath: $.task.taskType
             - jsonPath: $.task.taskDetails
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.task.status
             - jsonPath: $.task.assignedTo
             - jsonPath: $.task.isActive
@@ -81,6 +83,8 @@ serviceMaps:
             - jsonPath: $.task.taskDescription
             - jsonPath: $.task.taskType
             - jsonPath: $.task.taskDetails
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.task.status
             - jsonPath: $.task.assignedTo
             - jsonPath: $.task.isActive

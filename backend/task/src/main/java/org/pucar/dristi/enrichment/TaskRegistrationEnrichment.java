@@ -43,7 +43,7 @@ public class TaskRegistrationEnrichment {
                     document.setDocumentUid(document.getId());
                 });
             }
-
+            task.getAmount().setId(UUID.randomUUID());
             task.setTaskNumber(taskRegistrationIdList.get(0));
 
         } catch (Exception e) {
