@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import LocationComponent from "./LocationComponent";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
@@ -79,6 +79,11 @@ const selectCompMultiConfig = {
 
 const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
   const [locationData, setLocationData] = useState([{ id: generateUUID() }]);
+  
+  const addressLabel = useMemo(() => {
+   return formData?.respondentType?.code;
+  }, [formData?.respondentType]);
+
   const handleAdd = () => {
     setLocationData((locationData) => {
       const updatedLocationData = [...(locationData || []), { id: generateUUID() }];
@@ -110,7 +115,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       {locationData.map((data, index) => (
         <div key={data.id}>
           <div style={{ display: "flex", gap: "4px" }}>
-            <h1>{`WITNESS'S_LOCATION #${index + 1}`}</h1>
+            <b><h1>{` ${addressLabel == "INDIVIDUAL" ? t("CS_RESPONDENT_ADDRESS_DETAIL") : addressLabel == "REPRESENTATIVE" ? t("CS_COMPANY_LOCATION") : t("CS_COMMON_ADDRESS_DETAIL")} ${index + 1}`}</h1></b>
             <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
               <CrossIcon></CrossIcon>
             </span>
