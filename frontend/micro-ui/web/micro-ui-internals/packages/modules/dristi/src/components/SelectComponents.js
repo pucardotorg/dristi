@@ -97,16 +97,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
       return;
     }
     if (Array.isArray(input)) {
-      if (configKey in formData) {
-        onSelect(configKey, {
-          ...formData[configKey],
-          ...input.reduce((res, curr) => {
-            res[curr] = value[curr];
-            return res;
-          }, {}),
-        });
-      }
-      if (config.key in formData) {
+      if (!config?.isUserVerified) {
         onSelect(config.key, {
           ...formData[config.key],
           ...input.reduce((res, curr) => {
@@ -115,6 +106,16 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
           }, {}),
         });
       }
+      if (!config?.isUserVerified) {
+        onSelect(configKey, {
+          ...formData[configKey],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        });
+      }
+      
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
     }

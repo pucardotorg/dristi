@@ -236,8 +236,11 @@ function EFilingCases({ path }) {
           return {
             ...config,
             body: config?.body.map((body) => {
-              if (body?.addUUID) {
+              if (body?.addUUID && body?.uuid !== index) {
                 body.uuid = index;
+                body.isUserVerified = disableConfigFields.some((field) => {
+                   return field === body?.key;
+                })
               }
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
