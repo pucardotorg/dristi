@@ -4,18 +4,17 @@ const complainantDetailsFormConfig = [
       {
         type: "radio",
         key: "complainantType",
-        label: "CS_RESPONDENT_TYPE",
+        label: "SELECT_COMPLAINANT_TYPE",
         isMandatory: true,
         name: "complainantType",
         populators: {
-          label: "SELECT_RESPONDENT_TYPE",
+          label: "SELECT_COMPLAINANT_TYPE",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
           required: false,
           isMandatory: true,
           isDependent: true,
-          clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
           options: [
             {
               code: "INDIVIDUAL",
@@ -178,7 +177,6 @@ const complainantDetailsFormConfig = [
         label: "PHONE_NUMBER",
         name: "mobileNumber",
         disableConfigFields: [
-          "complainantType",
           "firstName",
           "middleName",
           "lastName",
@@ -189,7 +187,7 @@ const complainantDetailsFormConfig = [
           "district",
           "city",
           "locality",
-          'addressDetails'
+          "addressDetails",
         ],
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
@@ -220,7 +218,7 @@ const complainantDetailsFormConfig = [
             {
               label: "CS_PIN_LOCATION",
               type: "LocationSearch",
-              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid", ],
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
               key: "locationSearch",
             },
             {
@@ -301,7 +299,7 @@ const complainantDetailsFormConfig = [
             {
               label: "CS_PIN_LOCATION",
               type: "LocationSearch",
-              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid", ],
+              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
               key: "locationSearch",
             },
             {

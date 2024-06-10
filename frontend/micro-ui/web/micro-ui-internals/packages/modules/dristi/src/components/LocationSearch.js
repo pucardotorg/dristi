@@ -378,7 +378,7 @@ const LocationSearch = (props) => {
       loadGoogleMaps(initMaps);
     }
     mapScriptCall();
-    setCoordinateData({ callback: setCoordinates });
+    setCoordinateData({ callbackFunc: setCoordinates });
   }, [coordinates]);
 
   return (
