@@ -13,13 +13,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      
+
+      - name: Determine base commit
+        id: base
+        run: |
+          # Fetch all branches
+          git fetch --all
+          # Determine the base commit for the comparison
+          BASE_COMMIT=$(git merge-base origin/develop HEAD)
+          echo "BASE_COMMIT=$BASE_COMMIT" >> $GITHUB_ENV
+
       - name: Determine changed files
         id: changes
         run: |
           echo "Checking for changed files..."
-          git fetch origin
-          git diff --name-only origin/develop... > changed_files.txt
+          git diff --name-only ${{ env.BASE_COMMIT }} > changed_files.txt
           cat changed_files.txt
 
       - name: Setup Docker
@@ -137,10 +145,9 @@ jobs:
           docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
         working-directory: backend/order/src/main/resources/db
 
-      - name: Build and Push Docker image for digit-ui
-        if: env.digit_ui_changed == 'true'
-        run: |
-          docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
-          docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
-        working-directory: frontend/micro-ui
+      # - name: Build and Push Docker image for digit-ui
+      #   if: env.digit_ui_changed == 'true'
+      #   run: |
+      #     docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
+      #     docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+      #     docker push pu
