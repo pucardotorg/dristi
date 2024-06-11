@@ -20,8 +20,8 @@ public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Docum
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String caseId = rs.getString("case_id");
-                UUID uuid = UUID.fromString(caseId!=null ? caseId : "00000000-0000-0000-0000-000000000000");
+                String taskId = rs.getString("task_id");
+                UUID uuid = UUID.fromString(taskId);
                 Document document = Document.builder()
                         .id(rs.getString("id"))
                         .documentType(rs.getString("documenttype"))
@@ -29,7 +29,7 @@ public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Docum
                         .documentUid(rs.getString("documentuid"))
                         .build();
 
-                PGobject pgObject = (PGobject) rs.getObject("docadditionaldetails");
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
                 if(pgObject!=null)
                     document.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 

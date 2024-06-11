@@ -102,6 +102,12 @@ paths:
           description: the status of the task(s) being searched
           schema:
             type: string
+      requestBody:
+        description: RequestInfo for the creation of task
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RequestInfo'            
       responses:
         "200":
           description: ResponseInfo with list of task(s)
@@ -236,6 +242,9 @@ components:
         filingNumber:
           type: string
           description: the associated case
+        validate:
+          type: boolean
+          description: to handle validation        
         taskNumber:
           type: string
           description: Task Number
