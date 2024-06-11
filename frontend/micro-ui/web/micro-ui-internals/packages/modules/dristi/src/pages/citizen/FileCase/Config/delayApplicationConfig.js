@@ -4,10 +4,10 @@ const delayApplicationFormConfig = [
       {
         type: "radio",
         key: "delayApplicationType",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_QUESTION_DELAY_APPLICATION",
         isMandatory: true,
         populators: {
-          label: "CS_DELAY_APPLICATION_TYPE",
+          label: "CS_QUESTION_DELAY_APPLICATION",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
@@ -68,8 +68,8 @@ const delayApplicationFormConfig = [
           inputs: [
             {
               infoHeader: "CS_COMMON_NOTE",
-              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
+              infoText: "CS_NOTE_DELAY_APPLICATION",
+              infoTooltipMessage: "Tooltip",
               type: "InfoComponent",
             },
           ],
@@ -89,8 +89,8 @@ const delayApplicationFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Aadhar",
-              isOptional: "optional",
+              documentHeader: "CS_DELAY_CONDONATION_APPLICATION",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
