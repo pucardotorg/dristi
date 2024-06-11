@@ -1,17 +1,75 @@
-import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState } from "react";
+import { useLocation, Redirect } from "react-router-dom";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
 function ViewCaseFile({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const caseId = searchParams.get("caseId");
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
   const [showErrorToast, setShowErrorToast] = useState(false);
-  const onSubmit = () => { };
-  const onSaveDraft = () => { };
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => { };
+  const onSubmit = () => {};
+  const onSaveDraft = () => {};
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {};
   const closeToast = () => {
     setShowErrorToast(false);
   };
+
+  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    Boolean(caseId)
+  );
+
+  const caseData = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+
+  const formConfig = useMemo(() => {
+    if (!caseData) return null;
+    return [
+      ...reviewCaseFileFormConfig.map((form) => {
+        return {
+          ...form,
+          body: form.body.map((section) => {
+            return {
+              ...section,
+              populators: {
+                ...section.populators,
+                inputs: section.populators.inputs?.map((input) => {
+                  delete input.data;
+                  return {
+                    ...input,
+                    data: caseData.additionalDetails[input.key]?.formdata,
+                  };
+                }),
+              },
+            };
+          }),
+        };
+      }),
+    ];
+  }, [reviewCaseFileFormConfig, caseData]);
+
+  if (!caseId) {
+    return <Redirect to="cases" />;
+  }
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="file-case">
@@ -27,14 +85,14 @@ function ViewCaseFile({ t }) {
           <div className="header-content">
             <div className="header-details">
               <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => { }}>
+              <div className="header-icon" onClick={() => {}}>
                 <CustomArrowDownIcon />
               </div>
             </div>
           </div>
           <FormComposerV2
             label={t("CS_COMMON_CONTINUE")}
-            config={reviewCaseFileFormConfig}
+            config={formConfig}
             onSubmit={onSubmit}
             onSecondayActionClick={onSaveDraft}
             defaultValues={{}}

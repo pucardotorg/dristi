@@ -139,7 +139,7 @@ export const reviewCaseFileFormConfig = [
               icon: "PrayerSwornIcon",
               config: [
                 { type: "text", label: "CS_PRAYER_RELIEF", value: "prayerForRelief.text" },
-                { type: "text", label: "CS_ADDRESS", value: "addressDetails" },
+                { type: "address", label: "CS_ADDRESS", value: "addressDetails" },
                 {
                   type: "image",
                   label: "CS_DOCUMENT",
