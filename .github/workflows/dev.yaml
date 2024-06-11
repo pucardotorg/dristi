@@ -74,7 +74,7 @@ jobs:
           docker build  -t pucar_order_db:v1.0.0-${{ github.sha }} -f  Dockerfile .
           docker tag pucar_order_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/case/src/main/resources/db
+        working-directory: backend/order/src/main/resources/db
       - name: Build and Push Docker image for digit-ui
         run: |
          docker build  -t digit-ui:v1.0.0-${{ github.sha }} -f  web/docker/Dockerfile .
