@@ -77,7 +77,7 @@ export const delayAppConfig = [
             {
               name: "document",
               documentHeader: "Aadhar",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",

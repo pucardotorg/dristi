@@ -104,7 +104,7 @@ const CustomDragDrop = ({
           <div className="drag-drop-heading-main">
             <div className="drag-drop-heading">
               <h1> {heading}</h1>
-              {isOptional && <h3> (optional)</h3>}
+              {isOptional && <h3> {t("CS_IS_OPTIONAL")}</h3>}
               {showInfoTooltip && (
                 <span>
                   <InfoToolTipIcon></InfoToolTipIcon>

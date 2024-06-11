@@ -21,9 +21,7 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Bounced Cheque",
-              isOptional: "optional",
-              infoTooltipMessage: "Tooltip",
+              documentHeader: "CS_BOUNCED_CHEQUE ",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -133,8 +131,7 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Proof of deposit of Cheque",
-              isOptional: "optional",
+              documentHeader: "CS_PROOF_DEPOSIT_CHEQUE",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
@@ -159,8 +156,7 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Cheque Return Memo",
-              isOptional: "optional",
+              documentHeader: "CS_CHEQUE_RETURN_MEMO",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
@@ -177,11 +173,17 @@ export const chequeDetailsFormConfig = [
   {
     body: [
       {
-        type: "textarea",
-        label: "CS_CHEQUE_ADDITIONAL_DETAILS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "chequeAdditionalDetails",
         populators: {
-          name: "chequeAdditionalDetails",
+          inputs: [
+            {
+              textAreaSubHeader: "CS_CHEQUE_ADDITIONAL_DETAILS",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
         },
       },
     ],
