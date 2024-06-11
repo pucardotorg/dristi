@@ -273,6 +273,7 @@ const demandNoticeFormConfig = [
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
+          name: "delayApplicationType",
           required: false,
           isMandatory: true,
           isDependent: true,

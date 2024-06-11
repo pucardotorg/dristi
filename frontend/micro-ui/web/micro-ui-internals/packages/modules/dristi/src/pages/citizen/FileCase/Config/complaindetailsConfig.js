@@ -293,7 +293,7 @@ const complainantDetailsFormConfig = [
       {
         type: "component",
         component: "SelectComponents",
-        key: "addressDetails",
+        key: "addressCompanyDetails",
         addUUID: true,
         withoutLabel: true,
         populators: {
@@ -302,12 +302,13 @@ const complainantDetailsFormConfig = [
               label: "CS_PIN_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
-              key: "locationSearch",
+              key: "locationCompanySearch",
             },
             {
               label: "PINCODE",
               type: "text",
               name: "pincode",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 minlength: 6,
@@ -324,6 +325,7 @@ const complainantDetailsFormConfig = [
             {
               label: "STATE",
               type: "text",
+              shouldBeEnabled: true,
               name: "state",
               inputFieldClassName: "user-details-form-style",
               validation: {
@@ -335,6 +337,7 @@ const complainantDetailsFormConfig = [
               label: "DISTRICT",
               type: "text",
               name: "district",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
@@ -345,6 +348,7 @@ const complainantDetailsFormConfig = [
               label: "CITY/TOWN",
               type: "text",
               name: "city",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
@@ -355,6 +359,7 @@ const complainantDetailsFormConfig = [
               label: "ADDRESS",
               type: "text",
               name: "locality",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
