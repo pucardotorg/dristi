@@ -137,7 +137,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
   }, [fileStoreId, tenantId, fileName]);
 
   return (
-    <div>
+    <div className="select-user-type-component">
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         const showDependentFields =

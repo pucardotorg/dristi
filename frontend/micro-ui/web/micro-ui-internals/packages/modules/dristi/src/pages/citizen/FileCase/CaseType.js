@@ -144,7 +144,7 @@ function CaseType({ t }) {
                   {
                     tenantId,
                     statute: "Statute",
-                    sections: ["Negotiable Instruments Act", "02."],
+                    sections: ["Negotiable Instrument Act", "02."],
                     subsections: ["138", "03."],
                   },
                 ],
@@ -178,20 +178,22 @@ function CaseType({ t }) {
                 additionalDetails: {
                   ...(advocateId
                     ? {
-                        advocateDetails: [
-                          {
-                            isenabled: true,
-                            displayindex: 0,
-                            data: {
-                              isAdvocateRepresenting: {
-                                code: "YES",
-                                name: "Yes",
-                                showForm: true,
-                                isEnabled: true,
+                        advocateDetails: {
+                          formdata: [
+                            {
+                              isenabled: true,
+                              displayindex: 0,
+                              data: {
+                                isAdvocateRepresenting: {
+                                  code: "YES",
+                                  name: "Yes",
+                                  showForm: true,
+                                  isEnabled: true,
+                                },
                               },
                             },
-                          },
-                        ],
+                          ],
+                        },
                       }
                     : {
                         complaintDetails: {

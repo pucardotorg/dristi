@@ -10,8 +10,8 @@ export const litigantInboxConfig = {
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
-    moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+    moduleName: "caseInboxConfig",
+    searchFormJsonPath: "criteria.[0]",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
@@ -23,7 +23,7 @@ export const litigantInboxConfig = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          filingNumber: "",
           isActive: false,
           tenantId: "pg",
         },
@@ -34,7 +34,7 @@ export const litigantInboxConfig = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "filingNumber",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},

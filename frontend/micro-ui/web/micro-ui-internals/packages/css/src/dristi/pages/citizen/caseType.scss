@@ -26,6 +26,8 @@
   }
   .popup-module-main {
     padding: 0px !important;
+    max-height: 490px;
+    overflow-y: auto !important;
     .case-types-main-div {
       overflow-y: auto;
       overflow-x: hidden;

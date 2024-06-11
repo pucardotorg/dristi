@@ -25,7 +25,6 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
   const [{ setFormErrors, resetFormData }, setState] = useState({
     setFormErrors: () => {},
     resetFormData: () => {},
@@ -33,11 +32,18 @@ function EFilingCases({ path }) {
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
+  const [formdata, setFormdata] = useState(selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
+  const [receiptDemandNoticeModal, setReceiptDemandNoticeModal] = useState(false);
+  const [serviceOfDemandNoticeModal, setServiceOfDemandNoticeModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
+  const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
+    showSuccessToast: false,
+    successMsg: "",
+  });
   const [deleteFormIndex, setDeleteFormIndex] = useState(null);
 
   const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
@@ -93,8 +99,10 @@ function EFilingCases({ path }) {
   }, [selected]);
 
   useEffect(() => {
-    const data = caseDetails?.additionalDetails?.[selected]?.formdata ||
-      caseDetails?.caseDetails?.[selected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+    const data =
+      caseDetails?.additionalDetails?.[selected]?.formdata ||
+      caseDetails?.caseDetails?.[selected]?.formdata ||
+      (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
   }, [selected, caseDetails]);
 
@@ -242,6 +250,16 @@ function EFilingCases({ path }) {
                   return field === body?.key;
                 });
               }
+              if (selected === "delayApplications") {
+                if (
+                  caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
+                    (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
+                  ) &&
+                  body?.key === "delayApplicationType"
+                ) {
+                  body.disable = true;
+                }
+              }
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
                   ...body,
@@ -255,8 +273,8 @@ function EFilingCases({ path }) {
                       ) {
                         return {
                           ...input,
-                          disable: true,
-                          isDisabled: true,
+                          disable: input?.shouldBeEnabled ? false : true,
+                          isDisabled: input?.shouldBeEnabled ? false : true,
                         };
                       }
                       return {
@@ -347,6 +365,99 @@ function EFilingCases({ path }) {
 
   const closeToast = () => {
     setShowErrorToast(false);
+    setSuccessToast((prev) => ({
+      ...prev,
+      showSuccessToast: false,
+      successMsg: "",
+    }));
+  };
+
+  const chequeDateValidation = (formData, setError, clearErrors) => {
+    if (selected === "chequeDetails" && new Date(formData?.issuanceDate).getTime() > new Date().getTime()) {
+      setError("issuanceDate", { message: " CS_DATE_ERROR_MSG" });
+    } else {
+      clearErrors("issuanceDate");
+    }
+
+    if (
+      selected === "chequeDetails" &&
+      formData?.depositDate &&
+      formData?.issuanceDate &&
+      new Date(formData?.issuanceDate).getTime() > new Date(formData?.depositDate).getTime()
+    ) {
+      setError("depositDate", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
+    } else if (selected === "chequeDetails" && new Date(formData?.depositDate).getTime() > new Date().getTime()) {
+      setError("depositDate", { message: " CS_DATE_ERROR_MSG" });
+    } else {
+      clearErrors("depositDate");
+    }
+  };
+
+  const showDemandNoticeModal = (setValue, formData, setError, clearErrors) => {
+    if (selected === "demandNoticeDetails") {
+      if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
+        setError("dateOfIssuance", { message: " CS_DATE_ERROR_MSG" });
+      } else {
+        clearErrors("dateOfIssuance");
+      }
+
+      if (formData?.delayApplicationType?.code === "NO") {
+        setReceiptDemandNoticeModal(true);
+        setError("delayApplicationType", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
+      } else {
+        clearErrors("delayApplicationType");
+      }
+      if (formData?.dateOfDispatch && new Date(formData?.dateOfDispatch).getTime() + 15 * 24 * 60 * 60 * 1000 > new Date().getTime()) {
+        setServiceOfDemandNoticeModal(true);
+        setError("dateOfDispatch", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
+      } else if (
+        formData?.dateOfDispatch &&
+        formData?.dateOfIssuance &&
+        new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
+      ) {
+        setError("dateOfDispatch", { message: " CS_DISPATCH_DATE_ERROR_MSG" });
+      } else {
+        clearErrors("dateOfDispatch");
+        const milliseconds = new Date(formData?.dateOfDispatch).getTime() + 15 * 24 * 60 * 60 * 1000;
+        const date = new Date(milliseconds);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const formattedDate = `${year}-${month}-${day}`;
+        setValue("dateOfAccrual", formattedDate);
+      }
+    }
+  };
+
+  const validateDateForDelayApplication = (setValue) => {
+    if (selected === "delayApplications") {
+      if (
+        caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
+          (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
+        )
+      ) {
+        setValue("delayApplicationType", {
+          code: "NO",
+          name: "NO",
+          showForm: true,
+          isVerified: true,
+          hasBarRegistrationNo: true,
+          isEnabled: true,
+        });
+      }
+    }
+  };
+
+  const showToastForComplainant = (formData) => {
+    if (selected === "complaintDetails") {
+      if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType) {
+        setSuccessToast((prev) => ({
+          ...prev,
+          showSuccessToast: true,
+          successMsg: "CS_AADHAR_VERIFIED_SUCCESS_MSG",
+        }));
+      }
+    }
   };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
@@ -379,6 +490,10 @@ function EFilingCases({ path }) {
     }
 
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+      chequeDateValidation(formData, setError, clearErrors);
+      showDemandNoticeModal(setValue, formData, setError, clearErrors);
+      validateDateForDelayApplication(setValue);
+      showToastForComplainant(formData);
       setFormdata(
         formdata.map((item, i) => {
           setValue();
@@ -390,7 +505,6 @@ function EFilingCases({ path }) {
             : item;
         })
       );
-      // setIsFirstRender(false);
     }
     if (!setFormErrors) {
       setState((prev) => ({
@@ -398,6 +512,9 @@ function EFilingCases({ path }) {
         setFormErrors: setError,
         resetFormData: reset,
       }));
+    }
+    if (formState?.submitCount && !Object.keys(formState?.errors).length) {
+      setIsDisabled(true);
     }
   };
 
@@ -485,7 +602,7 @@ function EFilingCases({ path }) {
     return response;
   };
 
-  const updateCaseDetails = async (isCompleted) => {
+  const updateCaseDetails = async (isCompleted, key) => {
     const data = {};
     if (selected === "complaintDetails") {
       const litigants = await Promise.all(
@@ -539,12 +656,14 @@ function EFilingCases({ path }) {
             if (data?.data?.companyDetailsUpload?.document) {
               documentData = await Promise.all(
                 data?.data?.companyDetailsUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
@@ -570,7 +689,10 @@ function EFilingCases({ path }) {
           caseId: caseDetails?.id,
           representing: representative?.advocateId ? [...litigants] : [],
         }));
-      data.litigants = [...litigants];
+      data.litigants = [...litigants].map((item, index) => ({
+        ...(caseDetails.litigants?.[index] ? caseDetails.litigants?.[index] : {}),
+        ...item,
+      }));
       data.representatives = [...representatives];
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
@@ -589,12 +711,14 @@ function EFilingCases({ path }) {
             if (data?.data?.condonationFileUpload?.document) {
               documentData = await Promise.all(
                 data?.data?.condonationFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
@@ -631,36 +755,42 @@ function EFilingCases({ path }) {
             if (data?.data?.bouncedChequeFileUpload?.document) {
               documentData.bouncedChequeFileUpload.document = await Promise.all(
                 data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
             if (data?.data?.depositChequeFileUpload?.document) {
               documentData.depositChequeFileUpload.document = await Promise.all(
                 data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
             if (data?.data?.returnMemoFileUpload?.document) {
               documentData.returnMemoFileUpload.document = await Promise.all(
                 data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
@@ -691,12 +821,14 @@ function EFilingCases({ path }) {
             if (data?.data?.debtLiabilityFileUpload?.document) {
               debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
                 data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
@@ -741,12 +873,14 @@ function EFilingCases({ path }) {
                 const result = await res;
                 result[curr] = await Promise.all(
                   data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                    };
+                    if (document) {
+                      const uploadedData = await onDocumentUpload(document, document.name);
+                      return {
+                        documentType: uploadedData.fileType || document?.documentType,
+                        fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                        documentName: uploadedData.filename || document?.documentName,
+                      };
+                    }
                   })
                 );
                 return result;
@@ -781,12 +915,14 @@ function EFilingCases({ path }) {
             if (data?.data?.condonationFileUpload?.document) {
               condonationDocumentData.condonationFileUpload.document = await Promise.all(
                 data?.data?.condonationFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
@@ -870,12 +1006,14 @@ function EFilingCases({ path }) {
                 const result = await res;
                 result[curr] = await Promise.all(
                   data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                    };
+                    if (document) {
+                      const uploadedData = await onDocumentUpload(document, document.name);
+                      return {
+                        documentType: uploadedData.fileType || document?.documentType,
+                        fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                        documentName: uploadedData.filename || document?.documentName,
+                      };
+                    }
                   })
                 );
                 return result;
@@ -884,12 +1022,14 @@ function EFilingCases({ path }) {
             if (data?.data?.memorandumOfComplaint?.document) {
               documentData.memorandumOfComplaint.document = await Promise.all(
                 data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             } else if (data?.data?.memorandumOfComplaint?.text) {
@@ -898,12 +1038,14 @@ function EFilingCases({ path }) {
             if (data?.data?.prayerForRelief?.document) {
               documentData.prayerForRelief.document = await Promise.all(
                 data?.data?.prayerForRelief?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             } else if (data?.data?.prayerForRelief?.text) {
@@ -939,12 +1081,14 @@ function EFilingCases({ path }) {
             if (data?.data?.vakalatnamaFileUpload?.document) {
               vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
                 data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
-                  const uploadedData = await onDocumentUpload(document, document.name);
-                  return {
-                    documentType: uploadedData.fileType || document?.documentType,
-                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                    documentName: uploadedData.filename || document?.documentName,
-                  };
+                  if (document) {
+                    const uploadedData = await onDocumentUpload(document, document.name);
+                    return {
+                      documentType: uploadedData.fileType || document?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                      documentName: uploadedData.filename || document?.documentName,
+                    };
+                  }
                 })
               );
             }
@@ -987,6 +1131,7 @@ function EFilingCases({ path }) {
     }
     if (!!resetFormData) {
       resetFormData();
+      setIsDisabled(false);
     }
     return DRISTIService.caseUpdateService(
       {
@@ -1012,10 +1157,13 @@ function EFilingCases({ path }) {
     } else {
       updateCaseDetails(true).then(() => {
         refetchCaseData().then(() => {
-          const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+          const caseData =
+            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
           setFormdata(caseData);
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+          setIsDisabled(false);
         });
       });
     }
@@ -1044,12 +1192,15 @@ function EFilingCases({ path }) {
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
     if (!!resetFormData) {
       resetFormData();
+      setIsDisabled(false);
     }
     setIsOpen(false);
     updateCaseDetails("PAGE_CHANGE").then(() => {
       refetchCaseData().then(() => {
-        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+        const caseData =
+          caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+          caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+          (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
         setFormdata(caseData);
       });
     });
@@ -1228,6 +1379,75 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={handleConfirmDeleteForm}
             ></Modal>
           )}
+          {receiptDemandNoticeModal && (
+            <Modal
+              headerBarMain={<Heading label={t("CS_IMPORTANT_NOTICE")} />}
+              headerBarEnd={
+                <CloseBtn
+                  onClick={() => {
+                    setReceiptDemandNoticeModal(false);
+                  }}
+                />
+              }
+              actionCancelLabel={t("CS_CANCEL_E_FILING")}
+              actionCancelOnSubmit={async () => {
+                await DRISTIService.caseUpdateService(
+                  {
+                    cases: {
+                      ...caseDetails,
+                      filingDate: formatDate(new Date()),
+                      workflow: {
+                        ...caseDetails?.workflow,
+                        action: "DELETE_DRAFT",
+                      },
+                    },
+                    tenantId,
+                  },
+                  tenantId
+                );
+                setReceiptDemandNoticeModal(false);
+                history.push(`/${window?.contextPath}/citizen/dristi/home`);
+              }}
+              actionSaveLabel={t("CS_NOT_PAID_FULL")}
+              children={<div style={{ padding: "16px 0" }}>{t("CS_NOT_PAID_FULL_TEXT")}</div>}
+              actionSaveOnSubmit={async () => {
+                setReceiptDemandNoticeModal(false);
+              }}
+            ></Modal>
+          )}
+          {serviceOfDemandNoticeModal && (
+            <Modal
+              headerBarMain={<Heading label={t("CS_IMPORTANT_NOTICE")} />}
+              headerBarEnd={
+                <CloseBtn
+                  onClick={() => {
+                    setServiceOfDemandNoticeModal(false);
+                  }}
+                />
+              }
+              actionCancelOnSubmit={() => setServiceOfDemandNoticeModal(false)}
+              actionSaveLabel={t("CS_SAVE_AS_DRAFT")}
+              children={<div style={{ padding: "16px 0" }}>{t("CS_SAVE_AS_DRAFT_TEXT")}</div>}
+              actionSaveOnSubmit={async () => {
+                await DRISTIService.caseUpdateService(
+                  {
+                    cases: {
+                      ...caseDetails,
+                      filingDate: formatDate(new Date()),
+                      workflow: {
+                        ...caseDetails?.workflow,
+                        action: "SAVE_DRAFT",
+                      },
+                    },
+                    tenantId,
+                  },
+                  tenantId
+                );
+                setReceiptDemandNoticeModal(false);
+                history.push(`/${window?.contextPath}/citizen/dristi/home`);
+              }}
+            ></Modal>
+          )}
           {pageConfig?.addFormText && (
             <Button
               variation="secondary"
@@ -1247,6 +1467,7 @@ function EFilingCases({ path }) {
             />
           )}
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showSuccessToast && <Toast label={t(successMsg)} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>
       {openConfirmCourtModal && <ConfirmCourtModal setOpenConfirmCourtModal={setOpenConfirmCourtModal} t={t} onSubmitCase={onSubmitCase} />}

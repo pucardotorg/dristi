@@ -3,6 +3,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
+import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -15,6 +16,7 @@ const sectionsParentStyle = {
 function Home() {
   const { t } = useTranslation();
   const history = useHistory();
+  const { path } = useRouteMatch();
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
@@ -42,7 +44,14 @@ function Home() {
           <InboxSearchComposer
             customStyle={sectionsParentStyle}
             configs={litigantInboxConfig}
-            additionalConfig={{ resultsTable: { onClickRow: () => history.push("") } }}
+            additionalConfig={{
+              resultsTable: {
+                onClickRow: (props) => {
+                  console.log(props);
+                  history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
+                },
+              },
+            }}
           ></InboxSearchComposer>
         </div>
       </div>
