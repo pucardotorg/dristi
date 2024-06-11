@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { FormComposerV2, Header, Toast } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import SendCaseBack from "./SendCaseBack";
+import AdmissionActionModal from "./AdmissionActionModal";
 
 function CaseFileAdmission({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const [showModal, setShowModal] = useState(false);
-  const [modalData, setModalData] = useState(null);
+  const [modalInfo, setModalInfo] = useState(null);
   const [submitModalInfo, setSubmitModalInfo] = useState(null);
   const onSubmit = () => {
     setSubmitModalInfo({
@@ -43,22 +43,45 @@ function CaseFileAdmission({ t }) {
       showTable: true,
     });
 
-    // setModalInfo({ type: "schedule", page: "0" });
+    setModalInfo({ type: "admitCase", page: "0" });
     setShowModal(true);
   };
   const onSaveDraft = () => {
     setSubmitModalInfo({
-      header: "The case file has been sent back for correction",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
-      caseInfo: {
-        key: "Case File Number",
-        value: "KA08293928392",
-      },
+      header: "Admission hearing has been successfully scheduled",
+      caseInfo: [
+        {
+          key: "Case Number",
+          value: "FSM-2019-04-23-898898",
+        },
+        {
+          key: "Case Category",
+          value: "Criminal",
+        },
+        {
+          key: "Case Type",
+          value: "NIA S138",
+        },
+        {
+          key: "Court Name",
+          value: "Kerala City Criminal Court",
+        },
+        {
+          key: "Submitted on",
+          value: "23 Jan 2024",
+        },
+        {
+          key: "Next Hearing Date",
+          value: "17 March 2024",
+        },
+      ],
       backButtonText: "Back to Home",
       nextButtonText: "Next Case",
       isArrow: true,
+      showTable: true,
     });
     setShowModal(true);
+    setModalInfo({ type: "schedule", page: "0" });
   };
   const onSendBack = () => {
     setSubmitModalInfo({
@@ -71,6 +94,7 @@ function CaseFileAdmission({ t }) {
       showCopytext: true,
     });
     setShowModal(true);
+    setModalInfo({ type: "sendCaseBack", page: "0" });
   };
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -85,14 +109,23 @@ function CaseFileAdmission({ t }) {
   console.log(showModal);
 
   const handleCloseModal = () => {
-    setModalData(null);
+    setModalInfo(null);
     setSubmitModalInfo(null);
   };
   // {
   //   modalInfo.type === "Schedule" && modalInfo.page === 0 && <Modal1 modalData={modalData} setModalData={setModalData} />;
   // }
   if (showModal) {
-    return <SendCaseBack t={t} setShowModal={setShowModal} setSubmitModalInfo={setSubmitModalInfo} submitModalInfo={submitModalInfo}></SendCaseBack>;
+    return (
+      <AdmissionActionModal
+        t={t}
+        setShowModal={setShowModal}
+        setSubmitModalInfo={setSubmitModalInfo}
+        submitModalInfo={submitModalInfo}
+        modalInfo={modalInfo}
+        setModalInfo={setModalInfo}
+      ></AdmissionActionModal>
+    );
   }
 
   return (
