@@ -79,9 +79,9 @@ const selectCompMultiConfig = {
 
 const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
   const [locationData, setLocationData] = useState([{ id: generateUUID() }]);
-  
+
   const addressLabel = useMemo(() => {
-   return formData?.respondentType?.code;
+    return formData?.respondentType?.code;
   }, [formData?.respondentType]);
 
   const handleAdd = () => {
@@ -133,6 +133,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
         </div>
       ))}
       <Button
+        className={"add-location-btn"}
         label={"Add Location"}
         style={{ alignItems: "center" }}
         onButtonClick={() => {

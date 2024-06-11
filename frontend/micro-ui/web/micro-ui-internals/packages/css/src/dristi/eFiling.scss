@@ -220,66 +220,12 @@
     align-items: flex-start;
     gap: 8px;
 
-    h2 {
-      font-family: Roboto;
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 18.75px;
-      text-align: left;
-      color: #0a0a0a;
+    .card-label {
       margin: 0px !important;
     }
 
     .field {
       width: 100%;
-
-      .mobile-number {
-        h2 {
-          font-family: Roboto;
-          font-size: 16px;
-          font-weight: 400;
-          line-height: 18.75px;
-          text-align: left;
-          color: #0a0a0a;
-          margin-bottom: 4px;
-        }
-
-        .citizen-card-input.citizen-card-input--front {
-          margin: 0px;
-        }
-
-        .text-input {
-          max-width: 100% !important;
-        }
-
-        .employee-card-input {
-          margin: 0px;
-        }
-      }
-
-      .email-address {
-        h2 {
-          font-family: Roboto;
-          font-size: 16px;
-          font-weight: 400;
-          line-height: 18.75px;
-          text-align: left;
-          color: #0a0a0a;
-          margin-bottom: 4px;
-        }
-
-        .citizen-card-input.citizen-card-input--front {
-          margin: 0px;
-        }
-
-        .text-input {
-          max-width: 100% !important;
-        }
-
-        .employee-card-input {
-          margin: 0px;
-        }
-      }
 
       .radio-wrap {
         gap: 24px !important;
@@ -305,10 +251,6 @@
       }
 
       div {
-        .button-field {
-          padding-top: 20px;
-        }
-
         .info-banner-wrap {
           margin-top: 20px !important;
         }
@@ -323,7 +265,7 @@
           display: flex;
           flex-direction: column;
           align-items: start;
-          gap: 4px !important;
+          gap: 8px !important;
           padding-bottom: 0px;
 
           .field {
@@ -341,6 +283,7 @@
           }
 
           h2 {
+            width: 100%;
             font-family: Roboto;
             font-size: 16px;
             font-weight: 400;
@@ -359,36 +302,111 @@
   }
 }
 
-.respondent {
-  header {
+.complainant > .label-field-pair:first-of-type {
+  .bolder {
+    color: red;
+  }
+}
+.respondent,
+.cheque,
+.debt-liability,
+.complainant {
+  .card-section-header:first-child {
+    margin-bottom: 8px;
+  }
+  .label-field-pair {
+    margin-bottom: 20px;
+    padding-bottom: 0px !important;
+    .bolder {
+      font-family: Roboto;
+      font-size: 16px !important;
+      font-weight: 400 !important;
+      line-height: 18.75px !important;
+      text-align: left;
+      color: #0a0a0a !important;
+    }
+  }
+  .card-section-header {
+    margin-bottom: 20px;
+    padding-bottom: 0px !important;
+  }
+  input {
+    margin: 0px !important;
+  }
+}
+
+.debt-liability {
+  .select-wrap {
+    max-width: 100%;
+    margin-bottom: 0px;
+    .options-card {
+      margin-top: 40px;
+    }
+  }
+}
+
+.verification-component {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  h2.card-label {
     font-family: Roboto;
     font-size: 16px;
     font-weight: 700;
     line-height: 18.75px;
     text-align: left;
     color: #0a0a0a;
-    padding-bottom: 20px;
   }
-}
-
-.complainant {
-  .label-field-pair {
-    .field {
-      div {
-        .button-field {
-          width: 100% !important;
-          .jk-digit-secondary-btn.secondary-button-selector {
-            width: fit-content;
-          }
-        }
-        .label-field-pair {
-        }
-      }
+  .button-field {
+    button {
+      width: fit-content !important;
+      padding: 8px 24px;
     }
   }
 }
 
-.complainant,
+.phone-number-verification {
+  .citizen-card-input {
+    margin: 0px;
+  }
+  .digit-card-label-error {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+}
+
+.adhaar-verification-info-card {
+  padding: 8px;
+  background-color: #ecf3fd;
+  div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    h2 {
+      margin: 0px !important;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+  p {
+    margin: 0px;
+    padding-top: 8px;
+  }
+  &.user-verified {
+    background-color: #e4f2e4;
+  }
+}
+
+.witness-details,
 .respondent,
 .cheque,
 .debt-liability,
@@ -443,7 +461,6 @@
 
 .delay-application {
   .label-field-pair {
-    gap: 40px !important;
     padding-bottom: 16px;
 
     .field {
@@ -764,7 +781,7 @@
 @media (max-width: 900px) {
   .e-filing-card-form-style {
     .label-field-pair {
-      gap: 16px !important;
+      gap: 8px;
       flex-direction: column;
       align-items: flex-start;
     }
@@ -887,6 +904,53 @@
   .button-field {
     .tertiary-button-selector {
       background-color: #007e7e !important;
+    }
+  }
+}
+
+.bulk-input-class {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  h3.bulk-input-header {
+    margin: 0px !important;
+    width: 100%;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  .bulk-input-main {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    .input-main {
+      display: flex !important;
+      width: calc(100% - 77px);
+      .citizen-card-input {
+        margin-bottom: 0px !important;
+      }
+      .text-input {
+        max-width: 100% !important;
+      }
+    }
+    button {
+      width: 77px;
+      box-shadow: none;
+      background-color: transparent !important;
+      border: 1px #77787b solid !important;
+      h2 {
+        text-align: center !important;
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        color: #77787b;
+      }
     }
   }
 }

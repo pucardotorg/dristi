@@ -42,27 +42,23 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
             {t(input?.textAreaHeader)}
           </h1>
           {
-            <div>
-              <span>
-                <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
-                  {`${t(input?.textAreaSubHeader)}`}
-                  {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
-                </p>
-              </span>
-            </div>
+            <span>
+              <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+                {`${t(input?.textAreaSubHeader)}`}
+                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+              </p>
+            </span>
           }
         </div>
-        <div>
-          <textarea
-            value={formData?.[config.key]?.[input.name]}
-            onChange={(data) => {
-              handleChange(data, input);
-            }}
-            rows={5}
-            className="custom-textarea-style"
-            placeholder={input?.placeholder}
-          ></textarea>
-        </div>
+        <textarea
+          value={formData?.[config.key]?.[input.name]}
+          onChange={(data) => {
+            handleChange(data, input);
+          }}
+          rows={5}
+          className="custom-textarea-style"
+          placeholder={input?.placeholder}
+        ></textarea>
       </div>
     );
   });
