@@ -110,7 +110,6 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
     });
   };
 
-  console.log(addressLabel, config);
   return (
     <div>
       {locationData.map((data, index) => (

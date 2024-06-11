@@ -137,10 +137,11 @@ const respondentFromconfig = [
               componentInFront: "+91",
               validation: {
                 required: true,
-                minLength: 10,
-                maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
                 isArray: true,
+                minLength: 10,
+                maxLength: 10,
+                isNumber: true,
               },
             },
           ],
@@ -168,7 +169,7 @@ const respondentFromconfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /\S+@\S+\.\S+/,
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 isArray: true,
               },
             },

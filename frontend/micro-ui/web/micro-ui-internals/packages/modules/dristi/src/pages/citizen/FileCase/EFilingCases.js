@@ -27,8 +27,8 @@ function EFilingCases({ path }) {
   const [isDisabled, setIsDisabled] = useState(false);
   const [formdata, setFormdata] = useState([{ isenabled: true, data: {}, displayindex: 0 }]);
   const [{ setFormErrors, resetFormData }, setState] = useState({
-    setFormErrors: () => { },
-    resetFormData: () => { },
+    setFormErrors: () => {},
+    resetFormData: () => {},
   });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
@@ -186,14 +186,14 @@ function EFilingCases({ path }) {
                         data:
                           input.key === "advocateDetails"
                             ? [
-                              {
-                                name:
-                                  caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-                              },
-                            ] || [{ name: "" }]
+                                {
+                                  name:
+                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                                },
+                              ] || [{ name: "" }]
                             : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
-                              name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
-                            })),
+                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                              })),
                       };
                     }),
                   },
@@ -240,7 +240,7 @@ function EFilingCases({ path }) {
                 body.uuid = index;
                 body.isUserVerified = disableConfigFields.some((field) => {
                   return field === body?.key;
-                })
+                });
               }
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
@@ -350,15 +350,43 @@ function EFilingCases({ path }) {
   };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+    console.log(formData);
+    if (formData?.firstName || formData?.middleName || formData?.lastName) {
+      const formDataCopy = structuredClone(formData);
+      for (const key in formDataCopy) {
+        if (Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+          if (typeof value === "string") {
+            let updatedValue = value
+              .replace(/[^a-zA-Z\s]/g, "")
+              .trimStart()
+              .replace(/ +/g, " ")
+              .toLowerCase()
+              .replace(/\b\w/g, (char) => char.toUpperCase());
+            if (updatedValue !== oldValue) {
+              const element = document.querySelector(`[name="${key}"]`);
+              const start = element.selectionStart;
+              const end = element.selectionEnd;
+              setValue(key, updatedValue);
+              setTimeout(() => {
+                element.setSelectionRange(start, end);
+              }, 0);
+            }
+          }
+        }
+      }
+    }
+
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       setFormdata(
         formdata.map((item, i) => {
           setValue();
           return i === index
             ? {
-              ...item,
-              data: formData,
-            }
+                ...item,
+                data: formData,
+              }
             : item;
         })
       );
@@ -387,10 +415,10 @@ function EFilingCases({ path }) {
     const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
     const identifierIdDetails = documentData
       ? {
-        fileStoreId: identifierId,
-        filename: documentData?.filename,
-        documentType: documentData?.fileType,
-      }
+          fileStoreId: identifierId,
+          filename: documentData?.filename,
+          documentType: documentData?.fileType,
+        }
       : {};
     const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
     let Individual = {
@@ -1057,7 +1085,7 @@ function EFilingCases({ path }) {
 
   const caseType = {
     cateogry: "Criminal",
-    act: "Negotiable Instruments Act",
+    act: "Negotiable Instrument Act",
     section: "138",
     courtName: "Kollam S 138 Special Court",
   };
@@ -1068,7 +1096,9 @@ function EFilingCases({ path }) {
         <div className="side-stepper-info">
           <div className="header">
             <InfoIcon />
-            <span><b>{t("CS_YOU_ARE_FILING_A_CASE")}</b></span>
+            <span>
+              <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
+            </span>
           </div>
           <p>
             {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}

@@ -22,7 +22,7 @@ const witnessFormConfig = [
       },
       {
         type: "text",
-        label: "MIDDLE_NAME",
+        label: "CORE_COMMON_MIDDLE_NAME",
         populators: {
           name: "middleName",
           validation: {
@@ -77,6 +77,7 @@ const witnessFormConfig = [
                 minLength: 10,
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
+                isNumber: true,
               },
               className: "mobile-number",
             },

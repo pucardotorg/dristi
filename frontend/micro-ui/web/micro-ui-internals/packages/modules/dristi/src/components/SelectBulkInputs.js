@@ -60,7 +60,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
     ) {
       setEnableAdd(true);
     }
-    setValue(value, "textfieldValue");
+    setValue(input?.validation?.isNumber ? value?.replace(/[^0-9]/g, "") : value, "textfieldValue");
   };
 
   return inputs.map((input) => {
