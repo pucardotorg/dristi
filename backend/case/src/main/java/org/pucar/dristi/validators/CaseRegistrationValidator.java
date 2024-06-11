@@ -91,20 +91,26 @@ public class CaseRegistrationValidator {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
         if (!courtCase.getLitigants().isEmpty()) {
             courtCase.getLitigants().forEach(litigant -> {
-                if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
-                    throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                if(litigant.getIndividualId()!=null){
+                    if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
+                        throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                }
             });
         }
         if (courtCase.getDocuments() != null && !courtCase.getDocuments().isEmpty()) {
             courtCase.getDocuments().forEach(document -> {
-                if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
-                    throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                if(document.getFileStore()!=null){
+                    if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                }
             });
         }
         if (courtCase.getRepresentatives() != null && !courtCase.getRepresentatives().isEmpty()) {
             courtCase.getRepresentatives().forEach(rep -> {
-                if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
-                    throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                if(rep.getAdvocateId()!=null){
+                    if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
+                        throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                }
             });
         }
         if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {

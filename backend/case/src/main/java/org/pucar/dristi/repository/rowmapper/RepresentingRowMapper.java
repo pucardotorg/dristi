@@ -39,6 +39,7 @@ public class RepresentingRowMapper implements ResultSetExtractor<Map<UUID, List<
                         .individualId(rs.getString("individualid"))
                         .organisationID(rs.getString("organisationid"))
                         .partyType(rs.getString("partytype"))
+                        .caseId(rs.getString("caseid"))
                         .isActive(Boolean.getBoolean(rs.getString("isactive")))
                         .auditDetails(auditdetails)
                         .build();
