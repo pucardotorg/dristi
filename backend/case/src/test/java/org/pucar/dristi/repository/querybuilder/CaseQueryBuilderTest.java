@@ -519,7 +519,7 @@ class CaseQueryBuilderTest {
         String query = queryBuilder.getRepresentingSearchQuery(ids, preparedStmtList);
 
         // Assert
-        String expectedQuery = " SELECT rpst.id as id, rpst.tenantid as tenantid, rpst.partycategory as partycategory, rpst.representative_id as representative_id, rpst.individualid as individualid,  rpst.organisationid as organisationid, rpst.partytype as partytype, rpst.isactive as isactive, rpst.additionaldetails as additionaldetails, rpst.createdby as createdby, rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_representing rpst WHERE rpst.representative_id IN (?,?,?)";
+        String expectedQuery = " SELECT rpst.id as id, rpst.tenantid as tenantid, rpst.partycategory as partycategory, rpst.representative_id as representative_id, rpst.individualid as individualid, rpst.caseid as caseid,  rpst.organisationid as organisationid, rpst.partytype as partytype, rpst.isactive as isactive, rpst.additionaldetails as additionaldetails, rpst.createdby as createdby, rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime  FROM dristi_case_representing rpst WHERE rpst.representative_id IN (?,?,?)";
         assertEquals(expectedQuery, query);
         assertEquals(3, preparedStmtList.size());
         assertEquals("1", preparedStmtList.get(0));

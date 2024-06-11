@@ -55,7 +55,7 @@ public class CaseQueryBuilder {
     private static final String FROM_REPRESENTATIVES_TABLE = " FROM dristi_case_representatives rep";
 
     private static final String BASE_REPRESENTING_QUERY = " SELECT rpst.id as id, rpst.tenantid as tenantid, rpst.partycategory as partycategory, rpst.representative_id as representative_id, " +
-            "rpst.individualid as individualid, " +
+            "rpst.individualid as individualid, rpst.caseid as caseid, " +
             " rpst.organisationid as organisationid, rpst.partytype as partytype, rpst.isactive as isactive, rpst.additionaldetails as additionaldetails, rpst.createdby as createdby," +
             " rpst.lastmodifiedby as lastmodifiedby, rpst.createdtime as createdtime, rpst.lastmodifiedtime as lastmodifiedtime ";
     private static final String FROM_REPRESENTING_TABLE = " FROM dristi_case_representing rpst";
