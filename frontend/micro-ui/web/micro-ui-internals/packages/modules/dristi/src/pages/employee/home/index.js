@@ -1,6 +1,7 @@
 import { InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { scrutinyInboxConfig } from "./scrutinyInboxConfig";
+import { useHistory } from "react-router-dom";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -11,11 +12,25 @@ const sectionsParentStyle = {
 };
 
 function Home() {
+  const history = useHistory();
+
   return (
     <React.Fragment>
       <div className="registration-requests">
         <div className="inbox-search-wrapper">
-          <InboxSearchComposer customStyle={sectionsParentStyle} configs={scrutinyInboxConfig}></InboxSearchComposer>
+          <InboxSearchComposer
+            customStyle={sectionsParentStyle}
+            configs={scrutinyInboxConfig}
+            additionalConfig={{
+              resultsTable: {
+                onClickRow: (row) => {
+                  const searchParams = new URLSearchParams();
+                  searchParams.set("caseId", row.original.id);
+                  history.push(`case?${searchParams.toString()}`);
+                },
+              },
+            }}
+          ></InboxSearchComposer>
         </div>
       </div>
     </React.Fragment>
