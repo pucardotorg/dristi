@@ -13,7 +13,7 @@ export const reviewCaseFileFormConfig = [
         type: "component",
         component: "SelectReviewAccordion",
         key: "litigentDetails",
-        label: "CS_LITIGENT_HEADER",
+        label: "CS_LITIGENT_DETAILS",
         withoutLabel: true,
         populators: {
           inputs: [
@@ -24,9 +24,9 @@ export const reviewCaseFileFormConfig = [
               icon: "ComplainantDetailsIcon",
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "complainantType.name" },
-                { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "complainantVerification.mobileNumber" },
+                { type: "phonenumber", label: "PHONE_NUMBER", value: "complainantVerification.mobileNumber" },
                 { type: "image", label: "CS_ID_PROOF", value: ["individualDetails.document", "companyDetailsUpload.document"] },
-                { type: "address", label: "CS_ADDRESS", value: "addressDetails-select" },
+                { type: "address", label: "ADDRESS", value: "addressDetails-select" },
               ],
               data: ComplainantDummy,
             },
@@ -37,9 +37,9 @@ export const reviewCaseFileFormConfig = [
               icon: "RespondentDetailsIcon",
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "respondentType.name" },
-                { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
+                { type: "phonenumber", label: "PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
                 { type: "text", label: "CS_EMAIL", value: "emails.emailId" },
-                { type: "address", label: "CS_ADDRESS", value: "addressDetails" },
+                { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
               data: RespondentDummy,
             },
@@ -115,31 +115,31 @@ export const reviewCaseFileFormConfig = [
         type: "component",
         component: "SelectReviewAccordion",
         key: "additionalDetails",
-        label: "CS_ADDITIONAL_DETAILS_HEADER",
+        label: "CS_ADDITIONAL_DETAILS",
         withoutLabel: true,
         populators: {
           inputs: [
             {
               key: "witnessDetails",
               name: "witnessDetails",
-              label: "CS_WITNESS_DETAILS",
+              label: "CS_WITNESS_DETAIL_HEADING",
               icon: "WitnessDetailsIcon",
               config: [
                 { type: "title", value: ["firstName", "lastName"] },
-                { type: "phonenumber", label: "CS_PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
+                { type: "phonenumber", label: "PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
                 { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
-                { type: "address", label: "CS_ADDRESS", value: "addressDetails" },
+                { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
               data: WitnessDummy,
             },
             {
               key: "prayerSwornStatement",
               name: "prayerSwornStatement",
-              label: "CS_PRAYER_SWORN_DETAIL_NAME",
+              label: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
               icon: "PrayerSwornIcon",
               config: [
                 { type: "text", label: "CS_PRAYER_RELIEF", value: "prayerForRelief.text" },
-                { type: "text", label: "CS_ADDRESS", value: "addressDetails" },
+                { type: "text", label: "ADDRESS", value: "addressDetails" },
                 {
                   type: "image",
                   label: "CS_DOCUMENT",
