@@ -294,20 +294,20 @@ class CaseRepositoryTest {
     void checkCaseExists_ShouldReturnCaseExistsListWithCorrectExistenceStatus() {
         // Prepare test data
         List<CaseExists> caseExistsList = new ArrayList<>();
-        CaseExists caseExists1 = CaseExists.builder().courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
-        CaseExists caseExists2 = CaseExists.builder().courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
+        CaseExists caseExists1 = CaseExists.builder().caseId("12").courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().caseId(null).courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
         caseExistsList.add(caseExists1);
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
         when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         // Invoke the method
         List<CaseExists> result = caseRepository.checkCaseExists(caseExistsList);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString());
+        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
         verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
 
         // Assert result
@@ -320,13 +320,13 @@ class CaseRepositoryTest {
     void checkCaseExists_Exception() {
         // Prepare test data
         List<CaseExists> caseExistsList = new ArrayList<>();
-        CaseExists caseExists1 = CaseExists.builder().courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
-        CaseExists caseExists2 = CaseExists.builder().courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
+        CaseExists caseExists1 = CaseExists.builder().caseId("12").courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().caseId(null).courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
         caseExistsList.add(caseExists1);
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString())).thenThrow(new RuntimeException());
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenThrow(new RuntimeException());
 //        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         assertThrows(Exception.class, () -> {
@@ -338,13 +338,13 @@ class CaseRepositoryTest {
     void checkCaseExists_CustomException() {
         // Prepare test data
         List<CaseExists> caseExistsList = new ArrayList<>();
-        CaseExists caseExists1 = CaseExists.builder().courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
-        CaseExists caseExists2 = CaseExists.builder().courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
+        CaseExists caseExists1 = CaseExists.builder().caseId("12").courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().caseId(null).courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();; // Test case where all fields are null
         caseExistsList.add(caseExists1);
         caseExistsList.add(caseExists2);
 
         // Mock dependencies
-        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString())).thenThrow(new CustomException());
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenThrow(new CustomException());
 //        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1); // Assuming case exists
 
         assertThrows(CustomException.class, () -> {
@@ -353,4 +353,3 @@ class CaseRepositoryTest {
     }
 
 }
-

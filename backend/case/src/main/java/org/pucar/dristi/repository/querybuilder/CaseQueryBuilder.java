@@ -6,6 +6,7 @@ import org.pucar.dristi.web.models.CaseCriteria;
 import org.pucar.dristi.web.models.CaseExists;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -61,48 +62,32 @@ public class CaseQueryBuilder {
 
     private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_cases cases WHERE ";
 
-    public String checkCaseExistQuery(String courtCaseNumber, String cnrNumber, String filingNumber) {
+    public String checkCaseExistQuery(String caseId, String courtCaseNumber, String cnrNumber, String filingNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
+            List<String> conditions = new ArrayList<>();
 
-            if (courtCaseNumber != null && cnrNumber != null && filingNumber == null) {
-                // courtCaseNumber and cnrNumber are not null, filingNumber is null
-                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(" AND ");
-                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
+            if (caseId != null && !caseId.isEmpty()) {
+                conditions.add("cases.id = '" + caseId + "'");
+            }
+            if (courtCaseNumber != null && !courtCaseNumber.isEmpty()) {
+                conditions.add("cases.courtcasenumber = '" + courtCaseNumber + "'");
+            }
+            if (cnrNumber != null && !cnrNumber.isEmpty()) {
+                conditions.add("cases.cnrnumber = '" + cnrNumber + "'");
+            }
+            if (filingNumber != null && !filingNumber.isEmpty()) {
+                conditions.add("cases.filingnumber = '" + filingNumber + "'");
+            }
 
-            } else if (courtCaseNumber != null && cnrNumber == null && filingNumber != null) {
-                // courtCaseNumber and filingNumber are not null, cnrNumber is null
-                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(" AND ");
-                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-
-            } else if (courtCaseNumber == null && cnrNumber != null && filingNumber != null) {
-                // cnrNumber and filingNumber are not null, courtCaseNumber is null
-                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
-                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-
-            } else if (courtCaseNumber != null && cnrNumber == null) {
-                // Only courtCaseNumber is not null, cnrNumber and filingNumber are null
-                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(";");
-
-            } else if (courtCaseNumber == null && cnrNumber != null) {
-                // Only cnrNumber is not null, courtCaseNumber and filingNumber are null
-                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
-
-            } else if (courtCaseNumber == null && filingNumber != null) {
-                // Only filingNumber is not null, courtCaseNumber and cnrNumber are null
-                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-
-            } else if (courtCaseNumber != null) {
-                // All fields are not null
-                query.append("cases.courtcasenumber = ").append("'").append(courtCaseNumber).append("'").append(" AND ");
-                query.append("cases.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
-                query.append("cases.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
+            if (!conditions.isEmpty()) {
+                query.append(String.join(" AND ", conditions)).append(";");
             }
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building case exist query");
-            throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the case exist query : " + e.getMessage());
+            log.error("Error while building case exist query", e);
+            throw new CustomException(CASE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the case exist query: " + e.getMessage());
         }
     }
 
