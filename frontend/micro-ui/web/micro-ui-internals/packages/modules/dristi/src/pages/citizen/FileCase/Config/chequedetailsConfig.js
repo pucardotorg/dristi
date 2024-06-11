@@ -21,9 +21,7 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Bounced Cheque",
-              isOptional: "optional",
-              infoTooltipMessage: "Tooltip",
+              documentHeader: "CS_BOUNCED_CHEQUE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
