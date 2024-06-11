@@ -1068,10 +1068,10 @@ function EFilingCases({ path }) {
         <div className="side-stepper-info">
           <div className="header">
             <InfoIcon />
-            <span>You are filing a case</span>
+            <span><b>{t("CS_YOU_ARE_FILING_A_CASE")}</b></span>
           </div>
           <p>
-            Under <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> In
+            {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
             <span className="place-name">{` ${caseType.courtName}.`}</span>
           </p>
         </div>
@@ -1139,7 +1139,7 @@ function EFilingCases({ path }) {
                 <CustomArrowDownIcon />
               </div>
             </div>
-            <p>{t(pageConfig.subtext || "Please provide the necessary details")}</p>
+            <p>{t(pageConfig.subtext || "")}</p>
           </div>
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (

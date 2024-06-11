@@ -115,7 +115,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       {locationData.map((data, index) => (
         <div key={data.id}>
           <div style={{ display: "flex", gap: "4px" }}>
-            <b><h1>{` ${addressLabel == "INDIVIDUAL" ? t("CS_RESPONDENT_ADDRESS_DETAIL") : addressLabel == "REPRESENTATIVE" ? t("CS_COMPANY_LOCATION") : t("CS_COMMON_ADDRESS_DETAIL")} ${index + 1}`}</h1></b>
+            <b><h1>{` ${addressLabel == "INDIVIDUAL" ? t("CS_RESPONDENT_ADDRESS_DETAIL") : addressLabel == "REPRESENTATIVE" ? t("CS_COMPANY_LOCATION") : t("WITNESS_LOCATION")} ${index + 1}`}</h1></b>
             <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
               <CrossIcon></CrossIcon>
             </span>

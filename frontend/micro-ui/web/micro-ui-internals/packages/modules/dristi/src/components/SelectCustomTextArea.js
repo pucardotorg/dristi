@@ -46,7 +46,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
               <span>
                 <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                   {`${t(input?.textAreaSubHeader)}`}
-                  {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+                  {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{t("CS_IS_OPTIONAL")}</span>}
                 </p>
               </span>
             </div>

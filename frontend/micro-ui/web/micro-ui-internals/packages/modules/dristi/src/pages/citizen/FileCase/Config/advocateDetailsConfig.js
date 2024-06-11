@@ -36,6 +36,7 @@ const advocateDetailsFormConfig = [
   },
   {
     dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    head: "CS_ADVOCATE_BASIC_DETAILS",
     body: [
       {
         type: "apidropdown",
