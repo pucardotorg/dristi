@@ -163,7 +163,7 @@ const demandNoticeFormConfig = [
           inputs: [
             {
               name: "proofOfAcknowledgmentFileUpload",
-              documentHeader: "LEGAL_DEMAND_NOTICE",
+              documentHeader: "PROOF_LEGAL_DEMAND_NOTICE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -181,10 +181,10 @@ const demandNoticeFormConfig = [
       {
         type: "radio",
         key: "proofOfReply",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_REPLY_NOTICE",
         isMandatory: true,
         populators: {
-          label: "CS_DELAY_APPLICATION_TYPE",
+          label: "CS_REPLY_NOTICE",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
@@ -236,7 +236,7 @@ const demandNoticeFormConfig = [
           inputs: [
             {
               name: "proofOfReplyFileUpload",
-              documentHeader: "LEGAL_DEMAND_NOTICE",
+              documentHeader: "CS_PROOF_TO_REPLY_DEMAND_NOTICE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
@@ -266,10 +266,10 @@ const demandNoticeFormConfig = [
       {
         type: "radio",
         key: "delayApplicationType",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_PAYER_FAIL_TO_PAY",
         isMandatory: true,
         populators: {
-          label: "CS_DELAY_APPLICATION_TYPE",
+          label: "CS_PAYER_FAIL_TO_PAY",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",

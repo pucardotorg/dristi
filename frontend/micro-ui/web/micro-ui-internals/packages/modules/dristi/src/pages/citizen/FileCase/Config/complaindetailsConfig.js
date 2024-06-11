@@ -98,7 +98,7 @@ const complainantDetailsFormConfig = [
       },
       {
         type: "text",
-        label: "MIDDLE_NAME",
+        label: "CORE_COMMON_MIDDLE_NAME",
         populators: {
           name: "middleName",
           validation: {
@@ -127,43 +127,6 @@ const complainantDetailsFormConfig = [
             title: "",
             patternType: "Name",
           },
-        },
-      },
-    ],
-  },
-  {
-    head: "CS_RESPONDENT_COMPANY_DETAIL",
-    dependentKey: { complainantType: ["showCompanyDetails"] },
-    body: [
-      {
-        type: "text",
-        key: "company_Name",
-        label: "company_Name",
-        isMandatory: true,
-        populators: {
-          name: "companyName",
-          styles: { minWidth: "100%" },
-          labelStyles: { padding: "8px" },
-          customStyle: { minWidth: "100%" },
-        },
-      },
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "companyDetailsUpload",
-        populators: {
-          inputs: [
-            {
-              isMandatory: true,
-              name: "document",
-              documentHeader: "COMPANY_DOCUMENT_DETAILS",
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
-              isMultipleUpload: true,
-            },
-          ],
         },
       },
     ],
@@ -202,6 +165,43 @@ const complainantDetailsFormConfig = [
           pattern: /^[6-9]\d{9}$/,
         },
         populators: {},
+      },
+    ],
+  },
+  {
+    head: "CS_RESPONDENT_COMPANY_DETAIL",
+    dependentKey: { complainantType: ["showCompanyDetails"] },
+    body: [
+      {
+        type: "text",
+        key: "company_Name",
+        label: "company_Name",
+        isMandatory: true,
+        populators: {
+          name: "companyName",
+          styles: { minWidth: "100%" },
+          labelStyles: { padding: "8px" },
+          customStyle: { minWidth: "100%" },
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "companyDetailsUpload",
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              name: "document",
+              documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: true,
+            },
+          ],
+        },
       },
     ],
   },
@@ -372,7 +372,7 @@ const complainantDetailsFormConfig = [
 export const complaintdetailconfig = {
   formconfig: complainantDetailsFormConfig,
   header: "CS_COMPLAINT_DETAIL_HEADING",
-  subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
+  subtext: "CS_COMPLAINANT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_COMPLAINANT",
   formItemName: "Complainant",

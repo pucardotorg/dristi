@@ -20,7 +20,7 @@ const textAreaJSX = (value, t, input, handleChange) => {
             <span>
               <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
-                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{t("CS_IS_OPTIONAL")}</span>}
               </p>
             </span>
           </div>
@@ -84,7 +84,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           name: "document",
           documentHeader: "Aadhar",
           documentSubText: "subtext",
-          isOptional: "optional",
+          isOptional: "CS_IS_OPTIONAL",
           infoTooltipMessage: "Tooltip",
           type: "DragDropComponent",
           uploadGuidelines: t("UPLOAD_DOC_50"),
@@ -181,9 +181,9 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange)}
           {!isFileAdded && (
             <div>
-              <p>want to upload a file instead?</p>
+              <p>{t("CS_WANT_TO_UPLOAD")}</p>
               <span onClick={opneModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
-                Browse in my files
+              {t("WBH_BULK_BROWSE_FILES")}
               </span>
             </div>
           )}
@@ -204,7 +204,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
               <div className="drag-drop-heading-main">
                 <div className="drag-drop-heading">
                   <h2 className="card-label">{t(input?.documentHeader)}</h2>
-                  {input?.isOptional && <h3>{`(${t(input?.isOptional)})`}</h3>}
+                  {input?.isOptional && <h3>{t(input?.isOptional)}</h3>}
                   <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
                 </div>
                 {<p>{t(input?.documentSubText)}</p>}
@@ -266,7 +266,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                   customClass={input?.customClass}
                   containerStyles={{ ...input?.containerStyles }}
                 />
-                {<h1>t(CS_COMMON_FILE_UPLOAD_BLURB)</h1>}
+                {<h1>{t("CS_COMMON_FILE_UPLOAD_BLURB")}</h1>}
                 {Array.isArray(formData?.[config.key]?.[input.name]) && formData?.[config.key]?.[input.name].length > 0 && (
                   <DocViewerWrapper
                     selectedDocs={[formData?.[config.key]?.[input.name][0]]}

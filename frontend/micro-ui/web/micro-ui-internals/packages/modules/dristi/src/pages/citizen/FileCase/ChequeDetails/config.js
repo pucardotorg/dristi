@@ -26,7 +26,7 @@ export const chequeDetailsConfig = [
             {
               name: "document",
               documentHeader: "Bounced Cheque",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
@@ -130,7 +130,7 @@ export const chequeDetailsConfig = [
             {
               name: "document",
               documentHeader: "Proof of deposit of Cheque",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
@@ -155,7 +155,7 @@ export const chequeDetailsConfig = [
             {
               name: "document",
               documentHeader: "Cheque Return Memo",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",

@@ -36,7 +36,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
         {
           documentHeader: "Aadhar",
           documentSubText: "subtext",
-          isOptional: "optional",
+          isOptional: "CS_IS_OPTIONAL",
           infoTooltipMessage: "Tooltip",
           type: "DragDropComponent",
           uploadGuidelines: t("UPLOAD_DOC_50"),
@@ -92,7 +92,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
         <div className="drag-drop-heading-main">
           <div className="drag-drop-heading">
             <h1 className="card-label">{t(input?.documentHeader)}</h1>
-            {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`(${t(input?.isOptional)})`}</span>}
+            {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
           {input.documentSubText && <p>{t(input.documentSubText)}</p>}
