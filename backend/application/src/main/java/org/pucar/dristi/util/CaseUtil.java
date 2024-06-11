@@ -34,7 +34,7 @@ public class CaseUtil {
 
     public Boolean fetchCaseDetails(CaseExistsRequest caseExistsRequest) {
         StringBuilder uri = new StringBuilder();
-        uri.append(configs.getCaseHost()).append(configs.getCaseExistsPath()); //TODO add url and endpoint to config
+        uri.append(configs.getCaseHost()).append(configs.getCaseExistsPath());
 
         Object response = new HashMap<>();
         CaseExistsResponse caseExistsResponse = new CaseExistsResponse();

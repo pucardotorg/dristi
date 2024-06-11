@@ -22,6 +22,8 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class CaseExists {
+    @JsonProperty("caseId")
+    private String caseId = null;
 
     @JsonProperty("courtCaseNumber")
     private String courtCaseNumber = null;

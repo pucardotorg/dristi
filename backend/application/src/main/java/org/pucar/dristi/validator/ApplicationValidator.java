@@ -62,7 +62,7 @@ public class ApplicationValidator {
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
 
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
-            throw new CustomException(VALIDATION_ERR, "case does not exists");
+            throw new CustomException(VALIDATION_ERR, "case does not exist");
         }
         if(ObjectUtils.isEmpty(application.getId())){
             throw new CustomException(UPDATE_APPLICATION_ERR, "id is mandatory for updating application");
@@ -91,6 +91,7 @@ public class ApplicationValidator {
     public CaseExistsRequest createCaseExistsRequest(RequestInfo requestInfo, Application application){
         CaseExistsRequest caseExistsRequest = new CaseExistsRequest();
         CaseExists caseExists = new CaseExists();
+        caseExists.setCaseId(application.getCaseId());
         caseExists.setFilingNumber(application.getFilingNumber());
         caseExists.setCnrNumber(application.getCnrNumber());
         List<CaseExists> criteriaList = new ArrayList<>();
