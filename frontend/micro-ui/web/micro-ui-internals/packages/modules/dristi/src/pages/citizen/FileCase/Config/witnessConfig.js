@@ -1,6 +1,6 @@
 const witnessFormConfig = [
   {
-    head: "CS_RESPONDENT_NAME",
+    head: "CS_WITNESS_NAME",
     body: [
       {
         type: "text",
@@ -56,7 +56,8 @@ const witnessFormConfig = [
     ],
   },
   {
-    head: "CS_RESPONDENT_PHONE",
+    head: "CS_WITNESS_CONTACT_DETAILS",
+    subHead: "CS_WITNESS_NOTE",
     body: [
       {
         type: "component",
@@ -86,7 +87,6 @@ const witnessFormConfig = [
     ],
   },
   {
-    head: "CS_RESPONDENT_EMAIL",
     body: [
       {
         type: "component",
@@ -185,7 +185,7 @@ const witnessFormConfig = [
           inputs: [
             {
               textAreaHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
-              placeholder: "CS_TEXTAREA_PLACEHOLDER_WITNESS_ADDITIONAL_DETAIL",
+              placeholder: "CS_TEXTAREA_PLACEHOLDER_ADDITIONAL_DETAIL",
               headerClassName: "dristi-font-bold",
               type: "TextAreaComponent",
             },

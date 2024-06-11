@@ -61,7 +61,7 @@ const respondentFromconfig = [
       },
       {
         type: "text",
-        label: "MIDDLE_NAME",
+        label: "CORE_COMMON_MIDDLE_NAME",
         populators: {
           name: "middleName",
           validation: {
@@ -313,7 +313,7 @@ const respondentFromconfig = [
             {
               name: "document",
               documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",

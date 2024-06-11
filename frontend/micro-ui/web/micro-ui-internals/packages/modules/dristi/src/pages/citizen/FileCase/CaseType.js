@@ -290,7 +290,7 @@ function CaseType({ t }) {
         serialNumber: "03.",
       },
       {
-        header: "Proof od Debt/ Liability",
+        header: "Proof of Debt/ Liability",
         subtext: "Anything to prove some sort of agreement between you and the respondent",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "04.",
@@ -328,7 +328,7 @@ function CaseType({ t }) {
     >
       <div className="case-types-main-div">
         {detailsCardList.map((item) => (
-          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} style={{ width: "100%" }} />
+          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} subnote={item.subnote} style={{ width: "100%" }} />
         ))}
       </div>
       {page === 0 && (
