@@ -2,10 +2,10 @@ name: dristi workflow
 on:
   push:
     branches:
-      - prtest
+      - mytest
   pull_request:
     branches:
-      - develop
+      - mytest
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -13,25 +13,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Determine base commit
-        id: base
-        run: |
-          # Fetch all branches
-          git fetch --all
-          # Determine the base commit for the comparison
-          BASE_COMMIT=$(git merge-base origin/develop HEAD)
-          echo "BASE_COMMIT=$BASE_COMMIT" >> $GITHUB_ENV
-        env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
-      
-
-      - name: Determine changed files
-        id: changes
-        run: |
-          echo "Checking for changed files..."
-          git diff --name-only ${{ env.BASE_COMMIT }} > changed_files.txt
-          cat changed_files.txt
 
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
@@ -43,60 +24,60 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Check for changes in advocate
-        id: advocate_changed
+      - name: Check for changes in advocate module
+        id: advocate-changes
         run: |
-          if grep -q '^backend/advocate/' changed_files.txt; then
-            echo "advocate_changed=true" >> $GITHUB_ENV
+          if git diff --name-only HEAD develop | grep -q '^backend/advocate/'; then
+            echo "advocate=true" >> $GITHUB_ENV
           else
-            echo "advocate_changed=false" >> $GITHUB_ENV
-          fi
-      
-      - name: Check for changes in case
-        id: case_changed
-        run: |
-          if grep -q '^backend/case/' changed_files.txt; then
-            echo "case_changed=true" >> $GITHUB_ENV
-          else
-            echo "case_changed=false" >> $GITHUB_ENV
+            echo "advocate=false" >> $GITHUB_ENV
           fi
 
-      - name: Check for changes in order
-        id: order_changed
+      - name: Check for changes in case module
+        id: case-changes
         run: |
-          if grep -q '^backend/order/' changed_files.txt; then
-            echo "order_changed=true" >> $GITHUB_ENV
+          if git diff --name-only HEAD HEAD~1 | grep -q '^backend/case/'; then
+            echo "case=true" >> $GITHUB_ENV
           else
-            echo "order_changed=false" >> $GITHUB_ENV
+            echo "case=false" >> $GITHUB_ENV
+          fi
+
+      - name: Check for changes in order module
+        id: order-changes
+        run: |
+          if git diff --name-only HEAD HEAD~1 | grep -q '^backend/order/'; then
+            echo "order=true" >> $GITHUB_ENV
+          else
+            echo "order=false" >> $GITHUB_ENV
           fi
 
       - name: Check for changes in digit-ui
-        id: digit_ui_changed
+        id: digit-ui-changes
         run: |
-          if grep -q '^frontend/micro-ui/' changed_files.txt; then
-            echo "digit_ui_changed=true" >> $GITHUB_ENV
+          if git diff --name-only HEAD HEAD~1 | grep -q '^frontend/micro-ui/'; then
+            echo "digit_ui=true" >> $GITHUB_ENV
           else
-            echo "digit_ui_changed=false" >> $GITHUB_ENV
+            echo "digit_ui=false" >> $GITHUB_ENV
           fi
 
       - name: Build and analyze advocate
-        if: env.advocate_changed == 'true'
+        if: env.advocate == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Build and analyze case
-        if: env.case_changed == 'true'
+        if: env.case == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Build and analyze order
-        if: env.order_changed == 'true'
+        if: env.order == 'true'
         env:
-          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}  # Needed to get PR information, if any
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
@@ -104,14 +85,14 @@ jobs:
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
       - name: Build and Push Docker image for advocate
-        if: env.advocate_changed == 'true'
+        if: env.advocate == 'true'
         run: |
           docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for advocate_DB
-        if: env.advocate_changed == 'true'
+        if: env.advocate == 'true'
         run: |
           docker build -t pucar_advocate_db:v1.0.0-${{ github.sha }} -f Dockerfile .
           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
@@ -119,14 +100,14 @@ jobs:
         working-directory: backend/advocate/src/main/resources/db
 
       - name: Build and Push Docker image for case
-        if: env.case_changed == 'true'
+        if: env.case == 'true'
         run: |
           docker build --build-arg WORK_DIR="backend/case" -t pucar_case:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_case:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for case_DB
-        if: env.case_changed == 'true'
+        if: env.case == 'true'
         run: |
           docker build -t pucar_case_db:v1.0.0-${{ github.sha }} -f Dockerfile .
           docker tag pucar_case_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case_db:v1.0.0-${{ github.sha }}
@@ -134,16 +115,24 @@ jobs:
         working-directory: backend/case/src/main/resources/db
 
       - name: Build and Push Docker image for order
-        if: env.order_changed == 'true'
+        if: env.order == 'true'
         run: |
           docker build --build-arg WORK_DIR="backend/order" -t pucar_order:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_order:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_order:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for order_DB
-        if: env.order_changed == 'true'
+        if: env.order == 'true'
         run: |
           docker build -t pucar_order_db:v1.0.0-${{ github.sha }} -f Dockerfile .
           docker tag pucar_order_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
         working-directory: backend/order/src/main/resources/db
+
+      - name: Build and Push Docker image for digit-ui
+        if: env.digit_ui == 'true'
+        run: |
+          docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
+          docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+        working-directory: frontend/micro-ui
