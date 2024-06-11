@@ -67,12 +67,8 @@ function SelectId({ config, t, params, history, onSelect, pathOnRefresh }) {
         isDisabled={isDisabled}
         label={t("CS_COMMON_CONTINUE")}
         onSecondayActionClick={() => { }}
-        headingStyle={{ textAlign: "center" }}
-        cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", justifyContent: "center" }}
-        sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
         onFormValueChange={onFormValueChange}
         defaultValues={params?.indentity || {}}
-        buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
         value={params?.indentity || {}}
         onSubmit={(props) => {
           if (!validateFormData(props)) {

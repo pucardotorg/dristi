@@ -1,10 +1,6 @@
 import { Banner, Card, CardLabel, CardText, CloseSvg, Modal, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import CustomCopyTextDiv from "./admission/CustomCopyTextDiv";
-import CustomCaseInfoDiv from "./admission/CustomCaseInfoDiv";
 import Button from "../../../components/Button";
-import { InfoCard } from "@egovernments/digit-ui-components";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const mockSubmitModalInfo = {
   header: "CS_PAYMENT_SUCCESSFUL",

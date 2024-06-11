@@ -8,6 +8,7 @@ import EFilingCases from "./EFilingCases";
 import WitnessDetails from "./WitnessDetails";
 import SendCaseBack from "./SendCaseBack";
 import EFilingPayment from "./EFilingPayment";
+import EFilingPaymentResponse from "./EFilingPaymentResponse";
 
 function FileCase({ t }) {
   const { path } = useRouteMatch();
@@ -35,7 +36,10 @@ function FileCase({ t }) {
             <SendCaseBack t={t} />
           </Route>
           <Route path={`${path}/e-filing-payment`}>
-            <EFilingPayment t={t} />
+            <EFilingPayment t={t} path={path} />
+          </Route>
+          <Route path={`${path}/e-filing-payment-response`}>
+            <EFilingPaymentResponse t={t} />
           </Route>
         </AppContainer>
       </Switch>

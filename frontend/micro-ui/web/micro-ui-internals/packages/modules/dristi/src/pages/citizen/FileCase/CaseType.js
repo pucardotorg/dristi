@@ -203,6 +203,7 @@ function CaseType({ t }) {
                                   code: "INDIVIDUAL",
                                   name: "Individual",
                                   showCompanyDetails: false,
+                                  complainantLocation: true,
                                   commonFields: true,
                                   isEnabled: true,
                                 },

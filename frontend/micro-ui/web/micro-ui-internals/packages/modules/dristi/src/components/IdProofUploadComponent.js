@@ -111,6 +111,9 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                         customClass={input?.customClass}
                         containerStyles={{ ...input?.containerStyles }}
                         requestSpecifcFileRemoval={removeFile}
+                        noteMsg={input?.noteMsg}
+                        notSupportedError={input?.notSupportedError}
+                        maxFileErrorMessage={input?.maxFileErrorMessage}
                       />
                       {Array.isArray(formData?.[config.key]?.[input.name]) && formData?.[config.key]?.[input.name].length > 0 && (
                         <DocViewerWrapper

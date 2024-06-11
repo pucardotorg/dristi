@@ -4,7 +4,7 @@ import CustomCopyTextDiv from "./admission/CustomCopyTextDiv";
 import CustomCaseInfoDiv from "./admission/CustomCaseInfoDiv";
 import Button from "../../../components/Button";
 import { InfoCard } from "@egovernments/digit-ui-components";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_E_FILING_PAYMENT",
@@ -33,8 +33,9 @@ const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
 };
 
-function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo, amount = 2000 }) {
+function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo, amount = 2000, path }) {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const history = useHistory();
   const onCancel = () => {
     setShowPaymentModal(false);
   };
@@ -72,6 +73,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
           headerBarEnd={<CloseBtn onClick={onCancel} />}
           actionSaveLabel={t("CS_PAY_ONLINE")}
           formId="modal-action"
+          actionSaveOnSubmit={() => history.push(`${path}/e-filing-payment-response`)}
           headerBarMain={<Heading label={t("CS_PAY_TO_FILE_CASE")} />}
         >
           <div>
@@ -88,7 +90,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
                 style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
                 additionalElements={[<Link>{t("CS_LEARN_MORE")}</Link>]}
                 inline
-                text={"This is an offline step where you can visit your nearest Court to make the payment. "}
+                text={"CS_OFFLINE_PAYMENT_STEP_TEXT"}
                 textStyle={{}}
                 className={"adhaar-verification-info-card"}
               />

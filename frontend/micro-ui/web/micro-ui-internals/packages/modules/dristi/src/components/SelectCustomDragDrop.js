@@ -39,7 +39,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           isOptional: "optional",
           infoTooltipMessage: "Tooltip",
           type: "DragDropComponent",
-          uploadGuidelines: "Upload .png",
+          uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],

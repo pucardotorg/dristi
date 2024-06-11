@@ -218,7 +218,6 @@ const respondentFromconfig = [
   },
   {
     dependentKey: { respondentType: ["commonFields"] },
-    head: "CS_RESPONDENT_ADDRESS_DETAIL",
     body: [
       {
         type: "component",
@@ -317,7 +316,7 @@ const respondentFromconfig = [
               isOptional: "optional",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PNG", "PDF"],
