@@ -242,6 +242,9 @@ components:
         filingNumber:
           type: string
           description: the associated case
+        validate:
+          type: boolean
+          description: to handle validation        
         taskNumber:
           type: string
           description: Task Number

@@ -22,7 +22,7 @@ public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String id = rs.getString("task_id");
-                UUID uuid = UUID.fromString(id!=null ? id : "00000000-0000-0000-0000-000000000000");
+                UUID uuid = UUID.fromString(id);
 
                 Amount amount = Amount.builder()
                         .id(UUID.fromString(rs.getString("id")))
@@ -32,7 +32,7 @@ public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
                         .paymentRefNumber(rs.getString("paymentrefnumber"))
                         .build();
 
-                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
                 if (pgObject != null)
                     amount.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 

@@ -90,6 +90,9 @@ public class Task {
     @JsonProperty("assignedTo")
     private Object assignedTo = null;
 
+    @JsonProperty("validate")
+    private Boolean validate = null;
+
     @JsonProperty("isActive")
     private Boolean isActive = null;
 

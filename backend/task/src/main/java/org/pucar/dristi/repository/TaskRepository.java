@@ -8,7 +8,6 @@ import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Amount;
 import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskExists;
-import org.pucar.dristi.web.models.TaskExistsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;

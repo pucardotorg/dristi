@@ -5,7 +5,9 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.service.TaskService;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
+import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,12 @@ public class TaskRegistrationValidator {
     @Autowired
     private Configuration config;
 
+    @Autowired
+    private CaseUtil caseUtil;
+
+    @Autowired
+    private OrderUtil orderUtil;
+
 
     @Autowired
     public void setCaseService(@Lazy TaskService taskService) {
@@ -45,6 +53,12 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(taskRequest.getRequestInfo().getUserInfo())) {
             throw new CustomException(CREATE_TASK_ERR, "user info is mandatory for creating task");
         }
+        if (task.getValidate() && !caseUtil.fetchCaseDetails(taskRequest.getRequestInfo(),task.getCnrNumber(),task.getFilingNumber())) {
+            throw new CustomException(CREATE_TASK_ERR, "Invalid case details");
+        }
+        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
+            throw new CustomException(CREATE_TASK_ERR, "Invalid application details");
+        }
     }
 
     public Boolean validateApplicationExistence(Task task, RequestInfo requestInfo) {
@@ -53,6 +67,9 @@ public class TaskRegistrationValidator {
             throw new CustomException("UPDATE_TASK_ERR", "tenantId is mandatory for updating task");
         if (ObjectUtils.isEmpty(requestInfo.getUserInfo())) {
             throw new CustomException(CREATE_TASK_ERR, "user info is mandatory for creating task");
+        }
+        if (task.getValidate() && !caseUtil.fetchCaseDetails(requestInfo,task.getCnrNumber(),task.getFilingNumber())) {
+            throw new CustomException(CREATE_TASK_ERR, "Invalid case details");
         }
 
         List<Task> existingApplications = repository.getApplications(task.getId().toString(), task.getTenantId(), task.getStatus(),task.getOrderId(),task.getCnrNumber());

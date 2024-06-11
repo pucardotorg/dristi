@@ -67,7 +67,7 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating case");
+            log.error("Error occurred while creating task");
             throw new CustomException(CREATE_TASK_ERR, e.getMessage());
         }
     }
@@ -112,7 +112,7 @@ public class TaskService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating task");
-            throw new CustomException("UPDATE_TASK_ERR", "Error occurred while updating case: " + e.getMessage());
+            throw new CustomException("UPDATE_TASK_ERR", "Error occurred while updating task: " + e.getMessage());
         }
 
     }
