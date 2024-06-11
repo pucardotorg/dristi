@@ -699,6 +699,8 @@ components:
     CaseExists:
       type: object
       properties:
+        caseId:
+          type: string
         courtCaseNumber:
           type: string
         cnrNumber:

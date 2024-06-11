@@ -273,10 +273,15 @@ public class CaseRepository {
     public List<CaseExists> checkCaseExists(List<CaseExists> caseExistsRequest) {
         try {
             for (CaseExists caseExists : caseExistsRequest) {
-                if (caseExists.getCourtCaseNumber() == null && caseExists.getCnrNumber() == null && caseExists.getFilingNumber() == null) {
+                if (
+                        (caseExists.getCaseId() == null || caseExists.getCaseId().isEmpty()) &&
+                        (caseExists.getCourtCaseNumber() == null || caseExists.getCourtCaseNumber().isEmpty()) &&
+                        (caseExists.getCnrNumber() == null || caseExists.getCnrNumber().isEmpty()) &&
+                        (caseExists.getFilingNumber() == null || caseExists.getFilingNumber().isEmpty())
+                ) {
                     caseExists.setExists(false);
                 } else {
-                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
+                    String casesExistQuery = queryBuilder.checkCaseExistQuery(caseExists.getCaseId(), caseExists.getCourtCaseNumber(), caseExists.getCnrNumber(), caseExists.getFilingNumber());
                     log.info("Final case exist query :: {}", casesExistQuery);
                     Integer count = jdbcTemplate.queryForObject(casesExistQuery, Integer.class);
                     caseExists.setExists(count != null && count > 0);
