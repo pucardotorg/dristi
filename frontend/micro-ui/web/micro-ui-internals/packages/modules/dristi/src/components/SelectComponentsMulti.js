@@ -144,6 +144,7 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
         </div>
       ))}
       <Button
+        className={"add-location-btn"}
         label={"Add Location"}
         style={{ alignItems: "center", margin: "10px 0px" }}
         onButtonClick={() => {
