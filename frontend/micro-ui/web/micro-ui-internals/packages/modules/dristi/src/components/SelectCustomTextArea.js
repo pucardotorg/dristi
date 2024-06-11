@@ -38,12 +38,15 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
     return (
       <div className="custom-text-area-main-div" style={input?.style}>
         <div className="custom-text-area-header-div">
-          <h1 className={`${input?.headerClassName}`} style={{ margin: "0px" }}>
-            {t(input?.textAreaHeader)}
-          </h1>
+          {
+            input.textAreaHeader &&
+            <h1 className={`custom-text-area-header ${input?.headerClassName}`} style={{ margin: "0px" }}>
+              {t(input?.textAreaHeader)}
+            </h1>
+          }
           {
             <span>
-              <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+              <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
               </p>
@@ -57,7 +60,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
           }}
           rows={5}
           className="custom-textarea-style"
-          placeholder={input?.placeholder}
+          placeholder={t(input?.placeholder)}
         ></textarea>
       </div>
     );

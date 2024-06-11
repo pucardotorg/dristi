@@ -72,11 +72,14 @@
 
     .add-new-form {
       margin-top: 24px;
+      margin-bottom: 24px;
       display: flex;
       align-items: center;
       justify-content: start;
       align-self: flex-start;
       border: 0;
+      padding: 0px;
+      height: fit-content;
 
       span {
         font-family: Roboto;
@@ -85,6 +88,9 @@
         line-height: 18.75px;
         text-align: center;
         color: #007e7e;
+      }
+      h2 {
+        margin: 0px !important;
       }
     }
 
@@ -145,6 +151,7 @@
           line-height: 28.13px;
           text-align: left;
           color: #0a0a0a;
+          margin: 0px;
         }
       }
     }
@@ -302,14 +309,11 @@
   }
 }
 
-.complainant > .label-field-pair:first-of-type {
-  .bolder {
-    color: red;
-  }
-}
+.witness-details,
 .respondent,
 .cheque,
 .debt-liability,
+.prayer-and-sworm,
 .complainant {
   .card-section-header:first-child {
     margin-bottom: 8px;
@@ -319,9 +323,9 @@
     padding-bottom: 0px !important;
     .bolder {
       font-family: Roboto;
-      font-size: 16px !important;
-      font-weight: 400 !important;
-      line-height: 18.75px !important;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
       text-align: left;
       color: #0a0a0a !important;
     }
@@ -333,6 +337,9 @@
   input {
     margin: 0px !important;
   }
+}
+
+.witness-details {
 }
 
 .debt-liability {
@@ -406,6 +413,67 @@
   }
 }
 
+.prayer-and-sworm {
+  .custom-sub-header {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  h2 {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700 !important;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  .custom-text-area-main-div {
+    .custom-text-area-header-div {
+      gap: 12px !important;
+    }
+    .text-area-upload-sub-header {
+      margin-bottom: 5px !important;
+    }
+  }
+  .text-upload-file-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+    p {
+      margin: 0px;
+    }
+  }
+  .drag-drop-visible-main {
+    .drag-drop-heading-main {
+      .drag-drop-heading {
+        .custom-document-header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+      }
+      .custom-document-sub-header {
+        margin: 0px !important;
+        margin-top: 20px !important;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0a0a0a;
+      }
+    }
+  }
+}
+
+.delay-application,
 .witness-details,
 .respondent,
 .cheque,
@@ -462,6 +530,15 @@
 .delay-application {
   .label-field-pair {
     padding-bottom: 16px;
+
+    h2.card-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
 
     .field {
       width: 100%;
