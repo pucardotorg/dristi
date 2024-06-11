@@ -1,10 +1,12 @@
 const respondentFromconfig = [
   {
+
+    head: "CS_RESPONDENT_TYPE",
     body: [
       {
         type: "radio",
         key: "respondentType",
-        label: "CS_RESPONDENT_TYPE",
+        withoutLabel: true,
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -141,7 +143,6 @@ const respondentFromconfig = [
                 maxLength: 10,
                 isNumber: true,
               },
-              className: "mobile-number",
             },
           ],
           validation: {},
@@ -171,7 +172,6 @@ const respondentFromconfig = [
                 pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 isArray: true,
               },
-              className: "email-address",
             },
           ],
           validation: {},

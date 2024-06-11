@@ -1,10 +1,12 @@
 const complainantDetailsFormConfig = [
   {
+    head: "SELECT_COMPLAINANT_TYPE",
     body: [
       {
         type: "radio",
         key: "complainantType",
-        label: "SELECT_COMPLAINANT_TYPE",
+        // label: "SELECT_COMPLAINANT_TYPE",
+        withoutLabel: true,
         isMandatory: true,
         name: "complainantType",
         populators: {

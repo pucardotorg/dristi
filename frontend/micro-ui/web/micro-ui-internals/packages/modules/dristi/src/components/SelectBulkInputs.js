@@ -67,11 +67,10 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
     const currentValue = (formData && formData[config.key] && formData[config.key].textfieldValue) || "";
     const chipList = (formData && formData[config.key] && formData[config.key][input.name]) || "";
     return (
-      <div className={`${input.className || ""}`} style={{ width: "100%" }}>
-        <CardLabel>{t(input.label)}</CardLabel>
-
-        <div style={{ display: "flex", justifyContent: "left", gap: "20px" }}>
-          <div style={{ display: "flex", width: "100%" }}>
+      <div className={`bulk-input-class ${input.className || ""}`} style={{ width: "100%" }}>
+        <h3 className="bulk-input-header">{t(input.label)}</h3>
+        <div className="bulk-input-main">
+          <div className="input-main">
             {input?.componentInFront ? <span className="citizen-card-input citizen-card-input--front">{input?.componentInFront}</span> : null}
             <TextInput
               value={currentValue}

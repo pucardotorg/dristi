@@ -1176,7 +1176,7 @@ function EFilingCases({ path }) {
               <div key={`${selected}-${index}`} className="form-wrapper-d">
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
-                    <h1>{`${pageConfig?.formItemName} ${formdata[index]?.displayindex + 1}`}</h1>
+                    <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
                     {(activeForms > 1 || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
