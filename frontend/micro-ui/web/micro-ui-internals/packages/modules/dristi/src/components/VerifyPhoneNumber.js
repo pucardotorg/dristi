@@ -222,8 +222,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
   const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
 
   return (
-    <React.Fragment>
-      <LabelFieldPair style={{ width: "100%", display: "flex", alignItem: "center" }}>
+    <div className="phone-number-verification">
+      <LabelFieldPair>
         <CardLabel className="card-label-smaller">{t(config.label)}</CardLabel>
       </LabelFieldPair>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 24 }}>
@@ -287,20 +287,22 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           />
         )}
       </div>
-      <CardLabelError
-        style={{
-          fontWeight: 100,
-          position: "relative",
-          top: "-20px",
-        }}
-        className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}
-      >
-        {t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
-      </CardLabelError>
+      {
+        errors?.[config?.key]?.[config.name] &&
+        <CardLabelError
+          className={
+            errors?.[config?.key]?.[config.name]
+              ? "error-text"
+              : "default-text"
+          }
+        >
+          {t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
+        </CardLabelError>
+      }
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-          actionCancelOnSubmit={() => {}}
+          actionCancelOnSubmit={() => { }}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
             selectOtp(input);
@@ -314,16 +316,15 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
-                  `${
-                    input?.hasMobileNo
-                      ? formData[config.key]?.[input?.mobileNoKey]
-                        ? input?.isMobileSecret
-                          ? input?.mobileCode
-                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
-                        : ""
+                  `${input?.hasMobileNo
+                    ? formData[config.key]?.[input?.mobileNoKey]
+                      ? input?.isMobileSecret
+                        ? input?.mobileCode
+                          ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                        : ` ${formData[config.key]?.[input?.mobileNoKey]}`
                       : ""
+                    : ""
                   }`}
               </CardLabel>
               <div className="field">
@@ -367,7 +368,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           </div>
         </Modal>
       )}
-    </React.Fragment>
+    </div>
   );
 }
 

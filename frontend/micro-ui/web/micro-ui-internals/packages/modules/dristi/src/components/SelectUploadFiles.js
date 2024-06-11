@@ -12,13 +12,13 @@ const textAreaJSX = (value, t, input, handleChange) => {
   return (
     <div className="custom-text-area-main-div" style={input?.style}>
       <div className="custom-text-area-header-div">
-        <h1 className={`${input?.headerClassName}`} style={{ margin: "0px" }}>
+        <h1 className={`text-area-upload-header ${input?.headerClassName}`} style={{ margin: "0px" }}>
           {t(input?.textAreaHeader)}
         </h1>
         {
           <div>
             <span>
-              <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+              <p className={`text-area-upload-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
                 {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{t("CS_IS_OPTIONAL")}</span>}
               </p>
@@ -26,17 +26,16 @@ const textAreaJSX = (value, t, input, handleChange) => {
           </div>
         }
       </div>
-      <div>
-        <textarea
-          value={value}
-          onChange={(data) => {
-            handleChange(data, input);
-          }}
-          rows={5}
-          className="custom-textarea-style"
-          placeholder={input?.placeholder}
-        ></textarea>
-      </div>
+
+      <textarea
+        value={value}
+        onChange={(data) => {
+          handleChange(data, input);
+        }}
+        rows={5}
+        className="custom-textarea-style"
+        placeholder={input?.placeholder}
+      ></textarea>
     </div>
   );
 };
@@ -177,13 +176,13 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     const currentDocs = (formData && formData[config.key] && formData?.[config.key]?.["document"]) || [];
     if (input.type === "TextAreaComponent" && showTextArea) {
       return (
-        <div>
+        <div className="text-area-and-upload">
           {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange)}
           {!isFileAdded && (
-            <div>
+            <div className="text-upload-file-main">
               <p>{t("CS_WANT_TO_UPLOAD")}</p>
               <span onClick={opneModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
-              {t("WBH_BULK_BROWSE_FILES")}
+                {t("WBH_BULK_BROWSE_FILES")}
               </span>
             </div>
           )}
@@ -244,7 +243,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {showModal && (
             <Modal
               headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-              actionCancelOnSubmit={() => {}}
+              actionCancelOnSubmit={() => { }}
               actionSaveLabel={t("ADD")}
               actionSaveOnSubmit={(data) => handleAddFileInModal(data)}
               // hideSubmit={false}

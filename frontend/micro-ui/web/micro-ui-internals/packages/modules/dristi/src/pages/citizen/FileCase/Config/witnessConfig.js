@@ -87,6 +87,7 @@ const witnessFormConfig = [
     ],
   },
   {
+    head: " ",
     body: [
       {
         type: "component",
@@ -102,7 +103,7 @@ const witnessFormConfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /\S+@\S+\.\S+/,
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
               },
               className: "email-address",
             },
@@ -118,13 +119,14 @@ const witnessFormConfig = [
         type: "component",
         component: "SelectComponentsMulti",
         key: "addressDetails",
+        formType: "Witness",
         withoutLabel: true,
         error: "sample required message",
         required: false,
         isMandatory: true,
         populators: {
           inputs: [
-            { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
             {
               label: "PINCODE",
               type: "text",
@@ -203,4 +205,5 @@ export const witnessConfig = {
   isOptional: false,
   addFormText: "ADD_WITNESS",
   formItemName: "Witness",
+  className: "witness-details"
 };

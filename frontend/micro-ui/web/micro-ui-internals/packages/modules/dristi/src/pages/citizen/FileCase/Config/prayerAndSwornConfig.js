@@ -57,6 +57,7 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "caseSettlementCondition",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -243,4 +244,6 @@ const prayerAndSwornFormConfig = [
 export const prayerAndSwornConfig = {
   formconfig: prayerAndSwornFormConfig,
   header: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
+  addFormText: "ADD_DOCUMENT",
+  className: "prayer-and-sworm",
 };
