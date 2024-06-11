@@ -33,15 +33,17 @@ class CaseQueryBuilderTest {
     @Test
     void checkCaseExistQuery_ShouldGenerateCorrectQuery_WhenAllFieldsAreNotNull() {
         // Arrange
+        String caseId = "111";
         String courtCaseNumber = "123";
         String cnrNumber = "456";
         String filingNumber = "789";
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE " +
+                "cases.id = '111' AND " +
                 "cases.courtcasenumber = '123' AND " +
                 "cases.cnrnumber = '456' AND " +
                 "cases.filingnumber = '789';";
@@ -54,9 +56,10 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = "123";
         String cnrNumber = "456";
         String filingNumber = null;
+        String caseId = null;
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE " +
@@ -71,9 +74,10 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = "123";
         String cnrNumber = null;
         String filingNumber = "789";
+        String caseId = null;
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases " +
@@ -87,9 +91,11 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = null;
         String cnrNumber = "456";
         String filingNumber = "789";
+        String caseId = null;
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.cnrnumber = '456' AND cases.filingnumber = '789';";
@@ -102,9 +108,11 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = "123";
         String cnrNumber = null;
         String filingNumber = null;
+        String caseId = null;
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.courtcasenumber = '123';";
@@ -117,9 +125,10 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = null;
         String cnrNumber = "456";
         String filingNumber = null;
+        String caseId = null;
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.cnrnumber = '456';";
@@ -132,9 +141,11 @@ class CaseQueryBuilderTest {
         String courtCaseNumber = null;
         String cnrNumber = null;
         String filingNumber = "123";
+        String caseId = null;
 
         // Act
-        String query = queryBuilder.checkCaseExistQuery(courtCaseNumber, cnrNumber, filingNumber);
+        String query = queryBuilder.checkCaseExistQuery(caseId, courtCaseNumber, cnrNumber, filingNumber);
+
 
         // Assert
         String expectedQuery = "SELECT COUNT(*) FROM dristi_cases cases WHERE cases.filingnumber = '123';";
@@ -644,4 +655,3 @@ class CaseQueryBuilderTest {
     }
 
 }
-
