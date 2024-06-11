@@ -2,10 +2,10 @@ name: dristi workflow
 on:
   push:
     branches:
-      - mytest
+      - prtest
   pull_request:
     branches:
-      - mytest
+      - prtest
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -27,8 +27,12 @@ jobs:
       - name: Check for changes in advocate module
         id: advocate-changes
         run: |
-          if git diff --name-only HEAD HEAD~1 | grep -q '^backend/advocate/'; then
-            echo "advocate=true" >> $GITHUB_ENV
+          if [ $(git rev-parse --is-inside-work-tree 2>/dev/null) ]; then
+            if git diff --name-only HEAD~1..HEAD | grep -q '^backend/advocate/'; then
+              echo "advocate=true" >> $GITHUB_ENV
+            else
+              echo "advocate=false" >> $GITHUB_ENV
+            fi
           else
             echo "advocate=false" >> $GITHUB_ENV
           fi
@@ -36,8 +40,12 @@ jobs:
       - name: Check for changes in case module
         id: case-changes
         run: |
-          if git diff --name-only HEAD HEAD~1 | grep -q '^backend/case/'; then
-            echo "case=true" >> $GITHUB_ENV
+          if [ $(git rev-parse --is-inside-work-tree 2>/dev/null) ]; then
+            if git diff --name-only HEAD~1..HEAD | grep -q '^backend/case/'; then
+              echo "case=true" >> $GITHUB_ENV
+            else
+              echo "case=false" >> $GITHUB_ENV
+            fi
           else
             echo "case=false" >> $GITHUB_ENV
           fi
@@ -45,8 +53,12 @@ jobs:
       - name: Check for changes in order module
         id: order-changes
         run: |
-          if git diff --name-only HEAD HEAD~1 | grep -q '^backend/order/'; then
-            echo "order=true" >> $GITHUB_ENV
+          if [ $(git rev-parse --is-inside-work-tree 2>/dev/null) ]; then
+            if git diff --name-only HEAD~1..HEAD | grep -q '^backend/order/'; then
+              echo "order=true" >> $GITHUB_ENV
+            else
+              echo "order=false" >> $GITHUB_ENV
+            fi
           else
             echo "order=false" >> $GITHUB_ENV
           fi
@@ -54,8 +66,12 @@ jobs:
       - name: Check for changes in digit-ui
         id: digit-ui-changes
         run: |
-          if git diff --name-only HEAD HEAD~1 | grep -q '^frontend/micro-ui/'; then
-            echo "digit_ui=true" >> $GITHUB_ENV
+          if [ $(git rev-parse --is-inside-work-tree 2>/dev/null) ]; then
+            if git diff --name-only HEAD~1..HEAD | grep -q '^frontend/micro-ui/'; then
+              echo "digit_ui=true" >> $GITHUB_ENV
+            else
+              echo "digit_ui=false" >> $GITHUB_ENV
+            fi
           else
             echo "digit_ui=false" >> $GITHUB_ENV
           fi
@@ -137,10 +153,11 @@ jobs:
           docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
         working-directory: frontend/micro-ui
 
-      # - name: trigger deployment pipeline
-      #   run: |
-      #     curl -X POST \
-      #     -H "Accept: application/vnd.github.v3+json" \
-      #     -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
-      #     https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
-      #     -d '{"ref":"Dev-0"}'
+#       - name: trigger deployment pipeline
+#         run: |
+#           curl -X POST \
+#           -H "Accept: application/vnd.github.v3+json" \
+#           -H "Authorization: token ${{ secrets.GHUB_TOKEN }}" \
+#           https://api.github.com/repos/pucardotorg/pucar-Devops/actions/workflows/dev.yaml/dispatches \
+#           -d '{"ref":"Dev-0"}'
+# '
