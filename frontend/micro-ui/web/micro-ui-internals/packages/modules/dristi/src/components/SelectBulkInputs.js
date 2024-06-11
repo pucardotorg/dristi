@@ -60,7 +60,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
     ) {
       setEnableAdd(true);
     }
-    setValue(value, "textfieldValue");
+    setValue(input?.validation?.isNumber ? value?.replace(/[^0-9]/g, "") : value, "textfieldValue");
   };
 
   return inputs.map((input) => {
@@ -69,6 +69,7 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
     return (
       <div className={`${input.className || ""}`} style={{ width: "100%" }}>
         <CardLabel>{t(input.label)}</CardLabel>
+
         <div style={{ display: "flex", justifyContent: "left", gap: "20px" }}>
           <div style={{ display: "flex", width: "100%" }}>
             {input?.componentInFront ? <span className="citizen-card-input citizen-card-input--front">{input?.componentInFront}</span> : null}

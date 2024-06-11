@@ -265,7 +265,7 @@ function CaseType({ t }) {
       { header: "Case Category", subtext: "Criminal", serialNumber: "01." },
       {
         header: "Status / Act",
-        subtext: "Negotiable Instruments Act",
+        subtext: "Negotiable Instrument Act",
         serialNumber: "02.",
       },
       { header: "Section", subtext: "138", serialNumber: "03." },
@@ -328,7 +328,13 @@ function CaseType({ t }) {
     >
       <div className="case-types-main-div">
         {detailsCardList.map((item) => (
-          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} subnote={item.subnote} style={{ width: "100%" }} />
+          <CustomDetailsCard
+            header={item.header}
+            subtext={item.subtext}
+            serialNumber={item.serialNumber}
+            subnote={item.subnote}
+            style={{ width: "100%" }}
+          />
         ))}
       </div>
       {page === 0 && (
