@@ -17,11 +17,14 @@ jobs:
       - name: Determine base commit
         id: base
         run: |
-          # # Fetch all branches
-          # git fetch --all
+          # Fetch all branches
+          git fetch --all
           # Determine the base commit for the comparison
           BASE_COMMIT=$(git merge-base origin/develop HEAD)
           echo "BASE_COMMIT=$BASE_COMMIT" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+      
 
       - name: Determine changed files
         id: changes
