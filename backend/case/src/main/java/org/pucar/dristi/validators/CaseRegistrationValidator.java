@@ -61,25 +61,28 @@ public class CaseRegistrationValidator {
         CourtCase courtCase = caseRequest.getCases();
 
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
-            throw new CustomException(CREATE_CASE_ERR, "tenantId is mandatory for creating case");
+            throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for creating case");
         if (ObjectUtils.isEmpty(courtCase.getCaseCategory()))
-            throw new CustomException(CREATE_CASE_ERR, "caseCategory is mandatory for creating case");
+            throw new CustomException(VALIDATION_ERR, "caseCategory is mandatory for creating case");
         if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
-            throw new CustomException(CREATE_CASE_ERR, "statute and sections is mandatory for creating case");
-        if (ObjectUtils.isEmpty(courtCase.getLitigants()))
-            throw new CustomException(CREATE_CASE_ERR, "litigants is mandatory for creating case");
+            throw new CustomException(VALIDATION_ERR, "statute and sections is mandatory for creating case");
+        if (!courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION)) {
+            if (ObjectUtils.isEmpty(courtCase.getLitigants()))
+                throw new CustomException(VALIDATION_ERR, "litigants is mandatory for creating case");
+        }
         if (ObjectUtils.isEmpty(caseRequest.getRequestInfo().getUserInfo())) {
-            throw new CustomException(CREATE_CASE_ERR, "user info is mandatory for creating case");
+            throw new CustomException(VALIDATION_ERR, "user info is mandatory for creating case");
         }
     }
 
     public Boolean validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
 
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
-            throw new CustomException(UPDATE_CASE_ERR, "tenantId is mandatory for updating case");
-        if (courtCase.getWorkflow().getAction().equalsIgnoreCase(SUBMIT_CASE_WORKFLOW_ACTION)){
+            throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for updating case");
+        if (!(courtCase.getWorkflow().getAction().equalsIgnoreCase(SUBMIT_CASE_WORKFLOW_ACTION) ||
+                courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION))){
             if(ObjectUtils.isEmpty(courtCase.getFilingDate()))
-                throw new CustomException(UPDATE_CASE_ERR, "filingDate is mandatory for updating case");
+                throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
         }
 
         List<CaseCriteria> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))

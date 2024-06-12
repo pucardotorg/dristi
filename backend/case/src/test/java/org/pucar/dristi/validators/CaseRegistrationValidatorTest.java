@@ -2,11 +2,13 @@ package org.pucar.dristi.validators;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.pucar.dristi.config.ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION;
 
 import net.minidev.json.JSONArray;
 import org.apache.kafka.common.protocol.types.Field;
 import org.checkerframework.checker.units.qual.C;
 import org.egov.common.contract.models.Document;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -96,6 +98,10 @@ public class CaseRegistrationValidatorTest {
         courtCase.setStatutesAndSections(List.of(new StatuteSection()));
         courtCase.setFilingDate(LocalDate.parse("2021-12-12"));
 
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+
         request.setCases(courtCase);
 
         Map<String, Map<String, JSONArray>> mdmsRes = new HashMap<>();
@@ -171,6 +177,9 @@ public class CaseRegistrationValidatorTest {
         courtCase.setTenantId("pg");
         courtCase.setFilingDate(LocalDate.now());
         courtCase.setCaseCategory("category1");
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         List<StatuteSection> statuteSectionList = new ArrayList<>();
         statuteSectionList.add(StatuteSection.builder().tenantId("pb").build());
         courtCase.setStatutesAndSections(statuteSectionList);
@@ -190,6 +199,9 @@ public class CaseRegistrationValidatorTest {
         courtCase.setTenantId("pg");
         courtCase.setFilingDate(LocalDate.now());
         courtCase.setCaseCategory("category1");
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         List<StatuteSection> statuteSectionList = new ArrayList<>();
         statuteSectionList.add(StatuteSection.builder().tenantId("pb").build());
         List<Party> litigantList = new ArrayList<>();
@@ -209,6 +221,9 @@ public class CaseRegistrationValidatorTest {
         Document document = new Document();
         document.setFileStore("123");
         courtCase.setDocuments(List.of(document));
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         AdvocateMapping advocateMapping = new AdvocateMapping();
         advocateMapping.setAdvocateId("123");
         courtCase.setRepresentatives(List.of(advocateMapping));
@@ -258,6 +273,9 @@ public class CaseRegistrationValidatorTest {
         Document document = new Document();
         document.setFileStore("123");
         courtCase.setDocuments(List.of(document));
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         AdvocateMapping advocateMapping = new AdvocateMapping();
         advocateMapping.setAdvocateId("123");
         courtCase.setRepresentatives(List.of(advocateMapping));
@@ -298,6 +316,9 @@ public class CaseRegistrationValidatorTest {
         Document document = new Document();
         document.setFileStore("123");
         courtCase.setDocuments(List.of(document));
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         AdvocateMapping advocateMapping = new AdvocateMapping();
         advocateMapping.setAdvocateId("123");
         courtCase.setRepresentatives(List.of(advocateMapping));
@@ -352,7 +373,9 @@ public class CaseRegistrationValidatorTest {
         CourtCase courtCase = new CourtCase();
         CaseCriteria caseCriteria = new CaseCriteria();
         courtCase.setTenantId("pg");
-
+        Workflow workflow = new Workflow();
+        workflow.setAction("random_action");
+        courtCase.setWorkflow(workflow);
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
     }
 
@@ -369,6 +392,9 @@ public class CaseRegistrationValidatorTest {
         courtCase.setRepresentatives(List.of(advocateMapping));
         Party party = new Party();
         party.setIndividualId("123");
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         courtCase.setLitigants(List.of(party));
         LinkedCase linkedCase = LinkedCase.builder().id(UUID.randomUUID()).caseNumber("caseNumber").build();
 //        courtCase.setLinkedCases(List.of(linkedCase));
@@ -408,7 +434,9 @@ public class CaseRegistrationValidatorTest {
         CaseCriteria caseCriteria = new CaseCriteria();
         courtCase.setTenantId("pg");
         courtCase.setFilingDate(LocalDate.now());
-
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
@@ -420,6 +448,9 @@ public class CaseRegistrationValidatorTest {
         courtCase.setTenantId("pg");
         courtCase.setFilingDate(LocalDate.now());
         courtCase.setCaseCategory("categ1");
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         CaseCriteria caseCriteria = new CaseCriteria();
 
         when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
@@ -435,7 +466,9 @@ public class CaseRegistrationValidatorTest {
         courtCase.setCaseCategory("categ1");
         courtCase.setStatutesAndSections(List.of(StatuteSection.builder().tenantId("pb").build()));
         CaseCriteria caseCriteria = new CaseCriteria();
-
+        Workflow workflow = new Workflow();
+        workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
         when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(courtCase, new RequestInfo()));
