@@ -93,7 +93,7 @@ const debtLiabilityFromconfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_CHECK_COUNT_INVALID",
-              value: /^\d{12}$/,
+              value: /^\d{1,12}$/,
             },
           },
           title: "FIRST_TERMS_AND_CONDITIONS",

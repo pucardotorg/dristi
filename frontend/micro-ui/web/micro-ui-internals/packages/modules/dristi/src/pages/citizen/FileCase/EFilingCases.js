@@ -729,7 +729,7 @@ function EFilingCases({ path }) {
             };
           })
       );
-      const representatives = [...caseDetails?.representatives]
+      const representatives = [...caseDetails?.representatives ? caseDetails?.representative : []]
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
@@ -1209,6 +1209,9 @@ function EFilingCases({ path }) {
             caseDetails?.caseDetails?.[nextSelected]?.formdata ||
             (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
           setFormdata(caseData);
+          if (!!resetFormData) {
+            resetFormData();
+          }
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           setIsDisabled(false);
         });

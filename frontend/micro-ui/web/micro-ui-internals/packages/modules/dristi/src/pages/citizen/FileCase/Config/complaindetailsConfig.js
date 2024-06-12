@@ -88,9 +88,10 @@ const complainantDetailsFormConfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
+            maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -104,7 +105,7 @@ const complainantDetailsFormConfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             title: "",
             patternType: "Name",
@@ -121,9 +122,10 @@ const complainantDetailsFormConfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
+            maxLength: 100,
             title: "",
             patternType: "Name",
           },
