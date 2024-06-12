@@ -152,6 +152,13 @@ function ViewCaseFile({ t }) {
     setActionModal("caseRegisterSuccess");
   };
   const handleSendCaseBack = () => {
+    debugger
+    console.debug(formdata);
+    let body = {};
+    for (const key in formdata.data) {
+      body = { ...body, ...formdata.data[key] };
+    }
+    console.debug(body);
     setActionModal("caseSendBackSuccess");
   };
   const handlePotentialConfirm = () => {
@@ -244,7 +251,7 @@ function ViewCaseFile({ t }) {
           actionSaveLabel={"CS_COMMON_CONFIRM"}
           t={t}
           totalErrors={totalErrors?.total || 0}
-          handleCloseModal = {handleCloseModal}
+          handleCloseModal={handleCloseModal}
           onCancel={handlePotentialConfirm}
           onSubmit={handleSendCaseBack}
           heading={"CS_SEND_CASE_BACK"}
