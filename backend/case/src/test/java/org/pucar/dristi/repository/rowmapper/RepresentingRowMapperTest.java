@@ -44,6 +44,7 @@ class RepresentingRowMapperTest {
         when(rs.getLong("createdtime")).thenReturn(1000000L);
         when(rs.getString("lastmodifiedby")).thenReturn("User2");
         when(rs.getLong("lastmodifiedtime")).thenReturn(1000001L);
+        when(rs.getString("case_id")).thenReturn("case_id");
         when(rs.getString("isactive")).thenReturn("true");
 
         PGobject pgObject = mock(PGobject.class);

@@ -6,11 +6,13 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,10 +58,18 @@ public class CaseRegistrationEnrichment {
 
         enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
 
+        enrichCaseRegistrationFillingDate(courtCase);
+
 //                    courtCase.setIsActive(false);
         if (courtCase.getDocuments() != null) {
             List<Document> documentsListToCreate = courtCase.getDocuments().stream().filter(document -> document.getId() == null).toList();
             documentsListToCreate.forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
+        }
+    }
+
+    private void enrichCaseRegistrationFillingDate(CourtCase courtCase) {
+        if(courtCase.getWorkflow()!=null && courtCase.getWorkflow().getAction().equalsIgnoreCase(ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION)){
+            courtCase.setFilingDate(LocalDate.now());
         }
     }
 
