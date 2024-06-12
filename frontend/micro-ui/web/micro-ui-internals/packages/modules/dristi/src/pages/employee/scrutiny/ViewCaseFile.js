@@ -5,6 +5,7 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import SendCaseBackModal from "../../../components/SendCaseBackModal";
+import SuccessModal from "../../../components/SuccessModal";
 
 function ViewCaseFile({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -131,9 +132,32 @@ function ViewCaseFile({ t }) {
     ];
   }, [reviewCaseFileFormConfig, caseData]);
 
-  const onRegisterCase = () => {};
-  const onSendCaseBack = () => {
-    console.debug(formdata);
+  const handleRegisterClick = () => {
+    // setActionModal("sendCaseBackPotential");
+    setActionModal("registerCase");
+  };
+  const handleSendBackClick = () => {
+    setActionModal("sendCaseBack");
+  };
+  const handleNextCase = () => {
+    setActionModal(false);
+  };
+  const handleAllocationJudge = () => {
+    setActionModal(false);
+  };
+  const handleCloseSucessModal = () => {
+    setActionModal(false);
+  };
+  const handleRegisterCase = () => {
+    setActionModal("caseRegisterSuccess");
+  };
+  const handleSendCaseBack = () => {
+    setActionModal("caseSendBackSuccess");
+  };
+  const handlePotentialConfirm = () => {
+    setActionModal("caseRegisterPotential");
+  };
+  const handleCloseModal = () => {
     setActionModal(false);
   };
 
@@ -171,12 +195,8 @@ function ViewCaseFile({ t }) {
           <FormComposerV2
             label={t("CS_REGISTER_CASE")}
             config={formConfig}
-            onSubmit={() => {
-              setActionModal("registerCase");
-            }}
-            onSecondayActionClick={() => {
-              setActionModal("sendCaseBack");
-            }}
+            onSubmit={handleRegisterClick}
+            onSecondayActionClick={handleSendBackClick}
             defaultValues={{}}
             onFormValueChange={onFormValueChange}
             cardStyle={{ minWidth: "100%" }}
@@ -195,26 +215,80 @@ function ViewCaseFile({ t }) {
       </div>
       {actionModal == "sendCaseBack" && (
         <SendCaseBackModal
+          actionCancelLabel={"CS_COMMON_BACK"}
+          actionSaveLabel={"CS_COMMON_CONFIRM"}
           t={t}
           totalErrors={totalErrors?.total || 0}
-          onCancel={() => {
-            setActionModal(false);
-          }}
-          onSubmit={onSendCaseBack}
+          onCancel={handleCloseModal}
+          onSubmit={handleSendCaseBack}
           heading={"CS_SEND_CASE_BACK"}
           type="sendCaseBack"
         />
       )}
       {actionModal == "registerCase" && (
         <SendCaseBackModal
+          actionCancelLabel={"CS_COMMON_BACK"}
+          actionSaveLabel={"CS_COMMON_CONFIRM"}
           t={t}
           totalErrors={totalErrors?.total || 0}
-          onCancel={() => {
-            setActionModal(false);
-          }}
-          onSubmit={onRegisterCase}
+          onCancel={handleCloseModal}
+          onSubmit={handleRegisterCase}
           heading={"CS_REGISTER_CASE"}
           type="registerCase"
+        />
+      )}
+
+      {actionModal == "sendCaseBackPotential" && (
+        <SendCaseBackModal
+          actionCancelLabel={"CS_NO_REGISTER_CASE"}
+          actionSaveLabel={"CS_COMMON_CONFIRM"}
+          t={t}
+          totalErrors={totalErrors?.total || 0}
+          handleCloseModal = {handleCloseModal}
+          onCancel={handlePotentialConfirm}
+          onSubmit={handleSendCaseBack}
+          heading={"CS_SEND_CASE_BACK"}
+          type="sendCaseBackPotential"
+        />
+      )}
+      {actionModal == "caseRegisterPotential" && (
+        <SendCaseBackModal
+          actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
+          actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
+          t={t}
+          totalErrors={totalErrors?.total || 0}
+          onCancel={handleCloseModal}
+          onSubmit={handleSendCaseBack}
+          heading={"CS_SEND_CASE_BACK"}
+          type="sendCaseBackPotential"
+        />
+      )}
+
+      {actionModal === "caseSendBackSuccess" && (
+        <SuccessModal
+          header={"Vaibhav"}
+          t={t}
+          actionCancelLabel={"CS_COMMON_CLOSE"}
+          actionSaveLabel={"CS_NEXT_CASE"}
+          bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
+          onCancel={handleCloseSucessModal}
+          onSubmit={handleNextCase}
+          type={"caseSendBackSuccess"}
+          data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+        />
+      )}
+
+      {actionModal === "caseRegisterSuccess" && (
+        <SuccessModal
+          header={"Vaibhav"}
+          t={t}
+          actionCancelLabel={"CS_COMMON_CLOSE"}
+          actionSaveLabel={"CS_ALLOCATE_JUDGE"}
+          bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
+          onCancel={handleCloseSucessModal}
+          onSubmit={handleAllocationJudge}
+          type={"caseRegisterSuccess"}
+          data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
         />
       )}
     </div>

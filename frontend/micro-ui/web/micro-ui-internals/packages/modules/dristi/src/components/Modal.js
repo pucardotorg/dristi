@@ -23,7 +23,7 @@ const Modal = ({
   isOBPSFlow = false,
   popupModuleActionBarStyles = {},
   submitTextClassName = {},
-  className
+  className,
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes
@@ -38,7 +38,7 @@ const Modal = ({
   return (
     <PopUp>
       <div className={`popup-module ${className}`} style={popupStyles}>
-        <HeaderBar main={headerBarMain} end={headerBarEnd} style={headerBarMainStyle ? headerBarMainStyle : {}} />
+        {headerBarMain && <HeaderBar main={headerBarMain} end={headerBarEnd} style={headerBarMainStyle ? headerBarMainStyle : {}} />}
         <div className="popup-module-main" style={popupModuleMianStyles ? popupModuleMianStyles : {}}>
           {children}
           <div
