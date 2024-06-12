@@ -11,12 +11,12 @@ export const searchconfig = () =>
     apiDetails: {
       serviceName: "/individual/v1/_search",
       requestParam: {
-          "tenantId": "pg.citya",
+          "tenantId":Digit.ULBService.getCurrentTenantId()
       },
       requestBody: {
         apiOperation: "SEARCH",
         Individual: {
-          "tenantId": "pg.citya",
+          "tenantId": Digit.ULBService.getCurrentTenantId(),
         },
       },
      masterName: "commonUiConfig",
@@ -69,13 +69,12 @@ export const searchconfig = () =>
         show: true
       },
       searchResult: {
-        tenantId: "pg.citya",
+        tenantId: Digit.ULBService.getCurrentTenantId(),
         uiConfig: {
           columns: [
             {
               label: "IndividualID",
               jsonPath: "individualId",
-              "additionalCustomization": true
             },
             
             {
@@ -85,8 +84,7 @@ export const searchconfig = () =>
             },
             {
               label: "Address",
-              jsonPath: "address",
-             "additionalCustomization": true
+              jsonPath: "address.locality.code",
             },
           ],
 
