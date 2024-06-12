@@ -9,7 +9,6 @@ const estimates={
 }
 
 const Hooks = {
-  
   sample,
   estimates
 };

@@ -1,8 +1,7 @@
 import { AppContainer, BreadCrumb, PrivateRoute } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch } from "react-router-dom";
-//import sample from sample
+import { Switch } from "react-router-dom";
 import Inbox from "./SampleInbox";
 import SearchWageSeeker from "./SampleSearch";
 import AdvancedCreate from "./SampleAdvancedSearch";
@@ -12,7 +11,6 @@ import IndividualSearch from "./IndividualSearch";
 import ViewIndividual from "../../configs/ViewIndividual";
 import Create from "./SampleCreate";
 import View from "./SampleView";
-
 
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -32,10 +30,6 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path, stateCode, userType, tenants }) => {
-  const commonProps = { stateCode, userType, tenants, path };
-  
-
-
   return (
     <Switch>
       <AppContainer className="ground-container">
@@ -51,7 +45,6 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/search-individual`} component={() => <IndividualSearch></IndividualSearch>} />
         <PrivateRoute path={`${path}/individual-details`} component={() => <ViewIndividual />} />
         <PrivateRoute path={`${path}/sample-view`} component={() => <View />} />
-        
       </AppContainer>
     </Switch>
   );

@@ -4,13 +4,11 @@ import ReactDOM from "react-dom";
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 // import { paymentConfigs, PaymentLinks, PaymentModule } from "@egovernments/digit-ui-module-common";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
-import "@egovernments/digit-ui-css/example/index.css";
+import "@egovernments/digit-ui-sample-css/example/index.css";
 
 import { pgrCustomizations } from "./pgr";
 import { UICustomizations } from "./UICustomizations";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
-import { initWorkbenchHCMComponents } from "@egovernments/digit-ui-module-hcmworkbench";
 import {initSampleComponents} from "@egovernments/digit-ui-module-sample";
 
 var Digit = window.Digit || {};
@@ -67,8 +65,6 @@ const initDigitUI = () => {
   });
 
   initUtilitiesComponents();
-  initWorkbenchComponents();
-  initWorkbenchHCMComponents();
   initSampleComponents();
 
   const moduleReducers = (initData) => initData;
