@@ -14,6 +14,7 @@ jobs:
       run_job_case: ${{ steps.check_files.outputs.run_job_case }}
       run_job_order: ${{ steps.check_files.outputs.run_job_order }}
       run_job_digit_ui: ${{ steps.check_files.outputs.run_job_digit_ui }}
+      run_job_application: ${{ steps.check_files.outputs.run_job_digit_ui }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -22,6 +23,9 @@ jobs:
           fetch-depth: 2
       - name: Setup Docker
         uses: docker/setup-buildx-action@v1
+     
+      - name: Login to Azure Container Registry
+        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -39,8 +43,9 @@ jobs:
           run_job_advocate=false
           run_job_case=false 
           run_job_order=false
+          run_job_application=false
           run_job_digit_ui=false
-          for path in backend/advocate backend/case backend/order frontend/micro-ui
+          for path in backend/advocate backend/case backend/order backend/application frontend/micro-ui
           do
             if grep -q "^$path/" files.txt; then
               echo "This modified file is under the '$path' folder."
@@ -52,6 +57,7 @@ jobs:
           echo "::set-output name=run_job_advocate::$run_job_advocate"
           echo "::set-output name=run_job_case::$run_job_case"
           echo "::set-output name=run_job_order::$run_job_order"
+          echo "::set-output name=run_job_application::$run_job_application"
           echo "::set-output name=run_job_digit_ui::$run_job_digit_ui"
           
       - name: Build and analyze advocate
@@ -74,6 +80,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+      
+      - name: Build and analyze application
+        if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/application/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
@@ -119,6 +132,20 @@ jobs:
           docker tag pucar_order_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
         working-directory: backend/order/src/main/resources/db
+
+      - name: Build and Push Docker image for application
+        if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/application" -t pucar_application:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_application:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_application:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_application:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for application
+        if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
+        run: |
+          docker build -t pucar_application_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_application_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_application_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_application_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/application/src/main/resources/db
 
       - name: Build and Push Docker image for digit-ui
         if: ${{ steps.check_files.outputs.run_job_digit-ui == 'true' }}

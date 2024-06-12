@@ -16,3 +16,6 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+
+Workflow related to Application module:
+[ApplicationWorkflowConfigJson](../../docs/application/workflow/workflowConfig.json)

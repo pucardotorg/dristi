@@ -98,6 +98,11 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: status
+          in: query
+          description: Search by status
+          schema:
+            type: string
         - name: limit
           in: query
           description: No of records return

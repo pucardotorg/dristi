@@ -1,11 +1,10 @@
 package org.pucar.dristi.web.controllers;
 
 
-import org.pucar.dristi.web.models.ApplicationExistsRequest;
-import org.pucar.dristi.web.models.ApplicationExistsResponse;
-import org.pucar.dristi.web.models.ApplicationListResponse;
-import org.pucar.dristi.web.models.ApplicationRequest;
-import org.pucar.dristi.web.models.ApplicationResponse;
+import org.egov.common.contract.response.ResponseInfo;
+import org.pucar.dristi.service.ApplicationService;
+import org.pucar.dristi.util.ResponseInfoFactory;
+import org.pucar.dristi.web.models.*;
 
 import java.util.UUID;
     import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,6 +42,11 @@ public class ApplicationApiController{
     private final HttpServletRequest request;
 
     @Autowired
+    private ApplicationService applicationService;
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
     public ApplicationApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
@@ -51,57 +55,64 @@ public class ApplicationApiController{
     @RequestMapping(value="/application/v1/create", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new application + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
         String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ApplicationResponse>(objectMapper.readValue("{  \"application\" : {    \"filingNumber\" : \"filingNumber\",    \"applicationType\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"Application 1 of the year 2024\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"issuedBy\" : {      \"benchID\" : \"benchID\",      \"judgeID\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],      \"courtID\" : \"courtID\"    },    \"onBehalfOf\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"cnrNumber\" : \"cnrNumber\",    \"isActive\" : true,    \"additionalDetails\" : \"additionalDetails\",    \"referenceId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"statuteSection\" : {      \"subsections\" : [ \"subsections\", \"subsections\" ],      \"tenantId\" : \"tenantId\",      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"additionalDetails\" : \"additionalDetails\",      \"statute\" : \"statute\",      \"sections\" : [ \"sections\", \"sections\" ],      \"auditdetails\" : {        \"lastModifiedTime\" : 1,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 6      }    },    \"createdDate\" : \"createdDate\",    \"createdBy\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"tenantId\" : \"tenantId\",    \"comment\" : \"comment\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"status\" : \"status\"  },  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}", ApplicationResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+                try {
+                    Application application = applicationService.createApplication(body);
+                    ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                    ApplicationResponse applicationResponse = ApplicationResponse.builder().application(application).responseInfo(responseInfo).build();
+                    return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
+            } catch (Exception e) {
                 return new ResponseEntity<ApplicationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
-
-        return new ResponseEntity<ApplicationResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value="/application/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<ApplicationExistsResponse> applicationV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the application(S) exists", required=true, schema=@Schema()) @Valid @RequestBody ApplicationExistsRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<ApplicationExistsResponse>(objectMapper.readValue("{  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"applicationlist\" : {    \"filingNumber\" : \"filingNumber\",    \"applicationNumber\" : \"applicationNumber\",    \"exists\" : true,    \"cnrNumber\" : \"cnrNumber\"  }}", ApplicationExistsResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
-                return new ResponseEntity<ApplicationExistsResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            List<ApplicationExists> applicationExistsList = applicationService.existsApplication(body);
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+            ApplicationExistsResponse applicationExistsResponse = ApplicationExistsResponse.builder().applicationExists(applicationExistsList).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(applicationExistsResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), false);
+            ApplicationExistsResponse applicationExistsResponse = ApplicationExistsResponse.builder().applicationExists(null).responseInfo(responseInfo).build();
+            return new ResponseEntity<>(applicationExistsResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<ApplicationExistsResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @RequestMapping(value="/application/v1/search", method = RequestMethod.POST)
-    public ResponseEntity<ApplicationListResponse> applicationV1SearchPost(@Parameter(in = ParameterIn.QUERY, description = "Search by application ID" ,schema=@Schema()) @Valid @RequestParam(value = "id", required = false) String id,@Parameter(in = ParameterIn.QUERY, description = "Search by filingNumber" ,schema=@Schema()) @Valid @RequestParam(value = "filingNumber", required = false) UUID filingNumber,@Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose task(s) are being queried" ,schema=@Schema()) @Valid @RequestParam(value = "cnrNumber", required = false) String cnrNumber,@Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,schema=@Schema()) @Valid @RequestParam(value = "tenantId", required = false) UUID tenantId,@Parameter(in = ParameterIn.QUERY, description = "No of records return" ,schema=@Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit,@Parameter(in = ParameterIn.QUERY, description = "offset" ,schema=@Schema()) @Valid @RequestParam(value = "offset", required = false) Integer offset,@Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided" ,schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
+    public ResponseEntity<ApplicationListResponse> applicationV1SearchPost(
+            @Parameter(in = ParameterIn.QUERY, description = "Search by application ID" ,schema=@Schema()) @Valid
+            @RequestParam(value = "id", required = false) String id,@Parameter(in = ParameterIn.QUERY, description = "Search by filingNumber" ,schema=@Schema())
+            @Valid @RequestParam(value = "filingNumber", required = false) String filingNumber,@Parameter(in =
+            ParameterIn.QUERY, description = "the cnrNumber of the case whose task(s) are being queried" ,schema=@Schema()) @Valid
+            @RequestParam(value = "cnrNumber", required = false) String cnrNumber,@Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,schema=@Schema())
+            @Valid @RequestParam(value = "tenantId", required = false) String tenantId,@Parameter(in = ParameterIn.QUERY, description = "No of records return" ,schema=@Schema()) @Valid
+            @RequestParam(value = "limit", required = false) Integer limit,@Parameter(in = ParameterIn.QUERY, description = "offset" ,schema=@Schema())
+            @Valid @RequestParam(value = "offset", required = false) Integer offset,@Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided" ,
+            schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy,
+            @Parameter(in = ParameterIn.QUERY, schema=@Schema()) @Valid @RequestParam(value = "status", required = false) String status,
+            @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody RequestInfoBody requestInfoBody) {
             try {
-                return new ResponseEntity<ApplicationListResponse>(objectMapper.readValue("{  \"TotalCount\" : 0,  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  },  \"applicationlist\" : [ {    \"filingNumber\" : \"filingNumber\",    \"applicationType\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"Application 1 of the year 2024\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"issuedBy\" : {      \"benchID\" : \"benchID\",      \"judgeID\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],      \"courtID\" : \"courtID\"    },    \"onBehalfOf\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"cnrNumber\" : \"cnrNumber\",    \"isActive\" : true,    \"additionalDetails\" : \"additionalDetails\",    \"referenceId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"statuteSection\" : {      \"subsections\" : [ \"subsections\", \"subsections\" ],      \"tenantId\" : \"tenantId\",      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"additionalDetails\" : \"additionalDetails\",      \"statute\" : \"statute\",      \"sections\" : [ \"sections\", \"sections\" ],      \"auditdetails\" : {        \"lastModifiedTime\" : 1,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 6      }    },    \"createdDate\" : \"createdDate\",    \"createdBy\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"tenantId\" : \"tenantId\",    \"comment\" : \"comment\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"status\" : \"status\"  }, {    \"filingNumber\" : \"filingNumber\",    \"applicationType\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"Application 1 of the year 2024\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"issuedBy\" : {      \"benchID\" : \"benchID\",      \"judgeID\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],      \"courtID\" : \"courtID\"    },    \"onBehalfOf\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"cnrNumber\" : \"cnrNumber\",    \"isActive\" : true,    \"additionalDetails\" : \"additionalDetails\",    \"referenceId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"statuteSection\" : {      \"subsections\" : [ \"subsections\", \"subsections\" ],      \"tenantId\" : \"tenantId\",      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"additionalDetails\" : \"additionalDetails\",      \"statute\" : \"statute\",      \"sections\" : [ \"sections\", \"sections\" ],      \"auditdetails\" : {        \"lastModifiedTime\" : 1,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 6      }    },    \"createdDate\" : \"createdDate\",    \"createdBy\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"tenantId\" : \"tenantId\",    \"comment\" : \"comment\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"status\" : \"status\"  } ]}", ApplicationListResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+                List<Application> applicationList = applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset, sortBy, requestInfoBody);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoBody.getRequestInfo(), true);
+                ApplicationListResponse applicationListResponse = ApplicationListResponse.builder().applicationList(applicationList).totalCount(applicationList.size()).responseInfo(responseInfo).build();
+                return new ResponseEntity<>(applicationListResponse, HttpStatus.OK);
+            } catch (Exception e) {
                 return new ResponseEntity<ApplicationListResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<ApplicationListResponse>(HttpStatus.NOT_IMPLEMENTED);
-    }
 
     @RequestMapping(value="/application/v1/update", method = RequestMethod.POST)
     public ResponseEntity<ApplicationResponse> applicationV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update application(s) + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody ApplicationRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
             try {
-                return new ResponseEntity<ApplicationResponse>(objectMapper.readValue("{  \"application\" : {    \"filingNumber\" : \"filingNumber\",    \"applicationType\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"workflow\" : {      \"action\" : \"action\",      \"assignees\" : [ \"assignees\", \"assignees\" ],      \"comment\" : \"comment\"    },    \"applicationNumber\" : \"Application 1 of the year 2024\",    \"documents\" : [ {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    }, {      \"documentType\" : \"documentType\",      \"documentUid\" : \"documentUid\",      \"fileStore\" : \"fileStore\",      \"id\" : \"id\",      \"additionalDetails\" : { }    } ],    \"issuedBy\" : {      \"benchID\" : \"benchID\",      \"judgeID\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],      \"courtID\" : \"courtID\"    },    \"onBehalfOf\" : [ \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\", \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\" ],    \"cnrNumber\" : \"cnrNumber\",    \"isActive\" : true,    \"additionalDetails\" : \"additionalDetails\",    \"referenceId\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"statuteSection\" : {      \"subsections\" : [ \"subsections\", \"subsections\" ],      \"tenantId\" : \"tenantId\",      \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",      \"additionalDetails\" : \"additionalDetails\",      \"statute\" : \"statute\",      \"sections\" : [ \"sections\", \"sections\" ],      \"auditdetails\" : {        \"lastModifiedTime\" : 1,        \"createdBy\" : \"createdBy\",        \"lastModifiedBy\" : \"lastModifiedBy\",        \"createdTime\" : 6      }    },    \"createdDate\" : \"createdDate\",    \"createdBy\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"tenantId\" : \"tenantId\",    \"comment\" : \"comment\",    \"id\" : \"046b6c7f-0b8a-43b9-b35d-6489e6daee91\",    \"status\" : \"status\"  },  \"responseInfo\" : {    \"ver\" : \"ver\",    \"resMsgId\" : \"resMsgId\",    \"msgId\" : \"msgId\",    \"apiId\" : \"apiId\",    \"ts\" : 0,    \"status\" : \"SUCCESSFUL\"  }}", ApplicationResponse.class), HttpStatus.NOT_IMPLEMENTED);
-            } catch (IOException e) {
+                Application application = applicationService.updateApplication(body);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+                ApplicationResponse applicationResponse = ApplicationResponse.builder().application(application).responseInfo(responseInfo).build();
+                return new ResponseEntity<>(applicationResponse, HttpStatus.OK);
+            } catch (Exception e) {
                 return new ResponseEntity<ApplicationResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-        }
-
-        return new ResponseEntity<ApplicationResponse>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }
