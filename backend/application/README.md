@@ -19,3 +19,6 @@ Change default port value in application.properties
 
 Workflow related to Application module:
 [ApplicationWorkflowConfigJson](../../docs/application/workflow/workflowConfig.json)
+
+API-specs for application 
+[application-api-specs](../../api_specifications/application-api-0.1.0.yaml)
