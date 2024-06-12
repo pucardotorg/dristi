@@ -148,19 +148,16 @@ function CaseType({ t }) {
                     subsections: ["138", "03."],
                   },
                 ],
-                litigants: [
-                  {
-                    tenantId,
-                    partyCategory: "INDIVIDUAL",
-                  },
-                ],
-                representatives: [
-                  {
-                    advocateId: advocateId ? advocateId : null,
-                    tenantId,
-                    representing: [],
-                  },
-                ],
+                litigants: [],
+                representatives: advocateId
+                  ? [
+                      {
+                        advocateId: advocateId,
+                        tenantId,
+                        representing: [],
+                      },
+                    ]
+                  : [],
                 documents: [],
                 workflow: {
                   action: "SAVE_DRAFT",

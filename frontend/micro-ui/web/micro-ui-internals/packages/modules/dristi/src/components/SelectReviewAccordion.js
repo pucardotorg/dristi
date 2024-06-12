@@ -212,6 +212,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 {Array.isArray(input.data) &&
                   input.data.map((item, index) => {
                     const dataErrors = sectionValue?.form?.[index];
+                    const titleHeading = input.name === "chequeDetails" ? true : false;
                     return (
                       <CustomReviewCard
                         isScrutiny={isScrutiny}
@@ -226,6 +227,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         input={input}
                         dataErrors={dataErrors}
                         configKey={config.key}
+                        titleHeading={titleHeading}
                       />
                     );
                   })}

@@ -3,7 +3,7 @@ import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 
-const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError, t, config }) => {
+const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError, t, config, titleHeading }) => {
   const { type = null, label = null, value = null, badgeType = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const extractValue = (data, key) => {
@@ -33,7 +33,7 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
       return (
         <div className={`title-main ${isScrutiny && dataError && "error"}`}>
           <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-            <div>{`${titleIndex}. ${title}`}</div>
+            <div>{`${titleIndex}. ${titleHeading == true ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
             {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
             {isScrutiny && (

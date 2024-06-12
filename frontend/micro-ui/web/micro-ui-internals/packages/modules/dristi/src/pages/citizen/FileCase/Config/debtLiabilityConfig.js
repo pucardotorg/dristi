@@ -90,7 +90,12 @@ const debtLiabilityFromconfig = [
         key: "totalAmount",
         label: "CS_TOTAL_CHEQUE_AMOUNT",
         populators: {
-          validation: {},
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_CHECK_COUNT_INVALID",
+              value: /^\d{1,12}$/,
+            },
+          },
           title: "FIRST_TERMS_AND_CONDITIONS",
           name: "Terms_Conditions",
         },

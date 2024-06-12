@@ -266,7 +266,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           </div>
         ) : (
           <Button
-            label={"VERIFY_OTP"}
+            label={t("VERIFY_OTP")}
             style={{ alignItems: "center" }}
             className={"secondary-button-selector"}
             labelClassName={"secondary-label-selector"}
