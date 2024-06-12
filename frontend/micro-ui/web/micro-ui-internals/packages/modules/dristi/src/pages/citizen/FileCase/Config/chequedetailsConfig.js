@@ -89,6 +89,12 @@ export const chequeDetailsFormConfig = [
         label: "CS_IFSC_CODE",
         isMandatory: true,
         populators: {
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_IFSC_INVALID",
+              value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+            },
+          },
           name: "ifsc",
         },
       },
