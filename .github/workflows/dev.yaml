@@ -40,13 +40,22 @@ jobs:
           run_job_case=false 
           run_job_order=false
           run_job_digit_ui=false
-          for path in backend/advocate backend/case backend/order frontend/micro-ui
+          while IFS= read -r file
           do
-            if grep -q "^$path/" files.txt; then
-              echo "This modified file is under the '$path' folder."
-              echo "::set-output name=run_job_${path##*/}::true"
+            if [[ $file == backend/advocate/* ]]; then
+              echo "This modified file is under the 'advocate' folder."
+              run_job_advocate=true
+            elif [[ $file == backend/case/* ]]; then
+              echo "This modified file is under the 'case' folder."
+              run_job_case=true
+            elif [[ $file == backend/order/* ]]; then
+              echo "This modified file is under the 'order' folder."
+              run_job_order=true
+            elif [[ $file == frontend/micro-ui/* ]]; then
+              echo "This modified file is under the 'digit-ui' folder."
+              run_job_digit_ui=true
             fi
-          done
+          done < files.txt
           
           # Set the output based on whether the job should run
           echo "::set-output name=run_job_advocate::$run_job_advocate"
