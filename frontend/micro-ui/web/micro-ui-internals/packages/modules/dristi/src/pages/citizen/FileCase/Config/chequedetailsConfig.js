@@ -6,6 +6,14 @@ export const chequeDetailsFormConfig = [
         label: "CS_DISHONOURED_CHEQUE_SIGNATORY_NAME",
         isMandatory: true,
         populators: {
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            patternType: "Name",
+            minLength: 2,
+          },
           name: "chequeSignatoryName",
         },
       },
@@ -41,6 +49,14 @@ export const chequeDetailsFormConfig = [
         label: "CS_NAME_ON_CHEQUE",
         isMandatory: true,
         populators: {
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            patternType: "Name",
+            minLength: 2,
+          },
           name: "name",
         },
       },
