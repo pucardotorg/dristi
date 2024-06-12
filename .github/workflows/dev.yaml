@@ -66,7 +66,7 @@ jobs:
           echo "::set-output name=run_job_advocate::$run_job_advocate"
           echo "::set-output name=run_job_case::$run_job_case"
           echo "::set-output name=run_job_order::$run_job_order"
-          echo "::set-output name=run_job_order::$run_job_application"
+          echo "::set-output name=run_job_application::$run_job_application"
           echo "::set-output name=run_job_digit_ui::$run_job_digit_ui"
           
       - name: Build and analyze advocate
