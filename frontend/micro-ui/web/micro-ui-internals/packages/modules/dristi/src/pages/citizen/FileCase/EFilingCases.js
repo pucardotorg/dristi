@@ -546,7 +546,6 @@ function EFilingCases({ path }) {
 
               let updatedValue = value?.replace(/\D/g, "");
               if (updatedValue?.length > 12) {
-                console.log(updatedValue?.length);
                 updatedValue = updatedValue.substring(0, 12);
               }
 
@@ -797,6 +796,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: "Company documents",
                     };
                   }
                 })
@@ -852,6 +852,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: "Company documents",
                     };
                   }
                 })
@@ -883,6 +884,7 @@ function EFilingCases({ path }) {
         depositChequeFileUpload: {},
         returnMemoFileUpload: {},
       };
+      const infoBoxData = { header: "CS_COMMON_NOTE", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
       const newFormData = await Promise.all(
         formdata
           .filter((item) => item.isenabled)
@@ -896,6 +898,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["bouncedChequeFileUpload"],
                     };
                   }
                 })
@@ -910,6 +913,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["depositChequeFileUpload"],
                     };
                   }
                 })
@@ -924,10 +928,19 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["returnMemoFileUpload"],
                     };
                   }
                 })
               );
+            }
+
+            if (
+              data?.data?.depositDate &&
+              data?.data?.issuanceDate &&
+              new Date(data?.data?.issuanceDate).getTime() + 6 * 30 * 24 * 60 * 60 * 1000 > new Date(data?.data?.depositDate).getTime()
+            ) {
+              infoBoxData.data.splice(0, 0, "CS_SIX_MONTH_BEFORE_DEPOSIT_TEXT");
             }
 
             return {
@@ -935,6 +948,7 @@ function EFilingCases({ path }) {
               data: {
                 ...data.data,
                 ...documentData,
+                infoBoxData,
               },
             };
           })
@@ -962,6 +976,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["debtLiabilityFileUpload"],
                     };
                   }
                 })
@@ -1014,6 +1029,7 @@ function EFilingCases({ path }) {
                         documentType: uploadedData.fileType || document?.documentType,
                         fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                         documentName: uploadedData.filename || document?.documentName,
+                        fileName: pageConfig?.selectDocumentName?.[curr],
                       };
                     }
                   })
@@ -1056,6 +1072,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["condonationFileUpload"],
                     };
                   }
                 })
@@ -1080,6 +1097,7 @@ function EFilingCases({ path }) {
     }
     if (selected === "prayerSwornStatement") {
       const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
+      const infoBoxData = { header: "", data: "" };
       const newFormData = await Promise.all(
         formdata
           .filter((item) => item.isenabled)
@@ -1119,6 +1137,7 @@ function EFilingCases({ path }) {
                           fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
                           documentName: data.filename || data?.documentName,
                           artifactId: evidenceData?.artifact?.id,
+                          fileName: docWithNameData?.document[0]?.name,
                         },
                       ];
                     });
@@ -1147,6 +1166,7 @@ function EFilingCases({ path }) {
                         documentType: uploadedData.fileType || document?.documentType,
                         fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                         documentName: uploadedData.filename || document?.documentName,
+                        fileName: pageConfig?.selectDocumentName?.[curr],
                       };
                     }
                   })
@@ -1163,6 +1183,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["memorandumOfComplaint"],
                     };
                   }
                 })
@@ -1179,12 +1200,21 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["prayerForRelief"],
                     };
                   }
                 })
               );
             } else if (data?.data?.prayerForRelief?.text) {
               documentData.prayerForRelief.text = data?.data?.prayerForRelief?.text;
+            }
+
+            if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
+              infoBoxData.header = "CS_RESOLVE_WITH_ADR";
+              debugger;
+              if (data?.data?.caseSettlementCondition?.text) {
+                infoBoxData.data = data?.data?.caseSettlementCondition?.text;
+              }
             }
             return {
               ...data,
@@ -1195,6 +1225,7 @@ function EFilingCases({ path }) {
                   ...data?.data?.SelectCustomDragDrop,
                   ...documentData.SelectCustomDragDrop,
                 },
+                infoBoxData,
               },
             };
           })
@@ -1222,6 +1253,7 @@ function EFilingCases({ path }) {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                       documentName: uploadedData.filename || document?.documentName,
+                      fileName: pageConfig?.selectDocumentName?.["vakalatnamaFileUpload"],
                     };
                   }
                 })
@@ -1263,10 +1295,6 @@ function EFilingCases({ path }) {
           isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
         },
       };
-    }
-    if (!!resetFormData) {
-      resetFormData();
-      setIsDisabled(false);
     }
     return DRISTIService.caseUpdateService(
       {

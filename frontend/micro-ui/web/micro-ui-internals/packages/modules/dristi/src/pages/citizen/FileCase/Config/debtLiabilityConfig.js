@@ -171,4 +171,7 @@ export const debtliabilityconfig = {
   subtext: "CS_DEBT_LIABILITY_SUBTEXT",
   isOptional: false,
   className: "debt-liability",
+  selectDocumentName: {
+    debtLiabilityFileUpload: "CS_PROOF_DEBT",
+  },
 };

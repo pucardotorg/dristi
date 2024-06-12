@@ -47,7 +47,6 @@ function SendCaseBack({ t }) {
       [config]
     )
   );
-  console.log(stepItems, config);
   const onSubmit = (props) => {
     setPage(1);
   };

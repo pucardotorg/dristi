@@ -43,7 +43,7 @@ const prayerAndSwornFormConfig = [
               name: "NO",
             },
             {
-              code: "Maybe",
+              code: "MAYBE",
               name: "Maybe",
             },
           ],
@@ -247,4 +247,9 @@ export const prayerAndSwornConfig = {
   header: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
   // addFormText: "ADD_DOCUMENT",
   className: "prayer-and-sworm",
+  selectDocumentName: {
+    memorandumOfComplaint: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
+    prayerForRelief: "CS_PRAYER_FOR_RELIEF_HEADER",
+    swornStatement: "CS_SWORN_STATEMENT_HEADER",
+  },
 };

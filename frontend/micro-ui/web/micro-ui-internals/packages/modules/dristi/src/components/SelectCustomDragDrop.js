@@ -29,7 +29,7 @@ const DragDropJSX = ({ t, currentValue }) => {
   );
 };
 
-function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
+function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -123,8 +123,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           />
           <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
         </div>
-        {
-          input.downloadTemplateText && input.downloadTemplateLink &&
+        {input.downloadTemplateText && input.downloadTemplateLink && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
             {input?.downloadTemplateText && t(input?.downloadTemplateText)}
             {input?.downloadTemplateLink && (
@@ -146,7 +145,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
               </a>
             )}
           </div>
-        }
+        )}
       </div>
     );
   });
