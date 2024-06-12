@@ -22,7 +22,7 @@ const Modal = ({
   headerBarMainStyle,
   isOBPSFlow = false,
   popupModuleActionBarStyles = {},
-  submitTextClassName = {},
+  submitTextClassName = "",
   className
 }) => {
   /**

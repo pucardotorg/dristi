@@ -54,4 +54,5 @@ export const signatureconfig = {
   header: "CS_ADD_SIGNATURE",
   subtext: "CS_ADD_SIGNATURE_SUBTEXT",
   confirmmodalconfig,
+  className: "signature",
 };
