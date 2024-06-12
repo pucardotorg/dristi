@@ -195,6 +195,7 @@ const prayerAndSwornFormConfig = [
               type: "TextAreaComponent",
               isOptional: true,
               headerClassName: "dristi-font-bold",
+              subHeaderClassName: "subheader-bold-class",
             },
           ],
         },

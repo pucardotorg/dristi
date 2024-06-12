@@ -38,7 +38,7 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "respondentType.name" },
                 { type: "phonenumber", label: "PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
-                { type: "text", label: "CS_EMAIL", value: "emails.emailId" },
+                { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
               data: RespondentDummy,
@@ -60,7 +60,7 @@ export const reviewCaseFileFormConfig = [
               label: "CS_CHECKQUE_DETAILS",
               icon: "ChequeDetailsIcon",
               config: [
-                { type: "title", value: "chequeNumber" },
+                { type: "title", label: "CS_CHEQUE_NO", value: "chequeNumber" },
                 { type: "amount", label: "CS_CHEQUE_AMOUNT", value: "chequeAmount" },
                 { type: "text", label: "CS_CHEQUE_ISSUED_TO", value: "name" },
                 { type: "text", label: "CS_PAYER_BANK", value: "payerbank" },
@@ -80,7 +80,7 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "text", label: "CS_NATURE_OF_DEBT", value: "liabilityNature.name" },
                 { type: "text", label: "CS_CHEQUE_RECIEVED_FOR", value: "liabilityType.name" },
-                { type: "image", label: "Documents", value: ["debtLiabilityFileUpload.document"] },
+                { type: "image", label: "CS_DOCUMENT", value: ["debtLiabilityFileUpload.document"] },
               ],
               data: DebtDummy,
             },
@@ -138,7 +138,7 @@ export const reviewCaseFileFormConfig = [
               label: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
               icon: "PrayerSwornIcon",
               config: [
-                { type: "text", label: "CS_PRAYER_RELIEF", value: "prayerForRelief.text" },
+                { type: "text", label: "CS_PRAYER_FOR_RELIEF_HEADER", value: "prayerForRelief.text" },
                 { type: "text", label: "ADDRESS", value: "addressDetails" },
                 {
                   type: "image",
