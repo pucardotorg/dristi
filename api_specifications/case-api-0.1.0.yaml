@@ -671,6 +671,8 @@ components:
       properties:
         caseId:
           type: string
+        defaultFields:
+          type: boolean
         cnrNumber:
           type: string
         filingNumber:
