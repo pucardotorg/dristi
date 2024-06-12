@@ -24,11 +24,19 @@ const SUPPORTED_FILE_FORMATS = [
   ".xls",
 ];
 
-const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename }) => {
+const DocViewerWrapper = ({
+  style,
+  fileStoreId,
+  tenantId,
+  displayFilename,
+  selectedDocs = [],
+  docViewerCardClassName,
+  showDownloadOption = true,
+}) => {
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
   const { fileUrl, fileName } = Digit.Hooks.useQueryParams();
-  const [selectedDocs, setSelectedDocs] = useState([]);
+  // const [selectedDocs, setSelectedDocs] = useState([]);
   const uri = `${window.location.origin}${Urls.FileFetchById}?tenantId=${tenantId}&fileStoreId=${fileStoreId}`;
   const documents = fileStoreId
     ? [{ uri: uri || "", fileName: "fileName" }]
@@ -39,13 +47,23 @@ const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename }) => {
 
   return (
     <div className="docviewer-wrapper" id="docviewer-id">
-      <Card>
+      <Card className={docViewerCardClassName}>
         {documents?.length != 0 && (
           <>
             <DocViewer
+              className="docViewer-image"
               documents={documents}
               pluginRenderers={DocViewerRenderers}
-              style={{ width: 262, height: 206 }}
+              style={{ width: 262, height: 206, ...style }}
+              theme={{
+                primary: "#F47738",
+                secondary: "#feefe7",
+                tertiary: "#feefe7",
+                textPrimary: "#0B0C0C",
+                textSecondary: "#505A5F",
+                textTertiary: "#00000099",
+                disableThemeScrollbar: true,
+              }}
               config={{
                 header: {
                   disableHeader: true,
@@ -63,22 +81,24 @@ const DocViewerWrapper = ({ fileStoreId, tenantId, displayFilename }) => {
           </>
         )}
       </Card>
-      <a
-        href={uri}
-        target="_blank"
-        rel="noreferrer"
-        style={{
-          display: "flex",
-          color: "#505A5F",
-          textDecoration: "none",
-          width: 250,
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        {displayFilename || t("CS_CLICK_TO_DOWNLOAD")}
-      </a>
+      {showDownloadOption && (
+        <a
+          href={uri}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "flex",
+            color: "#505A5F",
+            textDecoration: "none",
+            width: 250,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {displayFilename || t("CS_CLICK_TO_DOWNLOAD")}
+        </a>
+      )}
     </div>
   );
 };

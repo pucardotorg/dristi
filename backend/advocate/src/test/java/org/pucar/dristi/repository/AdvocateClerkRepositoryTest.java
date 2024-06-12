@@ -1,6 +1,8 @@
 package org.pucar.dristi.repository;
 
+import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,15 +18,15 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.pucar.dristi.config.ServiceConstants.TEST_EXCEPTION;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvocateClerkRepositoryTest {
+
+    @InjectMocks
+    private AdvocateClerkRepository advocateClerkRepository;
 
     @Mock
     private AdvocateClerkQueryBuilder queryBuilder;
@@ -38,88 +40,190 @@ public class AdvocateClerkRepositoryTest {
     @Mock
     private AdvocateClerkDocumentRowMapper documentRowMapper;
 
-    @InjectMocks
-    private AdvocateClerkRepository repository;
+    private List<AdvocateClerkSearchCriteria> searchCriteriaList;
+    private AdvocateClerkSearchCriteria searchCriteria;
+    private List<AdvocateClerk> advocateClerkList;
+    private Map<UUID, List<Document>> documentMap;
+    private AtomicReference<Boolean> isIndividualLoggedInUser;
 
-    // Positive Test Cases
+    @BeforeEach
+    public void setUp() {
+        searchCriteria = new AdvocateClerkSearchCriteria();
+        searchCriteriaList = new ArrayList<>();
+        searchCriteriaList.add(searchCriteria);
 
-    @Test
-    public void testGetApplications_EmptySearchCriteria() {
-        List<AdvocateClerkSearchCriteria> searchCriteria = Collections.emptyList();
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
-        repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
-        verify(queryBuilder).getAdvocateClerkSearchQuery(eq(searchCriteria), anyList(), anyList(), anyString(), any(), any(), any());
+        advocateClerkList = new ArrayList<>();
+        AdvocateClerk clerk = new AdvocateClerk();
+        clerk.setId(UUID.randomUUID());
+        advocateClerkList.add(clerk);
+
+        documentMap = new HashMap<>();
+        documentMap.put(clerk.getId(), new ArrayList<>());
     }
 
     @Test
-    public void testGetApplications_NoDocumentsForAdvocates() {
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
-        List<AdvocateClerk> mockAdvocates = createMockAdvocateClerks(1);
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(), any())).thenReturn("Mocked Query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class))).thenReturn(mockAdvocates);
-        List<AdvocateClerk> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
+    public void testGetApplications() {
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+                .thenReturn("SELECT * FROM documents");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class)))
+                .thenReturn(documentMap);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", 10, 0);
+
+        assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(null, result.get(0).getDocuments());
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
+        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
     }
-
-    // Negative Test Cases
-
-    @Test()
-    public void testGetApplications_QueryBuilderThrowsException() {
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(), any())).thenThrow(new RuntimeException("Mocked Exception"));
-        try {
-            repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
-        } catch (Exception e) {
-            // Verify expected exception
-            assertTrue(e instanceof CustomException);
-            assertEquals("Error while fetching advocate clerk application list: Mocked Exception", e.getMessage());
-        }
-    }
-
-    @Test()
-    public void testGetApplications_JdbcTemplateThrowsException_AdvocateQuery() {
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(), any(), any(),any())).thenReturn("Mocked Query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class))).thenThrow(new CustomException(TEST_EXCEPTION,"Mock test"));
-        try {
-            repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false), null, null);
-        } catch (Exception e) {
-            // Verify expected exception
-            assertTrue(e instanceof CustomException);
-            assertEquals("Mock test", e.getMessage());
-        }
-    }
-
-    // Neutral Test Cases
 
     @Test
-    public void testGetApplications_EmptyAdvocateClerkList() {
-        List<AdvocateClerkSearchCriteria> searchCriteria = new ArrayList<>();
-        List<String> statusList = Arrays.asList("APPROVED", "PENDING");
-        String applicationNumber = "";
-        when(queryBuilder.getAdvocateClerkSearchQuery(anyList(), anyList(), anyList(), anyString(),any(), any(), any())).thenReturn("Mocked Query");
-        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class))).thenReturn(Collections.emptyList());
-        List<AdvocateClerk> result = repository.getApplications(searchCriteria, statusList, applicationNumber, new AtomicReference<>(false),null, null);
-        assertEquals(Collections.emptyList(), result);
+    public void testGetApplicationsEmpty() {
+        advocateClerkList = new ArrayList<>();
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
-    // Helper method to create mock AdvocateClerks
-    private List<AdvocateClerk> createMockAdvocateClerks(int numClerks) {
-        List<AdvocateClerk> clerks = new ArrayList<>();
-        for (int i = 0; i < numClerks; i++) {
-            AdvocateClerk clerk = new AdvocateClerk();
-            clerk.setId(UUID.randomUUID());
-            // Set other AdvocateClerk properties as needed
-            clerks.add(clerk);
-        }
-        return clerks;
+    @Test
+    public void testGetApplicationsByStatus() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+                .thenReturn("SELECT * FROM documents");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class)))
+                .thenReturn(documentMap);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
+        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
     }
+
+    @Test
+    public void testGetApplicationsByStatusWithEmptySuccess() {
+        advocateClerkList = new ArrayList<>();
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk WHERE status = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumber() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+                .thenReturn("SELECT * FROM documents");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class)))
+                .thenReturn(documentMap);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        verify(queryBuilder, times(1)).getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class));
+        verify(queryBuilder, times(1)).getDocumentSearchQuery(anyList(), anyList());
+        verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(AdvocateClerkDocumentRowMapper.class));
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumberWithEmptySuccess() {
+        advocateClerkList = new ArrayList<>();
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenReturn("SELECT * FROM advocate_clerk WHERE application_number = ?");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(AdvocateClerkRowMapper.class)))
+                .thenReturn(advocateClerkList);
+
+        List<AdvocateClerk> result = advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetApplications_Exception() {
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplications_CustomException() {
+        when(queryBuilder.getAdvocateClerkSearchQuery(any(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplications(
+                searchCriteriaList, "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByStatus_CustomException() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByStatus_Exception() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByStatus(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateClerkRepository.getApplicationsByStatus(
+                "status", "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumber_CustomException() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new CustomException());
+
+        assertThrows(CustomException.class, () -> advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0));
+    }
+
+    @Test
+    public void testGetApplicationsByAppNumber_Exception() {
+        when(queryBuilder.getAdvocateClerkSearchQueryByAppNumber(anyString(), anyList(), anyString(), anyInt(), anyInt()))
+                .thenThrow(new RuntimeException());
+
+        assertThrows(Exception.class, () -> advocateClerkRepository.getApplicationsByAppNumber(
+                "appNumber", "tenantId", 10, 0));
+    }
+
 }

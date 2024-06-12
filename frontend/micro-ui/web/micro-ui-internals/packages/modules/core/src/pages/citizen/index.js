@@ -108,7 +108,7 @@ const Home = ({
     window.open(obj);
   };
 
-  const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e));
+  const hideSidebar = sidebarHiddenFor.some((e) => window.location.href.includes(e)) || true;
   const appRoutes = modules.map(({ code, tenants }, index) => {
     const Module = Digit.ComponentRegistryService.getComponent(`${code}Module`);
     return Module ? (
@@ -143,12 +143,12 @@ const Home = ({
                   Info={
                     code === "OBPS"
                       ? () => (
-                          <CitizenInfoLabel
-                            style={{ margin: "0px", padding: "10px" }}
-                            info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                            text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
-                          />
-                        )
+                        <CitizenInfoLabel
+                          style={{ margin: "0px", padding: "10px" }}
+                          info={t("CS_FILE_APPLICATION_INFO_LABEL")}
+                          text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
+                        />
+                      )
                       : null
                   }
                   isInfo={code === "OBPS" ? true : false}
@@ -188,7 +188,7 @@ const Home = ({
       <div className={`main center-container citizen-home-container mb-25`}>
         {hideSidebar ? null : (
           <div>
-            <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} />
+            {/* <StaticCitizenSideBar linkData={linkData} islinkDataLoading={islinkDataLoading} /> */}
           </div>
         )}
 
@@ -242,16 +242,6 @@ const Home = ({
             {ModuleLevelLinkHomePages}
           </ErrorBoundary>
         </Switch>
-      </div>
-      <div className="citizen-home-footer" style={window.location.href.includes("citizen/obps") ? { zIndex: "-1" } : {}}>
-        <img
-          alt="Powered by DIGIT"
-          src={window?.globalConfigs?.getConfig?.("DIGIT_FOOTER")}
-          style={{ height: "1.2em", cursor: "pointer" }}
-          onClick={() => {
-            window.open(window?.globalConfigs?.getConfig?.("DIGIT_HOME_URL"), "_blank").focus();
-          }}
-        />
       </div>
     </div>
   );

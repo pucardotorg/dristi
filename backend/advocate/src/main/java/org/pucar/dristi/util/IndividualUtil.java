@@ -54,7 +54,7 @@ public class IndividualUtil {
             return false;
         }
         catch (CustomException e) {
-            log.error("Custom Exception occurred in Individual Utility");
+            log.error("Custom Exception occurred in Individual Utility :: {}", e.toString());
             throw e;
         }
         catch (Exception e){

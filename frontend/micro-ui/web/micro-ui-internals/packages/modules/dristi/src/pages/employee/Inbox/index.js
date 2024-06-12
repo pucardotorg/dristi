@@ -1,7 +1,6 @@
+import { CustomDropdown, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import { CustomDropdown, Header, InboxSearchComposer, Loader } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { dropdownConfig, newconfigAdvocate, newconfigClerk } from "./config";
 
@@ -20,10 +19,11 @@ const Inbox = ({ tenants, parentRoute }) => {
   Digit.SessionStorage.set("ENGAGEMENT_TENANTS", tenants);
   const tenantId = Digit.ULBService.getCurrentTenantId();
   let isMobile = window.Digit.Utils.browser.isMobile();
-  const [data, setData] = useState([]);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const type = urlParams.get("type") || "advocate";
+  const actions = urlParams.get("actions");
+
   const defaultType = { code: type, name: type?.charAt(0)?.toUpperCase() + type?.slice(1) };
   const [{ userType }, setSearchParams] = useState({
     eventStatus: [],
@@ -35,17 +35,11 @@ const Inbox = ({ tenants, parentRoute }) => {
     userType: defaultType,
     ulb: tenants?.find((tenant) => tenant?.code === tenantId),
   });
-  const { isLoading } = data;
-
-  if (isLoading) {
-    return <Loader />;
-  }
 
   return (
     <React.Fragment>
-      <div style={{ paddingLeft: "20px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <Header>{t("Registration-Requests")}</Header>
+      <div className="registration-requests">
+        <div className="header-class">
           <CustomDropdown
             t={t}
             defaulValue={defaultType}

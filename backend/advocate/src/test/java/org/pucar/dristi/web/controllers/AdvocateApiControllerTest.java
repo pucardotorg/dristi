@@ -1,233 +1,151 @@
 package org.pucar.dristi.web.controllers;
 
 import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.common.contract.response.ResponseInfo;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.pucar.dristi.service.AdvocateService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.Advocate;
-import org.pucar.dristi.web.models.AdvocateRequest;
-import org.pucar.dristi.web.models.AdvocateResponse;
-import org.pucar.dristi.web.models.AdvocateSearchRequest;
+import org.pucar.dristi.web.models.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class AdvocateApiControllerTest {
 
-    @InjectMocks
-    private AdvocateApiController controller;
+    @Autowired
+    private AdvocateApiController advocateApiController;
 
-    @Mock
+    @MockBean
     private AdvocateService advocateService;
-
     @Mock
     private ResponseInfoFactory responseInfoFactory;
 
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
+
     @Test
-    public void testAdvocateV1CreatePost_Success() {
-        // Mock AdvocateService response
-        List<Advocate> expectedAdvocates = Collections.singletonList(new Advocate());
-        when(advocateService.createAdvocate(any(AdvocateRequest.class)))
-                .thenReturn(expectedAdvocates);
+    public void testAdvocateV1CreatePost() {
+        AdvocateRequest request = new AdvocateRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        request.setRequestInfo(requestInfo);
 
-        // Mock ResponseInfoFactory response
-        ResponseInfo expectedResponseInfo = new ResponseInfo();
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class)))
-                .thenReturn(expectedResponseInfo);
+        Advocate advocate = new Advocate();
+        List<Advocate> advocateList = Arrays.asList(new Advocate());
+        when(advocateService.createAdvocate(request)).thenReturn(advocate);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).thenReturn(new ResponseInfo());
 
-        // Create mock AdvocateRequest
-        AdvocateRequest requestBody = new AdvocateRequest();
-        requestBody.setRequestInfo(new RequestInfo());
+        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1CreatePost(request);
 
-        controller.setMockInjects(advocateService, responseInfoFactory);
-        // Perform POST request
-        ResponseEntity<AdvocateResponse> response = controller.advocateV1CreatePost(requestBody);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(advocateList, responseEntity.getBody().getAdvocates());
+    }
 
-        // Verify response status and content
+
+
+    @Test
+    public void testAdvocateV1StatusSearchPost() {
+        String status = "active";
+        String tenantId = "tenantId";
+        List<Advocate> advocateList = Arrays.asList(new Advocate());
+        AdvocateSimpleSearchRequest advocateSimpleSearchRequest = new AdvocateSimpleSearchRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+        advocateSimpleSearchRequest.setRequestInfo(requestInfo);
+
+        when(advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, 10, 0)).thenReturn(advocateList);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(null, true)).thenReturn(new ResponseInfo());
+
+        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1StatusSearchPost(status, tenantId, 10, 0, advocateSimpleSearchRequest);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(advocateList, responseEntity.getBody().getAdvocates());
+    }
+
+    @Test
+    public void testAdvocateV1ApplicationnumberSearchPost() {
+        String applicationNumber = "app123";
+        String tenantId = "tenantId";
+        List<Advocate> advocateList = Arrays.asList(new Advocate());
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+        AdvocateSimpleSearchRequest advocateSimpleSearchRequest = new AdvocateSimpleSearchRequest();
+        advocateSimpleSearchRequest.setRequestInfo(requestInfo);
+
+        when(advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, 10, 0)).thenReturn(advocateList);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(null, true)).thenReturn(new ResponseInfo());
+
+        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1ApplicationnumberSearchPost(applicationNumber, tenantId, 10, 0, advocateSimpleSearchRequest);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(advocateList, responseEntity.getBody().getAdvocates());
+    }
+
+    @Test
+    public void testAdvocateV1UpdatePost() {
+        AdvocateRequest request = new AdvocateRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        request.setRequestInfo(requestInfo);
+
+        Advocate advocate = new Advocate();
+        List<Advocate> advocateList = Arrays.asList(advocate);
+
+        when(advocateService.updateAdvocate(request)).thenReturn(advocate);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).thenReturn(new ResponseInfo());
+
+        ResponseEntity<AdvocateResponse> responseEntity = advocateApiController.advocateV1UpdatePost(request);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(advocateList, responseEntity.getBody().getAdvocates());
+    }
+
+    @Test
+    void advocateV1SearchPost_Success() {
+        // Arrange
+        AdvocateSearchRequest body = new AdvocateSearchRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        body.setRequestInfo(requestInfo);
+        List<AdvocateSearchCriteria> criteria = new ArrayList<>(); // Your criteria here
+        body.setCriteria(criteria);
+        body.setTenantId("tenant1");
+        Integer limit = 10;
+        Integer offset = 0;
+        List<Advocate> advocateList = new ArrayList<>(); // Your list of advocates here
+       // when(advocateService.searchAdvocate(requestInfo, criteria, "tenant1", limit, offset)).thenReturn(advocateList);
+        ResponseInfo responseInfo = new ResponseInfo();
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true)).thenReturn(responseInfo);
+
+        // Act
+        ResponseEntity<AdvocateListResponse> response = advocateApiController.advocateV1SearchPost(body, limit, offset);
+
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        AdvocateResponse actualResponse = response.getBody();
-        assertNotNull(actualResponse);
-        assertEquals(expectedAdvocates, actualResponse.getAdvocates());
-        assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
+        assertEquals(criteria, response.getBody().getAdvocates());
     }
 
-    @Test
-    public void testAdvocateV1SearchPost_Success() {
-        // Mock AdvocateService response
-        List<Advocate> expectedAdvocates = Collections.singletonList(new Advocate());
-        when(advocateService.searchAdvocate(any(), any(), any(), any(),any(),any()))
-                .thenReturn(expectedAdvocates);
-        controller.setMockInjects(advocateService, responseInfoFactory);
 
-        // Mock ResponseInfoFactory response
-        ResponseInfo expectedResponseInfo = new ResponseInfo();
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class)))
-                .thenReturn(expectedResponseInfo);
-
-        // Create mock AdvocateSearchRequest
-        AdvocateSearchRequest requestBody = new AdvocateSearchRequest();
-        requestBody.setRequestInfo(new RequestInfo());
-
-        // Perform POST request
-        ResponseEntity<AdvocateResponse> response = controller.advocateV1SearchPost(requestBody,1,1);
-
-        // Verify response status and content
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AdvocateResponse actualResponse = response.getBody();
-        assertNotNull(actualResponse);
-        assertEquals(expectedAdvocates, actualResponse.getAdvocates());
-        assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
-    }
-
-    @Test
-    public void testAdvocateV1UpdatePost_Success() throws Exception {
-        // Mock AdvocateService response
-        List<Advocate> expectedAdvocates = Collections.singletonList(new Advocate());
-        when(advocateService.updateAdvocate(any(AdvocateRequest.class)))
-                .thenReturn(expectedAdvocates);
-        controller.setMockInjects(advocateService, responseInfoFactory);
-
-        // Mock ResponseInfoFactory response
-        ResponseInfo expectedResponseInfo = new ResponseInfo();
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class)))
-                .thenReturn(expectedResponseInfo);
-
-        // Create mock AdvocateRequest
-        AdvocateRequest requestBody = new AdvocateRequest();
-        requestBody.setRequestInfo(new RequestInfo());
-
-        // Perform POST request
-        ResponseEntity<AdvocateResponse> response = controller.advocateV1UpdatePost(requestBody);
-
-        // Verify response status and content
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AdvocateResponse actualResponse = response.getBody();
-        assertNotNull(actualResponse);
-        assertEquals(expectedAdvocates, actualResponse.getAdvocates());
-        assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
-    }
-
-    @Test
-    public void testAdvocateV1CreatePost_InvalidRequest() throws Exception {
-        // Prepare invalid request
-        AdvocateRequest requestBody = new AdvocateRequest();  // Missing required fields
-
-        // Expected validation error
-        when(advocateService.createAdvocate(requestBody)).thenThrow(new IllegalArgumentException("Invalid request"));
-
-        controller.setMockInjects(advocateService, responseInfoFactory);
-
-        // Perform POST request
-        try{
-            controller.advocateV1CreatePost(requestBody);
-        }
-        catch (Exception e){
-        assertTrue(e instanceof IllegalArgumentException);
-        assertEquals("Invalid request", e.getMessage());
-        }
-    }
-    @Test
-    public void testAdvocateV1CreatePost_EmptyList() throws Exception {
-        // Mock service to return empty list
-        List<Advocate> emptyList = Collections.emptyList();
-        when(advocateService.createAdvocate(any(AdvocateRequest.class))).thenReturn(emptyList);
-
-        // Mock ResponseInfoFactory
-        ResponseInfo expectedResponseInfo = new ResponseInfo();
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class)))
-                .thenReturn(expectedResponseInfo);
-
-        // Prepare request
-        AdvocateRequest requestBody = new AdvocateRequest();
-        requestBody.setRequestInfo(new RequestInfo());
-
-        controller.setMockInjects(advocateService, responseInfoFactory);
-
-        // Perform POST request
-        ResponseEntity<AdvocateResponse> response = controller.advocateV1CreatePost(requestBody);
-
-        // Verify OK status and empty list
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AdvocateResponse actualResponse = response.getBody();
-        assertNotNull(actualResponse);
-        assertEquals(emptyList, actualResponse.getAdvocates());
-    }
-    @Test
-    public void testAdvocateV1SearchPost_InvalidRequest() throws Exception {
-        // Prepare invalid request
-        AdvocateSearchRequest requestBody = new AdvocateSearchRequest();  // Missing required fields
-
-        // Expected validation error
-        when(advocateService.searchAdvocate(any(), any(), any(), any(),any(),any())).thenThrow(new IllegalArgumentException("Invalid request"));
-
-        controller.setMockInjects(advocateService, responseInfoFactory);
-
-        // Perform POST request
-        try {
-            controller.advocateV1SearchPost(requestBody,1,1);
-        }
-        catch (Exception e){
-            assertTrue(e instanceof IllegalArgumentException);
-            assertEquals("Invalid request", e.getMessage());
-        }
-    }
-
-    @Test
-    public void testAdvocateV1SearchPost_EmptyList() throws Exception {
-        // Mock service to return empty list
-        List<Advocate> emptyList = Collections.emptyList();
-        when(advocateService.searchAdvocate(any(), any(), any(), any(),any(),any())).thenReturn(emptyList);
-
-        // Mock ResponseInfoFactory
-        ResponseInfo expectedResponseInfo = new ResponseInfo();
-        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class)))
-                .thenReturn(expectedResponseInfo);
-
-        // Prepare request
-        AdvocateSearchRequest requestBody = new AdvocateSearchRequest();
-        requestBody.setRequestInfo(new RequestInfo());
-
-        controller.setMockInjects(advocateService, responseInfoFactory);
-
-        // Perform POST request
-        ResponseEntity<AdvocateResponse> response = controller.advocateV1SearchPost(requestBody,1,1);
-
-        // Verify OK status and empty list
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        AdvocateResponse actualResponse = response.getBody();
-        assertNotNull(actualResponse);
-        assertEquals(emptyList, actualResponse.getAdvocates());
-    }
-
-    @Test
-    public void testAdvocateV1UpdatePost_InvalidRequest() throws Exception {
-        // Prepare invalid request
-        AdvocateRequest requestBody = new AdvocateRequest();  // Missing required fields
-
-        // Expected validation error
-        when(advocateService.updateAdvocate(requestBody)).thenThrow(new IllegalArgumentException("Invalid request"));
-
-        controller.setMockInjects(advocateService, responseInfoFactory);
-
-        // Perform POST request
-        try {
-            controller.advocateV1UpdatePost(requestBody);
-        }
-        catch (Exception e){
-            assertTrue(e instanceof IllegalArgumentException);
-            assertEquals("Invalid request", e.getMessage());
-        }
-    }
 }

@@ -121,6 +121,7 @@ const MultiUploadWrapper = ({
     } else {
       setFileErrors(validationMsg);
       setEnableButton(true);
+      return dispatch({ type: FILES_UPLOADED, payload: { files: [], fileStoreIds: [1] } });
     }
   };
 
@@ -151,9 +152,11 @@ const MultiUploadWrapper = ({
         disabled={!enableButton}
       />
       <span className="error-msg" style={{ display: "flex" }}>
-        {fileErrors.length
-          ? fileErrors.map(({ valid, name, type, size, error }) => (valid ? null : displayError({ t, error, name }, customErrorMsg)))
-          : null}
+        {fileErrors.length ? (
+          fileErrors.map(({ valid, name, type, size, error }) => (valid ? null : displayError({ t, error, name }, customErrorMsg)))
+        ) : (
+          <h1 style={{ fontSize: "12px" }}>{t("CS_DOCUMENT_UPLOAD_BLURB")}</h1>
+        )}
       </span>
     </div>
   );
