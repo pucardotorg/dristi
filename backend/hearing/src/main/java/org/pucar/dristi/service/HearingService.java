@@ -2,6 +2,8 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.HearingRegistrationEnrichment;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
@@ -71,60 +74,26 @@ public class HearingService {
         }
     }
 
-    public List<Hearing> searchHearing(String cnrNumber, String applicationNumber, String id, String fightingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
-        if (limit == null || limit<1) limit =10;
-        if (offset == null || offset<0) offset =0;
-        if (sortBy == null || sortBy !="DESC") sortBy = "ASC";
-        List<Hearing> hearingList = hearingRepository.getHearings(cnrNumber,applicationNumber,id,fightingNumber,tenentId,fromDate,toDate,limit,offset,sortBy);
-        return hearingList;
-//        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
-//        Map<String, String> individualUserUUID = new HashMap<>();
-//
-//        try {
-//            if (!EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType()) && hearingSearchCriteria != null) {
-//                Optional<HearingSearchCriteria> firstNonNull = hearingSearchCriteria.stream()
-//
-//                        // Filter out objects with non-null individualId
-//                        .filter(criteria -> Objects.nonNull(criteria.getIndividualId()))
-//                        .findFirst();
-//
-//                firstNonNull.ifPresent(value -> {
-//                    log.info("Search Criteria :: {}", value);
-//                    if (individualService.searchIndividual(requestInfo, value.getIndividualId(), individualUserUUID)) {
-//                        if (requestInfo.getUserInfo().getUuid().equals(individualUserUUID.get("userUuid"))) {
-//                            isIndividualLoggedInUser.set(true);
-//                        }
-//                    }
-//                });
-//                limit = null;
-//                offset = null;
-//            } else if (EMPLOYEE.equalsIgnoreCase(requestInfo.getUserInfo().getType())) {
-//                if (limit == null)
-//                    limit = 10;
-//                if (offset == null)
-//                    offset = 0;
-//            }
-//
-//            // Fetch applications from database according to the given search criteria
-//            List<Hearing> applications = hearingRepository.getApplications(hearingSearchCriteria, statusList, applicationNumber, isIndividualLoggedInUser, limit, offset);
-//            log.info("Application size :: {}", applications.size());
-//
-//            // If no applications are found matching the given criteria, return an empty list
-//            if (CollectionUtils.isEmpty(applications))
-//                return new ArrayList<>();
-//            if (isIndividualLoggedInUser.get()) {
-//                if (applications.size() > 1)
-//                    applications.subList(1, applications.size()).clear();
-//            }
-//            applications.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, application.getTenantId(), application.getApplicationNumber()))));
-//            return applications;
-//        } catch (CustomException e) {
-//            log.error("Custom Exception occurred while searching");
-//            throw e;
-//        } catch (Exception e) {
-//            log.error("Error while fetching to search results");
-//            throw new CustomException(ADVOCATE_SEARCH_EXCEPTION, e.getMessage());
-//        }
+    public List<Hearing> searchHearing(String cnrNumber, String applicationNumber, String hearingId, String fightingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
+
+        try{
+            RequestInfo requestInfo = new RequestInfo();
+            requestInfo.setUserInfo(new User());
+            if (limit == null || limit<1) limit =10;
+            if (offset == null || offset<0) offset =0;
+            if (!Objects.equals(sortBy, "DESC")) sortBy = "ASC";
+            List<Hearing> hearingList = hearingRepository.getHearings(cnrNumber,applicationNumber,hearingId,fightingNumber,tenentId,fromDate,toDate,limit,offset,sortBy);
+            for (Hearing hearing : hearingList){
+                hearing.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, hearing.getTenantId(), hearing.getHearingId())));
+            }
+            return hearingList;
+        }  catch (CustomException e) {
+            log.error("Custom Exception occurred while searching");
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while fetching to search results");
+            throw new CustomException(HEARING_SEARCH_EXCEPTION, e.getMessage());
+        }
     }
 
     public Hearing updateHearing(HearingRequest hearingRequest) {
@@ -132,12 +101,16 @@ public class HearingService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-//            Hearing hearing = validator.validateApplicationExistence(hearingRequest.getHearing());
-//            hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
-//            hearingRequest.setHearing(hearing);
-//            TODO: Validate hearing from DB, update hearing startDate, endDate and other fields that can be updated. Extra: add previous scheduled hearing startDate and endDate to additional details with process instance key.
-            Hearing hearing = hearingRequest.getHearing();
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getHearing());
 
+            // Updating Hearing request
+            // TODO: Validate hearing from DB. Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.
+            hearing.setWorkflow(hearingRequest.getHearing().getWorkflow());
+            hearing.setStartTime(hearingRequest.getHearing().getStartTime());
+            hearing.setEndTime(hearingRequest.getHearing().getEndTime());
+            hearing.setTranscript(hearingRequest.getHearing().getTranscript());
+            hearing.setNotes(hearingRequest.getHearing().getNotes());
+            hearingRequest.setHearing(hearing);
             workflowService.updateWorkflowStatus(hearingRequest);
 
             // Enrich application upon update
@@ -158,6 +131,14 @@ public class HearingService {
     }
 
     public HearingExists isHearingExist(HearingExistsRequest body) {
-        return new HearingExists();
+        HearingExists order = body.getOrder();
+        List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(),order.getApplicationNumber(), order.getHearingId(),order.getFilingNumber(),body.getRequestInfo().getUserInfo().getTenantId(),null,null,1,0,null);
+        if (!hearingList.isEmpty()){
+            order.setExists(true);
+        }
+        else {
+            order.setExists(false);
+        }
+        return order;
     }
 }

@@ -18,7 +18,7 @@ import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 public class HearingDocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Document>>> {
 
     /** To map query result to a map
-     * @param rs
+     * @param rs result set
      * @return map of uuid along with its corresponding document lists
      */
     public Map<UUID,List<Document>> extractData(ResultSet rs) {
@@ -26,15 +26,15 @@ public class HearingDocumentRowMapper implements ResultSetExtractor<Map<UUID,Lis
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                UUID uuid = UUID.fromString(rs.getString("advocateid"));
+                UUID uuid = UUID.fromString(rs.getString("hearingid"));
                 Document document = Document.builder()
-                        .id(rs.getString("aid"))
+                        .id(rs.getString("id"))
                         .documentType(rs.getString("documenttype"))
                         .fileStore(rs.getString("filestore"))
                         .documentUid(rs.getString("documentuid"))
                         .build();
 
-                PGobject pgObject = (PGobject) rs.getObject("docadditionaldetails");
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
                 if(pgObject!=null)
                     document.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 

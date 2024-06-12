@@ -88,7 +88,7 @@ public class WorkflowService {
      * @param requestInfo
      * @return payload for workflow service call
      */
-    private ProcessInstance getProcessInstanceForHearing(Hearing hearing, RequestInfo requestInfo) {
+    ProcessInstance getProcessInstanceForHearing(Hearing hearing, RequestInfo requestInfo) {
         try {
             Workflow workflow = hearing.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
@@ -112,7 +112,7 @@ public class WorkflowService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error getting process instance for ADVOCATE: {}", e.toString());
+            log.error("Error getting process instance for HEARING: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.toString());
         }
     }
@@ -134,7 +134,7 @@ public class WorkflowService {
         }
     }
 
-    private BusinessService getBusinessService(Hearing hearing, RequestInfo requestInfo) {
+    BusinessService getBusinessService(Hearing hearing, RequestInfo requestInfo) {
         try {
             String tenantId = hearing.getTenantId();
             StringBuilder url = getSearchURLWithParams(tenantId, "ADV");
@@ -152,7 +152,7 @@ public class WorkflowService {
         }
     }
 
-    private StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
+    StringBuilder getSearchURLWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfBusinessServiceSearchPath());
         url.append("?tenantId=").append(tenantId);
@@ -160,7 +160,7 @@ public class WorkflowService {
         return url;
     }
 
-    private StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
+    StringBuilder getSearchURLForProcessInstanceWithParams(String tenantId, String businessService) {
         StringBuilder url = new StringBuilder(config.getWfHost());
         url.append(config.getWfProcessInstanceSearchPath());
         url.append("?tenantId=").append(tenantId);
@@ -195,7 +195,7 @@ public class WorkflowService {
         if (processInstance == null) {
             return null;
         }
-        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
+        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).documents(processInstance.getDocuments()).build();
     }
 }
  

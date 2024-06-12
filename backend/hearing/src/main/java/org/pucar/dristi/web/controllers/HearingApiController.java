@@ -47,34 +47,26 @@ public class HearingApiController {
 
     @RequestMapping(value = "/hearing/v1/create", method = RequestMethod.POST)
     public ResponseEntity<HearingResponse> hearingV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new hearing + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            Hearing hearing = hearingService.createHearing(body);
-            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-            HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
-            return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
-        }
 
-        return new ResponseEntity<HearingResponse>(HttpStatus.NOT_IMPLEMENTED);
+        Hearing hearing = hearingService.createHearing(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/hearing/v1/exists", method = RequestMethod.POST)
     public ResponseEntity<HearingExistsResponse> hearingV1ExistsPost(@Parameter(in = ParameterIn.DEFAULT, description = "check if the Hearing(S) exists", required = true, schema = @Schema()) @Valid @RequestBody HearingExistsRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            HearingExists order = hearingService.isHearingExist(body);
-            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-            HearingExistsResponse hearingExistsResponse = HearingExistsResponse.builder().order(order).responseInfo(responseInfo).build();
-            return new ResponseEntity<>(hearingExistsResponse, HttpStatus.OK);
-        }
 
-        return new ResponseEntity<HearingExistsResponse>(HttpStatus.BAD_REQUEST);
+        HearingExists order = hearingService.isHearingExist(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        HearingExistsResponse hearingExistsResponse = HearingExistsResponse.builder().order(order).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(hearingExistsResponse, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/hearing/v1/search", method = RequestMethod.POST)
     public ResponseEntity<HearingListResponse> hearingV1SearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "cnrNumber", required = true) String cnrNumber,
                                                                    @NotNull @Parameter(in = ParameterIn.QUERY, description = "the applicationNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "the hearing id", schema = @Schema()) @Valid @RequestParam(value = "id", required = false) String id,
+                                                                   @Parameter(in = ParameterIn.QUERY, description = "the hearing id", schema = @Schema()) @Valid @RequestParam(value = "hearingId", required = false) String hearingId,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "Search by filingNumber", schema = @Schema()) @Valid @RequestParam(value = "filingNumber", required = false) String filingNumber,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId of case request", schema = @Schema()) @Valid @RequestParam(value = "tenantId", required = false) String tenantId,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved", schema = @Schema()) @Valid @RequestParam(value = "fromDate", required = false) LocalDate fromDate,
@@ -82,26 +74,20 @@ public class HearingApiController {
                                                                    @Parameter(in = ParameterIn.QUERY, description = "No of record return", schema = @Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "offset", schema = @Schema()) @Valid @RequestParam(value = "offset", required = false) Integer offset,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided", schema = @Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            List<Hearing> hearingList = hearingService.searchHearing(cnrNumber,applicationNumber,id,filingNumber,tenantId,fromDate,toDate,limit,offset,sortBy);
-            HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).totalCount(hearingList.size()).build();
-            return new ResponseEntity<>(hearingListResponse, HttpStatus.OK);
-        }
-        return new ResponseEntity<HearingListResponse>(HttpStatus.BAD_REQUEST);
+
+        List<Hearing> hearingList = hearingService.searchHearing(cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
+        HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).totalCount(hearingList.size()).build();
+        return new ResponseEntity<>(hearingListResponse, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/hearing/v1/update", method = RequestMethod.POST)
-    public ResponseEntity<HearingResponse> hearingV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required=true, schema=@Schema()) @Valid @RequestBody HearingRequest body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            Hearing hearing = hearingService.updateHearing(body);
-            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-            HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
-            return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
-        }
+    @RequestMapping(value = "/hearing/v1/update", method = RequestMethod.POST)
+    public ResponseEntity<HearingResponse> hearingV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
 
-        return new ResponseEntity<HearingResponse>(HttpStatus.BAD_REQUEST);
+        Hearing hearing = hearingService.updateHearing(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
+
     }
 
 }

@@ -59,9 +59,9 @@ public class ServiceConstants {
     public static final String TEST_EXCEPTION = "TEST_EXCEPTION";
     public static final String HEARING_CREATE_EXCEPTION = "Exception while updating hearing";
     public static final String HEARING_UPDATE_EXCEPTION = "Exception while updating hearing";
+    public static final String HEARING_SEARCH_EXCEPTION = "Exception while Searching hearing";
     public static final String SEARCH_QUERY_EXCEPTION = "Exception while creating query";
-
-
-
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+    public static final String ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE = "ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE";
 
 }

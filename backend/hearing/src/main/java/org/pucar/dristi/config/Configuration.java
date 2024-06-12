@@ -113,4 +113,26 @@ public class Configuration {
     // Advocate Workflow/Business Service name
     @Value("${egov.workflow.hearing.business.service.name}")
     private String hearingBusinessServiceName;
+
+    // MDMS Hearing module name
+    @Value("${egov.mdms.module.name}")
+    private String mdmsHearingModuleName;
+
+    // MDMS Hearing Type Master List name
+    @Value("${egov.mdms.hearing.type.master.name}")
+    private String mdmsHearingTypeMasterName;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String caseExistsPath;
+
+    // Application Config
+    @Value("${egov.application.host}")
+    private String applicationHost;
+
+    @Value("${egov.application.path}")
+    private String applicationExistsPath;
 }

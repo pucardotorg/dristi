@@ -16,3 +16,7 @@ You can view the api documentation in swagger-ui by pointing to
 http://localhost:8080/  
 
 Change default port value in application.properties
+
+Hearing API Specs: [hearing-api-0.1.0.yaml](..%2F..%2Fapi_specifications%2Fhearing-api-0.1.0.yaml)
+
+Hearing Workflow: [workflowConfig.json](..%2F..%2Fdocs%2Fhearing%2Fworkflow%2FworkflowConfig.json)

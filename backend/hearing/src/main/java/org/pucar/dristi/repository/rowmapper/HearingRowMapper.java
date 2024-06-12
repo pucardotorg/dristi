@@ -1,14 +1,20 @@
 package org.pucar.dristi.repository.rowmapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
+import org.pucar.dristi.web.models.Attendee;
 import org.pucar.dristi.web.models.Hearing;
+import org.pucar.dristi.web.models.PresidedBy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.util.*;
 
@@ -18,6 +24,8 @@ import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 @Slf4j
 public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
 
+    @Autowired
+    public ObjectMapper objectMapper;
     /** To map query result to a list of hearing instance
      * @param rs
      * @return list of hearing
@@ -26,9 +34,8 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         Map<String, Hearing> hearingMap = new LinkedHashMap<>();
 
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String uuid = rs.getString("applicationnumber");
+                String uuid = rs.getString("id");
                 Hearing hearing = hearingMap.get(uuid);
 
                 if (hearing == null) {
@@ -45,24 +52,35 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
                             .lastModifiedTime(lastModifiedTime)
                             .build();
 
-//                    hearing = Hearing.builder()
-//                            .applicationNumber(rs.getString("applicationnumber"))
-//                            .tenantId(rs.getString("tenantid"))
-//                            .id(UUID.fromString(rs.getString("id")))
-//                            .barRegistrationNumber(rs.getString("barregistrationnumber"))
-//                            .organisationID(toUUID(rs.getString("organisationid")))
-//                            .individualId(rs.getString("individualid"))
-//                            .isActive(rs.getBoolean("isactive"))
-//                            .hearingType(rs.getString("hearingtype"))
-//                            .status(rs.getString("status"))
-//                            .auditDetails(auditdetails)
-//                            .build();
+                    hearing = Hearing.builder()
+                            .tenantId(rs.getString("tenantid"))
+                            .id(UUID.fromString(rs.getString("id")))
+                            .hearingId(rs.getString("hearingid"))
+                            .hearingType(rs.getString("hearingtype"))
+                            .status(rs.getString("status"))
+                            .startTime(Long.valueOf(rs.getString("starttime")))
+                            .endTime(Long.valueOf(rs.getString("endtime")))
+                            .vcLink(rs.getString("vclink"))
+                            .isActive(rs.getBoolean("isactive"))
+                            .notes(rs.getString("notes"))
+                            .hearingType(rs.getString("hearingtype"))
+                            .auditDetails(auditdetails)
+                            .cnrNumbers(getListFromJson(rs.getString("cnrnumbers")))
+                            .filingNumber(getListFromJson(rs.getString("filingnumber")))
+                            .applicationNumbers(getListFromJson(rs.getString("applicationnumbers")))
+                            .presidedBy(getObjectFromJson(rs.getString("presidedby"), new TypeReference<PresidedBy>() {}))
+                            .attendees(getObjectFromJson(rs.getString("attendees"), new TypeReference<List<Attendee>>() {
+                                @Override
+                                public Type getType() {
+                                    return super.getType();
+                                }
+                            }))
+                            .transcript(getListFromJson(rs.getString("transcript")))
+                            .build();
                 }
-
                 PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
                 if(pgObject!=null)
-//                    hearing.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
-
+                    hearing.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
                 hearingMap.put(uuid, hearing);
             }
         }
@@ -72,11 +90,33 @@ public class HearingRowMapper implements ResultSetExtractor<List<Hearing>> {
         }
         return new ArrayList<>(hearingMap.values());
     }
-    private UUID toUUID(String toUuid) {
-        if(toUuid == null) {
-            return null;
+    public List<String> getListFromJson(String json) {
+        if (json == null || json.trim().isEmpty()) {
+            return Collections.emptyList();
         }
-        return UUID.fromString(toUuid);
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert JSON to List<String>", e);
+        }
+    }
+
+    public <T> T getObjectFromJson(String json, TypeReference<T> typeRef) {
+        if (json == null || json.trim().isEmpty()) {
+            try {
+                if (typeRef.getType().equals( new TypeReference<List<Attendee>>() {}.getType())) {
+                    return objectMapper.readValue("[]", typeRef);
+                }
+                return objectMapper.readValue("{}", typeRef); // Return an empty object of the specified type
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create an empty instance of " + typeRef.getType(), e);
+            }
+        }
+        try {
+            return objectMapper.readValue(json, typeRef);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert JSON to " + typeRef.getType(), e);
+        }
     }
 
 }

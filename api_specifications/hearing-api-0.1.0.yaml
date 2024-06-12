@@ -226,7 +226,7 @@ components:
       properties:
         hearingId:
           type: string
-          format: uuid
+          format: string
           minLength: 36
           maxLength: 36
         filingNumber:
