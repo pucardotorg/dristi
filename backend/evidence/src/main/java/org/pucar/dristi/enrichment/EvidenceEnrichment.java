@@ -25,31 +25,7 @@ public class EvidenceEnrichment {
         try {
             if (evidenceRequest.getRequestInfo().getUserInfo() != null) {
                 // Determine the ID format based on artifact type
-                String artifactType = evidenceRequest.getArtifact().getArtifactType();
-                String idFormat;
-
-                switch (artifactType) {
-                    case "complainant":
-                        idFormat = "document.evidence_complainant";
-                        break;
-                    case "accused":
-                        idFormat = "document.evidence_accused";
-                        break;
-                    case "court":
-                        idFormat = "document.evidence_court";
-                        break;
-                    case "witness_complainant":
-                        idFormat = "document.witness_complainant";
-                        break;
-                    case "witness_accused":
-                        idFormat = "document.witness_accused";
-                        break;
-                    case "witness_court":
-                        idFormat = "document.witness_court";
-                        break;
-                    default:
-                        throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type provided");
-                }
+                String idFormat = getIdgenByArtifactType(evidenceRequest.getArtifact().getArtifactType());
 
                 // Generate the artifact number using the determined ID format
                 List<String> artifactRegistrationIdList = idgenUtil.getIdList(
@@ -93,6 +69,26 @@ public class EvidenceEnrichment {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in evidence enrichment service: " + e.getMessage());
         }
     }
+
+    String getIdgenByArtifactType(String artifactType) {
+        switch (artifactType) {
+            case "complainant":
+                return "document.evidence_complainant";
+            case "accused":
+                return "document.evidence_accused";
+            case "court":
+                return "document.evidence_court";
+            case "witness_complainant":
+                return "document.witness_complainant";
+            case "witness_accused":
+                return "document.witness_accused";
+            case "witness_court":
+                return "document.witness_court";
+            default:
+                throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type provided");
+        }
+    }
+
 
     public void enrichEvidenceRegistrationUponUpdate(EvidenceRequest evidenceRequest) {
         try {

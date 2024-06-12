@@ -26,8 +26,8 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 public class EvidenceEnrichmentTest {
 
@@ -73,7 +73,7 @@ public class EvidenceEnrichmentTest {
         // Mock idList and ensure it contains "artifactNumber"
         List<String> idList = new ArrayList<>();
         idList.add("artifactNumber");
-        Mockito.when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenReturn(idList);
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), any(), anyInt())).thenReturn(idList);
 
         // Call the method to be tested
         evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest);
@@ -93,6 +93,32 @@ public class EvidenceEnrichmentTest {
             assertNotNull(artifact.getFile().getId());
             assertEquals(artifact.getFile().getId(), artifact.getFile().getDocumentUid());
         }
+    }
+
+    @Test
+    public void testGetIdgenByArtifactType() {
+        assertEquals("document.evidence_complainant", evidenceEnrichment.getIdgenByArtifactType("complainant"));
+        assertEquals("document.evidence_accused", evidenceEnrichment.getIdgenByArtifactType("accused"));
+        assertEquals("document.evidence_court", evidenceEnrichment.getIdgenByArtifactType("court"));
+        assertEquals("document.witness_complainant", evidenceEnrichment.getIdgenByArtifactType("witness_complainant"));
+        assertEquals("document.witness_accused", evidenceEnrichment.getIdgenByArtifactType("witness_accused"));
+        assertEquals("document.witness_court", evidenceEnrichment.getIdgenByArtifactType("witness_court"));
+        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactType("invalidType"));
+    }
+
+
+    @Test
+    public void testEnrichEvidenceRegistrationUserInfoNotFound() {
+        evidenceRequest.getRequestInfo().setUserInfo(null);
+        CustomException exception = assertThrows(CustomException.class, () -> evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest));
+        assertEquals("User info not found!!!", exception.getMessage());
+    }
+
+    @Test
+    public void testEnrichEvidenceRegistrationInvalidArtifactType() {
+        evidenceRequest.getArtifact().setArtifactType("invalidType");
+        CustomException exception = assertThrows(CustomException.class, () -> evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest));
+        assertEquals("Invalid artifact type provided", exception.getMessage());
     }
     @Test
     void testEnrichEvidenceRegistration_UserInfoNotFound() {
