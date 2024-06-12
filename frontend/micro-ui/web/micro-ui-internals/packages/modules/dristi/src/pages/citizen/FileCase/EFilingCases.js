@@ -35,6 +35,7 @@ function EFilingCases({ path }) {
   const [formdata, setFormdata] = useState(selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
+
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
   const [receiptDemandNoticeModal, setReceiptDemandNoticeModal] = useState(false);
@@ -461,44 +462,84 @@ function EFilingCases({ path }) {
   };
   const checkIfscValidation = (formData, setValue) => {
     if (selected === "chequeDetails") {
-      if (formData?.ifsc) {
-        const formDataCopy = structuredClone(formData);
-        for (const key in formDataCopy) {
-          switch (key) {
-            case "ifsc":
-              if (Object.hasOwnProperty.call(formDataCopy, key)) {
-                const oldValue = formDataCopy[key];
-                let value = oldValue;
+      const formDataCopy = structuredClone(formData);
+      for (const key in formDataCopy) {
+        switch (key) {
+          case "ifsc":
+            if (Object.hasOwnProperty.call(formDataCopy, key)) {
+              const oldValue = formDataCopy[key];
+              let value = oldValue;
 
-                if (typeof value === "string") {
-                  let updatedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
-                  if (updatedValue?.length > 11) {
-                    updatedValue = updatedValue.substring(0, 11);
-                  }
+              if (typeof value === "string") {
+                let updatedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                if (updatedValue?.length > 11) {
+                  updatedValue = updatedValue.substring(0, 11);
+                }
 
-                  if (updatedValue?.length >= 5) {
-                    updatedValue = updatedValue.slice(0, 4).replace(/[^A-Z]/g, "") + "0" + updatedValue.slice(5);
-                  }
+                if (updatedValue?.length >= 5) {
+                  updatedValue = updatedValue.slice(0, 4).replace(/[^A-Z]/g, "") + "0" + updatedValue.slice(5);
+                }
 
-                  if (updatedValue?.length === 11) {
-                    updatedValue = updatedValue.slice(0, 4) + "0" + updatedValue.slice(5, 11).replace(/[^A-Z0-9]/g, "");
-                  }
+                if (updatedValue?.length === 11) {
+                  updatedValue = updatedValue.slice(0, 4) + "0" + updatedValue.slice(5, 11).replace(/[^A-Z0-9]/g, "");
+                }
 
-                  if (updatedValue !== oldValue) {
-                    const element = document.querySelector(`[name="${key}"]`);
-                    const start = element?.selectionStart;
-                    const end = element?.selectionEnd;
-                    setValue(key, updatedValue);
-                    setTimeout(() => {
-                      element?.setSelectionRange(start, end);
-                    }, 0);
-                  }
+                if (updatedValue !== oldValue) {
+                  const element = document.querySelector(`[name="${key}"]`);
+                  const start = element?.selectionStart;
+                  const end = element?.selectionEnd;
+                  setValue(key, updatedValue);
+                  setTimeout(() => {
+                    element?.setSelectionRange(start, end);
+                  }, 0);
                 }
               }
-              break;
-            default:
-              break;
-          }
+            }
+            break;
+          case "chequeAmount":
+            if (Object.hasOwnProperty.call(formDataCopy, key)) {
+              const oldValue = formDataCopy[key];
+              let value = oldValue;
+
+              let updatedValue = value?.replace(/\D/g, "");
+              if (updatedValue?.length > 12) {
+                console.log(updatedValue?.length);
+                updatedValue = updatedValue.substring(0, 12);
+              }
+
+              if (updatedValue !== oldValue) {
+                const element = document?.querySelector(`[name="${key}"]`);
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
+                setValue(key, updatedValue);
+                setTimeout(() => {
+                  element?.setSelectionRange(start, end);
+                }, 0);
+              }
+            }
+            break;
+          case "chequeNumber":
+            if (Object.hasOwnProperty.call(formDataCopy, key)) {
+              const oldValue = formDataCopy[key];
+              let value = oldValue;
+
+              let updatedValue = value?.replace(/\D/g, "");
+              if (updatedValue?.length > 6) {
+                updatedValue = updatedValue?.substring(0, 6);
+              }
+              if (updatedValue !== oldValue) {
+                const element = document?.querySelector(`[name="${key}"]`);
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
+                setValue(key, updatedValue);
+                setTimeout(() => {
+                  element?.setSelectionRange(start, end);
+                }, 0);
+              }
+            }
+            break;
+          default:
+            break;
         }
       }
     }
@@ -512,6 +553,10 @@ function EFilingCases({ path }) {
             const oldValue = formDataCopy[key];
             let value = oldValue;
             if (typeof value === "string") {
+              if (value.length > 100) {
+                value = value.slice(0, 100);
+              }
+
               let updatedValue = value
                 .replace(/[^a-zA-Z\s]/g, "")
                 .trimStart()
@@ -566,9 +611,8 @@ function EFilingCases({ path }) {
   };
 
   const handleAccordionClick = (index) => {
-    setParentOpen(index);
+    setParentOpen((prevParentOpen) => (prevParentOpen === index ? -1 : index));
   };
-
   const onDocumentUpload = async (fileData, filename) => {
     if (fileData?.fileStore) return fileData;
     const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
@@ -729,7 +773,7 @@ function EFilingCases({ path }) {
             };
           })
       );
-      const representatives = [...caseDetails?.representatives ? caseDetails?.representative : []]
+      const representatives = [...(caseDetails?.representatives ? caseDetails?.representative : [])]
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
