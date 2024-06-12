@@ -4,6 +4,7 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.IndividualService;
@@ -61,8 +62,6 @@ public class CaseRegistrationValidator {
 
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
             throw new CustomException(CREATE_CASE_ERR, "tenantId is mandatory for creating case");
-        if (ObjectUtils.isEmpty(courtCase.getFilingDate()))
-            throw new CustomException(CREATE_CASE_ERR, "filingDate is mandatory for creating case");
         if (ObjectUtils.isEmpty(courtCase.getCaseCategory()))
             throw new CustomException(CREATE_CASE_ERR, "caseCategory is mandatory for creating case");
         if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
@@ -78,8 +77,10 @@ public class CaseRegistrationValidator {
 
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
             throw new CustomException(UPDATE_CASE_ERR, "tenantId is mandatory for updating case");
-        if (ObjectUtils.isEmpty(courtCase.getFilingDate()))
-            throw new CustomException(UPDATE_CASE_ERR, "filingDate is mandatory for updating case");
+        if (courtCase.getWorkflow().getAction().equalsIgnoreCase(SUBMIT_CASE_WORKFLOW_ACTION)){
+            if(ObjectUtils.isEmpty(courtCase.getFilingDate()))
+                throw new CustomException(UPDATE_CASE_ERR, "filingDate is mandatory for updating case");
+        }
 
         List<CaseCriteria> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
                 .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build()));
@@ -91,19 +92,31 @@ public class CaseRegistrationValidator {
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
         if (!courtCase.getLitigants().isEmpty()) {
             courtCase.getLitigants().forEach(litigant -> {
-                if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
+                if(litigant.getIndividualId()!=null){
+                    if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
+                        throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                }
+                else
                     throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
             });
         }
         if (courtCase.getDocuments() != null && !courtCase.getDocuments().isEmpty()) {
             courtCase.getDocuments().forEach(document -> {
-                if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
+                if(document.getFileStore()!=null){
+                    if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
+                        throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                }
+                else
                     throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
             });
         }
         if (courtCase.getRepresentatives() != null && !courtCase.getRepresentatives().isEmpty()) {
             courtCase.getRepresentatives().forEach(rep -> {
-                if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
+                if(rep.getAdvocateId()!=null){
+                    if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
+                        throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                }
+                else
                     throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
             });
         }
@@ -121,6 +134,7 @@ public class CaseRegistrationValidator {
             if (!isValidLinkedCase)
                 throw new CustomException(INVALID_LINKEDCASE_ID, "Invalid linked case details");
         }
+
         return true;
     }
 

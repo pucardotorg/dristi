@@ -42,6 +42,7 @@ public class LitigantRowMapper implements ResultSetExtractor<Map<UUID, List<Part
                         .organisationID(rs.getString("organisationid"))
                         .partyType(rs.getString("partytype"))
                         .isActive(Boolean.getBoolean(rs.getString("isactive")))
+                        .caseId(rs.getString("case_id"))
                         .auditDetails(auditdetails)
                         .build();
 
