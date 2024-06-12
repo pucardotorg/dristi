@@ -1,10 +1,12 @@
 const complainantDetailsFormConfig = [
   {
+    head: "SELECT_COMPLAINANT_TYPE",
     body: [
       {
         type: "radio",
         key: "complainantType",
-        label: "SELECT_COMPLAINANT_TYPE",
+        // label: "SELECT_COMPLAINANT_TYPE",
+        withoutLabel: true,
         isMandatory: true,
         name: "complainantType",
         populators: {
@@ -96,7 +98,7 @@ const complainantDetailsFormConfig = [
       },
       {
         type: "text",
-        label: "MIDDLE_NAME",
+        label: "CORE_COMMON_MIDDLE_NAME",
         populators: {
           name: "middleName",
           validation: {
@@ -125,43 +127,6 @@ const complainantDetailsFormConfig = [
             title: "",
             patternType: "Name",
           },
-        },
-      },
-    ],
-  },
-  {
-    head: "CS_RESPONDENT_COMPANY_DETAIL",
-    dependentKey: { complainantType: ["showCompanyDetails"] },
-    body: [
-      {
-        type: "text",
-        key: "company_Name",
-        label: "company_Name",
-        isMandatory: true,
-        populators: {
-          name: "companyName",
-          styles: { minWidth: "100%" },
-          labelStyles: { padding: "8px" },
-          customStyle: { minWidth: "100%" },
-        },
-      },
-      {
-        type: "component",
-        component: "SelectCustomDragDrop",
-        key: "companyDetailsUpload",
-        populators: {
-          inputs: [
-            {
-              isMandatory: true,
-              name: "document",
-              documentHeader: "COMPANY_DOCUMENT_DETAILS",
-              type: "DragDropComponent",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
-              isMultipleUpload: true,
-            },
-          ],
         },
       },
     ],
@@ -200,6 +165,43 @@ const complainantDetailsFormConfig = [
           pattern: /^[6-9]\d{9}$/,
         },
         populators: {},
+      },
+    ],
+  },
+  {
+    head: "CS_RESPONDENT_COMPANY_DETAIL",
+    dependentKey: { complainantType: ["showCompanyDetails"] },
+    body: [
+      {
+        type: "text",
+        key: "company_Name",
+        label: "company_Name",
+        isMandatory: true,
+        populators: {
+          name: "companyName",
+          styles: { minWidth: "100%" },
+          labelStyles: { padding: "8px" },
+          customStyle: { minWidth: "100%" },
+        },
+      },
+      {
+        type: "component",
+        component: "SelectCustomDragDrop",
+        key: "companyDetailsUpload",
+        populators: {
+          inputs: [
+            {
+              isMandatory: true,
+              name: "document",
+              documentHeader: "COMPANY_DOCUMENT_DETAILS",
+              type: "DragDropComponent",
+              maxFileSize: 50,
+              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              fileTypes: ["JPG", "PNG", "PDF"],
+              isMultipleUpload: true,
+            },
+          ],
+        },
       },
     ],
   },
@@ -291,7 +293,7 @@ const complainantDetailsFormConfig = [
       {
         type: "component",
         component: "SelectComponents",
-        key: "addressDetails",
+        key: "addressCompanyDetails",
         addUUID: true,
         withoutLabel: true,
         populators: {
@@ -300,12 +302,13 @@ const complainantDetailsFormConfig = [
               label: "CS_PIN_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
-              key: "locationSearch",
+              key: "locationCompanySearch",
             },
             {
               label: "PINCODE",
               type: "text",
               name: "pincode",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 minlength: 6,
@@ -322,6 +325,7 @@ const complainantDetailsFormConfig = [
             {
               label: "STATE",
               type: "text",
+              shouldBeEnabled: true,
               name: "state",
               inputFieldClassName: "user-details-form-style",
               validation: {
@@ -333,6 +337,7 @@ const complainantDetailsFormConfig = [
               label: "DISTRICT",
               type: "text",
               name: "district",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
@@ -343,6 +348,7 @@ const complainantDetailsFormConfig = [
               label: "CITY/TOWN",
               type: "text",
               name: "city",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
@@ -353,6 +359,7 @@ const complainantDetailsFormConfig = [
               label: "ADDRESS",
               type: "text",
               name: "locality",
+              shouldBeEnabled: true,
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
@@ -370,7 +377,7 @@ const complainantDetailsFormConfig = [
 export const complaintdetailconfig = {
   formconfig: complainantDetailsFormConfig,
   header: "CS_COMPLAINT_DETAIL_HEADING",
-  subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
+  subtext: "CS_COMPLAINANT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_COMPLAINANT",
   formItemName: "Complainant",

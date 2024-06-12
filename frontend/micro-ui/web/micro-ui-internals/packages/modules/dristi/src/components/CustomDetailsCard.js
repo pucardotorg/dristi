@@ -51,7 +51,7 @@ const CustomDetailsCard = ({ header, subtext, serialNumber, subnote, style }) =>
           fontWeight: 400,
           lineHeight: '16.41px',
           textAlign: 'left',
-          color: '#0A0A0A',
+          color: '#77787B',
           margin: '0px',
         }}>{subnote}</p>}
       </div>

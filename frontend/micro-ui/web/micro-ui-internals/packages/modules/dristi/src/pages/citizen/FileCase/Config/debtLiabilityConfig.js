@@ -4,7 +4,7 @@ const debtLiabilityFromconfig = [
       {
         type: "dropdown",
         key: "liabilityNature",
-        label: "Nature of debt / liability for which cheque(s) was/were received (e.g. loan, sales agreement etc)",
+        label: "CS_NATURE_DEBT_LIABILITY",
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -45,7 +45,7 @@ const debtLiabilityFromconfig = [
       {
         type: "radio",
         key: "liabilityType",
-        label: "What was the total amount the cheque(s) covered?",
+        label: "CS_CHEQUE_LIABILITY",
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -88,7 +88,7 @@ const debtLiabilityFromconfig = [
       {
         type: "text",
         key: "totalAmount",
-        label: "What was the total amount the cheque(s) covered? ",
+        label: "CS_TOTAL_CHEQUE_AMOUNT",
         populators: {
           validation: {},
           title: "FIRST_TERMS_AND_CONDITIONS",
@@ -107,8 +107,8 @@ const debtLiabilityFromconfig = [
           inputs: [
             {
               infoHeader: "CS_COMMON_NOTE",
-              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
+              infoText: "CS_NOTE_DEBT_LIABILITY",
+              infoTooltipMessage: "Tooltip",
               type: "InfoComponent",
             },
           ],
@@ -126,8 +126,8 @@ const debtLiabilityFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "PROOF_OF_DL",
-              isOptional: "optional",
+              documentHeader: "CS_PROOF_DEBT",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
@@ -150,7 +150,8 @@ const debtLiabilityFromconfig = [
         populators: {
           inputs: [
             {
-              textAreaHeader: "CS_TEXTAREA_HEADER_ADDITIONAL_DL_DETAILS",
+              textAreaSubHeader: "CS_DEBT_ADDITIONAL_DETAILS",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],

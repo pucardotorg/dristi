@@ -10,6 +10,7 @@ const prayerAndSwornFormConfig = [
             {
               infoHeader: "CS_COMMON_NOTE",
               infoText: "CS_NOTETEXT_PRAYER_AND_SWORN",
+              infoTooltipMessage: "Tooltip",
               type: "InfoComponent",
             },
           ],
@@ -56,6 +57,7 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "caseSettlementCondition",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -113,7 +115,7 @@ const prayerAndSwornFormConfig = [
             {
               name: "text",
               textAreaHeader: "CS_PRAYER_FOR_RELIEF_HEADER",
-              textAreaSubHeader: "CS_PRAYER_FOR_RELIEF_SUBHEADER",
+              textAreaSubHeader: "CS_MEMORANDUM_OF_COMPLAINT_SUBHEADER",
               type: "TextAreaComponent",
               isOptional: false,
               headerClassName: "dristi-font-bold",
@@ -171,9 +173,8 @@ const prayerAndSwornFormConfig = [
           inputs: [
             {
               name: "text",
-              textAreaSubHeader: "CS_SWORN_PAGE_ADDITIONAL_DETAILS_SUBHEADER",
+              textAreaSubHeader: "CS_ADDITIONAL_DETAILS",
               type: "TextAreaComponent",
-              isOptional: true,
             },
           ],
         },
@@ -190,7 +191,7 @@ const prayerAndSwornFormConfig = [
           inputs: [
             {
               name: "text",
-              textAreaHeader: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
+              textAreaSubHeader: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
               type: "TextAreaComponent",
               isOptional: true,
               headerClassName: "dristi-font-bold",
@@ -243,5 +244,6 @@ const prayerAndSwornFormConfig = [
 export const prayerAndSwornConfig = {
   formconfig: prayerAndSwornFormConfig,
   header: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
-  subtext: "CS_PRAYER_AND_SWORN_STATEMENT_SUBTEXT",
+  // addFormText: "ADD_DOCUMENT",
+  className: "prayer-and-sworm",
 };

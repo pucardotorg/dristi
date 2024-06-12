@@ -38,31 +38,30 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
     return (
       <div className="custom-text-area-main-div" style={input?.style}>
         <div className="custom-text-area-header-div">
-          <h1 className={`${input?.headerClassName}`} style={{ margin: "0px" }}>
-            {t(input?.textAreaHeader)}
-          </h1>
           {
-            <div>
-              <span>
-                <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
-                  {`${t(input?.textAreaSubHeader)}`}
-                  {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
-                </p>
-              </span>
-            </div>
+            input.textAreaHeader &&
+            <h1 className={`custom-text-area-header ${input?.headerClassName}`} style={{ margin: "0px" }}>
+              {t(input?.textAreaHeader)}
+            </h1>
+          }
+          {
+            <span>
+              <p className={`custom-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+                {`${t(input?.textAreaSubHeader)}`}
+                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+              </p>
+            </span>
           }
         </div>
-        <div>
-          <textarea
-            value={formData?.[config.key]?.[input.name]}
-            onChange={(data) => {
-              handleChange(data, input);
-            }}
-            rows={5}
-            className="custom-textarea-style"
-            placeholder={input?.placeholder}
-          ></textarea>
-        </div>
+        <textarea
+          value={formData?.[config.key]?.[input.name]}
+          onChange={(data) => {
+            handleChange(data, input);
+          }}
+          rows={5}
+          className="custom-textarea-style"
+          placeholder={t(input?.placeholder)}
+        ></textarea>
       </div>
     );
   });

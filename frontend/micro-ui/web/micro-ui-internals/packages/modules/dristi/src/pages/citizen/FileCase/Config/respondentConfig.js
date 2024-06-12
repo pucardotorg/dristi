@@ -1,10 +1,12 @@
 const respondentFromconfig = [
   {
+
+    head: "CS_RESPONDENT_TYPE",
     body: [
       {
         type: "radio",
         key: "respondentType",
-        label: "CS_RESPONDENT_TYPE",
+        withoutLabel: true,
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -61,7 +63,7 @@ const respondentFromconfig = [
       },
       {
         type: "text",
-        label: "MIDDLE_NAME",
+        label: "CORE_COMMON_MIDDLE_NAME",
         populators: {
           name: "middleName",
           validation: {
@@ -135,12 +137,12 @@ const respondentFromconfig = [
               componentInFront: "+91",
               validation: {
                 required: true,
-                minLength: 10,
-                maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
                 isArray: true,
+                minLength: 10,
+                maxLength: 10,
+                isNumber: true,
               },
-              className: "mobile-number",
             },
           ],
           validation: {},
@@ -167,10 +169,9 @@ const respondentFromconfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /\S+@\S+\.\S+/,
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 isArray: true,
               },
-              className: "email-address",
             },
           ],
           validation: {},
@@ -313,7 +314,7 @@ const respondentFromconfig = [
             {
               name: "document",
               documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",

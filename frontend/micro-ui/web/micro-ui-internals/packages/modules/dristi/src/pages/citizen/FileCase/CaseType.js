@@ -144,7 +144,7 @@ function CaseType({ t }) {
                   {
                     tenantId,
                     statute: "Statute",
-                    sections: ["Negotiable Instruments Act", "02."],
+                    sections: ["Negotiable Instrument Act", "02."],
                     subsections: ["138", "03."],
                   },
                 ],
@@ -178,20 +178,22 @@ function CaseType({ t }) {
                 additionalDetails: {
                   ...(advocateId
                     ? {
-                        advocateDetails: [
-                          {
-                            isenabled: true,
-                            displayindex: 0,
-                            data: {
-                              isAdvocateRepresenting: {
-                                code: "YES",
-                                name: "Yes",
-                                showForm: true,
-                                isEnabled: true,
+                        advocateDetails: {
+                          formdata: [
+                            {
+                              isenabled: true,
+                              displayindex: 0,
+                              data: {
+                                isAdvocateRepresenting: {
+                                  code: "YES",
+                                  name: "Yes",
+                                  showForm: true,
+                                  isEnabled: true,
+                                },
                               },
                             },
-                          },
-                        ],
+                          ],
+                        },
                       }
                     : {
                         complaintDetails: {
@@ -265,7 +267,7 @@ function CaseType({ t }) {
       { header: "Case Category", subtext: "Criminal", serialNumber: "01." },
       {
         header: "Status / Act",
-        subtext: "Negotiable Instruments Act",
+        subtext: "Negotiable Instrument Act",
         serialNumber: "02.",
       },
       { header: "Section", subtext: "138", serialNumber: "03." },
@@ -290,7 +292,7 @@ function CaseType({ t }) {
         serialNumber: "03.",
       },
       {
-        header: "Proof od Debt/ Liability",
+        header: "Proof of Debt/ Liability",
         subtext: "Anything to prove some sort of agreement between you and the respondent",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "04.",
@@ -328,7 +330,13 @@ function CaseType({ t }) {
     >
       <div className="case-types-main-div">
         {detailsCardList.map((item) => (
-          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} style={{ width: "100%" }} />
+          <CustomDetailsCard
+            header={item.header}
+            subtext={item.subtext}
+            serialNumber={item.serialNumber}
+            subnote={item.subnote}
+            style={{ width: "100%" }}
+          />
         ))}
       </div>
       {page === 0 && (

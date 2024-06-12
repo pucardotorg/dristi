@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
-const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRefresh, userTypeRegister }) => {
+const SelectUserType = ({ config, t, params = {}, setParams = () => { }, pathOnRefresh, userTypeRegister }) => {
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
@@ -100,9 +100,9 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
     const identifierId = uploadedDocument ? uploadedDocument?.filedata?.files?.[0]?.fileStoreId : data?.adhaarNumber;
     const identifierIdDetails = uploadedDocument
       ? {
-          fileStoreId: identifierId,
-          filename: uploadedDocument?.filename,
-        }
+        fileStoreId: identifierId,
+        filename: uploadedDocument?.filename,
+      }
       : {};
     const identifierType = uploadedDocument ? uploadedDocument?.IdType?.code : "AADHAR";
     setParams({ ...params, userType });
@@ -118,24 +118,24 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRe
           username: Digit.UserService.getUser()?.info?.userName,
           roles: userType?.clientDetails?.selectUserType?.role
             ? [
-                {
-                  code: "CITIZEN",
-                  name: "Citizen",
-                  tenantId: tenantId,
-                },
-                ...userType?.clientDetails?.selectUserType?.role?.map((role) => ({
-                  code: role,
-                  name: role,
-                  tenantId: tenantId,
-                })),
-              ]
+              {
+                code: "CITIZEN",
+                name: "Citizen",
+                tenantId: tenantId,
+              },
+              ...userType?.clientDetails?.selectUserType?.role?.map((role) => ({
+                code: role,
+                name: role,
+                tenantId: tenantId,
+              })),
+            ]
             : [
-                {
-                  code: "CITIZEN",
-                  name: "Citizen",
-                  tenantId: tenantId,
-                },
-              ],
+              {
+                code: "CITIZEN",
+                name: "Citizen",
+                tenantId: tenantId,
+              },
+            ],
           type: Digit.UserService.getUser()?.info?.type,
         },
         userUuid: Digit.UserService.getUser()?.info?.uuid,

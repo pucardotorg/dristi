@@ -32,10 +32,11 @@ const Heading = (props) => {
 };
 
 function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setError }) {
-  const [{ showModal, mobileNumber, isUserVerified }, setState] = useState({
+  const [{ showModal, mobileNumber, isUserVerified, errorMsg }, setState] = useState({
     showModal: false,
     mobileNumber: null,
     isUserVerified: false,
+    errorMsg: "",
   });
   const [user, setUser] = useState(null);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
@@ -215,6 +216,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         ...prev,
         isUserVerified: false,
         showModal: true,
+        errorMsg: "CS_INVALID_OTP",
       }));
     }
   };
@@ -222,8 +224,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
   const input = useMemo(() => verifyMobileNoConfig?.[0]?.body?.[0]?.populators?.inputs?.[0], []);
 
   return (
-    <React.Fragment>
-      <LabelFieldPair style={{ width: "100%", display: "flex", alignItem: "center" }}>
+    <div className="phone-number-verification">
+      <LabelFieldPair>
         <CardLabel className="card-label-smaller">{t(config.label)}</CardLabel>
       </LabelFieldPair>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 24 }}>
@@ -287,30 +289,32 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           />
         )}
       </div>
-      <CardLabelError
-        style={{
-          fontWeight: 100,
-          position: "relative",
-          top: "-20px",
-        }}
-        className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}
-      >
-        {t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
-      </CardLabelError>
+      {errors?.[config?.key]?.[config.name] && (
+        <CardLabelError className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}>
+          {t(errors?.[config?.key]?.[config.name] ? "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
+        </CardLabelError>
+      )}
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
           actionCancelOnSubmit={() => {}}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
-            selectOtp(input);
+            if (!formData[config.key]?.[input?.name])
+              setState((prev) => ({
+                ...prev,
+                isUserVerified: false,
+                showModal: true,
+                errorMsg: "CS_INVALID_OTP",
+              }));
+            else selectOtp(input);
           }}
           formId="modal-action"
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
           className={"case-types"}
         >
-          <div>
+          <div className="verify-mobile-modal" style={{ padding: "16px 16px 0" }}>
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
@@ -347,7 +351,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                   !formData?.[config.key][input.name].match(
                     window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
                   ) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px" }}>
+                    <CardLabelError style={{ width: "100%", fontSize: "16px", paddingTop: "4px" }}>
                       <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                     </CardLabelError>
                   )}
@@ -355,19 +359,27 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             </LabelFieldPair>
             {input?.hasResendOTP && (
               <React.Fragment>
-                {timeLeft > 0 ? (
+                {timeLeft && !errorMsg > 0 ? (
                   <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
                 ) : (
-                  <p className="card-text" onClick={() => resendOtp(input)} style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer" }}>
-                    {t("CS_RESEND_OTP")}
-                  </p>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <CardText style={{ margin: 0 }}>{errorMsg ? `${t(errorMsg)}` : `${t("CS_HAVE_NOT_RECEIVED_OTP")}`}</CardText>
+
+                    <p
+                      className="card-text"
+                      onClick={() => resendOtp(input)}
+                      style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer", margin: 0, textDecoration: "underline", fontSize: 16 }}
+                    >
+                      {t("CS_RESEND_OTP")}
+                    </p>
+                  </div>
                 )}
               </React.Fragment>
             )}
           </div>
         </Modal>
       )}
-    </React.Fragment>
+    </div>
   );
 }
 
