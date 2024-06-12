@@ -135,3 +135,4 @@ jobs:
           docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
           docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+        working-directory: frontend/micro-ui
