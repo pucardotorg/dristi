@@ -459,36 +459,83 @@ function EFilingCases({ path }) {
       }
     }
   };
+  const checkIfscValidation = (formData, setValue) => {
+    if (selected === "chequeDetails") {
+      if (formData?.ifsc) {
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          switch (key) {
+            case "ifsc":
+              if (Object.hasOwnProperty.call(formDataCopy, key)) {
+                const oldValue = formDataCopy[key];
+                let value = oldValue;
 
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
-    console.log(formData);
-    if (formData?.firstName || formData?.middleName || formData?.lastName) {
-      const formDataCopy = structuredClone(formData);
-      for (const key in formDataCopy) {
-        if (Object.hasOwnProperty.call(formDataCopy, key)) {
-          const oldValue = formDataCopy[key];
-          let value = oldValue;
-          if (typeof value === "string") {
-            let updatedValue = value
-              .replace(/[^a-zA-Z\s]/g, "")
-              .trimStart()
-              .replace(/ +/g, " ")
-              .toLowerCase()
-              .replace(/\b\w/g, (char) => char.toUpperCase());
-            if (updatedValue !== oldValue) {
-              const element = document.querySelector(`[name="${key}"]`);
-              const start = element?.selectionStart;
-              const end = element?.selectionEnd;
-              setValue(key, updatedValue);
-              setTimeout(() => {
-                element?.setSelectionRange(start, end);
-              }, 0);
+                if (typeof value === "string") {
+                  let updatedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                  if (updatedValue?.length > 11) {
+                    updatedValue = updatedValue.substring(0, 11);
+                  }
+
+                  if (updatedValue?.length >= 5) {
+                    updatedValue = updatedValue.slice(0, 4).replace(/[^A-Z]/g, "") + "0" + updatedValue.slice(5);
+                  }
+
+                  if (updatedValue?.length === 11) {
+                    updatedValue = updatedValue.slice(0, 4) + "0" + updatedValue.slice(5, 11).replace(/[^A-Z0-9]/g, "");
+                  }
+
+                  if (updatedValue !== oldValue) {
+                    const element = document.querySelector(`[name="${key}"]`);
+                    const start = element?.selectionStart;
+                    const end = element?.selectionEnd;
+                    setValue(key, updatedValue);
+                    setTimeout(() => {
+                      element?.setSelectionRange(start, end);
+                    }, 0);
+                  }
+                }
+              }
+              break;
+            default:
+              break;
+          }
+        }
+      }
+    }
+  };
+  const checkNameValidation = (formData, setValue) => {
+    if (selected === "complaintDetails" || selected === "respondentDetails") {
+      if (formData?.firstName || formData?.middleName || formData?.lastName) {
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          if (Object.hasOwnProperty.call(formDataCopy, key)) {
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (typeof value === "string") {
+              let updatedValue = value
+                .replace(/[^a-zA-Z\s]/g, "")
+                .trimStart()
+                .replace(/ +/g, " ")
+                .toLowerCase()
+                .replace(/\b\w/g, (char) => char.toUpperCase());
+              if (updatedValue !== oldValue) {
+                const element = document.querySelector(`[name="${key}"]`);
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
+                setValue(key, updatedValue);
+                setTimeout(() => {
+                  element?.setSelectionRange(start, end);
+                }, 0);
+              }
             }
           }
         }
       }
     }
-
+  };
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+    checkIfscValidation(formData, setValue);
+    checkNameValidation(formData, setValue);
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       chequeDateValidation(formData, setError, clearErrors);
       showDemandNoticeModal(setValue, formData, setError, clearErrors);
