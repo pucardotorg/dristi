@@ -3,8 +3,11 @@ package org.pucar.dristi.web.controllers;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.WitnessService;
 import org.pucar.dristi.util.ResponseInfoFactory;
@@ -24,14 +27,14 @@ import static org.mockito.Mockito.when;
 /**
 * API tests for CaseApiController
 */
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class CaseApiControllerTest {
 
-    @Autowired
+    @InjectMocks
     private CaseApiController caseApiController;
-    @MockBean
+    @Mock
     private CaseService caseService;
-    @MockBean
+    @Mock
     private WitnessService witnessService;
     @Mock
     private ResponseInfoFactory responseInfoFactory;

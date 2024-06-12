@@ -139,7 +139,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Mock case-indexer.yml CourtCase object with required fields
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CourtCase.class), any())).thenReturn(true);
+        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
@@ -159,7 +159,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenReturn(false);
+        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenReturn(false);
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
@@ -171,7 +171,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
+        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenThrow(new CustomException("VALIDATION", "Case does not exist"));
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
@@ -183,7 +183,7 @@ public class CaseServiceTest {
         CourtCase courtCase = new CourtCase(); // Assume the necessary properties are set
         caseRequest.setCases(courtCase);
 
-        when(validator.validateApplicationExistence(any(CourtCase.class),any())).thenThrow(new RuntimeException());
+        when(validator.validateApplicationExistence(any(CaseRequest.class))).thenThrow(new RuntimeException());
 
         // Execute & Assert
         assertThrows(CustomException.class, () -> caseService.updateCase(caseRequest));
