@@ -29,13 +29,8 @@ public class AdvocateRequest {
 	@Valid
 	private RequestInfo requestInfo = null;
 
-	@JsonProperty("advocates")
+	@JsonProperty("advocate")
 	@Valid
-	private List<Advocate> advocates = new ArrayList<>();
-
-	public AdvocateRequest addAdvocatesItem(Advocate advocatesItem) {
-		this.advocates.add(advocatesItem);
-		return this;
-	}
+	private Advocate advocate = null;
 
 }

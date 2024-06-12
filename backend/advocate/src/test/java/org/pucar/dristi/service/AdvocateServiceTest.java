@@ -1,36 +1,37 @@
 package org.pucar.dristi.service;
-
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.egov.tracer.model.CustomException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
-
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.AdvocateRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.AdvocateRepository;
 import org.pucar.dristi.validators.AdvocateRegistrationValidator;
-import org.pucar.dristi.web.models.Advocate;
-import org.pucar.dristi.web.models.AdvocateRequest;
-import org.pucar.dristi.web.models.AdvocateSearchCriteria;
+import org.pucar.dristi.web.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-@ExtendWith(MockitoExtension.class)
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
 public class AdvocateServiceTest {
+
+    @InjectMocks
+    private AdvocateService advocateService;
 
     @Mock
     private AdvocateRegistrationValidator validator;
@@ -39,10 +40,10 @@ public class AdvocateServiceTest {
     private AdvocateRegistrationEnrichment enrichmentUtil;
 
     @Mock
-    private IndividualService individualService;
+    private WorkflowService workflowService;
 
     @Mock
-    private WorkflowService workflowService;
+    private IndividualService individualService;
 
     @Mock
     private AdvocateRepository advocateRepository;
@@ -50,91 +51,409 @@ public class AdvocateServiceTest {
     @Mock
     private Producer producer;
 
-    @InjectMocks
-    private AdvocateService service;
     @Mock
     private Configuration config;
 
+
     @Test
-    void testCreateAdvocateRequest() {
-        // Prepare the request
+    public void testRegisterAdvocateClerkRequest_Success() {
+        // Mock data
         AdvocateRequest request = new AdvocateRequest();
-        RequestInfo requestInfo = new RequestInfo();
-        request.setRequestInfo(requestInfo);
-        Advocate advocate = new Advocate();
-        advocate.setTenantId("tenant1");
-        advocate.setIndividualId("individualId");
-        request.setAdvocates(Collections.singletonList(advocate));
-        when(config.getAdvocateCreateTopic()).thenReturn("save-advocate-application");
-
-        // Execute the method under test
-        List<Advocate> result = service.createAdvocate(request);
-
-        // Verify the interactions
-        verify(validator, times(1)).validateAdvocateRegistration(request);
-        verify(enrichmentUtil, times(1)).enrichAdvocateRegistration(request);
-        verify(workflowService, times(1)).updateWorkflowStatus(request);
-        verify(producer, times(1)).push("save-advocate-application", request);
-
-        // Assert the result
-        assertNotNull(result);
-        assertEquals("tenant1", result.get(0).getTenantId());
+        // Setup mocks
+        when(config.getAdvocateCreateTopic()).thenReturn("advCreateTopic");
+        // Test method
+        advocateService.createAdvocate(request);
+        // Verify interactions
+        verify(validator).validateAdvocateRegistration(request);
+        verify(enrichmentUtil).enrichAdvocateRegistration(request);
+        verify(workflowService).updateWorkflowStatus(request);
+        verify(producer).push("advCreateTopic", request);
     }
 
     @Test
-    public void testSearchAdvocateApplications() {
-        // Setup
+    public void registerAdvocateRequest_Exception() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+
+        doThrow(new RuntimeException("Internal error")).when(validator).validateAdvocateRegistration(any());
+
+        // Act and Assert
+        assertThrows(Exception.class, () -> {
+            advocateService.createAdvocate(advocateRequest);
+        });
+    }
+
+    @Test
+    public void registerAdvocateRequest_CustomException() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+
+        doThrow(new CustomException()).when(validator).validateAdvocateRegistration(any());
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateService.createAdvocate(advocateRequest);
+        });
+    }
+
+    @Test
+    public void registerAdvocateRequest_Custom() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+
+        doThrow(new RuntimeException("Internal error")).when(validator).validateAdvocateRegistration(any());
+
+        // Act and Assert
+        assertThrows(CustomException.class, () -> {
+            advocateService.createAdvocate(advocateRequest);
+        });
+    }
+
+    @Test
+    public void searchAdvocateClerkApplications() {
+        // Arrange
         RequestInfo requestInfo = new RequestInfo();
-        User user = new User();
-        user.setType("CITIZEN");
-        requestInfo.setUserInfo(user);
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
         List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
-        AdvocateSearchCriteria criteria = new AdvocateSearchCriteria(null, null, "APP123", null);
-        advocateSearchCriteria.add(criteria);
-        String applicationNumber = new String();
+        // Populate advocateClerkSearchCriteria with test data
 
-        List<String> statusList = Arrays.asList("APPROVED","PENDING");
-        when(advocateRepository.getApplications(
-                eq(Collections.singletonList(new AdvocateSearchCriteria(null, null, "APP123", null))),
-                eq(Arrays.asList("APPROVED", "PENDING")),
-                eq(""), any(),any(),any()))
-                .thenReturn(Collections.emptyList());
-
-        // Invoke
-        List<Advocate> result = service.searchAdvocate(requestInfo, advocateSearchCriteria,statusList, applicationNumber,1,1);
-
-        // Verify
-        assertEquals(0, result.size());
-        verify(advocateRepository, times(1)).getApplications(eq(advocateSearchCriteria), eq(Arrays.asList("APPROVED", "PENDING")), eq(applicationNumber), any(),any(),any());
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+        advocateService.searchAdvocate(requestInfo, advocateSearchCriteria, tenantId, limit, offset);
+        verify(advocateRepository, times(1)).getApplications(advocateSearchCriteria, "testTenantId",   10, 0);
     }
 
     @Test
-    void testUpdateAdvocateRequest() {
-        // Prepare the request
-        AdvocateRequest request = new AdvocateRequest();
+    public void searchAdvocateClerkApplications_IndividualLoggedInUser() {
+        // Arrange
         RequestInfo requestInfo = new RequestInfo();
-        request.setRequestInfo(requestInfo);
+        User userInfo = new User();
+        userInfo.setType("INDIVIDUAL");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+
+        AtomicReference<Boolean> isIndividualLoggedInUser = new AtomicReference<>(false);
+
+        // Act
+        advocateService.searchAdvocate(requestInfo, advocateSearchCriteria, tenantId, limit, offset);
+        verify(advocateRepository, times(1)).getApplications(advocateSearchCriteria, "testTenantId",   10, 0);
+    }
+
+    @Test
+    public void searchAdvocateApplications_IndividualLoggedInUserEmploye() {
+        // Arrange
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        // Populate advocateClerkSearchCriteria with test data
+
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        // Act
+        advocateService.searchAdvocate(requestInfo, advocateSearchCriteria, tenantId, limit, offset);
+        verify(advocateRepository, times(1)).getApplications(advocateSearchCriteria, "testTenantId",   10, 0);
+    }
+
+    @Test
+    public void searchAdvocate_CustomException() {
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        when(advocateRepository.getApplications(any(), any(), anyInt(), anyInt())).thenThrow(CustomException.class);
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateService.searchAdvocate(requestInfo, advocateSearchCriteria, tenantId, limit, offset));
+    }
+
+    @Test
+    public void searchAdvocate_Exception() {
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        when(advocateRepository.getApplications(any(), any(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
+
+        // Assert
+        assertThrows(Exception.class, () -> advocateService.searchAdvocate(requestInfo, advocateSearchCriteria, tenantId, limit, offset));
+    }
+
+    @Test
+    public void testSearchAdvocateByStatus_Success() {
+        // Setup
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        // Mock behavior
+        when(advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate() {
+        }));
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset);
+
+        // Verification
+        assertNotNull(result);
+        // Add more verification as needed
+    }
+
+    @Test
+    public void testSearchAdvocateByStatus_EmptySuccess() {
+        // Setup
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        // Mock behavior
+        when(advocateRepository.getListApplicationsByStatus(status, tenantId, limit, offset)).thenReturn(new ArrayList<>());
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset);
+
+        // Verification
+        assertNotNull(result);
+        // Add more verification as needed
+    }
+
+    @Test
+    public void searchAdvocateByStatus_Exception() {
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        when(advocateRepository.getListApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
+
+        // Assert
+        assertThrows(Exception.class, () -> advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset));
+    }
+
+    @Test
+    public void searchAdvocateByStatus_CustomException() {
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        List<AdvocateSearchCriteria> advocateSearchCriteria = new ArrayList<>();
+        String status = "testStatus";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+
+        when(advocateRepository.getListApplicationsByStatus(anyString(), anyString(), anyInt(), anyInt())).thenThrow(CustomException.class);
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateService.searchAdvocateByStatus(requestInfo, status, tenantId, limit, offset));
+    }
+
+    @Test
+    public void testSearchAdvocateByApplicationNumber_Success() {
+        // Setup
+        String applicationNumber = "testApplicationNumber";
+        String tenantId = "testTenantId";
+        Integer limit = 10;
+        Integer offset = 0;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        // Mock behavior
+        when(advocateRepository.getListApplicationsByApplicationNumber(applicationNumber, tenantId, limit, offset)).thenReturn(Collections.singletonList(new Advocate() {
+        }));
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+
+        // Verification
+        assertNotNull(result);
+        // Add more verification as needed
+    }
+
+    @Test
+    public void testSearchAdvocateByApplicationNumber_EmptySuccess() {
+        // Setup
+        String applicationNumber = "testApplicationNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+
+        // Verification
+        assertNotNull(result);
+        // Add more verification as needed
+    }
+
+    @Test
+    public void testSearchAdvocateByApplicationNumber_CustomException() {
+        // Setup
+        String applicationNumber = "testApplicationNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        // Execution
+        List<Advocate> result = advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset);
+
+        when(advocateRepository.getListApplicationsByApplicationNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(CustomException.class);
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset));
+    }
+
+    @Test
+    public void testSearchAdvocateByApplicationNumber_Exception() {
+        // Setup
+        String applicationNumber = "testApplicationNumber";
+        String tenantId = "testTenantId";
+        Integer limit = null;
+        Integer offset = null;
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setType("EMPLOYEE");
+        userInfo.setUuid(UUID.randomUUID().toString());
+        requestInfo.setUserInfo(userInfo);
+
+        when(advocateRepository.getListApplicationsByApplicationNumber(anyString(), anyString(), anyInt(), anyInt())).thenThrow(RuntimeException.class);
+
+        // Assert
+        assertThrows(Exception.class, () -> advocateService.searchAdvocateByApplicationNumber(requestInfo, applicationNumber, tenantId, limit, offset));
+    }
+
+    @Test
+    public void updateAdvocate_EmptySuccess() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
         Advocate advocate = new Advocate();
-        advocate.setTenantId("tenant1");
-        advocate.setIndividualId("individualId");
-        advocate.setWorkflow(new Workflow());
+        advocateRequest.setAdvocate(advocate);
+
+        when(validator.validateApplicationExistence(any())).thenReturn(new Advocate());
+        doNothing().when(enrichmentUtil).enrichAdvocateApplicationUponUpdate(any());
+        doNothing().when(workflowService).updateWorkflowStatus((AdvocateRequest) any());
+        when(config.getAdvocateUpdateTopic()).thenReturn("testTopic");
+        doNothing().when(producer).push(anyString(), any());
+
+        // Act
+        Advocate result = advocateService.updateAdvocate(advocateRequest);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(advocate, result);
+    }
+
+    @Test
+    public void updateAdvocate_Success() {
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        Advocate advocate = new Advocate();
+        advocate.setApplicationNumber("appNum1");
+        advocate.setTenantId("tenantId");
         advocate.setStatus("ACTIVE");
-        request.setAdvocates(Collections.singletonList(advocate));
+        advocateRequest.setAdvocate(advocate);
 
         when(validator.validateApplicationExistence(any())).thenReturn(advocate);
-        when(config.getAdvocateUpdateTopic()).thenReturn("update-advocate-application");
+//        when(config.getAdvClerkUpdateTopic()).thenReturn("testTopic");
 
-        // Execute the method under test
-        List<Advocate> result = service.updateAdvocate(request);
+        // Act
+        Advocate result = advocateService.updateAdvocate(advocateRequest);
 
-        // Verify the interactions
-        verify(validator, times(1)).validateApplicationExistence(request.getAdvocates().get(0));
-        verify(enrichmentUtil, times(1)).enrichAdvocateApplicationUponUpdate(request);
-        verify(workflowService, times(1)).updateWorkflowStatus(request);
-        verify(producer, times(1)).push("update-advocate-application", request);
-
-        // Assert the result
+        // Assert
         assertNotNull(result);
-        assertEquals("tenant1", result.get(0).getTenantId());
+        assertEquals(advocate, result);
+    }
+
+    @Test
+    public void updateAdvocate_ValidationCustomException() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        Advocate advocate = new Advocate();
+        advocate.setApplicationNumber("appNum1");
+        advocate.setTenantId("tenantId");
+        advocateRequest.setAdvocate(advocate);
+
+        when(validator.validateApplicationExistence(any())).thenThrow(CustomException.class);
+
+        // Assert
+        assertThrows(CustomException.class, () -> advocateService.updateAdvocate(advocateRequest));
+    }
+
+    @Test
+    public void updateAdvocate_ValidationException() {
+        // Arrange
+        AdvocateRequest advocateRequest = new AdvocateRequest();
+        Advocate advocate = new Advocate();
+        advocate.setApplicationNumber("appNum1");
+        advocate.setTenantId("tenantId");
+        advocateRequest.setAdvocate(advocate);
+
+        // Assert
+        assertThrows(Exception.class, () -> advocateService.updateAdvocate(advocateRequest));
     }
 }
+
+

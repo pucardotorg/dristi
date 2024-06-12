@@ -38,14 +38,14 @@ public class AdvocateRegistrationValidator {
         RequestInfo requestInfo = advocateRequest.getRequestInfo();
          if(requestInfo.getUserInfo() == null)
             throw new CustomException(VALIDATION_EXCEPTION,"User info not found!!!");
-        advocateRequest.getAdvocates().forEach(advocate -> {
-            if(ObjectUtils.isEmpty(advocate.getTenantId()) || ObjectUtils.isEmpty(advocate.getIndividualId())){
-                throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and individualId are mandatory for creating advocate");
-            }
-            //searching individual exist or not
-            if(!individualService.searchIndividual(requestInfo,advocate.getIndividualId(), new HashMap<>()))
-                throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
-        });
+
+        Advocate advocate =  advocateRequest.getAdvocate();
+        if(ObjectUtils.isEmpty(advocate.getTenantId()) || ObjectUtils.isEmpty(advocate.getIndividualId())){
+            throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and individualId are mandatory for creating advocate");
+        }
+        //searching individual exist or not
+        if(!individualService.searchIndividual(requestInfo,advocate.getIndividualId(), new HashMap<>()))
+            throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
     }
 
     /**
@@ -54,7 +54,8 @@ public class AdvocateRegistrationValidator {
      */
     public Advocate validateApplicationExistence(Advocate advocate) {
         //checking if application exist or not
-        List<Advocate> existingApplications = repository.getApplications(Collections.singletonList(AdvocateSearchCriteria.builder().applicationNumber(advocate.getApplicationNumber()).build()), new ArrayList<>(), "", new AtomicReference<>(false),1,0);
+        List<AdvocateSearchCriteria> list = repository.getApplications(Collections.singletonList(AdvocateSearchCriteria.builder().applicationNumber(advocate.getApplicationNumber()).build()), advocate.getTenantId(), 1,0);
+        List<Advocate> existingApplications = list.get(0).getResponseList();
         log.info("Existing Applications :: {}", existingApplications);
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate Application does not exist");
         return existingApplications.get(0);

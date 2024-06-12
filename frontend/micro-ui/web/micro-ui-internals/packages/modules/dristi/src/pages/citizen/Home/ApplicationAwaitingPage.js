@@ -1,20 +1,24 @@
-import { Button } from "@egovernments/digit-ui-react-components";
+import { Button, Card, CardHeader, CardText } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { ReactComponent as WaitImage } from "./ImageUpload/image/AppAwait.svg";
-import { ReactComponent as RightArrow } from "./ImageUpload/image/arrow_forward.svg";
+import { WaitIcon } from "../../../icons/svgIndex";
 
 function ApplicationAwaitingPage({ individualId }) {
   const { t } = useTranslation();
   const history = useHistory();
   return (
-    <div style={{ display: "flex", flexDirection: "column", width: "90vw", height: "52vh", background: "white", alignItems: "center" }}>
+    <Card className="response-main">
       <div style={{ maxHeight: "40vh" }}>
-        <WaitImage></WaitImage>
+        <WaitIcon />
       </div>
       <div style={{ "text-align": "center" }}>
-        <h2> your application is awaiting approval.....!</h2>
+        <CardHeader> {t("APPROVAL_WAITING")}</CardHeader>
+      </div>
+      <div style={{ "text-align": "center", maxWidth: "50%" }}>
+        <CardText>
+          {`Your registration (ID: ${individualId}) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.`}
+        </CardText>
       </div>
       <div>
         <Button
@@ -24,17 +28,12 @@ function ApplicationAwaitingPage({ individualId }) {
           label={t("View My Application")}
           style={{
             flex: 1,
-            maxHeight: "7vh",
             width: "20vw",
-            background: "none",
-            color: "#F47738",
             boxShadow: "none",
           }}
-        >
-          <RightArrow />
-        </Button>
+        ></Button>
       </div>
-    </div>
+    </Card>
   );
 }
 

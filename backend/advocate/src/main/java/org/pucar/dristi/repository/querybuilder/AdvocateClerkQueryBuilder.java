@@ -3,6 +3,7 @@ package org.pucar.dristi.repository.querybuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateClerkSearchCriteria;
+import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -27,111 +28,144 @@ public class AdvocateClerkQueryBuilder {
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
 
     /** To build query using search criteria to search clerks
-     * @param criteriaList
+     * @param criteria
      * @param preparedStmtList
-     * @param statusList
-     * @param applicationNumber
-     * @param isIndividualLoggedInUser
+     * @param tenantId
      * @param limit
      * @param offset
      * @return query
      */
-    public String getAdvocateClerkSearchQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, List<String> statusList, String applicationNumber, AtomicReference<Boolean> isIndividualLoggedInUser, Integer limit, Integer offset){
+    public String getAdvocateClerkSearchQuery(AdvocateClerkSearchCriteria criteria, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_CLERK_TABLES);
+            if(criteria != null) {
+
+                if (criteria.getId()!=null && !criteria.getId().isEmpty()) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append(" advc.id = ? ");
+                    preparedStmtList.add(criteria.getId());
+                }
+
+                if (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append("advc.stateregnnumber = ?");
+                    preparedStmtList.add(criteria.getStateRegnNumber());
+                }
+
+                if (criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append("advc.applicationNumber = ?");
+                    preparedStmtList.add(criteria.getApplicationNumber());
+                }
+
+                if (criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
+                    addClauseIfRequired(query, preparedStmtList);
+                    query.append("advc.individualId = ?");
+                    preparedStmtList.add(criteria.getIndividualId());
+                }
+
+                if ((criteria.getId()!=null && !criteria.getId().isEmpty()) || (criteria.getStateRegnNumber()!=null && !criteria.getStateRegnNumber().isEmpty()) || criteria.getApplicationNumber()!=null && !criteria.getApplicationNumber().isEmpty()
+                        || criteria.getIndividualId()!=null && !criteria.getIndividualId().isEmpty()) {
+                    query.append(")");
+                }
+
+                if(tenantId != null && !tenantId.isEmpty()){
+                    addClauseIfRequiredForTenantId(query, preparedStmtList);
+                    query.append("LOWER(advc.tenantid) = LOWER(?)");
+                    preparedStmtList.add(tenantId.toLowerCase());
+                }
+            }
+
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
+            }
+
+            return query.toString();
+        }
+        catch(CustomException e){
+            throw e;
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate clerk search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
+        }
+    }
+
+    public String getAdvocateClerkSearchQueryByStatus(String status, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
             query.append(FROM_CLERK_TABLES);
 
-            appendCriteriaToQuery(criteriaList, preparedStmtList, applicationNumber, query);
-
-            if (statusList != null && !CollectionUtils.isEmpty(statusList)) {
+            if(status != null && !status.isEmpty()){
                 addClauseIfRequiredForStatus(query, preparedStmtList);
-                query.append(" advc.status IN ( ").append(createQuery(statusList)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, statusList);
+                query.append("LOWER(advc.status) = LOWER(?)")
+                        .append(")");
+                preparedStmtList.add(status.toLowerCase());
             }
 
-            if(isIndividualLoggedInUser.get()){
-                query.append(ORDERBY_CREATEDTIME_DESC);
-            } else {
-                query.append(ORDERBY_CREATEDTIME_ASC);
+            if(tenantId != null && !tenantId.isEmpty()){
+                addClauseIfRequiredForTenantId(query, preparedStmtList);
+                query.append("LOWER(advc.tenantid) = LOWER(?)");
+                preparedStmtList.add(tenantId.toLowerCase());
             }
 
-            appendPagination(query, preparedStmtList, limit, offset);
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
+            }
 
             return query.toString();
-        } catch (Exception e) {
-            log.error("Error while building advocate clerk search query");
-            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Error occurred while building the advocate search query: "+ e.getMessage());
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate clerk search query :: {}", e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
         }
     }
 
-    private void appendCriteriaToQuery(List<AdvocateClerkSearchCriteria> criteriaList, List<Object> preparedStmtList, String applicationNumber, StringBuilder query) {
-        if(criteriaList != null && !criteriaList.isEmpty()) {
-            List<String> ids = criteriaList.stream()
-                    .map(AdvocateClerkSearchCriteria::getId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+    public String getAdvocateClerkSearchQueryByAppNumber(String applicationNumber, List<Object> preparedStmtList, String tenantId, Integer limit, Integer offset){
+        try {
+            StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
+            query.append(FROM_CLERK_TABLES);
 
-            List<String> stateRegnNumber = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null)
-                    .map(AdvocateClerkSearchCriteria::getStateRegnNumber)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            List<String> applicationNumbers = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null)
-                    .map(AdvocateClerkSearchCriteria::getApplicationNumber)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            List<String> individualIds = criteriaList.stream()
-                    .filter(criteria -> criteria.getId() == null && criteria.getStateRegnNumber() == null && criteria.getApplicationNumber() == null)
-                    .map(AdvocateClerkSearchCriteria::getIndividualId)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-
-            if (!CollectionUtils.isEmpty(ids)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.id IN ( ").append(createQuery(ids)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, ids);
+            if(applicationNumber != null && !applicationNumber.isEmpty()){
+                addClauseIfRequiredForStatus(query, preparedStmtList);
+                query.append("LOWER(advc.applicationnumber) = LOWER(?)")
+                        .append(")");
+                preparedStmtList.add(applicationNumber.toLowerCase());
             }
 
-            if (!CollectionUtils.isEmpty(stateRegnNumber)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.stateregnnumber IN ( ").append(createQuery(stateRegnNumber)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, stateRegnNumber);
+            if(tenantId != null && !tenantId.isEmpty()){
+                addClauseIfRequiredForTenantId(query, preparedStmtList);
+                query.append("LOWER(advc.tenantid) = LOWER(?)");
+                preparedStmtList.add(tenantId.toLowerCase());
             }
 
-            if (!CollectionUtils.isEmpty(applicationNumbers)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.applicationnumber IN ( ").append(createQuery(applicationNumbers)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, applicationNumbers);
+            query.append(ORDERBY_CREATEDTIME_DESC);
+
+            // Adding Pagination
+            if (limit != null && offset != null) {
+                query.append(" LIMIT ? OFFSET ?");
+                preparedStmtList.add(limit);
+                preparedStmtList.add(offset);
             }
 
-            if (!CollectionUtils.isEmpty(individualIds)) {
-                addClauseIfRequired(query, preparedStmtList);
-                query.append(" advc.individualid IN ( ").append(createQuery(individualIds)).append(" ) ");
-                addToPreparedStatement(preparedStmtList, individualIds);
-            }
-
-            if (!CollectionUtils.isEmpty(ids) || !CollectionUtils.isEmpty(stateRegnNumber) || !CollectionUtils.isEmpty(applicationNumbers) || !CollectionUtils.isEmpty(individualIds)) {
-                query.append(")");
-            }
-        } else if(applicationNumber != null && !applicationNumber.isEmpty()){
-            addClauseIfRequired(query, preparedStmtList);
-            query.append("LOWER(advc.applicationNumber) LIKE LOWER(?)").append(")");
-            preparedStmtList.add("%" + applicationNumber.toLowerCase() + "%");
+            return query.toString();
+        }
+        catch (Exception e) {
+            log.error("Error while building advocate clerk search query :: {}",e.toString());
+            throw new CustomException(ADVOCATE_CLERK_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the advocate search query: "+ e.getMessage());
         }
     }
-
-    private void appendPagination(StringBuilder query, List<Object> preparedStmtList, Integer limit, Integer offset) {
-        // Adding Pagination
-        if (limit != null && offset != null) {
-            query.append(" LIMIT ? OFFSET ?");
-            preparedStmtList.add(limit);
-            preparedStmtList.add(offset);
-        }
-    }
-
 
     private void addClauseIfRequired(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
@@ -141,27 +175,20 @@ public class AdvocateClerkQueryBuilder {
         }
     }
 
-    private void addToPreparedStatement(List<Object> preparedStmtList, List<String> list) {
-        preparedStmtList.addAll(list);
-    }
-
     private void addClauseIfRequiredForStatus(StringBuilder query, List<Object> preparedStmtList){
         if(preparedStmtList.isEmpty()){
-            query.append(" WHERE ");
+            query.append(" WHERE (");
         }else{
             query.append(" AND ");
         }
     }
 
-    private String createQuery(List<String> ids) {
-        StringBuilder builder = new StringBuilder();
-        int length = ids.size();
-        for (int i = 0; i < length; i++) {
-            builder.append(" ?");
-            if (i != length - 1)
-                builder.append(",");
+    private void addClauseIfRequiredForTenantId(StringBuilder query, List<Object> preparedStmtList){
+        if(preparedStmtList.isEmpty()){
+            query.append(" WHERE ");
+        }else{
+            query.append(" AND ");
         }
-        return builder.toString();
     }
 
     /** To add condition for fetching documents
@@ -182,8 +209,8 @@ public class AdvocateClerkQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building clerk document search query");
-            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the clerk document query: "+ e.getMessage());
+            log.error("Error while building clerk document search query :: {}",e.toString());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Exception occurred while building the clerk document query: "+ e.getMessage());
         }
     }
 }

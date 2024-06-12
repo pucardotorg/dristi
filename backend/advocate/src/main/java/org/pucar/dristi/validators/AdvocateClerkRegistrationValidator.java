@@ -38,14 +38,13 @@ public class AdvocateClerkRegistrationValidator {
     public void validateAdvocateClerkRegistration(AdvocateClerkRequest advocateClerkRequest) throws CustomException{
         RequestInfo requestInfo = advocateClerkRequest.getRequestInfo();
 
-        advocateClerkRequest.getClerks().forEach(clerk -> {
-            if(ObjectUtils.isEmpty(clerk.getTenantId()) || ObjectUtils.isEmpty(clerk.getIndividualId()))
-                throw new CustomException(VALIDATION_EXCEPTION, "tenantId and individualId are mandatory for creating advocate clerk");
+        if(ObjectUtils.isEmpty(advocateClerkRequest.getClerk().getTenantId()) || ObjectUtils.isEmpty(advocateClerkRequest.getClerk().getIndividualId()))
+            throw new CustomException(VALIDATION_EXCEPTION, "tenantId and individualId are mandatory for creating advocate clerk");
 
-            //searching individual exist or not
-            if (!individualService.searchIndividual(requestInfo,clerk.getIndividualId(), new HashMap<>()))
-                throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
-        });
+        //searching individual exist or not
+        if (!individualService.searchIndividual(requestInfo,advocateClerkRequest.getClerk().getIndividualId(), new HashMap<>()))
+            throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist");
+
     }
 
     /**
@@ -54,7 +53,7 @@ public class AdvocateClerkRegistrationValidator {
      */
     public AdvocateClerk validateApplicationExistence(AdvocateClerk advocateClerk) {
         //checking if application exist or not
-        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new ArrayList<>(), "", new AtomicReference<>(false), 1,0);
+        List<AdvocateClerk> existingApplications =  repository.getApplications(Collections.singletonList(AdvocateClerkSearchCriteria.builder().applicationNumber(advocateClerk.getApplicationNumber()).build()), new String(), 1,0);
         log.info("Existing Applications :: {}", existingApplications);
         if(existingApplications.isEmpty()) throw new CustomException(VALIDATION_EXCEPTION,"Advocate clerk Application does not exist");
         return existingApplications.get(0);

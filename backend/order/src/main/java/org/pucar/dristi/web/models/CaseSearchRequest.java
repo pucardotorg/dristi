@@ -23,17 +23,17 @@ import java.util.List;
 @Builder
 public class CaseSearchRequest {
 
-	@JsonProperty("RequestInfo")
-	@Valid
-	private RequestInfo requestInfo = null;
+    @JsonProperty("RequestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-	@JsonProperty("criteria")
-	@Valid
-	private List<CaseCriteria> criteria = new ArrayList<>();
+    @JsonProperty("criteria")
+    @Valid
+    private List<CaseCriteria> criteria = new ArrayList<>();
 
-	public CaseSearchRequest addCriteriaItem(CaseCriteria criteriaItem) {
-		this.criteria.add(criteriaItem);
-		return this;
-	}
+    public CaseSearchRequest addCriteriaItem(CaseCriteria criteriaItem) {
+        this.criteria.add(criteriaItem);
+        return this;
+    }
 
 }

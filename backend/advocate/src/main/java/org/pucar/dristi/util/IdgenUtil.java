@@ -22,7 +22,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
-public class 	IdgenUtil {
+public class IdgenUtil {
 
 	@Autowired
 	private ObjectMapper mapper;
@@ -37,46 +37,46 @@ public class 	IdgenUtil {
 	 * @param requestInfo
 	 * @param tenantId
 	 * @param idName
+	 * @param idformat
 	 * @param count
 	 * @return
 	 */
-	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idFormat, Integer count) {
+	public List<String> getIdList(RequestInfo requestInfo, String tenantId, String idName, String idformat,
+								  Integer count) {
 		try {
 			List<IdRequest> reqList = new ArrayList<>();
 			for (int i = 0; i < count; i++) {
-				reqList.add(IdRequest.builder().idName(idName).format(idFormat).tenantId(tenantId).build());
+				reqList.add(IdRequest.builder().idName(idName).format(idformat).tenantId(tenantId).build());
 			}
 
-			IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
+			IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo)
+					.build();
 			StringBuilder uri = new StringBuilder(configs.getIdGenHost()).append(configs.getIdGenPath());
-
-			IdGenerationResponse response = fetchIdGenerationResponse(uri, request);
+			IdGenerationResponse response;
+			try {
+				response = mapper.convertValue(restRepo.fetchResult(uri, request),
+						IdGenerationResponse.class);
+			}
+			catch (CustomException e) {
+				log.error("Custom Exception occurred in Idgen Utility :: {}", e.toString());
+				throw e;
+			}
+			catch (Exception e) {
+				log.error("Error fetching ID from ID generation service :: {}", e.toString());
+				throw new CustomException(IDGEN_ERROR, "Error fetching ID from ID generation service");
+			}
 
 			List<IdResponse> idResponses = response.getIdResponses();
 
-			if (CollectionUtils.isEmpty(idResponses)) {
+			if (CollectionUtils.isEmpty(idResponses))
 				throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
-			}
 
 			return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
-		} catch (CustomException e) {
+		} catch (CustomException e){
+			log.error("Custom Exception occurred in calling Idgen :: {}", e.toString());
 			throw e;
-		} catch (Exception e) {
-			log.error("ERROR in IDGEN Service: {}", e.getMessage());
-			throw new CustomException(IDGEN_ERROR, "ERROR in IDGEN Service");
+		} catch (Exception e){
+			throw new CustomException(IDGEN_ERROR,"ERROR in IDGEN Service");
 		}
 	}
-
-	private IdGenerationResponse fetchIdGenerationResponse(StringBuilder uri, IdGenerationRequest request) {
-		try {
-			return mapper.convertValue(restRepo.fetchResult(uri, request), IdGenerationResponse.class);
-		} catch (CustomException e) {
-			log.error("Custom Exception occurred in Idgen Utility");
-			throw e;
-		} catch (Exception e) {
-			log.error("Error fetching ID from ID generation service: {}", e.getMessage());
-			throw new CustomException(IDGEN_ERROR, "Error fetching ID from ID generation service");
-		}
-	}
-
 }
