@@ -26,13 +26,13 @@ function Home() {
             <Button
               variation={"secondary"}
               className={"secondary-button-selector"}
-              label={t("CS_JOIN_CASE")}
+              label={t("JOIN_A_CASE")}
               labelClassName={"secondary-label-selector"}
               onButtonClick={() => {}}
             />
             <Button
               className={"tertiary-button-selector"}
-              label={t("CS_FILE_CASE")}
+              label={t("FILE_A_CASE")}
               labelClassName={"tertiary-label-selector"}
               onButtonClick={() => {
                 history.push("/digit-ui/citizen/dristi/home/file-case");

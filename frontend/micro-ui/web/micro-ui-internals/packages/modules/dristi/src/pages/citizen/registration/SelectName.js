@@ -34,11 +34,11 @@ const SelectName = ({ config, t, onSubmit, isDisabled, params, history, value, i
             .replace(/\b\w/g, char => char.toUpperCase());
           if (updatedValue !== oldValue) {
             const element = document.querySelector(`[name="${key}"]`);
-            const start = element.selectionStart;
-            const end = element.selectionEnd;
+            const start = element?.selectionStart;
+            const end = element?.selectionEnd;
             setValue(key, updatedValue);
             setTimeout(() => {
-              element.setSelectionRange(start, end);
+              element?.setSelectionRange(start, end);
             }, 0);
           }
         }
