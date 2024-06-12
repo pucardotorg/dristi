@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
@@ -26,7 +26,7 @@ const IndividualCreate = () => {
     await mutation.mutate(
       {
         url: `/individual/v1/_create`,
-        params: { tenantId: "pg.citya" },
+        params: { tenantId },
         body: transformCreateData(data),
         config: {
           enable: true,
@@ -36,9 +36,9 @@ const IndividualCreate = () => {
   };
   return (
     <div>
-      <Header> Create Individual</Header>
+      <Header> {t("CREATE_INDIVIDUAL")}</Header>
       <FormComposerV2
-        label={t("Submit")}
+        label={t("SUBMIT_BUTTON")}
         config={newConfig.map((config) => {
           return {
             ...config,
