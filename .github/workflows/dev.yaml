@@ -40,7 +40,6 @@ jobs:
           run_job_case=false 
           run_job_order=false
           run_job_digit_ui=false
-          while IFS= read -r file
           for path in backend/advocate backend/case backend/order frontend/micro-ui
           do
             if grep -q "^$path/" files.txt; then
