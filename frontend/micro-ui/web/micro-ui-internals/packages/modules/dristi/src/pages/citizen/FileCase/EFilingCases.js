@@ -472,29 +472,32 @@ function EFilingCases({ path }) {
 
                 if (typeof value === "string") {
                   let updatedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
-                  if (updatedValue.length > 11) {
+                  if (updatedValue?.length > 11) {
                     updatedValue = updatedValue.substring(0, 11);
                   }
 
-                  if (updatedValue.length >= 5) {
+                  if (updatedValue?.length >= 5) {
                     updatedValue = updatedValue.slice(0, 4).replace(/[^A-Z]/g, "") + "0" + updatedValue.slice(5);
                   }
 
-                  if (updatedValue.length === 11) {
+                  if (updatedValue?.length === 11) {
                     updatedValue = updatedValue.slice(0, 4) + "0" + updatedValue.slice(5, 11).replace(/[^A-Z0-9]/g, "");
                   }
 
                   if (updatedValue !== oldValue) {
                     const element = document.querySelector(`[name="${key}"]`);
-                    const start = element.selectionStart;
-                    const end = element.selectionEnd;
+                    const start = element?.selectionStart;
+                    const end = element?.selectionEnd;
                     setValue(key, updatedValue);
                     setTimeout(() => {
-                      element.setSelectionRange(start, end);
+                      element?.setSelectionRange(start, end);
                     }, 0);
                   }
                 }
               }
+              break;
+            default:
+              break;
           }
         }
       }
@@ -517,11 +520,11 @@ function EFilingCases({ path }) {
                 .replace(/\b\w/g, (char) => char.toUpperCase());
               if (updatedValue !== oldValue) {
                 const element = document.querySelector(`[name="${key}"]`);
-                const start = element.selectionStart;
-                const end = element.selectionEnd;
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
                 setValue(key, updatedValue);
                 setTimeout(() => {
-                  element.setSelectionRange(start, end);
+                  element?.setSelectionRange(start, end);
                 }, 0);
               }
             }
@@ -1470,7 +1473,7 @@ function EFilingCases({ path }) {
                 />
               }
               actionCancelOnSubmit={() => setServiceOfDemandNoticeModal(false)}
-              actionSaveLabel={t("CS_SAVE_AS_DRAFT")}
+              actionSaveLabel={t("CS_SAVE_DRAFT")}
               children={<div style={{ padding: "16px 0" }}>{t("CS_SAVE_AS_DRAFT_TEXT")}</div>}
               actionSaveOnSubmit={async () => {
                 await DRISTIService.caseUpdateService(

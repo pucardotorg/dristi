@@ -18,10 +18,10 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
 
   return (
     <div>
-      {inputs.map((input, inputIndex) => (
+      {inputs?.map((input, inputIndex) => (
         <div>
           <div style={{ paddingTop: "10px", paddingBottom: "10px", fontWeight: 700, fontSize: "24px", color: "#3D3C3C" }}>{config?.label}</div>
-          {input.data.map((item, itemIndex) => (
+          {input?.data?.map((item, itemIndex) => (
             <SignatureCard
               key={inputIndex + itemIndex}
               index={itemIndex}

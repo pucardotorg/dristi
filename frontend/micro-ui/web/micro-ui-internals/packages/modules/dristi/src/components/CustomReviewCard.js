@@ -1,7 +1,7 @@
 import React from "react";
 import CustomReviewCardRow from "./CustomReviewCardRow";
 
-function CustomReviewCard({ titleIndex, config, data, isScrutiny, t, dataIndex, handleOpenPopup, input, dataErrors, configKey }) {
+function CustomReviewCard({ titleIndex, config, data, isScrutiny, t, dataIndex, handleOpenPopup, input, dataErrors, configKey, titleHeading }) {
   return (
     <div className="item-body">
       {config.map((item, i) => {
@@ -19,6 +19,7 @@ function CustomReviewCard({ titleIndex, config, data, isScrutiny, t, dataIndex, 
             configKey={configKey}
             dataError={dataError}
             t={t}
+            titleHeading={titleHeading}
           />
         );
       })}
