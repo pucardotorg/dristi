@@ -11,7 +11,7 @@ const witnessFormConfig = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "VERIFY_PHONE_ERROR_TEXT",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             minLength: 2,
@@ -27,7 +27,7 @@ const witnessFormConfig = [
           name: "middleName",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "VERIFY_PHONE_ERROR_TEXT",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             title: "",
@@ -44,7 +44,7 @@ const witnessFormConfig = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "VERIFY_PHONE_ERROR_TEXT",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             minLength: 2,
