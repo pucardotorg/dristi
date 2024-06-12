@@ -75,7 +75,10 @@ public class CaseRegistrationValidator {
         }
     }
 
-    public Boolean validateApplicationExistence(CourtCase courtCase, RequestInfo requestInfo) {
+    public Boolean validateApplicationExistence(CaseRequest caseRequest) {
+        validateCaseRegistration(caseRequest);
+        CourtCase courtCase = caseRequest.getCases();
+        RequestInfo requestInfo = caseRequest.getRequestInfo();
 
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
             throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for updating case");
