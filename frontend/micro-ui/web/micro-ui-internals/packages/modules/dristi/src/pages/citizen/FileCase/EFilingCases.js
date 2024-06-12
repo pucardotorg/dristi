@@ -25,9 +25,10 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [{ setFormErrors, resetFormData }, setState] = useState({
-    setFormErrors: () => {},
-    resetFormData: () => {},
+  const [{ setFormErrors, resetFormData, setFormDataValue }, setState] = useState({
+    setFormErrors: null,
+    resetFormData: null,
+    setFormDataValue: null,
   });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
@@ -373,58 +374,89 @@ function EFilingCases({ path }) {
   };
 
   const chequeDateValidation = (formData, setError, clearErrors) => {
-    if (selected === "chequeDetails" && new Date(formData?.issuanceDate).getTime() > new Date().getTime()) {
-      setError("issuanceDate", { message: " CS_DATE_ERROR_MSG" });
-    } else {
-      clearErrors("issuanceDate");
-    }
-
-    if (
-      selected === "chequeDetails" &&
-      formData?.depositDate &&
-      formData?.issuanceDate &&
-      new Date(formData?.issuanceDate).getTime() > new Date(formData?.depositDate).getTime()
-    ) {
-      setError("depositDate", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
-    } else if (selected === "chequeDetails" && new Date(formData?.depositDate).getTime() > new Date().getTime()) {
-      setError("depositDate", { message: " CS_DATE_ERROR_MSG" });
-    } else {
-      clearErrors("depositDate");
+    if (selected === "chequeDetails") {
+      for (const key in formData) {
+        switch (key) {
+          case "issuanceDate":
+            if (new Date(formData?.issuanceDate).getTime() > new Date().getTime()) {
+              setError("issuanceDate", { message: " CS_DATE_ERROR_MSG" });
+            } else {
+              clearErrors("issuanceDate");
+            }
+            break;
+          case "depositDate":
+            if (
+              formData?.depositDate &&
+              formData?.issuanceDate &&
+              new Date(formData?.issuanceDate).getTime() > new Date(formData?.depositDate).getTime()
+            ) {
+              setError("depositDate", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
+            } else if (selected === "chequeDetails" && new Date(formData?.depositDate).getTime() > new Date().getTime()) {
+              setError("depositDate", { message: " CS_DATE_ERROR_MSG" });
+            } else {
+              clearErrors("depositDate");
+            }
+            break;
+          default:
+            break;
+        }
+      }
     }
   };
 
   const showDemandNoticeModal = (setValue, formData, setError, clearErrors) => {
     if (selected === "demandNoticeDetails") {
-      if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
-        setError("dateOfIssuance", { message: " CS_DATE_ERROR_MSG" });
-      } else {
-        clearErrors("dateOfIssuance");
-      }
+      for (const key in formData) {
+        switch (key) {
+          case "dateOfService":
+            if (formData?.dateOfService && new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000 > new Date().getTime()) {
+              setServiceOfDemandNoticeModal(true);
+              setError("dateOfService", { message: " CS_SERVICE_DATE_ERROR_MSG" });
+              setValue("dateOfAccrual", "");
+            } else {
+              clearErrors("dateOfService");
+              const milliseconds = new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000;
+              const date = new Date(milliseconds);
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              const day = String(date.getDate()).padStart(2, "0");
+              const formattedDate = `${year}-${month}-${day}`;
+              setValue("dateOfAccrual", formattedDate);
+            }
+            break;
 
-      if (formData?.delayApplicationType?.code === "NO") {
-        setReceiptDemandNoticeModal(true);
-        setError("delayApplicationType", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
-      } else {
-        clearErrors("delayApplicationType");
-      }
-      if (formData?.dateOfDispatch && new Date(formData?.dateOfDispatch).getTime() + 15 * 24 * 60 * 60 * 1000 > new Date().getTime()) {
-        setServiceOfDemandNoticeModal(true);
-        setError("dateOfDispatch", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
-      } else if (
-        formData?.dateOfDispatch &&
-        formData?.dateOfIssuance &&
-        new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
-      ) {
-        setError("dateOfDispatch", { message: " CS_DISPATCH_DATE_ERROR_MSG" });
-      } else {
-        clearErrors("dateOfDispatch");
-        const milliseconds = new Date(formData?.dateOfDispatch).getTime() + 15 * 24 * 60 * 60 * 1000;
-        const date = new Date(milliseconds);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        const formattedDate = `${year}-${month}-${day}`;
-        setValue("dateOfAccrual", formattedDate);
+          case "dateOfIssuance":
+            if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
+              setError("dateOfIssuance", { message: " CS_DATE_ERROR_MSG" });
+            } else {
+              clearErrors("dateOfIssuance");
+            }
+            break;
+
+          case "dateOfDispatch":
+            if (new Date(formData?.dateOfDispatch).getTime() > new Date().getTime()) {
+              setError("dateOfDispatch", { message: " CS_DATE_ERROR_MSG" });
+            } else if (
+              formData?.dateOfDispatch &&
+              formData?.dateOfIssuance &&
+              new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
+            ) {
+              setError("dateOfDispatch", { message: " CS_DISPATCH_DATE_ERROR_MSG" });
+            } else {
+              clearErrors("dateOfDispatch");
+            }
+            break;
+          case "delayApplicationType":
+            if (formData?.delayApplicationType?.code === "NO") {
+              setReceiptDemandNoticeModal(true);
+              setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
+            } else {
+              clearErrors("delayApplicationType");
+            }
+            break;
+          default:
+            break;
+        }
       }
     }
   };
@@ -442,6 +474,17 @@ function EFilingCases({ path }) {
           showForm: true,
           isVerified: true,
           hasBarRegistrationNo: true,
+          isEnabled: true,
+        });
+      } else if (
+        caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
+          (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 >= new Date().getTime()
+        )
+      ) {
+        setValue("delayApplicationType", {
+          code: "YES",
+          name: "YES",
+          showForm: false,
           isEnabled: true,
         });
       }
@@ -558,9 +601,10 @@ function EFilingCases({ path }) {
         ...prev,
         setFormErrors: setError,
         resetFormData: reset,
+        setFormDataValue: setValue,
       }));
     }
-    if (formState?.submitCount && !Object.keys(formState?.errors).length) {
+    if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
       setIsDisabled(true);
     }
   };
@@ -729,7 +773,7 @@ function EFilingCases({ path }) {
             };
           })
       );
-      const representatives = [...caseDetails?.representatives ? caseDetails?.representative : []]
+      const representatives = [...(caseDetails?.representatives ? caseDetails?.representative : [])]
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
@@ -1203,15 +1247,15 @@ function EFilingCases({ path }) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails(true).then(() => {
+        if (!!resetFormData) {
+          resetFormData();
+        }
         refetchCaseData().then(() => {
           const caseData =
             caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
             caseDetails?.caseDetails?.[nextSelected]?.formdata ||
             (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
           setFormdata(caseData);
-          if (!!resetFormData) {
-            resetFormData();
-          }
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           setIsDisabled(false);
         });
@@ -1265,8 +1309,13 @@ function EFilingCases({ path }) {
   const getFormClassName = useCallback(() => {
     if (formdata && formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.isDisable) {
       return "disable-form";
-    } else return "";
-  }, [formdata]);
+    }
+
+    if (selected === "delayApplications" && formdata?.[0]?.data?.delayApplicationType?.code) {
+      return "disable-form";
+    }
+    return "";
+  }, [formdata, selected]);
 
   const handleConfirmDeleteForm = () => {
     const index = deleteFormIndex;
@@ -1461,6 +1510,12 @@ function EFilingCases({ path }) {
               actionSaveLabel={t("CS_NOT_PAID_FULL")}
               children={<div style={{ padding: "16px 0" }}>{t("CS_NOT_PAID_FULL_TEXT")}</div>}
               actionSaveOnSubmit={async () => {
+                setFormDataValue("delayApplicationType", {
+                  code: "YES",
+                  name: "YES",
+                  showForm: false,
+                  isEnabled: true,
+                });
                 setReceiptDemandNoticeModal(false);
               }}
             ></Modal>

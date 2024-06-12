@@ -663,6 +663,14 @@
   }
 }
 
+.delay-application {
+  &.disable-form {
+    .radio-wrap {
+      pointer-events: none;
+    }
+  }
+}
+
 .review-case-file {
   border: none !important;
   padding: 0px;
