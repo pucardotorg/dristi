@@ -185,7 +185,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
             );
           })}
       </div>
-      {<span onClick={handleAddDocument}> + Add Document</span>}
+      {<span onClick={handleAddDocument}> + {t("ADD_DOCUMENT")}</span>}
     </div>
   );
 }
