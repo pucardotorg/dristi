@@ -2,6 +2,7 @@ import React from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
+import { InfoCard } from "@egovernments/digit-ui-components";
 
 const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError, t, config, titleHeading }) => {
   const { type = null, label = null, value = null, badgeType = null } = config;
@@ -79,6 +80,53 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
               </div>
             )}
           </div>
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
+            </div>
+          )}
+        </div>
+      );
+
+    case "infoBox":
+      if (!data?.[value]?.header) {
+        return null;
+      }
+      return (
+        <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+          <div className="value info-box">
+            <InfoCard
+              variant={"default"}
+              label={t(data?.[value]?.header)}
+              additionalElements={[
+                <React.Fragment>
+                  {Array.isArray(data?.[value]?.data) && (
+                    <ul style={{ listStyleType: "disc", margin: "4px" }}>
+                      {data?.[value]?.data.map((data) => (
+                        <li>{t(data)}</li>
+                      ))}
+                    </ul>
+                  )}
+                </React.Fragment>,
+              ]}
+              inline
+              text={typeof data?.[value]?.data === "string" && data?.[value]?.data}
+              textStyle={{}}
+              className={`adhaar-verification-info-card`}
+            />
+          </div>
+          {isScrutiny && (
+            <div
+              className="flag"
+              onClick={(e) => {
+                handleOpenPopup(e, configKey, name, dataIndex, value);
+              }}
+              key={dataIndex}
+            >
+              {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+            </div>
+          )}
           {dataError && isScrutiny && (
             <div className="scrutiny-error input">
               <FlagIcon isError={true} />

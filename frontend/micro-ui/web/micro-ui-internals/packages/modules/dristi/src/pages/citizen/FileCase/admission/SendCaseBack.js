@@ -47,7 +47,6 @@ function SendCaseBack({ t, setShowModal, setSubmitModalInfo, submitModalInfo }) 
       [modalConfig]
     )
   );
-  console.log(stepItems);
   const onSubmit = (props) => {
     setPage(1);
   };

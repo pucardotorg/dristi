@@ -47,7 +47,6 @@ function Home() {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  console.log(props);
                   history.push(`${path}/file-case/case?caseId=${props?.original?.id}`);
                 },
               },

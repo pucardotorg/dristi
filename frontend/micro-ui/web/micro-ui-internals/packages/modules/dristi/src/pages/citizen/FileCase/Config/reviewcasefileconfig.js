@@ -69,6 +69,12 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "CS_IFSC_CODE", value: "ifsc" },
                 { type: "text", label: "CS_DATE_DEPOSITE", value: "depositDate" },
                 { type: "text", label: "CS_DATE_ISSUANCE", value: "issuanceDate" },
+                { type: "infoBox", value: "infoBoxData" },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: ["bouncedChequeFileUpload.document", "depositChequeFileUpload.document", "returnMemoFileUpload.document"],
+                },
               ],
               data: CheckqueDummy,
             },
@@ -138,6 +144,7 @@ export const reviewCaseFileFormConfig = [
               label: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
               icon: "PrayerSwornIcon",
               config: [
+                { type: "infoBox", value: "infoBoxData" },
                 { type: "text", label: "CS_PRAYER_FOR_RELIEF_HEADER", value: "prayerForRelief.text" },
                 { type: "text", label: "ADDRESS", value: "addressDetails" },
                 {
