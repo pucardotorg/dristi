@@ -1,0 +1,89 @@
+serviceMaps:
+  serviceName: hearing-service
+  mappings:
+    - version: 1.0
+      description: Persists hearing request details in tables
+      fromTopic: create-hearing-application
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO dristi_hearing(id,tenantId,hearingId,filingNumber,cnrNumbers,applicationNumbers,hearingType,status,startTime,endTime,presidedBy,attendees,transcript,vcLink,isActive,additionalDetails,notes,createdBy,lastModifiedBy,createdTime,lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: hearing
+          jsonMaps:
+            - jsonPath: $.hearing.id
+            - jsonPath: $.hearing.tenantId
+            - jsonPath: $.hearing.hearingId
+            - jsonPath: $.hearing.filingNumber
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.cnrNumbers
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.applicationNumbers
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.hearingType
+            - jsonPath: $.hearing.status
+            - jsonPath: $.hearing.startTime
+            - jsonPath: $.hearing.endTime
+            - jsonPath: $.hearing.presidedBy
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.attendees
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.transcript
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.vcLink
+            - jsonPath: $.hearing.isActive
+            - jsonPath: $.hearing.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.notes
+            - jsonPath: $.hearing.auditDetails.createdBy
+            - jsonPath: $.hearing.auditDetails.lastModifiedBy
+            - jsonPath: $.hearing.auditDetails.createdTime
+            - jsonPath: $.hearing.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_hearing_document(id,fileStore,documentUid,documentType,hearingId,additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: hearing.documents.*
+          jsonMaps:
+            - jsonPath: $.hearing.documents.*.id
+            - jsonPath: $.hearing.documents.*.fileStore
+            - jsonPath: $.hearing.documents.*.documentUid
+            - jsonPath: $.hearing.documents.*.documentType
+            - jsonPath: $.hearing.id
+            - jsonPath: $.hearing.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+    - version: 1.0
+      description: Update hearing request details in tables
+      fromTopic: update-hearing-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE dristi_hearing SET hearingType = ?, status = ?, startTime = ?, endTime = ?,presidedBy=?, attendees = ?, transcript = ?, vcLink = ?, isActive = ?, additionalDetails = ?, notes = ?, lastModifiedBy = ?, lastModifiedTime = ? WHERE id = ?;
+          basePath: hearing
+          jsonMaps:
+            - jsonPath: $.hearing.hearingType
+            - jsonPath: $.hearing.status
+            - jsonPath: $.hearing.startTime
+            - jsonPath: $.hearing.endTime
+            - jsonPath: $.hearing.presidedBy
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.attendees
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.transcript
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.vcLink
+            - jsonPath: $.hearing.isActive
+            - jsonPath: $.hearing.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.hearing.notes
+            - jsonPath: $.hearing.auditDetails.lastModifiedBy
+            - jsonPath: $.hearing.auditDetails.lastModifiedTime
+            - jsonPath: $.hearing.id
