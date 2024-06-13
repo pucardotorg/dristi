@@ -108,7 +108,7 @@ public class ApplicationQueryBuilder {
             query.append(ORDERBY_CREATEDTIME_DESC);
 
 
-            // Adding Pagination
+            //TODO Adding Pagination
 //            if (limit != null && offset != null) {
 //                query.append(" LIMIT ? OFFSET ?");
 //                preparedStmtList.add(limit);
