@@ -58,7 +58,6 @@ function CaseFileAdmission({ t }) {
             actionClassName="admission-action-buttons"
             showSkip={"FDSJKLDFSJL"}
             onSkip={() => {
-              console.debug("vaibhav");
             }}
           />
 

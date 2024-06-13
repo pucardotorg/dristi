@@ -6,6 +6,7 @@ import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import SendCaseBackModal from "../../../components/SendCaseBackModal";
 import SuccessModal from "../../../components/SuccessModal";
+import { formatDate } from "../../citizen/FileCase/CaseType";
 
 function ViewCaseFile({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -103,7 +104,6 @@ function ViewCaseFile({ t }) {
     caseId,
     Boolean(caseId)
   );
-
   const caseData = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
 
   const formConfig = useMemo(() => {
@@ -121,7 +121,7 @@ function ViewCaseFile({ t }) {
                   delete input.data;
                   return {
                     ...input,
-                    data: caseData.additionalDetails[input.key]?.formdata,
+                    data: caseData?.additionalDetails?.[input?.key]?.formdata || caseData?.caseDetails?.[input?.key]?.formdata || {},
                   };
                 }),
               },
@@ -131,6 +131,45 @@ function ViewCaseFile({ t }) {
       }),
     ];
   }, [reviewCaseFileFormConfig, caseData]);
+
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+
+  const updateCaseDetails = (data) => {
+    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data } };
+    const reqbody = {
+      cases: {
+        ...newcasedetails,
+        linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+        filingDate: formatDate(new Date()),
+        workflow: {
+          ...caseDetails?.workflow,
+          action: "UNDER_SCRUTINY",
+        },
+      },
+      tenantId,
+    };
+    
+    // return DRISTIService.caseUpdateService(
+    //   {
+    //     cases: {
+    //       newcasedetails,
+    //       linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+    //       filingDate: formatDate(new Date()),
+    //       workflow: {
+    //         ...caseDetails?.workflow,
+    //         action: "UNDER_SCRUTINY",
+    //       },
+    //     },
+    //     tenantId,
+    //   },
+    //   tenantId
+    // );
+  };
 
   const handleRegisterClick = () => {
     // setActionModal("sendCaseBackPotential");
@@ -152,13 +191,11 @@ function ViewCaseFile({ t }) {
     setActionModal("caseRegisterSuccess");
   };
   const handleSendCaseBack = () => {
-    debugger
-    console.debug(formdata);
     let body = {};
     for (const key in formdata.data) {
       body = { ...body, ...formdata.data[key] };
     }
-    console.debug(body);
+    updateCaseDetails(body);
     setActionModal("caseSendBackSuccess");
   };
   const handlePotentialConfirm = () => {

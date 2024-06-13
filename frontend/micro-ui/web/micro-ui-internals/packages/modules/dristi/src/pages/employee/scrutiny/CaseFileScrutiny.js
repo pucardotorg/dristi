@@ -47,7 +47,6 @@ function CaseFileScrutiny({ t }) {
   }, [formdata]);
 
   //error count for each section
-  console.debug(scrutinyErrorCount);
   const onSubmit = () => {};
   const onSaveDraft = () => {};
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {

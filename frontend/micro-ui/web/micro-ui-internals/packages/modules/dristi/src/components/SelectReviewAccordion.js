@@ -12,11 +12,13 @@ import {
 import CustomReviewCard from "./CustomReviewCard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import CustomPopUp from "./CustomPopUp";
+import ImageModal from "./ImageModal";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
   const [isOpen, setOpen] = useState(true);
+  const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
@@ -228,6 +230,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         dataErrors={dataErrors}
                         configKey={config.key}
                         titleHeading={titleHeading}
+                        setIsImageModal={setIsImageModal}
                       />
                     );
                   })}
@@ -270,6 +273,16 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             </div>
           </Fragment>
         </CustomPopUp>
+      )}
+      {isImageModal && (
+        <ImageModal
+          imageInfo={isImageModal}
+          t={t}
+          handleOpenPopup={handleClosePopup}
+          handleCloseModal={() => {
+            setIsImageModal(false);
+          }}
+        />
       )}
     </div>
   );

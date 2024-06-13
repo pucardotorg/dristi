@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
 
-const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, dataIndex, name, configKey, dataError, t, config, titleHeading }) => {
+const CustomReviewCardRow = ({
+  isScrutiny,
+  data,
+  handleOpenPopup,
+  titleIndex,
+  dataIndex,
+  name,
+  configKey,
+  dataError,
+  t,
+  config,
+  titleHeading,
+  setIsImageModal,
+}) => {
   const { type = null, label = null, value = null, badgeType = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const extractValue = (data, key) => {
@@ -21,7 +34,18 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
     });
     return value;
   };
-
+  const handleImageClick = (configKey, name, dataIndex, fieldName, data) => {
+    if (isScrutiny && data) {
+      setIsImageModal({
+        fieldName,
+        configKey,
+        name,
+        dataIndex,
+        data,
+      });
+    }
+    return null;
+  };
   switch (type) {
     case "title":
       let title = "";
@@ -156,24 +180,40 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
                       extractValue(data, value)?.map((data, index) => {
                         if (data?.fileStore) {
                           return (
-                            <DocViewerWrapper
-                              key={`${value}-${index}`}
-                              fileStoreId={data?.fileStore}
-                              displayFilename={data?.fileName}
-                              tenantId={tenantId}
-                              docWidth="250px"
-                            />
-                          );
-                        } else if (data?.document) {
-                          return data?.document?.map((data, index) => {
-                            return (
+                            <div
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                handleImageClick(configKey, name, dataIndex, value, data);
+                              }}
+                            >
                               <DocViewerWrapper
                                 key={`${value}-${index}`}
                                 fileStoreId={data?.fileStore}
                                 displayFilename={data?.fileName}
                                 tenantId={tenantId}
                                 docWidth="250px"
+                                showDownloadOption={false}
                               />
+                            </div>
+                          );
+                        } else if (data?.document) {
+                          return data?.document?.map((data, index) => {
+                            return (
+                              <div
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  handleImageClick(configKey, name, dataIndex, value, data);
+                                }}
+                              >
+                                <DocViewerWrapper
+                                  key={`${value}-${index}`}
+                                  fileStoreId={data?.fileStore}
+                                  displayFilename={data?.fileName}
+                                  tenantId={tenantId}
+                                  docWidth="250px"
+                                  showDownloadOption={false}
+                                />
+                              </div>
                             );
                           });
                         } else {
@@ -181,13 +221,21 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
                         }
                       })
                     ) : extractValue(data, value) ? (
-                      <DocViewerWrapper
-                        key={`${value}-${extractValue(data, value)?.name}`}
-                        fileStoreId={extractValue(data, value)?.fileStore}
-                        displayFilename={extractValue(data, value)?.fileName}
-                        tenantId={tenantId}
-                        docWidth="250px"
-                      />
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleImageClick(configKey, name, dataIndex, value, data);
+                        }}
+                      >
+                        <DocViewerWrapper
+                          key={`${value}-${extractValue(data, value)?.name}`}
+                          fileStoreId={extractValue(data, value)?.fileStore}
+                          displayFilename={extractValue(data, value)?.fileName}
+                          tenantId={tenantId}
+                          docWidth="250px"
+                          showDownloadOption={false}
+                        />
+                      </div>
                     ) : null
                   )
                 : null}
