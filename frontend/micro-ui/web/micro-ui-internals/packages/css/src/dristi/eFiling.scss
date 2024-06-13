@@ -132,6 +132,10 @@
       margin-top: 32px;
       border: none !important;
 
+      .card-label-error {
+        color: #bb2c2f !important;
+      }
+
       .form-item-name {
         width: 100%;
         padding: 12px 32px 12px 32px;
@@ -310,6 +314,19 @@
         }
       }
     }
+  }
+}
+
+.respondent,
+.cheque {
+  .card-label-error {
+    margin-top: -18px !important;
+  }
+}
+
+.demand-notice {
+  .card-label-error {
+    margin-top: -16px !important;
   }
 }
 

@@ -14,6 +14,7 @@ export const chequeDetailsFormConfig = [
             patternType: "Name",
             minLength: 2,
           },
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           name: "chequeSignatoryName",
         },
       },
@@ -58,6 +59,7 @@ export const chequeDetailsFormConfig = [
             patternType: "Name",
             minLength: 2,
           },
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           name: "name",
         },
       },
@@ -94,6 +96,7 @@ export const chequeDetailsFormConfig = [
         label: "CS_BANK_NAME",
         isMandatory: true,
         populators: {
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           name: "bankName",
         },
       },
@@ -127,6 +130,7 @@ export const chequeDetailsFormConfig = [
         populators: {
           componentInFront: "₹",
           name: "chequeAmount",
+          prefix: "",
         },
       },
     ],

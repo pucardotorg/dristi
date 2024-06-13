@@ -86,18 +86,13 @@ const debtLiabilityFromconfig = [
     dependentKey: { liabilityType: ["showAmountCovered"] },
     body: [
       {
-        type: "text",
-        key: "totalAmount",
+        type: "amount",
+        component: "CustomInput",
         label: "CS_TOTAL_CHEQUE_AMOUNT",
         populators: {
-          validation: {
-            pattern: {
-              message: "CORE_COMMON_CHECK_COUNT_INVALID",
-              value: /^\d{1,12}$/,
-            },
-          },
-          title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
+          componentInFront: "₹",
+          name: "totalAmount",
+          prefix: "",
         },
       },
     ],
