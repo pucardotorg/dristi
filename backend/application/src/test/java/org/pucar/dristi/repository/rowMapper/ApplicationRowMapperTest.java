@@ -35,6 +35,7 @@ public class ApplicationRowMapperTest {
         when(resultSet.getString("applicationnumber")).thenReturn("APP-001", "APP-002");
         when(resultSet.getString("cnrnumber")).thenReturn("CN-001", "CN-002");
         when(resultSet.getString("filingnumber")).thenReturn("F-001", "F-002");
+        when(resultSet.getString("caseid")).thenReturn("Case-001", "Case-002");
         when(resultSet.getString("referenceid")).thenReturn("123e4567-e89b-12d3-a456-556642440000", "123e4567-e89b-12d3-a456-556642440001");
         when(resultSet.getString("createddate")).thenReturn("2024-05-27", "2024-05-28");
         when(resultSet.getString("applicationcreatedby")).thenReturn("123e4567-e89b-12d3-a456-556642440002", "123e4567-e89b-12d3-a456-556642440003");

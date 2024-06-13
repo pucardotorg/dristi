@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.rowMapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
@@ -35,11 +36,13 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
                         .lastModifiedBy(rs.getString("lastmodifiedby"))
                         .lastModifiedTime(lastModifiedTime)
                         .build();
+                List<String> sections = stringToList(rs.getString("sections"));
+                List<String> subsections = stringToList(rs.getString("subsections"));
                 StatuteSection statuteSection = StatuteSection.builder()
                         .id(UUID.fromString(rs.getString("id")))
                         .tenantId(rs.getString("tenantid"))
-                        .sections(stringToList(rs.getString("sections")))
-                        .subsections(stringToList(rs.getString("subsections")))
+                        .sections(sections)
+                        .subsections(subsections)
                         .strSubsections(rs.getString("strsubsections"))
                         .strSections(rs.getString("strsections"))
                         .statute(rs.getString("statute"))
@@ -60,16 +63,17 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
         }
         return statuteSectionMap;
     }
+    public List<String> stringToList(String str) {
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<String> stringToList(String str){
         List<String> list = new ArrayList<>();
-        if(str!=null){
-            StringTokenizer st = new StringTokenizer(str,"|");
-            while (st.hasMoreTokens()) {
-                list.add(st.nextToken());
+        try {
+            if (str != null) {
+                list = objectMapper.readValue(str, new TypeReference<List<String>>() {});
             }
+        } catch (Exception e) {
+            log.error("Error occurred while converting string to list: {}", e.getMessage());
         }
-
         return list;
     }
 

@@ -33,7 +33,7 @@ class ApplicationQueryBuilderTest {
         Integer limit = 10;
         Integer offset = 0;
 
-        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
+        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
@@ -55,7 +55,7 @@ class ApplicationQueryBuilderTest {
         Integer limit = 10;
         Integer offset = 0;
 
-        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
+        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +

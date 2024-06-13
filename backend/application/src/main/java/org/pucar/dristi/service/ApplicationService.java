@@ -53,14 +53,6 @@ public class ApplicationService {
     public Application updateApplication(ApplicationRequest applicationRequest) {
         try {
                 Application application = applicationRequest.getApplication();
-//                Application existingApplication;
-//                try {
-//                    existingApplication = validator.validateApplicationExistence(applicationRequest.getRequestInfo(),application);
-//                } catch (Exception e) {
-//                    log.error("Error validating existing application {}", e.getMessage());
-//                    throw new CustomException(VALIDATION_ERR,"Error validating existing application: "+ e.getMessage());
-//                }
-//                existingApplication.setWorkflow(application.getWorkflow());
 
             if(!validator.validateApplicationExistence(applicationRequest.getRequestInfo(),application)){
                 throw new CustomException(VALIDATION_ERR, "Error occurred while validating existing application");

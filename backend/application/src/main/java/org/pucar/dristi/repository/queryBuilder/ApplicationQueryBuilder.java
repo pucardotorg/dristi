@@ -15,7 +15,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class ApplicationQueryBuilder {
 
     private static final String BASE_APP_QUERY =
-            " SELECT app.id as id, app.tenantid as tenantid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
+            " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                     " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                     " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                     " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +

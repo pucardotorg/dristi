@@ -70,7 +70,6 @@ class ApplicationEnrichmentTest {
 
         application.getDocuments().forEach(document -> {
             assertNotNull(document.getId());
-            assertEquals(document.getId(), document.getDocumentUid());
         });
 
         verify(idgenUtil).getIdList(any(), any(), any(), any(), anyInt());

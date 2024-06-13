@@ -48,7 +48,6 @@ public class ApplicationEnrichment {
                 if (application.getDocuments() != null) {
                     application.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));
-                        document.setDocumentUid(document.getId());
                     });
                 }
             }

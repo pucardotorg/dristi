@@ -110,9 +110,11 @@ class StatuteSectionRowMapperTest {
 
     @Test
     void testStringToList() {
-        List<String> result = statuteSectionRowMapper.stringToList("item");
+        StatuteSectionRowMapper statuteSectionRowMapper = new StatuteSectionRowMapper();
+        List<String> result = statuteSectionRowMapper.stringToList("[\"item\"]");
         assertNotNull(result);
         assertEquals(1, result.size());
+        assertEquals("item", result.get(0));
     }
 
     @Test
