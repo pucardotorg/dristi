@@ -45,6 +45,7 @@ function AdmissionActionModal({
   path,
   handleSendCaseBack,
   handleAdmitCase,
+  handleScheduleCase,
 }) {
   const [reasons, setReasons] = useState(null);
   const history = useHistory();
@@ -79,7 +80,7 @@ function AdmissionActionModal({
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
     } else {
-      handleSendCaseBack();
+      handleSendCaseBack(props);
       // setSendCaseBack({ ...sendCaseBack, caseBackReason: props?.commentForLitigant });
     }
   };
@@ -204,7 +205,11 @@ function AdmissionActionModal({
             handleInputChange={handleInputChange}
             selectedValues={selectedValues}
             setSelectedValues={setSelectedValues}
+            handleScheduleCase={handleScheduleCase}
+            setShowErrorToast={setShowErrorToast}
+            t={t}
           />
+          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </Modal>
       )}
       {modalInfo?.showDate && (

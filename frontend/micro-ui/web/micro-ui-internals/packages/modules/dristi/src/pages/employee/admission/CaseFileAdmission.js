@@ -178,7 +178,7 @@ function CaseFileAdmission({ t, path }) {
   }, [reviewCaseFileFormConfig, caseDetails]);
 
   const updateCaseDetails = async (action, data = {}) => {
-    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data } };
+    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
 
     return DRISTIService.caseUpdateService(
       {
@@ -197,15 +197,18 @@ function CaseFileAdmission({ t, path }) {
     );
   };
 
-  const handleSendCaseBack = () => {
-    updateCaseDetails("SEND_BACK", formdata).then((res) => {
+  const handleSendCaseBack = (props) => {
+    updateCaseDetails("SEND_BACK", props?.commentForLitigant).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
-      // setActionModal("caseSendBackSuccess");
     });
-    setModalInfo({ ...modalInfo, page: 1 });
   };
   const handleAdmitCase = () => {
-    updateCaseDetails("ADMIT_CASE", formdata).then((res) => {
+    updateCaseDetails("ADMIT", formdata).then((res) => {
+      setModalInfo({ ...modalInfo, page: 1 });
+    });
+  };
+  const handleScheduleCase = () => {
+    updateCaseDetails("SCHEDULE_ADMISSION_HEARING", formdata).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
       // setActionModal("caseSendBackSuccess");
     });
@@ -232,6 +235,7 @@ function CaseFileAdmission({ t, path }) {
         handleSendCaseBack={handleSendCaseBack}
         handleAdmitCase={handleAdmitCase}
         path={path}
+        handleScheduleCase={handleScheduleCase}
       ></AdmissionActionModal>
     );
   }

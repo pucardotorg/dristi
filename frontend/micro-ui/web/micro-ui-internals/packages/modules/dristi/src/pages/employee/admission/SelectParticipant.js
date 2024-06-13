@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
-import { Button, CardHeader, CardLabel, SubmitBar } from "@egovernments/digit-ui-react-components";
+import { Button, CardHeader, CardLabel, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 
 function SelectParticipant({
   config,
@@ -12,11 +12,30 @@ function SelectParticipant({
   selectedValues,
   setSelectedValues,
   handleInputChange,
+  handleScheduleCase,
+  t,
 }) {
-  const onSubmitSchedule = (props) => {
-    setModalInfo({ ...modalInfo, page: 2 });
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const isObjectEmpty = (obj) => {
+    return Object.keys(obj).length === 0;
   };
+  const isEmpty = isObjectEmpty(selectedValues);
+  const onSubmitSchedule = (props) => {
+    if (isEmpty) {
+      console.log("submit");
+      setShowErrorToast(true);
+    } else setModalInfo({ ...modalInfo, page: 2 });
+  };
+  const closeToast = () => {
+    setShowErrorToast(false);
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
 
+    return () => clearTimeout(timer);
+  }, [closeToast]);
   return (
     <div>
       <CardLabel>{config?.header}</CardLabel>
@@ -38,6 +57,7 @@ function SelectParticipant({
           label={"Schedule"}
         ></SubmitBar>
       </div>
+      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
 }
