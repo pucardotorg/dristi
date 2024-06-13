@@ -1283,8 +1283,19 @@ function EFilingCases({ path }) {
           return {
             ...caseDetails?.representative,
             caseId: caseDetails?.id,
-            representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId ? [...caseDetails?.litigants] : [],
+            representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
+              ? [
+                  ...caseDetails?.litigants?.map((data) => ({
+                    tenantId,
+                    caseId: data?.caseId,
+                    partyCategory: data?.partyCategory,
+                    individualId: data?.individualId,
+                    partyType: data?.partyType,
+                  })),
+                ]
+              : [],
             advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+            tenantId,
           };
         });
       data.representatives = [...representatives];
