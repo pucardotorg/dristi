@@ -65,6 +65,7 @@ const advocateDetailsFormConfig = [
         component: "AdvocateNameDetails",
         key: "AdvocateNameDetails",
         withoutLabel: true,
+        isMandatory: true,
         populators: {
           inputs: [
             {
@@ -113,6 +114,7 @@ const advocateDetailsFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "vakalatnamaFileUpload",
+        isMandatory: true,
         populators: {
           inputs: [
             {

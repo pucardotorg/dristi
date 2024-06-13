@@ -77,6 +77,7 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectUploadFiles",
         key: "memorandumOfComplaint",
+        isMandatory: true,
         populators: {
           inputs: [
             {
@@ -114,6 +115,7 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectUploadFiles",
         key: "prayerForRelief",
+        isMandatory: true,
         populators: {
           inputs: [
             {
