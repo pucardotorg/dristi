@@ -381,7 +381,6 @@ function EFilingCases({ path }) {
         return formConfig;
       });
     }
-
     return formdata.map(({ data }, index) => {
       let disableConfigFields = [];
       formConfig.forEach((config) => {
@@ -446,6 +445,21 @@ function EFilingCases({ path }) {
                           disable: input?.shouldBeEnabled ? false : true,
                           isDisabled: input?.shouldBeEnabled ? false : true,
                         };
+                      }
+                      if (selected === "respondentDetails") {
+                        if (
+                          data?.addressDetails?.some(
+                            (address) =>
+                              address?.addressDetails?.pincode !==
+                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+                              body?.key === "inquiryAffidavitFileUpload"
+                          )
+                        ) {
+                          delete input.isOptional;
+                          return {
+                            ...input,
+                          };
+                        }
                       }
                       return {
                         ...input,
@@ -516,7 +530,7 @@ function EFilingCases({ path }) {
           };
         });
     });
-  }, [isDependentEnabled, formdata, selected, formConfig, caseDetails.additionalDetails, caseDetails?.caseDetails]);
+  }, [isDependentEnabled, formdata, selected, formConfig, caseDetails.additionalDetails, caseDetails?.caseDetails, t]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
@@ -663,9 +677,10 @@ function EFilingCases({ path }) {
     }
   };
 
-  const showToastForComplainant = (formData) => {
+  const showToastForComplainant = (formData, setValue) => {
     if (selected === "complaintDetails") {
-      if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType) {
+      if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType && formData?.complainantId?.isFirstRender) {
+        setValue("complainantId", { ...formData?.complainantId, isFirstRender: false });
         setSuccessToast((prev) => ({
           ...prev,
           showSuccessToast: true,
@@ -791,6 +806,9 @@ function EFilingCases({ path }) {
       }
     }
   };
+
+  const respondentValidation = (formData, setValue) => {};
+
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
       setValue("advocateBarRegNumberWithName", [
@@ -807,7 +825,7 @@ function EFilingCases({ path }) {
       chequeDateValidation(formData, setError, clearErrors);
       showDemandNoticeModal(setValue, formData, setError, clearErrors);
       validateDateForDelayApplication(setValue);
-      showToastForComplainant(formData);
+      showToastForComplainant(formData, setValue);
       setFormdata(
         formdata.map((item, i) => {
           return i === index

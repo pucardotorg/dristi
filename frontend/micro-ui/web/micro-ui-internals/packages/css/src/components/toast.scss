@@ -2,6 +2,7 @@
   max-width: 480px;
   width: calc(100% - 20px);
   right: 16px;
+  bottom: 64px;
   left: auto;
   margin: 0 10px;
   gap: 16px;
@@ -30,6 +31,7 @@
 @screen dt {
   .toast-success {
     right: 16px;
+    bottom: 64px;
     left: auto;
   }
 }
