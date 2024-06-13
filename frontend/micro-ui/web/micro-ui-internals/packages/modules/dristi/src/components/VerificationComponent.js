@@ -135,12 +135,13 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
           [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
             fileValidator(file, idProofVerificationConfig?.[0].body[0]?.populators?.inputs?.[1])
           );
-        const isUserVerified = (input?.verificationOn && extractValue(formData, input?.verificationOn)) || isAadharVerified;
+        const isUserVerified =
+          (input?.verificationOn && extractValue(formData, input?.verificationOn)) ||
+          isAadharVerified ||
+          (formData?.[config.key]?.[config.key] && formData?.[config.key]?.["verificationType"]);
         return (
           <React.Fragment key={index}>
-            <CardLabel className="card-label-smaller">
-              {t(input.label)}
-            </CardLabel>
+            <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
             {!currentValue?.[input.name]?.["ID_Proof"] ? (
               <React.Fragment>
                 {!isUserVerified && (
@@ -155,7 +156,12 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                           ...prev,
                           isAadharVerified: true,
                         }));
-                        onSelect(config.key, { ...formData[config.key], [config.key]: generateAadhaar(), verificationType: "AADHAR" });
+                        onSelect(config.key, {
+                          ...formData[config.key],
+                          [config.key]: generateAadhaar(),
+                          verificationType: "AADHAR",
+                          isFirstRender: true,
+                        });
                       }}
                     />
                     <Button
@@ -178,11 +184,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                   label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
                   additionalElements={{}}
                   inline
-                  text={
-                    isUserVerified
-                      ? t("CS_ID_VERIFIED_NOTE")
-                      : t("CS_AADHAR_VERIFICATION_NOTE")
-                  }
+                  text={isUserVerified ? t("CS_ID_VERIFIED_NOTE") : t("CS_AADHAR_VERIFICATION_NOTE")}
                   textStyle={{}}
                   className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
                 />
@@ -206,7 +208,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
               <Modal
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
-                actionCancelOnSubmit={() => { }}
+                actionCancelOnSubmit={() => {}}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });

@@ -26,7 +26,7 @@ function splitNamesPartiallyFromFullName(fullName) {
   return {
     firstName: firstName,
     middleName: middleName,
-    lastName: lastName,
+    lastName: lastName ? lastName : firstName?.[0],
   };
 }
 
@@ -104,9 +104,21 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     if (isApproved && searchResult) {
       const barRegNum = searchResult[0]?.barRegistrationNumber;
       const userName = searchResult[0]?.additionalDetails?.username;
+      const advocateId = searchResult[0]?.id;
       onSelect("advocateBarRegNumberWithName", [
-        { barRegistrationNumber: `${barRegNum} (${userName})`, advocateName: userName, isDisable: true, barRegistrationNumberOriginal: barRegNum },
+        {
+          barRegistrationNumber: `${barRegNum} (${userName})`,
+          advocateName: userName,
+          isDisable: true,
+          barRegistrationNumberOriginal: barRegNum,
+          advocateId,
+        },
       ]);
+      onSelect("AdvocateNameDetails", {
+        firstName: splitNamesPartiallyFromFullName(userName).firstName,
+        middleName: splitNamesPartiallyFromFullName(userName).middleName,
+        lastName: splitNamesPartiallyFromFullName(userName).lastName,
+      });
     }
   }, [isApproved, onSelect, searchResult]);
 
