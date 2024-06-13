@@ -110,6 +110,7 @@ public class HearingService {
             hearing.setEndTime(hearingRequest.getHearing().getEndTime());
             hearing.setTranscript(hearingRequest.getHearing().getTranscript());
             hearing.setNotes(hearingRequest.getHearing().getNotes());
+            hearing.setAttendees(hearingRequest.getHearing().getAttendees());
             hearingRequest.setHearing(hearing);
             workflowService.updateWorkflowStatus(hearingRequest);
 
