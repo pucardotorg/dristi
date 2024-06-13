@@ -176,3 +176,75 @@
     }
   }
 }
+
+.popup-module.view-image-modal {
+  width: 100%;
+  min-height: 100vh;
+  background: transparent;
+  .header-wrap {
+    border: none;
+    padding: 24px 24px 0px;
+    .header-content.popup-header-fix {
+      .heading-main {
+        display: flex;
+        gap: 40px;
+        .heading-title {
+          h1.heading-m {
+            font-family: Roboto;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 37.5px;
+            text-align: left;
+            color: #ffffff;
+            margin: 0px;
+            padding: 0px;
+            margin-bottom: 12px;
+          }
+          p {
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 16.41px;
+            text-align: left;
+            color: #999895;
+          }
+        }
+      }
+      .heading-back-error {
+        margin-top: 8px;
+        height: 24px;
+        width: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .header-end {
+      display: flex;
+      gap: 40px;
+      padding-top: 8px;
+      .flag-icon,
+      .close-icon {
+        width: 24px;
+        height: 24px;
+      }
+      .flag-icon {
+        svg {
+          path {
+            fill: #ffffff;
+          }
+        }
+      }
+      .close-icon {
+        svg {
+          fill: #ffffff;
+        }
+      }
+    }
+  }
+  .popup-module-main {
+    .employeeCard {
+      height: calc(100vh - 154px);
+    }
+  }
+}
