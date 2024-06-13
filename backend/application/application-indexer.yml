@@ -18,6 +18,8 @@ ServiceMaps:
                 outJsonPath: $.Data.applicationDetails.id
               - inJsonPath: $.tenantId
                 outJsonPath: $.Data.applicationDetails.tenantId
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.applicationDetails.caseId
               - inJsonPath: $.filingNumber
                 outJsonPath: $.Data.applicationDetails.filingNumber
               - inJsonPath: $.cnrNumber
@@ -98,6 +100,8 @@ ServiceMaps:
                 outJsonPath: $.Data.applicationDetails.id
               - inJsonPath: $.tenantId
                 outJsonPath: $.Data.applicationDetails.tenantId
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.applicationDetails.caseId
               - inJsonPath: $.filingNumber
                 outJsonPath: $.Data.applicationDetails.filingNumber
               - inJsonPath: $.cnrNumber

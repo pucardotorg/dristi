@@ -11,11 +11,12 @@ serviceMaps:
       auditAttributeBasePath: $.application
       queryMaps:
 
-        - query: INSERT INTO dristi_application(id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_application(id, tenantId, caseId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: application
           jsonMaps:
             - jsonPath: $.application.id
             - jsonPath: $.application.tenantId
+            - jsonPath: $.application.caseId
             - jsonPath: $.application.filingNumber
             - jsonPath: $.application.cnrNumber
             - jsonPath: $.application.referenceId
@@ -82,11 +83,12 @@ serviceMaps:
       transactionCodeJsonPath: $.filingNumber
       auditAttributeBasePath: $.application
       queryMaps:
-        - query: INSERT INTO dristi_application (id, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, filingNumber = EXCLUDED.filingNumber, cnrNumber = EXCLUDED.cnrNumber, referenceId = EXCLUDED.referenceId, createdDate = EXCLUDED.createdDate, applicationCreatedBy = EXCLUDED.applicationCreatedBy, onBehalfOf = EXCLUDED.onBehalfOf, applicationType = EXCLUDED.applicationType, applicationNumber = EXCLUDED.applicationNumber, issuedBy = EXCLUDED.issuedBy, status = EXCLUDED.status, comment = EXCLUDED.comment, isActive = EXCLUDED.isActive, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
+        - query: INSERT INTO dristi_application (id, caseId, tenantId, filingNumber, cnrNumber, referenceId, createdDate, applicationCreatedBy, onBehalfOf, applicationType, applicationNumber, issuedBy, status, comment, isActive, additionalDetails, createdBy, lastModifiedBy, createdTime, lastModifiedTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantId = EXCLUDED.tenantId, filingNumber = EXCLUDED.filingNumber, cnrNumber = EXCLUDED.cnrNumber, referenceId = EXCLUDED.referenceId, createdDate = EXCLUDED.createdDate, applicationCreatedBy = EXCLUDED.applicationCreatedBy, onBehalfOf = EXCLUDED.onBehalfOf, applicationType = EXCLUDED.applicationType, applicationNumber = EXCLUDED.applicationNumber, issuedBy = EXCLUDED.issuedBy, status = EXCLUDED.status, comment = EXCLUDED.comment, isActive = EXCLUDED.isActive, additionalDetails = EXCLUDED.additionalDetails, createdBy = EXCLUDED.createdBy, lastModifiedBy = EXCLUDED.lastModifiedBy, createdTime = EXCLUDED.createdTime, lastModifiedTime = EXCLUDED.lastModifiedTime;
           basePath: application
           jsonMaps:
             - jsonPath: $.application.id
             - jsonPath: $.application.tenantId
+            - jsonPath: $.application.caseId
             - jsonPath: $.application.filingNumber
             - jsonPath: $.application.cnrNumber
             - jsonPath: $.application.referenceId

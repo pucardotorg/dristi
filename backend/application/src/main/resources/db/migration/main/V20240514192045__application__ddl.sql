@@ -1,6 +1,7 @@
 CREATE TABLE dristi_application (
                                     id varchar(64) NOT NULL PRIMARY KEY,
                                     tenantId varchar(64)  NULL ,
+                                    caseId varchar(64) NOT NULL,
                                     filingNumber varchar(64) NULL,
                                     cnrNumber varchar(64)  NULL ,
                                     referenceId varchar(64)  NULL ,
