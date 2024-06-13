@@ -2,21 +2,25 @@ import React, { useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
 import { Button, CardHeader, CardLabel, SubmitBar } from "@egovernments/digit-ui-react-components";
 
-function SelectParticipant({ config, setShowModal, modalInfo, setModalInfo, scheduleHearingParams, setScheduleHearingParam }) {
-  const [selectedValues, setSelectedValues] = useState({});
-
-  const handleInputChange = (values) => {
-    console.log(values);
-    setSelectedValues(values);
-  };
+function SelectParticipant({
+  config,
+  setShowModal,
+  modalInfo,
+  setModalInfo,
+  scheduleHearingParams,
+  setScheduleHearingParam,
+  selectedValues,
+  setSelectedValues,
+  handleInputChange,
+}) {
   const onSubmitSchedule = (props) => {
-    console.log(props);
     setModalInfo({ ...modalInfo, page: 2 });
   };
+
   return (
     <div>
       <CardLabel>{config?.header}</CardLabel>
-      <DependentCheckBoxComponent options={config} onInputChange={handleInputChange} />
+      <DependentCheckBoxComponent options={config} onInputChange={handleInputChange} selectedValues={selectedValues} />
       <div className="action-button-application">
         <Button
           variation="secondary"

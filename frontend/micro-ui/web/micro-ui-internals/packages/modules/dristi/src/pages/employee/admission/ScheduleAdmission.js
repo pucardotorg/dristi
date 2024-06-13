@@ -21,6 +21,7 @@ function ScheduleAdmission({
   setPurposeValue,
   setScheduleHearingParam,
   scheduleHearingParams,
+  submitModalInfo,
 }) {
   const getNextNDates = (n) => {
     const today = new Date();
@@ -66,40 +67,24 @@ function ScheduleAdmission({
 
     return () => clearTimeout(timer);
   }, [closeToast]);
-  const caseInfo = [
-    {
-      key: "Case Number",
-      value: "FSM-2019-04-23-898898",
-    },
-    {
-      key: "Court Name",
-      value: "Kerala City Criminal Court",
-    },
-    {
-      key: "Case Type",
-      value: "NIA S138",
-    },
-  ];
-  const onSubmitSchedule = (props) => {
-    console.log(props);
-    setModalInfo({ ...modalInfo, page: 1 });
-  };
+
   const date = new Date(selectedCustomDate);
 
   const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
   const formattedDate = date.toLocaleDateString("en-GB", options).replace(/\//g, "/");
 
   const handleSubmit = (props) => {
-    if (!dateSelected && !selectedCustomDate) {
+    if (!dateSelected && !modalInfo?.showCustomDate) {
       setShowErrorToast(true);
     } else {
-      onSubmitSchedule(props);
+      setScheduleHearingParam({ ...scheduleHearingParams, date: selectedCustomDate || dateSelected });
+      setModalInfo({ ...modalInfo, page: 1 });
     }
   };
 
   return (
     <div>
-      {dateSelected && <CustomCaseInfoDiv data={caseInfo} />}
+      {dateSelected && <CustomCaseInfoDiv data={submitModalInfo?.shortCaseInfo} />}
 
       <CardText className="card-label-smaller">{t(config.label)}</CardText>
       <TextInput

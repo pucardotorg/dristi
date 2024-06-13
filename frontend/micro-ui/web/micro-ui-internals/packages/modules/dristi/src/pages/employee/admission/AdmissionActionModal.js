@@ -35,7 +35,17 @@ const CloseBtn = (props) => {
     </div>
   );
 };
-function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModalInfo, modalInfo, setModalInfo, path }) {
+function AdmissionActionModal({
+  t,
+  setShowModal,
+  setSubmitModalInfo,
+  submitModalInfo,
+  modalInfo,
+  setModalInfo,
+  path,
+  handleSendCaseBack,
+  handleAdmitCase,
+}) {
   const [reasons, setReasons] = useState(null);
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -69,8 +79,8 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
     } else {
-      setSendCaseBack({ ...sendCaseBack, caseBackReason: props?.commentForLitigant });
-      setModalInfo({ ...modalInfo, page: 1 });
+      handleSendCaseBack();
+      // setSendCaseBack({ ...sendCaseBack, caseBackReason: props?.commentForLitigant });
     }
   };
   const showSuccessModal = (modalInfo) => {
@@ -104,7 +114,12 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
     console.log("CustomDate");
     setModalInfo({ ...modalInfo, showDate: true });
   };
+  const [selectedValues, setSelectedValues] = useState({});
 
+  const handleInputChange = (values) => {
+    console.log(values);
+    setSelectedValues(values);
+  };
   console.log(scheduleHearingParams);
   return (
     <div>
@@ -141,7 +156,7 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
           headerBarMain={<Heading label={t(stepItems[1].headModal)} />}
           actionSaveLabel={t(stepItems[1]?.submitText)}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-          actionSaveOnSubmit={(props) => onSubmit(props)}
+          actionSaveOnSubmit={(props) => handleAdmitCase(props)}
         >
           <CardText>{t(stepItems[1]?.text)}</CardText>
         </Modal>
@@ -169,6 +184,7 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
             setPurposeValue={setPurposeValue}
             scheduleHearingParams={scheduleHearingParams}
             setScheduleHearingParam={setScheduleHearingParam}
+            submitModalInfo={submitModalInfo}
           />
         </Modal>
       )}
@@ -185,6 +201,9 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
             setModalInfo={setModalInfo}
             scheduleHearingParams={scheduleHearingParams}
             setScheduleHearingParam={setScheduleHearingParam}
+            handleInputChange={handleInputChange}
+            selectedValues={selectedValues}
+            setSelectedValues={setSelectedValues}
           />
         </Modal>
       )}

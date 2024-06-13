@@ -1,5 +1,5 @@
 import { CardText, CheckBox } from "@egovernments/digit-ui-react-components";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 function CheckboxItem({ name, checked, onToggle }) {
   return (
     <CheckBox
@@ -33,9 +33,18 @@ function DependentFields({ option, selectedValues, handleInputChange }) {
     </div>
   );
 }
-function DependentCheckBoxComponent({ options, onInputChange }) {
+function DependentCheckBoxComponent({ options, onInputChange, selectedValues }) {
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({});
-  const [selectedValues, setSelectedValues] = useState({});
+
+  useEffect(() => {
+    const initialSelectedCheckboxes = {};
+    Object.keys(selectedValues).forEach((key) => {
+      if (selectedValues[key] && Object.keys(selectedValues[key]).length > 0) {
+        initialSelectedCheckboxes[key] = true;
+      }
+    });
+    setSelectedCheckboxes(initialSelectedCheckboxes);
+  }, [selectedValues]);
 
   const toggleCheckbox = (option) => {
     setSelectedCheckboxes((prevState) => ({
@@ -50,10 +59,8 @@ function DependentCheckBoxComponent({ options, onInputChange }) {
       ...selectedValues,
       [option]: { ...selectedValues[option], [value]: checked },
     };
-    setSelectedValues(newSelectedValues);
     onInputChange(newSelectedValues);
   };
-
   return (
     <div className="select-checkbox-dependent">
       {options?.checkBoxText && <CardText>{options?.checkBoxText}</CardText>}

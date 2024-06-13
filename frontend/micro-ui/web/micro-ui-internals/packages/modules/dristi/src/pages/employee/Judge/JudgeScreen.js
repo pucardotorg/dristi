@@ -24,20 +24,13 @@ function JudgeScreen({ path }) {
           <InboxSearchComposer
             customStyle={sectionsParentStyle}
             configs={judgeInboxConfig}
-            // additionalConfig={{
-            //   resultsTable: {
-            //     onClickRow: (props) => {
-            //       console.log(props);
-            //       history.push(`${path}/admission/info`);
-            //     },
-            //   },
-            // }}
             additionalConfig={{
               resultsTable: {
-                onClickRow: (row) => {
+                onClickRow: (props) => {
+                  console.log(props);
                   const searchParams = new URLSearchParams();
-                  searchParams.set("caseId", row.original.id);
-                  history.push(`/admission/case?${searchParams.toString()}`);
+                  searchParams.set("caseId", props.original.id);
+                  history.push(`${path}/admission/info?${searchParams.toString()}`);
                 },
               },
             }}
