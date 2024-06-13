@@ -20,7 +20,7 @@ export const searchconfig = () =>
         },
       },
      masterName: "commonUiConfig",
-      moduleName: "SearchIndividualConfig",
+      moduleName: "SearchPucarConfig",
       minParametersForSearchForm: 0,
       tableFormJsonPath: "requestParam",
       filterFormJsonPath: "requestBody.Individual",

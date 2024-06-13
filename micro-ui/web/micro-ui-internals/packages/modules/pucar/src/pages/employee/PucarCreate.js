@@ -2,11 +2,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
-import { configs } from "../../configs/OrderCreateConfig";
+import { configs } from "../../configs/pucarCreateConfig";
+import { transformCreateData } from "../../utils/createUtils";
 
 const fieldStyle={ marginRight: 0 };
 
-const OrderCreate = () => {
+const PucarCreate = () => {
   const defaultValue={};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
@@ -57,4 +58,4 @@ const OrderCreate = () => {
   );
 }
 
-export default OrderCreate;
+export default PucarCreate;

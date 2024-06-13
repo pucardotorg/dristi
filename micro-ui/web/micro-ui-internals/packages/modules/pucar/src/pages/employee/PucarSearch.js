@@ -4,7 +4,7 @@ import {
   } from "@egovernments/digit-ui-react-components";
   import React, { useState, useEffect } from "react";
   import { useTranslation } from "react-i18next";
-  import { searchconfig } from "../../configs/IndividualSearchCOnfig";
+  import { searchconfig } from "../../configs/pucarSearchConfig";
   
   const defaultSearchValues = {
     individualName: "",
@@ -14,7 +14,7 @@ import {
 
  
 
-  const OrderSearch = () => {
+  const PucarSearch = () => {
     const { t } = useTranslation();
     const [defaultValues, setDefaultValues] = useState(defaultSearchValues); // State to hold default values for search fields
     const indConfigs = searchconfig();
@@ -34,4 +34,4 @@ import {
       </React.Fragment>
     );
   };
-  export default IndividualSearch;
+  export default PucarSearch;

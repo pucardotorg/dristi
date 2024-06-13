@@ -2,7 +2,7 @@ import { AppContainer, BreadCrumb, PrivateRoute } from "@egovernments/digit-ui-r
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
-import Response from "./Response";
+import PucarResponse from "./PucarResponse";
 import PucarCreate from "./PucarCreate";
 import PucarSearch from "./PucarSearch";
 const bredCrumbStyle={ maxWidth: "min-content" };
@@ -30,7 +30,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <React.Fragment>
           <ProjectBreadCrumb location={location} />
         </React.Fragment>
-        <PrivateRoute path={`${path}/pucar-response`} component={() => <Response></Response>} />
+        <PrivateRoute path={`${path}/pucar-response`} component={() => <PucarResponse></PucarResponse>} />
         <PrivateRoute path={`${path}/pucar-create`} component={() => <PucarCreate />} />
         <PrivateRoute path={`${path}/pucar-search`} component={() => <PucarSearch></PucarSearch>} />
       </AppContainer>
