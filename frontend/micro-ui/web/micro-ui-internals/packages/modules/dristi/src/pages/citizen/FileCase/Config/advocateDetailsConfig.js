@@ -65,7 +65,6 @@ const advocateDetailsFormConfig = [
         component: "AdvocateNameDetails",
         key: "AdvocateNameDetails",
         withoutLabel: true,
-        isMandatory: true,
         populators: {
           inputs: [
             {
@@ -85,9 +84,7 @@ const advocateDetailsFormConfig = [
               name: "middleName",
               isDisabled: true,
               inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
+              validation: {},
             },
             {
               label: "LAST_NAME",
