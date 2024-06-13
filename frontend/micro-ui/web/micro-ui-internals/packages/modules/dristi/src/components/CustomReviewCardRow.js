@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
+import { InfoCard } from "@egovernments/digit-ui-components";
 
 const CustomReviewCardRow = ({
   isScrutiny,
@@ -112,6 +113,53 @@ const CustomReviewCardRow = ({
         </div>
       );
 
+    case "infoBox":
+      if (!data?.[value]?.header) {
+        return null;
+      }
+      return (
+        <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+          <div className="value info-box">
+            <InfoCard
+              variant={"default"}
+              label={t(data?.[value]?.header)}
+              additionalElements={[
+                <React.Fragment>
+                  {Array.isArray(data?.[value]?.data) && (
+                    <ul style={{ listStyleType: "disc", margin: "4px" }}>
+                      {data?.[value]?.data.map((data) => (
+                        <li>{t(data)}</li>
+                      ))}
+                    </ul>
+                  )}
+                </React.Fragment>,
+              ]}
+              inline
+              text={typeof data?.[value]?.data === "string" && data?.[value]?.data}
+              textStyle={{}}
+              className={`adhaar-verification-info-card`}
+            />
+          </div>
+          {isScrutiny && (
+            <div
+              className="flag"
+              onClick={(e) => {
+                handleOpenPopup(e, configKey, name, dataIndex, value);
+              }}
+              key={dataIndex}
+            >
+              {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+            </div>
+          )}
+          {dataError && isScrutiny && (
+            <div className="scrutiny-error input">
+              <FlagIcon isError={true} />
+              {dataError}
+            </div>
+          )}
+        </div>
+      );
+
     case "amount":
       return (
         <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
@@ -173,7 +221,7 @@ const CustomReviewCardRow = ({
         <div className={`image-main ${isScrutiny && dataError && "error"}`}>
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
             <div className="label">{t(label)}</div>
-            <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll" }}>
+            <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
               {Array.isArray(value)
                 ? value?.map((value) =>
                     extractValue(data, value) && Array.isArray(extractValue(data, value)) ? (

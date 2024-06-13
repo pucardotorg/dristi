@@ -57,8 +57,7 @@ function CaseFileAdmission({ t }) {
             showSecondaryLabel={true}
             actionClassName="admission-action-buttons"
             showSkip={"FDSJKLDFSJL"}
-            onSkip={() => {
-            }}
+            onSkip={() => {}}
           />
 
           {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}

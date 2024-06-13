@@ -140,4 +140,7 @@ export const advocateDetailsConfig = {
   header: "CS_ADVOCATE_DETAILS_HEADING",
   subtext: "CS_ADVOCATE_DETAILS_SUBTEXT",
   className: "advocate-detail",
+  selectDocumentName: {
+    vakalatnamaFileUpload: "UPLOAD_VAKALATNAMA",
+  },
 };

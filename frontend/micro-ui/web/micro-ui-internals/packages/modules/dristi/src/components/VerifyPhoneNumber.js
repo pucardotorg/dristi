@@ -122,7 +122,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           const identifierIdDetails = JSON.parse(
             individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
           );
-          const address = `${doorNo} ${buildingName} ${street}`.trim();
+          const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street ? street + "," : ""}`.trim();
 
           const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
           const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
@@ -157,7 +157,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             individualDetails: {
               individualId: individualData?.Individual?.[0]?.individualId,
               document: identifierIdDetails?.fileStoreId
-                ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
                 : null,
             },
             [config?.disableConfigKey]: true,

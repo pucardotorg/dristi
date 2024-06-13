@@ -22,8 +22,8 @@ const Modal = ({
   headerBarMainStyle,
   isOBPSFlow = false,
   popupModuleActionBarStyles = {},
-  submitTextClassName = {},
-  className,
+  submitTextClassName = "",
+  className
 }) => {
   /**
    * TODO: It needs to be done from the desgin changes

@@ -96,7 +96,7 @@ const delayApplicationFormConfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
             },
           ],
         },
@@ -110,4 +110,7 @@ export const delayApplicationConfig = {
   header: "CS_RESPONDENT_DELAY_APPLICATION_HEADING",
   subtext: "CS_RESPONDENT_DELAY_APPLICATION_SUBTEXT",
   className: "delay-application",
+  selectDocumentName: {
+    condonationFileUpload: "CS_DELAY_CONDONATION_APPLICATION",
+  },
 };

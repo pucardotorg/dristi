@@ -46,7 +46,6 @@ const DocViewerWrapper = ({
         uri: window.URL.createObjectURL(file),
         fileName: file?.name || fileName,
       }));
-
   return (
     <div className="docviewer-wrapper" id="docviewer-id">
       <Card className={docViewerCardClassName}>
@@ -98,7 +97,7 @@ const DocViewerWrapper = ({
             textOverflow: "ellipsis",
           }}
         >
-          {displayFilename || t("CS_CLICK_TO_DOWNLOAD")}
+          {t(displayFilename) || t("CS_CLICK_TO_DOWNLOAD")}
         </a>
       )}
     </div>

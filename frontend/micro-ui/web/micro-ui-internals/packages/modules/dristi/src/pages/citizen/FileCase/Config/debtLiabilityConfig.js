@@ -86,18 +86,13 @@ const debtLiabilityFromconfig = [
     dependentKey: { liabilityType: ["showAmountCovered"] },
     body: [
       {
-        type: "text",
-        key: "totalAmount",
+        type: "amount",
+        component: "CustomInput",
         label: "CS_TOTAL_CHEQUE_AMOUNT",
+        isMandatory: true,
         populators: {
-          validation: {
-            pattern: {
-              message: "CORE_COMMON_CHECK_COUNT_INVALID",
-              value: /^\d{1,12}$/,
-            },
-          },
-          title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
+          componentInFront: "₹",
+          name: "chequeAmount",
         },
       },
     ],
@@ -138,7 +133,7 @@ const debtLiabilityFromconfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -171,4 +166,7 @@ export const debtliabilityconfig = {
   subtext: "CS_DEBT_LIABILITY_SUBTEXT",
   isOptional: false,
   className: "debt-liability",
+  selectDocumentName: {
+    debtLiabilityFileUpload: "CS_PROOF_DEBT",
+  },
 };

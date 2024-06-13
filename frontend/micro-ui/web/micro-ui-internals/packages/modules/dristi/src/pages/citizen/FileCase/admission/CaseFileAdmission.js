@@ -82,7 +82,6 @@ function CaseFileAdmission({ t }) {
   const closeToast = () => {
     setShowErrorToast(false);
   };
-  console.log(showModal);
 
   const handleCloseModal = () => {
     setModalData(null);

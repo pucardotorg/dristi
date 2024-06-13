@@ -203,7 +203,6 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
         .finally(() => {
           setShowSuccess(true);
 
-          console.log("FINALLY");
           setParams({});
         });
       setParams({
@@ -270,7 +269,6 @@ function AdvocateClerkAdditionalDetail({ params, setParams, path, config, pathOn
               const refreshToken = window.localStorage.getItem("citizen.refresh-token");
               if (refreshToken) {
                 getUserDetails(refreshToken).then((res) => {
-                  console.log(res);
                   const { ResponseInfo, UserRequest: info, ...tokens } = res;
                   const user = { info, ...tokens };
                   window?.Digit.SessionStorage.set("citizen.userRequestObject", user);
