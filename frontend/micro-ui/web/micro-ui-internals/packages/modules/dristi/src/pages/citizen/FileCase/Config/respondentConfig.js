@@ -195,7 +195,7 @@ const respondentFromconfig = [
         isMandatory: true,
         populators: {
           title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
+          name: "companyName",
           styles: { minWidth: "100%" },
           labelStyles: { padding: "8px" },
           customStyle: { minWidth: "100%" },
@@ -280,6 +280,15 @@ const respondentFromconfig = [
               },
               isMandatory: true,
             },
+            {
+              label: "ADDRESS",
+              type: "text",
+              name: "locality",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
           ],
           validation: {},
         },
@@ -313,7 +322,7 @@ const respondentFromconfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "condonationFileUpload",
+        key: "inquiryAffidavitFileUpload",
         withoutLabel: true,
         populators: {
           inputs: [
