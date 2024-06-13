@@ -47,7 +47,7 @@ config:
     build:
       - work-dir: micro-ui/
         dockerfile: micro-ui/web/docker/Dockerfile
-        image-name: digit-ui
+        image-name: pucar-ui
 
   - name: builds/Digit-Frontend/core-ui
     build:
