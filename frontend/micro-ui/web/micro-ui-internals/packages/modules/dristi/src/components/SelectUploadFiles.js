@@ -85,6 +85,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           documentSubText: "subtext",
           isOptional: "CS_IS_OPTIONAL",
           infoTooltipMessage: "Tooltip",
+          label: "Title",
           type: "DragDropComponent",
           uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
@@ -249,10 +250,12 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
               // hideSubmit={false}
               isDisabled={isAddButtonDisabled}
               formId="modal-action"
-              headerBarMain={<Heading label={t("VERIFY_ID_PROOF")} />}
+              headerBarMain={<Heading label={t("UPLOAD_FILE")} />}
               submitTextClassName={"verification-button-text-modal"}
             >
               <div>
+              {<h1>{t(input.label)}</h1>}
+
                 <MultiUploadWrapper
                   t={t}
                   module="works"
@@ -264,8 +267,10 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                   extraStyleName={{ padding: "0.5rem" }}
                   customClass={input?.customClass}
                   containerStyles={{ ...input?.containerStyles }}
+                  allowedFileTypesRegex={input.allowedFileTypes}
+                  noteMsg={input?.noteMsg}
+                  notSupportedError={input?.notSupportedError}
                 />
-                {<h1>{t("CS_COMMON_FILE_UPLOAD_BLURB")}</h1>}
                 {Array.isArray(formData?.[config.key]?.[input.name]) && formData?.[config.key]?.[input.name].length > 0 && (
                   <DocViewerWrapper
                     selectedDocs={[formData?.[config.key]?.[input.name][0]]}

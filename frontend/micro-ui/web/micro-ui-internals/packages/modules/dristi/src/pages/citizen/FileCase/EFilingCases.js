@@ -212,6 +212,19 @@ function EFilingCases({ path }) {
             };
           });
         }
+        if (selected === "witnessDetails") {
+          return formConfig.map((config) => {
+            return {
+              ...config,
+              body: config?.body?.map((body) => {
+                return {
+                  ...body,
+                  labelChildren: body?.labelChildren === "optional" ? <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span> : "",
+                };
+              }),
+            };
+          });
+        }
         return formConfig;
       });
     }
@@ -320,6 +333,9 @@ function EFilingCases({ path }) {
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;
               const modifiedFormComponent = structuredClone(formComponent);
+              if (modifiedFormComponent?.labelChildren === "optional") {
+                modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+              }
               if (scrutiny?.[selected]) modifiedFormComponent.disable = true;
               if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
                 modifiedFormComponent.disable = false;
@@ -621,6 +637,16 @@ function EFilingCases({ path }) {
     }
   };
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+    if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
+      debugger;
+      setValue("advocateBarRegNumberWithName", [
+        {
+          ...formData.advocateBarRegNumberWithName[0],
+          modified: true,
+          barRegistrationNumber: formData.advocateBarRegNumberWithName[0].barRegistrationNumberOriginal,
+        },
+      ]);
+    }
     checkIfscValidation(formData, setValue);
     checkNameValidation(formData, setValue);
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
@@ -1268,43 +1294,46 @@ function EFilingCases({ path }) {
                     barRegistrationNumber: item?.barRegistrationNumber,
                     advocateName: item?.advocateName,
                     advocateId: item?.advocateId,
+                    barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
                   };
                 }),
                 advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
                 barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
+                barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
               },
             };
           })
       );
-      const representatives = formdata
-        .filter((item) => item.isenabled)
-        .map((data, index) => {
-          return {
-            ...(caseDetails.representatives?.[index] ? caseDetails.representatives?.[index] : {}),
-            caseId: caseDetails?.id,
-            representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
-              ? [
-                  ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data, key) => ({
-                        ...(caseDetails.representatives?.[index]?.representing?.[key]
-                          ? caseDetails.representatives?.[index]?.representing?.[key]
-                          : {}),
-                        tenantId,
-                        caseId: data?.caseId,
-                        partyCategory: data?.partyCategory,
-                        individualId: data?.individualId,
-                        partyType: data?.partyType,
-                      }))
-                    : []),
-                ]
-              : [],
-            advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
-            tenantId,
-          };
-        });
-      const isRepresenting = newFormData?.[0]?.data?.isAdvocateRepresenting?.showForm;
-
-      data.representatives = isRepresenting ? [...representatives] : null;
+      let representatives = [];
+      if (formdata?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
+        representatives = formdata
+          .filter((item) => item.isenabled)
+          .map((data, index) => {
+            return {
+              ...(caseDetails.representatives?.[index] ? caseDetails.representatives?.[index] : {}),
+              caseId: caseDetails?.id,
+              representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
+                ? [
+                    ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
+                      ? caseDetails?.litigants?.map((data, key) => ({
+                          ...(caseDetails.representatives?.[index]?.representing?.[key]
+                            ? caseDetails.representatives?.[index]?.representing?.[key]
+                            : {}),
+                          tenantId,
+                          caseId: data?.caseId,
+                          partyCategory: data?.partyCategory,
+                          individualId: data?.individualId,
+                          partyType: data?.partyType,
+                        }))
+                      : []),
+                  ]
+                : [],
+              advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+              tenantId,
+            };
+          });
+      }
+      data.representatives = [...representatives];
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
         advocateDetails: {
