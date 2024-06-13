@@ -293,7 +293,7 @@ serviceMaps:
             - jsonPath: $.cases.representatives.*.representing.*.caseId
             - jsonPath: $.cases.representatives.*.representing.*.partyType
             - jsonPath: $.cases.representatives.*.representing.*.isActive
-            - jsonPath: $.cases.representatives.*.representing.*.representative_id
+            - jsonPath: $.cases.representatives[*][?({id} in @.representing[*].id)].id
             - jsonPath: $.cases.representatives.*.representing.*.additionalDetails
               type: JSON
               dbType: JSONB
