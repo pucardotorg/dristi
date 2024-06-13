@@ -1,15 +1,18 @@
 import { CheckSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { useLocation, Redirect } from "react-router-dom";
+import { useLocation, Redirect, useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import SendCaseBackModal from "../../../components/SendCaseBackModal";
 import SuccessModal from "../../../components/SuccessModal";
 import { formatDate } from "../../citizen/FileCase/CaseType";
+import { DRISTIService } from "../../../services";
 
 function ViewCaseFile({ t }) {
-  const [isDisabled, setIsDisabled] = useState(false);
+  const history = useHistory();
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
@@ -36,7 +39,7 @@ function ViewCaseFile({ t }) {
     let inputErrors = 0;
     Object.keys(section)?.forEach((key) => {
       if (section[key]) {
-        if (section[key]?.scrutinyMessage) {
+        if (section[key]?.scrutinyMessage?.FSOError) {
           total++;
           sectionErrors++;
         }
@@ -89,6 +92,7 @@ function ViewCaseFile({ t }) {
       inputErrors,
     };
   }, [scrutinyErrors]);
+  const isDisabled = useMemo(() => totalErrors?.total > 0);
 
   const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
@@ -104,10 +108,12 @@ function ViewCaseFile({ t }) {
     caseId,
     Boolean(caseId)
   );
-  const caseData = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+  const defaultScrutinyErrors = useMemo(() => caseDetails?.additionalDetails?.scrutiny || {}, [caseDetails]);
+  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
 
   const formConfig = useMemo(() => {
-    if (!caseData) return null;
+    if (!caseDetails) return null;
     return [
       ...reviewCaseFileFormConfig.map((form) => {
         return {
@@ -121,7 +127,7 @@ function ViewCaseFile({ t }) {
                   delete input.data;
                   return {
                     ...input,
-                    data: caseData?.additionalDetails?.[input?.key]?.formdata || caseData?.caseDetails?.[input?.key]?.formdata || {},
+                    data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
                   };
                 }),
               },
@@ -130,53 +136,50 @@ function ViewCaseFile({ t }) {
         };
       }),
     ];
-  }, [reviewCaseFileFormConfig, caseData]);
-
-  const caseDetails = useMemo(
-    () => ({
-      ...caseData?.criteria?.[0]?.responseList?.[0],
-    }),
-    [caseData]
-  );
-
-  const updateCaseDetails = (data) => {
+  }, [reviewCaseFileFormConfig, caseDetails]);
+  const primaryButtonLabel = useMemo(() => {
+    if (isScrutiny) {
+      return "CS_REGISTER_CASE";
+    }
+    //write admission condition here
+  }, [isScrutiny]);
+  const secondaryButtonLabel = useMemo(() => {
+    if (isScrutiny) {
+      return "CS_SEND_BACK";
+    }
+  }, [isScrutiny]);
+  const updateCaseDetails = async (action, data = {}) => {
     const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data } };
-    const reqbody = {
-      cases: {
-        ...newcasedetails,
-        linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-        filingDate: formatDate(new Date()),
-        workflow: {
-          ...caseDetails?.workflow,
-          action: "UNDER_SCRUTINY",
+
+    return DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...newcasedetails,
+          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+          filingDate: formatDate(new Date()),
+          workflow: {
+            ...caseDetails?.workflow,
+            action,
+          },
         },
+        tenantId,
       },
-      tenantId,
-    };
-
-    // return DRISTIService.caseUpdateService(
-    //   {
-    //     cases: {
-    //       newcasedetails,
-    //       linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-    //       filingDate: formatDate(new Date()),
-    //       workflow: {
-    //         ...caseDetails?.workflow,
-    //         action: "UNDER_SCRUTINY",
-    //       },
-    //     },
-    //     tenantId,
-    //   },
-    //   tenantId
-    // );
+      tenantId
+    );
   };
 
-  const handleRegisterClick = () => {
-    // setActionModal("sendCaseBackPotential");
-    setActionModal("registerCase");
+  const handlePrimaryButtonClick = () => {
+    if (isScrutiny) {
+      // setActionModal("sendCaseBackPotential");
+      setActionModal("registerCase");
+    }
+    // Write isAdmission condition here
   };
-  const handleSendBackClick = () => {
-    setActionModal("sendCaseBack");
+  const handleSecondaryButtonClick = () => {
+    if (isScrutiny) {
+      setActionModal("sendCaseBack");
+    }
+    // Write isAdmission condition here
   };
   const handleNextCase = () => {
     setActionModal(false);
@@ -188,15 +191,14 @@ function ViewCaseFile({ t }) {
     setActionModal(false);
   };
   const handleRegisterCase = () => {
-    setActionModal("caseRegisterSuccess");
+    updateCaseDetails("VALIDATE").then((res) => {
+      setActionModal("caseRegisterSuccess");
+    });
   };
   const handleSendCaseBack = () => {
-    let body = {};
-    for (const key in formdata.data) {
-      body = { ...body, ...formdata.data[key] };
-    }
-    updateCaseDetails(body);
-    setActionModal("caseSendBackSuccess");
+    updateCaseDetails("SEND_BACK", formdata).then((res) => {
+      setActionModal("caseSendBackSuccess");
+    });
   };
   const handlePotentialConfirm = () => {
     setActionModal("caseRegisterPotential");
@@ -212,8 +214,26 @@ function ViewCaseFile({ t }) {
   if (isLoading) {
     return <Loader />;
   }
+  if (isScrutiny && state !== "UNDER_SCRUTINY") {
+    // if state is not under scrutiny, don't allow 
+    // history.push("/digit-ui/employee/dristi/cases");
+  }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
-  const labels = { litigentDetails: "CS_LITIGENT_DETAIL", caseSpecificDetails: "CS_CASE_SPECIFIC_DETAIL", additionalDetails: "CS_ADDITIONAL_DETAIL" };
+  const labels = {
+    litigentDetails: "CS_LITIGENT_DETAILS",
+    caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
+    additionalDetails: "CS_ADDITIONAL_DETAILS",
+  };
+  const checkList = [
+    "CS_SPELLING_MISTAKES",
+    "CS_WRONG_INPUTS",
+    "CS_MISSING_DETAILS",
+    "CS_FIELDS_NO_MATCHUP",
+    "CS_WRONG_DOCUMENT",
+    "CS_POOR_UPLOAD",
+    "CS_WRONG_JURISDICTION",
+    "CS_PHOTO_MISMATCH",
+  ];
   return (
     <div className="view-case-file">
       <div className="file-case">
@@ -222,7 +242,7 @@ function ViewCaseFile({ t }) {
             {sidebar.map((key, index) => (
               <div className="accordion-wrapper">
                 <div key={index} className="accordion-title">
-                  <div>{`${index + 1}. ${labels[key]}`}</div>
+                  <div>{`${index + 1}. ${t(labels[key])}`}</div>
                   <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
                 </div>
               </div>
@@ -234,22 +254,22 @@ function ViewCaseFile({ t }) {
             <div className="header-content">
               <div className="header-details">
                 <Header>{t("Review Case")}</Header>
-                <div className="header-icon" onClick={() => { }}>
+                <div className="header-icon" onClick={() => {}}>
                   <CustomArrowDownIcon />
                 </div>
               </div>
             </div>
             <FormComposerV2
-              label={t("CS_REGISTER_CASE")}
+              label={primaryButtonLabel}
               config={formConfig}
-              onSubmit={handleRegisterClick}
-              onSecondayActionClick={handleSendBackClick}
-              defaultValues={{}}
+              onSubmit={handlePrimaryButtonClick}
+              onSecondayActionClick={handleSecondaryButtonClick}
+              defaultValues={defaultScrutinyErrors?.data}
               onFormValueChange={onFormValueChange}
               cardStyle={{ minWidth: "100%" }}
               isDisabled={isDisabled}
               cardClassName={`e-filing-card-form-style review-case-file`}
-              secondaryLabel={t("CS_SEND_BACK")}
+              secondaryLabel={secondaryButtonLabel}
               showSecondaryLabel={true}
               actionClassName="e-filing-action-bar"
             />
@@ -259,27 +279,17 @@ function ViewCaseFile({ t }) {
         </div>
         <div className="file-case-checklist">
           <div className="checklist-main">
-            <h3 className="checklist-title">
-              Make Sure you Check For
-            </h3>
-            <div className="checklist-item">
-              <div className="item-logo">
-                <CheckSvg />
-              </div>
-              <h3 className="item-text">Spelling mistakes</h3>
-            </div>
-            <div className="checklist-item">
-              <div className="item-logo">
-                <CheckSvg />
-              </div>
-              <h3 className="item-text">Spelling mistakes</h3>
-            </div>
-            <div className="checklist-item">
-              <div className="item-logo">
-                <CheckSvg />
-              </div>
-              <h3 className="item-text">Spelling mistakes</h3>
-            </div>
+            <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
+            {checkList.map((item, index) => {
+              return (
+                <div className="checklist-item" key={index}>
+                  <div className="item-logo">
+                    <CheckSvg />
+                  </div>
+                  <h3 className="item-text">{t(item)}</h3>
+                </div>
+              );
+            })}
           </div>
         </div>
         {actionModal == "sendCaseBack" && (
