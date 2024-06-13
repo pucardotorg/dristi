@@ -1,6 +1,9 @@
+.popup-module.otp-modal-class,
+.popup-module.upload-signature-modal,
+.popup-module.e-sign-aadhar-modal,
 .popup-module.case-types {
   width: 536px;
-  max-height: 544px;
+  max-height: 560px;
   border-radius: 4px;
   .header-wrap {
     width: 100%;
@@ -25,6 +28,8 @@
   }
   .popup-module-main {
     padding: 0px !important;
+    max-height: 510px;
+    overflow-y: auto !important;
     .case-types-main-div {
       overflow-y: auto;
       overflow-x: hidden;
@@ -139,6 +144,7 @@
 }
 
 @media (max-width: 450px) {
+  .popup-module.otp-modal-class,
   .popup-module.case-types {
     margin: auto 16px;
     max-height: 564px;
@@ -153,6 +159,7 @@
       .case-types-main-div {
         max-height: 300px;
       }
+
       .submit-bar-div {
         display: flex;
         flex-direction: column-reverse;

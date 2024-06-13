@@ -60,14 +60,17 @@ function CaseType({ t }) {
     const addressLine1 = individualData?.Individual?.[0]?.address[0]?.addressLine1 || "Telangana";
     const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "Rangareddy";
     const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
-    const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
+    const street = individualData?.Individual?.[0]?.address[0]?.street || "";
     const city = individualData?.Individual?.[0]?.address[0]?.city || "";
     const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
     const latitude = individualData?.Individual?.[0]?.address[0]?.latitude || "";
     const longitude = individualData?.Individual?.[0]?.address[0]?.longitude || "";
     const doorNo = individualData?.Individual?.[0]?.address[0]?.doorNo || "";
-
-    const address = `${doorNo} ${buildingName} ${landmark}`.trim();
+    const idType = individualData?.Individual?.[0]?.identifiers[0]?.identifierType || "";
+    const identifierIdDetails = JSON.parse(
+      individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
+    );
+    const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street ? street + "," : ""}`.trim();
 
     const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
     const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
@@ -141,23 +144,20 @@ function CaseType({ t }) {
                   {
                     tenantId,
                     statute: "Statute",
-                    sections: ["Negotiable Instruments Act", "02."],
+                    sections: ["Negotiable Instrument Act", "02."],
                     subsections: ["138", "03."],
                   },
                 ],
-                litigants: [
-                  {
-                    tenantId,
-                    partyCategory: "INDIVIDUAL",
-                  },
-                ],
-                representatives: [
-                  {
-                    advocateId: advocateId ? advocateId : null,
-                    tenantId,
-                    representing: [],
-                  },
-                ],
+                litigants: [],
+                representatives: advocateId
+                  ? [
+                      {
+                        advocateId: advocateId,
+                        tenantId,
+                        representing: [],
+                      },
+                    ]
+                  : [],
                 documents: [],
                 workflow: {
                   action: "SAVE_DRAFT",
@@ -175,20 +175,22 @@ function CaseType({ t }) {
                 additionalDetails: {
                   ...(advocateId
                     ? {
-                        advocateDetails: [
-                          {
-                            isenabled: true,
-                            displayindex: 0,
-                            data: {
-                              isAdvocateRepresenting: {
-                                code: "YES",
-                                name: "Yes",
-                                showForm: true,
-                                isEnabled: true,
+                        advocateDetails: {
+                          formdata: [
+                            {
+                              isenabled: true,
+                              displayindex: 0,
+                              data: {
+                                isAdvocateRepresenting: {
+                                  code: "YES",
+                                  name: "Yes",
+                                  showForm: true,
+                                  isEnabled: true,
+                                },
                               },
                             },
-                          },
-                        ],
+                          ],
+                        },
                       }
                     : {
                         complaintDetails: {
@@ -200,6 +202,7 @@ function CaseType({ t }) {
                                   code: "INDIVIDUAL",
                                   name: "Individual",
                                   showCompanyDetails: false,
+                                  complainantLocation: true,
                                   commonFields: true,
                                   isEnabled: true,
                                 },
@@ -217,7 +220,12 @@ function CaseType({ t }) {
                                 complainantVerification: {
                                   mobileNumber: userInfo?.userName,
                                   otpNumber: "123456",
-                                  individualDetails: individualId,
+                                  individualDetails: {
+                                    individualId: individualId,
+                                    document: identifierIdDetails?.fileStoreId
+                                      ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                                      : null,
+                                  },
                                   isUserVerified: true,
                                 },
                                 addressDetails: {
@@ -256,7 +264,7 @@ function CaseType({ t }) {
       { header: "Case Category", subtext: "Criminal", serialNumber: "01." },
       {
         header: "Status / Act",
-        subtext: "Negotiable Instruments Act",
+        subtext: "Negotiable Instrument Act",
         serialNumber: "02.",
       },
       { header: "Section", subtext: "138", serialNumber: "03." },
@@ -281,7 +289,7 @@ function CaseType({ t }) {
         serialNumber: "03.",
       },
       {
-        header: "Proof od Debt/ Liability",
+        header: "Proof of Debt/ Liability",
         subtext: "Anything to prove some sort of agreement between you and the respondent",
         subnote: "Upload .pdf or .jpg. Maximum upload size of 50MB",
         serialNumber: "04.",
@@ -319,7 +327,13 @@ function CaseType({ t }) {
     >
       <div className="case-types-main-div">
         {detailsCardList.map((item) => (
-          <CustomDetailsCard header={item.header} subtext={item.subtext} serialNumber={item.serialNumber} style={{ width: "100%" }} />
+          <CustomDetailsCard
+            header={item.header}
+            subtext={item.subtext}
+            serialNumber={item.serialNumber}
+            subnote={item.subnote}
+            style={{ width: "100%" }}
+          />
         ))}
       </div>
       {page === 0 && (

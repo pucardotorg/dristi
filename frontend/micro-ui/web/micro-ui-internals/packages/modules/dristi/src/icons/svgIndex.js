@@ -653,7 +653,26 @@ const CopyIcon = () => (
     />
   </svg>
 );
-
+const RightArrow = () => {
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="white" />
+  </svg>;
+};
+const CalendarLeftArrow = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 15L7 10L12 5" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+);
+const CalendarRightArrow = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 5L12 10L7 15" stroke="#1F2937" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+);
+const WhiteRightArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="white" />
+  </svg>
+);
 export {
   RegisterIcon,
   LoginIcon,
@@ -691,4 +710,8 @@ export {
   InfoIconRed,
   FSOErrorIcon,
   CopyIcon,
+  RightArrow,
+  CalendarLeftArrow,
+  CalendarRightArrow,
+  WhiteRightArrow,
 };

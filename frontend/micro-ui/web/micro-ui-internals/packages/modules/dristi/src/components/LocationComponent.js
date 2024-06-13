@@ -124,7 +124,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
-                <span>{input?.showOptional && ` (${t("CS_OPTIONAL")})`}</span>
+                <span>{input?.showOptional && ` ${t("CS_IS_OPTIONAL")}`}</span>
               </CardLabel>
               <div className="field">
                 {input?.type === "LocationSearch" ? (

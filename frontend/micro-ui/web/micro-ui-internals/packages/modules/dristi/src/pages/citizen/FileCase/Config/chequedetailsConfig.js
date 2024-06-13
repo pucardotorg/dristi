@@ -6,6 +6,14 @@ export const chequeDetailsFormConfig = [
         label: "CS_DISHONOURED_CHEQUE_SIGNATORY_NAME",
         isMandatory: true,
         populators: {
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            patternType: "Name",
+            minLength: 2,
+          },
           name: "chequeSignatoryName",
         },
       },
@@ -21,11 +29,10 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Bounced Cheque",
-              isOptional: "optional",
-              infoTooltipMessage: "Tooltip",
+              isMandatory: true,
+              documentHeader: "CS_BOUNCED_CHEQUE",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -43,6 +50,14 @@ export const chequeDetailsFormConfig = [
         label: "CS_NAME_ON_CHEQUE",
         isMandatory: true,
         populators: {
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+            },
+            patternType: "Name",
+            minLength: 2,
+          },
           name: "name",
         },
       },
@@ -91,6 +106,12 @@ export const chequeDetailsFormConfig = [
         label: "CS_IFSC_CODE",
         isMandatory: true,
         populators: {
+          validation: {
+            pattern: {
+              message: "CORE_COMMON_IFSC_INVALID",
+              value: /^[A-Z]{4}0[A-Z0-9]{6}$/,
+            },
+          },
           name: "ifsc",
         },
       },
@@ -133,11 +154,10 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Proof of deposit of Cheque",
-              isOptional: "optional",
+              documentHeader: "CS_PROOF_DEPOSIT_CHEQUE",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -159,11 +179,10 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Cheque Return Memo",
-              isOptional: "optional",
+              documentHeader: "CS_CHEQUE_RETURN_MEMO",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -177,11 +196,17 @@ export const chequeDetailsFormConfig = [
   {
     body: [
       {
-        type: "textarea",
-        label: "CS_CHEQUE_ADDITIONAL_DETAILS",
-        isMandatory: true,
+        type: "component",
+        component: "SelectCustomTextArea",
+        key: "chequeAdditionalDetails",
         populators: {
-          name: "chequeAdditionalDetails",
+          inputs: [
+            {
+              textAreaSubHeader: "CS_CHEQUE_ADDITIONAL_DETAILS",
+              isOptional: true,
+              type: "TextAreaComponent",
+            },
+          ],
         },
       },
     ],
@@ -196,4 +221,9 @@ export const chequeDetailsConfig = {
   addFormText: "ADD_CHEQUE",
   formItemName: "Cheque",
   className: "cheque",
+  selectDocumentName: {
+    bouncedChequeFileUpload: "CS_BOUNCED_CHEQUE",
+    depositChequeFileUpload: "CS_PROOF_DEPOSIT_CHEQUE",
+    returnMemoFileUpload: "CS_CHEQUE_RETURN_MEMO",
+  },
 };

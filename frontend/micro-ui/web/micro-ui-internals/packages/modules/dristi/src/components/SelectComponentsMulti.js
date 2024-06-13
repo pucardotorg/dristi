@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import LocationComponent from "./LocationComponent";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
@@ -11,7 +11,7 @@ const selectCompMultiConfig = {
   withoutLabel: true,
   populators: {
     inputs: [
-      { label: "CS_PIN_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+      { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
       {
         label: "PINCODE",
         type: "text",
@@ -79,6 +79,11 @@ const selectCompMultiConfig = {
 
 const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
   const [locationData, setLocationData] = useState([{ id: generateUUID() }]);
+
+  const addressLabel = useMemo(() => {
+    return formData?.respondentType?.code;
+  }, [formData?.respondentType]);
+
   const handleAdd = () => {
     setLocationData((locationData) => {
       const updatedLocationData = [...(locationData || []), { id: generateUUID() }];
@@ -110,7 +115,17 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
       {locationData.map((data, index) => (
         <div key={data.id}>
           <div style={{ display: "flex", gap: "4px" }}>
-            <h1>{`WITNESS'S_LOCATION #${index + 1}`}</h1>
+            <b>
+              <h1>{` ${
+                addressLabel == "INDIVIDUAL"
+                  ? t("CS_RESPONDENT_ADDRESS_DETAIL")
+                  : addressLabel == "REPRESENTATIVE"
+                  ? t("CS_COMPANY_LOCATION")
+                  : config?.formType == "Witness"
+                  ? t("CS_COMMON_ADDRESS_WITNESS")
+                  : t("CS_COMMON_ADDRESS_DETAIL")
+              } ${index + 1}`}</h1>
+            </b>
             <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
               <CrossIcon></CrossIcon>
             </span>
@@ -128,8 +143,9 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
         </div>
       ))}
       <Button
+        className={"add-location-btn"}
         label={"Add Location"}
-        style={{ alignItems: "center" }}
+        style={{ alignItems: "center", margin: "10px 0px" }}
         onButtonClick={() => {
           handleAdd();
         }}

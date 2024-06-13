@@ -40,7 +40,9 @@ export const modalConfig = [
   },
   {
     headModal: "Select Custom Date",
-    label: "12 Hearings Scheduled",
+    label: "Hearings Scheduled",
+    showBottomBar: true,
+    buttonText: "CS_COMMON_CONFIRM",
   },
 ];
 export const selectParticipantConfig = {

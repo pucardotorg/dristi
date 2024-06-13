@@ -1,5 +1,5 @@
-import { ArrowForward, ArrowRightInbox, Banner, Card, CardText, Modal, TextArea } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import { ArrowForward, ArrowRightInbox, Banner, Card, CardText, Modal, TextArea, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 
 import { modalConfig, selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
@@ -8,6 +8,8 @@ import CustomSubmitModal from "../../../components/CustomSubmitModal";
 import ScheduleAdmission from "./ScheduleAdmission";
 import SelectParticipant from "./SelectParticipant";
 import { Calendar } from "react-date-range";
+import CustomCalendar from "../../../components/CustomCalendar";
+import { WhiteRightArrow } from "../../../icons/svgIndex";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -33,9 +35,20 @@ const CloseBtn = (props) => {
     </div>
   );
 };
-function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModalInfo, modalInfo, setModalInfo }) {
+function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModalInfo, modalInfo, setModalInfo, path }) {
   const [reasons, setReasons] = useState(null);
   const history = useHistory();
+  const [showErrorToast, setShowErrorToast] = useState(false);
+  const closeToast = () => {
+    setShowErrorToast(false);
+  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
   const stepItems = useMemo(() =>
     modalConfig.map(
       (step) => {
@@ -48,36 +61,51 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
       [modalConfig]
     )
   );
+  const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
+  const [sendCaseBack, setSendCaseBack] = useState({});
 
   const onSubmit = (props) => {
-    setModalInfo({ ...modalInfo, page: 1 });
+    console.log(props);
+    if (!props?.commentForLitigant) {
+      setShowErrorToast(true);
+    } else {
+      setSendCaseBack({ ...sendCaseBack, caseBackReason: props?.commentForLitigant });
+      setModalInfo({ ...modalInfo, page: 1 });
+    }
   };
   const showSuccessModal = (modalInfo) => {
     if (!modalInfo) return false;
     const { page, type } = modalInfo;
     return (page === 1 && (type === "admitCase" || type === "sendCaseBack")) || (page === 2 && type === "schedule");
   };
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  // const onCalendarConfirm = () => {};
+  const [selectedCustomDate, setSelectedCustomDate] = useState(new Date());
 
   const handleSelect = (date) => {
-    setSelectedDate(date);
+    setSelectedCustomDate(date);
+  };
+  const onCalendarConfirm = () => {
+    setModalInfo({ ...modalInfo, page: 0, showDate: false, showCustomDate: true });
+    setDateSelected(false);
+  };
+  const [selectedChip, setSelectedChip] = React.useState(null);
+  //   const [purposeValue, setPurposeValue] = useState();
+
+  const setPurposeValue = (value, input) => {
+    setScheduleHearingParam({ ...scheduleHearingParams, purpose: value });
+    console.log(value, input);
+  };
+  const handleChipClick = (chipLabel) => {
+    setSelectedChip(chipLabel);
+  };
+  const [dateSelected, setDateSelected] = useState(false);
+
+  const showCustomDateModal = () => {
+    console.log("CustomDate");
+    setModalInfo({ ...modalInfo, showDate: true });
   };
 
-  const renderCustomDay = (date) => {
-    const isToday = date.getDate() === new Date().getDate(); // Check if the date is today
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Check if the date is a weekend
-
-    return (
-      // <div style={{ textAlign: "center", fontSize: "14px", paddingTop: "5px" }}>
-      <div>
-        {date.getDate()}
-        {isToday && <div style={{ fontSize: "8px", color: "#931847" }}>10 Hearings</div>}
-      </div>
-      //   {isWeekend && <div style={{ color: "red" }}>Weekend</div>}
-      // </div>
-    );
-  };
-
+  console.log(scheduleHearingParams);
   return (
     <div>
       {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
@@ -105,6 +133,7 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
             buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
             actionClassName="e-filing-action-bar"
           ></FormComposerV2>
+          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </Modal>
       )}
       {modalInfo?.page == 0 && modalInfo?.type === "admitCase" && (
@@ -124,7 +153,23 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
         >
-          <ScheduleAdmission config={stepItems[2]} t={t} setShowModal={setShowModal} setModalInfo={setModalInfo} modalInfo={modalInfo} />
+          <ScheduleAdmission
+            config={stepItems[2]}
+            t={t}
+            setShowModal={setShowModal}
+            setModalInfo={setModalInfo}
+            modalInfo={modalInfo}
+            selectedCustomDate={selectedCustomDate}
+            selectedChip={selectedChip}
+            setSelectedChip={setSelectedChip}
+            handleChipClick={handleChipClick}
+            dateSelected={dateSelected}
+            setDateSelected={setDateSelected}
+            showCustomDateModal={showCustomDateModal}
+            setPurposeValue={setPurposeValue}
+            scheduleHearingParams={scheduleHearingParams}
+            setScheduleHearingParam={setScheduleHearingParam}
+          />
         </Modal>
       )}
       {modalInfo?.page == 1 && modalInfo?.type === "schedule" && (
@@ -133,17 +178,32 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
         >
-          <SelectParticipant config={selectParticipantConfig} setShowModal={setShowModal} modalInfo={modalInfo} setModalInfo={setModalInfo} />
+          <SelectParticipant
+            config={selectParticipantConfig}
+            setShowModal={setShowModal}
+            modalInfo={modalInfo}
+            setModalInfo={setModalInfo}
+            scheduleHearingParams={scheduleHearingParams}
+            setScheduleHearingParam={setScheduleHearingParam}
+          />
         </Modal>
       )}
       {modalInfo?.showDate && (
         <Modal
           headerBarMain={<Heading label={t(stepItems[3].headModal)} />}
-          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
-          actionSaveLabel={t("CS_COMMON_CONFIRM")}
+          headerBarEnd={<CloseBtn onClick={() => setModalInfo({ ...modalInfo, page: 0, showDate: false, showCustomDate: false })} />}
+          // actionSaveLabel={t("CS_COMMON_CONFIRM")}
+          hideSubmit={true}
+
           // actionSaveOnSubmit={onSelect}
         >
-          <Calendar date={selectedDate} onChange={handleSelect} dayContentRenderer={renderCustomDay} />
+          <CustomCalendar
+            config={stepItems[3]}
+            t={t}
+            onCalendarConfirm={onCalendarConfirm}
+            handleSelect={handleSelect}
+            selectedCustomDate={selectedCustomDate}
+          />
         </Modal>
       )}
       {showSuccessModal(modalInfo) && (
@@ -151,14 +211,16 @@ function AdmissionActionModal({ t, setShowModal, setSubmitModalInfo, submitModal
           actionSaveLabel={
             <div>
               {t(submitModalInfo?.nextButtonText)}
-              {submitModalInfo?.isArrow && <ArrowRightInbox />}
+              {submitModalInfo?.isArrow && <WhiteRightArrow />}
             </div>
           }
           actionCancelLabel={t(submitModalInfo?.backButtonText)}
           actionCancelOnSubmit={() => {
             setShowModal(false);
           }}
+          actionSaveOnSubmit={() => history.push(`${path}/admission`)}
           className="case-types"
+          formId="modal-action"
         >
           <CustomSubmitModal submitModalInfo={submitModalInfo} />
         </Modal>

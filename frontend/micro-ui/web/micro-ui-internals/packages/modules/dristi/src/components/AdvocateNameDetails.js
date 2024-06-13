@@ -39,7 +39,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
   const moduleCode = "DRISTI";
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const tenantId = window.localStorage.getItem("tenant-id");
-  const { data, isLoading, refetch } = Digit.Hooks.dristi.useGetIndividualUser(
+  const { data, isLoading, refetch } = window?.Digit.Hooks.dristi.useGetIndividualUser(
     {
       Individual: {
         userUuid: [userInfo?.uuid],
@@ -53,7 +53,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
 
   const individualId = useMemo(() => data?.Individual?.[0]?.individualId, [data?.Individual]);
   const userType = useMemo(() => data?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "userType")?.value, [data?.Individual]);
-  const { data: searchData, isLoading: isSearchLoading } = Digit.Hooks.dristi.useGetAdvocateClerk(
+  const { data: searchData, isLoading: isSearchLoading } = window?.Digit.Hooks.dristi.useGetAdvocateClerk(
     {
       criteria: [{ individualId }],
       tenantId,
@@ -104,9 +104,11 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     if (isApproved && searchResult) {
       const barRegNum = searchResult[0]?.barRegistrationNumber;
       const userName = searchResult[0]?.additionalDetails?.username;
-      onSelect("advocateBarRegNumberWithName", [{ barRegistrationNumber: `${barRegNum} (${userName})`, advocateName: userName, isDisable: true }]);
+      onSelect("advocateBarRegNumberWithName", [
+        { barRegistrationNumber: `${barRegNum} (${userName})`, advocateName: userName, isDisable: true, barRegistrationNumberOriginal: barRegNum },
+      ]);
     }
-  }, [isApproved, searchResult]);
+  }, [isApproved, onSelect, searchResult]);
 
   const inputs = useMemo(
     () =>

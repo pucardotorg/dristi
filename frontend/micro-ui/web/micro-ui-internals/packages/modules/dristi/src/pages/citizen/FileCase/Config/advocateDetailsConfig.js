@@ -36,6 +36,7 @@ const advocateDetailsFormConfig = [
   },
   {
     dependentKey: { isAdvocateRepresenting: ["showForm"] },
+    head: "CS_ADVOCATE_BASIC_DETAILS",
     body: [
       {
         type: "apidropdown",
@@ -119,7 +120,7 @@ const advocateDetailsFormConfig = [
               documentHeader: "UPLOAD_VAKALATNAMA",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PNG", "PDF"],
@@ -139,4 +140,7 @@ export const advocateDetailsConfig = {
   header: "CS_ADVOCATE_DETAILS_HEADING",
   subtext: "CS_ADVOCATE_DETAILS_SUBTEXT",
   className: "advocate-detail",
+  selectDocumentName: {
+    vakalatnamaFileUpload: "UPLOAD_VAKALATNAMA",
+  },
 };

@@ -127,7 +127,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
   };
 
   return (
-    <div>
+    <div className="verification-component">
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         let fileErrors =
@@ -138,15 +138,13 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
         const isUserVerified = (input?.verificationOn && extractValue(formData, input?.verificationOn)) || isAadharVerified;
         return (
           <React.Fragment key={index}>
-            <LabelFieldPair style={{ width: "100%", display: "flex", alignItem: "center" }}>
-              <CardLabel style={{ fontWeight: 700 }} className="card-label-smaller">
-                {t(input.label)}
-              </CardLabel>
-            </LabelFieldPair>
+            <CardLabel className="card-label-smaller">
+              {t(input.label)}
+            </CardLabel>
             {!currentValue?.[input.name]?.["ID_Proof"] ? (
               <React.Fragment>
                 {!isUserVerified && (
-                  <div className="button-field" style={{ width: "50%" }}>
+                  <div className="button-field">
                     <Button
                       variation={"secondary"}
                       className={"secondary-button-selector"}
@@ -177,17 +175,16 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
 
                 <InfoCard
                   variant={isUserVerified ? "success" : "default"}
-                  label={isUserVerified ? "CS_AADHAR_VERIFIED" : "CS_COMMON_NOTE"}
-                  style={{ margin: "16px 0 0 0", backgroundColor: isUserVerified ? "#E4F2E4" : "#ECF3FD" }}
+                  label={isUserVerified ? t("CS_AADHAR_VERIFIED") : t("CS_COMMON_NOTE")}
                   additionalElements={{}}
                   inline
                   text={
                     isUserVerified
-                      ? "Adhaar verification is instant and can help increase the speed of case filing"
-                      : "Your Id was already verified during user registration."
+                      ? t("CS_ID_VERIFIED_NOTE")
+                      : t("CS_AADHAR_VERIFICATION_NOTE")
                   }
                   textStyle={{}}
-                  className={"adhaar-verification-info-card"}
+                  className={`adhaar-verification-info-card ${isUserVerified && "user-verified"}`}
                 />
               </React.Fragment>
             ) : (
@@ -209,7 +206,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
               <Modal
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
-                actionCancelOnSubmit={() => {}}
+                actionCancelOnSubmit={() => { }}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });
@@ -220,7 +217,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                   }));
                 }}
                 formId="modal-action"
-                headerBarMain={<Heading label={t("UPLOAD_ID_PROOF_HEADER")} />}
+                headerBarMain={<Heading label={t("VERIFY_ID_PROOF")} />}
                 submitTextClassName={"verification-button-text-modal"}
                 className={"case-types"}
               >

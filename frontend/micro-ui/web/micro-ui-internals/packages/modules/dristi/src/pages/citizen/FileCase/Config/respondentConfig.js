@@ -1,10 +1,14 @@
+import { Label } from "@egovernments/digit-ui-react-components";
+
 const respondentFromconfig = [
   {
+
+    head: "CS_RESPONDENT_TYPE",
     body: [
       {
         type: "radio",
         key: "respondentType",
-        label: "CS_RESPONDENT_TYPE",
+        withoutLabel: true,
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -51,9 +55,10 @@ const respondentFromconfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
+            maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -62,12 +67,13 @@ const respondentFromconfig = [
       {
         type: "text",
         label: "MIDDLE_NAME",
+        labelChildren: "optional",
         populators: {
           name: "middleName",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             title: "",
             patternType: "Name",
@@ -84,9 +90,10 @@ const respondentFromconfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
+            maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -135,12 +142,12 @@ const respondentFromconfig = [
               componentInFront: "+91",
               validation: {
                 required: true,
-                minLength: 10,
-                maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
                 isArray: true,
+                minLength: 10,
+                maxLength: 10,
+                isNumber: true,
               },
-              className: "mobile-number",
             },
           ],
           validation: {},
@@ -167,10 +174,9 @@ const respondentFromconfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /\S+@\S+\.\S+/,
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 isArray: true,
               },
-              className: "email-address",
             },
           ],
           validation: {},
@@ -206,9 +212,10 @@ const respondentFromconfig = [
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
               type: "DragDropComponent",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -218,7 +225,6 @@ const respondentFromconfig = [
   },
   {
     dependentKey: { respondentType: ["commonFields"] },
-    head: "CS_RESPONDENT_ADDRESS_DETAIL",
     body: [
       {
         type: "component",
@@ -314,13 +320,13 @@ const respondentFromconfig = [
             {
               name: "document",
               documentHeader: "CS_202_INQUIRY_AFFIDAVIT",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],

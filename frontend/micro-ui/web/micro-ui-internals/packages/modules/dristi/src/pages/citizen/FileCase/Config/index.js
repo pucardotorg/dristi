@@ -23,6 +23,8 @@ export const sideMenuConfig = [
         isCompleted: false,
         isDisabled: false,
         pageConfig: complaintdetailconfig,
+        mandatoryFields: ["complainantType", "complainantId.complainantId", "firstName", "lastName"],
+        optionalFields: ["middleName"],
       },
       {
         key: "respondentDetails",

@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
 import { Button, CardHeader, CardLabel, SubmitBar } from "@egovernments/digit-ui-react-components";
 
-function SelectParticipant({ config, setShowModal, modalInfo, setModalInfo }) {
+function SelectParticipant({ config, setShowModal, modalInfo, setModalInfo, scheduleHearingParams, setScheduleHearingParam }) {
   const [selectedValues, setSelectedValues] = useState({});
 
   const handleInputChange = (values) => {
+    console.log(values);
     setSelectedValues(values);
   };
   const onSubmitSchedule = (props) => {
     console.log(props);
     setModalInfo({ ...modalInfo, page: 2 });
   };
-  console.log(selectedValues);
   return (
     <div>
       <CardLabel>{config?.header}</CardLabel>
@@ -24,6 +24,7 @@ function SelectParticipant({ config, setShowModal, modalInfo, setModalInfo }) {
           className="primary-label-btn"
           label={"Back"}
         ></Button>
+
         <SubmitBar
           variation="primary"
           onSubmit={(props) => {

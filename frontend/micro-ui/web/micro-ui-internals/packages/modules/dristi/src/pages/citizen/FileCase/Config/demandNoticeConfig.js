@@ -68,7 +68,7 @@ const demandNoticeFormConfig = [
               name: "legalDemandNoticeFileUpload",
               documentHeader: "LEGAL_DEMAND_NOTICE",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -92,7 +92,7 @@ const demandNoticeFormConfig = [
               name: "proofOfDispatchFileUpload",
               documentHeader: "PROOF_OF_DISPATCH_LDN",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -163,9 +163,9 @@ const demandNoticeFormConfig = [
           inputs: [
             {
               name: "proofOfAcknowledgmentFileUpload",
-              documentHeader: "LEGAL_DEMAND_NOTICE",
+              documentHeader: "PROOF_LEGAL_DEMAND_NOTICE",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -181,10 +181,10 @@ const demandNoticeFormConfig = [
       {
         type: "radio",
         key: "proofOfReply",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_REPLY_NOTICE",
         isMandatory: true,
         populators: {
-          label: "CS_DELAY_APPLICATION_TYPE",
+          label: "CS_REPLY_NOTICE",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
@@ -213,7 +213,7 @@ const demandNoticeFormConfig = [
     ],
   },
   {
-    dependentKey: { proofOfService: ["showProofOfReply"] },
+    dependentKey: { proofOfReply: ["showProofOfReply"] },
     body: [
       {
         type: "date",
@@ -236,9 +236,9 @@ const demandNoticeFormConfig = [
           inputs: [
             {
               name: "proofOfReplyFileUpload",
-              documentHeader: "LEGAL_DEMAND_NOTICE",
+              documentHeader: "CS_PROOF_TO_REPLY_DEMAND_NOTICE",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .pdf or .jpg",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
               fileTypes: ["JPG", "PDF"],
@@ -266,13 +266,14 @@ const demandNoticeFormConfig = [
       {
         type: "radio",
         key: "delayApplicationType",
-        label: "CS_DELAY_APPLICATION_TYPE",
+        label: "CS_PAYER_FAIL_TO_PAY",
         isMandatory: true,
         populators: {
-          label: "CS_DELAY_APPLICATION_TYPE",
+          label: "CS_PAYER_FAIL_TO_PAY",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
+          name: "delayApplicationType",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -307,4 +308,9 @@ export const demandNoticeConfig = {
   addFormText: "ADD_DEMAND_NOTICE",
   formItemName: "CS_DEMAND_NOTICE",
   className: "demand-notice",
+  selectDocumentName: {
+    proofOfDispatchFileUpload: "PROOF_OF_DISPATCH_LDN",
+    proofOfAcknowledgmentFileUpload: "PROOF_LEGAL_DEMAND_NOTICE",
+    proofOfReplyFileUpload: "CS_PROOF_TO_REPLY_DEMAND_NOTICE",
+  },
 };

@@ -4,7 +4,7 @@ const debtLiabilityFromconfig = [
       {
         type: "dropdown",
         key: "liabilityNature",
-        label: "Nature of debt / liability for which cheque(s) was/were received (e.g. loan, sales agreement etc)",
+        label: "CS_NATURE_DEBT_LIABILITY",
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -45,7 +45,7 @@ const debtLiabilityFromconfig = [
       {
         type: "radio",
         key: "liabilityType",
-        label: "What was the total amount the cheque(s) covered?",
+        label: "CS_CHEQUE_LIABILITY",
         isMandatory: true,
         populators: {
           label: "SELECT_RESPONDENT_TYPE",
@@ -86,13 +86,13 @@ const debtLiabilityFromconfig = [
     dependentKey: { liabilityType: ["showAmountCovered"] },
     body: [
       {
-        type: "text",
-        key: "totalAmount",
-        label: "What was the total amount the cheque(s) covered? ",
+        type: "amount",
+        component: "CustomInput",
+        label: "CS_TOTAL_CHEQUE_AMOUNT",
+        isMandatory: true,
         populators: {
-          validation: {},
-          title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
+          componentInFront: "₹",
+          name: "chequeAmount",
         },
       },
     ],
@@ -107,8 +107,8 @@ const debtLiabilityFromconfig = [
           inputs: [
             {
               infoHeader: "CS_COMMON_NOTE",
-              infoText: "CS_NOTETEXT_RESPONDENT_ADDRESS",
-              infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_ADDRESS",
+              infoText: "CS_NOTE_DEBT_LIABILITY",
+              infoTooltipMessage: "Tooltip",
               type: "InfoComponent",
             },
           ],
@@ -126,14 +126,14 @@ const debtLiabilityFromconfig = [
           inputs: [
             {
               name: "document",
-              documentHeader: "Aadhar",
-              isOptional: "optional",
+              documentHeader: "CS_PROOF_DEBT",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -146,11 +146,12 @@ const debtLiabilityFromconfig = [
       {
         type: "component",
         component: "SelectCustomTextArea",
-        key: "delayApplicationReason",
+        key: "additionalDebtLiabilityDetails",
         populators: {
           inputs: [
             {
-              textAreaHeader: "CS_TEXTAREA_HEADER_DELAY_REASON",
+              textAreaSubHeader: "CS_DEBT_ADDITIONAL_DETAILS",
+              isOptional: true,
               type: "TextAreaComponent",
             },
           ],
@@ -165,4 +166,7 @@ export const debtliabilityconfig = {
   subtext: "CS_DEBT_LIABILITY_SUBTEXT",
   isOptional: false,
   className: "debt-liability",
+  selectDocumentName: {
+    debtLiabilityFileUpload: "CS_PROOF_DEBT",
+  },
 };

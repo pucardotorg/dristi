@@ -76,6 +76,7 @@
           font-weight: 700;
           line-height: 18.75px;
           text-align: center;
+          margin: 0px;
         }
       }
 
@@ -83,7 +84,6 @@
         border: 1px #007e7e solid !important;
         h2 {
           color: #007e7e !important;
-          margin-top: 3px;
         }
       }
       .delete-button {
@@ -182,7 +182,7 @@
 .drag-drop-visible-main {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   .drag-drop-heading-main {
     width: 100%;
     .drag-drop-heading {
@@ -191,10 +191,6 @@
       align-items: center;
       margin-left: 10px;
       gap: 4px;
-      * {
-        margin: 0;
-      }
-
       h1 {
         font-family: Roboto;
         font-size: 16px;
@@ -227,7 +223,9 @@
   .file-uploader-div-main {
     display: none;
     &.show-file-uploader {
-      display: block;
+      display: flex !important;
+      flex-direction: column;
+      gap: 8px;
     }
 
     &.select-UploadFiles {
@@ -274,10 +272,9 @@
   }
 
   .upload-guidelines-div {
-    margin-left: 10px;
-
     p {
       color: #77787b;
+      margin: 0px;
     }
   }
 }

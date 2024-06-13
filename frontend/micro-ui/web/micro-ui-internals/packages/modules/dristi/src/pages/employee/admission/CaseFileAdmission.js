@@ -4,8 +4,11 @@ import { CustomArrowDownIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import AdmissionActionModal from "./AdmissionActionModal";
 
+const DIGIT = window.Digit;
+
 function CaseFileAdmission({ t }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const { caseId } = DIGIT.hooks.useQueryParams();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const [showModal, setShowModal] = useState(false);
@@ -151,6 +154,7 @@ function CaseFileAdmission({ t }) {
             label={t("CS_ADMIT_CASE")}
             config={reviewCaseFileFormConfig}
             onSubmit={onSubmit}
+            // defaultValues={}
             onSecondayActionClick={onSaveDraft}
             defaultValues={{}}
             onFormValueChange={onFormValueChange}
