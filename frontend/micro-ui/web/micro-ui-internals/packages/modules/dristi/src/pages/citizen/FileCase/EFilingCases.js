@@ -14,8 +14,62 @@ import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
 import { userTypeOptions } from "../registration/config";
 
+function isEmptyValue(value) {
+  if (!value) {
+    return true;
+  } else if (Array.isArray(value) || typeof value === "object") {
+    return Object.keys(value).length === 0;
+  } else if (typeof value === "string") {
+    return value.trim().length === 0;
+  } else {
+    return false;
+  }
+}
+
+const extractValue = (data, key) => {
+  if (!key.includes(".")) {
+    return data[key];
+  }
+  const keyParts = key.split(".");
+  let value = data;
+  keyParts.forEach((part) => {
+    if (value && value.hasOwnProperty(part)) {
+      value = value[part];
+    } else {
+      value = undefined;
+    }
+  });
+  return value;
+};
+
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
+};
+
+const selectedArray = [
+  "complaintDetails",
+  "respondentDetails",
+  "chequeDetails",
+  "debtLiabilityDetails",
+  "demandNoticeDetails",
+  "delayApplications",
+  "witnessDetails",
+  "prayerSwornStatement",
+  "advocateDetails",
+];
+
+const getTotalCountFromSideMenuConfig = (sideMenuConfig, selected) => {
+  const countObj = { mandatory: 0, optional: 0 };
+  for (let i = 0; i < sideMenuConfig.length; i++) {
+    const childArray = sideMenuConfig[i]?.children;
+    for (let j = 0; j < childArray.length; j++) {
+      if (childArray[j].key === selected) {
+        countObj.mandatory = childArray[j]?.initialMandatoryFieldCount;
+        countObj.optional = childArray[j]?.initialOptionalFieldCount;
+      }
+    }
+  }
+  return countObj;
 };
 
 function EFilingCases({ path }) {
@@ -42,11 +96,73 @@ function EFilingCases({ path }) {
   const [receiptDemandNoticeModal, setReceiptDemandNoticeModal] = useState(false);
   const [serviceOfDemandNoticeModal, setServiceOfDemandNoticeModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
+  const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
+  const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
+
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
     successMsg: "",
   });
   const [deleteFormIndex, setDeleteFormIndex] = useState(null);
+  const setFieldsRemainingInitially = () => {
+    const array = [];
+    for (let i = 0; i < selectedArray.length; i++) {
+      const selected = selectedArray[i];
+      array.push({
+        selectedPage: selected,
+        mandatoryTotalCount: getTotalCountFromSideMenuConfig(sideMenuConfig, selected)?.mandatory,
+        optionalTotalCount: getTotalCountFromSideMenuConfig(sideMenuConfig, selected)?.optional,
+      });
+    }
+    return array;
+  };
+  const [fieldsRemaining, setFieldsRemaining] = useState(() => setFieldsRemainingInitially());
+
+  const checkAndGetMandatoryFieldLeftPages = useMemo(() => {
+    const mandatoryRemainingPages = fieldsRemaining.filter((page) => page.mandatoryTotalCount !== 0) || [];
+    return mandatoryRemainingPages;
+  }, [fieldsRemaining]);
+
+  const checkAndGetOptionalFieldLeftPages = useMemo(() => {
+    const optionalRemainingPages = fieldsRemaining.filter((page) => page.optionalTotalCount !== 0) || [];
+    return optionalRemainingPages;
+  }, [fieldsRemaining]);
+
+  const mandatoryFieldsLeftTotalCount = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < fieldsRemaining.length; i++) {
+      count = count + fieldsRemaining[i].mandatoryTotalCount;
+    }
+    return count;
+  }, [fieldsRemaining]);
+
+  const optionalFieldsLeftTotalCount = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < fieldsRemaining.length; i++) {
+      count = count + fieldsRemaining[i].optionalTotalCount;
+    }
+    return count;
+  }, [fieldsRemaining]);
+
+  const showMandatoryFieldsRemainingModal = useMemo(() => {
+    if (selected === "reviewCaseFile" || selected === "addSignature") {
+      if (mandatoryFieldsLeftTotalCount > 0) {
+        setShowConfirmMandatoryModal(true);
+        return true;
+      } else return false;
+    }
+    return false;
+  }, [selected, mandatoryFieldsLeftTotalCount]);
+
+  const showOptionalFieldsRemainingModal = useMemo(() => {
+    if (selected === "reviewCaseFile" || selected === "addSignature") {
+      if (checkAndGetOptionalFieldLeftPages.length !== 0) {
+        setShowConfirmOptionalModal(true);
+        return true;
+      } else return false;
+    }
+    return false;
+  }, [selected, checkAndGetOptionalFieldLeftPages]);
 
   const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
@@ -76,7 +192,23 @@ function EFilingCases({ path }) {
   const deleteWarningText = useCallback((pageName) => {
     return (
       <div>
-        <h3>{`This will permanently delete all the details entered for this ${pageName}. This action cannot be undone.`}</h3>
+        <h3>{`${t("CONFIRM_DELETE_FIRST_HALF")} ${pageName} ${t("CONFIRM_DELETE_SECOND_HALF")}`}</h3>
+      </div>
+    );
+  }, []);
+
+  const mandatoryFieldsRemainingText = useCallback(() => {
+    return (
+      <div>
+        <h3>{t("ENSURE_ALL_MANDATORY_ARE_FILLED")}</h3>
+      </div>
+    );
+  }, []);
+
+  const optionalFieldsRemainingText = useCallback((count) => {
+    return (
+      <div>
+        <h3>{`${t("MORE_INFO_HELPS_FIRST_HALF")} ${count} ${t("MORE_INFO_HELPS_SECOND_HALF")}`}</h3>
       </div>
     );
   }, []);
@@ -99,6 +231,27 @@ function EFilingCases({ path }) {
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
+
+  useEffect(() => {
+    if (Object.keys(caseDetails).length !== 0) {
+      const fieldsRemainingCopy = structuredClone(fieldsRemaining);
+      const additionalDetailsArray = ["complaintDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
+      const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
+      for (const key of additionalDetailsArray) {
+        if (caseDetails?.additionalDetails?.[key]) {
+          const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
+          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.additionalDetails?.[key]?.formdata, key);
+        }
+      }
+      for (const key of caseDetailsArray) {
+        if (caseDetails?.caseDetails?.[key]) {
+          const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
+          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
+        }
+      }
+      setFieldsRemaining(fieldsRemainingCopy);
+    }
+  }, [caseDetails]);
 
   useEffect(() => {
     const data =
@@ -219,10 +372,10 @@ function EFilingCases({ path }) {
               body: config?.body?.map((body) => {
                 return {
                   ...body,
-                  labelChildren: body?.labelChildren === "optional" ? <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span> : ""
+                  labelChildren: body?.labelChildren === "optional" ? <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span> : "",
                 };
-              }
-            )};
+              }),
+            };
           });
         }
         return formConfig;
@@ -334,7 +487,7 @@ function EFilingCases({ path }) {
               const key = formComponent.key || formComponent.populators?.name;
               const modifiedFormComponent = structuredClone(formComponent);
               if (modifiedFormComponent?.labelChildren === "optional") {
-                modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>
+                modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
               }
               if (scrutiny?.[selected]) modifiedFormComponent.disable = true;
               if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
@@ -762,6 +915,113 @@ function EFilingCases({ path }) {
     return response;
   };
 
+  const setMandatoryAndOptionalRemainingFields = (currentPageData, currentSelected) => {
+    let totalMandatoryLeft = 0;
+    let totalOptionalLeft = 0;
+
+    if (currentPageData.length === 0) {
+      // this case is specially for witness details page (which is optional),
+      // so there might not be any witness at all hence empty currentPageData will be received.
+      totalMandatoryLeft = 0;
+      totalOptionalLeft = 1;
+    } else {
+      for (let i = 0; i < currentPageData.length; i++) {
+        const currentIndexData = currentPageData[i];
+        const currentPageMandatoryFields = [];
+        const currentPageOptionalFields = [];
+        let currentPage = {};
+        for (const obj of sideMenuConfig) {
+          const foundPage = obj?.children.find((o) => o?.key === currentSelected);
+          if (foundPage) {
+            currentPage = foundPage;
+            break;
+          }
+        }
+
+        currentPageMandatoryFields.push(...(currentPage?.mandatoryFields || []));
+        currentPageOptionalFields.push(...(currentPage?.optionalFields || []));
+
+        const currentPageMandatoryDependentFields = (currentPage?.dependentMandatoryFields || [])
+          .filter((obj) => {
+            return currentIndexData?.data?.[obj?.dependentOn]?.[obj?.dependentOnKey] === true;
+          })
+          .map((obj) => {
+            return obj?.field;
+          });
+        currentPageMandatoryFields.push(...currentPageMandatoryDependentFields);
+
+        const currentPageOptionalDependentFields = (currentPage?.dependentOptionalFields || [])
+          .filter((obj) => {
+            return currentIndexData?.data?.[obj?.dependentOn]?.[obj?.dependentOnKey] === true;
+          })
+          .map((obj) => {
+            return obj?.field;
+          });
+        currentPageOptionalFields.push(...currentPageOptionalDependentFields);
+
+        if (currentPageMandatoryFields.length !== 0) {
+          for (let i = 0; i < currentPageMandatoryFields.length; i++) {
+            const value = extractValue(currentIndexData?.data, currentPageMandatoryFields[i]);
+            const isValueEmpty = isEmptyValue(value);
+            if (isValueEmpty) {
+              totalMandatoryLeft++;
+            }
+          }
+        }
+
+        if ("ifDataKeyHasValueAsArray" in currentPage) {
+          const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
+          for (let i = 0; i < arrayValue.length; i++) {
+            const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
+            for (let j = 0; j < mandatoryFields.length; j++) {
+              const value = extractValue(arrayValue[i], mandatoryFields[j]);
+              const isValueEmpty = isEmptyValue(value);
+              if (isValueEmpty) {
+                totalMandatoryLeft++;
+              }
+            }
+          }
+        }
+
+        if ("anyOneOfTheseMandatoryFields" in currentPage) {
+          const fieldsArray = currentPage.anyOneOfTheseMandatoryFields;
+          for (let i = 0; i < fieldsArray.length; i++) {
+            const currentChildArray = fieldsArray[i];
+            let count = 0;
+            for (let j = 0; j < currentChildArray.length; j++) {
+              const value = extractValue(currentIndexData?.data, currentChildArray[j]);
+              const isValueEmpty = isEmptyValue(value);
+              if (isValueEmpty) {
+                count++;
+              }
+            }
+            if (count === 2) {
+              totalMandatoryLeft++;
+            }
+          }
+        }
+
+        if (currentPageOptionalFields.length !== 0) {
+          let optionalLeft = 0;
+          for (let i = 0; i < currentPageOptionalFields.length; i++) {
+            const value = extractValue(currentIndexData?.data, currentPageOptionalFields[i]);
+            const isValueEmpty = isEmptyValue(value);
+            if (isValueEmpty) {
+              optionalLeft++;
+            }
+          }
+          totalOptionalLeft += optionalLeft;
+        }
+      }
+    }
+    const obj = {
+      selectedPage: currentSelected,
+      mandatoryTotalCount: totalMandatoryLeft,
+      optionalTotalCount: totalOptionalLeft,
+    };
+    return obj;
+  };
+
   const updateCaseDetails = async (isCompleted, key) => {
     const data = {};
     if (selected === "complaintDetails") {
@@ -839,11 +1099,15 @@ function EFilingCases({ path }) {
                 individualDetails: {
                   ...data?.data?.complainantVerification?.individualDetails,
                 },
+                complainantVerification: {
+                  ...data?.data?.complainantVerification,
+                  isUserVerified: !!data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.mobileNumber,
+                },
               },
             };
           })
       );
-      const representatives = [...(caseDetails?.representatives ? caseDetails?.representatives : [])]
+      const representatives = (caseDetails?.representatives ? [...caseDetails?.representatives] : [])
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
@@ -869,11 +1133,11 @@ function EFilingCases({ path }) {
           .filter((item) => item.isenabled)
           .map(async (data) => {
             let documentData = [];
-            if (data?.data?.condonationFileUpload?.document) {
+            if (data?.data?.inquiryAffidavitFileUpload?.document) {
               documentData = await Promise.all(
-                data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                   if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
+                    const uploadedData = await inquiryAffidavitFileUpload(document, document.name);
                     return {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
@@ -888,8 +1152,8 @@ function EFilingCases({ path }) {
               ...data,
               data: {
                 ...data.data,
-                condonationFileUpload: {
-                  ...data?.data?.condonationFileUpload,
+                inquiryAffidavitFileUpload: {
+                  ...data?.data?.inquiryAffidavitFileUpload,
                   document: documentData,
                 },
               },
@@ -1237,7 +1501,6 @@ function EFilingCases({ path }) {
 
             if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
               infoBoxData.header = "CS_RESOLVE_WITH_ADR";
-              debugger;
               if (data?.data?.caseSettlementCondition?.text) {
                 infoBoxData.data = data?.data?.caseSettlementCondition?.text;
               }
@@ -1459,12 +1722,29 @@ function EFilingCases({ path }) {
     courtName: "Kollam S 138 Special Court",
   };
 
+  const takeUserToRemainingMandatoryFieldsPage = () => {
+    const firstPageInTheListWhichHasMandatoryFieldsLeft = checkAndGetMandatoryFieldLeftPages?.[0];
+    const selectedPage = firstPageInTheListWhichHasMandatoryFieldsLeft?.selectedPage;
+    history.push(`?caseId=${caseId}&selected=${selectedPage}`);
+    setShowConfirmMandatoryModal(false);
+  };
+
+  const takeUserToRemainingOptionalFieldsPage = () => {
+    const firstPageInTheListWhichHasOptionalFieldsLeft = checkAndGetOptionalFieldLeftPages?.[0];
+    const selectedPage = firstPageInTheListWhichHasOptionalFieldsLeft?.selectedPage;
+    history.push(`?caseId=${caseId}&selected=${selectedPage}`);
+    setShowConfirmOptionalModal(false);
+  };
+
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
         <div className="side-stepper-info">
           <div className="header">
             <InfoIcon />
+            <span>
+              <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
+            </span>
             <span>
               <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
             </span>
@@ -1587,7 +1867,6 @@ function EFilingCases({ path }) {
           })}
           {confirmDeleteModal && (
             <Modal
-              // hideSubmit={true}
               headerBarMain={<Heading label={t("Are you sure?")} />}
               headerBarEnd={<CloseBtn onClick={() => setConfirmDeleteModal(false)} />}
               actionCancelLabel="Cancel"
@@ -1670,6 +1949,26 @@ function EFilingCases({ path }) {
                 setReceiptDemandNoticeModal(false);
                 history.push(`/${window?.contextPath}/citizen/dristi/home`);
               }}
+            ></Modal>
+          )}
+          {showMandatoryFieldsRemainingModal && showConfirmMandatoryModal && (
+            <Modal
+              headerBarMain={<Heading label={`${mandatoryFieldsLeftTotalCount} ${t("MANDATORY_FIELDS_REMAINING")}`} />}
+              headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingMandatoryFieldsPage()} />}
+              actionSaveLabel={t("CONTINUE_FILLING")}
+              children={mandatoryFieldsRemainingText()}
+              actionSaveOnSubmit={() => takeUserToRemainingMandatoryFieldsPage()}
+            ></Modal>
+          )}
+          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && (
+            <Modal
+              headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
+              headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
+              actionCancelLabel={t("SKIP_AND_CONTINUE")}
+              actionCancelOnSubmit={() => setShowConfirmOptionalModal(false)}
+              actionSaveLabel={t("FILL_NOW")}
+              children={optionalFieldsRemainingText(optionalFieldsLeftTotalCount)}
+              actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
             ></Modal>
           )}
           {pageConfig?.addFormText && (

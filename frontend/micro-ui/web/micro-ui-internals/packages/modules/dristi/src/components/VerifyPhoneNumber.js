@@ -143,7 +143,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             firstName: givenName,
             lastName: familyName,
             middleName: otherNames,
-            complainantId: true,
+            complainantId: { complainantId: true },
           };
 
           ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
