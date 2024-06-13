@@ -51,7 +51,7 @@ export const RespondentDummy = [
           },
         },
       ],
-      condonationFileUpload: {
+      inquiryAffidavitFileUpload: {
         document: [{}],
       },
     },
@@ -100,7 +100,7 @@ export const RespondentDummy = [
           },
         },
       ],
-      condonationFileUpload: {
+      inquiryAffidavitFileUpload: {
         document: [{}],
       },
     },

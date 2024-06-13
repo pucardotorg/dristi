@@ -84,10 +84,7 @@ const advocateDetailsFormConfig = [
               name: "middleName",
               isDisabled: true,
               inputFieldClassName: "user-details-form-style",
-              validation: {
-                isRequired: true,
-              },
-              isMandatory: true,
+              validation: {},
             },
             {
               label: "LAST_NAME",
@@ -113,6 +110,7 @@ const advocateDetailsFormConfig = [
         type: "component",
         component: "SelectCustomDragDrop",
         key: "vakalatnamaFileUpload",
+        isMandatory: true,
         populators: {
           inputs: [
             {

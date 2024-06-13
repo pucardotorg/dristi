@@ -89,9 +89,10 @@ const debtLiabilityFromconfig = [
         type: "amount",
         component: "CustomInput",
         label: "CS_TOTAL_CHEQUE_AMOUNT",
+        isMandatory: true,
         populators: {
           componentInFront: "₹",
-          name: "totalAmount",
+          name: "chequeAmount",
           prefix: "",
         },
       },
@@ -133,7 +134,7 @@ const debtLiabilityFromconfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -150,6 +151,7 @@ const debtLiabilityFromconfig = [
         populators: {
           inputs: [
             {
+              name: "text",
               textAreaSubHeader: "CS_DEBT_ADDITIONAL_DETAILS",
               isOptional: true,
               type: "TextAreaComponent",

@@ -99,7 +99,8 @@ const complainantDetailsFormConfig = [
       },
       {
         type: "text",
-        label: "CORE_COMMON_MIDDLE_NAME",
+        label: "MIDDLE_NAME",
+        labelChildren: "optional",
         populators: {
           name: "middleName",
           validation: {
@@ -199,7 +200,8 @@ const complainantDetailsFormConfig = [
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              uploadGuidelines: "UPLOAD_DOC_50",
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: true,
             },
           ],
