@@ -274,9 +274,19 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           </Fragment>
         </CustomPopUp>
       )}
-      {isImageModal && (
+      {true && (
         <ImageModal
-          imageInfo={isImageModal}
+          imageInfo={{
+            fieldName: "bouncedChequeFileUpload.document",
+            configKey: "caseSpecificDetails",
+            name: "chequeDetails",
+            dataIndex: 0,
+            data: {
+              fileStore: "e217a13c-b15c-41c2-84c6-ed4c55cc2d24",
+              documentName: "170010024-1.pdf",
+              documentType: "application/pdf",
+            },
+          }}
           t={t}
           handleOpenPopup={handleClosePopup}
           handleCloseModal={() => {

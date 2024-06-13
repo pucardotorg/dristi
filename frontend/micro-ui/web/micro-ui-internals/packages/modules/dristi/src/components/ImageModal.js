@@ -31,7 +31,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
       headerBarEnd={<HeaderBarEnd />}
       formId="modal-action"
       headerBarMain={<Heading label={t("CS_BOUNCED_CHEQUE")} />}
-      className="case-types"
+      className="view-image-modal"
       hideSubmit
       style={{ height: "100%", width: "100%" }}
     >
