@@ -1,11 +1,13 @@
 import React, { useMemo, useState } from "react";
-import { Button, TextInput } from "@egovernments/digit-ui-react-components";
+import { TextInput } from "@egovernments/digit-ui-react-components";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
 import RenderFileCard from "./RenderFileCard";
 import { ReactComponent as DeleteFileIcon } from "../images/delete.svg";
 
 import { UploadIcon } from "@egovernments/digit-ui-react-components";
+import { CustomAddIcon } from "../icons/svgIndex";
+import Button from "./Button";
 
 function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   const [documentData, setDocumentData] = useState(formData?.[config.key] ? formData?.[config.key] : []);
@@ -41,7 +43,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   );
 
   const dragDropJSX = (
-    <div className="drag-drop-container">
+    <div className="drag-drop-container-desktop">
       <UploadIcon />
       <p className="drag-drop-text">
         {t("WBH_DRAG_DROP")} <text className="browse-text">{t("WBH_BULK_BROWSE_FILES")}</text>
@@ -102,90 +104,97 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
   };
 
   return (
-    <div>
-      <div style={{ marginTop: "20px" }}>
-        {documentData.length > 0 &&
-          documentData.map((data, index) => {
-            return (
-              <div key={index} style={{ border: "solid 1px #BBBBBD" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "solid 1px #BBBBBD" }}>
-                  <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${index + 1}`}</h1>
-                  <span
-                    onClick={() => {
-                      handleDeleteDocument(index);
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <DeleteFileIcon />
-                  </span>
-                </div>
-                <div style={{ padding: "0px 5px 10px 5px" }}>
-                  {inputs.map((input) => {
-                    let currentValue = data && data[input.name];
-                    if (input.type === "text") {
-                      return (
-                        <div>
-                          <h1>{t("DOCUMENT_NAME_TITLE")}</h1>
-                          <TextInput
-                            className="field desktop-w-full"
-                            key={input?.name}
-                            value={currentValue}
-                            onChange={(e) => {
-                              handleOnTextChange(e.target.value, input, index);
-                            }}
-                            disable={input?.isDisabled}
-                            defaultValue={undefined}
-                            {...input?.validation}
-                          />
-                        </div>
-                      );
-                    } else {
-                      let fileErrors = fileValidator(currentValue, input);
-                      const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
-                      return (
-                        <div className="drag-drop-visible-main">
-                          <div className="drag-drop-heading-main">
-                            <div className="drag-drop-heading">
-                              <span>
-                                <h2 className="card-label">{t(input?.documentHeader)}</h2>
-                              </span>
-                            </div>
+    <div className="file-uploader-with-name">
+      {documentData.length > 0 &&
+        documentData.map((data, index) => {
+          return (
+            <div key={index} className="file-uploader-with-name-sub" >
+              <div className="file-uploader-with-name-header" >
+                <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${index + 1}`}</h1>
+                <span
+                  onClick={() => {
+                    handleDeleteDocument(index);
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <DeleteFileIcon />
+                </span>
+              </div>
+              <div className="drag-drop-visible-main-with-custom-name" >
+                {inputs.map((input) => {
+                  let currentValue = data && data[input.name];
+                  if (input.type === "text") {
+                    return (
+                      <div className="file-name-field">
+                        <h1>{t("DOCUMENT_NAME_TITLE")}</h1>
+                        <TextInput
+                          className="field desktop-w-full"
+                          key={input?.name}
+                          value={currentValue}
+                          onChange={(e) => {
+                            handleOnTextChange(e.target.value, input, index);
+                          }}
+                          disable={input?.isDisabled}
+                          defaultValue={undefined}
+                          {...input?.validation}
+                        />
+                      </div>
+                    );
+                  } else {
+                    let fileErrors = fileValidator(currentValue, input);
+                    const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
+                    return (
+                      <div className="drag-drop-visible-main">
+                        <div className="drag-drop-heading-main">
+                          <div className="drag-drop-heading">
+                            <span>
+                              <h2 className="card-label document-header">{t(input?.documentHeader)}</h2>
+                            </span>
                           </div>
-                          {currentValue.length > 0 && (
-                            <RenderFileCard
-                              fileData={currentValue[0]}
+                        </div>
+                        {currentValue.length > 0 && (
+                          <RenderFileCard
+                            fileData={currentValue[0]}
+                            handleChange={(data) => {
+                              handleFileChange(data, input, index);
+                            }}
+                            handleDeleteFile={() => handleDeleteFile(index)}
+                            t={t}
+                            uploadErrorInfo={fileErrors}
+                            input={input}
+                          />
+                        )}
+                        {showFileUploader && (
+                          <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
+                            <FileUploader
                               handleChange={(data) => {
                                 handleFileChange(data, input, index);
                               }}
-                              handleDeleteFile={() => handleDeleteFile(index)}
-                              t={t}
-                              uploadErrorInfo={fileErrors}
-                              input={input}
+                              name="file"
+                              types={input?.fileTypes}
+                              children={dragDropJSX}
+                              key={input?.name}
                             />
-                          )}
-                          {showFileUploader && (
-                            <div>
-                              <FileUploader
-                                handleChange={(data) => {
-                                  handleFileChange(data, input, index);
-                                }}
-                                name="file"
-                                types={input?.fileTypes}
-                                children={dragDropJSX}
-                                key={input?.name}
-                              />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
+                            <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+                })}
               </div>
-            );
-          })}
-      </div>
-      {<span onClick={handleAddDocument}> + {t("ADD_DOCUMENT")}</span>}
+            </div>
+          );
+        })}
+      <Button
+        variation="secondary"
+        onButtonClick={handleAddDocument}
+        className="add-new-document"
+        icon={<CustomAddIcon />}
+        label={t("ADD_DOCUMENT")}
+        labelClassName="add-new-document-label"
+      />
+      {/* {<span onClick={handleAddDocument}> + {t("ADD_DOCUMENT")}</span>} */}
     </div>
   );
 }

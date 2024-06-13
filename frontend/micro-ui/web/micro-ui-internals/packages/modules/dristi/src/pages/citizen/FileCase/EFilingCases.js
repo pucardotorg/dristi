@@ -196,14 +196,14 @@ function EFilingCases({ path }) {
                         data:
                           input.key === "advocateDetails"
                             ? [
-                                {
-                                  name:
-                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-                                },
-                              ] || [{ name: "" }]
+                              {
+                                name:
+                                  caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                              },
+                            ] || [{ name: "" }]
                             : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
-                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
-                              })),
+                              name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                            })),
                       };
                     }),
                   },
@@ -633,9 +633,9 @@ function EFilingCases({ path }) {
           setValue();
           return i === index
             ? {
-                ...item,
-                data: formData,
-              }
+              ...item,
+              data: formData,
+            }
             : item;
         })
       );
@@ -666,10 +666,10 @@ function EFilingCases({ path }) {
     const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
     const identifierIdDetails = documentData
       ? {
-          fileStoreId: identifierId,
-          filename: documentData?.filename,
-          documentType: documentData?.fileType,
-        }
+        fileStoreId: identifierId,
+        filename: documentData?.filename,
+        documentType: documentData?.fileType,
+      }
       : {};
     const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
     let Individual = {

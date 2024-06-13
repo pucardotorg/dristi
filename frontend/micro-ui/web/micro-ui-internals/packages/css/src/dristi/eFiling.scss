@@ -418,6 +418,7 @@
 }
 
 .prayer-and-sworm {
+  margin-bottom: 80px;
   .custom-sub-header {
     font-family: Roboto;
     font-size: 16px;
@@ -454,6 +455,61 @@
       margin: 0px;
     }
   }
+
+  .file-uploader-with-name {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    .file-uploader-with-name-sub {
+      border: 1px #bbbbbd solid;
+      .file-uploader-with-name-header {
+        padding: 12px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px #bbbbbd solid;
+        h1 {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px;
+        }
+      }
+      .drag-drop-visible-main-with-custom-name {
+        padding: 24px 32px;
+        .file-name-field {
+          h1 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0a0a0a;
+            margin: 0px;
+            margin-bottom: 8px;
+          }
+          .field {
+            width: 50% !important;
+          }
+        }
+        .document-header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400 !important;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px;
+          margin-top: 16px !important;
+        }
+      }
+    }
+  }
+
   .drag-drop-visible-main {
     .drag-drop-heading-main {
       .drag-drop-heading {
@@ -476,6 +532,38 @@
         text-align: left;
         color: #0a0a0a;
       }
+    }
+  }
+
+  .label-field-pair:last-child {
+    margin-bottom: 0px !important;
+  }
+  .add-new-document {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    align-self: flex-start;
+    border: 0;
+    padding: 0px;
+    margin: 0px !important;
+    height: fit-content;
+    background-color: transparent !important;
+    position: relative;
+    top: 70px;
+    left: -40px;
+
+    .add-new-document-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700 !important;
+      line-height: 18.75px;
+      text-align: center;
+      color: #007e7e !important;
+      margin: 0px !important;
+    }
+    h2 {
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
     }
   }
 }
@@ -1046,6 +1134,127 @@
         font-weight: 700;
         line-height: 18.75px;
         color: #77787b;
+      }
+    }
+  }
+}
+
+.signature {
+  padding: 0px;
+  border: none;
+  .label-field-pair {
+    margin-bottom: 40px;
+  }
+  .upload-signature-modal {
+    .upload-signature-modal-main {
+      padding: 16px 24px 0px;
+    }
+  }
+  .popup-module-action-bar {
+    button {
+      width: unset !important;
+      height: 40px !important;
+      .e-sign-aadhar-button,
+      .upload-signature-button {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #ffffff !important;
+      }
+    }
+  }
+  .e-sign-aadhar-modal {
+    .e-sign-aadhar-main {
+      padding: 16px 24px 0px;
+      .e-sign-aadhar-title {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        padding-bottom: 8px;
+        margin: 0px;
+      }
+      input {
+        margin: 0px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+.select-signature-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  .select-signature-header {
+    width: 100%;
+    .signature-label {
+      font-family: Roboto;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 28.13px;
+      text-align: left;
+      color: #3d3c3c;
+      margin: 0px;
+    }
+  }
+  .select-signature-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    border-bottom: 1px #bbbbbd solid;
+  }
+  .signature-body {
+    width: 100%;
+    border-width: 1px 1px 0px 1px;
+    border-color: #bbbbbd;
+    border-style: solid;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .icon-and-title,
+  .signed-button-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .icon-and-title {
+    .signature-title {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+  .signed-button-group {
+    button {
+      background-color: #ffffff !important;
+      box-shadow: none;
+      padding: 8px 24px;
+      .aadhar-sign-in,
+      .upload-signature-label {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
+        margin: 0px;
+        margin-top: 4px;
+      }
+    }
+    .upload-signature {
+      border: none;
+      svg {
+        margin: 0px 12px 0px 0px !important;
       }
     }
   }
