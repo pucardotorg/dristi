@@ -1,4 +1,4 @@
-import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { CheckSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useLocation, Redirect } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
@@ -153,7 +153,7 @@ function ViewCaseFile({ t }) {
       },
       tenantId,
     };
-    
+
     // return DRISTIService.caseUpdateService(
     //   {
     //     cases: {
@@ -215,126 +215,152 @@ function ViewCaseFile({ t }) {
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = { litigentDetails: "CS_LITIGENT_DETAIL", caseSpecificDetails: "CS_CASE_SPECIFIC_DETAIL", additionalDetails: "CS_ADDITIONAL_DETAIL" };
   return (
-    <div className="file-case">
-      <div className="file-case-side-stepper">
-        <div className="file-case-select-form-section">
-          {sidebar.map((key, index) => (
-            <div key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>{labels[key]}</div>
-              <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
-            </div>
-          ))}
+    <div className="view-case-file">
+      <div className="file-case">
+        <div className="file-case-side-stepper">
+          <div className="file-case-select-form-section">
+            {sidebar.map((key, index) => (
+              <div className="accordion-wrapper">
+                <div key={index} className="accordion-title">
+                  <div>{`${index + 1}. ${labels[key]}`}</div>
+                  <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="file-case-form-section">
-        <div className="employee-card-wrapper">
-          <div className="header-content">
-            <div className="header-details">
-              <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => {}}>
-                <CustomArrowDownIcon />
+        <div className="file-case-form-section">
+          <div className="employee-card-wrapper">
+            <div className="header-content">
+              <div className="header-details">
+                <Header>{t("Review Case")}</Header>
+                <div className="header-icon" onClick={() => { }}>
+                  <CustomArrowDownIcon />
+                </div>
               </div>
             </div>
+            <FormComposerV2
+              label={t("CS_REGISTER_CASE")}
+              config={formConfig}
+              onSubmit={handleRegisterClick}
+              onSecondayActionClick={handleSendBackClick}
+              defaultValues={{}}
+              onFormValueChange={onFormValueChange}
+              cardStyle={{ minWidth: "100%" }}
+              isDisabled={isDisabled}
+              cardClassName={`e-filing-card-form-style review-case-file`}
+              secondaryLabel={t("CS_SEND_BACK")}
+              showSecondaryLabel={true}
+              actionClassName="e-filing-action-bar"
+            />
+
+            {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
           </div>
-          <FormComposerV2
-            label={t("CS_REGISTER_CASE")}
-            config={formConfig}
-            onSubmit={handleRegisterClick}
-            onSecondayActionClick={handleSendBackClick}
-            defaultValues={{}}
-            onFormValueChange={onFormValueChange}
-            cardStyle={{ minWidth: "100%" }}
-            isDisabled={isDisabled}
-            cardClassName={`e-filing-card-form-style review-case-file`}
-            secondaryLabel={t("CS_SEND_BACK")}
-            showSecondaryLabel={true}
-            actionClassName="e-filing-action-bar"
-          />
-
-          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </div>
+        <div className="file-case-checklist">
+          <div className="checklist-main">
+            <h3 className="checklist-title">
+              Make Sure you Check For
+            </h3>
+            <div className="checklist-item">
+              <div className="item-logo">
+                <CheckSvg />
+              </div>
+              <h3 className="item-text">Spelling mistakes</h3>
+            </div>
+            <div className="checklist-item">
+              <div className="item-logo">
+                <CheckSvg />
+              </div>
+              <h3 className="item-text">Spelling mistakes</h3>
+            </div>
+            <div className="checklist-item">
+              <div className="item-logo">
+                <CheckSvg />
+              </div>
+              <h3 className="item-text">Spelling mistakes</h3>
+            </div>
+          </div>
+        </div>
+        {actionModal == "sendCaseBack" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_COMMON_BACK"}
+            actionSaveLabel={"CS_COMMON_CONFIRM"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            onCancel={handleCloseModal}
+            onSubmit={handleSendCaseBack}
+            heading={"CS_SEND_CASE_BACK"}
+            type="sendCaseBack"
+          />
+        )}
+        {actionModal == "registerCase" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_COMMON_BACK"}
+            actionSaveLabel={"CS_COMMON_CONFIRM"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            onCancel={handleCloseModal}
+            onSubmit={handleRegisterCase}
+            heading={"CS_REGISTER_CASE"}
+            type="registerCase"
+          />
+        )}
+
+        {actionModal == "sendCaseBackPotential" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_NO_REGISTER_CASE"}
+            actionSaveLabel={"CS_COMMON_CONFIRM"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            handleCloseModal={handleCloseModal}
+            onCancel={handlePotentialConfirm}
+            onSubmit={handleSendCaseBack}
+            heading={"CS_SEND_CASE_BACK"}
+            type="sendCaseBackPotential"
+          />
+        )}
+        {actionModal == "caseRegisterPotential" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
+            actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            onCancel={handleCloseModal}
+            onSubmit={handleSendCaseBack}
+            heading={"CS_SEND_CASE_BACK"}
+            type="sendCaseBackPotential"
+          />
+        )}
+
+        {actionModal === "caseSendBackSuccess" && (
+          <SuccessModal
+            header={"Vaibhav"}
+            t={t}
+            actionCancelLabel={"CS_COMMON_CLOSE"}
+            actionSaveLabel={"CS_NEXT_CASE"}
+            bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
+            onCancel={handleCloseSucessModal}
+            onSubmit={handleNextCase}
+            type={"caseSendBackSuccess"}
+            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+          />
+        )}
+
+        {actionModal === "caseRegisterSuccess" && (
+          <SuccessModal
+            header={"Vaibhav"}
+            t={t}
+            actionCancelLabel={"CS_COMMON_CLOSE"}
+            actionSaveLabel={"CS_ALLOCATE_JUDGE"}
+            bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
+            onCancel={handleCloseSucessModal}
+            onSubmit={handleAllocationJudge}
+            type={"caseRegisterSuccess"}
+            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+          />
+        )}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
-        <div>Make Sure you Check For</div>
-      </div>
-      {actionModal == "sendCaseBack" && (
-        <SendCaseBackModal
-          actionCancelLabel={"CS_COMMON_BACK"}
-          actionSaveLabel={"CS_COMMON_CONFIRM"}
-          t={t}
-          totalErrors={totalErrors?.total || 0}
-          onCancel={handleCloseModal}
-          onSubmit={handleSendCaseBack}
-          heading={"CS_SEND_CASE_BACK"}
-          type="sendCaseBack"
-        />
-      )}
-      {actionModal == "registerCase" && (
-        <SendCaseBackModal
-          actionCancelLabel={"CS_COMMON_BACK"}
-          actionSaveLabel={"CS_COMMON_CONFIRM"}
-          t={t}
-          totalErrors={totalErrors?.total || 0}
-          onCancel={handleCloseModal}
-          onSubmit={handleRegisterCase}
-          heading={"CS_REGISTER_CASE"}
-          type="registerCase"
-        />
-      )}
-
-      {actionModal == "sendCaseBackPotential" && (
-        <SendCaseBackModal
-          actionCancelLabel={"CS_NO_REGISTER_CASE"}
-          actionSaveLabel={"CS_COMMON_CONFIRM"}
-          t={t}
-          totalErrors={totalErrors?.total || 0}
-          handleCloseModal={handleCloseModal}
-          onCancel={handlePotentialConfirm}
-          onSubmit={handleSendCaseBack}
-          heading={"CS_SEND_CASE_BACK"}
-          type="sendCaseBackPotential"
-        />
-      )}
-      {actionModal == "caseRegisterPotential" && (
-        <SendCaseBackModal
-          actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
-          actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
-          t={t}
-          totalErrors={totalErrors?.total || 0}
-          onCancel={handleCloseModal}
-          onSubmit={handleSendCaseBack}
-          heading={"CS_SEND_CASE_BACK"}
-          type="sendCaseBackPotential"
-        />
-      )}
-
-      {actionModal === "caseSendBackSuccess" && (
-        <SuccessModal
-          header={"Vaibhav"}
-          t={t}
-          actionCancelLabel={"CS_COMMON_CLOSE"}
-          actionSaveLabel={"CS_NEXT_CASE"}
-          bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
-          onCancel={handleCloseSucessModal}
-          onSubmit={handleNextCase}
-          type={"caseSendBackSuccess"}
-          data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
-        />
-      )}
-
-      {actionModal === "caseRegisterSuccess" && (
-        <SuccessModal
-          header={"Vaibhav"}
-          t={t}
-          actionCancelLabel={"CS_COMMON_CLOSE"}
-          actionSaveLabel={"CS_ALLOCATE_JUDGE"}
-          bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
-          onCancel={handleCloseSucessModal}
-          onSubmit={handleAllocationJudge}
-          type={"caseRegisterSuccess"}
-          data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
-        />
-      )}
     </div>
   );
 }

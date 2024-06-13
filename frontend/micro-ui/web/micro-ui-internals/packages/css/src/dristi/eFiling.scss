@@ -1038,3 +1038,62 @@
     }
   }
 }
+
+.view-case-file {
+  padding-top: 60px;
+  padding-left: 20px;
+  background-color: #ffffff;
+  .file-case-side-stepper {
+    width: 22.5% !important;
+  }
+  .file-case-form-section {
+    width: 60% !important;
+    max-width: 60% !important;
+  }
+  .file-case-checklist {
+    width: 17.5% !important;
+    height: fit-content;
+    margin-left: 40px;
+    .checklist-main {
+      width: 17.5%;
+      border: 1px #e8e8e8 solid;
+      padding: 16px 20px;
+      border-radius: 4px;
+      position: fixed;
+      bottom: 78px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      .checklist-title {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: left;
+        color: #3d3c3c;
+        margin: 0px;
+      }
+      .checklist-item {
+        display: flex;
+        gap: 12px;
+        .item-logo {
+          height: 16px;
+          width: 16px;
+          svg {
+            fill: #3d3c3c;
+          }
+        }
+        h3.item-text {
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: left;
+          color: #3d3c3c;
+          margin: 0px;
+        }
+      }
+    }
+  }
+}
