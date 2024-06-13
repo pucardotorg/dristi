@@ -637,6 +637,16 @@ function EFilingCases({ path }) {
     }
   };
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+    if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
+      debugger;
+      setValue("advocateBarRegNumberWithName", [
+        {
+          ...formData.advocateBarRegNumberWithName[0],
+          modified: true,
+          barRegistrationNumber: formData.advocateBarRegNumberWithName[0].barRegistrationNumberOriginal,
+        },
+      ]);
+    }
     checkIfscValidation(formData, setValue);
     checkNameValidation(formData, setValue);
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
@@ -833,7 +843,7 @@ function EFilingCases({ path }) {
             };
           })
       );
-      const representatives = [...(caseDetails?.representatives ? caseDetails?.representative : [])]
+      const representatives = [...(caseDetails?.representatives ? caseDetails?.representatives : [])]
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
@@ -1285,40 +1295,45 @@ function EFilingCases({ path }) {
                     barRegistrationNumber: item?.barRegistrationNumber,
                     advocateName: item?.advocateName,
                     advocateId: item?.advocateId,
+                    barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
                   };
                 }),
                 advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
                 barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
+                barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
               },
             };
           })
       );
-      const representatives = formdata
-        .filter((item) => item.isenabled)
-        .map((data, index) => {
-          return {
-            ...(caseDetails.representatives?.[index] ? caseDetails.representatives?.[index] : {}),
-            caseId: caseDetails?.id,
-            representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
-              ? [
-                  ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data, key) => ({
-                        ...(caseDetails.representatives?.[index]?.representing?.[key]
-                          ? caseDetails.representatives?.[index]?.representing?.[key]
-                          : {}),
-                        tenantId,
-                        caseId: data?.caseId,
-                        partyCategory: data?.partyCategory,
-                        individualId: data?.individualId,
-                        partyType: data?.partyType,
-                      }))
-                    : []),
-                ]
-              : [],
-            advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
-            tenantId,
-          };
-        });
+      let representatives = [];
+      if (formdata?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
+        representatives = formdata
+          .filter((item) => item.isenabled)
+          .map((data, index) => {
+            return {
+              ...(caseDetails.representatives?.[index] ? caseDetails.representatives?.[index] : {}),
+              caseId: caseDetails?.id,
+              representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
+                ? [
+                    ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
+                      ? caseDetails?.litigants?.map((data, key) => ({
+                          ...(caseDetails.representatives?.[index]?.representing?.[key]
+                            ? caseDetails.representatives?.[index]?.representing?.[key]
+                            : {}),
+                          tenantId,
+                          caseId: data?.caseId,
+                          partyCategory: data?.partyCategory,
+                          individualId: data?.individualId,
+                          partyType: data?.partyType,
+                        }))
+                      : []),
+                  ]
+                : [],
+              advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
+              tenantId,
+            };
+          });
+      }
       data.representatives = [...representatives];
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
