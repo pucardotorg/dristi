@@ -41,7 +41,14 @@ export const sideMenuConfig = [
     isDisabled: false,
     title: "CS_CASE_SPECIFIC_DETAILS",
     children: [
-      { key: "chequeDetails", label: "CS_CHEQUE_DETAILS", checked: false, isCompleted: false, isDisabled: false, pageConfig: chequeDetailsConfig },
+      {
+        key: "chequeDetails",
+        label: "CS_CHEQUE_DETAILS",
+        checked: false,
+        isCompleted: false,
+        isDisabled: false,
+        pageConfig: chequeDetailsConfig,
+      },
       {
         key: "debtLiabilityDetails",
         label: "CS_DEBT_LIABILITY_DETAILS",
