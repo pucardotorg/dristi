@@ -253,7 +253,7 @@ components:
         createdDate:
           type: string
           format: datetime
-          description: the date on which the order was created. Can be treated as the start date also
+          description: the date on which the application was created
         createdBy:
           type: string
           format: uuid
