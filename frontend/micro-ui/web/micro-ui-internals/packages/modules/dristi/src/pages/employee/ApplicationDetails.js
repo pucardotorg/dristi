@@ -160,7 +160,6 @@ const ApplicationDetails = ({ location, match }) => {
   }
 
   function onActionSelect(action) {
-    console.log(action);
     if (action === "APPROVE") {
       takeAction(action);
     }

@@ -308,4 +308,9 @@ export const demandNoticeConfig = {
   addFormText: "ADD_DEMAND_NOTICE",
   formItemName: "CS_DEMAND_NOTICE",
   className: "demand-notice",
+  selectDocumentName: {
+    proofOfDispatchFileUpload: "PROOF_OF_DISPATCH_LDN",
+    proofOfAcknowledgmentFileUpload: "PROOF_LEGAL_DEMAND_NOTICE",
+    proofOfReplyFileUpload: "CS_PROOF_TO_REPLY_DEMAND_NOTICE",
+  },
 };

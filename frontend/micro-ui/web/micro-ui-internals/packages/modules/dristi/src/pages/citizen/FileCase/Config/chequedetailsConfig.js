@@ -29,6 +29,7 @@ export const chequeDetailsFormConfig = [
           inputs: [
             {
               name: "document",
+              isMandatory: true,
               documentHeader: "CS_BOUNCED_CHEQUE",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",
@@ -220,4 +221,9 @@ export const chequeDetailsConfig = {
   addFormText: "ADD_CHEQUE",
   formItemName: "Cheque",
   className: "cheque",
+  selectDocumentName: {
+    bouncedChequeFileUpload: "CS_BOUNCED_CHEQUE",
+    depositChequeFileUpload: "CS_PROOF_DEPOSIT_CHEQUE",
+    returnMemoFileUpload: "CS_CHEQUE_RETURN_MEMO",
+  },
 };
