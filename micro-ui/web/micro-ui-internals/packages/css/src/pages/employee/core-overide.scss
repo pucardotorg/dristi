@@ -1,0 +1,9 @@
+$primaryColor :theme(colors.primary.main);
+.link-label {
+    color: $primaryColor;
+    color: rgba(200, 76, 14, var(--text-opacity)); }
+    .link-label:hover {
+      color: $primaryColor;
+
+    }
+
