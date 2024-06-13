@@ -150,6 +150,7 @@ const debtLiabilityFromconfig = [
         populators: {
           inputs: [
             {
+              name: "text",
               textAreaSubHeader: "CS_DEBT_ADDITIONAL_DETAILS",
               isOptional: true,
               type: "TextAreaComponent",

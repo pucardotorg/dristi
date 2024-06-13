@@ -58,7 +58,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
 
   const fileValidator = (file, input) => {
