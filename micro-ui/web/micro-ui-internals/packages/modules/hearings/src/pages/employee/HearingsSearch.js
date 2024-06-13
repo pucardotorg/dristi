@@ -34,4 +34,4 @@ import {
       </React.Fragment>
     );
   };
-  export default IndividualSearch;
+  export default HearingsSearch;
