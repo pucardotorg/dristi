@@ -825,7 +825,7 @@ function EFilingCases({ path }) {
       chequeDateValidation(formData, setError, clearErrors);
       showDemandNoticeModal(setValue, formData, setError, clearErrors);
       validateDateForDelayApplication(setValue);
-      showToastForComplainant(formData);
+      showToastForComplainant(formData, setValue);
       setFormdata(
         formdata.map((item, i) => {
           return i === index
