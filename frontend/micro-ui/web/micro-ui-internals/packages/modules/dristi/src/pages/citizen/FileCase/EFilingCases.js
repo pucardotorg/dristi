@@ -403,7 +403,9 @@ function EFilingCases({ path }) {
           for (const key in dependentKeys) {
             const nameArray = dependentKeys[key];
             for (const name of nameArray) {
-              show = show && Boolean(data?.[key]?.[name]);
+              if (Array.isArray(data?.[key]?.[name]) && data?.[key]?.[name]?.length === 0) {
+                show = false;
+              } else show = show && Boolean(data?.[key]?.[name]);
             }
           }
           return show && config;
@@ -807,9 +809,9 @@ function EFilingCases({ path }) {
       showDemandNoticeModal(setValue, formData, setError, clearErrors);
       validateDateForDelayApplication(setValue);
       showToastForComplainant(formData);
+      debugger;
       setFormdata(
         formdata.map((item, i) => {
-          setValue();
           return i === index
             ? {
                 ...item,
@@ -1137,7 +1139,7 @@ function EFilingCases({ path }) {
               documentData = await Promise.all(
                 data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                   if (document) {
-                    const uploadedData = await inquiryAffidavitFileUpload(document, document.name);
+                    const uploadedData = await onDocumentUpload(document, document.name);
                     return {
                       documentType: uploadedData.fileType || document?.documentType,
                       fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
@@ -1613,6 +1615,7 @@ function EFilingCases({ path }) {
           ...data,
           linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
           filingDate: formatDate(new Date()),
+          ...(!caseDetails?.litigants && { litigants: [] }),
           workflow: {
             ...caseDetails?.workflow,
             action: "SAVE_DRAFT",
