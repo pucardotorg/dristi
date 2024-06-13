@@ -817,7 +817,7 @@ function EFilingCases({ path }) {
             };
           })
       );
-      const representatives = [...(caseDetails?.representatives ? caseDetails?.representative : [])]
+      const representatives = (caseDetails?.representatives ? [...caseDetails?.representatives] : [])
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
@@ -1211,7 +1211,6 @@ function EFilingCases({ path }) {
 
             if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
               infoBoxData.header = "CS_RESOLVE_WITH_ADR";
-              debugger;
               if (data?.data?.caseSettlementCondition?.text) {
                 infoBoxData.data = data?.data?.caseSettlementCondition?.text;
               }
@@ -1303,7 +1302,9 @@ function EFilingCases({ path }) {
             tenantId,
           };
         });
-      data.representatives = [...representatives];
+      const isRepresenting = newFormData?.[0]?.data?.isAdvocateRepresenting?.showForm;
+
+      data.representatives = isRepresenting ? [...representatives] : null;
       data.additionalDetails = {
         ...caseDetails.additionalDetails,
         advocateDetails: {
