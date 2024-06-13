@@ -208,5 +208,6 @@ export const witnessConfig = {
   isOptional: false,
   addFormText: "ADD_WITNESS",
   formItemName: "Witness",
-  className: "witness-details"
+  className: "witness-details",
+  showOptionalInHeader: true,
 };
