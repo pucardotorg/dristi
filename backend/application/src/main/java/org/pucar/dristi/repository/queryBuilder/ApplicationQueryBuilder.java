@@ -107,13 +107,10 @@ public class ApplicationQueryBuilder {
             }
             query.append(ORDERBY_CREATEDTIME_DESC);
 
-
-            //TODO Adding Pagination
-//            if (limit != null && offset != null) {
-//                query.append(" LIMIT ? OFFSET ?");
-//                preparedStmtList.add(limit);
-//                preparedStmtList.add(offset);
-//            }
+            if (limit != null && offset != null) {  //pagination
+                query.append(" LIMIT ").append(limit);
+                query.append(" OFFSET ").append(offset);
+            }
 
             return query.toString();
         }

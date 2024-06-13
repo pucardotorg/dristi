@@ -30,8 +30,8 @@ class ApplicationQueryBuilderTest {
         String cnrNumber = null;
         String tenantId = "test-tenant";
         String status = null;
-        Integer limit = 10;
-        Integer offset = 0;
+        Integer limit = null;
+        Integer offset = null;
 
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
@@ -52,8 +52,8 @@ class ApplicationQueryBuilderTest {
         String cnrNumber = null;
         String tenantId = null;
         String status = null;
-        Integer limit = 10;
-        Integer offset = 0;
+        Integer limit = null;
+        Integer offset = null;
 
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
