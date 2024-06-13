@@ -197,7 +197,7 @@ const CustomReviewCardRow = ({ isScrutiny, data, handleOpenPopup, titleIndex, da
         <div className={`image-main ${isScrutiny && dataError && "error"}`}>
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
             <div className="label">{t(label)}</div>
-            <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll" }}>
+            <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
               {Array.isArray(value)
                 ? value?.map((value) =>
                     extractValue(data, value) && Array.isArray(extractValue(data, value)) ? (
