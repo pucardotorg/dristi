@@ -111,11 +111,13 @@ public class HearingServiceTest {
     void testUpdateHearing_Success() {
         // Arrange
         HearingRequest hearingRequest = new HearingRequest();
+        RequestInfo requestInfo = new RequestInfo();
         Hearing hearing = new Hearing();
         hearingRequest.setHearing(hearing);
+        hearingRequest.setRequestInfo(requestInfo);
 
         // Mock validator and workflowService behaviors
-        when(validator.validateHearingExistence(hearing)).thenReturn(hearing);
+        when(validator.validateHearingExistence(requestInfo,hearing)).thenReturn(hearing);
         doNothing().when(workflowService).updateWorkflowStatus(hearingRequest);
         when(config.getHearingUpdateTopic()).thenReturn("updateTopic");
 
@@ -134,7 +136,7 @@ public class HearingServiceTest {
         HearingRequest hearingRequest = new HearingRequest();
 
         // Mock validator behavior to throw CustomException
-        when(validator.validateHearingExistence(any())).thenThrow(new CustomException("Hearing not found","throw custom exception"));
+        when(validator.validateHearingExistence(any(),any())).thenThrow(new CustomException("Hearing not found","throw custom exception"));
 
         // Act & Assert
         assertThrows(CustomException.class, () -> hearingService.updateHearing(hearingRequest));

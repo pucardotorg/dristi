@@ -278,12 +278,13 @@ class HearingRegistrationValidatorTest {
     void testValidateHearingExistence_Success() {
         // Arrange
         Hearing hearing = new Hearing();
+        RequestInfo requestInfo = new RequestInfo();
         List<Hearing> existingHearings = Collections.singletonList(hearing);
 
         when(repository.getHearings(any())).thenReturn(existingHearings);
 
         // Act
-        Hearing result = validator.validateHearingExistence(hearing);
+        Hearing result = validator.validateHearingExistence(requestInfo,hearing);
 
         // Assert
         assertNotNull(result);
@@ -294,13 +295,14 @@ class HearingRegistrationValidatorTest {
     void testValidateHearingExistence_NotFound() {
         // Arrange
         Hearing hearing = new Hearing();
+        RequestInfo requestInfo = new RequestInfo();
         List<Hearing> existingHearings = Collections.emptyList();
 
         when(repository.getHearings(any())).thenReturn(existingHearings);
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            validator.validateHearingExistence(hearing);
+            validator.validateHearingExistence(requestInfo,hearing);
         });
         assertEquals("Hearing does not exist", exception.getMessage());
     }
