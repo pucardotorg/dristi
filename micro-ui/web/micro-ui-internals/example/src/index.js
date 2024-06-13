@@ -11,8 +11,9 @@ import { UICustomizations } from "./UICustomizations";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
 import {initSampleComponents} from "@egovernments/digit-ui-module-sample";
 import {initPucarComponents} from "@egovernments/digit-ui-module-pucar";
-// import {initHearingComponents} from "@egovernments/digit-ui-module-hearing";
-// import {initOrderComponents} from "@egovernments/digit-ui-module-order";
+import {initHearingsComponents} from "@egovernments/digit-ui-module-hearings";
+import {initOrdersComponents} from "@egovernments/digit-ui-module-orders";
+import {initCasesComponents} from "@egovernments/digit-ui-module-cases";
 
 var Digit = window.Digit || {};
 
@@ -25,9 +26,10 @@ const enabledModules = [
   "Utilities",
   "Microplanning",
   "Sample",
-  "Order",
+  "Orders",
+  "Cases",
   "Pucar",
-  "Hearing"
+  "Hearings"
   //added to check fsm
   // "FSM"
 ];
@@ -73,8 +75,9 @@ const initDigitUI = () => {
   initUtilitiesComponents();
   initSampleComponents();
   initPucarComponents();
-  // initHearingComponents();
-  // initOrderComponents();
+  initHearingsComponents();
+  initOrdersComponents();
+  initCasesComponents();
   const moduleReducers = (initData) => initData;
 
 
