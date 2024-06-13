@@ -222,7 +222,7 @@ components:
           type: boolean
 
     Application:
-      required: [tenantId, createdDate, applicationType, status, isActive]
+      required: [tenantId, caseId, createdDate, applicationType, status, isActive]
       type: object
       properties:
         id:
@@ -235,6 +235,9 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
+        caseId:
+          type: string
+          description: This is the caseId of the associated case
         filingNumber:
           type: string
           description: the associated case
