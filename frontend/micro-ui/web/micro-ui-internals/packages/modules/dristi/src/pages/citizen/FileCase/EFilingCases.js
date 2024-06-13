@@ -1279,14 +1279,17 @@ function EFilingCases({ path }) {
       );
       const representatives = formdata
         .filter((item) => item.isenabled)
-        .map((data) => {
+        .map((data, index) => {
           return {
-            ...caseDetails?.representative,
+            ...(caseDetails.representatives?.[index] ? caseDetails.representatives?.[index] : {}),
             caseId: caseDetails?.id,
             representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
               ? [
                   ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data) => ({
+                    ? caseDetails?.litigants?.map((data, key) => ({
+                        ...(caseDetails.representatives?.[index]?.representing?.[key]
+                          ? caseDetails.representatives?.[index]?.representing?.[key]
+                          : {}),
                         tenantId,
                         caseId: data?.caseId,
                         partyCategory: data?.partyCategory,
