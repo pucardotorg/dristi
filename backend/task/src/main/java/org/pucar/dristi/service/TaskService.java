@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.CREATE_TASK_ERR;
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Service
 @Slf4j
@@ -67,7 +66,7 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating task");
+            log.error("Error occurred while creating task :: {}",e.toString());
             throw new CustomException(CREATE_TASK_ERR, e.getMessage());
         }
     }
@@ -86,8 +85,8 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
-            throw new CustomException("SEARCH_TASK_ERR", e.getMessage());
+            log.error("Error while fetching task results :: {}", e.toString());
+            throw new CustomException(SEARCH_TASK_ERR, e.getMessage());
         }
     }
 
@@ -111,8 +110,8 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating task");
-            throw new CustomException("UPDATE_TASK_ERR", "Error occurred while updating task: " + e.getMessage());
+            log.error("Error occurred while updating task :: {}",e.toString());
+            throw new CustomException(UPDATE_TASK_ERR, "Error occurred while updating task: " + e.getMessage());
         }
 
     }
@@ -123,8 +122,8 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist task");
-            throw new CustomException("TASK_EXIST_ERR", e.getMessage());
+            log.error("Error while fetching to exist task :: {}",e.toString());
+            throw new CustomException(EXIST_TASK_ERR, e.getMessage());
         }
     }
 }

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class TaskQueryBuilder {
@@ -48,8 +50,8 @@ public class TaskQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building case search query");
-            throw new CustomException("TASK_SEARCH_QUERY_EXCEPTION", "Exception occurred while building the case search query: " + e.getMessage());
+            log.error("Error while building task search query :: {}",e.toString());
+            throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the case search query: " + e.getMessage());
         }
     }
 
@@ -93,8 +95,8 @@ public class TaskQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building task search query");
-            throw new CustomException("TASK_SEARCH_QUERY_EXCEPTION", "Exception occurred while building the task search query: " + e.getMessage());
+            log.error("Error while building task search query :: {}",e.toString());
+            throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
         }
     }
 
@@ -114,7 +116,7 @@ public class TaskQueryBuilder {
             throw e;
         } catch (Exception e) {
             log.error("Error while building document search query :: {}",e.toString());
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Exception occurred while building the query: " + e.getMessage());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the query for task document search: " + e.getMessage());
         }
     }
 
@@ -134,7 +136,7 @@ public class TaskQueryBuilder {
             throw e;
         } catch (Exception e) {
             log.error("Error while building amount search query :: {}",e.toString());
-            throw new CustomException("AMOUNT_SEARCH_QUERY_EXCEPTION", "Exception occurred while building the query: " + e.getMessage());
+            throw new CustomException(AMOUNT_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the query for amount: " + e.getMessage());
         }
     }
 

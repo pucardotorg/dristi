@@ -18,6 +18,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.CREATE_TASK_ERR;
+import static org.pucar.dristi.config.ServiceConstants.UPDATE_TASK_ERR;
 
 @Component
 public class TaskRegistrationValidator {
@@ -51,27 +52,29 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(task.getTenantId()))
             throw new CustomException(CREATE_TASK_ERR, "tenantId is mandatory for creating task");
         if (ObjectUtils.isEmpty(taskRequest.getRequestInfo().getUserInfo())) {
-            throw new CustomException(CREATE_TASK_ERR, "user info is mandatory for creating task");
+            throw new CustomException(CREATE_TASK_ERR, "User info is mandatory for creating task");
         }
+        if (ObjectUtils.isEmpty(taskRequest.getTask().getTaskType())) {
+            throw new CustomException(CREATE_TASK_ERR, "Task type is mandatory for creating task");
+        }
+        if (ObjectUtils.isEmpty(taskRequest.getTask().getCreatedDate())) {
+            throw new CustomException(CREATE_TASK_ERR, "CreatedDate mandatory for creating task");
+        }
+//        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
+//            throw new CustomException(CREATE_TASK_ERR, "Invalid order ID");
+//        }
         if (task.getValidate() && !caseUtil.fetchCaseDetails(taskRequest.getRequestInfo(),task.getCnrNumber(),task.getFilingNumber())) {
             throw new CustomException(CREATE_TASK_ERR, "Invalid case details");
-        }
-        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
-            throw new CustomException(CREATE_TASK_ERR, "Invalid application details");
         }
     }
 
     public Boolean validateApplicationExistence(Task task, RequestInfo requestInfo) {
 
         if (ObjectUtils.isEmpty(task.getTenantId()))
-            throw new CustomException("UPDATE_TASK_ERR", "tenantId is mandatory for updating task");
+            throw new CustomException(UPDATE_TASK_ERR, "tenantId is mandatory for updating task");
         if (ObjectUtils.isEmpty(requestInfo.getUserInfo())) {
-            throw new CustomException(CREATE_TASK_ERR, "user info is mandatory for creating task");
+            throw new CustomException(UPDATE_TASK_ERR, "user info is mandatory for creating task");
         }
-        if (task.getValidate() && !caseUtil.fetchCaseDetails(requestInfo,task.getCnrNumber(),task.getFilingNumber())) {
-            throw new CustomException(CREATE_TASK_ERR, "Invalid case details");
-        }
-
         List<Task> existingApplications = repository.getApplications(task.getId().toString(), task.getTenantId(), task.getStatus(),task.getOrderId(),task.getCnrNumber());
         return !existingApplications.isEmpty();
     }
