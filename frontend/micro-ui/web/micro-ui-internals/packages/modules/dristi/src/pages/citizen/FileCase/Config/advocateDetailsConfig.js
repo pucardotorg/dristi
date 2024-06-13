@@ -88,7 +88,6 @@ const advocateDetailsFormConfig = [
               validation: {
                 isRequired: true,
               },
-              isMandatory: true,
             },
             {
               label: "LAST_NAME",
