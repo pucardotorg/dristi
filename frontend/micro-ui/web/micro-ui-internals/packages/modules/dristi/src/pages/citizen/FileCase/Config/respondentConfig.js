@@ -66,7 +66,8 @@ const respondentFromconfig = [
       },
       {
         type: "text",
-        label: "CORE_COMMON_MIDDLE_NAME",
+        label: "MIDDLE_NAME",
+        labelChildren: "optional",
         populators: {
           name: "middleName",
           validation: {
@@ -211,9 +212,10 @@ const respondentFromconfig = [
               name: "document",
               documentHeader: "COMPANY_DOCUMENT_DETAILS",
               type: "DragDropComponent",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],
@@ -324,7 +326,7 @@ const respondentFromconfig = [
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["JPG", "PDF"],
               isMultipleUpload: false,
             },
           ],

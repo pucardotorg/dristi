@@ -22,7 +22,8 @@ const witnessFormConfig = [
       },
       {
         type: "text",
-        label: "CORE_COMMON_MIDDLE_NAME",
+        label: "MIDDLE_NAME",
+        labelChildren: "optional",
         populators: {
           name: "middleName",
           validation: {
