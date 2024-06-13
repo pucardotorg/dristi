@@ -101,7 +101,7 @@ public class HearingService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            Hearing hearing = validator.validateHearingExistence(hearingRequest.getHearing());
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(),hearingRequest.getHearing());
 
             // Updating Hearing request
             // TODO: Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.

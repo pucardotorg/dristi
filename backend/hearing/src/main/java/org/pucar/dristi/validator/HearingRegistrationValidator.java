@@ -105,12 +105,21 @@ public class HearingRegistrationValidator {
      * @param hearing hearing details
      * @throws CustomException VALIDATION_EXCEPTION -> if hearing is not present
      */
-    public Hearing validateHearingExistence(Hearing hearing) {
+    public Hearing validateHearingExistence(RequestInfo requestInfo,Hearing hearing) {
         //checking if hearing exist or not
         List<Hearing> existingHearings = repository.getHearings(hearing);
         log.info("Existing Hearing :: {}", existingHearings);
         if (existingHearings.isEmpty())
             throw new CustomException(VALIDATION_EXCEPTION, "Hearing does not exist");
+
+        hearing.getAttendees().forEach(attendee -> {
+            if(ObjectUtils.isEmpty(attendee.getIndividualId())){
+                throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"individualId is mandatory for attendee");
+            }
+            //searching individual exist or not
+            if(!individualService.searchIndividual(requestInfo,attendee.getIndividualId(), new HashMap<>()))
+                throw new CustomException(INDIVIDUAL_NOT_FOUND,"Requested Individual not found or does not exist. ID: "+ attendee.getIndividualId());
+        });
         return existingHearings.get(0);
     }
     public CaseExistsRequest createCaseExistsRequest(RequestInfo requestInfo, Hearing hearing){
