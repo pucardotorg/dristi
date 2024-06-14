@@ -25,7 +25,15 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "complainantType.name" },
                 { type: "phonenumber", label: "PHONE_NUMBER", value: "complainantVerification.mobileNumber" },
-                { type: "image", label: "CS_ID_PROOF", value: ["individualDetails.document", "companyDetailsUpload.document"] },
+                {
+                  type: "image",
+                  label: "CS_ID_PROOF",
+                  value: ["individualDetails.document", "companyDetailsUpload.document"],
+                  docName: {
+                    "individualDetails.document": "CS_INDIVIDUAL_DETAILS",
+                    "companyDetailsUpload.document": "CS_COMPANY_DETAILS",
+                  },
+                },
                 { type: "address", label: "ADDRESS", value: "addressDetails-select" },
               ],
               data: ComplainantDummy,
@@ -74,6 +82,11 @@ export const reviewCaseFileFormConfig = [
                   type: "image",
                   label: "CS_DOCUMENT",
                   value: ["bouncedChequeFileUpload.document", "depositChequeFileUpload.document", "returnMemoFileUpload.document"],
+                  docName: {
+                    "bouncedChequeFileUpload.document": "CS_BOUNCED_CHEQUE",
+                    "depositChequeFileUpload.document": "CS_DEPOSIT_CHEQUE",
+                    "returnMemoFileUpload.document": "CS_RETURN_MEMO",
+                  },
                 },
               ],
               data: CheckqueDummy,
@@ -86,7 +99,12 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "text", label: "CS_NATURE_OF_DEBT", value: "liabilityNature.name" },
                 { type: "text", label: "CS_CHEQUE_RECIEVED_FOR", value: "liabilityType.name" },
-                { type: "image", label: "CS_DOCUMENT", value: ["debtLiabilityFileUpload.document"] },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: ["debtLiabilityFileUpload.document"],
+                  docName: { "debtLiabilityFileUpload.document": "CS_DEBT_LIABILITY" },
+                },
               ],
               data: DebtDummy,
             },
@@ -110,6 +128,12 @@ export const reviewCaseFileFormConfig = [
                     "SelectCustomDragDrop.proofOfDispatchFileUpload",
                     "SelectCustomDragDrop.proofOfReplyFileUpload",
                   ],
+                  docName: {
+                    "SelectCustomDragDrop.legalDemandNoticeFileUpload": "CS_LEGAL_DEMAND_NOTICE",
+                    "SelectCustomDragDrop.proofOfAcknowledgmentFileUpload": "CS_PROOF_ACKNOWLEDGEMENT",
+                    "SelectCustomDragDrop.proofOfDispatchFileUpload": "CS_PROOF_DISPATCH",
+                    "SelectCustomDragDrop.proofOfReplyFileUpload": "CS_PROOF_REPLY",
+                  },
                 },
               ],
               data: DemandDummy,
@@ -156,6 +180,12 @@ export const reviewCaseFileFormConfig = [
                     "prayerForRelief.document",
                     "SelectUploadDocWithName.document",
                   ],
+                  docName: {
+                    "SelectCustomDragDrop.swornStatement": "CS_SWORN_STATEMENT",
+                    "memorandumOfComplaint.document": "CS_MEMORANDUM_COMPLAINT",
+                    "prayerForRelief.document": "CS_PRAYER_RELIEF",
+                    "SelectUploadDocWithName.document": "CS_UPLOAD_DOC_WITHu_NAME",
+                  },
                 },
               ],
               data: [
@@ -186,7 +216,12 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "title", value: "advocateName" },
                 { type: "text", label: "CS_BAR_REGISTRATION", value: "barRegistrationNumber" },
-                { type: "image", label: "CS_ID_PROOF", value: ["vakalatnamaFileUpload.document"] },
+                {
+                  type: "image",
+                  label: "CS_ID_PROOF",
+                  value: ["vakalatnamaFileUpload.document"],
+                  docName: { "vakalatnamaFileUpload.document": "CS_VAKALATNAMA" },
+                },
               ],
               data: AdvocateDummy,
             },

@@ -8,6 +8,7 @@ import Home from "./home";
 import { useToast } from "../../components/Toast/useToast";
 import ApplicationDetails from "./ApplicationDetails";
 import ViewCaseFile from "./scrutiny/ViewCaseFile";
+import JudgeScreen from "./Judge/JudgeScreen";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -55,9 +56,11 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
             <PrivateRoute exact path={`${path}/cases`} component={Home} />
           </div>
-          <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
-            <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} />} />
+          <div className={"file-case-main"}>
+            <PrivateRoute exact path={`${path}/admission/info`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
             <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
+            <PrivateRoute exact path={`${path}/admission`} component={(props) => <JudgeScreen {...props} t={t} path={path} />} />
+            <PrivateRoute exact path={`${path}/cases`} component={(props) => <ViewCaseFile {...props} t={t} />} />
           </div>
         </div>
         {toastMessage && (

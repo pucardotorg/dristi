@@ -83,7 +83,6 @@ function EFilingCases({ path }) {
   const resetFormData = useRef(null);
   const setFormDataValue = useRef(null);
   const clearFormDataErrors = useRef(null);
-  const [isSaving, setIsSaving] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
@@ -909,19 +908,9 @@ function EFilingCases({ path }) {
           ) &&
           !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
         ) {
-          setFormErrors.current?.("inquiryAffidavitFileUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setShowErrorToast(true);
           return true;
-        }
-        // else if (
-        //   formData?.respondentType?.code === "REPRESENTATIVE" &&
-        //   "companyDetailsUpload" in formDataCopy &&
-        //   !Object.keys(formData?.companyDetailsUpload?.document || {}).length
-        // ) {
-        //   setFormErrors.current?.("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
-        //   return true;
-        // }
-        else {
-          clearFormDataErrors.current?.("inquiryAffidavitFileUpload");
+        } else {
           return false;
         }
       }
@@ -937,13 +926,15 @@ function EFilingCases({ path }) {
             (data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length
           )
         ) {
-          setFormErrors.current?.("SelectCustomDragDrop", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setShowErrorToast(true);
           return true;
         } else if (
           formData?.proofOfService?.code === "YES" &&
           ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
         ) {
-          clearFormDataErrors.current?.("SelectCustomDragDrop");
+          setShowErrorToast(true);
+          return true;
+        } else {
           return false;
         }
       }
@@ -955,10 +946,9 @@ function EFilingCases({ path }) {
       const formDataCopy = structuredClone(formData);
       if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
         if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
-          setFormErrors.current?.("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setShowErrorToast(true);
           return true;
         } else {
-          clearFormDataErrors.current?.("companyDetailsUpload");
           return false;
         }
       }
@@ -1000,9 +990,9 @@ function EFilingCases({ path }) {
     setFormDataValue.current = setValue;
     clearFormDataErrors.current = clearErrors;
 
-    if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
-      setIsDisabled(true);
-    }
+    // if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
+    //   setIsDisabled(true);
+    // }
   };
 
   const handleAccordionClick = (index) => {
@@ -1197,6 +1187,7 @@ function EFilingCases({ path }) {
 
   const updateCaseDetails = async (isCompleted, key) => {
     const data = {};
+    setIsDisabled(true);
     if (selected === "complaintDetails") {
       const litigants = await Promise.all(
         formdata
@@ -1572,6 +1563,7 @@ function EFilingCases({ path }) {
                     const document = await onDocumentUpload(docWithNameData?.document[0], docWithNameData?.document[0]?.name).then(async (data) => {
                       const evidenceData = await DRISTIService.createEvidence({
                         artifact: {
+                          artifactType: "complainant",
                           caseId: caseDetails?.id,
                           tenantId,
                           comments: [],
@@ -1805,13 +1797,12 @@ function EFilingCases({ path }) {
     if (formdata.some((data) => demandNoticeFileValidation(data?.data))) {
       return;
     }
-    // if (formdata.some((data) => complainantValidation(data?.data))) {
-    //   return;
-    // }
+    if (formdata.some((data) => complainantValidation(data?.data))) {
+      return;
+    }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
-      setIsSaving(true);
       updateCaseDetails(true)
         .then(() => {
           resetFormData.current?.();
@@ -1821,29 +1812,29 @@ function EFilingCases({ path }) {
               caseDetails?.caseDetails?.[nextSelected]?.formdata ||
               (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
             setFormdata(caseData);
-            history.push(`?caseId=${caseId}&selected=${nextSelected}`);
             setIsDisabled(false);
+            history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           });
         })
-        .finally(() => {
-          setIsSaving(false);
+        .catch(() => {
+          setIsDisabled(false);
         });
     }
   };
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    setIsSaving(true);
     updateCaseDetails()
       .then(() => {
-        return refetchCaseData().then(() => {
+        refetchCaseData().then(() => {
           const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
             caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
           setFormdata(caseData);
+          setIsDisabled(false);
         });
       })
-      .finally(() => {
-        setIsSaving(false);
+      .catch(() => {
+        setIsDisabled(false);
       });
   };
 
@@ -1862,15 +1853,20 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    updateCaseDetails("PAGE_CHANGE").then(() => {
-      refetchCaseData().then(() => {
-        const caseData =
-          caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata ||
-          (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-        setFormdata(caseData);
+    updateCaseDetails("PAGE_CHANGE")
+      .then(() => {
+        refetchCaseData().then(() => {
+          const caseData =
+            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+          setFormdata(caseData);
+          setIsDisabled(false);
+        });
+      })
+      .catch(() => {
+        setIsDisabled(false);
       });
-    });
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -2017,7 +2013,7 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig?.formItemName === "Witness" || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -2031,7 +2027,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={isSaving ? "Saving ..." : selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
@@ -2044,7 +2040,6 @@ function EFilingCases({ path }) {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
                   cardStyle={{ minWidth: "100%" }}
-                  isDisabled={isDisabled || isSaving}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
@@ -2063,7 +2058,7 @@ function EFilingCases({ path }) {
               actionCancelLabel="Cancel"
               actionCancelOnSubmit={() => setConfirmDeleteModal(false)}
               actionSaveLabel={`Remove ${t(pageConfig?.formItemName)}`}
-              children={deleteWarningText(`${t(pageConfig?.formItemName)}`)}
+              children={deleteWarningText(`${t(pageConfig?.formItemName).toLowerCase()}`)}
               actionSaveOnSubmit={handleConfirmDeleteForm}
               className={"confirm-delete-modal"}
             ></Modal>
@@ -2186,6 +2181,24 @@ function EFilingCases({ path }) {
         </div>
       </div>
       {openConfirmCourtModal && <ConfirmCourtModal setOpenConfirmCourtModal={setOpenConfirmCourtModal} t={t} onSubmitCase={onSubmitCase} />}
+      {isDisabled && (
+        <div
+          style={{
+            width: "100vw",
+            height: "100vh",
+            zIndex: "9999",
+            position: "fixed",
+            right: "0",
+            display: "flex",
+            top: "0",
+            background: "rgb(234 234 245 / 50%)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Loader />
+        </div>
+      )}
     </div>
   );
 }

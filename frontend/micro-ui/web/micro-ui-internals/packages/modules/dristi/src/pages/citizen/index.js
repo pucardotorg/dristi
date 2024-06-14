@@ -79,7 +79,6 @@ const App = ({ stateCode, tenantId }) => {
 
   const hideHomeCrumb = [`${path}/home`];
   const whiteListedRoutes = [
-    `${path}/home/response`,
     `${path}/home/register`,
     `${path}/home/register/otp`,
     `${path}/home/login/otp`,
@@ -95,6 +94,7 @@ const App = ({ stateCode, tenantId }) => {
     `${path}/home/registration/aadhar-otp`,
     `${path}/home/registration/additional-details`,
     `${path}/home/registration/upload-id`,
+    `${path}/home/application-details`,
   ];
   const registerScreenRoute = [`${path}/home/login`, `${path}/home/registration/mobile-number`, `${path}/home/registration/otp`];
 

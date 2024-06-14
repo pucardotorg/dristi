@@ -270,6 +270,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                   allowedFileTypesRegex={input.allowedFileTypes}
                   noteMsg={input?.noteMsg}
                   notSupportedError={input?.notSupportedError}
+                  maxFileErrorMessage={input?.maxFileErrorMessage}
                 />
                 {Array.isArray(formData?.[config.key]?.[input.name]) && formData?.[config.key]?.[input.name].length > 0 && (
                   <DocViewerWrapper

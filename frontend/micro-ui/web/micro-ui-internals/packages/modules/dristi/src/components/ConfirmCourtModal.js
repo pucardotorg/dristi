@@ -39,7 +39,7 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
         {
           type: "dropdown",
           key: "state",
-          label: "CS_BAR_REGISTRATION",
+          label: "STATE",
           isMandatory: true,
           populators: {
             label: "SELECT_RESPONDENT_TYPE",
@@ -61,7 +61,7 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
         {
           type: "dropdown",
           key: "district",
-          label: "CS_BAR_REGISTRATION",
+          label: "DISTRICT",
           isMandatory: true,
           populators: {
             label: "SELECT_RESPONDENT_TYPE",
@@ -83,7 +83,7 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
         {
           type: "dropdown",
           key: "court",
-          label: "CS_BAR_REGISTRATION",
+          label: "CS_COURT",
           isMandatory: true,
           populators: {
             label: "SELECT_RESPONDENT_TYPE",
