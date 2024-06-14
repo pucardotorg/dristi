@@ -41,7 +41,7 @@ public class PaymentUpdateService {
             String tenantId = paymentRequest.getPayment().getTenantId();
 
             for (PaymentDetail paymentDetail : paymentDetails) {
-                updateWorkflowForBirthRegistrationPayment(requestInfo, tenantId, paymentDetail);
+                updateWorkflowForCasePayment(requestInfo, tenantId, paymentDetail);
             }
         } catch (Exception e) {
             log.error("KAFKA_PROCESS_ERROR:", e);
@@ -49,7 +49,7 @@ public class PaymentUpdateService {
 
     }
 
-    private void updateWorkflowForBirthRegistrationPayment(RequestInfo requestInfo, String tenantId, PaymentDetail paymentDetail) {
+    private void updateWorkflowForCasePayment(RequestInfo requestInfo, String tenantId, PaymentDetail paymentDetail) {
 
         Bill bill  = paymentDetail.getBill();
 
