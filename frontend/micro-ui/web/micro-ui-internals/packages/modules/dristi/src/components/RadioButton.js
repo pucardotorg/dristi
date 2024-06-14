@@ -11,7 +11,6 @@ const RadioButtons = (props) => {
     //selected = value;
     props.onSelect(value);
   }
-
   return (
     <div style={props.style} className={`radio-wrap ${props?.additionalWrapperClass}`}>
       {props?.options?.map((option, ind) => {
@@ -23,7 +22,7 @@ const RadioButtons = (props) => {
               }}
             >
               <div className="card-button-wrap" key={ind}>
-                <span className="radio-btn-wrap">
+                <span className="radio-btn-wrap" style={props && props.isRejected ? { pointerEvents: "none" } : {}}>
                   <input
                     className="radio-btn"
                     type="radio"

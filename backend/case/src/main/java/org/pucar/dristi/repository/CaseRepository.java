@@ -78,7 +78,7 @@ public class CaseRepository {
                     log.info("Case list size :: {}",list.size());
                 }
 
-                if(caseCriteria.getDefaultFields()){
+                if(caseCriteria.getDefaultFields() != null && caseCriteria.getDefaultFields()){
                     continue;
                 }
 

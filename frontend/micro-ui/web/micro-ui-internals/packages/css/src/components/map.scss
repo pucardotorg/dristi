@@ -1,6 +1,21 @@
 .map-wrap {
   @apply pb-lg;
 }
+.map-wrap-disable {
+  @apply pb-lg;
+  position: relative;
+}
+
+.map-wrap-disable::before {
+  content: "";
+  height: 270px;
+  z-index: 1;
+  background-color: transparent;
+  display: flex;
+  position: absolute;
+  max-width: 100%;
+  width: 100%;
+}
 
 .map {
   width: 100%;

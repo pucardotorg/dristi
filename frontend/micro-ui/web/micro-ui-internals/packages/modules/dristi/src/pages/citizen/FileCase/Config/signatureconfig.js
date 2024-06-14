@@ -10,7 +10,7 @@ const signatureFormConfig = [
         populators: {
           inputs: [
             {
-              key: "complaintDetails",
+              key: "advocateDetails",
               icon: "AdvocateIcon",
               config: { title: "name" },
               data: [{ name: "Soumya Dhasmana" }],
@@ -43,7 +43,7 @@ const signatureFormConfig = [
   },
 ];
 const confirmmodalconfig = {
-  actionCancelLabel: "CS_CORE_CANCEL",
+  actionCancelLabel: "CS_COMMON_CANCEL",
   actionSaveLabel: "CS_CONTINUE_EDITING",
   headerBarMain: "CS_EDIT_FIELDS",
   modalText: "CS_EDIT_FIELDS_TEXT",
@@ -51,7 +51,8 @@ const confirmmodalconfig = {
 
 export const signatureconfig = {
   formconfig: signatureFormConfig,
-  header: "CS_ADD_SIGNATURE_HEADING",
+  header: "CS_ADD_SIGNATURE",
   subtext: "CS_ADD_SIGNATURE_SUBTEXT",
   confirmmodalconfig,
+  className: "signature",
 };
