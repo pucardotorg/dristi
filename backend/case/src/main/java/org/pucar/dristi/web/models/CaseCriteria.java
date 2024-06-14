@@ -26,7 +26,7 @@ public class CaseCriteria {
     private String caseId = null;
 
     @JsonProperty("defaultFields")
-    private Boolean defaultFields = true;
+    private Boolean defaultFields = false;
 
     @JsonProperty("cnrNumber")
     private String cnrNumber = null;
