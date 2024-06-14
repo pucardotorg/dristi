@@ -921,7 +921,6 @@ function EFilingCases({ path }) {
   const demandNoticeFileValidation = (formData) => {
     if (selected === "demandNoticeDetails") {
       const formDataCopy = structuredClone(formData);
-      debugger;
       if ("SelectCustomDragDrop" in formDataCopy) {
         if (
           ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some(
