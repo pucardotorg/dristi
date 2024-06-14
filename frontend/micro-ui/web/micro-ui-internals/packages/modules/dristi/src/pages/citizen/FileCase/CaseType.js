@@ -4,10 +4,10 @@ import CustomDetailsCard from "../../../components/CustomDetailsCard";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import Modal from "../../../components/Modal";
 import Button from "../../../components/Button";
-import { ReactComponent as FileDownload } from "../../../icons/file_download.svg";
 import { DRISTIService } from "../../../services";
 import { Loader } from "@egovernments/digit-ui-components";
 import { userTypeOptions } from "../registration/config";
+import { FileDownloadIcon } from "../../../icons/svgIndex";
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -117,7 +117,7 @@ function CaseType({ t }) {
     }
     return (
       <div className="submit-bar-div">
-        <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
+        <Button icon={<FileDownloadIcon />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
         <div className="right-div">
           <Button
             className="cancel-button"
