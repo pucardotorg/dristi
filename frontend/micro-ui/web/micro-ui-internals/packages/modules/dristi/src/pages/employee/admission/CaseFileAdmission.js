@@ -150,7 +150,6 @@ function CaseFileAdmission({ t, path }) {
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
 
-  // console.log(caseDetails);
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
     return [
@@ -207,12 +206,11 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 1 });
     });
   };
-  const handleScheduleCase = () => {
+  const handleScheduleCase = (props) => {
+    console.log(props);
     updateCaseDetails("SCHEDULE_ADMISSION_HEARING", formdata).then((res) => {
-      setModalInfo({ ...modalInfo, page: 1 });
-      // setActionModal("caseSendBackSuccess");
+      setModalInfo({ ...modalInfo, page: 2 });
     });
-    setModalInfo({ ...modalInfo, page: 1 });
   };
 
   if (!caseId) {

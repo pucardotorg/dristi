@@ -9,13 +9,10 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
     const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Check if the date is a weekend
 
     return (
-      // <div style={{ textAlign: "center", fontSize: "14px", paddingTop: "5px" }}>
       <div>
         <span class="rdrDayNumber">{date.getDate()}</span>
         {isToday && <div style={{ fontSize: "8px", color: "#931847", marginTop: "20px" }}>10 Hearings</div>}
       </div>
-      //   {isWeekend && <div style={{ color: "red" }}>Weekend</div>}
-      // </div>
     );
   };
   const navigatorRenderer = (currentDate, changeShownDate, props) => {

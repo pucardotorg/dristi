@@ -1,4 +1,4 @@
-import { CardText, CheckBox } from "@egovernments/digit-ui-react-components";
+import { CardText, CheckBox, CollapseAndExpandGroups } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 function CheckboxItem({ name, checked, onToggle }) {
   return (

@@ -22,9 +22,10 @@ function SelectParticipant({
   const isEmpty = isObjectEmpty(selectedValues);
   const onSubmitSchedule = (props) => {
     if (isEmpty) {
-      console.log("submit");
       setShowErrorToast(true);
-    } else setModalInfo({ ...modalInfo, page: 2 });
+    } else {
+      handleScheduleCase({ ...scheduleHearingParams, participant: selectedValues });
+    }
   };
   const closeToast = () => {
     setShowErrorToast(false);

@@ -20,22 +20,73 @@
   }
 }
 
-.rdrCalendarWrapper {
-  background-color: #ffffff; /* Change background color */
+.custom-navigator {
+  font-family: "Roboto";
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.custom-navigator button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.custom-navigator span {
+  font-size: 16px;
+  font-weight: bold;
+}
+.calendar-bottom-div {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  align-items: center;
+  border-top: 1px solid #e1e1e1;
+}
+
+.rdrDay:hover .rdrDayNumber span {
+  background: none !important;
+  /* color: inherit !important; */
+  border: none !important;
 }
 
 .rdrDayNumber span {
-  color: #333; /* Change day number color */
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+.rdrDayNumber span::before,
+.rdrDayNumber span::after {
+  content: none !important;
+}
+
+.rdrCalendarWrapper {
+  background-color: #ffffff;
+}
+
+.rdrDayNumber span {
+  color: #333;
 }
 
 .rdrSelected {
-  background: #007e7e !important; /* Change selected date background */
-  color: #fff !important; /* Change selected date color */
+  background: #007e7e !important;
+  color: #fff !important;
 }
 
 .rdrDayToday .rdrDayNumber span:after {
-  border: 1px solid #007e7e; /* Change border for today's date */
-  color: #fff !important; /* Change selected date color */
+  border: 1px solid #007e7e;
+  color: #fff !important;
 }
 .rdrDayStartPreview {
   height: 40px !important;
@@ -63,19 +114,19 @@
   border-radius: 100px !important;
   height: 40px !important;
   width: 40px !important;
-  color: #007e7e; /* Change border for today's date */
+  color: #007e7e;
 }
 .rdrDayHovered {
   border-radius: 100px !important;
   height: 40px !important;
   width: 40px !important;
-  color: #007e7e; /* Change border for today's date */
+  color: #007e7e;
 }
 .rdrDayActive {
   border-radius: 100px !important;
   height: 40px !important;
   width: 40px !important;
-  color: #007e7e; /* Change border for today's date */
+  color: #007e7e;
 }
 .rdrDay {
   height: 40px !important;
@@ -92,35 +143,4 @@
 .rdrDayDisabled {
   background-color: #ffffff !important;
   color: #9ca3af !important;
-}
-.custom-navigator {
-  font-family: "Roboto";
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 20px;
-  text-align: left;
-
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 10px;
-}
-
-.custom-navigator button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.custom-navigator span {
-  font-size: 16px;
-  font-weight: bold;
-}
-.calendar-bottom-div {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px;
-  align-items: center;
-  border-top: 1px solid #e1e1e1;
 }

@@ -76,12 +76,10 @@ function AdmissionActionModal({
   const [sendCaseBack, setSendCaseBack] = useState({});
 
   const onSubmit = (props) => {
-    console.log(props);
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
     } else {
       handleSendCaseBack(props);
-      // setSendCaseBack({ ...sendCaseBack, caseBackReason: props?.commentForLitigant });
     }
   };
   const showSuccessModal = (modalInfo) => {
@@ -100,11 +98,9 @@ function AdmissionActionModal({
     setDateSelected(false);
   };
   const [selectedChip, setSelectedChip] = React.useState(null);
-  //   const [purposeValue, setPurposeValue] = useState();
 
   const setPurposeValue = (value, input) => {
     setScheduleHearingParam({ ...scheduleHearingParams, purpose: value });
-    console.log(value, input);
   };
   const handleChipClick = (chipLabel) => {
     setSelectedChip(chipLabel);
@@ -112,16 +108,13 @@ function AdmissionActionModal({
   const [dateSelected, setDateSelected] = useState(false);
 
   const showCustomDateModal = () => {
-    console.log("CustomDate");
     setModalInfo({ ...modalInfo, showDate: true });
   };
   const [selectedValues, setSelectedValues] = useState({});
 
   const handleInputChange = (values) => {
-    console.log(values);
     setSelectedValues(values);
   };
-  console.log(scheduleHearingParams);
   return (
     <div>
       {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
