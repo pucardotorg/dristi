@@ -1,0 +1,167 @@
+ServiceMaps:
+  serviceName: Application Service
+  version: 1.0.0
+  mappings:
+    - topic: save-application
+      configKey: INDEX
+      indexes:
+        - name: application-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.application
+          customJsonMapping:
+            indexMapping: {"Data":{ applicationDetails:{},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.applicationDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.applicationDetails.tenantId
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.applicationDetails.caseId
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.applicationDetails.filingNumber
+              - inJsonPath: $.cnrNumber
+                outJsonPath: $.Data.applicationDetails.cnrNumber
+              - inJsonPath: $.referenceId
+                outJsonPath: $.Data.applicationDetails.referenceId
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.applicationDetails.createdDate
+              - inJsonPath: $.createdBy
+                outJsonPath: $.Data.applicationDetails.createdBy
+              - inJsonPath: $.onBehalfOf
+                outJsonPath: $.Data.applicationDetails.onBehalfOf
+              - inJsonPath: $.applicationType
+                outJsonPath: $.Data.applicationDetails.applicationType
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.applicationDetails.applicationNumber
+              - inJsonPath: $.issuedBy
+                outJsonPath: $.Data.applicationDetails.issuedBy
+              - inJsonPath: $.status
+                outJsonPath: $.Data.applicationDetails.status
+              - inJsonPath: $.comment
+                outJsonPath: $.Data.applicationDetails.comment
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.applicationDetails.isActive
+              - inJsonPath: $.statueSection.id
+                outJsonPath: $.Data.statueSection.id
+              - inJsonPath: $.statueSection.tenantId
+                outJsonPath: $.Data.statueSection.tenantId
+              - inJsonPath: $.statueSection.statute
+                outJsonPath: $.Data.statueSection.statute
+              - inJsonPath: $.statueSection.sections
+                outJsonPath: $.Data.statueSection.sections
+              - inJsonPath: $.statueSection.subsections
+                outJsonPath: $.Data.statueSection.subsections
+              - inJsonPath: $.statueSection.additionalDetails
+                outJsonPath: $.Data.statueSection.additionalDetails
+              - inJsonPath: $.statueSection.strSections
+                outJsonPath: $.Data.statueSection.strSections
+              - inJsonPath: $.statueSection.strSubsections
+                outJsonPath: $.Data.statueSection.strSubsections
+              - inJsonPath: $.statueSection.auditDetails.createdBy
+                outJsonPath: $.Data.statueSection.auditDetails.createdBy
+              - inJsonPath: $.statueSection.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.statueSection.auditDetails.lastModifiedBy
+              - inJsonPath: $.statueSection.auditDetails.createdTime
+                outJsonPath: $.Data.statueSection.auditDetails.createdTime
+              - inJsonPath: $.statueSection.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.statueSection.auditDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.applicationDetails.additionalDetails
+              - inJsonPath: $.auditDetails
+                outJsonPath: $.Data.auditDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.applicationNumber,tenantId=$.tenantId,history=true
+                apiRequest: { "RequestInfo": { "apiId": "","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pg","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pg" } ] } } }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+
+    - topic: update-application
+      configKey: INDEX
+      indexes:
+        - name: application-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.application
+          customJsonMapping:
+            indexMapping: { "Data": { applicationDetails: {},"history": {},"auditDetails":{},"currentProcessInstance": {} } }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.applicationDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.applicationDetails.tenantId
+              - inJsonPath: $.caseId
+                outJsonPath: $.Data.applicationDetails.caseId
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.applicationDetails.filingNumber
+              - inJsonPath: $.cnrNumber
+                outJsonPath: $.Data.applicationDetails.cnrNumber
+              - inJsonPath: $.referenceId
+                outJsonPath: $.Data.applicationDetails.referenceId
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.applicationDetails.createdDate
+              - inJsonPath: $.createdBy
+                outJsonPath: $.Data.applicationDetails.createdBy
+              - inJsonPath: $.onBehalfOf
+                outJsonPath: $.Data.applicationDetails.onBehalfOf
+              - inJsonPath: $.applicationType
+                outJsonPath: $.Data.applicationDetails.applicationType
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.applicationDetails.applicationNumber
+              - inJsonPath: $.issuedBy
+                outJsonPath: $.Data.applicationDetails.issuedBy
+              - inJsonPath: $.status
+                outJsonPath: $.Data.applicationDetails.status
+              - inJsonPath: $.comment
+                outJsonPath: $.Data.applicationDetails.comment
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.applicationDetails.isActive
+              - inJsonPath: $.statueSection.id
+                outJsonPath: $.Data.statueSection.id
+              - inJsonPath: $.statueSection.tenantId
+                outJsonPath: $.Data.statueSection.tenantId
+              - inJsonPath: $.statueSection.statute
+                outJsonPath: $.Data.statueSection.statute
+              - inJsonPath: $.statueSection.sections
+                outJsonPath: $.Data.statueSection.sections
+              - inJsonPath: $.statueSection.subsections
+                outJsonPath: $.Data.statueSection.subsections
+              - inJsonPath: $.statueSection.additionalDetails
+                outJsonPath: $.Data.statueSection.additionalDetails
+              - inJsonPath: $.statueSection.strSections
+                outJsonPath: $.Data.statueSection.strSections
+              - inJsonPath: $.statueSection.strSubsections
+                outJsonPath: $.Data.statueSection.strSubsections
+              - inJsonPath: $.statueSection.auditDetails.createdBy
+                outJsonPath: $.Data.statueSection.auditDetails.createdBy
+              - inJsonPath: $.statueSection.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.statueSection.auditDetails.lastModifiedBy
+              - inJsonPath: $.statueSection.auditDetails.createdTime
+                outJsonPath: $.Data.statueSection.auditDetails.createdTime
+              - inJsonPath: $.statueSection.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.statueSection.auditDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.applicationDetails.additionalDetails
+              - inJsonPath: $.auditDetails
+                outJsonPath: $.Data.auditDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.applicationNumber,tenantId=$.tenantId,history=true
+                apiRequest: { "RequestInfo": { "apiId": "","ver": "1.0","ts": 1502890899493,"action": "asd","did": "4354648646","key": "xyz","msgId": "654654","requesterId": "61","authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8","userInfo": { "id": 1,"uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067","type": "EMPLOYEE","tenantId": "pg","roles": [ { "name": "Employee","code": "EMPLOYEE","tenantId": "pg" } ] } } }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status

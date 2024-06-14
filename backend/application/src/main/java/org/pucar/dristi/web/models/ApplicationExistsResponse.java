@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.egov.common.contract.response.ResponseInfo;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 /**
  * ApplicationExistsResponse
  */
@@ -19,15 +21,15 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class ApplicationExistsResponse   {
-        @JsonProperty("responseInfo")
+        @JsonProperty("ResponseInfo")
 
           @Valid
                 private ResponseInfo responseInfo = null;
 
-        @JsonProperty("order")
+        @JsonProperty("applicationList")
 
           @Valid
-                private ApplicationExists order = null;
+                private List<ApplicationExists> applicationExists = null;
 
 
 }
