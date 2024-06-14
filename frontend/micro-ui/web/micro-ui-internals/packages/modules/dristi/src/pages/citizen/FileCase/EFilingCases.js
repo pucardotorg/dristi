@@ -83,6 +83,7 @@ function EFilingCases({ path }) {
   const resetFormData = useRef(null);
   const setFormDataValue = useRef(null);
   const clearFormDataErrors = useRef(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
@@ -920,7 +921,7 @@ function EFilingCases({ path }) {
         //   return true;
         // }
         else {
-           clearFormDataErrors.current?.("inquiryAffidavitFileUpload");
+          clearFormDataErrors.current?.("inquiryAffidavitFileUpload");
           return false;
         }
       }
@@ -943,7 +944,7 @@ function EFilingCases({ path }) {
           formData?.proofOfService?.code === "YES" &&
           ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
         ) {
-           clearFormDataErrors.current?.("SelectCustomDragDrop");
+          clearFormDataErrors.current?.("SelectCustomDragDrop");
           return false;
         }
       }
@@ -1813,30 +1814,40 @@ function EFilingCases({ path }) {
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
-      updateCaseDetails(true).then(() => {
-        resetFormData.current?.();
-        refetchCaseData().then(() => {
-          const caseData =
-            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
-            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-          setFormdata(caseData);
-          history.push(`?caseId=${caseId}&selected=${nextSelected}`);
-          setIsDisabled(false);
+      setIsSaving(true);
+      updateCaseDetails(true)
+        .then(() => {
+          resetFormData.current?.();
+          return refetchCaseData().then(() => {
+            const caseData =
+              caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+              caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+              (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+            setFormdata(caseData);
+            history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+            setIsDisabled(false);
+          });
+        })
+        .finally(() => {
+          setIsSaving(false);
         });
-      });
     }
   };
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails().then(() => {
-      refetchCaseData().then(() => {
-        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
-        setFormdata(caseData);
+    setIsSaving(true);
+    updateCaseDetails()
+      .then(() => {
+        return refetchCaseData().then(() => {
+          const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+          setFormdata(caseData);
+        });
+      })
+      .finally(() => {
+        setIsSaving(false);
       });
-    });
   };
 
   const handlePageChange = (key, isConfirm) => {
@@ -2023,7 +2034,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
+                  label={isSaving ? "Saving ..." : selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
                   onSecondayActionClick={onSaveDraft}
@@ -2036,7 +2047,7 @@ function EFilingCases({ path }) {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
                   cardStyle={{ minWidth: "100%" }}
-                  isDisabled={isDisabled}
+                  isDisabled={isDisabled || isSaving}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
