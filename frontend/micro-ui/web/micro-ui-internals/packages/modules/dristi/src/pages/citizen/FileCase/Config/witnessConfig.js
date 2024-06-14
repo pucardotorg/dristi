@@ -207,7 +207,7 @@ export const witnessConfig = {
   subtext: "CS_WITNESS_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_WITNESS",
-  formItemName: "Witness",
+  formItemName: "CS_WITNESS",
   className: "witness-details",
   showOptionalInHeader: true,
 };

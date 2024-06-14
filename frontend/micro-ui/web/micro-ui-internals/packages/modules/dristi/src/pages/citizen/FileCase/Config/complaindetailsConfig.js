@@ -384,6 +384,6 @@ export const complaintdetailconfig = {
   subtext: "CS_COMPLAINANT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_COMPLAINANT",
-  formItemName: "Complainant",
+  formItemName: "CS_COMPLAINANT",
   className: "complainant",
 };

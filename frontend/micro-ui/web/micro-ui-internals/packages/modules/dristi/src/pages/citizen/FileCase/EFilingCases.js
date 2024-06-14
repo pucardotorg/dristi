@@ -909,19 +909,9 @@ function EFilingCases({ path }) {
           ) &&
           !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
         ) {
-          if (!!setFormErrors) setFormErrors("inquiryAffidavitFileUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setShowErrorToast(true);
           return true;
-        }
-        // else if (
-        //   formData?.respondentType?.code === "REPRESENTATIVE" &&
-        //   "companyDetailsUpload" in formDataCopy &&
-        //   !Object.keys(formData?.companyDetailsUpload?.document || {}).length
-        // ) {
-        //   if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
-        //   return true;
-        // }
-        else {
-          if (!!clearFormDataErrors) clearFormDataErrors("inquiryAffidavitFileUpload");
+        } else {
           return false;
         }
       }
@@ -938,13 +928,15 @@ function EFilingCases({ path }) {
             (data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length
           )
         ) {
-          if (!!setFormErrors) setFormErrors("SelectCustomDragDrop", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setShowErrorToast(true);
           return true;
         } else if (
           formData?.proofOfService?.code === "YES" &&
           ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
         ) {
-          if (!!clearFormDataErrors) clearFormDataErrors("SelectCustomDragDrop");
+          setShowErrorToast(true);
+          return true;
+        } else {
           return false;
         }
       }
@@ -954,13 +946,11 @@ function EFilingCases({ path }) {
   const complainantValidation = (formData) => {
     if (selected === "complaintDetails") {
       const formDataCopy = structuredClone(formData);
-      debugger;
       if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
         if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
-          if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setShowErrorToast(true);
           return true;
         } else {
-          if (!!clearFormDataErrors) clearFormDataErrors("companyDetailsUpload");
           return false;
         }
       }
@@ -1005,9 +995,9 @@ function EFilingCases({ path }) {
         clearFormDataErrors: clearErrors,
       }));
     }
-    if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
-      setIsDisabled(true);
-    }
+    // if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
+    //   setIsDisabled(true);
+    // }
   };
 
   const handleAccordionClick = (index) => {
@@ -1202,6 +1192,7 @@ function EFilingCases({ path }) {
 
   const updateCaseDetails = async (isCompleted, key) => {
     const data = {};
+    setIsDisabled(true);
     if (selected === "complaintDetails") {
       const litigants = await Promise.all(
         formdata
@@ -1810,38 +1801,47 @@ function EFilingCases({ path }) {
     if (formdata.some((data) => demandNoticeFileValidation(data?.data))) {
       return;
     }
-    // if (formdata.some((data) => complainantValidation(data?.data))) {
-    //   return;
-    // }
+    if (formdata.some((data) => complainantValidation(data?.data))) {
+      return;
+    }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
-      updateCaseDetails(true).then(() => {
-        if (!!resetFormData) {
-          resetFormData();
-        }
-        refetchCaseData().then(() => {
-          const caseData =
-            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
-            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-          setFormdata(caseData);
-          history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+      updateCaseDetails(true)
+        .then(() => {
+          if (!!resetFormData) {
+            resetFormData();
+          }
+          refetchCaseData().then(() => {
+            const caseData =
+              caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+              caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+              (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+            setFormdata(caseData);
+            setIsDisabled(false);
+            history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+          });
+        })
+        .catch(() => {
           setIsDisabled(false);
         });
-      });
     }
   };
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails().then(() => {
-      refetchCaseData().then(() => {
-        const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
-        setFormdata(caseData);
+    updateCaseDetails()
+      .then(() => {
+        refetchCaseData().then(() => {
+          const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }];
+          setFormdata(caseData);
+          setIsDisabled(false);
+        });
+      })
+      .catch(() => {
+        setIsDisabled(false);
       });
-    });
   };
 
   const handlePageChange = (key, isConfirm) => {
@@ -1859,15 +1859,20 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    updateCaseDetails("PAGE_CHANGE").then(() => {
-      refetchCaseData().then(() => {
-        const caseData =
-          caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-          caseDetails?.caseDetails?.[nextSelected]?.formdata ||
-          (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-        setFormdata(caseData);
+    updateCaseDetails("PAGE_CHANGE")
+      .then(() => {
+        refetchCaseData().then(() => {
+          const caseData =
+            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+          setFormdata(caseData);
+          setIsDisabled(false);
+        });
+      })
+      .catch(() => {
+        setIsDisabled(false);
       });
-    });
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -2014,7 +2019,7 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig?.formItemName === "Witness" || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -2042,7 +2047,6 @@ function EFilingCases({ path }) {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
                   cardStyle={{ minWidth: "100%" }}
-                  isDisabled={isDisabled}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
                   showSecondaryLabel={true}
@@ -2061,7 +2065,7 @@ function EFilingCases({ path }) {
               actionCancelLabel="Cancel"
               actionCancelOnSubmit={() => setConfirmDeleteModal(false)}
               actionSaveLabel={`Remove ${t(pageConfig?.formItemName)}`}
-              children={deleteWarningText(`${t(pageConfig?.formItemName)}`)}
+              children={deleteWarningText(`${t(pageConfig?.formItemName).toLowerCase()}`)}
               actionSaveOnSubmit={handleConfirmDeleteForm}
               className={"confirm-delete-modal"}
             ></Modal>
@@ -2184,6 +2188,24 @@ function EFilingCases({ path }) {
         </div>
       </div>
       {openConfirmCourtModal && <ConfirmCourtModal setOpenConfirmCourtModal={setOpenConfirmCourtModal} t={t} onSubmitCase={onSubmitCase} />}
+      {isDisabled && (
+        <div
+          style={{
+            width: "100vw",
+            height: "100vh",
+            zIndex: "9999",
+            position: "fixed",
+            right: "0",
+            display: "flex",
+            top: "0",
+            background: "rgb(234 234 245 / 50%)",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Loader />
+        </div>
+      )}
     </div>
   );
 }
