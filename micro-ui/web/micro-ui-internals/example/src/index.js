@@ -28,7 +28,7 @@ const enabledModules = [
   "Sample",
   "Orders",
   "Cases",
-  "Pucar",
+  // "Pucar",
   "Hearings"
   //added to check fsm
   // "FSM"

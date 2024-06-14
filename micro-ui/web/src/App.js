@@ -22,7 +22,7 @@ const enabledModules = [
   "sample",
   "Orders",
   "Cases",
-  "Pucar",
+  // "Pucar",
   "Hearings"
 ];
 
