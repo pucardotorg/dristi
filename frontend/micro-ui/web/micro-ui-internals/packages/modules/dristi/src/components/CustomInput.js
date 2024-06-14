@@ -19,6 +19,7 @@ function CustomInput({ onChange, value, isDisabled, componentInFront, config, _d
             <TextInput
               value={"99999"}
               // onChange={onChange}
+              prefix={""}
               name={input.name}
               minlength={input?.validation?.minLength}
               maxlength={input?.validation?.maxLength}

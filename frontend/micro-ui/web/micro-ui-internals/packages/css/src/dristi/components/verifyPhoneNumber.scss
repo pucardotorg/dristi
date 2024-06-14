@@ -43,5 +43,21 @@
 }
 
 .verify-mobile-modal {
-  padding: 16px 16px 0;
+  .popup-module-main {
+    .verify-mobile-modal-main {
+      padding: 16px 24px 0px;
+      .label-field-pair {
+        margin-bottom: 12px !important;
+        .field {
+          .verify-mobile-otp-input {
+            &.error {
+              input {
+                border-color: #bb2c2f;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }

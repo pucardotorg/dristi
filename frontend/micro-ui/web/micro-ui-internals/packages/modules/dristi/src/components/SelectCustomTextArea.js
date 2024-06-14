@@ -59,6 +59,7 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
             handleChange(data, input);
           }}
           rows={5}
+          maxLength={400}
           className="custom-textarea-style"
           placeholder={t(input?.placeholder)}
         ></textarea>

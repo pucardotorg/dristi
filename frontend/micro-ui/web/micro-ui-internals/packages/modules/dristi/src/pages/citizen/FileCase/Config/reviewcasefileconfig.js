@@ -154,7 +154,7 @@ export const reviewCaseFileFormConfig = [
                     "SelectCustomDragDrop.swornStatement",
                     "memorandumOfComplaint.document",
                     "prayerForRelief.document",
-                    "SelectUploadDocWithName",
+                    "SelectUploadDocWithName.document",
                   ],
                 },
               ],
