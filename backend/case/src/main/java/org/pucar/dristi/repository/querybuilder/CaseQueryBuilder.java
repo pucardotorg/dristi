@@ -126,6 +126,27 @@ public class CaseQueryBuilder {
                     firstCriteria = false;
                 }
 
+                if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.id = ?)");
+                    preparedStmtList.add(criteria.getLitigantId());
+                    firstCriteria = false;
+                }
+
+                if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.id = ?)");
+                    preparedStmtList.add(criteria.getAdvocateId());
+                    firstCriteria = false;
+                }
+
+                if (criteria.getStatus() != null && !criteria.getStatus().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.status = ?");
+                    preparedStmtList.add(criteria.getStatus());
+                    firstCriteria = false;
+                }
+
                 if (criteria.getFilingFromDate() != null && criteria.getFilingToDate() != null) {
                     if (!firstCriteria)
                         query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
