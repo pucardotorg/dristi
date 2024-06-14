@@ -252,7 +252,7 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
+      setFieldsRemaining(fieldsRemainingCopy);
     }
   }, [caseDetails]);
 
@@ -263,6 +263,24 @@ function EFilingCases({ path }) {
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
   }, [selected, caseDetails]);
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+    setErrorMsg("");
+    setSuccessToast((prev) => ({
+      ...prev,
+      showSuccessToast: false,
+      successMsg: "",
+    }));
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
 
   const accordion = useMemo(() => {
     return sideMenuConfig.map((parent, pIndex) => ({
@@ -551,16 +569,6 @@ function EFilingCases({ path }) {
     }));
     setConfirmDeleteModal(true);
     setFormdata(newArray);
-  };
-
-  const closeToast = () => {
-    setShowErrorToast(false);
-    setErrorMsg("");
-    setSuccessToast((prev) => ({
-      ...prev,
-      showSuccessToast: false,
-      successMsg: "",
-    }));
   };
 
   const chequeDateValidation = (formData, setError, clearErrors) => {
@@ -875,7 +883,6 @@ function EFilingCases({ path }) {
       }
     } else if (selected == "debtLiabilityDetails") {
       if (formData?.totalAmount) {
-        console.log("formData?.totalAmount", formData?.totalAmount);
         const formDataCopy = structuredClone(formData);
         for (const key in formDataCopy) {
           if (Object.hasOwnProperty.call(formDataCopy, key) && key === "totalAmount") {
@@ -1119,7 +1126,7 @@ function EFilingCases({ path }) {
 
     if (currentPageData.length === 0) {
       // this case is specially for witness details page (which is optional),
-      // so there might not be any witness at all hence empty currentPageData will be received.
+      // so there might not be any witness at all.
       totalMandatoryLeft = 0;
       totalOptionalLeft = 1;
     } else {

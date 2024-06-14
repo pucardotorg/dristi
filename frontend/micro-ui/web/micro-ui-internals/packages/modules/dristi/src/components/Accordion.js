@@ -5,16 +5,16 @@ function Accordion({ t, title, handlePageChange, handleAccordionClick, children,
   const getTime = useMemo(() => {
     switch (parentIndex) {
       case 0: {
-        return "04";
+        return "04m";
       }
       case 1: {
-        return "15";
+        return "15m";
       }
       case 2: {
-        return "10";
+        return "10m";
       }
       case 3: {
-        return "05";
+        return "05m";
       }
     }
   }, [parentIndex]);
