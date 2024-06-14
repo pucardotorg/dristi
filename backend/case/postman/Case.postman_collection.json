@@ -1,0 +1,429 @@
+{
+	"info": {
+		"_postman_id": "7a1bdaff-4458-428b-a67e-ca1f22e95a2b",
+		"name": "Case",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33009635"
+	},
+	"item": [
+		{
+			"name": "create case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "unified-dev.digit.org",
+						"uuid": "c3d17cf3-47c8-4067-8d2d-7dc7b23f8e85"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"uuid": "5f4cbef7-df27-4683-9de9-5818ef39a0e3"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8",
+						"uuid": "2e79077f-2b20-4659-a930-284b8e44179f"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8",
+						"uuid": "9fa64513-e344-4692-9e53-ffc385cc7684"
+					},
+					{
+						"key": "cookie",
+						"value": "_ga_H9YC8FEN6F=GS1.1.1704892149.2.1.1704892416.60.0.0; _ga_0JZG96DZSM=GS1.1.1704952026.9.1.1704953656.25.0.0; _ga_V2CPZCVTXQ=GS1.1.1705472749.3.0.1705472749.0.0.0; _ga=GA1.1.1573992852.1702469055; _ga_XBQP06FR8V=GS1.1.1706697152.1.1.1706698636.60.0.0; __cuid=dff1142b62e34f53b35747a950dff6f8; amp_fef1e8=1dd32260-1592-4a18-9ace-531494eedb5dR...1hlfh7smq.1hlfilmgt.3b.8.3j",
+						"uuid": "ae3b4659-f66a-4d7d-aa7b-e701054ab6f2"
+					},
+					{
+						"key": "origin",
+						"value": "https://unified-dev.digit.org",
+						"uuid": "e6982c30-3d84-4e52-81eb-629cd0378c4b"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i",
+						"uuid": "bc92c3c6-0e0b-45a4-b786-7fd08628e058"
+					},
+					{
+						"key": "referer",
+						"value": "https://unified-dev.digit.org/health-ui/employee/hrms/response",
+						"uuid": "0d1d1251-9f8c-4847-af7c-edc4c6220753"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+						"uuid": "482836da-7a8a-4ddc-8340-8ade4c319d57"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"uuid": "ededa23a-65d7-432e-aa91-83b1f671fd61"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\"",
+						"uuid": "5f23ee39-52ee-4db7-9724-a4d247cf4b8d"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty",
+						"uuid": "3523f149-ee1a-42ac-b55b-79ede78c2f1b"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors",
+						"uuid": "a67c4c5e-1637-42da-899e-45d1876b3620"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin",
+						"uuid": "82aa88e0-dfed-4798-aa35-22fe2e49dbd5"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+						"uuid": "b80b5d85-6872-45cb-811a-b5573b9e2dc6"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "a303f0dc-1459-4471-a596-6e9f08e79460"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": 0,\n        \"action\": \"null\",\n        \"did\": \"null\",\n        \"key\": \"null\",\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"requesterId\": \"null\",\n        \"userInfo\": {\n            \"id\": 188,\n            \"userName\": \"devuser5\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"16a7d2e8-a04d-4494-9110-687df70d8700\",\n            \"createdDate\": \"06-05-2024 12:29:35\",\n            \"lastModifiedDate\": \"06-05-2024 12:29:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 12:29:35\"\n        },\n        \"authToken\": \"16af2771-0736-46f7-a823-b8d8612bd78d\"\n    },\n    \"cases\": {\n        \"tenantId\": \"pg\",\n        \"resolutionMechanism\": \"COURT\",\n        \"caseDescription\": \"Case description\",\n        \"courtId\": \"123456\",\n        \"benchId\": \"123456\",\n        \"isActive\":true,\n        \"linkedCases\": [\n            {\n                \"relationshipType\": \"PARENT\",\n                \"caseNumber\": \"null\",\n                \"referenceUri\": \"null\",\n                \"isActive\": true,\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\n                            \"name\": \"ooo\"\n                        }\n                    }\n                ],\n                \"additionalDetails\": \"string\"\n            }\n        ],\n        \"filingDate\": \"18-04-2024\",\n        \"registrationDate\": \"18-04-2024\",\n        \"caseDetails\": {},\n        \"caseCategory\": \"CIVIL\",\n        \"natureOfPleading\": \"Original Suit\",\n        \"statutesAndSections\": [\n            {\n                \"tenantId\": \"pg\",\n                \"statute\": \"Statute\",\n                \"sections\": [\n                    \"test\",\n                    \"test2\"\n                ],\n                \"subsections\": [\n                    \"test\",\n                    \"test3\"\n                ]\n            }\n        ],\n        \"litigants\": [\n            {\n                \"tenantId\": \"pg\",\n                \"partyCategory\": \"INDIVIDUAL\",\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"7c0378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\n                            \"name\": \"uuu\"\n                        }\n                    }\n                ]\n            },\n            {\n                \"tenantId\": \"pg\",\n                \"partyCategory\": \"ORGANISATION\",\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\n                            \"name\": \"xxx\"\n                        }\n                    }\n                ]\n            }\n        ],\n        \"representatives\": [\n            {\n                \"tenantId\": \"pg\",\n                \"advocateId\": \"2e240f7b-3c1a-4506-9a99-715f36c3e317\",\n                \"representing\": [\n                    {\n                        \"tenantId\": \"pg\",\n                        \"caseId\": \"string\",\n                        \"partyCategory\": \"INDIVIDUAL\",\n                        \"organisationID\": \"string\",\n                        \"individualId\": \"string\",\n                        \"isActive\": true,\n                        \"documents\": [\n                            {\n                                \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                                \"documentType\": \"PDF\",\n                                \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                                \"documentUid\": \"\",\n                                \"additionalDetails\": {\n                                    \"name\": \"eee\"\n                                }\n                            }\n                        ],\n                        \"additionalDetails\": {}\n                    }\n                ],\n                \"isActive\": true,\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"string\",\n                        \"fileStore\": \"string\",\n                        \"documentUid\": \"string\",\n                        \"additionalDetails\": {}\n                    }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"status\": \"Status\",\n        \"documents\": [\n            {\n                \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                \"documentType\": \"PDF\",\n                \"fileStore\": \"7c0378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                \"documentUid\": \"\",\n                \"additionalDetails\": {\n                    \"name\": \"ccc\"\n                }\n            }\n        ],\n        \"remarks\": \"remarks\",\n        \"workflow\": {\n            \"action\": \"SAVE_DRAFT\",\n            \"comments\": null,\n            \"assignes\": null,\n            \"documents\": [\n                {\n                    \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                    \"documentType\": null,\n                    \"fileStore\": null,\n                    \"documentUid\": null,\n                    \"additionalDetails\": null\n                }\n            ]\n        },\n        \"additionalDetails\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/v1/_create",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "915d507f-ead6-4e12-a678-bfa0ff0b779f"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"uuid": "3b6d1b63-ee8d-4799-ae62-3ede533dffa3"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\": {\n            \"id\": 188,\n            \"userName\": \"devuser5\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"16a7d2e8-a04d-4494-9110-687df70d8700\",\n            \"createdDate\": \"06-05-2024 12:29:35\",\n            \"lastModifiedDate\": \"06-05-2024 12:29:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 12:29:35\"\n        },\n       \"authToken\":  \"16af2771-0736-46f7-a823-b8d8612bd78d\"\n    },\n            \"tenantId\":\"pg\",\n\n    \"criteria\": [{\n          \"filingNumber\": \"CASE-FILING-NO-2024-05-29-000606\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/v1/_search",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "authority",
+						"value": "unified-dev.digit.org",
+						"uuid": "134c983f-9771-4c84-b3c9-519c53b656ba"
+					},
+					{
+						"key": "accept",
+						"value": "application/json, text/plain, */*",
+						"uuid": "7b4d4a6a-a952-493f-a4c6-01e960262485"
+					},
+					{
+						"key": "accept-language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8",
+						"uuid": "bba9254e-839a-463d-9332-76d6f58dbb48"
+					},
+					{
+						"key": "content-type",
+						"value": "application/json;charset=UTF-8",
+						"uuid": "a6518ec5-5c68-4805-a5ff-8be6121986ec"
+					},
+					{
+						"key": "cookie",
+						"value": "_ga_H9YC8FEN6F=GS1.1.1704892149.2.1.1704892416.60.0.0; _ga_0JZG96DZSM=GS1.1.1704952026.9.1.1704953656.25.0.0; _ga_V2CPZCVTXQ=GS1.1.1705472749.3.0.1705472749.0.0.0; _ga=GA1.1.1573992852.1702469055; _ga_XBQP06FR8V=GS1.1.1706697152.1.1.1706698636.60.0.0; __cuid=dff1142b62e34f53b35747a950dff6f8; amp_fef1e8=1dd32260-1592-4a18-9ace-531494eedb5dR...1hlfh7smq.1hlfilmgt.3b.8.3j",
+						"uuid": "69541caa-a42c-4de6-8685-8f940fcbd390"
+					},
+					{
+						"key": "origin",
+						"value": "https://unified-dev.digit.org",
+						"uuid": "794efdc0-4bfd-444a-8fc6-568ba17f94ce"
+					},
+					{
+						"key": "priority",
+						"value": "u=1, i",
+						"uuid": "fae5ccf4-f0c5-404a-add4-c799880d67f1"
+					},
+					{
+						"key": "referer",
+						"value": "https://unified-dev.digit.org/health-ui/employee/hrms/response",
+						"uuid": "5cb34149-246a-441e-a6ff-e61929736637"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+						"uuid": "4a4ff529-96e0-4963-9c40-42ac5acd743d"
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0",
+						"uuid": "afb9789e-40ff-49ce-b0b9-63cf28f65227"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\"",
+						"uuid": "b8bbf5b4-904b-462d-960b-a0a74156dbc4"
+					},
+					{
+						"key": "sec-fetch-dest",
+						"value": "empty",
+						"uuid": "fb54d98c-bbf8-430c-a53e-9dc37b1026c4"
+					},
+					{
+						"key": "sec-fetch-mode",
+						"value": "cors",
+						"uuid": "6af9123f-3049-49fd-8c9a-461e3e10476a"
+					},
+					{
+						"key": "sec-fetch-site",
+						"value": "same-origin",
+						"uuid": "53183946-edd0-46be-987b-b3818657ce13"
+					},
+					{
+						"key": "user-agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+						"uuid": "b27937d6-048f-4f46-bb2e-3580a98bb30f"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "892155f8-0e95-4555-837b-456ec84c637f"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": 0,\n        \"action\": \"null\",\n        \"did\": \"null\",\n        \"key\": \"null\",\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"requesterId\": \"null\",\n        \"userInfo\": {\n            \"id\": 130,\n            \"userName\": \"UATuser4\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"USER_REGISTER\",\n                    \"name\": \"USER_REGISTER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"c606aca4-4002-429d-9b5a-62355f6b38df\",\n            \"createdDate\": \"18-04-2024 15:27:11\",\n            \"lastModifiedDate\": \"18-04-2024 15:27:11\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"17-07-2024 15:27:11\"\n        },\n        \"authToken\": \"16af2771-0736-46f7-a823-b8d8612bd78d\"\n    },\n    \"cases\": {\n        \"tenantId\": \"pg\",\n        \"resolutionMechanism\": \"COURT\",\n        \"caseDescription\": \"Case description\",\n        \"courtId\": \"123456\",\n        \"benchId\": \"123456\",\n        \"isActive\":true,\n        \"linkedCases\": [\n            {\n                \"relationshipType\": \"PARENT\",\n                \"caseNumber\": \"null\",\n                \"referenceUri\": \"null\",\n                \"isActive\": true,\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\n                            \"name\": \"ooo\"\n                        }\n                    }\n                ],\n                \"additionalDetails\": \"string\"\n            }\n        ],\n        \"filingDate\": \"18-04-2024\",\n        \"registrationDate\": \"18-04-2024\",\n        \"caseDetails\": {},\n        \"caseCategory\": \"CIVIL\",\n        \"natureOfPleading\": \"Original Suit\",\n        \"statutesAndSections\": [\n            {\n                \"tenantId\": \"pg\",\n                \"statute\": \"Statute\",\n                \"sections\": [\n                    \"test\",\n                    \"test2\"\n                ],\n                \"subsections\": [\n                    \"test\",\n                    \"test3\"\n                ]\n            }\n        ],\n        \"litigants\": [\n            {\n                \"tenantId\": \"pg\",\n                \"partyCategory\": \"INDIVIDUAL\",\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"7c0378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\n                            \"name\": \"uuu\"\n                        }\n                    }\n                ]\n            },\n            {\n                \"tenantId\": \"pg\",\n                \"partyCategory\": \"ORGANISATION\",\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\n                            \"name\": \"xxx\"\n                        }\n                    }\n                ]\n            }\n        ],\n        \"representatives\": [\n            {\n                \"tenantId\": \"pg\",\n                \"advocateId\": \"2e240f7b-3c1a-4506-9a99-715f36c3e317\",\n                \"representing\": [\n                    {\n                        \"tenantId\": \"pg\",\n                        \"caseId\": \"string\",\n                        \"partyCategory\": \"INDIVIDUAL\",\n                        \"organisationID\": \"string\",\n                        \"individualId\": \"string\",\n                        \"isActive\": true,\n                        \"documents\": [\n                            {\n                                \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                                \"documentType\": \"PDF\",\n                                \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                                \"documentUid\": \"\",\n                                \"additionalDetails\": {\n                                    \"name\": \"eee\"\n                                }\n                            }\n                        ],\n                        \"additionalDetails\": {}\n                    }\n                ],\n                \"isActive\": true,\n                \"documents\": [\n                    {\n                        \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                        \"documentType\": \"string\",\n                        \"fileStore\": \"string\",\n                        \"documentUid\": \"string\",\n                        \"additionalDetails\": {}\n                    }\n                ],\n                \"additionalDetails\": {}\n            }\n        ],\n        \"status\": \"Status\",\n        \"documents\": [\n            {\n                \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                \"documentType\": \"PDF\",\n                \"fileStore\": \"7c0378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                \"documentUid\": \"\",\n                \"additionalDetails\": {\n                    \"name\": \"ccc\"\n                }\n            }\n        ],\n        \"remarks\": \"remarks\",\n        \"workflow\": {\n            \"action\": \"SAVE_DRAFT\",\n            \"comments\": null,\n            \"assignes\": null,\n            \"documents\": [\n                {\n                    \"id\":\"7c7378ab-554f-41f2-9b3e-2b9ea0465b3d\",\n                    \"documentType\": null,\n                    \"fileStore\": null,\n                    \"documentUid\": null,\n                    \"additionalDetails\": null\n                }\n            ]\n        },\n        \"additionalDetails\": {}\n    }\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/v1/_update",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create witness",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"uuid": "25e24e06-942e-427a-8a34-2d82c83dbe1b"
+					},
+					{
+						"key": "User-Agent",
+						"value": "insomnia/2023.5.8",
+						"uuid": "7fb6d413-aa1d-4971-a630-be70314a0070"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "e08ff391-ca10-4df3-99f5-eac96cb69c54"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"authToken\": \"16af2771-0736-46f7-a823-b8d8612bd78d\",\n\t\t\t\"userInfo\": {\n\t\t\"id\": 92,\n\t\t\"uuid\": \"585ceb74-311a-4047-9f96-2903e5434722\",\n\t\t\"userName\": \"qasuperuser1\",\n\t\t\"name\": \"Super User\",\n\t\t\"mobileNumber\": \"7474747471\",\n\t\t\"emailId\": \"qasuperuser@gmail.com\",\n\t\t\"locale\": null,\n\t\t\"type\": \"EMPLOYEE\",\n\t\t\"active\": true,\n\t\t\"tenantId\": \"pg\",\n\t\t\"permanentCity\": null\n\t}\n    },\n    \"tenantId\":\"pg\",\n    \"witness\":\n        {\n            \"caseId\":\"94a0f1e9-1e19-45e9-92be-c2e9e0beaa20\",\n            \"individualId\":\"IND-2024-04-21-000017\",\n            \"witnessIdentifier\":\"12\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"}\n        }\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/witness/v1/_create",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"witness",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search witness",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "d9ad7381-91d2-48fd-8007-3dcb8cf360b4"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"uuid": "846a7df9-ed74-4715-86f4-de7721522c7c"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\":{\n            \"id\": 94,\n            \"userName\": \"username\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"0000000000\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 181,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 181,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pb\"\n                }\n            ],\n            \"uuid\": \"cc09e507-e677-4502-9edc-132e3f4b00be\",\n            \"createdDate\": \"04-04-2024 12:50:42\",\n            \"lastModifiedDate\": \"04-04-2024 12:50:42\", \n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"03-07-2024 12:50:42\"\n        },\n         \"authToken\": \"16af2771-0736-46f7-a823-b8d8612bd78d\"\n    },\n    \"tenantId\":\"pg\",\n    \"criteria\":[\n        {\n            \"caseId\":\"94a0f1e9-1e19-45e9-92be-c2e9e0beaa20\"\n        },\n        {\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/witness/v1/_search",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"witness",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update witness",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"uuid": "99c759f6-0565-48de-8a33-9ceb93ec6cac"
+					},
+					{
+						"key": "User-Agent",
+						"value": "insomnia/2023.5.8",
+						"uuid": "32e88cf8-ea92-47aa-b50c-add3a2c0ee1c"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "9089bb30-2ca1-420d-8418-f079f463ce0e"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n         \"authToken\": \"16af2771-0736-46f7-a823-b8d8612bd78d\",\n\t\t\t\"userInfo\": {\n\t\t\"id\": 92,\n            \"uuid\": \"41c1ead4-8dbe-4bbb-a880-21d3e2a077c2\",\n\t\t\"userName\": \"qasuperuser1\",\n\t\t\"name\": \"Super User\",\n\t\t\"mobileNumber\": \"7474747471\",\n\t\t\"emailId\": \"qasuperuser@gmail.com\",\n\t\t\"locale\": null,\n\t\t\"type\": \"EMPLOYEE\",\n\t\t\"active\": true,\n\t\t\"tenantId\": \"pg\",\n\t\t\"permanentCity\": null\n\t}\n    },\n    \"tenantId\":\"pg\",\n    \"witness\":\n        {\n            \"id\": \"ba896e8b-8d91-4ccc-9e3b-1183433f6bcc\",\n            \"caseId\": \"94a0f1e9-1e19-45e9-92be-c2e9e0beaa20\",\n            \"filingNumber\": \"5e95f6a1-4476-4691-a463-b7296e783668\",\n            \"cnrNumber\": \"5e95f6a1-4476-4691-a463-b7296e783668\",\n            \"witnessIdentifier\": \"12\",\n            \"individualId\": \"IND-2024-04-21-000017\",\n            \"remarks\": null,\n            \"isActive\": false,\n            \"auditDetails\": {\n                \"createdBy\": \"585ceb74-311a-4047-9f96-2903e5434722\",\n                \"lastModifiedBy\": \"585ceb74-311a-4047-9f96-2903e5434722\",\n                \"createdTime\": 1715069358336,\n                \"lastModifiedTime\": 1715069358336   \n            },\n            \"additionalDetails\": {\n                \"name\": \"Ram babu\"\n            }\n        }\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/witness/v1/_update",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"witness",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "exist case",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"uuid": "8e60e838-4b1b-4988-b3ae-f315eaa79bc2"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"uuid": "85f076bc-d66e-4bf4-b8ec-edcec72ecfb7"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\": {\n            \"id\": 188,\n            \"userName\": \"devuser5\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"16a7d2e8-a04d-4494-9110-687df70d8700\",\n            \"createdDate\": \"06-05-2024 12:29:35\",\n            \"lastModifiedDate\": \"06-05-2024 12:29:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 12:29:35\"\n        },\n       \"authToken\":  \"16af2771-0736-46f7-a823-b8d8612bd78d\"\n    },\n            \"tenantId\":\"pg\",\n\n    \"criteria\": [\n        {\n            \"filingNumber\": \"CASE-FILING-NO-2024-05-29-000606\"\n        }\n    ]\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/case/case/v1/_exists",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"case",
+						"case",
+						"v1",
+						"_exists"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

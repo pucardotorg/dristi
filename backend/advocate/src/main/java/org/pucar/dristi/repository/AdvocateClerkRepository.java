@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_CLERK_SEARCH_EXCEPTION;
 

@@ -45,6 +45,23 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
-
+    public static final String APPLICATION_ACTIVE_STATUS = "ACTIVE";
+    public static final String INDIVIDUAL_SERVICE_EXCEPTION = "INDIVIDUAL_SERVICE_EXCEPTION";
+    public static final String VALIDATION_EXCEPTION = "VALIDATION_ERROR";
+    public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+    public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
+    public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
+    public static final String RESPONSE_INFO_FACTORY_EXCEPTION = "RESPONSE_INFO_FACTORY_EXCEPTION";
+    public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
+    public static final String QUERY_EXECUTION_FAILED = "QUERY_EXECUTION_FAILED";
+    public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
+    public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+    public static final String TEST_EXCEPTION = "TEST_EXCEPTION";
+    public static final String HEARING_CREATE_EXCEPTION = "Exception while updating hearing";
+    public static final String HEARING_UPDATE_EXCEPTION = "Exception while updating hearing";
+    public static final String HEARING_SEARCH_EXCEPTION = "Exception while Searching hearing";
+    public static final String SEARCH_QUERY_EXCEPTION = "Exception while creating query";
+    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
+    public static final String ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE = "ERROR_WHILE_FETCHING_FROM_APPLICATION_SERVICE";
 
 }
