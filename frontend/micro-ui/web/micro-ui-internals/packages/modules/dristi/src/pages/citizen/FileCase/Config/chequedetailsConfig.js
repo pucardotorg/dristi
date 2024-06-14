@@ -124,7 +124,6 @@ export const chequeDetailsFormConfig = [
     body: [
       {
         type: "amount",
-        component: "CustomInput",
         label: "CS_CHEQUE_AMOUNT",
         isMandatory: true,
         populators: {
