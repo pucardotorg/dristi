@@ -264,6 +264,23 @@ function EFilingCases({ path }) {
     setFormdata(data);
   }, [selected, caseDetails]);
 
+  const closeToast = () => {
+    setShowErrorToast(false);
+    setSuccessToast((prev) => ({
+      ...prev,
+      showSuccessToast: false,
+      successMsg: "",
+    }));
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      closeToast();
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [closeToast]);
+
   const accordion = useMemo(() => {
     return sideMenuConfig.map((parent, pIndex) => ({
       ...parent,
