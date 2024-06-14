@@ -25,11 +25,13 @@ const complainantDetailsFormConfig = [
               complainantLocation: true,
               commonFields: true,
               isEnabled: true,
+              isIndividual: true,
             },
             {
               code: "REPRESENTATIVE",
               name: "Representative of an Entity",
               showCompanyDetails: true,
+              isIndividual: false,
               commonFields: true,
               isVerified: true,
               hasBarRegistrationNo: true,
@@ -60,6 +62,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         isMandatory: true,
         populators: {
+          name: "complainantId",
           inputs: [
             {
               label: "COMPLAINANT_ID",

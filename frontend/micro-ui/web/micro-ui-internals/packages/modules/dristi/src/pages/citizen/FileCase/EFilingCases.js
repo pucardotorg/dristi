@@ -13,6 +13,7 @@ import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
 import { userTypeOptions } from "../registration/config";
+import { useToast } from "../../../components/Toast/useToast";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -76,6 +77,7 @@ function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
+  const toast = useToast();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -98,6 +100,7 @@ function EFilingCases({ path }) {
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
@@ -249,7 +252,7 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining(fieldsRemainingCopy);
+      setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
     }
   }, [caseDetails]);
 
@@ -552,6 +555,7 @@ function EFilingCases({ path }) {
 
   const closeToast = () => {
     setShowErrorToast(false);
+    setErrorMsg("");
     setSuccessToast((prev) => ({
       ...prev,
       showSuccessToast: false,
@@ -914,6 +918,8 @@ function EFilingCases({ path }) {
           return false;
         }
       }
+    } else {
+      return false;
     }
   };
 
@@ -938,9 +944,10 @@ function EFilingCases({ path }) {
           return false;
         }
       }
+    } else {
+      return false;
     }
   };
-
   const complainantValidation = (formData) => {
     if (selected === "complaintDetails") {
       const formDataCopy = structuredClone(formData);
@@ -952,6 +959,34 @@ function EFilingCases({ path }) {
           return false;
         }
       }
+      if (!formData?.complainantId?.complainantId) {
+        setShowErrorToast(true);
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  };
+
+  const signatureValidation = (formData) => {
+    if (selected === "addSignature") {
+      if (
+        !(
+          formData?.advocatesignature &&
+          Object.keys(formData?.advocatesignature)?.length > 0 &&
+          formData?.litigentsignature &&
+          Object.keys(formData?.litigentsignature)?.length > 0
+        )
+      ) {
+        setShowErrorToast(true);
+        setErrorMsg("CS_PLEASE_ADD_SIGNATURE_BEFORE_SUBMIT");
+        return true;
+      }
+    } else {
+      setErrorMsg("");
+      return false;
     }
   };
 
@@ -1005,7 +1040,7 @@ function EFilingCases({ path }) {
   };
 
   const createIndividualUser = async (data, documentData) => {
-    const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
+    const identifierId = documentData ? documentData?.file?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
     const identifierIdDetails = documentData
       ? {
           fileStoreId: identifierId,
@@ -1132,7 +1167,7 @@ function EFilingCases({ path }) {
           }
         }
 
-        if ("ifDataKeyHasValueAsArray" in currentPage) {
+        if ("ifMultipleAddressLocations" in currentPage) {
           const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
           for (let i = 0; i < arrayValue.length; i++) {
             const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
@@ -1800,6 +1835,9 @@ function EFilingCases({ path }) {
     if (formdata.some((data) => complainantValidation(data?.data))) {
       return;
     }
+    if (formdata.some((data) => signatureValidation(data?.data))) {
+      return;
+    }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
@@ -1835,6 +1873,9 @@ function EFilingCases({ path }) {
       })
       .catch(() => {
         setIsDisabled(false);
+      })
+      .finally(() => {
+        toast.success("Successfully Saved Draft");
       });
   };
 
@@ -2176,7 +2217,14 @@ function EFilingCases({ path }) {
               handlePageChange={handlePageChange}
             />
           )}
-          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showErrorToast && (
+            <Toast
+              error={true}
+              label={t(errorMsg ? errorMsg : "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")}
+              isDleteBtn={true}
+              onClose={closeToast}
+            />
+          )}
           {showSuccessToast && <Toast label={t(successMsg)} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>

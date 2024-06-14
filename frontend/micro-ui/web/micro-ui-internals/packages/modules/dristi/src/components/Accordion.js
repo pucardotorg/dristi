@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CustomArrowDownIcon, CustomCompleteIcon, CustomSchedule } from "../icons/svgIndex";
 
 function Accordion({ t, title, handlePageChange, handleAccordionClick, children, parentIndex, isOpen, showConfirmModal }) {
+  const getTime = useMemo(() => {
+    switch (parentIndex) {
+      case 0: {
+        return "04";
+      }
+      case 1: {
+        return "15";
+      }
+      case 2: {
+        return "10";
+      }
+      case 3: {
+        return "05";
+      }
+    }
+  }, [parentIndex]);
+
   return (
     <div key={parentIndex} className="accordion-wrapper">
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={handleAccordionClick}>
         <span>{`${parentIndex + 1}. ${t(title)}`}</span>
         <div className="icon">
           <CustomSchedule />
-          <span style={{ paddingRight: "8px" }}>4m</span>
+          <span style={{ paddingRight: "8px" }}>{getTime}</span>
           <span className="reverse-arrow">
             <CustomArrowDownIcon />
           </span>
