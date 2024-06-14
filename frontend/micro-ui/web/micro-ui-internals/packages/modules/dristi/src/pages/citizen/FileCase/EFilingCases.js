@@ -931,7 +931,6 @@ function EFilingCases({ path }) {
   const demandNoticeFileValidation = (formData) => {
     if (selected === "demandNoticeDetails") {
       const formDataCopy = structuredClone(formData);
-      debugger;
       if ("SelectCustomDragDrop" in formDataCopy) {
         if (
           ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some(
@@ -954,7 +953,6 @@ function EFilingCases({ path }) {
   const complainantValidation = (formData) => {
     if (selected === "complaintDetails") {
       const formDataCopy = structuredClone(formData);
-      debugger;
       if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
         if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
           if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
@@ -981,7 +979,6 @@ function EFilingCases({ path }) {
     checkNameValidation(formData, setValue);
     checkOnlyCharInCheque(formData, setValue);
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
-      debugger;
       chequeDateValidation(formData, setError, clearErrors);
       showDemandNoticeModal(setValue, formData, setError, clearErrors, index);
       validateDateForDelayApplication(setValue);

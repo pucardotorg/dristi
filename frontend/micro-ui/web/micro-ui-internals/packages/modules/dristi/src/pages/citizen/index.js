@@ -1,17 +1,17 @@
-import { AppContainer, BackButton, HelpOutlineIcon, Loader, PrivateRoute } from "@egovernments/digit-ui-react-components";
+import { BackButton, Loader, PrivateRoute, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { Switch, useRouteMatch } from "react-router-dom";
-
 import { useTranslation } from "react-i18next";
+import { Switch, useRouteMatch } from "react-router-dom";
 import { Route, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { useToast } from "../../components/Toast/useToast";
+import ApplicationDetails from "../employee/ApplicationDetails";
 import CitizenHome from "./Home";
 import LandingPage from "./Home/LandingPage";
-import ApplicationDetails from "../employee/ApplicationDetails";
-import BreadCrumb from "../../components/BreadCrumb";
 import { userTypeOptions } from "./registration/config";
 
 const App = ({ stateCode, tenantId }) => {
   const [hideBack, setHideBack] = useState(false);
+  const { toastMessage, toastType, closeToast } = useToast();
   const Digit = window?.Digit || {};
   const { path } = useRouteMatch();
   const location = useLocation();
@@ -116,7 +116,7 @@ const App = ({ stateCode, tenantId }) => {
   }
 
   return (
-    <span className={"pt-citizen"}>
+    <div className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
           {!hideBack && !(location.pathname.includes("/login") || individualId) && (
@@ -137,9 +137,9 @@ const App = ({ stateCode, tenantId }) => {
           <div
             className={
               location.pathname.includes("/response") ||
-                location.pathname.includes("/login") ||
-                location.pathname.includes("/registration") ||
-                location.pathname.endsWith("/home")
+              location.pathname.includes("/login") ||
+              location.pathname.includes("/registration") ||
+              location.pathname.endsWith("/home")
                 ? `user-registration`
                 : ""
             }
@@ -166,7 +166,15 @@ const App = ({ stateCode, tenantId }) => {
           </Route>
         </React.Fragment>
       </Switch>
-    </span>
+      {toastMessage && (
+        <Toast
+          style={{ right: 24, left: "unset" }}
+          label={toastMessage}
+          onClose={closeToast}
+          {...(toastType !== "success" && { [toastType]: true })}
+        />
+      )}
+    </div>
   );
 };
 
