@@ -138,6 +138,25 @@ export const reviewCaseFileFormConfig = [
               ],
               data: DemandDummy,
             },
+            {
+              key: "delayApplications",
+              name: "delayApplications",
+              label: "CS_DELAY_CONDONATION_APPLICATION",
+              icon: "DemandDetailsNoticeIcon",
+              config: [
+                { type: "text", label: "CS_QUESTION_DELAY_APPLICATION", value: "delayApplicationType.name" },
+                { type: "text", label: "CS_TEXTAREA_HEADER_DELAY_REASON", value: "delayApplicationReason.reasonForDelay" },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: ["condonationFileUpload.document"],
+                  docName: {
+                    "condonationFileUpload.document": "CS_DELAY_CONDONATION_APPLICATION",
+                  },
+                },
+              ],
+              data: DemandDummy,
+            },
           ],
         },
       },

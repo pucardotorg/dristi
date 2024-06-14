@@ -60,6 +60,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         isMandatory: true,
         populators: {
+          name: "complainantId",
           inputs: [
             {
               label: "COMPLAINANT_ID",
