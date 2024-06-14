@@ -1568,6 +1568,7 @@ function EFilingCases({ path }) {
                     const document = await onDocumentUpload(docWithNameData?.document[0], docWithNameData?.document[0]?.name).then(async (data) => {
                       const evidenceData = await DRISTIService.createEvidence({
                         artifact: {
+                          artifactType: "complainant",
                           caseId: caseDetails?.id,
                           tenantId,
                           comments: [],

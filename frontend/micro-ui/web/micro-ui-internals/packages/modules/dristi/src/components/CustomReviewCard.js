@@ -15,6 +15,9 @@ function CustomReviewCard({
   titleHeading,
   setIsImageModal,
 }) {
+  if (data?.isAdvocateRepresenting?.code === "NO") {
+    return null;
+  }
   return (
     <div className="item-body">
       {config.map((item, i) => {
