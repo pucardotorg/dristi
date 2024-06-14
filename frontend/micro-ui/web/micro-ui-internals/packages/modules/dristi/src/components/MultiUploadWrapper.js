@@ -12,12 +12,12 @@ const fileValidationStatus = (file, regex, maxSize, t, notSupportedError, maxFil
   const status = { valid: true, name: file?.name?.substring(0, 15), error: "" };
   if (!file) return;
 
-  if (!regex.test(file.type) && file.size / 1024 / 1024 > maxSize) {
+  if (!regex.test(file.name) && file.size / 1024 / 1024 > maxSize) {
     status.valid = false;
     status.error = t(`NOT_SUPPORTED_FILE_TYPE_AND_FILE_SIZE_EXCEEDED_5MB`);
   }
 
-  if (!regex.test(file.type)) {
+  if (!regex.test(file.name)) {
     status.valid = false;
     status.error = t(notSupportedError ? notSupportedError : `NOT_SUPPORTED_FILE_TYPE`);
   }
