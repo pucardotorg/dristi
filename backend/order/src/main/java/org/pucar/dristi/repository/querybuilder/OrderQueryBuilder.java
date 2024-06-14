@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class OrderQueryBuilder {
@@ -37,60 +39,50 @@ public class OrderQueryBuilder {
     public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_EXIST_QUERY);
-
-            if (orderNumber != null && cnrNumber != null && filingNumber == null) {
-                // orderNumber and cnrNumber are not null, filingNumber is null
-                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(" AND ");
-                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
-
-            } else if (orderNumber != null && cnrNumber == null && filingNumber != null) {
-                // orderNumber and filingNumber are not null, cnrNumber is null
-                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(" AND ");
-                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-
-            } else if (orderNumber == null && cnrNumber != null && filingNumber != null) {
-                // cnrNumber and filingNumber are not null, orderNumber is null
-                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
-                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-
-            } else if (orderNumber != null && cnrNumber == null) {
-                // Only orderNumber is not null, cnrNumber and filingNumber are null
-                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(";");
-
-            } else if (orderNumber == null && cnrNumber != null) {
-                // Only cnrNumber is not null, orderNumber and filingNumber are null
-                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(";");
-
-            } else if (orderNumber == null && filingNumber != null) {
-                // Only filingNumber is not null, orderNumber and cnrNumber are null
-                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-
-            } else if (orderNumber != null) {
-                // All fields are not null
-                query.append("orders.ordernumber = ").append("'").append(orderNumber).append("'").append(" AND ");
-                query.append("orders.cnrnumber = ").append("'").append(cnrNumber).append("'").append(" AND ");
-                query.append("orders.filingnumber = ").append("'").append(filingNumber).append("'").append(";");
-            }
-
-            return query.toString();
-        } catch (Exception e) {
-            log.error("Error while building order exist query");
-            throw new CustomException("ORDER_EXISTS_ERROR", "Error occurred while building the order exist query : " + e.getMessage());
-        }
-    }
-
-
-    public String getOrderSearchQuery(String cnrNumber, String filingNumber, String tenantId, String id, String status) {
-        try {
-            StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
-            query.append(FROM_ORDERS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
             if (cnrNumber!=null) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
+            }
 
+            if (filingNumber!=null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.filingnumber =").append("'").append(filingNumber).append("'");
+                firstCriteria = false;
+            }
+
+            if (orderNumber!=null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.ordernumber =").append("'").append(orderNumber).append("'");
+                firstCriteria = false;
+            }
+
+            return query.toString();
+        } catch (Exception e) {
+            log.error("Error while building order exist query :: {}",e.toString());
+            throw new CustomException(ORDER_EXISTS_EXCEPTION, "Error occurred while building the order exist query : " + e.getMessage());
+        }
+    }
+
+
+    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+        try {
+            StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
+            query.append(FROM_ORDERS_TABLE);
+            boolean firstCriteria = true; // To check if it's the first criteria
+
+            if (applicationNumber!=null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.applicationNumber::text LIKE '%\"").append(applicationNumber).append("\"%'");
+                firstCriteria = false;
+            }
+
+            if (cnrNumber!=null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
+                firstCriteria = false;
             }
 
             if (filingNumber!=null) {
@@ -121,16 +113,8 @@ public class OrderQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building order search query");
-            throw new CustomException("ORDER_SEARCH_QUERY_EXCEPTION", "Error occurred while building the order search query: " + e.getMessage());
-        }
-    }
-
-    private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
-        if (isFirstCriteria) {
-            query.append(" WHERE ");
-        } else {
-            query.append(" OR ");
+            log.error("Error while building order search query :: {}",e.toString());
+            throw new CustomException(ORDER_SEARCH_EXCEPTION, "Error occurred while building the order search query: " + e.getMessage());
         }
     }
 
@@ -147,8 +131,8 @@ public class OrderQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.getMessage());
+            log.error("Error while building document search query :: {}",e.toString());
+            throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
         }
     }
 
@@ -166,8 +150,16 @@ public class OrderQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.getMessage());
+            log.error("Error while building statute search query :: {}",e.toString());
+            throw new CustomException(STATUTE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the query: " + e.getMessage());
+        }
+    }
+
+    private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
+        if (isFirstCriteria) {
+            query.append(" WHERE ");
+        } else {
+            query.append(" AND ");
         }
     }
 }

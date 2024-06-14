@@ -93,7 +93,7 @@ public class OrderRegistrationValidatorTest {
         // Mock repository response
         List<Order> existingApplications = new ArrayList<>();
         existingApplications.add(order);
-        when(repository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(existingApplications);
+        when(repository.getApplications(any(),anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(existingApplications);
 
         // Mock MDMS data
         Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
