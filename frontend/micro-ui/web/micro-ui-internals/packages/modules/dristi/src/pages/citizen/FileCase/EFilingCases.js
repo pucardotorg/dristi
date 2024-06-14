@@ -1132,7 +1132,7 @@ function EFilingCases({ path }) {
           }
         }
 
-        if ("ifDataKeyHasValueAsArray" in currentPage) {
+        if ("ifMultipleAddressLocations" in currentPage) {
           const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
           for (let i = 0; i < arrayValue.length; i++) {
             const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
