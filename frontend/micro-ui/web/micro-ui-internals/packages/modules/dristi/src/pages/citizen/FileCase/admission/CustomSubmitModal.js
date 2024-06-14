@@ -6,7 +6,7 @@ import Button from "../../../../components/Button";
 
 const mockSubmitModalInfo = {
   header: "The case file has been admitted successfully.",
-  subHeader: "Case updates with file number has been sent to all parties via SMS.",
+  subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE.",
   caseInfo: [
     {
       key: "Case Number",
