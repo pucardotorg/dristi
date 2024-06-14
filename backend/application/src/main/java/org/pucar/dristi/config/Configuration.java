@@ -89,4 +89,18 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String caseExistsPath;
+
+    //Application topic
+    @Value("${application.kafka.create.topic}")
+    private String applicationCreateTopic;
+
+    @Value("${application.kafka.update.topic}")
+    private String applicationUpdateTopic;
 }

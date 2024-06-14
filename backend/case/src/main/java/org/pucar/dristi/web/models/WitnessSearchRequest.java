@@ -21,23 +21,23 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WitnessSearchRequest   {
-        @JsonProperty("requestInfo")
+public class WitnessSearchRequest {
 
-          @Valid
-                private RequestInfo requestInfo = null;
+    @JsonProperty("RequestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-        @JsonProperty("searchCriteria")
-          @Valid
-                private List<WitnessSearchCriteria> searchCriteria = null;
+    @JsonProperty("searchCriteria")
+    @Valid
+    private List<WitnessSearchCriteria> searchCriteria = null;
 
 
-        public WitnessSearchRequest addSearchCriteriaItem(WitnessSearchCriteria searchCriteriaItem) {
-            if (this.searchCriteria == null) {
+    public WitnessSearchRequest addSearchCriteriaItem(WitnessSearchCriteria searchCriteriaItem) {
+        if (this.searchCriteria == null) {
             this.searchCriteria = new ArrayList<>();
-            }
+        }
         this.searchCriteria.add(searchCriteriaItem);
         return this;
-        }
+    }
 
 }

@@ -1,0 +1,303 @@
+serviceMaps:
+  serviceName: case-services
+  mappings:
+    - version: 1.0
+      description: Persists case details in tables
+      fromTopic: save-case-application
+      isTransaction: true
+      module: CASE
+      objectIdJsonPath: $.id
+      tenantIdJsonPath: $.tenantId
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.cases
+      queryMaps:
+        - query: INSERT INTO dristi_cases(id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber,cnrnumber,courtcasenumber, accesscode, isactive, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases
+          jsonMaps:
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.tenantId
+            - jsonPath: $.cases.resolutionMechanism
+            - jsonPath: $.cases.caseTitle
+            - jsonPath: $.cases.caseDescription
+            - jsonPath: $.cases.filingNumber
+            - jsonPath: $.cases.caseNumber
+            - jsonPath: $.cases.cnrNumber
+            - jsonPath: $.cases.courtCaseNumber
+            - jsonPath: $.cases.accessCode
+            - jsonPath: $.cases.isActive
+            - jsonPath: $.cases.courtId
+            - jsonPath: $.cases.benchId
+            - jsonPath: $.cases.filingDate
+            - jsonPath: $.cases.registrationDate
+            - jsonPath: $.cases.caseCategory
+            - jsonPath: $.cases.natureOfPleading
+            - jsonPath: $.cases.status
+            - jsonPath: $.cases.remarks
+            - jsonPath: $.cases.caseDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.auditDetails.createdBy
+            - jsonPath: $.cases.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.auditDetails.createdTime
+            - jsonPath: $.cases.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_linked_case(id, relationshiptype, casenumbers, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases.linkedCases.*
+          jsonMaps:
+            - jsonPath: $.cases.linkedCases.*.id
+            - jsonPath: $.cases.linkedCases.*.relationshipType
+            - jsonPath: $.cases.linkedCases.*.caseNumber
+            - jsonPath: $.cases.linkedCases.*.isActive
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.linkedCases.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.linkedCases.*.auditDetails.createdBy
+            - jsonPath: $.cases.linkedCases.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.linkedCases.*.auditDetails.createdTime
+            - jsonPath: $.cases.linkedCases.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_case_statutes_and_sections(id, tenantid, statutes, sections, subsections, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases.statutesAndSections.*
+          jsonMaps:
+            - jsonPath: $.cases.statutesAndSections.*.id
+            - jsonPath: $.cases.statutesAndSections.*.tenantId
+            - jsonPath: $.cases.statutesAndSections.*.statute
+            - jsonPath: $.cases.statutesAndSections.*.strSections
+            - jsonPath: $.cases.statutesAndSections.*.strSubsections
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.statutesAndSections.*.additionalDetails
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.createdBy
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.createdTime
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.dristi_case_litigants(id, tenantid, partycategory, individualid, organisationid, partytype, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases.litigants.*
+          jsonMaps:
+            - jsonPath: $.cases.litigants.*.id
+            - jsonPath: $.cases.litigants.*.tenantId
+            - jsonPath: $.cases.litigants.*.partyCategory
+            - jsonPath: $.cases.litigants.*.individualId
+            - jsonPath: $.cases.litigants.*.organisationID
+            - jsonPath: $.cases.litigants.*.partyType
+            - jsonPath: $.cases.litigants.*.isActive
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.litigants.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.litigants.*.auditDetails.createdBy
+            - jsonPath: $.cases.litigants.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.litigants.*.auditDetails.createdTime
+            - jsonPath: $.cases.litigants.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.dristi_case_representatives(id, tenantid, advocateid, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases.representatives.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.id
+            - jsonPath: $.cases.representatives.*.tenantId
+            - jsonPath: $.cases.representatives.*.advocateId
+            - jsonPath: $.cases.representatives.*.isActive
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.representatives.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.representatives.*.auditDetails.createdBy
+            - jsonPath: $.cases.representatives.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.representatives.*.auditDetails.createdTime
+            - jsonPath: $.cases.representatives.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.dristi_case_representing(id, tenantid, partycategory, individualid, organisationid, case_id, partytype, isactive, representative_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: cases.representatives.*.representing.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.representing.*.id
+            - jsonPath: $.cases.representatives.*.representing.*.tenantId
+            - jsonPath: $.cases.representatives.*.representing.*.partyCategory
+            - jsonPath: $.cases.representatives.*.representing.*.individualId
+            - jsonPath: $.cases.representatives.*.representing.*.organisationID
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.representatives.*.representing.*.partyType
+            - jsonPath: $.cases.representatives.*.representing.*.isActive
+            - jsonPath: $.cases.representatives[*][?({id} in @.representing[*].id)].id
+            - jsonPath: $.cases.representatives.*.representing.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.createdBy
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.createdTime
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType,case_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: cases.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.documents.*.id
+            - jsonPath: $.cases.documents.*.fileStore
+            - jsonPath: $.cases.documents.*.documentUid
+            - jsonPath: $.cases.documents.*.documentType
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, litigant_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: cases.litigants.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.litigants.*.documents.*.id
+            - jsonPath: $.cases.litigants.*.documents.*.fileStore
+            - jsonPath: $.cases.litigants.*.documents.*.documentUid
+            - jsonPath: $.cases.litigants.*.documents.*.documentType
+            - jsonPath: $.cases.litigants[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.litigants.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representative_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: cases.representatives.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.documents.*.id
+            - jsonPath: $.cases.representatives.*.documents.*.fileStore
+            - jsonPath: $.cases.representatives.*.documents.*.documentUid
+            - jsonPath: $.cases.representatives.*.documents.*.documentType
+            - jsonPath: $.cases.representatives[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.representatives.*.documents.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+        - query: INSERT INTO dristi_case_document(id,fileStore,documentUid,documentType, representing_id, additionalDetails) VALUES (?, ?, ?, ?, ?, ?);
+          basePath: cases.representatives.*.representing.*.documents.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.id
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.fileStore
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.documentUid
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.documentType
+            - jsonPath: $.cases.representatives.*.representing[*][?({id} in @.documents[*].id)].id
+            - jsonPath: $.cases.representatives.*.representing.*.documents.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+
+    - version: 1.0
+      description: Update case details in tables
+      fromTopic: update-case-application
+      isTransaction: true
+      queryMaps:
+        - query: INSERT INTO dristi_cases (id, tenantid, resolutionmechanism, casetitle, casedescription, filingnumber, casenumber, accesscode, isactive, courtid, benchid, filingdate, registrationdate, casecategory, natureofpleading, status, remarks, casedetails, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, resolutionmechanism = EXCLUDED.resolutionmechanism, casetitle = EXCLUDED.casetitle, casedescription = EXCLUDED.casedescription, filingnumber = EXCLUDED.filingnumber, casenumber = EXCLUDED.casenumber, accesscode = EXCLUDED.accesscode, courtid = EXCLUDED.courtid, benchid = EXCLUDED.benchid, filingdate = EXCLUDED.filingdate, registrationdate = EXCLUDED.registrationdate, casecategory = EXCLUDED.casecategory, natureofpleading = EXCLUDED.natureofpleading, status = EXCLUDED.status, remarks = EXCLUDED.remarks, isactive = EXCLUDED.isactive, casedetails = EXCLUDED.casedetails, additionaldetails = EXCLUDED.additionaldetails, createdby = EXCLUDED.createdby, lastmodifiedby = EXCLUDED.lastmodifiedby, createdtime = EXCLUDED.createdtime, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: cases
+          jsonMaps:
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.tenantId
+            - jsonPath: $.cases.resolutionMechanism
+            - jsonPath: $.cases.caseTitle
+            - jsonPath: $.cases.caseDescription
+            - jsonPath: $.cases.filingNumber
+            - jsonPath: $.cases.caseNumber
+            - jsonPath: $.cases.accessCode
+            - jsonPath: $.cases.isActive
+            - jsonPath: $.cases.courtId
+            - jsonPath: $.cases.benchId
+            - jsonPath: $.cases.filingDate
+            - jsonPath: $.cases.registrationDate
+            - jsonPath: $.cases.caseCategory
+            - jsonPath: $.cases.natureOfPleading
+            - jsonPath: $.cases.status
+            - jsonPath: $.cases.remarks
+            - jsonPath: $.cases.caseDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.auditDetails.createdBy
+            - jsonPath: $.cases.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.auditDetails.createdTime
+            - jsonPath: $.cases.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_linked_case (id, relationshiptype, casenumbers, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET relationshiptype = EXCLUDED.relationshiptype, casenumbers = EXCLUDED.casenumbers, isactive = EXCLUDED.isactive, case_id = EXCLUDED.case_id, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: cases.linkedCases.*
+          jsonMaps:
+            - jsonPath: $.cases.linkedCases.*.id
+            - jsonPath: $.cases.linkedCases.*.relationshipType
+            - jsonPath: $.cases.linkedCases.*.caseNumber
+            - jsonPath: $.cases.linkedCases.*.isActive
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.linkedCases.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.linkedCases.*.auditDetails.createdBy
+            - jsonPath: $.cases.linkedCases.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.linkedCases.*.auditDetails.createdTime
+            - jsonPath: $.cases.linkedCases.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_case_statutes_and_sections (id, tenantid, statutes, sections, subsections, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET statutes = EXCLUDED.statutes, sections = EXCLUDED.sections, subsections = EXCLUDED.subsections, case_id = EXCLUDED.case_id, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: cases.statutesAndSections.*
+          jsonMaps:
+            - jsonPath: $.cases.statutesAndSections.*.id
+            - jsonPath: $.cases.statutesAndSections.*.tenantId
+            - jsonPath: $.cases.statutesAndSections.*.statute
+            - jsonPath: $.cases.statutesAndSections.*.strSections
+            - jsonPath: $.cases.statutesAndSections.*.strSubsections
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.statutesAndSections.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.createdBy
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.createdTime
+            - jsonPath: $.cases.statutesAndSections.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO public.dristi_case_litigants (id, tenantid, partycategory, individualid, organisationid, partytype, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET partycategory = EXCLUDED.partycategory, individualid = EXCLUDED.individualid, organisationid = EXCLUDED.organisationid, case_id = EXCLUDED.case_id, partytype = EXCLUDED.partytype, isactive = EXCLUDED.isactive, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: cases.litigants.*
+          jsonMaps:
+            - jsonPath: $.cases.litigants.*.id
+            - jsonPath: $.cases.litigants.*.tenantId
+            - jsonPath: $.cases.litigants.*.partyCategory
+            - jsonPath: $.cases.litigants.*.individualId
+            - jsonPath: $.cases.litigants.*.organisationID
+            - jsonPath: $.cases.litigants.*.partyType
+            - jsonPath: $.cases.litigants.*.isActive
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.litigants.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.litigants.*.auditDetails.createdBy
+            - jsonPath: $.cases.litigants.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.litigants.*.auditDetails.createdTime
+            - jsonPath: $.cases.litigants.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_case_representatives (id, tenantid, advocateid, isactive, case_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, advocateid = EXCLUDED.advocateid, isactive = EXCLUDED.isactive, case_id = EXCLUDED.case_id, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: cases.representatives.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.id
+            - jsonPath: $.cases.representatives.*.tenantId
+            - jsonPath: $.cases.representatives.*.advocateId
+            - jsonPath: $.cases.representatives.*.isActive
+            - jsonPath: $.cases.id
+            - jsonPath: $.cases.representatives.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.representatives.*.auditDetails.createdBy
+            - jsonPath: $.cases.representatives.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.representatives.*.auditDetails.createdTime
+            - jsonPath: $.cases.representatives.*.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_case_representing (id, tenantid, partycategory, individualid, organisationid, case_id, partytype, isactive, representative_id, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET partycategory = EXCLUDED.partycategory, individualid = EXCLUDED.individualid, organisationid = EXCLUDED.organisationid, case_id = EXCLUDED.case_id, partytype = EXCLUDED.partytype, isactive = EXCLUDED.isactive, representative_id = EXCLUDED.representative_id, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: cases.representatives.*.representing.*
+          jsonMaps:
+            - jsonPath: $.cases.representatives.*.representing.*.id
+            - jsonPath: $.cases.representatives.*.representing.*.tenantId
+            - jsonPath: $.cases.representatives.*.representing.*.partyCategory
+            - jsonPath: $.cases.representatives.*.representing.*.individualId
+            - jsonPath: $.cases.representatives.*.representing.*.organisationID
+            - jsonPath: $.cases.representatives.*.representing.*.caseId
+            - jsonPath: $.cases.representatives.*.representing.*.partyType
+            - jsonPath: $.cases.representatives.*.representing.*.isActive
+            - jsonPath: $.cases.representatives[*][?({id} in @.representing[*].id)].id
+            - jsonPath: $.cases.representatives.*.representing.*.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.createdBy
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedBy
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.createdTime
+            - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedTime

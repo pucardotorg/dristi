@@ -98,6 +98,11 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: status
+          in: query
+          description: Search by status
+          schema:
+            type: string
         - name: limit
           in: query
           description: No of records return
@@ -217,7 +222,7 @@ components:
           type: boolean
 
     Application:
-      required: [tenantId, createdDate, applicationType, status, isActive]
+      required: [tenantId, caseId, createdDate, applicationType, status, isActive]
       type: object
       properties:
         id:
@@ -230,6 +235,9 @@ components:
         tenantId:
           type: string
           description: This is tenantId of the case
+        caseId:
+          type: string
+          description: This is the caseId of the associated case
         filingNumber:
           type: string
           description: the associated case
@@ -245,7 +253,7 @@ components:
         createdDate:
           type: string
           format: datetime
-          description: the date on which the order was created. Can be treated as the start date also
+          description: the date on which the application was created
         createdBy:
           type: string
           format: uuid
@@ -257,12 +265,8 @@ components:
             format: uuid
             description: ID of the users for whom the application has been raised
         applicationType:
-          type: array
-          items:
-            type: string
-            format: uuid
-            minLength: 36
-            maxLength: 36
+          type: string
+          format: uuid
           description: array of Master Data ID since an application can be of multiple application types
         applicationNumber:
           type: string
