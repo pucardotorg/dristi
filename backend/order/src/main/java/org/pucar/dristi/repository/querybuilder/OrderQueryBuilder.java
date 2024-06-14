@@ -41,19 +41,19 @@ public class OrderQueryBuilder {
             StringBuilder query = new StringBuilder(BASE_ORDER_EXIST_QUERY);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            if (cnrNumber!=null) {
+            if (cnrNumber!=null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
 
-            if (filingNumber!=null) {
+            if (filingNumber!=null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.filingnumber =").append("'").append(filingNumber).append("'");
                 firstCriteria = false;
             }
 
-            if (orderNumber!=null) {
+            if (orderNumber!=null && !orderNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.ordernumber =").append("'").append(orderNumber).append("'");
                 firstCriteria = false;
@@ -73,38 +73,38 @@ public class OrderQueryBuilder {
             query.append(FROM_ORDERS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            if (applicationNumber!=null) {
+            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.applicationNumber::text LIKE '%\"").append(applicationNumber).append("\"%'");
                 firstCriteria = false;
             }
 
-            if (cnrNumber!=null) {
+            if (cnrNumber!=null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.cnrNumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
 
-            if (filingNumber!=null) {
+            if (filingNumber!=null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.filingnumber =").append("'").append(filingNumber).append("'");
                 firstCriteria = false;
             }
 
-            if (tenantId!=null) {
+            if (tenantId!=null && !tenantId.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.tenantid =").append("'").append(tenantId).append("'");
                 firstCriteria = false;
             }
 
-            if (id!=null) {
+            if (id!=null && !id.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.id = ").append("'").append(id).append("'");
                 firstCriteria = false;
 
             }
 
-            if (status!=null) {
+            if (status!=null && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.status =").append("'").append(status).append("'");
                 firstCriteria = false;
