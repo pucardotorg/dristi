@@ -144,7 +144,7 @@ public class WorkflowService {
                 .businessService("CE")
                 .businessId(caseCriteria.getFilingNumber())
                 .comment("Payment for Case processed")
-                .moduleName("BillingServices")
+                .moduleName("BillingService")
                 .tenantId(tenantId)
                 .action("PAY")
                 .build();
