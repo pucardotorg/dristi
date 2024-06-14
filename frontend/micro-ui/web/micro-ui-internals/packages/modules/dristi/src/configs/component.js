@@ -13,7 +13,7 @@ export const idProofVerificationConfig = [
               type: "dropdown",
               name: "selectIdTypeType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               isMandatory: true,
               disableFormValidation: false,

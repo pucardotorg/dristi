@@ -81,6 +81,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       ...prev,
       showModal: false,
     }));
+    onSelect(config?.key, { ...formData?.[config.key], otpNumber: "" });
   };
 
   const resendOtp = async (input) => {
@@ -298,7 +299,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-          actionCancelOnSubmit={() => { }}
+          actionCancelOnSubmit={() => {}}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
             if (!formData[config.key]?.[input?.name])
@@ -319,27 +320,31 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
-                  `${input?.hasMobileNo
-                    ? formData[config.key]?.[input?.mobileNoKey]
-                      ? input?.isMobileSecret
-                        ? input?.mobileCode
-                          ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                          : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                        : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                  `${
+                    input?.hasMobileNo
+                      ? formData[config.key]?.[input?.mobileNoKey]
+                        ? input?.isMobileSecret
+                          ? input?.mobileCode
+                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
+                        : ""
                       : ""
-                    : ""
                   }`}
               </CardLabel>
               <div className="field">
                 {input?.type === "text" && (
                   <TextInput
-                    className={`field desktop-w-full verify-mobile-otp-input ${formData?.[config.key][input.name] &&
+                    className={`field desktop-w-full verify-mobile-otp-input ${
+                      formData?.[config.key][input.name] &&
                       formData?.[config.key][input.name].length > 0 &&
                       !["documentUpload", "radioButton"].includes(input.type) &&
                       input.validation &&
                       !formData?.[config.key][input.name].match(
                         window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
-                      ) && "error"}`}
+                      ) &&
+                      "error"
+                    }`}
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
