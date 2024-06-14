@@ -412,6 +412,6 @@ export const respondentconfig = {
   subtext: "CS_RESPONDENT_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_RESPONDENT",
-  formItemName: "Respondent",
+  formItemName: "CS_RESPONDENT",
   className: "respondent",
 };

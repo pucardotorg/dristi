@@ -222,7 +222,7 @@ export const chequeDetailsConfig = {
   subtext: "CS_CHEQUE_DETAILS_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_CHEQUE",
-  formItemName: "Cheque",
+  formItemName: "CS_CHEQUE",
   className: "cheque",
   selectDocumentName: {
     bouncedChequeFileUpload: "CS_BOUNCED_CHEQUE",
