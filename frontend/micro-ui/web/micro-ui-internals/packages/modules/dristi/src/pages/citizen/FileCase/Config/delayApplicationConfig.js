@@ -10,7 +10,7 @@ const delayApplicationFormConfig = [
           label: "CS_QUESTION_DELAY_APPLICATION",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
