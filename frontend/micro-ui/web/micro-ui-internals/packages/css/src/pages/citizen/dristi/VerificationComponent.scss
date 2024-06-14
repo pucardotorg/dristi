@@ -1,0 +1,169 @@
+.citizen-form-wrapper .app-container {
+  @extend .light-background;
+  width: 100%;
+  form {
+    .card {
+      max-width: 960px;
+      h2.verification-button-text-modal {
+        text-align: left;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #fff !important;
+      }
+      h2.default-text {
+        color: theme(colors.text.primary) !important;
+      }
+      h2.error-text {
+        color: #b91900 !important;
+      }
+      h2.secondary-label-selector {
+        text-align: left;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
+      }
+      h2.tertiary-label-selector {
+        text-align: left;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
+      }
+      .field-container {
+        max-width: 540px;
+      }
+      button {
+        background-color: #007e7e;
+      }
+      button.secondary-button-selector {
+        width: 200px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        border: 1px solid #007e7e;
+        background-color: transparent !important;
+        box-shadow: none;
+      }
+      button.tertiary-button-selector {
+        width: 200px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        background-color: transparent !important;
+        color: #007e7e;
+        border: none;
+        box-shadow: none;
+      }
+      button.selector-button-primary {
+        width: 100px;
+        height: 40px;
+        padding: 8px 24px 8px 24px;
+        gap: 4px;
+        background-color: #007e7e !important;
+        color: #fff;
+        border: none;
+        box-shadow: none;
+      }
+      .card-text-button {
+        @extend .light-primary-button;
+        text-align: left;
+      }
+    }
+  }
+}
+
+.break-line {
+  margin: 0 !important;
+}
+.label-field-pair {
+}
+.button-field {
+  display: flex;
+}
+
+.info-banner-wrap {
+  margin: 0 !important;
+}
+
+.tertiary-button-selector {
+  background-color: transparent !important;
+}
+
+.popup-module {
+  width: 480px;
+  margin: 0 auto;
+  @apply bg-white;
+
+  .popup-module-main {
+    @apply px-lg pb-lg;
+  }
+
+  .popup-module-action-bar {
+    gap: 16px;
+    @apply flex flex-row justify-end;
+  }
+}
+
+.form-composer-id-proof-card {
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  margin-bottom: 16px;
+}
+
+.header-wrap {
+  border-bottom: 1px solid lightgrey;
+  margin-bottom: 0;
+}
+
+@screen dt {
+  .header-wrap {
+    border-bottom: 1px solid lightgrey;
+    margin-bottom: 0;
+  }
+  .popup-module {
+    width: 588px;
+    margin: auto;
+    @apply bg-white;
+
+    .popup-module-main {
+      @apply px-lg pb-lg;
+      padding: 0px 24px 16px 24px !important;
+    }
+    .popup-module-main {
+      @apply w-full p-sm h-full;
+    }
+
+    .popup-module-action-bar {
+      gap: 16px;
+      @apply flex flex-row justify-end;
+    }
+  }
+  .docviewer-wrapper {
+    margin-left: 0px !important;
+
+    .doc-viewer-card-style {
+      width: fit-content !important;
+    }
+
+    #pdf-controls {
+      display: none !important;
+    }
+  }
+}
+
+.docviewer-wrapper {
+  margin-left: 0px !important;
+
+  #pdf-controls {
+    display: none !important;
+  }
+}

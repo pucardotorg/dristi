@@ -2,35 +2,189 @@ name: dristi workflow
 on:
   push:
     branches:
-      - main    
-  workflow_dispatch:    
+      - develop
+  pull_request:
+    branches:
+      - develop
+  workflow_dispatch:
 jobs:
-  docker_image-build:
+ docker_image-build:
+    outputs:
+      run_job_advocate: ${{ steps.check_files.outputs.run_job_advocate }}
+      run_job_case: ${{ steps.check_files.outputs.run_job_case }}
+      run_job_order: ${{ steps.check_files.outputs.run_job_order }}
+      run_job_application: ${{ steps.check_files.outputs.run_job_application }}
+      run_job_evidence: ${{ steps.check_files.outputs.run_job_evidence }}
+      run_job_digit_ui: ${{ steps.check_files.outputs.run_job_digit_ui }}
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: Setup Docker
-      uses: docker/setup-buildx-action@v1
-    # Login to Azure Container Registry
-    - name: Login to Azure Container Registry
-      run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
-      
-    # - name: Build and Push Docker image for advocate
-    #   run: |
-    #        docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:latest -f build/maven/Dockerfile .
-    #        docker tag pucar_advocate:latest pucardev.azurecr.io/pucar_advocate:latest
-    #        docker push pucardev.azurecr.io/pucar_advocate:latest
-           
-    # - name: Build and Push Docker image for case
-    #   run: |
-    #        docker build --build-arg WORK_DIR="backend/artifacts" -t pucar_artifacts:latest -f build/maven/Dockerfile .
-    #        docker tag pucar_artifacts:latest pucardev.azurecr.io/pucar_artifacts:latest
-    #        docker push pucardev.azurecr.io/pucar_artifacts:latest
-           
-    # - name: Build and Push Docker image for case
-    #   run: |
-    #        docker build --build-arg WORK_DIR="backend/case" -t pucar_case:latest -f build/maven/Dockerfile .
-    #        docker tag pucar_case:latest pucardev.azurecr.io/pucar_case:latest
-    #        docker push pucardev.azurecr.io/pucar_case:latest
-    
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: check modified files
+        id: check_files
+        run: |
+          echo "=============== list modified files ==============="
+          git diff --name-only HEAD^ HEAD
+          
+          echo "========== check paths of modified files =========="
+          git diff --name-only HEAD^ HEAD > files.txt
+          run_job_advocate=false
+          run_job_case=false 
+          run_job_order=false
+          run_job_application=false
+          run_job_evidence=false
+          run_job_digit_ui=false
+          while IFS= read -r file
+          do
+            if [[ $file == backend/advocate/* ]]; then
+              echo "This modified file is under the 'advocate' folder."
+              run_job_advocate=true
+            elif [[ $file == backend/case/* ]]; then
+              echo "This modified file is under the 'case' folder."
+              run_job_case=true
+            elif [[ $file == backend/order/* ]]; then
+              echo "This modified file is under the 'order' folder."
+              run_job_order=true
+            elif [[ $file == backend/application/* ]]; then
+              echo "This modified file is under the 'application' folder."
+              run_job_application=true
+            elif [[ $file == backend/evidence/* ]]; then
+              echo "This modified file is under the 'evidence' folder."
+              run_job_evidence=true
+            elif [[ $file == frontend/micro-ui/* ]]; then
+              echo "This modified file is under the 'digit_ui' folder."
+              run_job_digit_ui=true
+            fi
+          done < files.txt
+          
+          # Set the output based on whether the job should run
+          echo "::set-output name=run_job_advocate::$run_job_advocate"
+          echo "::set-output name=run_job_case::$run_job_case"
+          echo "::set-output name=run_job_order::$run_job_order"
+          echo "::set-output name=run_job_application::$run_job_application"
+          echo "::set-output name=run_job_evidence::$run_job_evidence"
+          echo "::set-output name=run_job_digit_ui::$run_job_digit_ui"
+          
+      - name: Build and analyze advocate
+        if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/advocate/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_advocate -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+
+      - name: Build and analyze case
+        if: ${{ steps.check_files.outputs.run_job_case == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+
+      - name: Build and analyze order
+        if: ${{ steps.check_files.outputs.run_job_order == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+
+      - name: Build and analyze application
+        if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/application/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_application -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+      - name: Build and analyze evidence
+        if: ${{ steps.check_files.outputs.run_job_evidence == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/evidence/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_evidence -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+      - name: Login to Azure Container Registry
+        run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
+
+      - name: Build and Push Docker image for advocate
+        if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/advocate" -t pucar_advocate:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_advocate:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_advocate:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for advocate_DB
+        if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
+        run: |
+          docker build -t pucar_advocate_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/advocate/src/main/resources/db
+
+      - name: Build and Push Docker image for case
+        if: ${{ steps.check_files.outputs.run_job_case == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/case" -t pucar_case:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_case:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for case_DB
+        if: ${{ steps.check_files.outputs.run_job_case == 'true' }}
+        run: |
+          docker build -t pucar_case_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_case_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_case_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/case/src/main/resources/db
+
+      - name: Build and Push Docker image for order
+        if: ${{ steps.check_files.outputs.run_job_order == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/order" -t pucar_order:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_order:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_order:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for order_DB
+        if: ${{ steps.check_files.outputs.run_job_order == 'true' }}
+        run: |
+          docker build -t pucar_order_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_order_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/order/src/main/resources/db
+        
+      - name: Build and Push Docker image for application
+        if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/application" -t pucar_application:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_application:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_application:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_application:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for application_DB
+        if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
+        run: |
+          docker build -t pucar_application_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_application_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_application_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_application_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/application/src/main/resources/db
+      - name: Build and Push Docker image for evidence
+        if: ${{ steps.check_files.outputs.run_job_evidence == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/evidence" -t pucar_evidence:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_evidence:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_evidence:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for evidence_DB
+        if: ${{ steps.check_files.outputs.run_job_evidence == 'true' }}
+        run: |
+          docker build -t pucar_evidence_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_evidence_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/evidence/src/main/resources/db
+
+
+      - name: Build and Push Docker image for digit-ui
+        if: ${{ steps.check_files.outputs.run_job_digit-ui == 'true' }}
+        run: |
+          docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
+          docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+        working-directory: frontend/micro-ui

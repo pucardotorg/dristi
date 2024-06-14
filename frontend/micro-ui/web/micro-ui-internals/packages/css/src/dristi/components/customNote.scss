@@ -1,0 +1,28 @@
+.custom-note-main-div {
+  height: 72px;
+  background-color: #ecf3fd;
+  padding-left: 5px;
+  margin: 10px;
+
+  .custom-note-heading-div {
+    display: flex;
+    align-items: center;
+    height: 24px;
+    gap: 5px;
+    padding-top: 8px;
+
+    path {
+      fill: #0f3b8c;
+    }
+
+    h2 {
+      font-weight: bold;
+    }
+  }
+
+  .custom-note-info-div p {
+    margin: 10px;
+    margin-left: 5px;
+    padding-bottom: 10px;
+  }
+}

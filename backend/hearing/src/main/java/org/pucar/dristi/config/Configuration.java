@@ -1,17 +1,11 @@
 package org.pucar.dristi.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 import org.egov.tracer.config.TracerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import java.util.TimeZone;
 
 @Component
 @Data
@@ -89,4 +83,56 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    @Value("${kafka.topics.hearing.update}")
+    private String hearingUpdateTopic;
+
+    @Value("${kafka.topics.hearing.create}")
+    private String hearingCreateTopic;
+
+    //Individual Service
+    @Value("${egov.individual.host}")
+    private String individualHost;
+
+    @Value("${egov.individual.path}")
+    private String individualPath;
+
+    @Value("${egov.individual.create.path}")
+    private String individualCreateEndpoint;
+
+    @Value("${egov.individual.search.path}")
+    private String individualSearchEndpoint;
+
+    @Value("${egov.individual.update.path}")
+    private String individualUpdateEndpoint;
+
+    // Advocate Workflow/Business name
+    @Value("${egov.workflow.hearing.business.name}")
+    private String hearingBusinessName;
+
+    // Advocate Workflow/Business Service name
+    @Value("${egov.workflow.hearing.business.service.name}")
+    private String hearingBusinessServiceName;
+
+    // MDMS Hearing module name
+    @Value("${egov.mdms.module.name}")
+    private String mdmsHearingModuleName;
+
+    // MDMS Hearing Type Master List name
+    @Value("${egov.mdms.hearing.type.master.name}")
+    private String mdmsHearingTypeMasterName;
+
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String caseExistsPath;
+
+    // Application Config
+    @Value("${egov.application.host}")
+    private String applicationHost;
+
+    @Value("${egov.application.path}")
+    private String applicationExistsPath;
 }
