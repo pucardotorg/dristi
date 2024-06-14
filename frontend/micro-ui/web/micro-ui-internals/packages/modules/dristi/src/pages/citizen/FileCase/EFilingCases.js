@@ -13,6 +13,7 @@ import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
 import { userTypeOptions } from "../registration/config";
+import { useToast } from "../../../components/Toast/useToast";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -76,6 +77,7 @@ function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
+  const toast = useToast();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -1165,7 +1167,7 @@ function EFilingCases({ path }) {
           }
         }
 
-        if ("ifDataKeyHasValueAsArray" in currentPage) {
+        if ("ifMultipleAddressLocations" in currentPage) {
           const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
           for (let i = 0; i < arrayValue.length; i++) {
             const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
@@ -1871,6 +1873,9 @@ function EFilingCases({ path }) {
       })
       .catch(() => {
         setIsDisabled(false);
+      })
+      .finally(() => {
+        toast.success("Successfully Saved Draft");
       });
   };
 
