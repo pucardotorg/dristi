@@ -17,23 +17,27 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
   );
 
   return (
-    <div>
+    <div className="select-signature-main">
       {inputs.map((input, inputIndex) => (
-        <div>
-          <div style={{ paddingTop: "10px", paddingBottom: "10px", fontWeight: 700, fontSize: "24px", color: "#3D3C3C" }}>{config?.label}</div>
-          {input.data.map((item, itemIndex) => (
-            <SignatureCard
-              key={inputIndex + itemIndex}
-              index={itemIndex}
-              data={item}
-              input={input}
-              t={t}
-              formData={formData}
-              onSelect={onSelect}
-              configKey={config.key}
-            />
-          ))}
-        </div>
+        <React.Fragment>
+          <div className="select-signature-header">
+            <h1 className="signature-label">{config?.label}</h1>
+          </div>
+          <div className="select-signature-list">
+            {input.data.map((item, itemIndex) => (
+              <SignatureCard
+                key={inputIndex + itemIndex}
+                index={itemIndex}
+                data={item}
+                input={input}
+                t={t}
+                formData={formData}
+                onSelect={onSelect}
+                configKey={config.key}
+              />
+            ))}
+          </div>
+        </React.Fragment>
       ))}
     </div>
   );

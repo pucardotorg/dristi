@@ -1,6 +1,6 @@
 const witnessFormConfig = [
   {
-    head: "CS_RESPONDENT_NAME",
+    head: "CS_WITNESS_NAME",
     body: [
       {
         type: "text",
@@ -11,7 +11,7 @@ const witnessFormConfig = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "VERIFY_PHONE_ERROR_TEXT",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             minLength: 2,
@@ -23,11 +23,12 @@ const witnessFormConfig = [
       {
         type: "text",
         label: "MIDDLE_NAME",
+        labelChildren: "optional",
         populators: {
           name: "middleName",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "VERIFY_PHONE_ERROR_TEXT",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             title: "",
@@ -44,7 +45,7 @@ const witnessFormConfig = [
           error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "VERIFY_PHONE_ERROR_TEXT",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             minLength: 2,
@@ -56,7 +57,8 @@ const witnessFormConfig = [
     ],
   },
   {
-    head: "CS_RESPONDENT_PHONE",
+    head: "CS_WITNESS_CONTACT_DETAILS",
+    subHead: "CS_WITNESS_NOTE",
     body: [
       {
         type: "component",
@@ -76,6 +78,7 @@ const witnessFormConfig = [
                 minLength: 10,
                 maxLength: 10,
                 pattern: /^[6-9]\d{9}$/,
+                isNumber: true,
               },
               className: "mobile-number",
             },
@@ -86,7 +89,7 @@ const witnessFormConfig = [
     ],
   },
   {
-    head: "CS_RESPONDENT_EMAIL",
+    head: " ",
     body: [
       {
         type: "component",
@@ -102,7 +105,7 @@ const witnessFormConfig = [
               error: "ERR_HRMS_INVALID_MOB_NO",
               validation: {
                 required: true,
-                pattern: /\S+@\S+\.\S+/,
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
               },
               className: "email-address",
             },
@@ -118,13 +121,14 @@ const witnessFormConfig = [
         type: "component",
         component: "SelectComponentsMulti",
         key: "addressDetails",
+        formType: "Witness",
         withoutLabel: true,
         error: "sample required message",
         required: false,
         isMandatory: true,
         populators: {
           inputs: [
-            { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
             {
               label: "PINCODE",
               type: "text",
@@ -184,8 +188,9 @@ const witnessFormConfig = [
         populators: {
           inputs: [
             {
+              name: "text",
               textAreaHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
-              placeholder: "CS_TEXTAREA_PLACEHOLDER_WITNESS_ADDITIONAL_DETAIL",
+              placeholder: "CS_TEXTAREA_PLACEHOLDER_ADDITIONAL_DETAIL",
               headerClassName: "dristi-font-bold",
               type: "TextAreaComponent",
             },
@@ -202,5 +207,7 @@ export const witnessConfig = {
   subtext: "CS_WITNESS_DETAIL_SUBTEXT",
   isOptional: false,
   addFormText: "ADD_WITNESS",
-  formItemName: "Witness",
+  formItemName: "CS_WITNESS",
+  className: "witness-details",
+  showOptionalInHeader: true,
 };

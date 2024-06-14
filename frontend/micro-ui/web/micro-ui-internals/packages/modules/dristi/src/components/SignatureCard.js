@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { AdvocateIcon, LitigentIcon } from "../icons/svgIndex";
-import { Button } from "@egovernments/digit-ui-react-components";
+import { AdvocateIcon, FileUploadIcon, LitigentIcon } from "../icons/svgIndex";
 import EsignAdharModal from "./EsignAdharModal";
 import UploadSignatureModal from "./UploadSignatureModal";
+import Button from "./Button";
 
 function SignatureCard({ input, data, t, index, onSelect, formData, configKey }) {
   const [openUploadSignatureModal, setOpenUploadSignatureModal] = useState(false);
@@ -19,8 +19,8 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey })
             type: "DragDropComponent",
             uploadGuidelines: "Ensure the image is not blurry and under 5MB.",
             maxFileSize: 5,
-            maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-            fileTypes: ["JPG", "PNG", "PDF"],
+            maxFileErrorMessage: "CS_FILE_LIMIT_5_MB",
+            fileTypes: ["JPG", "PNG", "JPEG"],
             isMultipleUpload: false,
           },
         ],
@@ -42,34 +42,30 @@ function SignatureCard({ input, data, t, index, onSelect, formData, configKey })
   const currentValue = (formData && formData[configKey] && formData[configKey][name]) || [];
   const isSigned = currentValue.length > 0;
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "flex-start",
-          gap: "20px",
-          paddingTop: "10px",
-          paddingBottom: "10px",
-        }}
-      >
+    <div className="signature-body">
+      <div className="icon-and-title">
         {input?.icon && <Icon icon={input?.icon} />}
-        {data?.[input?.config?.title]}
+        <h3 className="signature-title">{data?.[input?.config?.title]}</h3>
       </div>
-      {isSigned && <div style={{ width: "inherit", borderRadius: "30px", background: "#E4F2E4", color: "#00703C", padding: "10px" }}>Signed</div>}
+      {isSigned && <div style={{ width: "inherit", borderRadius: "30px", background: "#E4F2E4", color: "#00703C", padding: "10px", width: "fit-content" }}>Signed</div>}
       {!isSigned && (
-        <div style={{ display: "flex", gap: "20px", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="signed-button-group">
           <Button
+            icon={<FileUploadIcon />}
             label={t("CS_UPLOAD_ESIGNATURE")}
             onButtonClick={() => {
               setOpenUploadSignatureModal(true);
             }}
+            className={"upload-signature"}
+            labelClassName={"upload-signature-label"}
           ></Button>
           <Button
             label={t("CS_ESIGN_AADHAR")}
             onButtonClick={() => {
               setOpenAadharModal(true);
             }}
+            className={"aadhar-sign-in"}
+            labelClassName={"aadhar-sign-in"}
           ></Button>
         </div>
       )}

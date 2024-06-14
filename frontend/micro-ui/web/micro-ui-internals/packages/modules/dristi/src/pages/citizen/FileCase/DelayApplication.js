@@ -1,8 +1,4 @@
 import React, { useMemo, useState } from "react";
-import CustomDragDrop from "../../../components/CustomDragDrop";
-import CustomRadioSelector from "../../../components/CustomRadioSelector";
-import CustomTextArea from "../../../components/CustomTextArea";
-import CustomNote from "../../../components/CustomNote";
 // import { delayAppConfig } from "./delayAppConfig";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";

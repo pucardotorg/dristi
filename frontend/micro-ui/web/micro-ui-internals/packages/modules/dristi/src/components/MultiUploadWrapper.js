@@ -8,7 +8,7 @@ const displayError = ({ t, error, name }, customErrorMsg) => (
   </span>
 );
 
-const fileValidationStatus = (file, regex, maxSize, t) => {
+const fileValidationStatus = (file, regex, maxSize, t, notSupportedError, maxFileErrorMessage) => {
   const status = { valid: true, name: file?.name?.substring(0, 15), error: "" };
   if (!file) return;
 
@@ -19,17 +19,17 @@ const fileValidationStatus = (file, regex, maxSize, t) => {
 
   if (!regex.test(file.type)) {
     status.valid = false;
-    status.error = t(`NOT_SUPPORTED_FILE_TYPE`);
+    status.error = t(notSupportedError ? notSupportedError : `NOT_SUPPORTED_FILE_TYPE`);
   }
 
   if (file.size / 1024 / 1024 > maxSize) {
     status.valid = false;
-    status.error = t(`FILE_SIZE_EXCEEDED_5MB`);
+    status.error = t(maxFileErrorMessage ? maxFileErrorMessage : `FILE_SIZE_EXCEEDED_5MB`);
   }
 
   return status;
 };
-const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) => {
+const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state, notSupportedError, maxFileErrorMessage) => {
   if (!files.length || !regex || !maxSize) return [{}, false];
 
   const uploadedFiles = state.length + 1;
@@ -39,7 +39,7 @@ const checkIfAllValidFiles = (files, regex, maxSize, t, maxFilesAllowed, state) 
   const messages = [];
   let isInValidGroup = false;
   for (let file of files) {
-    const fileStatus = fileValidationStatus(file, regex, maxSize, t);
+    const fileStatus = fileValidationStatus(file, regex, maxSize, t, notSupportedError, maxFileErrorMessage);
     if (!fileStatus.valid) {
       isInValidGroup = true;
     }
@@ -67,6 +67,9 @@ const MultiUploadWrapper = ({
   customClass = "",
   customErrorMsg,
   containerStyles,
+  noteMsg,
+  notSupportedError,
+  maxFileErrorMessage
 }) => {
   const FILES_UPLOADED = "FILES_UPLOADED";
   const TARGET_FILE_REMOVAL = "TARGET_FILE_REMOVAL";
@@ -107,7 +110,7 @@ const MultiUploadWrapper = ({
     const files = Array.from(e.target.files);
 
     if (!files.length) return;
-    const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed, state);
+    const [validationMsg, error] = checkIfAllValidFiles(files, allowedFileTypesRegex, allowedMaxSizeInMB, t, maxFilesAllowed, state, notSupportedError, maxFileErrorMessage);
 
     if (!error) {
       try {
@@ -155,7 +158,7 @@ const MultiUploadWrapper = ({
         {fileErrors.length ? (
           fileErrors.map(({ valid, name, type, size, error }) => (valid ? null : displayError({ t, error, name }, customErrorMsg)))
         ) : (
-          <h1 style={{ fontSize: "12px" }}>{t("CS_DOCUMENT_UPLOAD_BLURB")}</h1>
+          <h1 style={{ fontSize: "12px" }}>{t(noteMsg ? noteMsg : "CS_DOCUMENT_UPLOAD_BLURB")}</h1>
         )}
       </span>
     </div>

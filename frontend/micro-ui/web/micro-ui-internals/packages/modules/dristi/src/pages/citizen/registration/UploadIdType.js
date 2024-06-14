@@ -62,39 +62,32 @@ function UploadIdType({ config, t, onAadharChange, onDocumentUpload, params, pat
     history.push(pathOnRefresh);
   }
   return (
-    <div className="advocate-additional-details">
-      <React.Fragment>
-        <FormComposerV2
-          config={config}
-          t={t}
-          onSubmit={(data) => {
-            if (!validateFormData(data)) {
-              setShowErrorToast(!validateFormData(data));
-            } else if (data?.SelectUserTypeComponent?.aadharNumber) {
-              onAadharChange(data?.SelectUserTypeComponent?.aadharNumber);
-            } else {
-              onDocumentUpload(
-                data?.SelectUserTypeComponent?.ID_Proof[0][0],
-                data?.SelectUserTypeComponent?.ID_Proof[0][1]?.file,
-                data?.SelectUserTypeComponent?.selectIdType
-              );
-            }
-            return;
-          }}
-          noBoxShadow
-          inline
-          label={"CS_COMMON_CONTINUE"}
-          // onFormValueChange={onFormValueChange}
-          onSecondayActionClick={() => {}}
-          headingStyle={{ textAlign: "center" }}
-          cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-          sectionHeadStyle={{ marginBottom: "20px", fontSize: "40px" }}
-          // cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-          submitInForm
-          buttonStyle={{ alignSelf: "center", minWidth: "30%" }}
-        ></FormComposerV2>
-        {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-      </React.Fragment>
+    <div className="advocate-additional-details upload-id">
+      <FormComposerV2
+        config={config}
+        t={t}
+        onSubmit={(data) => {
+          if (!validateFormData(data)) {
+            setShowErrorToast(!validateFormData(data));
+          } else if (data?.SelectUserTypeComponent?.aadharNumber) {
+            onAadharChange(data?.SelectUserTypeComponent?.aadharNumber);
+          } else {
+            onDocumentUpload(
+              data?.SelectUserTypeComponent?.ID_Proof[0][0],
+              data?.SelectUserTypeComponent?.ID_Proof[0][1]?.file,
+              data?.SelectUserTypeComponent?.selectIdType
+            );
+          }
+          return;
+        }}
+        noBoxShadow
+        inline
+        label={"CS_COMMON_CONTINUE"}
+        // onFormValueChange={onFormValueChange}
+        onSecondayActionClick={() => { }}
+        submitInForm
+      ></FormComposerV2>
+      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
 }
