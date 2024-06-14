@@ -95,7 +95,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     }
   };
   const handleOpenPopup = (e, configKey, name, index = null, fieldName) => {
-    popupAnchor.current = e.currentTarget;
+    if (e) {
+      popupAnchor.current = e.currentTarget;
+    }
     setValue(
       "scrutinyMessage",
       {
@@ -274,21 +276,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           </Fragment>
         </CustomPopUp>
       )}
-      {true && (
+      {isImageModal && (
         <ImageModal
-          imageInfo={{
-            fieldName: "bouncedChequeFileUpload.document",
-            configKey: "caseSpecificDetails",
-            name: "chequeDetails",
-            dataIndex: 0,
-            data: {
-              fileStore: "e217a13c-b15c-41c2-84c6-ed4c55cc2d24",
-              documentName: "170010024-1.pdf",
-              documentType: "application/pdf",
-            },
-          }}
+          imageInfo={isImageModal}
           t={t}
-          handleOpenPopup={handleClosePopup}
+          handleOpenPopup={handleOpenPopup}
           handleCloseModal={() => {
             setIsImageModal(false);
           }}

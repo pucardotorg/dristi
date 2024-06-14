@@ -9,7 +9,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
   const Heading = (props) => {
     return (
       <div className="heading-main">
-        <div className="heading-back-error">
+        <div className="heading-back-error" onClick={handleCloseModal}>
           <LeftArrow />
         </div>
         <div className="heading-title">
@@ -17,20 +17,20 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
           <p>{`cheque_bounced.jpeg  |  2MB`}</p>
         </div>
       </div>
-    )
-
+    );
   };
   const HeaderBarEnd = () => {
     return (
       <React.Fragment>
-        <div className="flag-icon"
+        <div
+          className="flag-icon"
           onClick={(e) => {
-            handleOpenPopup(e, imageInfo.configKey, imageInfo.name, imageInfo.dataIndex, imageInfo.fieldName);
+            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.dataIndex, imageInfo.fieldName);
           }}
         >
           <FlagIcon />
         </div>
-        <div className="close-icon">
+        <div className="close-icon" onClick={handleCloseModal}>
           <CloseSvg />
         </div>
       </React.Fragment>
@@ -45,7 +45,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
       hideSubmit
       style={{ height: "100%", width: "100%" }}
     >
-      <DocViewerWrapper fileStoreId={imageInfo.fileStore} tenantId={tenantId} docWidth="250px" showDownloadOption={false} />
+      <DocViewerWrapper fileStoreId={imageInfo.data.fileStore} tenantId={tenantId} docWidth="100%" docHeight={"100%"} showDownloadOption={false} />
     </Modal>
   );
 }
