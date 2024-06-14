@@ -252,7 +252,7 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
+      setFieldsRemaining(fieldsRemainingCopy);
     }
   }, [caseDetails]);
 
@@ -1119,7 +1119,7 @@ function EFilingCases({ path }) {
 
     if (currentPageData.length === 0) {
       // this case is specially for witness details page (which is optional),
-      // so there might not be any witness at all hence empty currentPageData will be received.
+      // so there might not be any witness at all.
       totalMandatoryLeft = 0;
       totalOptionalLeft = 1;
     } else {
