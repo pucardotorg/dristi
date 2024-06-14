@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - develop
+      - casemanagement
   pull_request:
     branches:
       - develop
@@ -15,6 +15,7 @@ jobs:
       run_job_order: ${{ steps.check_files.outputs.run_job_order }}
       run_job_application: ${{ steps.check_files.outputs.run_job_application }}
       run_job_evidence: ${{ steps.check_files.outputs.run_job_evidence }}
+      run_job_casemanagement: ${{ steps.check_files.outputs.run_job_casemanagement }}
       run_job_digit_ui: ${{ steps.check_files.outputs.run_job_digit_ui }}
     runs-on: ubuntu-latest
     steps:
@@ -44,6 +45,7 @@ jobs:
           run_job_application=false
           run_job_evidence=false
           run_job_digit_ui=false
+          run_job_casemanagement=false
           while IFS= read -r file
           do
             if [[ $file == backend/advocate/* ]]; then
@@ -61,6 +63,9 @@ jobs:
             elif [[ $file == backend/evidence/* ]]; then
               echo "This modified file is under the 'evidence' folder."
               run_job_evidence=true
+            elif [[ $file == backend/casemanagement/* ]]; then
+              echo "This modified file is under the 'casemanagement' folder."
+              run_job_casemanagement=true
             elif [[ $file == frontend/micro-ui/* ]]; then
               echo "This modified file is under the 'digit_ui' folder."
               run_job_digit_ui=true
@@ -73,6 +78,7 @@ jobs:
           echo "::set-output name=run_job_order::$run_job_order"
           echo "::set-output name=run_job_application::$run_job_application"
           echo "::set-output name=run_job_evidence::$run_job_evidence"
+          echo "::set-output name=run_job_casemanagement::$run_job_casemanagement"
           echo "::set-output name=run_job_digit_ui::$run_job_digit_ui"
 
       - name: Build and analyze advocate
@@ -97,7 +103,7 @@ jobs:
         run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Build and analyze application
-        if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
+        if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
@@ -108,6 +114,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/evidence/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_evidence -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+      - name: Build and analyze casemanagement
+        if: ${{ steps.check_files.outputs.run_job_casemanagement == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/casemanagement/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_casemanagement -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
@@ -179,6 +192,12 @@ jobs:
           docker tag pucar_evidence_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
         working-directory: backend/evidence/src/main/resources/db
+      - name: Build and Push Docker image for casemanagement
+        if: ${{ steps.check_files.outputs.run_job_casemanagement == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/casemanagement" -t pucar_casemanagement:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_casemanagement:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for digit-ui
         if: ${{ steps.check_files.outputs.run_job_digit-ui == 'true' }}
