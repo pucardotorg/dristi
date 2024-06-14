@@ -398,7 +398,7 @@ const ErrorInfoIcon = () => (
 );
 
 const FlagIcon = ({ isError }) => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M3 3V4V14V21H5V14H12.3828L13.3828 16H21V5H14.6172L13.6172 3H3ZM5 5H12.3828L13.3828 7H14H19V14H14.6172L13.6172 12H5V5Z"
       fill={isError ? "#BB2C2F" : "#3D3C3C"}
@@ -643,11 +643,17 @@ const FSOErrorIcon = () => (
     </defs>
   </svg>
 );
-const RightArrow = () => {
+const RightArrow = () => (
   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M8 0L6.59 1.41L12.17 7H0V9H12.17L6.59 14.59L8 16L16 8L8 0Z" fill="white" />
-  </svg>;
-};
+  </svg>
+);
+
+const LeftArrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 7H3.83L9.42 1.41L8 0L0 8L8 16L9.41 14.59L3.83 9H16V7Z" fill="white" />
+  </svg>
+)
 export {
   RegisterIcon,
   LoginIcon,
@@ -685,4 +691,5 @@ export {
   InfoIconRed,
   FSOErrorIcon,
   RightArrow,
+  LeftArrow,
 };
