@@ -6,7 +6,6 @@ import ChequeDetails from "./ChequeDetails";
 import DelayApplication from "./DelayApplication";
 import EFilingCases from "./EFilingCases";
 import WitnessDetails from "./WitnessDetails";
-import SendCaseBack from "./SendCaseBack";
 import EFilingPayment from "./EFilingPayment";
 import EFilingPaymentResponse from "./EFilingPaymentResponse";
 
@@ -31,9 +30,6 @@ function FileCase({ t }) {
           </Route>
           <Route path={`${path}/cheque-details`}>
             <ChequeDetails />
-          </Route>
-          <Route path={`${path}/send-case-back`}>
-            <SendCaseBack t={t} />
           </Route>
           <Route path={`${path}/e-filing-payment`}>
             <EFilingPayment t={t} path={path} />

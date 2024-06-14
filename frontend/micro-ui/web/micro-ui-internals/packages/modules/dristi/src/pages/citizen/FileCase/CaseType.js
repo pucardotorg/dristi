@@ -213,7 +213,7 @@ function CaseType({ t }) {
                                 state: addressLine1,
                                 locality: address,
                               },
-                              complainantId: true,
+                              complainantId: { complainantId: true },
                               firstName: givenName,
                               middleName: otherNames,
                               lastName: familyName,

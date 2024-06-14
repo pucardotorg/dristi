@@ -29,6 +29,7 @@ const DocViewerWrapper = ({
   fileStoreId,
   tenantId,
   displayFilename,
+  documentName,
   selectedDocs = [],
   docViewerCardClassName,
   showDownloadOption = true,
@@ -99,6 +100,22 @@ const DocViewerWrapper = ({
         >
           {t(displayFilename) || t("CS_CLICK_TO_DOWNLOAD")}
         </a>
+      )}
+      {documentName && (
+        <p
+          style={{
+            display: "flex",
+            color: "#505A5F",
+            textDecoration: "none",
+            width: 250,
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            margin: 8,
+          }}
+        >
+          {t(documentName)}
+        </p>
       )}
     </div>
   );

@@ -46,6 +46,7 @@ export const idProofVerificationConfig = [
               disableFormValidation: false,
               uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 25,
+              allowedMaxSizeInMB: 25,
               maxFileErrorMessage: "CS_FILE_LIMIT_25_MB",
               noteMsg: "CS_DOCUMENT_BLURB",
               notSupportedError: "NOT_SUPPORTED_ERROR",

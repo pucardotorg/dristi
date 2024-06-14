@@ -4,6 +4,7 @@ import { FileUploader } from "react-drag-drop-files";
 import { CardLabelError, UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
 import { FileUploadIcon } from "../icons/svgIndex";
+import { useToast } from "./Toast/useToast";
 
 const DragDropJSX = ({ t, currentValue }) => {
   return (
@@ -30,6 +31,7 @@ const DragDropJSX = ({ t, currentValue }) => {
 };
 
 function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
+  const toast = useToast();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -123,6 +125,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             types={input?.fileTypes}
             children={<DragDropJSX t={t} currentValue={currentValue} />}
             key={input?.name}
+            onTypeError={() => {
+              toast.error("Invalid File type");
+            }}
           />
           <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
         </div>
