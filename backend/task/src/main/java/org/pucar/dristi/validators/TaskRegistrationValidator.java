@@ -60,6 +60,7 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(taskRequest.getTask().getCreatedDate())) {
             throw new CustomException(CREATE_TASK_ERR, "CreatedDate mandatory for creating task");
         }
+        // To be uncommented later       
 //        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
 //            throw new CustomException(CREATE_TASK_ERR, "Invalid order ID");
 //        }

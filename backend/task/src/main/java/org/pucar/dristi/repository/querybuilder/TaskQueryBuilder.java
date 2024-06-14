@@ -14,22 +14,22 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class TaskQueryBuilder {
 
-    private static final String BASE_CASE_QUERY = " SELECT task.id as id, task.tenantid as tenantid, task.orderid as orderid, task.createddate as createddate, " +
-            "task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber, " +
+    private static final String BASE_CASE_QUERY = "SELECT task.id as id, task.tenantid as tenantid, task.orderid as orderid, task.createddate as createddate," +
+            " task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber," +
             " task.taskdetails as taskdetails, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
-            " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime ";
+            " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime";
     private static final String FROM_task_TABLE = " FROM dristi_task task";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY task.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
-            " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id ";
+            " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_task_document doc";
 
     private static final String AMOUNT_SELECT_QUERY_CASE = "SELECT amount.id as id, amount.type as type, amount.amount as amount," +
-            " amount.paymentRefNumber as paymentRefNumber, amount.status as status, amount.additionaldetails as additionaldetails, amount.task_id as task_id ";
+            " amount.paymentRefNumber as paymentRefNumber, amount.status as status, amount.additionaldetails as additionaldetails, amount.task_id as task_id";
     private static final String FROM_AMOUNT_TABLE = " FROM dristi_task_amount amount";
 
-    private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_task task ";
+    private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_task task";
 
     public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
         try {

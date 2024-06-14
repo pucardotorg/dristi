@@ -43,7 +43,6 @@ public class TaskService {
     @Autowired
     private Producer producer;
 
-
     @Autowired
     public void setValidator(@Lazy TaskRegistrationValidator validator) {
         this.validator = validator;
@@ -56,7 +55,7 @@ public class TaskService {
 
             enrichmentUtil.enrichTaskRegistration(body);
 
-            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getCnrNumber(),
+            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
                     config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
 
             producer.push(config.getTaskCreateTopic(), body);
