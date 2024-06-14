@@ -6,6 +6,7 @@ import Button from "./Button";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
 import { DRISTIService } from "../services";
+import { InfoIconRed } from "../icons/svgIndex";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -143,7 +144,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             firstName: givenName,
             lastName: familyName,
             middleName: otherNames,
-            complainantId: true,
+            complainantId: { complainantId: true },
           };
 
           ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
@@ -297,7 +298,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-          actionCancelOnSubmit={() => {}}
+          actionCancelOnSubmit={() => { }}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
             if (!formData[config.key]?.[input?.name])
@@ -312,28 +313,33 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           formId="modal-action"
           headerBarMain={<Heading label={t("VERIFY_PHONE_NUMBER")} />}
           submitTextClassName={"verification-button-text-modal"}
-          className={"case-types"}
+          className={"verify-mobile-modal"}
         >
-          <div className="verify-mobile-modal" style={{ padding: "16px 16px 0" }}>
+          <div className="verify-mobile-modal-main">
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
-                  `${
-                    input?.hasMobileNo
-                      ? formData[config.key]?.[input?.mobileNoKey]
-                        ? input?.isMobileSecret
-                          ? input?.mobileCode
-                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
-                        : ""
+                  `${input?.hasMobileNo
+                    ? formData[config.key]?.[input?.mobileNoKey]
+                      ? input?.isMobileSecret
+                        ? input?.mobileCode
+                          ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                        : ` ${formData[config.key]?.[input?.mobileNoKey]}`
                       : ""
+                    : ""
                   }`}
               </CardLabel>
               <div className="field">
                 {input?.type === "text" && (
                   <TextInput
-                    className="field desktop-w-full"
+                    className={`field desktop-w-full verify-mobile-otp-input ${formData?.[config.key][input.name] &&
+                      formData?.[config.key][input.name].length > 0 &&
+                      !["documentUpload", "radioButton"].includes(input.type) &&
+                      input.validation &&
+                      !formData?.[config.key][input.name].match(
+                        window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
+                      ) && "error"}`}
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
@@ -341,6 +347,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}
+                    clas
                     {...input.validation}
                   />
                 )}
@@ -352,7 +359,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                     window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
                   ) && (
                     <CardLabelError style={{ width: "100%", fontSize: "16px", paddingTop: "4px" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                      <InfoIconRed />
+                      <span style={{ color: "#BB2C2F" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                     </CardLabelError>
                   )}
               </div>
@@ -362,7 +370,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                 {timeLeft && !errorMsg > 0 ? (
                   <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
                 ) : (
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                     <CardText style={{ margin: 0 }}>{errorMsg ? `${t(errorMsg)}` : `${t("CS_HAVE_NOT_RECEIVED_OTP")}`}</CardText>
 
                     <p

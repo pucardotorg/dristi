@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
@@ -14,8 +14,62 @@ import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
 import { userTypeOptions } from "../registration/config";
 
+function isEmptyValue(value) {
+  if (!value) {
+    return true;
+  } else if (Array.isArray(value) || typeof value === "object") {
+    return Object.keys(value).length === 0;
+  } else if (typeof value === "string") {
+    return value.trim().length === 0;
+  } else {
+    return false;
+  }
+}
+
+const extractValue = (data, key) => {
+  if (!key.includes(".")) {
+    return data[key];
+  }
+  const keyParts = key.split(".");
+  let value = data;
+  keyParts.forEach((part) => {
+    if (value && value.hasOwnProperty(part)) {
+      value = value[part];
+    } else {
+      value = undefined;
+    }
+  });
+  return value;
+};
+
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
+};
+
+const selectedArray = [
+  "complaintDetails",
+  "respondentDetails",
+  "chequeDetails",
+  "debtLiabilityDetails",
+  "demandNoticeDetails",
+  "delayApplications",
+  "witnessDetails",
+  "prayerSwornStatement",
+  "advocateDetails",
+];
+
+const getTotalCountFromSideMenuConfig = (sideMenuConfig, selected) => {
+  const countObj = { mandatory: 0, optional: 0 };
+  for (let i = 0; i < sideMenuConfig.length; i++) {
+    const childArray = sideMenuConfig[i]?.children;
+    for (let j = 0; j < childArray.length; j++) {
+      if (childArray[j].key === selected) {
+        countObj.mandatory = childArray[j]?.initialMandatoryFieldCount;
+        countObj.optional = childArray[j]?.initialOptionalFieldCount;
+      }
+    }
+  }
+  return countObj;
 };
 
 function EFilingCases({ path }) {
@@ -25,10 +79,11 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [{ setFormErrors, resetFormData, setFormDataValue }, setState] = useState({
+  const [{ setFormErrors, resetFormData, setFormDataValue, clearFormDataErrors }, setState] = useState({
     setFormErrors: null,
     resetFormData: null,
     setFormDataValue: null,
+    clearFormDataErrors: null,
   });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
@@ -42,11 +97,73 @@ function EFilingCases({ path }) {
   const [receiptDemandNoticeModal, setReceiptDemandNoticeModal] = useState(false);
   const [serviceOfDemandNoticeModal, setServiceOfDemandNoticeModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
+  const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
+  const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
+
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
     successMsg: "",
   });
   const [deleteFormIndex, setDeleteFormIndex] = useState(null);
+  const setFieldsRemainingInitially = () => {
+    const array = [];
+    for (let i = 0; i < selectedArray.length; i++) {
+      const selected = selectedArray[i];
+      array.push({
+        selectedPage: selected,
+        mandatoryTotalCount: getTotalCountFromSideMenuConfig(sideMenuConfig, selected)?.mandatory,
+        optionalTotalCount: getTotalCountFromSideMenuConfig(sideMenuConfig, selected)?.optional,
+      });
+    }
+    return array;
+  };
+  const [fieldsRemaining, setFieldsRemaining] = useState(() => setFieldsRemainingInitially());
+
+  const checkAndGetMandatoryFieldLeftPages = useMemo(() => {
+    const mandatoryRemainingPages = fieldsRemaining.filter((page) => page.mandatoryTotalCount !== 0) || [];
+    return mandatoryRemainingPages;
+  }, [fieldsRemaining]);
+
+  const checkAndGetOptionalFieldLeftPages = useMemo(() => {
+    const optionalRemainingPages = fieldsRemaining.filter((page) => page.optionalTotalCount !== 0) || [];
+    return optionalRemainingPages;
+  }, [fieldsRemaining]);
+
+  const mandatoryFieldsLeftTotalCount = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < fieldsRemaining.length; i++) {
+      count = count + fieldsRemaining[i].mandatoryTotalCount;
+    }
+    return count;
+  }, [fieldsRemaining]);
+
+  const optionalFieldsLeftTotalCount = useMemo(() => {
+    let count = 0;
+    for (let i = 0; i < fieldsRemaining.length; i++) {
+      count = count + fieldsRemaining[i].optionalTotalCount;
+    }
+    return count;
+  }, [fieldsRemaining]);
+
+  const showMandatoryFieldsRemainingModal = useMemo(() => {
+    if (selected === "reviewCaseFile" || selected === "addSignature") {
+      if (mandatoryFieldsLeftTotalCount > 0) {
+        setShowConfirmMandatoryModal(true);
+        return true;
+      } else return false;
+    }
+    return false;
+  }, [selected, mandatoryFieldsLeftTotalCount]);
+
+  const showOptionalFieldsRemainingModal = useMemo(() => {
+    if (selected === "reviewCaseFile" || selected === "addSignature") {
+      if (checkAndGetOptionalFieldLeftPages.length !== 0) {
+        setShowConfirmOptionalModal(true);
+        return true;
+      } else return false;
+    }
+    return false;
+  }, [selected, checkAndGetOptionalFieldLeftPages]);
 
   const { data: caseData, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
@@ -75,8 +192,24 @@ function EFilingCases({ path }) {
 
   const deleteWarningText = useCallback((pageName) => {
     return (
+      <div className="delete-warning-text">
+        <h3>{`${t("CONFIRM_DELETE_FIRST_HALF")} ${pageName?.toLowerCase()} ${t("CONFIRM_DELETE_SECOND_HALF")}`}</h3>
+      </div>
+    );
+  }, []);
+
+  const mandatoryFieldsRemainingText = useCallback(() => {
+    return (
       <div>
-        <h3>{`This will permanently delete all the details entered for this ${pageName}. This action cannot be undone.`}</h3>
+        <h3>{t("ENSURE_ALL_MANDATORY_ARE_FILLED")}</h3>
+      </div>
+    );
+  }, []);
+
+  const optionalFieldsRemainingText = useCallback((count) => {
+    return (
+      <div>
+        <h3>{`${t("MORE_INFO_HELPS_FIRST_HALF")} ${count} ${t("MORE_INFO_HELPS_SECOND_HALF")}`}</h3>
       </div>
     );
   }, []);
@@ -99,6 +232,27 @@ function EFilingCases({ path }) {
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
+
+  useEffect(() => {
+    if (Object.keys(caseDetails).length !== 0) {
+      const fieldsRemainingCopy = structuredClone(fieldsRemaining);
+      const additionalDetailsArray = ["complaintDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
+      const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
+      for (const key of additionalDetailsArray) {
+        if (caseDetails?.additionalDetails?.[key]) {
+          const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
+          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.additionalDetails?.[key]?.formdata, key);
+        }
+      }
+      for (const key of caseDetailsArray) {
+        if (caseDetails?.caseDetails?.[key]) {
+          const index = fieldsRemainingCopy.findIndex((fieldsRemainingCopy) => fieldsRemainingCopy.selectedPage === key);
+          fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
+        }
+      }
+      setFieldsRemaining(fieldsRemainingCopy);
+    }
+  }, [caseDetails]);
 
   useEffect(() => {
     const data =
@@ -228,7 +382,6 @@ function EFilingCases({ path }) {
         return formConfig;
       });
     }
-
     return formdata.map(({ data }, index) => {
       let disableConfigFields = [];
       formConfig.forEach((config) => {
@@ -250,7 +403,9 @@ function EFilingCases({ path }) {
           for (const key in dependentKeys) {
             const nameArray = dependentKeys[key];
             for (const name of nameArray) {
-              show = show && Boolean(data?.[key]?.[name]);
+              if (Array.isArray(data?.[key]?.[name]) && data?.[key]?.[name]?.length === 0) {
+                show = false;
+              } else show = show && Boolean(data?.[key]?.[name]);
             }
           }
           return show && config;
@@ -291,6 +446,21 @@ function EFilingCases({ path }) {
                           disable: input?.shouldBeEnabled ? false : true,
                           isDisabled: input?.shouldBeEnabled ? false : true,
                         };
+                      }
+                      if (selected === "respondentDetails") {
+                        if (
+                          data?.addressDetails?.some(
+                            (address) =>
+                              address?.addressDetails?.pincode !==
+                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+                              body?.key === "inquiryAffidavitFileUpload"
+                          )
+                        ) {
+                          delete input.isOptional;
+                          return {
+                            ...input,
+                          };
+                        }
                       }
                       return {
                         ...input,
@@ -361,7 +531,7 @@ function EFilingCases({ path }) {
           };
         });
     });
-  }, [isDependentEnabled, formdata, selected, formConfig, caseDetails.additionalDetails, caseDetails?.caseDetails]);
+  }, [isDependentEnabled, formdata, selected, formConfig, caseDetails.additionalDetails, caseDetails?.caseDetails, t]);
 
   const activeForms = useMemo(() => {
     return formdata.filter((item) => item.isenabled === true).length;
@@ -396,7 +566,7 @@ function EFilingCases({ path }) {
         switch (key) {
           case "issuanceDate":
             if (new Date(formData?.issuanceDate).getTime() > new Date().getTime()) {
-              setError("issuanceDate", { message: " CS_DATE_ERROR_MSG" });
+              setError("issuanceDate", { message: "CS_DATE_ERROR_MSG" });
             } else {
               clearErrors("issuanceDate");
             }
@@ -407,9 +577,9 @@ function EFilingCases({ path }) {
               formData?.issuanceDate &&
               new Date(formData?.issuanceDate).getTime() > new Date(formData?.depositDate).getTime()
             ) {
-              setError("depositDate", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
+              setError("depositDate", { message: "CS_DEPOSIT_DATE_ERROR_MSG" });
             } else if (selected === "chequeDetails" && new Date(formData?.depositDate).getTime() > new Date().getTime()) {
-              setError("depositDate", { message: " CS_DATE_ERROR_MSG" });
+              setError("depositDate", { message: "CS_DATE_ERROR_MSG" });
             } else {
               clearErrors("depositDate");
             }
@@ -421,7 +591,7 @@ function EFilingCases({ path }) {
     }
   };
 
-  const showDemandNoticeModal = (setValue, formData, setError, clearErrors) => {
+  const showDemandNoticeModal = (setValue, formData, setError, clearErrors, index) => {
     if (selected === "demandNoticeDetails") {
       for (const key in formData) {
         switch (key) {
@@ -432,33 +602,39 @@ function EFilingCases({ path }) {
               setValue("dateOfAccrual", "");
             } else {
               clearErrors("dateOfService");
-              const milliseconds = new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000;
-              const date = new Date(milliseconds);
-              const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, "0");
-              const day = String(date.getDate()).padStart(2, "0");
-              const formattedDate = `${year}-${month}-${day}`;
+              let formattedDate = "";
+              if (formData?.dateOfService) {
+                const milliseconds = new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000;
+                const date = new Date(milliseconds);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                formattedDate = `${year}-${month}-${day}`;
+              }
               setValue("dateOfAccrual", formattedDate);
             }
             break;
 
           case "dateOfIssuance":
             if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
-              setError("dateOfIssuance", { message: " CS_DATE_ERROR_MSG" });
-            } else {
-              clearErrors("dateOfIssuance");
-            }
+              setError("dateOfIssuance", { message: "CS_DATE_ERROR_MSG" });
+            } else if (
+              new Date(formData?.dateOfIssuance).getTime() <
+              new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[index]?.data?.depositDate).getTime()
+            ) {
+              setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" });
+            } else clearErrors("dateOfIssuance");
             break;
 
           case "dateOfDispatch":
             if (new Date(formData?.dateOfDispatch).getTime() > new Date().getTime()) {
-              setError("dateOfDispatch", { message: " CS_DATE_ERROR_MSG" });
+              setError("dateOfDispatch", { message: "CS_DATE_ERROR_MSG" });
             } else if (
               formData?.dateOfDispatch &&
               formData?.dateOfIssuance &&
               new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
             ) {
-              setError("dateOfDispatch", { message: " CS_DISPATCH_DATE_ERROR_MSG" });
+              setError("dateOfDispatch", { message: "CS_DISPATCH_DATE_ERROR_MSG" });
             } else {
               clearErrors("dateOfDispatch");
             }
@@ -466,7 +642,7 @@ function EFilingCases({ path }) {
           case "delayApplicationType":
             if (formData?.delayApplicationType?.code === "NO") {
               setReceiptDemandNoticeModal(true);
-              setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
+              // setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
             } else {
               clearErrors("delayApplicationType");
             }
@@ -508,9 +684,10 @@ function EFilingCases({ path }) {
     }
   };
 
-  const showToastForComplainant = (formData) => {
+  const showToastForComplainant = (formData, setValue) => {
     if (selected === "complaintDetails") {
-      if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType) {
+      if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType && formData?.complainantId?.isFirstRender) {
+        setValue("complainantId", { ...formData?.complainantId, isFirstRender: false });
         setSuccessToast((prev) => ({
           ...prev,
           showSuccessToast: true,
@@ -636,9 +813,162 @@ function EFilingCases({ path }) {
       }
     }
   };
+
+  const checkOnlyCharInCheque = (formData, setValue) => {
+    if (selected === "chequeDetails") {
+      if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          if (Object.hasOwnProperty.call(formDataCopy, key)) {
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (key === "chequeSignatoryName" || key === "name") {
+              if (typeof value === "string") {
+                if (value.length > 100) {
+                  value = value.slice(0, 100);
+                }
+
+                let updatedValue = value
+                  .replace(/[^a-zA-Z\s]/g, "")
+                  .trimStart()
+                  .replace(/ +/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (char) => char.toUpperCase());
+                if (updatedValue !== oldValue) {
+                  const element = document.querySelector(`[name="${key}"]`);
+                  const start = element?.selectionStart;
+                  const end = element?.selectionEnd;
+                  setValue(key, updatedValue);
+                  setTimeout(() => {
+                    element?.setSelectionRange(start, end);
+                  }, 0);
+                }
+              }
+            } else if (key === "bankName") {
+              if (typeof value === "string") {
+                if (value.length > 200) {
+                  value = value.slice(0, 200);
+                }
+
+                let updatedValue = value
+                  .replace(/[^a-zA-Z0-9 ]/g, "")
+                  .trimStart()
+                  .replace(/ +/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (char) => char.toUpperCase());
+                if (updatedValue !== oldValue) {
+                  const element = document.querySelector(`[name="${key}"]`);
+                  const start = element?.selectionStart;
+                  const end = element?.selectionEnd;
+                  setValue(key, updatedValue);
+                  setTimeout(() => {
+                    element?.setSelectionRange(start, end);
+                  }, 0);
+                }
+              }
+            }
+          }
+        }
+      }
+    } else if (selected == "debtLiabilityDetails") {
+      if (formData?.totalAmount) {
+        console.log("formData?.totalAmount", formData?.totalAmount);
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          if (Object.hasOwnProperty.call(formDataCopy, key) && key === "totalAmount") {
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (typeof value === "string") {
+              if (value.length > 12) {
+                value = value.slice(0, 12);
+              }
+
+              if (value !== oldValue) {
+                const element = document.querySelector(`[name="${key}"]`);
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
+                setValue(key, value);
+                setTimeout(() => {
+                  element?.setSelectionRange(start, end);
+                }, 0);
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+  const respondentValidation = (formData) => {
+    if (selected === "respondentDetails") {
+      const formDataCopy = structuredClone(formData);
+      if ("inquiryAffidavitFileUpload" in formDataCopy) {
+        if (
+          formData?.addressDetails?.some(
+            (address) =>
+              address?.addressDetails?.pincode !== caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode
+          ) &&
+          !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
+        ) {
+          if (!!setFormErrors) setFormErrors("inquiryAffidavitFileUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          return true;
+        }
+        // else if (
+        //   formData?.respondentType?.code === "REPRESENTATIVE" &&
+        //   "companyDetailsUpload" in formDataCopy &&
+        //   !Object.keys(formData?.companyDetailsUpload?.document || {}).length
+        // ) {
+        //   if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+        //   return true;
+        // }
+        else {
+          if (!!clearFormDataErrors) clearFormDataErrors("inquiryAffidavitFileUpload");
+          return false;
+        }
+      }
+    }
+  };
+
+  const demandNoticeFileValidation = (formData) => {
+    if (selected === "demandNoticeDetails") {
+      const formDataCopy = structuredClone(formData);
+      debugger;
+      if ("SelectCustomDragDrop" in formDataCopy) {
+        if (
+          ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some(
+            (data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length
+          )
+        ) {
+          if (!!setFormErrors) setFormErrors("SelectCustomDragDrop", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          return true;
+        } else if (
+          formData?.proofOfService?.code === "YES" &&
+          ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
+        ) {
+          if (!!clearFormDataErrors) clearFormDataErrors("SelectCustomDragDrop");
+          return false;
+        }
+      }
+    }
+  };
+
+  const complainantValidation = (formData) => {
+    if (selected === "complaintDetails") {
+      const formDataCopy = structuredClone(formData);
+      debugger;
+      if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
+        if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
+          if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          return true;
+        } else {
+          if (!!clearFormDataErrors) clearFormDataErrors("companyDetailsUpload");
+          return false;
+        }
+      }
+    }
+  };
+
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
-      debugger;
       setValue("advocateBarRegNumberWithName", [
         {
           ...formData.advocateBarRegNumberWithName[0],
@@ -649,14 +979,14 @@ function EFilingCases({ path }) {
     }
     checkIfscValidation(formData, setValue);
     checkNameValidation(formData, setValue);
+    checkOnlyCharInCheque(formData, setValue);
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       chequeDateValidation(formData, setError, clearErrors);
-      showDemandNoticeModal(setValue, formData, setError, clearErrors);
+      showDemandNoticeModal(setValue, formData, setError, clearErrors, index);
       validateDateForDelayApplication(setValue);
-      showToastForComplainant(formData);
+      showToastForComplainant(formData, setValue);
       setFormdata(
         formdata.map((item, i) => {
-          setValue();
           return i === index
             ? {
                 ...item,
@@ -672,6 +1002,7 @@ function EFilingCases({ path }) {
         setFormErrors: setError,
         resetFormData: reset,
         setFormDataValue: setValue,
+        clearFormDataErrors: clearErrors,
       }));
     }
     if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
@@ -762,6 +1093,113 @@ function EFilingCases({ path }) {
     return response;
   };
 
+  const setMandatoryAndOptionalRemainingFields = (currentPageData, currentSelected) => {
+    let totalMandatoryLeft = 0;
+    let totalOptionalLeft = 0;
+
+    if (currentPageData.length === 0) {
+      // this case is specially for witness details page (which is optional),
+      // so there might not be any witness at all hence empty currentPageData will be received.
+      totalMandatoryLeft = 0;
+      totalOptionalLeft = 1;
+    } else {
+      for (let i = 0; i < currentPageData.length; i++) {
+        const currentIndexData = currentPageData[i];
+        const currentPageMandatoryFields = [];
+        const currentPageOptionalFields = [];
+        let currentPage = {};
+        for (const obj of sideMenuConfig) {
+          const foundPage = obj?.children.find((o) => o?.key === currentSelected);
+          if (foundPage) {
+            currentPage = foundPage;
+            break;
+          }
+        }
+
+        currentPageMandatoryFields.push(...(currentPage?.mandatoryFields || []));
+        currentPageOptionalFields.push(...(currentPage?.optionalFields || []));
+
+        const currentPageMandatoryDependentFields = (currentPage?.dependentMandatoryFields || [])
+          .filter((obj) => {
+            return currentIndexData?.data?.[obj?.dependentOn]?.[obj?.dependentOnKey] === true;
+          })
+          .map((obj) => {
+            return obj?.field;
+          });
+        currentPageMandatoryFields.push(...currentPageMandatoryDependentFields);
+
+        const currentPageOptionalDependentFields = (currentPage?.dependentOptionalFields || [])
+          .filter((obj) => {
+            return currentIndexData?.data?.[obj?.dependentOn]?.[obj?.dependentOnKey] === true;
+          })
+          .map((obj) => {
+            return obj?.field;
+          });
+        currentPageOptionalFields.push(...currentPageOptionalDependentFields);
+
+        if (currentPageMandatoryFields.length !== 0) {
+          for (let i = 0; i < currentPageMandatoryFields.length; i++) {
+            const value = extractValue(currentIndexData?.data, currentPageMandatoryFields[i]);
+            const isValueEmpty = isEmptyValue(value);
+            if (isValueEmpty) {
+              totalMandatoryLeft++;
+            }
+          }
+        }
+
+        if ("ifDataKeyHasValueAsArray" in currentPage) {
+          const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
+          for (let i = 0; i < arrayValue.length; i++) {
+            const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
+            for (let j = 0; j < mandatoryFields.length; j++) {
+              const value = extractValue(arrayValue[i], mandatoryFields[j]);
+              const isValueEmpty = isEmptyValue(value);
+              if (isValueEmpty) {
+                totalMandatoryLeft++;
+              }
+            }
+          }
+        }
+
+        if ("anyOneOfTheseMandatoryFields" in currentPage) {
+          const fieldsArray = currentPage.anyOneOfTheseMandatoryFields;
+          for (let i = 0; i < fieldsArray.length; i++) {
+            const currentChildArray = fieldsArray[i];
+            let count = 0;
+            for (let j = 0; j < currentChildArray.length; j++) {
+              const value = extractValue(currentIndexData?.data, currentChildArray[j]);
+              const isValueEmpty = isEmptyValue(value);
+              if (isValueEmpty) {
+                count++;
+              }
+            }
+            if (count === 2) {
+              totalMandatoryLeft++;
+            }
+          }
+        }
+
+        if (currentPageOptionalFields.length !== 0) {
+          let optionalLeft = 0;
+          for (let i = 0; i < currentPageOptionalFields.length; i++) {
+            const value = extractValue(currentIndexData?.data, currentPageOptionalFields[i]);
+            const isValueEmpty = isEmptyValue(value);
+            if (isValueEmpty) {
+              optionalLeft++;
+            }
+          }
+          totalOptionalLeft += optionalLeft;
+        }
+      }
+    }
+    const obj = {
+      selectedPage: currentSelected,
+      mandatoryTotalCount: totalMandatoryLeft,
+      optionalTotalCount: totalOptionalLeft,
+    };
+    return obj;
+  };
+
   const updateCaseDetails = async (isCompleted, key) => {
     const data = {};
     if (selected === "complaintDetails") {
@@ -839,11 +1277,15 @@ function EFilingCases({ path }) {
                 individualDetails: {
                   ...data?.data?.complainantVerification?.individualDetails,
                 },
+                complainantVerification: {
+                  ...data?.data?.complainantVerification,
+                  isUserVerified: !!data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.mobileNumber,
+                },
               },
             };
           })
       );
-      const representatives = [...(caseDetails?.representatives ? caseDetails?.representatives : [])]
+      const representatives = (caseDetails?.representatives ? [...caseDetails?.representatives] : [])
         ?.filter((representative) => representative?.advocateId)
         .map((representative) => ({
           ...representative,
@@ -869,9 +1311,9 @@ function EFilingCases({ path }) {
           .filter((item) => item.isenabled)
           .map(async (data) => {
             let documentData = [];
-            if (data?.data?.condonationFileUpload?.document) {
+            if (data?.data?.inquiryAffidavitFileUpload?.document) {
               documentData = await Promise.all(
-                data?.data?.condonationFileUpload?.document?.map(async (document) => {
+                data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                   if (document) {
                     const uploadedData = await onDocumentUpload(document, document.name);
                     return {
@@ -888,8 +1330,8 @@ function EFilingCases({ path }) {
               ...data,
               data: {
                 ...data.data,
-                condonationFileUpload: {
-                  ...data?.data?.condonationFileUpload,
+                inquiryAffidavitFileUpload: {
+                  ...data?.data?.inquiryAffidavitFileUpload,
                   document: documentData,
                 },
               },
@@ -1237,7 +1679,6 @@ function EFilingCases({ path }) {
 
             if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
               infoBoxData.header = "CS_RESOLVE_WITH_ADR";
-              debugger;
               if (data?.data?.caseSettlementCondition?.text) {
                 infoBoxData.data = data?.data?.caseSettlementCondition?.text;
               }
@@ -1350,6 +1791,7 @@ function EFilingCases({ path }) {
           ...data,
           linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
           filingDate: formatDate(new Date()),
+          ...(!caseDetails?.litigants && { litigants: [] }),
           workflow: {
             ...caseDetails?.workflow,
             action: "SAVE_DRAFT",
@@ -1362,6 +1804,15 @@ function EFilingCases({ path }) {
   };
 
   const onSubmit = async () => {
+    if (formdata.some((data) => respondentValidation(data?.data))) {
+      return;
+    }
+    if (formdata.some((data) => demandNoticeFileValidation(data?.data))) {
+      return;
+    }
+    // if (formdata.some((data) => complainantValidation(data?.data))) {
+    //   return;
+    // }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
@@ -1459,6 +1910,20 @@ function EFilingCases({ path }) {
     courtName: "Kollam S 138 Special Court",
   };
 
+  const takeUserToRemainingMandatoryFieldsPage = () => {
+    const firstPageInTheListWhichHasMandatoryFieldsLeft = checkAndGetMandatoryFieldLeftPages?.[0];
+    const selectedPage = firstPageInTheListWhichHasMandatoryFieldsLeft?.selectedPage;
+    history.push(`?caseId=${caseId}&selected=${selectedPage}`);
+    setShowConfirmMandatoryModal(false);
+  };
+
+  const takeUserToRemainingOptionalFieldsPage = () => {
+    const firstPageInTheListWhichHasOptionalFieldsLeft = checkAndGetOptionalFieldLeftPages?.[0];
+    const selectedPage = firstPageInTheListWhichHasOptionalFieldsLeft?.selectedPage;
+    history.push(`?caseId=${caseId}&selected=${selectedPage}`);
+    setShowConfirmOptionalModal(false);
+  };
+
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1528,7 +1993,10 @@ function EFilingCases({ path }) {
         <div className="employee-card-wrapper">
           <div className="header-content">
             <div className="header-details">
-              <Header>{t(pageConfig.header)}</Header>
+              <Header>
+                {`${t(pageConfig.header)}`}
+                {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
+              </Header>
               <div
                 className="header-icon"
                 onClick={() => {
@@ -1546,7 +2014,7 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || pageConfig?.formItemName === "Witness" || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -1581,20 +2049,21 @@ function EFilingCases({ path }) {
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
+                  submitIcon={<RightArrow />}
                 />
               </div>
             ) : null;
           })}
           {confirmDeleteModal && (
             <Modal
-              // hideSubmit={true}
               headerBarMain={<Heading label={t("Are you sure?")} />}
               headerBarEnd={<CloseBtn onClick={() => setConfirmDeleteModal(false)} />}
               actionCancelLabel="Cancel"
               actionCancelOnSubmit={() => setConfirmDeleteModal(false)}
-              actionSaveLabel={`Remove ${pageConfig?.formItemName}`}
-              children={deleteWarningText(`${pageConfig?.formItemName}`)}
+              actionSaveLabel={`Remove ${t(pageConfig?.formItemName)}`}
+              children={deleteWarningText(`${t(pageConfig?.formItemName)}`)}
               actionSaveOnSubmit={handleConfirmDeleteForm}
+              className={"confirm-delete-modal"}
             ></Modal>
           )}
           {receiptDemandNoticeModal && (
@@ -1670,6 +2139,26 @@ function EFilingCases({ path }) {
                 setReceiptDemandNoticeModal(false);
                 history.push(`/${window?.contextPath}/citizen/dristi/home`);
               }}
+            ></Modal>
+          )}
+          {showMandatoryFieldsRemainingModal && showConfirmMandatoryModal && (
+            <Modal
+              headerBarMain={<Heading label={`${mandatoryFieldsLeftTotalCount} ${t("MANDATORY_FIELDS_REMAINING")}`} />}
+              headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingMandatoryFieldsPage()} />}
+              actionSaveLabel={t("CONTINUE_FILLING")}
+              children={mandatoryFieldsRemainingText()}
+              actionSaveOnSubmit={() => takeUserToRemainingMandatoryFieldsPage()}
+            ></Modal>
+          )}
+          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && (
+            <Modal
+              headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
+              headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
+              actionCancelLabel={t("SKIP_AND_CONTINUE")}
+              actionCancelOnSubmit={() => setShowConfirmOptionalModal(false)}
+              actionSaveLabel={t("FILL_NOW")}
+              children={optionalFieldsRemainingText(optionalFieldsLeftTotalCount)}
+              actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
             ></Modal>
           )}
           {pageConfig?.addFormText && (

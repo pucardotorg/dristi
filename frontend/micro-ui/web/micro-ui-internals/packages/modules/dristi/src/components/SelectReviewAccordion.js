@@ -95,7 +95,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     }
   };
   const handleOpenPopup = (e, configKey, name, index = null, fieldName) => {
-    popupAnchor.current = e.currentTarget;
+    if (e) {
+      popupAnchor.current = e.currentTarget;
+    }
     setValue(
       "scrutinyMessage",
       {
@@ -278,7 +280,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         <ImageModal
           imageInfo={isImageModal}
           t={t}
-          handleOpenPopup={handleClosePopup}
+          handleOpenPopup={handleOpenPopup}
           handleCloseModal={() => {
             setIsImageModal(false);
           }}

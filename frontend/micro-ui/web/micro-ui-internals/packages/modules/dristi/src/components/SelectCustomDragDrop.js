@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
-import { UploadIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
 import { FileUploadIcon } from "../icons/svgIndex";
 
@@ -58,7 +58,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
 
   const fileValidator = (file, input) => {
@@ -87,6 +89,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     let fileErrors = currentValue.map((file) => fileValidator(file, input));
     const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
+    console.log(errors);
     return (
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">
@@ -146,6 +149,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             )}
           </div>
         )}
+        {/* {errors?.[config.key] && <CardLabelError>{t(errors[config.key]?.message || "CORE_COMMON_INVALID")}</CardLabelError>} */}
       </div>
     );
   });

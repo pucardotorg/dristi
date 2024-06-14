@@ -188,6 +188,7 @@ const witnessFormConfig = [
         populators: {
           inputs: [
             {
+              name: "text",
               textAreaHeader: "CS_TEXTAREA_WITNESS_ADDITIONAL_DETAIL",
               placeholder: "CS_TEXTAREA_PLACEHOLDER_ADDITIONAL_DETAIL",
               headerClassName: "dristi-font-bold",
@@ -207,5 +208,6 @@ export const witnessConfig = {
   isOptional: false,
   addFormText: "ADD_WITNESS",
   formItemName: "Witness",
-  className: "witness-details"
+  className: "witness-details",
+  showOptionalInHeader: true,
 };

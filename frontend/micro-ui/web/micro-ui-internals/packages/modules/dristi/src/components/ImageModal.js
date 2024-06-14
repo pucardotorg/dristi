@@ -1,29 +1,39 @@
 import React from "react";
 import Modal from "./Modal";
-import { FlagIcon } from "../icons/svgIndex";
+import { FlagIcon, LeftArrow } from "../icons/svgIndex";
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
 function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const Heading = (props) => {
-    return <h1 className="heading-m">{props.label}</h1>;
+    return (
+      <div className="heading-main">
+        <div className="heading-back-error" onClick={handleCloseModal}>
+          <LeftArrow />
+        </div>
+        <div className="heading-title">
+          <h1 className="heading-m">{props.label}</h1>
+          <p>{`cheque_bounced.jpeg  |  2MB`}</p>
+        </div>
+      </div>
+    );
   };
   const HeaderBarEnd = () => {
     return (
-      <div style={{ display: "flex", gap: 20, alignItems: "center", justifyContent: "end" }}>
+      <React.Fragment>
         <div
+          className="flag-icon"
           onClick={(e) => {
-            handleOpenPopup(e, imageInfo.configKey, imageInfo.name, imageInfo.dataIndex, imageInfo.fieldName);
+            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.dataIndex, imageInfo.fieldName);
           }}
-          style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}
         >
           <FlagIcon />
         </div>
-        <div onClick={handleCloseModal} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+        <div className="close-icon" onClick={handleCloseModal}>
           <CloseSvg />
         </div>
-      </div>
+      </React.Fragment>
     );
   };
   return (
@@ -31,11 +41,11 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
       headerBarEnd={<HeaderBarEnd />}
       formId="modal-action"
       headerBarMain={<Heading label={t("CS_BOUNCED_CHEQUE")} />}
-      className="case-types"
+      className="view-image-modal"
       hideSubmit
       style={{ height: "100%", width: "100%" }}
     >
-      <DocViewerWrapper fileStoreId={imageInfo.fileStore} tenantId={tenantId} docWidth="250px" showDownloadOption={false} />
+      <DocViewerWrapper fileStoreId={imageInfo.data.fileStore} tenantId={tenantId} docWidth="100%" docHeight={"100%"} showDownloadOption={false} />
     </Modal>
   );
 }

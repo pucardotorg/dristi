@@ -2,7 +2,6 @@ import { Label } from "@egovernments/digit-ui-react-components";
 
 const respondentFromconfig = [
   {
-
     head: "CS_RESPONDENT_TYPE",
     body: [
       {
@@ -51,7 +50,7 @@ const respondentFromconfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -86,7 +85,7 @@ const respondentFromconfig = [
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -156,6 +155,37 @@ const respondentFromconfig = [
     ],
   },
   {
+    dependentKey: { phonenumbers: ["mobileNumber"] },
+    head: "WHATSAPP_SEND_CONFIRMATION",
+    body: [
+      {
+        type: "radio",
+        key: "whatsAppConfirmation",
+        withoutLabel: true,
+        isMandatory: true,
+        populators: {
+          type: "radioButton",
+          name: "whatsAppConfirmation",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          options: [
+            {
+              code: "YES",
+              name: "Yes",
+            },
+            {
+              code: "NO",
+              name: "No",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
     dependentKey: { respondentType: ["commonFields"] },
     head: "CS_RESPONDENT_EMAIL",
     body: [
@@ -185,6 +215,37 @@ const respondentFromconfig = [
     ],
   },
   {
+    dependentKey: { emails: ["emailId"] },
+    head: "SEND_EMAIL_CONFIRMATION",
+    body: [
+      {
+        type: "radio",
+        key: "emailConfirmation",
+        withoutLabel: true,
+        isMandatory: true,
+        populators: {
+          name: "emailConfirmation",
+          type: "radioButton",
+          optionsKey: "name",
+          error: "sample required message",
+          required: false,
+          isMandatory: true,
+          isDependent: true,
+          options: [
+            {
+              code: "YES",
+              name: "Yes",
+            },
+            {
+              code: "NO",
+              name: "No",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
     head: "CS_RESPONDENT_COMPANY_DETAIL",
     dependentKey: { respondentType: ["showCompanyDetails"] },
     body: [
@@ -195,7 +256,7 @@ const respondentFromconfig = [
         isMandatory: true,
         populators: {
           title: "FIRST_TERMS_AND_CONDITIONS",
-          name: "Terms_Conditions",
+          name: "companyName",
           styles: { minWidth: "100%" },
           labelStyles: { padding: "8px" },
           customStyle: { minWidth: "100%" },
@@ -280,6 +341,15 @@ const respondentFromconfig = [
               },
               isMandatory: true,
             },
+            {
+              label: "ADDRESS",
+              type: "text",
+              name: "locality",
+              validation: {
+                isRequired: true,
+              },
+              isMandatory: true,
+            },
           ],
           validation: {},
         },
@@ -313,7 +383,7 @@ const respondentFromconfig = [
       {
         type: "component",
         component: "SelectCustomDragDrop",
-        key: "condonationFileUpload",
+        key: "inquiryAffidavitFileUpload",
         withoutLabel: true,
         populators: {
           inputs: [

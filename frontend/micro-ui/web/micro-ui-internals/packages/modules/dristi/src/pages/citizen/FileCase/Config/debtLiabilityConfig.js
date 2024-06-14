@@ -92,7 +92,12 @@ const debtLiabilityFromconfig = [
         isMandatory: true,
         populators: {
           componentInFront: "₹",
-          name: "chequeAmount",
+          name: "totalAmount",
+          prefix: "",
+          validation: {
+            maxLength: 12,
+            max: 999999999999,
+          }
         },
       },
     ],
@@ -150,6 +155,7 @@ const debtLiabilityFromconfig = [
         populators: {
           inputs: [
             {
+              name: "text",
               textAreaSubHeader: "CS_DEBT_ADDITIONAL_DETAILS",
               isOptional: true,
               type: "TextAreaComponent",
