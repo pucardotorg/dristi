@@ -81,5 +81,6 @@ public class ServiceConstants {
 
 	public static final String SAVE_DRAFT_CASE_WORKFLOW_ACTION = "SAVE_DRAFT";
 	public static final String SUBMIT_CASE_WORKFLOW_ACTION = "SUBMIT_CASE";
+	public static final String DELETE_DRAFT_WORKFLOW_ACTION = "DELETE_DRAFT";
 
 }
