@@ -1,11 +1,11 @@
-import { CardLabel, CardLabelError, CardText, CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
-import React, { Fragment, useEffect, useState } from "react";
+import { CardLabel, CardLabelError, CardText, CloseSvg } from "@egovernments/digit-ui-react-components";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import useInterval from "../../../hooks/useInterval";
 import OTPInput from "../../../components/OTPInput";
 import FormStep from "../../../components/FormStep";
-import { Close } from "@egovernments/digit-ui-svg-components";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { CloseIconWhite } from "../../../icons/svgIndex";
+import Modal from "../../../components/Modal";
 
 const SelectOtp = ({
   config,
@@ -23,8 +23,10 @@ const SelectOtp = ({
   isAdhaar,
   cardText,
   mobileNumber,
+  setState,
 }) => {
   const history = useHistory();
+  const location = useLocation();
   const token = window.localStorage.getItem("token");
   const isUserLoggedIn = Boolean(token);
   const [timeLeft, setTimeLeft] = useState(25);
@@ -40,13 +42,16 @@ const SelectOtp = ({
     setTimeLeft(25);
   };
   const onCancel = () => {
+    setState((prev) => ({
+      ...prev,
+      showOtpModal: false,
+    }));
     setParams({
       ...params,
       otp: "",
       aadharOtp: "",
+      adhaarNumber: "",
     });
-
-    history.goBack();
   };
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
@@ -65,12 +70,6 @@ const SelectOtp = ({
       </div>
     );
   };
-
-  if (!params?.mobileNumber && !isAdhaar) {
-    history.push(path);
-  } else if (!params?.adhaarNumber && isAdhaar) {
-    history.push(path);
-  }
 
   if (userType === "employee") {
     return (
@@ -93,6 +92,7 @@ const SelectOtp = ({
   }
 
   const handleKeyDown = (e) => {
+    e.stopPropagation();
     if (e.key === "Enter") {
       onSelect();
     }
@@ -122,7 +122,7 @@ const SelectOtp = ({
           <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
         </React.Fragment>
       }
-      popupStyles={{ width: "580px", alignItems: "center" }}
+      className={"otp-modal-class"}
     >
       <FormStep
         onSelect={onSelect}
@@ -131,9 +131,7 @@ const SelectOtp = ({
         isDisabled={!(otp?.length === 6 && canSubmit)}
         cardStyle={{ minWidth: "100%", alignItems: "center" }}
       >
-        <div style={{ display: "flex" }}>
-          <OTPInput length={6} onChange={onOtpChange} value={otp} />
-        </div>
+        <OTPInput length={6} onChange={onOtpChange} value={otp} />
         <div className="message">
           <p>
             {timeLeft > 0 ? <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span> : ""}

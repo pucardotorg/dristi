@@ -24,7 +24,7 @@ function Accordion({ t, title, handlePageChange, handleAccordionClick, children,
                 handlePageChange(item.key, !showConfirmModal);
               }}
             >
-              {item.isCompleted ? (
+              {item.isCompleted && !item?.checked ? (
                 <CustomCompleteIcon />
               ) : (
                 <span className="radio-btn-wrap">

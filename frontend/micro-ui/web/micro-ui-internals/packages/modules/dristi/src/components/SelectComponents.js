@@ -73,10 +73,32 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
               })(),
               coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
             });
+            onSelect(config.key, {
+              ...formData[config.key],
+              [input]: value,
+              state: getLocation(location, "administrative_area_level_1") || "",
+              district: getLocation(location, "administrative_area_level_3") || "",
+              city: getLocation(location, "locality") || "",
+              locality: (() => {
+                const plusCode = getLocation(location, "plus_code");
+                const neighborhood = getLocation(location, "neighborhood");
+                const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                  .reduce((result, current) => {
+                    if (current) {
+                      result.push(current);
+                    }
+                    return result;
+                  }, [])
+                  .join(", ");
+              })(),
+              coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
+            });
             coordinateData.callbackFunc({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
           }
         })
-        .catch(() => {
+        .catch((err) => {
           onSelect(configKey, {
             ...formData[configKey],
             ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
@@ -97,13 +119,25 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
       return;
     }
     if (Array.isArray(input)) {
-      onSelect(configKey, {
-        ...formData[configKey],
-        ...input.reduce((res, curr) => {
-          res[curr] = value[curr];
-          return res;
-        }, {}),
-      });
+      if (!config?.isUserVerified) {
+        onSelect(config.key, {
+          ...formData[config.key],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        });
+      }
+      if (!config?.isUserVerified) {
+        onSelect(configKey, {
+          ...formData[configKey],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        });
+      }
+      
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
     }
@@ -113,7 +147,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
     const isEmpty = /^\s*$/.test(currentValue);
     return isEmpty || !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
   };
-
   return (
     <div>
       {inputs?.map((input, index) => {
@@ -131,9 +164,10 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
                     locationStyle={{ maxWidth: "100%" }}
-                    position={formData?.[configKey]?.coordinates || {}}
+                    position={formData?.[config.key]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
-                    index={formData?.[config.key]?.uuid || uuid}
+                    disable={input?.isDisabled}
+                    index={config?.uuid}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
                         {
@@ -166,9 +200,8 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                                     .join(", ");
                                 })(),
                           coordinates,
-                          uuid: isFirstRender && formData[config.key] ? formData[config.key]["uuid"] : uuid,
-                          buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
-                          doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
+                          buildingName: formData && isFirstRender && formData[config.key] ? formData[configKey]["buildingName"] : "",
+                          doorNo: formData && isFirstRender && formData[config.key] ? formData[configKey]["doorNo"] : "",
                         },
                         input.name
                       );

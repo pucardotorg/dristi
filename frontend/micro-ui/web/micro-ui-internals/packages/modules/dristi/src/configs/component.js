@@ -17,6 +17,8 @@ export const idProofVerificationConfig = [
               validation: {},
               isMandatory: true,
               disableFormValidation: false,
+              clearFields: { ID_Proof: [] },
+              clearFieldsType: { ID_Proof: "documentUpload" },
               options: [
                 {
                   code: "AADHAR",
@@ -37,13 +39,16 @@ export const idProofVerificationConfig = [
               name: "ID_Proof",
               validation: {},
               fileTypes: ["JPG", "PNG", "PDF"],
-              allowedFileTypes: /(.*?)(png|jpeg|pdf)$/i,
+              allowedFileTypes: /(.*?)(doc|docx|pdf|txt)$/i,
               isMandatory: true,
               errorMessage: "CUSTOM_DOCUMENT_ERROR_MSG",
               disableFormValidation: false,
-              uploadGuidelines: "Upload .png",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+              uploadGuidelines: "UPLOAD_DOC_50",
+              maxFileSize: 25,
+              allowedMaxSizeInMB: 25,
+              maxFileErrorMessage: "CS_FILE_LIMIT_25_MB",
+              noteMsg: "CS_DOCUMENT_BLURB",
+              notSupportedError: "NOT_SUPPORTED_ERROR",
             },
           ],
           validation: {},
@@ -64,7 +69,7 @@ export const verifyMobileNoConfig = [
         populators: {
           inputs: [
             {
-              label: "ENTER_OTP_SENT_TO",
+              label: "CS_LOGIN_OTP_TEXT",
               type: "text",
               name: "otpNumber",
               hasMobileNo: true,
@@ -77,7 +82,7 @@ export const verifyMobileNoConfig = [
                 minlength: 6,
                 maxlength: 6,
                 pattern: /[0-9]{6}$/i,
-                errMsg: "MOBILE_NUMBER_INVALID",
+                errMsg: "INVALID_OTP_NUMBER",
                 title: "",
               },
               isMandatory: true,
