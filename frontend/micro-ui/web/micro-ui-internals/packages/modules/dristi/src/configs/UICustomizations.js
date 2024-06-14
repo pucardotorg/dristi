@@ -189,6 +189,7 @@ export const UICustomizations = {
       return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
       const moduleSearchCriteria = {
         ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
         ...requestCriteria?.state?.searchForm,
