@@ -85,6 +85,9 @@ export const chequeDetailsFormConfig = [
         isMandatory: true,
         populators: {
           name: "issuanceDate",
+          validation: {
+            max: new Date().toISOString().split('T')[0],
+          }
         },
       },
     ],
@@ -142,6 +145,9 @@ export const chequeDetailsFormConfig = [
         isMandatory: true,
         populators: {
           name: "depositDate",
+          validation: {
+            max: new Date().toISOString().split('T')[0],
+          }
         },
       },
     ],
