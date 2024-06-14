@@ -208,7 +208,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
               <Modal
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
-                actionCancelOnSubmit={() => {}}
+                actionCancelOnSubmit={() => { }}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });
@@ -221,19 +221,17 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                 formId="modal-action"
                 headerBarMain={<Heading label={t("VERIFY_ID_PROOF")} />}
                 submitTextClassName={"verification-button-text-modal"}
-                className={"case-types"}
+                className={"verification-complainant-modal"}
               >
-                <div style={{ padding: "16px 24px" }}>
-                  <FormComposerV2
-                    config={idProofVerificationConfig}
-                    t={t}
-                    cardClassName={"form-composer-id-proof-card"}
-                    inline
-                    headingStyle={{ textAlign: "center" }}
-                    cardStyle={{ minWidth: "100%" }}
-                    onFormValueChange={onFormValueChange}
-                  ></FormComposerV2>
-                </div>
+                <FormComposerV2
+                  config={idProofVerificationConfig}
+                  t={t}
+                  cardClassName={"form-composer-id-proof-card"}
+                  inline
+                  headingStyle={{ textAlign: "center" }}
+                  cardStyle={{ minWidth: "100%" }}
+                  onFormValueChange={onFormValueChange}
+                ></FormComposerV2>
               </Modal>
             )}
           </React.Fragment>

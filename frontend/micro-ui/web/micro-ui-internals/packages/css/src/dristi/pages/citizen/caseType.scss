@@ -3,6 +3,7 @@
 .popup-module.e-sign-aadhar-modal,
 .popup-module.confirm-delete-modal,
 .popup-module.verify-mobile-modal,
+.popup-module.verification-complainant-modal,
 .popup-module.case-types {
   width: 536px;
   max-height: 560px;
@@ -156,6 +157,7 @@
   .popup-module.e-sign-aadhar-modal,
   .popup-module.confirm-delete-modal,
   .popup-module.verify-mobile-modal,
+  .popup-module.verification-complainant-modal,
   .popup-module.case-types {
     margin: auto 16px;
     max-height: 564px;
@@ -265,6 +267,22 @@
   .popup-module-main {
     .employeeCard {
       height: calc(100vh - 154px);
+    }
+  }
+}
+
+.popup-module.popup-module.verification-complainant-modal {
+  .popup-module-main {
+    form {
+      padding: 16px 24px 0px !important;
+      .field {
+        .label-field-pair {
+          margin-bottom: 16px !important;
+          .select-wrap {
+            margin-bottom: 0px !important;
+          }
+        }
+      }
     }
   }
 }

@@ -45,14 +45,14 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
   return (
-    <div>
+    <React.Fragment>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         const showDependentFields =
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-            ? formData &&
+              ? formData &&
               formData[config.key] &&
               Array.isArray(input.dependentKey[input.isDependentOn]) &&
               input.dependentKey[input.isDependentOn].reduce((res, curr) => {
@@ -60,7 +60,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                 res = formData[config.key][input.isDependentOn][curr];
                 return res;
               }, true)
-            : true;
+              : true;
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
@@ -92,6 +92,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                         showHintBelow={input?.showHintBelow ? true : false}
                         setuploadedstate={formData?.[config.key]?.[input.name] || []}
                         allowedFileTypesRegex={input.allowedFileTypes}
+                        acceptFiles={input?.acceptFiles}
                         allowedMaxSizeInMB={input.allowedMaxSizeInMB || "5"}
                         hintText={input.hintText}
                         maxFilesAllowed={input.maxFilesAllowed || "1"}
@@ -142,7 +143,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
           </React.Fragment>
         );
       })}
-    </div>
+    </React.Fragment>
   );
 };
 
