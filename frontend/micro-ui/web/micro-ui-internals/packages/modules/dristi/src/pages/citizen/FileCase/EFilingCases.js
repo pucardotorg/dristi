@@ -79,10 +79,11 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [{ setFormErrors, resetFormData, setFormDataValue }, setState] = useState({
+  const [{ setFormErrors, resetFormData, setFormDataValue, clearFormDataErrors }, setState] = useState({
     setFormErrors: null,
     resetFormData: null,
     setFormDataValue: null,
+    clearFormDataErrors: null,
   });
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
@@ -349,14 +350,14 @@ function EFilingCases({ path }) {
                         data:
                           input.key === "advocateDetails"
                             ? [
-                              {
-                                name:
-                                  caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-                              },
-                            ] || [{ name: "" }]
+                                {
+                                  name:
+                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                                },
+                              ] || [{ name: "" }]
                             : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
-                              name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
-                            })),
+                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                              })),
                       };
                     }),
                   },
@@ -451,7 +452,7 @@ function EFilingCases({ path }) {
                           data?.addressDetails?.some(
                             (address) =>
                               address?.addressDetails?.pincode !==
-                              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
                               body?.key === "inquiryAffidavitFileUpload"
                           )
                         ) {
@@ -601,12 +602,15 @@ function EFilingCases({ path }) {
               setValue("dateOfAccrual", "");
             } else {
               clearErrors("dateOfService");
-              const milliseconds = new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000;
-              const date = new Date(milliseconds);
-              const year = date.getFullYear();
-              const month = String(date.getMonth() + 1).padStart(2, "0");
-              const day = String(date.getDate()).padStart(2, "0");
-              const formattedDate = `${year}-${month}-${day}`;
+              let formattedDate = "";
+              if (formData?.dateOfService) {
+                const milliseconds = new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000;
+                const date = new Date(milliseconds);
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                formattedDate = `${year}-${month}-${day}`;
+              }
               setValue("dateOfAccrual", formattedDate);
             }
             break;
@@ -614,10 +618,12 @@ function EFilingCases({ path }) {
           case "dateOfIssuance":
             if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
               setError("dateOfIssuance", { message: "CS_DATE_ERROR_MSG" });
-            } else if (new Date(formData?.dateOfIssuance).getTime() < new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[index]?.data?.depositDate).getTime()) {
-              setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" })
-            } else
-              clearErrors("dateOfIssuance");
+            } else if (
+              new Date(formData?.dateOfIssuance).getTime() <
+              new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[index]?.data?.depositDate).getTime()
+            ) {
+              setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" });
+            } else clearErrors("dateOfIssuance");
             break;
 
           case "dateOfDispatch":
@@ -808,18 +814,15 @@ function EFilingCases({ path }) {
     }
   };
 
-  const respondentValidation = (formData, setValue) => { };
-
-
   const checkOnlyCharInCheque = (formData, setValue) => {
-    if (selected == 'chequeDetails') {
+    if (selected === "chequeDetails") {
       if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
         const formDataCopy = structuredClone(formData);
         for (const key in formDataCopy) {
           if (Object.hasOwnProperty.call(formDataCopy, key)) {
             const oldValue = formDataCopy[key];
             let value = oldValue;
-            if (key === 'chequeSignatoryName' || key === 'name') {
+            if (key === "chequeSignatoryName" || key === "name") {
               if (typeof value === "string") {
                 if (value.length > 100) {
                   value = value.slice(0, 100);
@@ -841,7 +844,7 @@ function EFilingCases({ path }) {
                   }, 0);
                 }
               }
-            } else if (key === 'bankName') {
+            } else if (key === "bankName") {
               if (typeof value === "string") {
                 if (value.length > 200) {
                   value = value.slice(0, 200);
@@ -867,12 +870,12 @@ function EFilingCases({ path }) {
           }
         }
       }
-    } else if (selected == 'debtLiabilityDetails') {
+    } else if (selected == "debtLiabilityDetails") {
       if (formData?.totalAmount) {
-        console.log('formData?.totalAmount', formData?.totalAmount)
+        console.log("formData?.totalAmount", formData?.totalAmount);
         const formDataCopy = structuredClone(formData);
         for (const key in formDataCopy) {
-          if (Object.hasOwnProperty.call(formDataCopy, key) && key === 'totalAmount') {
+          if (Object.hasOwnProperty.call(formDataCopy, key) && key === "totalAmount") {
             const oldValue = formDataCopy[key];
             let value = oldValue;
             if (typeof value === "string") {
@@ -894,7 +897,75 @@ function EFilingCases({ path }) {
         }
       }
     }
-  }
+  };
+  const respondentValidation = (formData) => {
+    if (selected === "respondentDetails") {
+      const formDataCopy = structuredClone(formData);
+      if ("inquiryAffidavitFileUpload" in formDataCopy) {
+        if (
+          formData?.addressDetails?.some(
+            (address) =>
+              address?.addressDetails?.pincode !== caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode
+          ) &&
+          !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
+        ) {
+          if (!!setFormErrors) setFormErrors("inquiryAffidavitFileUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          return true;
+        }
+        // else if (
+        //   formData?.respondentType?.code === "REPRESENTATIVE" &&
+        //   "companyDetailsUpload" in formDataCopy &&
+        //   !Object.keys(formData?.companyDetailsUpload?.document || {}).length
+        // ) {
+        //   if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+        //   return true;
+        // }
+        else {
+          if (!!clearFormDataErrors) clearFormDataErrors("inquiryAffidavitFileUpload");
+          return false;
+        }
+      }
+    }
+  };
+
+  const demandNoticeFileValidation = (formData) => {
+    if (selected === "demandNoticeDetails") {
+      const formDataCopy = structuredClone(formData);
+      debugger;
+      if ("SelectCustomDragDrop" in formDataCopy) {
+        if (
+          ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some(
+            (data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length
+          )
+        ) {
+          if (!!setFormErrors) setFormErrors("SelectCustomDragDrop", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          return true;
+        } else if (
+          formData?.proofOfService?.code === "YES" &&
+          ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
+        ) {
+          if (!!clearFormDataErrors) clearFormDataErrors("SelectCustomDragDrop");
+          return false;
+        }
+      }
+    }
+  };
+
+  const complainantValidation = (formData) => {
+    if (selected === "complaintDetails") {
+      const formDataCopy = structuredClone(formData);
+      debugger;
+      if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
+        if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
+          if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          return true;
+        } else {
+          if (!!clearFormDataErrors) clearFormDataErrors("companyDetailsUpload");
+          return false;
+        }
+      }
+    }
+  };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
@@ -918,9 +989,9 @@ function EFilingCases({ path }) {
         formdata.map((item, i) => {
           return i === index
             ? {
-              ...item,
-              data: formData,
-            }
+                ...item,
+                data: formData,
+              }
             : item;
         })
       );
@@ -931,6 +1002,7 @@ function EFilingCases({ path }) {
         setFormErrors: setError,
         resetFormData: reset,
         setFormDataValue: setValue,
+        clearFormDataErrors: clearErrors,
       }));
     }
     if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
@@ -951,10 +1023,10 @@ function EFilingCases({ path }) {
     const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
     const identifierIdDetails = documentData
       ? {
-        fileStoreId: identifierId,
-        filename: documentData?.filename,
-        documentType: documentData?.fileType,
-      }
+          fileStoreId: identifierId,
+          filename: documentData?.filename,
+          documentType: documentData?.fileType,
+        }
       : {};
     const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
     let Individual = {
@@ -1684,19 +1756,19 @@ function EFilingCases({ path }) {
               caseId: caseDetails?.id,
               representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
                 ? [
-                  ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                    ? caseDetails?.litigants?.map((data, key) => ({
-                      ...(caseDetails.representatives?.[index]?.representing?.[key]
-                        ? caseDetails.representatives?.[index]?.representing?.[key]
-                        : {}),
-                      tenantId,
-                      caseId: data?.caseId,
-                      partyCategory: data?.partyCategory,
-                      individualId: data?.individualId,
-                      partyType: data?.partyType,
-                    }))
-                    : []),
-                ]
+                    ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
+                      ? caseDetails?.litigants?.map((data, key) => ({
+                          ...(caseDetails.representatives?.[index]?.representing?.[key]
+                            ? caseDetails.representatives?.[index]?.representing?.[key]
+                            : {}),
+                          tenantId,
+                          caseId: data?.caseId,
+                          partyCategory: data?.partyCategory,
+                          individualId: data?.individualId,
+                          partyType: data?.partyType,
+                        }))
+                      : []),
+                  ]
                 : [],
               advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
               tenantId,
@@ -1732,6 +1804,15 @@ function EFilingCases({ path }) {
   };
 
   const onSubmit = async () => {
+    if (formdata.some((data) => respondentValidation(data?.data))) {
+      return;
+    }
+    if (formdata.some((data) => demandNoticeFileValidation(data?.data))) {
+      return;
+    }
+    // if (formdata.some((data) => complainantValidation(data?.data))) {
+    //   return;
+    // }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
