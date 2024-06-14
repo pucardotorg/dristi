@@ -9,7 +9,7 @@ export const chequeDetailsFormConfig = [
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             patternType: "Name",
             minLength: 2,

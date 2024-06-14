@@ -1279,3 +1279,15 @@
     }
   }
 }
+
+.action-bar-wrap.e-filing-action-bar {
+  .submit-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none;
+    width: fit-content;
+    padding: 8px 24px;
+  }
+}

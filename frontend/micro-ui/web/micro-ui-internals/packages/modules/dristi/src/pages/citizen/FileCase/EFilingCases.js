@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
@@ -812,14 +812,14 @@ function EFilingCases({ path }) {
 
 
   const checkOnlyCharInCheque = (formData, setValue) => {
-    if (selected == 'chequeDetails')
+    if (selected == 'chequeDetails') {
       if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
         const formDataCopy = structuredClone(formData);
         for (const key in formDataCopy) {
           if (Object.hasOwnProperty.call(formDataCopy, key)) {
-            if (key === 'chequeSignatoryName' || key === 'bankName' || key === 'name') {
-              const oldValue = formDataCopy[key];
-              let value = oldValue;
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (key === 'chequeSignatoryName' || key === 'name') {
               if (typeof value === "string") {
                 if (value.length > 100) {
                   value = value.slice(0, 100);
@@ -841,10 +841,59 @@ function EFilingCases({ path }) {
                   }, 0);
                 }
               }
+            } else if (key === 'bankName') {
+              if (typeof value === "string") {
+                if (value.length > 200) {
+                  value = value.slice(0, 200);
+                }
+
+                let updatedValue = value
+                  .replace(/[^a-zA-Z0-9 ]/g, "")
+                  .trimStart()
+                  .replace(/ +/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (char) => char.toUpperCase());
+                if (updatedValue !== oldValue) {
+                  const element = document.querySelector(`[name="${key}"]`);
+                  const start = element?.selectionStart;
+                  const end = element?.selectionEnd;
+                  setValue(key, updatedValue);
+                  setTimeout(() => {
+                    element?.setSelectionRange(start, end);
+                  }, 0);
+                }
+              }
             }
           }
         }
       }
+    } else if (selected == 'debtLiabilityDetails') {
+      if (formData?.totalAmount) {
+        console.log('formData?.totalAmount', formData?.totalAmount)
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          if (Object.hasOwnProperty.call(formDataCopy, key) && key === 'totalAmount') {
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (typeof value === "string") {
+              if (value.length > 12) {
+                value = value.slice(0, 12);
+              }
+
+              if (value !== oldValue) {
+                const element = document.querySelector(`[name="${key}"]`);
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
+                setValue(key, value);
+                setTimeout(() => {
+                  element?.setSelectionRange(start, end);
+                }, 0);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
@@ -1803,9 +1852,6 @@ function EFilingCases({ path }) {
             <span>
               <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
             </span>
-            <span>
-              <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
-            </span>
           </div>
           <p>
             {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
@@ -1919,6 +1965,7 @@ function EFilingCases({ path }) {
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
+                  submitIcon={<RightArrow />}
                 />
               </div>
             ) : null;
