@@ -197,9 +197,9 @@ const UploadFile = (props) => {
               style={{ color: "#007E7E", display: "flex", flexDirection: "row", justifyContent: "center", marginTop: "5px" }}
               className="upload-button-custimised"
             >
-              <div style={{ marginRight: "5px" }}>
+              <span style={{ marginRight: '4px' }}>
                 <UploadIcon />
-              </div>
+              </span>
               {t("CS_COMMON_CHOOSE_FILE")}
             </span>
           </span>

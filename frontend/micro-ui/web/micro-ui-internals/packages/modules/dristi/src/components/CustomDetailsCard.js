@@ -6,12 +6,12 @@ const CustomDetailsCard = ({ header, subtext, serialNumber, subnote, style }) =>
     <div
       style={{
         display: "flex",
-        justifyContent: "space-evenly",
         width: "100%",
         flexDirection: "row",
         alignItems: "flex-start",
         borderBottom: "1px #E8E8E8 solid",
         padding: '16px 0px 16px 0px',
+        gap: "12px",
         ...style,
       }}
     >
@@ -26,7 +26,7 @@ const CustomDetailsCard = ({ header, subtext, serialNumber, subnote, style }) =>
           margin: '0px',
         }}>{serialNumber}</p>
       )}
-      <div style={{ paddingLeft: '16px', width: "90%" }}>
+      <div style={{ width: "90%" }}>
         {header && <p style={{
           fontFamily: 'Roboto',
           fontSize: '16px',
@@ -51,7 +51,7 @@ const CustomDetailsCard = ({ header, subtext, serialNumber, subnote, style }) =>
           fontWeight: 400,
           lineHeight: '16.41px',
           textAlign: 'left',
-          color: '#0A0A0A',
+          color: '#77787B',
           margin: '0px',
         }}>{subnote}</p>}
       </div>

@@ -23,7 +23,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
       ],
     [config?.populators?.inputs]
   );
-  const [coordinateData, setCoordinateData] = useState({ callback: () => { } });
+  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => { } });
 
   const getLatLngByPincode = async (pincode) => {
     const response = await Axios.get(
@@ -73,7 +73,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
               })(),
               coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
             });
-            coordinateData.callback({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
+            coordinateData.callbackFunc({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
           }
         })
         .catch(() => {
@@ -206,7 +206,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                   {currentValue &&
                     currentValue.length > 0 &&
                     input.validation &&
-                    !currentValue.match(Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
+                    !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
                       <CardLabelError>
                         {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}
                       </CardLabelError>

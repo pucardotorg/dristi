@@ -78,6 +78,10 @@ public class CaseRepository {
                     log.info("Case list size :: {}",list.size());
                 }
 
+                if(caseCriteria.getDefaultFields() != null && caseCriteria.getDefaultFields()){
+                    continue;
+                }
+
                 List<String> ids = new ArrayList<>();
                 List<String> idsLinkedCases = new ArrayList<>();
                 List<String> idsLitigant = new ArrayList<>();

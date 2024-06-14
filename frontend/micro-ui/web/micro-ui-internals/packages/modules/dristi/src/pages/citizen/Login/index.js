@@ -65,6 +65,8 @@ const Login = ({ stateCode }) => {
   const [canSubmitOtp, setCanSubmitOtp] = useState(true);
   const [canSubmitNo, setCanSubmitNo] = useState(true);
   const [isUserRegistered, setIsUserRegistered] = useState(true);
+  const [{ showOtpModal }, setState] = useState({ showOtpModal: false });
+
   useEffect(() => {
     let errorTimeout;
     if (error) {
@@ -131,6 +133,7 @@ const Login = ({ stateCode }) => {
   };
 
   const selectMobileNumber = async (mobileNumber) => {
+    setIsOtpValid(true);
     setCanSubmitNo(false);
     setParmas({ ...params, ...mobileNumber });
     const data = {
@@ -141,7 +144,11 @@ const Login = ({ stateCode }) => {
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
     if (!err) {
       setCanSubmitNo(true);
-      history.push(`${path}/otp`);
+      setIsOtpValid(true);
+      setState((prev) => ({
+        ...prev,
+        showOtpModal: true,
+      }));
       return;
     } else {
       setCanSubmitNo(true);
@@ -180,6 +187,10 @@ const Login = ({ stateCode }) => {
         }
 
         setUser({ info, ...tokens });
+        setState((prev) => ({
+          ...prev,
+          showOtpModal: false,
+        }));
       } else if (!isUserRegistered) {
         const requestData = {
           name: name || DEFAULT_USER,
@@ -195,6 +206,10 @@ const Login = ({ stateCode }) => {
         }
 
         setUser({ info, ...tokens });
+        setState((prev) => ({
+          ...prev,
+          showOtpModal: false,
+        }));
       }
     } catch (err) {
       setCanSubmitOtp(true);
@@ -207,6 +222,7 @@ const Login = ({ stateCode }) => {
   };
 
   const resendOtp = async () => {
+    setIsOtpValid(true);
     setParmas({ ...params, otp: "" });
     const { mobileNumber } = params;
     const data = {
@@ -245,7 +261,7 @@ const Login = ({ stateCode }) => {
               t={t}
             />
           </Route>
-          <Route path={`${path}/otp`}>
+          {showOtpModal && (
             <SelectOtp
               cardText={`${stepItems[2].texts.cardText}`}
               mobileNumber={params.mobileNumber || ""}
@@ -258,9 +274,10 @@ const Login = ({ stateCode }) => {
               params={params}
               setParams={setParmas}
               t={t}
-              path={`${path}/login`}
+              path={`${path}`}
+              setState={setState}
             />
-          </Route>
+          )}
 
           {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         </React.Fragment>
