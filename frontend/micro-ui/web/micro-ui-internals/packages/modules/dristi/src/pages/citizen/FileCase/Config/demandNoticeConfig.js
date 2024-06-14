@@ -111,6 +111,7 @@ const demandNoticeFormConfig = [
         label: "CS_DELAY_APPLICATION_TYPE",
         isMandatory: true,
         populators: {
+          name: "proofOfService",
           label: "CS_DELAY_APPLICATION_TYPE",
           type: "radioButton",
           optionsKey: "name",
@@ -184,6 +185,7 @@ const demandNoticeFormConfig = [
         label: "CS_REPLY_NOTICE",
         isMandatory: true,
         populators: {
+          name: "proofOfReply",
           label: "CS_REPLY_NOTICE",
           type: "radioButton",
           optionsKey: "name",
@@ -269,11 +271,11 @@ const demandNoticeFormConfig = [
         label: "CS_PAYER_FAIL_TO_PAY",
         isMandatory: true,
         populators: {
+          name: "delayApplicationType",
           label: "CS_PAYER_FAIL_TO_PAY",
           type: "radioButton",
           optionsKey: "name",
           error: "sample required message",
-          name: "delayApplicationType",
           required: false,
           isMandatory: true,
           isDependent: true,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
@@ -79,11 +79,10 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [{ setFormErrors, resetFormData, setFormDataValue }, setState] = useState({
-    setFormErrors: null,
-    resetFormData: null,
-    setFormDataValue: null,
-  });
+  const setFormErrors = useRef(null);
+  const resetFormData = useRef(null);
+  const setFormDataValue = useRef(null);
+
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
@@ -791,7 +790,6 @@ function EFilingCases({ path }) {
   };
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
-      debugger;
       setValue("advocateBarRegNumberWithName", [
         {
           ...formData.advocateBarRegNumberWithName[0],
@@ -802,14 +800,15 @@ function EFilingCases({ path }) {
     }
     checkIfscValidation(formData, setValue);
     checkNameValidation(formData, setValue);
+    if (Object.keys(formData))
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+      debugger;
       chequeDateValidation(formData, setError, clearErrors);
       showDemandNoticeModal(setValue, formData, setError, clearErrors);
       validateDateForDelayApplication(setValue);
       showToastForComplainant(formData);
       setFormdata(
         formdata.map((item, i) => {
-          setValue();
           return i === index
             ? {
                 ...item,
@@ -819,14 +818,11 @@ function EFilingCases({ path }) {
         })
       );
     }
-    if (!setFormErrors) {
-      setState((prev) => ({
-        ...prev,
-        setFormErrors: setError,
-        resetFormData: reset,
-        setFormDataValue: setValue,
-      }));
-    }
+
+    setFormErrors.current = setError;
+    resetFormData.current = reset;
+    setFormDataValue.current = setValue;
+
     if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
       setIsDisabled(true);
     }
@@ -1629,9 +1625,7 @@ function EFilingCases({ path }) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails(true).then(() => {
-        if (!!resetFormData) {
-          resetFormData();
-        }
+        resetFormData.current?.();
         refetchCaseData().then(() => {
           const caseData =
             caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -1666,8 +1660,8 @@ function EFilingCases({ path }) {
     }
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
-    if (!!resetFormData) {
-      resetFormData();
+    if (resetFormData.current) {
+      resetFormData.current();
       setIsDisabled(false);
     }
     setIsOpen(false);
@@ -1840,7 +1834,6 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  key={selected}
                   label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={(data) => onSubmit(data, index)}
@@ -1908,7 +1901,7 @@ function EFilingCases({ path }) {
               actionSaveLabel={t("CS_NOT_PAID_FULL")}
               children={<div style={{ padding: "16px 0" }}>{t("CS_NOT_PAID_FULL_TEXT")}</div>}
               actionSaveOnSubmit={async () => {
-                setFormDataValue("delayApplicationType", {
+                setFormDataValue.current?.("delayApplicationType", {
                   code: "YES",
                   name: "YES",
                   showForm: false,
