@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError } from "@egovernments/digit-ui-react-components";
-import LocationSearch from "./LocationSearch";
+import { CardLabel, CardLabelError, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import Axios from "axios";
+import React, { useMemo, useState } from "react";
+import LocationSearch from "./LocationSearch";
+import { generateUUID } from "../Utils";
 
 const getLocation = (places, code) => {
   let location = null;
@@ -10,17 +11,22 @@ const getLocation = (places, code) => {
   })?.long_name;
   return location ? location : null;
 };
-const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
-  const [coordinateData, setCoordinateData] = useState({ callback: () => {} });
-  const inputs = useMemo(
-    () =>
-      config?.populators?.inputs || [
+
+const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formState, control, watch, register }) => {
+  const configKey = `${config.key}-select`;
+  // const configKey = config.key;
+  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
+  const { inputs, uuid } = useMemo(
+    () => ({
+      inputs: config?.populators?.inputs || [
         {
           label: "CS_PIN_LOCATION",
           type: "LocationSearch",
           name: [],
         },
       ],
+      uuid: generateUUID(),
+    }),
     [config?.populators?.inputs]
   );
 
@@ -32,6 +38,9 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
   };
 
   function setValue(value, input) {
+    if (typeof value === "string") {
+      value = value.trim();
+    }
     if (input === "pincode" && value?.length === 6) {
       getLatLngByPincode(value)
         .then((res) => {
@@ -39,20 +48,11 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
             (res.data.results && res.data.results?.length === 0) ||
             (res.data.status === "OK" && getLocation(res.data.results[0], "country") !== "India")
           ) {
-            onSelect(config.key, {
-              ...formData[config.key],
-              ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
-                res[curr] = "";
-                if (curr === "pincode") {
-                  res[curr] = value;
-                }
-                return res;
-              }, {}),
-            });
+            throw new Error("Invalid Pincode");
           } else {
             const [location] = res.data.results;
-            onSelect(config.key, {
-              ...formData[config.key],
+            onSelect(configKey, {
+              ...formData[configKey],
               [input]: value,
               state: getLocation(location, "administrative_area_level_1") || "",
               district: getLocation(location, "administrative_area_level_3") || "",
@@ -73,12 +73,12 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
               })(),
               coordinates: { latitude: location.geometry.location.lat, longitude: location.geometry.location.lng },
             });
-            coordinateData.callback({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
+            coordinateData.callbackFunc({ lat: location.geometry.location.lat, lng: location.geometry.location.lng });
           }
         })
         .catch(() => {
-          onSelect(config.key, {
-            ...formData[config.key],
+          onSelect(configKey, {
+            ...formData[configKey],
             ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
               res[curr] = "";
               if (curr === "pincode") {
@@ -90,68 +90,67 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
         });
       return;
     } else if (input === "pincode") {
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...["state", "district", "city", "locality", "coordinates", "pincode"].reduce((res, curr) => {
-          res[curr] = "";
-          if (curr === "pincode") {
-            res[curr] = value;
-          }
-          return res;
-        }, {}),
+      ["state", "district", "city", "locality", "coordinates"].forEach((key) => {
+        onSelect(`${configKey}.${key}`, "");
       });
+      onSelect(`${configKey}.${"pincode"}`, value);
       return;
     }
     if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
+      onSelect(configKey, {
+        ...formData[configKey],
         ...input.reduce((res, curr) => {
           res[curr] = value[curr];
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
+    }
   }
+
+  const checkIfValidated = (currentValue, input) => {
+    const isEmpty = /^\s*$/.test(currentValue);
+    return isEmpty || !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern);
+  };
 
   return (
     <div>
       {inputs?.map((input, index) => {
-        let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
+        let currentValue = (formData && formData[configKey] && formData[configKey][input.name]) || "";
         let isFirstRender = true;
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-            <LabelFieldPair style={{ width: "100%", display: "flex" }}>
+            <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
-                {input.isMandatory ? <span style={{ color: "#FF0000" }}>{" * "}</span> : null}
+                <span>{input?.showOptional && ` (${t("CS_OPTIONAL")})`}</span>
               </CardLabel>
-              <div className="field" style={{ width: "50%" }}>
+              <div className={`field ${input.inputFieldClassName}`}>
                 {input?.type === "LocationSearch" ? (
                   <LocationSearch
-                    locationStyle={{ maxWidth: "540px" }}
-                    position={formData?.[config.key]?.coordinates || {}}
+                    locationStyle={{ maxWidth: "100%" }}
+                    position={formData?.[configKey]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
+                    index={formData?.[config.key]?.uuid || uuid}
                     onChange={(pincode, location, coordinates = {}) => {
-                      console.log(location);
                       setValue(
                         {
-                          pincode: formData && isFirstRender && formData[config.key] ? formData[config.key]["pincode"] : pincode || "",
+                          pincode: formData && isFirstRender && formData[configKey] ? formData[configKey]["pincode"] : pincode || "",
                           state:
-                            formData && isFirstRender && formData[config.key]
-                              ? formData[config.key]["state"]
+                            formData && isFirstRender && formData[configKey]
+                              ? formData[configKey]["state"]
                               : getLocation(location, "administrative_area_level_1") || "",
                           district:
-                            formData && isFirstRender && formData[config.key]
-                              ? formData[config.key]["district"]
+                            formData && isFirstRender && formData[configKey]
+                              ? formData[configKey]["district"]
                               : getLocation(location, "administrative_area_level_3") || "",
                           city:
-                            formData && isFirstRender && formData[config.key]
-                              ? formData[config.key]["city"]
-                              : getLocation(location, "locality") || "",
+                            formData && isFirstRender && formData[configKey] ? formData[configKey]["city"] : getLocation(location, "locality") || "",
                           locality:
-                            isFirstRender && formData[config.key]
-                              ? formData[config.key]["locality"]
+                            isFirstRender && formData[configKey]
+                              ? formData[configKey]["locality"]
                               : (() => {
                                   const plusCode = getLocation(location, "plus_code");
                                   const neighborhood = getLocation(location, "neighborhood");
@@ -167,6 +166,9 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                                     .join(", ");
                                 })(),
                           coordinates,
+                          uuid: isFirstRender && formData[config.key] ? formData[config.key]["uuid"] : uuid,
+                          buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
+                          doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
                         },
                         input.name
                       );
@@ -174,26 +176,26 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors }) => {
                     }}
                   />
                 ) : (
-                  <TextInput
-                    className="field desktop-w-full"
-                    key={input.name}
-                    value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
-                    onChange={(e) => {
-                      setValue(e.target.value, input.name);
-                    }}
-                    disable={input.isDisabled}
-                    defaultValue={undefined}
-                    {...input.validation}
-                  />
+                  <React.Fragment>
+                    <TextInput
+                      className="field desktop-w-full"
+                      name={`${configKey}.${input.name}`}
+                      inputRef={register({
+                        required: input.isMandatory,
+                        ...input.validation,
+                      })}
+                      onChange={(e) => {
+                        setValue(e.target.value, input.name);
+                      }}
+                      disable={input.isDisabled}
+                    />
+                  </React.Fragment>
                 )}
-                {currentValue &&
-                  currentValue.length > 0 &&
-                  input.validation &&
-                  !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                    <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
-                      <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
-                    </CardLabelError>
-                  )}
+                {currentValue && currentValue.length > 0 && input.validation && checkIfValidated(currentValue, input) && (
+                  <CardLabelError style={{ width: "100%", marginTop: "-15px", fontSize: "16px", marginBottom: "12px", color: "#FF0000" }}>
+                    <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
+                  </CardLabelError>
+                )}
               </div>
             </LabelFieldPair>
           </React.Fragment>

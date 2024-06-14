@@ -1,0 +1,703 @@
+.e-filing-card-wrapper {
+  h2 {
+    margin-top: 0;
+  }
+
+  .e-filing-header-content {
+    .e-filing-header-subtext {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: var(--Grey-700, #3d3c3c);
+    }
+  }
+
+  .e-filing-form-container {
+    background-color: white;
+    border: 1px solid var(--Grey-200, #bbbbbd);
+    > h2 {
+      font-weight: 700;
+      font-size: 24px;
+      border-bottom: 1px solid var(--Grey-200, #bbbbbd);
+      padding: 12px 32px;
+      margin: 0;
+    }
+
+    form .card {
+      margin: 0;
+      box-shadow: none;
+      padding: 24px 32px;
+    }
+  }
+}
+
+.pt-citizen {
+  width: 100% !important;
+  padding: 0px !important;
+}
+
+.file-case-select-form-section {
+  width: 100%;
+}
+
+.file-case-form-section {
+  width: 100%;
+  max-width: 62%;
+  padding: 0px;
+  gap: 32px;
+  .jk-digit-primary-btn.add-location-btn {
+    background-color: white !important;
+    box-shadow: none !important;
+    border: 1px #007e7e solid;
+    margin-top: 24px;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      line-height: 18.75px !important;
+      text-align: center;
+      color: #007e7e !important;
+    }
+  }
+  .employee-card-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    .add-new-form {
+      margin-top: 24px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: start;
+      span {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e;
+      }
+    }
+    .header-content {
+      .header-details {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        header.h1 {
+          font-family: Roboto;
+          font-size: 40px;
+          font-weight: 700;
+          line-height: 46.88px;
+          text-align: left;
+          color: #0a0a0a;
+          overflow-wrap: break-word;
+          margin: 0px 0px 4px 0px;
+        }
+        svg {
+          display: none;
+        }
+      }
+      p {
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #3d3c3c;
+      }
+    }
+    .form-wrapper-d {
+      margin-top: 32px;
+      border: none !important;
+      .form-item-name {
+        width: 100%;
+        padding: 12px 32px 12px 32px;
+        gap: 20px;
+        border-width: 1px 1px 0px 1px !important;
+        border-style: solid;
+        border-color: #bbbbbd;
+        border-bottom: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        h1 {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .file-case-form-section {
+    max-width: 100%;
+    .employee-card-wrapper {
+      flex-direction: column;
+      .header-content {
+        .header-details {
+          .header-icon {
+            height: 24px;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          header.h1 {
+            font-size: 24px;
+            line-height: 28.13px;
+            width: 90%;
+          }
+          svg {
+            display: inline;
+          }
+        }
+        p {
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
+      .form-item-name {
+        h1 {
+          font-size: 20px;
+          line-height: 23.44px;
+        }
+      }
+    }
+  }
+}
+
+.e-filing-card-form-style {
+  box-shadow: none;
+  border-radius: 0px;
+  padding: 24px 32px;
+  margin: 0px;
+  border: 1px #bbbbbd solid;
+  .card-section-header {
+    margin-top: 0px;
+  }
+  .drag-drop-heading {
+    margin-left: 0px !important;
+  }
+
+  .label-field-pair:last-child {
+    padding-bottom: 0px;
+  }
+  .label-field-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+      margin: 0px !important;
+    }
+    .field {
+      width: 100%;
+      .mobile-number {
+        h2 {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+          margin-bottom: 4px;
+        }
+        .citizen-card-input.citizen-card-input--front {
+          margin: 0px;
+        }
+        .text-input {
+          max-width: 100% !important;
+        }
+        .employee-card-input {
+          margin: 0px;
+        }
+      }
+      .email-address {
+        h2 {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+          margin-bottom: 4px;
+        }
+        .citizen-card-input.citizen-card-input--front {
+          margin: 0px;
+        }
+        .text-input {
+          max-width: 100% !important;
+        }
+        .employee-card-input {
+          margin: 0px;
+        }
+      }
+      .radio-wrap {
+        gap: 24px !important;
+        margin: 0px !important;
+        div {
+          margin: 0px;
+        }
+        label {
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: left;
+          color: #0a0a0a;
+          margin-left: 8px !important;
+        }
+      }
+      .label-field-pair {
+        padding-bottom: 4px;
+      }
+      div {
+        .info-banner-wrap {
+          margin-top: 20px !important;
+        }
+        .label-field-pair:last-child {
+          input {
+            margin-bottom: 0px !important;
+          }
+        }
+        .label-field-pair {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          gap: 4px !important;
+          padding-bottom: 0px;
+          .field {
+            width: 100%;
+            max-width: 100% !important;
+
+            div {
+              justify-content: space-between;
+            }
+            .map {
+              width: 343px;
+              height: 202px;
+            }
+          }
+          h2 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0a0a0a;
+            margin: 0px !important;
+          }
+          .user-details-form-style {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.respondent {
+  header {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+    padding-bottom: 20px;
+  }
+}
+
+.complainant {
+  .label-field-pair {
+    .field {
+      div {
+        .button-field {
+          width: 100% !important;
+          .jk-digit-secondary-btn.secondary-button-selector {
+            width: fit-content;
+          }
+        }
+        .label-field-pair {
+        }
+      }
+    }
+  }
+}
+
+.complainant,
+.cheque,
+.debt-liability,
+.demand-notice {
+  .label-field-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 4px !important;
+    padding-bottom: 16px;
+    h2 {
+      width: 50%;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+    .field {
+      width: 100%;
+      max-width: 100%;
+      .field-container {
+        max-width: 100% !important;
+        .component-in-front {
+          height: 40px;
+          width: 40px;
+          background-color: #eeeeee !important;
+        }
+        .text-input {
+          max-width: 100%;
+          .employee-card-input {
+            margin: 0px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.demand-notice {
+  .select-wrap {
+    margin: 0px !important;
+    max-width: 100%;
+  }
+}
+
+.delay-application {
+  .label-field-pair {
+    gap: 40px !important;
+    padding-bottom: 16px;
+    .field {
+      width: 100%;
+      max-width: 100%;
+      .custom-text-area-main-div {
+        padding: 0px;
+        .text-area-header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px 0px 4px 0px;
+        }
+      }
+      .field-container {
+        max-width: 100% !important;
+        .component-in-front {
+          height: 40px;
+          width: 40px;
+          background-color: #eeeeee !important;
+        }
+        .text-input {
+          max-width: 100%;
+          .employee-card-input {
+            margin: 0px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.advocate-detail {
+  .select-wrap {
+    margin: 0px !important;
+    max-width: 100%;
+  }
+  header {
+    margin-bottom: 20px;
+  }
+  .label-field-pair:nth-child(2) {
+    flex-direction: row !important;
+    h2 {
+      margin-right: 40px !important;
+    }
+    .card-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+  .label-field-pair {
+    flex-direction: column;
+    align-items: start;
+    gap: 4px !important;
+    .card-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+    .field {
+      .drag-drop-visible-main {
+        .card-label {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+      }
+    }
+  }
+}
+
+.review-case-file {
+  border: none !important;
+  padding: 0px;
+  .label-field-pair {
+    padding-bottom: 32px;
+  }
+  .accordion-wrapper {
+    padding: 0px !important;
+    .accordion-title {
+      padding: 0px;
+    }
+    .accordion-item {
+      padding-top: 24px !important;
+      .accordion-content {
+        padding-top: 0px !important;
+        .content-item {
+          width: 100%;
+          padding: 20px 24px 20px 24px;
+          border-width: 1px 1px 0px 1px;
+          border-style: solid;
+          border-color: #e6e6e6;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          .item-header {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            .header-left {
+              display: flex;
+              gap: 16px;
+              align-items: center !important;
+              span {
+                font-family: Roboto;
+                font-size: 16px;
+                font-weight: 700;
+                line-height: 18.75px;
+                text-align: left;
+                color: #0a0a0a;
+              }
+            }
+            .header-right {
+              cursor: pointer;
+            }
+          }
+          .item-body {
+            border: 1px #e6e6e6 solid;
+            border-radius: 4px;
+            .title {
+              padding: 16px;
+              font-family: Roboto;
+              font-size: 16px;
+              font-weight: 700;
+              line-height: 18.75px;
+              text-align: left;
+              color: #77787b;
+            }
+            .phone-number,
+            .image,
+            .text,
+            .amount {
+              width: 100%;
+              padding: 12px 16px;
+              display: flex;
+              border-bottom: 1px #e8e8e8 solid;
+            }
+            .address {
+              width: 100%;
+              padding: 12px 16px;
+              display: flex;
+              justify-content: space-between;
+            }
+            .label {
+              width: 45%;
+              font-family: Roboto;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 21px;
+              text-align: left;
+              color: #414042;
+            }
+            .value {
+              width: 45%;
+              font-family: Roboto;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 22px;
+              text-align: left;
+              color: #0a0a0a;
+            }
+            .flag {
+              width: 10%;
+              display: flex;
+              justify-content: flex-end;
+              svg {
+                cursor: pointer;
+              }
+            }
+            .image {
+              flex-direction: column !important;
+              gap: 8px;
+              .value,
+              .label {
+                width: 100% !important;
+                .docviewer-wrapper {
+                  margin-top: 0px !important;
+                  .card {
+                    max-width: fit-content !important;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .advocate-detail {
+    .label-field-pair:nth-child(2) {
+      flex-direction: column !important;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .e-filing-card-form-style {
+    .label-field-pair {
+      gap: 16px !important;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .map {
+      width: 100%;
+    }
+  }
+}
+
+.e-filing-card-form-style.respondent {
+  .label-field-pair {
+    .card-label.bolder {
+      margin-right: 40px;
+    }
+  }
+}
+
+.file-case-main {
+  padding: 0px 20px;
+  background-color: white;
+}
+
+.file-case {
+  display: flex;
+  gap: 40px;
+  flex-direction: row;
+  width: 100%;
+  .file-case-side-stepper {
+    width: 22.5%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .side-stepper-info {
+      width: 100%;
+      padding: 12px 16px 12px 16px;
+      gap: 8px;
+      border-radius: 4px;
+      border: 1px #9e400a24 solid;
+      background-color: #f7f5f3;
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      p {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        text-align: left;
+        color: #3d3c3c;
+        line-height: 24px;
+        margin: 10px 0px 0px 0px;
+        .act-name {
+          text-decoration: underline;
+        }
+        .place-name {
+          font-weight: 700;
+        }
+      }
+    }
+    .file-case-select-form-section {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .citizen-form-wrapper .app-container {
+    padding: 0px 16px;
+  }
+  .file-case {
+    flex-direction: column;
+    .file-case-side-stepper {
+      width: 100%;
+      .file-case-select-form-section {
+        display: none;
+      }
+    }
+  }
+}
+
+.e-filing-action-bar {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20px;
+}
+
+.label-field-pair {
+  .field-container {
+    max-width: unset !important;
+    align-items: flex-start;
+    .text-input-width {
+      max-width: unset;
+    }
+  }
+}

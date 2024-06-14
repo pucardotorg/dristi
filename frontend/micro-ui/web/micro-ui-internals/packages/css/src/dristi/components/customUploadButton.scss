@@ -1,0 +1,14 @@
+.custom-upload-button-div-main {
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Adjust the spacing between the icon and text */
+    border: solid 1px #007e7e;
+    background-color: #ffffff;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    color: #007e7e;
+  }
+}

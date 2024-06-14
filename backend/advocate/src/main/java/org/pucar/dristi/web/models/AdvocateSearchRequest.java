@@ -26,7 +26,7 @@ import javax.validation.Valid;
 @Builder
 public class AdvocateSearchRequest {
 	@JsonProperty("RequestInfo")
-	@javax.validation.Valid
+	@Valid
 	private RequestInfo requestInfo = null;
 
 	@JsonProperty("tenantId")

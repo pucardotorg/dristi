@@ -79,22 +79,36 @@ const TopBar = ({
 
   if (CITIZEN) {
     return (
-      <div>
-        <TopBarComponent
-          img={stateInfo?.logoUrlWhite}
-          isMobile={true}
-          toggleSidebar={updateSidebar}
-          logoUrl={stateInfo?.logoUrlWhite}
-          onLogout={handleLogout}
-          userDetails={userDetails}
-          notificationCount={unreadNotificationCount < 99 ? unreadNotificationCount : 99}
-          notificationCountLoaded={notificationCountLoaded}
-          cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
-          onNotificationIconClick={onNotificationIconClick}
-          hideNotificationIconOnSomeUrlsWhenNotLoggedIn={true}
-          changeLanguage={!mobileView ? <ChangeLanguage dropdown={true} /> : null}
-        />
-      </div>
+      <TopBarComponent
+        img={stateInfo?.logoUrlWhite}
+        isMobile={true}
+        toggleSidebar={updateSidebar}
+        logoUrl={stateInfo?.logoUrlWhite}
+        onLogout={handleLogout}
+        userDetails={userDetails}
+        notificationCount={unreadNotificationCount < 99 ? unreadNotificationCount : 99}
+        notificationCountLoaded={notificationCountLoaded}
+        cityOfCitizenShownBesideLogo={t(CitizenHomePageTenantId)}
+        onNotificationIconClick={onNotificationIconClick}
+        hideNotificationIconOnSomeUrlsWhenNotLoggedIn={true}
+        changeLanguage={
+          !mobileView ? (
+            <ChangeLanguage
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              dropdownClassName={"change-language-citizen"}
+              dropdown={true}
+            />
+          ) : null
+        }
+        userOptions={userOptions}
+        handleUserDropdownSelection={handleUserDropdownSelection}
+        TextToImg={TextToImg}
+        mobileView={mobileView}
+      />
     );
   }
   const loggedin = userDetails?.access_token ? true : false;

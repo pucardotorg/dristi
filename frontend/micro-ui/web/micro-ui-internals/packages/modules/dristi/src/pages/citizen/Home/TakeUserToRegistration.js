@@ -13,8 +13,6 @@ function TakeUserToRegistration({ message }) {
       style={{
         display: "flex",
         flexDirection: "column",
-        width: "90vw",
-        height: "52vh",
         background: "white",
         alignItems: "center",
         marginLeft: "10px",
@@ -31,7 +29,8 @@ function TakeUserToRegistration({ message }) {
           onButtonClick={() => {
             sessionStorage.removeItem("Digit.UploadedDocument");
             sessionStorage.removeItem("Digit.aadharNumber");
-            history.push(`/digit-ui/citizen/dristi/home/login/id-verification`);
+            sessionStorage.removeItem("Digit.isAadharNumberVerified");
+            history.push(`/digit-ui/citizen/dristi/home/registration/user-name`);
           }}
           label={t("Register")}
           style={{
@@ -39,7 +38,7 @@ function TakeUserToRegistration({ message }) {
             maxHeight: "7vh",
             width: "20vw",
             background: "none",
-            color: "#F47738",
+            color: "#007E7E",
             boxShadow: "none",
           }}
         >

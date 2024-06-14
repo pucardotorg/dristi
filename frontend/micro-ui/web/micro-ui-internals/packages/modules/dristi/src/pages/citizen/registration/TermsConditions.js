@@ -78,11 +78,11 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
                   name: "Citizen",
                   tenantId: tenantId,
                 },
-                {
-                  code: data?.clientDetails?.selectUserType?.role,
-                  name: data?.clientDetails?.selectUserType?.role,
+                ...data?.clientDetails?.selectUserType?.role?.map((role) => ({
+                  code: role,
+                  name: role,
                   tenantId: tenantId,
-                },
+                })),
               ]
             : [
                 {
@@ -105,7 +105,10 @@ function TermsConditions({ params = {}, setParams = () => {}, path, refetchIndiv
             longitude: data?.addressDetails?.coordinates?.longitude,
             city: data?.addressDetails?.city,
             pincode: data?.addressDetails?.pincode,
-            district: data?.addressDetails?.district,
+            addressLine1: data?.addressDetails?.state,
+            addressLine2: data?.addressDetails?.district,
+            buildingName: data?.addressDetails?.buildingName,
+            landmark: data?.addressDetails?.locality,
           },
         ],
         identifiers: [

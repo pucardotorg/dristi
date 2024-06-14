@@ -154,10 +154,42 @@ export const UICustomizations = {
     }
   },
   registrationRequestsConfig: {
+    customValidationCheck: (data) => {
+      return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
+    },
+    preProcess: (requestCriteria, additionalDetails) => {
+      const moduleSearchCriteria = {
+        ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
+        ...requestCriteria?.state?.searchForm,
+        tenantId: window?.Digit.ULBService.getStateId(),
+      };
+      if (additionalDetails in moduleSearchCriteria && !moduleSearchCriteria[additionalDetails]) {
+        delete moduleSearchCriteria[additionalDetails];
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          inbox: {
+            ...requestCriteria?.body?.inbox,
+            moduleSearchCriteria: {
+              ...moduleSearchCriteria,
+            },
+          },
+        },
+      };
+    },
     additionalValidations: (type, data, keys) => {
       if (type === "date") {
         return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
       }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Application No") link = ``;
+      });
+      return link;
     },
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       const usertype = row?.ProcessInstance?.businessService === "advocateclerk" ? "clerk" : "advocate";
@@ -177,21 +209,14 @@ export const UICustomizations = {
           );
         case "Action":
           return (
-            <Link
-              style={{
-                border: "1px solid #F47738",
-                color: "#F47738",
-                padding: "10px",
-                width: "100px",
-                display: "block",
-                textAlign: "center",
-                textDecoration: "none",
-              }}
-              to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
-            >
-              {" "}
-              {t("Verify")}
-            </Link>
+            <span className="action-link">
+              <Link
+                to={`/digit-ui/employee/dristi/registration-requests/details?applicationNo=${applicationNumber}&individualId=${value}&type=${usertype}`}
+              >
+                {" "}
+                {t("Verify")}
+              </Link>
+            </span>
           );
         case "User Type":
           return usertype === "clerk" ? "Advocate Clerk" : "Advocate";
@@ -209,7 +234,10 @@ export const UICustomizations = {
           const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
-          return <span style={{ paddingLeft: "50px" }}>{differenceInDays}</span>;
+          return <span>{differenceInDays}</span>;
+        case "User Name":
+          const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
+          return displayName;
         default:
           return t("ES_COMMON_NA");
       }

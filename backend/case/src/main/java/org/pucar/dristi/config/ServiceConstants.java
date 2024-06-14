@@ -36,6 +36,8 @@ public class ServiceConstants {
 	public static final String CITIZEN_LOWER = "Citizen";
 	public static final String USER = "user";
 
+    public static final String CASE_CREATE_EXCEPTION = "CASE_CREATE_EXCEPTION";
+
 	public static final String PARSING_ERROR = "PARSING ERROR";
 	public static final String FAILED_TO_PARSE_BUSINESS_SERVICE_SEARCH = "Failed to parse response of workflow business service search";
 	public static final String BUSINESS_SERVICE_NOT_FOUND = "BUSINESSSERVICE_NOT_FOUND";
@@ -43,5 +45,41 @@ public class ServiceConstants {
 	public static final String NOT_FOUND = " is not found";
 	public static final String TENANTID = "?tenantId=";
 	public static final String BUSINESS_SERVICES = "&businessServices=";
+	public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
+	public static final String ERROR_WHILE_FETCHING_FROM_ADVOCATE = "ERROR_WHILE_FETCHING_FROM_ADVOCATE";
+	public static final String CREATE_CASE_ERR = "CREATE_CASE_ERR";
+	public static final String SEARCH_CASE_ERR = "CASE_NOT_FOUND";
+	public static final String UPDATE_CASE_ERR = "UPDATE_CASE_ERR";
+
+	public static final String CREATE_WITNESS_ERR = "CREATE_WITNESS_ERR";
+	public static final String SEARCH_WITNESS_ERR = "WITNESS_NOT_FOUND";
+	public static final String UPDATE_WITNESS_ERR = "UPDATE_WITNESS_ERR";
+	public static final String VALIDATION_ERR = "VALIDATION_EXCEPTION";
+	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
+	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
+	public static final String INDIVIDUAL_SERVICE_EXCEPTION = "INDIVIDUAL_SERVICE_EXCEPTION";
+	public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
+
+	public static final String WITNESS_SEARCH_QUERY_EXCEPTION = "WITNESS_SEARCH_QUERY_EXCEPTION";
+	public static final String CASE_SEARCH_QUERY_EXCEPTION = "CASE_SEARCH_QUERY_EXCEPTION";
+	public static final String LINKED_CASE_SEARCH_QUERY_EXCEPTION = "LINKED_CASE_SEARCH_QUERY_EXCEPTION";
+	public static final String LITIGANT_SEARCH_QUERY_EXCEPTION = "LITIGANT_SEARCH_QUERY_EXCEPTION";
+	public static final String STATUTE_SECTION_SEARCH_QUERY_EXCEPTION = "STATUTE_SECTION_SEARCH_QUERY_EXCEPTION";
+	public static final String REPRESENTATIVES_SEARCH_QUERY_EXCEPTION = "REPRESENTATIVES_SEARCH_QUERY_EXCEPTION";
+	public static final String REPRESENTING_SEARCH_QUERY_EXCEPTION = "REPRESENTING_SEARCH_QUERY_EXCEPTION";
+	public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
+	public static final String CASE_EXIST_ERR = "CASE_EXIST_EXCEPTION";
+	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
+	public static final String INVALID_ADVOCATE_ID = "INVALID_ADVOCATE_ID";
+	public static final String INVALID_CASE_ID = "INVALID_CASE_ID";
+	public static final String INVALID_FILESTORE_ID = "INVALID_FILESTORE_ID";
+	public static final String REGISTERED_STATUS ="REGISTERED";
+	public static final String INWORKFLOW_STATUS ="INWORKFLOW";
+    public static final String INVALID_LINKEDCASE_ID = "INVALID_LINKEDCASE_ID";
+
+	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
+
+	public static final String SAVE_DRAFT_CASE_WORKFLOW_ACTION = "SAVE_DRAFT";
+	public static final String SUBMIT_CASE_WORKFLOW_ACTION = "SUBMIT_CASE";
 
 }
