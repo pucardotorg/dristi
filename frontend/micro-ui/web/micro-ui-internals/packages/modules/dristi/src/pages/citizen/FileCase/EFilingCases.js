@@ -2014,7 +2014,7 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig?.formItemName === "Witness" || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -2061,7 +2061,7 @@ function EFilingCases({ path }) {
               actionCancelLabel="Cancel"
               actionCancelOnSubmit={() => setConfirmDeleteModal(false)}
               actionSaveLabel={`Remove ${t(pageConfig?.formItemName)}`}
-              children={deleteWarningText(`${t(pageConfig?.formItemName)}`)}
+              children={deleteWarningText(`${t(pageConfig?.formItemName).toLowerCase()}`)}
               actionSaveOnSubmit={handleConfirmDeleteForm}
               className={"confirm-delete-modal"}
             ></Modal>
