@@ -677,6 +677,12 @@ components:
           type: string
         courtCaseNumber:
           type: string
+        litigantId:
+          type: string
+        advocateId:
+          type: string
+        status:
+          type: string          
         filingFromDate:
           type: string
           format: date
