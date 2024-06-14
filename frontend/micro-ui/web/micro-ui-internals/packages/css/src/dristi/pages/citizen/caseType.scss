@@ -1,6 +1,8 @@
 .popup-module.otp-modal-class,
 .popup-module.upload-signature-modal,
 .popup-module.e-sign-aadhar-modal,
+.popup-module.confirm-delete-modal,
+.popup-module.verify-mobile-modal,
 .popup-module.case-types {
   width: 536px;
   max-height: 560px;
@@ -145,6 +147,10 @@
 
 @media (max-width: 450px) {
   .popup-module.otp-modal-class,
+  .popup-module.upload-signature-modal,
+  .popup-module.e-sign-aadhar-modal,
+  .popup-module.confirm-delete-modal,
+  .popup-module.verify-mobile-modal,
   .popup-module.case-types {
     margin: auto 16px;
     max-height: 564px;
@@ -173,6 +179,15 @@
       .popup-module-action-bar {
         flex-direction: column-reverse;
       }
+    }
+  }
+}
+
+.popup-module.confirm-delete-modal {
+  .delete-warning-text {
+    padding: 16px 24px;
+    h3 {
+      margin: 0px !important;
     }
   }
 }

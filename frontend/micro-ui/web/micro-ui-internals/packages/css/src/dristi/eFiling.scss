@@ -132,6 +132,10 @@
       margin-top: 32px;
       border: none !important;
 
+      .card-label-error {
+        color: #bb2c2f !important;
+      }
+
       .form-item-name {
         width: 100%;
         padding: 12px 32px 12px 32px;
@@ -310,6 +314,19 @@
         }
       }
     }
+  }
+}
+
+.respondent,
+.cheque {
+  .card-label-error {
+    margin-top: -18px !important;
+  }
+}
+
+.demand-notice {
+  .card-label-error {
+    margin-top: -16px !important;
   }
 }
 
@@ -1319,5 +1336,17 @@
         margin: 0px 12px 0px 0px !important;
       }
     }
+  }
+}
+
+.action-bar-wrap.e-filing-action-bar {
+  .submit-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none;
+    width: fit-content;
+    padding: 8px 24px;
   }
 }

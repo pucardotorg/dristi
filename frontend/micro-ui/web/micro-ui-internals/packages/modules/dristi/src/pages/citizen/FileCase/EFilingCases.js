@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon } from "../../../icons/svgIndex";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
@@ -191,8 +191,8 @@ function EFilingCases({ path }) {
 
   const deleteWarningText = useCallback((pageName) => {
     return (
-      <div>
-        <h3>{`${t("CONFIRM_DELETE_FIRST_HALF")} ${pageName} ${t("CONFIRM_DELETE_SECOND_HALF")}`}</h3>
+      <div className="delete-warning-text">
+        <h3>{`${t("CONFIRM_DELETE_FIRST_HALF")} ${pageName?.toLowerCase()} ${t("CONFIRM_DELETE_SECOND_HALF")}`}</h3>
       </div>
     );
   }, []);
@@ -349,14 +349,14 @@ function EFilingCases({ path }) {
                         data:
                           input.key === "advocateDetails"
                             ? [
-                                {
-                                  name:
-                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-                                },
-                              ] || [{ name: "" }]
+                              {
+                                name:
+                                  caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+                              },
+                            ] || [{ name: "" }]
                             : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
-                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
-                              })),
+                              name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                            })),
                       };
                     }),
                   },
@@ -451,7 +451,7 @@ function EFilingCases({ path }) {
                           data?.addressDetails?.some(
                             (address) =>
                               address?.addressDetails?.pincode !==
-                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+                              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
                               body?.key === "inquiryAffidavitFileUpload"
                           )
                         ) {
@@ -565,7 +565,7 @@ function EFilingCases({ path }) {
         switch (key) {
           case "issuanceDate":
             if (new Date(formData?.issuanceDate).getTime() > new Date().getTime()) {
-              setError("issuanceDate", { message: " CS_DATE_ERROR_MSG" });
+              setError("issuanceDate", { message: "CS_DATE_ERROR_MSG" });
             } else {
               clearErrors("issuanceDate");
             }
@@ -576,9 +576,9 @@ function EFilingCases({ path }) {
               formData?.issuanceDate &&
               new Date(formData?.issuanceDate).getTime() > new Date(formData?.depositDate).getTime()
             ) {
-              setError("depositDate", { message: " CS_DEPOSIT_DATE_ERROR_MSG" });
+              setError("depositDate", { message: "CS_DEPOSIT_DATE_ERROR_MSG" });
             } else if (selected === "chequeDetails" && new Date(formData?.depositDate).getTime() > new Date().getTime()) {
-              setError("depositDate", { message: " CS_DATE_ERROR_MSG" });
+              setError("depositDate", { message: "CS_DATE_ERROR_MSG" });
             } else {
               clearErrors("depositDate");
             }
@@ -590,7 +590,7 @@ function EFilingCases({ path }) {
     }
   };
 
-  const showDemandNoticeModal = (setValue, formData, setError, clearErrors) => {
+  const showDemandNoticeModal = (setValue, formData, setError, clearErrors, index) => {
     if (selected === "demandNoticeDetails") {
       for (const key in formData) {
         switch (key) {
@@ -613,21 +613,22 @@ function EFilingCases({ path }) {
 
           case "dateOfIssuance":
             if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
-              setError("dateOfIssuance", { message: " CS_DATE_ERROR_MSG" });
-            } else {
+              setError("dateOfIssuance", { message: "CS_DATE_ERROR_MSG" });
+            } else if (new Date(formData?.dateOfIssuance).getTime() < new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[index]?.data?.depositDate).getTime()) {
+              setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" })
+            } else
               clearErrors("dateOfIssuance");
-            }
             break;
 
           case "dateOfDispatch":
             if (new Date(formData?.dateOfDispatch).getTime() > new Date().getTime()) {
-              setError("dateOfDispatch", { message: " CS_DATE_ERROR_MSG" });
+              setError("dateOfDispatch", { message: "CS_DATE_ERROR_MSG" });
             } else if (
               formData?.dateOfDispatch &&
               formData?.dateOfIssuance &&
               new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
             ) {
-              setError("dateOfDispatch", { message: " CS_DISPATCH_DATE_ERROR_MSG" });
+              setError("dateOfDispatch", { message: "CS_DISPATCH_DATE_ERROR_MSG" });
             } else {
               clearErrors("dateOfDispatch");
             }
@@ -635,7 +636,7 @@ function EFilingCases({ path }) {
           case "delayApplicationType":
             if (formData?.delayApplicationType?.code === "NO") {
               setReceiptDemandNoticeModal(true);
-              setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
+              // setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
             } else {
               clearErrors("delayApplicationType");
             }
@@ -807,7 +808,93 @@ function EFilingCases({ path }) {
     }
   };
 
-  const respondentValidation = (formData, setValue) => {};
+  const respondentValidation = (formData, setValue) => { };
+
+
+  const checkOnlyCharInCheque = (formData, setValue) => {
+    if (selected == 'chequeDetails') {
+      if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          if (Object.hasOwnProperty.call(formDataCopy, key)) {
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (key === 'chequeSignatoryName' || key === 'name') {
+              if (typeof value === "string") {
+                if (value.length > 100) {
+                  value = value.slice(0, 100);
+                }
+
+                let updatedValue = value
+                  .replace(/[^a-zA-Z\s]/g, "")
+                  .trimStart()
+                  .replace(/ +/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (char) => char.toUpperCase());
+                if (updatedValue !== oldValue) {
+                  const element = document.querySelector(`[name="${key}"]`);
+                  const start = element?.selectionStart;
+                  const end = element?.selectionEnd;
+                  setValue(key, updatedValue);
+                  setTimeout(() => {
+                    element?.setSelectionRange(start, end);
+                  }, 0);
+                }
+              }
+            } else if (key === 'bankName') {
+              if (typeof value === "string") {
+                if (value.length > 200) {
+                  value = value.slice(0, 200);
+                }
+
+                let updatedValue = value
+                  .replace(/[^a-zA-Z0-9 ]/g, "")
+                  .trimStart()
+                  .replace(/ +/g, " ")
+                  .toLowerCase()
+                  .replace(/\b\w/g, (char) => char.toUpperCase());
+                if (updatedValue !== oldValue) {
+                  const element = document.querySelector(`[name="${key}"]`);
+                  const start = element?.selectionStart;
+                  const end = element?.selectionEnd;
+                  setValue(key, updatedValue);
+                  setTimeout(() => {
+                    element?.setSelectionRange(start, end);
+                  }, 0);
+                }
+              }
+            }
+          }
+        }
+      }
+    } else if (selected == 'debtLiabilityDetails') {
+      if (formData?.totalAmount) {
+        console.log('formData?.totalAmount', formData?.totalAmount)
+        const formDataCopy = structuredClone(formData);
+        for (const key in formDataCopy) {
+          if (Object.hasOwnProperty.call(formDataCopy, key) && key === 'totalAmount') {
+            const oldValue = formDataCopy[key];
+            let value = oldValue;
+            if (typeof value === "string") {
+              if (value.length > 12) {
+                value = value.slice(0, 12);
+              }
+
+              if (value !== oldValue) {
+                const element = document.querySelector(`[name="${key}"]`);
+                const start = element?.selectionStart;
+                const end = element?.selectionEnd;
+                setValue(key, value);
+                setTimeout(() => {
+                  element?.setSelectionRange(start, end);
+                }, 0);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
@@ -821,18 +908,19 @@ function EFilingCases({ path }) {
     }
     checkIfscValidation(formData, setValue);
     checkNameValidation(formData, setValue);
+    checkOnlyCharInCheque(formData, setValue);
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
       chequeDateValidation(formData, setError, clearErrors);
-      showDemandNoticeModal(setValue, formData, setError, clearErrors);
+      showDemandNoticeModal(setValue, formData, setError, clearErrors, index);
       validateDateForDelayApplication(setValue);
       showToastForComplainant(formData, setValue);
       setFormdata(
         formdata.map((item, i) => {
           return i === index
             ? {
-                ...item,
-                data: formData,
-              }
+              ...item,
+              data: formData,
+            }
             : item;
         })
       );
@@ -863,10 +951,10 @@ function EFilingCases({ path }) {
     const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
     const identifierIdDetails = documentData
       ? {
-          fileStoreId: identifierId,
-          filename: documentData?.filename,
-          documentType: documentData?.fileType,
-        }
+        fileStoreId: identifierId,
+        filename: documentData?.filename,
+        documentType: documentData?.fileType,
+      }
       : {};
     const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
     let Individual = {
@@ -1596,19 +1684,19 @@ function EFilingCases({ path }) {
               caseId: caseDetails?.id,
               representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
                 ? [
-                    ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                      ? caseDetails?.litigants?.map((data, key) => ({
-                          ...(caseDetails.representatives?.[index]?.representing?.[key]
-                            ? caseDetails.representatives?.[index]?.representing?.[key]
-                            : {}),
-                          tenantId,
-                          caseId: data?.caseId,
-                          partyCategory: data?.partyCategory,
-                          individualId: data?.individualId,
-                          partyType: data?.partyType,
-                        }))
-                      : []),
-                  ]
+                  ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
+                    ? caseDetails?.litigants?.map((data, key) => ({
+                      ...(caseDetails.representatives?.[index]?.representing?.[key]
+                        ? caseDetails.representatives?.[index]?.representing?.[key]
+                        : {}),
+                      tenantId,
+                      caseId: data?.caseId,
+                      partyCategory: data?.partyCategory,
+                      individualId: data?.individualId,
+                      partyType: data?.partyType,
+                    }))
+                    : []),
+                ]
                 : [],
               advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
               tenantId,
@@ -1764,9 +1852,6 @@ function EFilingCases({ path }) {
             <span>
               <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
             </span>
-            <span>
-              <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
-            </span>
           </div>
           <p>
             {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
@@ -1883,6 +1968,7 @@ function EFilingCases({ path }) {
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
+                  submitIcon={<RightArrow />}
                 />
               </div>
             ) : null;
@@ -1893,9 +1979,10 @@ function EFilingCases({ path }) {
               headerBarEnd={<CloseBtn onClick={() => setConfirmDeleteModal(false)} />}
               actionCancelLabel="Cancel"
               actionCancelOnSubmit={() => setConfirmDeleteModal(false)}
-              actionSaveLabel={`Remove ${pageConfig?.formItemName}`}
-              children={deleteWarningText(`${pageConfig?.formItemName}`)}
+              actionSaveLabel={`Remove ${t(pageConfig?.formItemName)}`}
+              children={deleteWarningText(`${t(pageConfig?.formItemName)}`)}
               actionSaveOnSubmit={handleConfirmDeleteForm}
+              className={"confirm-delete-modal"}
             ></Modal>
           )}
           {receiptDemandNoticeModal && (
