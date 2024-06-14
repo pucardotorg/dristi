@@ -34,9 +34,6 @@ public class AdvocateClerkSearchRequest {
 	private List<AdvocateClerkSearchCriteria> criteria = new ArrayList<>();
 
 	public AdvocateClerkSearchRequest addCriteriaItem(AdvocateClerkSearchCriteria criteriaItem) {
-		if (this.criteria == null) {
-			this.criteria = new ArrayList<>();
-		}
 		this.criteria.add(criteriaItem);
 		return this;
 	}

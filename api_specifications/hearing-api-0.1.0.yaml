@@ -226,7 +226,7 @@ components:
       properties:
         hearingId:
           type: string
-          format: uuid
+          format: string
           minLength: 36
           maxLength: 36
         filingNumber:
@@ -279,13 +279,13 @@ components:
           description: workflow state being set as hearing status
           example: scheduled, in progress, in transcription, closed
         startTime:
-          type: string
-          format: date
+          type: integer
+          format: int64
           nullable: true
           description: This field holds information about start date time of hearing in epoch time.
         endTime:
-          type: string
-          format: date
+          type: integer
+          format: int64
           nullable: true
           description: This field holds information about end date time of hearing in epoch time. Optional field.
         presidedBy:
