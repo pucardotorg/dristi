@@ -88,7 +88,7 @@ export const loginSteps = [
               type: "dropdown",
               name: "selectIdType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               clearFields: { aadharNumber: "", ID_Proof: [] },
               clearFieldsType: { ID_Proof: "documentUpload" },
