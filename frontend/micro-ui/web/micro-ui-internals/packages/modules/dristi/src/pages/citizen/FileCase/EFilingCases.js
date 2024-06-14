@@ -1912,7 +1912,10 @@ function EFilingCases({ path }) {
         <div className="employee-card-wrapper">
           <div className="header-content">
             <div className="header-details">
-              <Header>{t(pageConfig.header)}</Header>
+              <Header>
+                {`${t(pageConfig.header)}`}
+                {pageConfig?.showOptionalInHeader && <span style={{ color: "#77787B", fontWeight: 100 }}>&nbsp;(optional)</span>}
+              </Header>
               <div
                 className="header-icon"
                 onClick={() => {
@@ -1930,7 +1933,7 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || pageConfig?.formItemName === "Witness" || pageConfig?.isOptional) && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
