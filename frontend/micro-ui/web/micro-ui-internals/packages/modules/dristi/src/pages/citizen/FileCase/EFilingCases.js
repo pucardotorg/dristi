@@ -909,7 +909,7 @@ function EFilingCases({ path }) {
           ) &&
           !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
         ) {
-          if (!!setFormErrors) setFormErrors("inquiryAffidavitFileUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setFormErrors.current?.("inquiryAffidavitFileUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
           return true;
         }
         // else if (
@@ -917,7 +917,7 @@ function EFilingCases({ path }) {
         //   "companyDetailsUpload" in formDataCopy &&
         //   !Object.keys(formData?.companyDetailsUpload?.document || {}).length
         // ) {
-        //   if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+        //   setFormErrors.current?.("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
         //   return true;
         // }
         else {
@@ -937,7 +937,7 @@ function EFilingCases({ path }) {
             (data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length
           )
         ) {
-          if (!!setFormErrors) setFormErrors("SelectCustomDragDrop", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setFormErrors.current?.("SelectCustomDragDrop", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
           return true;
         } else if (
           formData?.proofOfService?.code === "YES" &&
@@ -955,7 +955,7 @@ function EFilingCases({ path }) {
       const formDataCopy = structuredClone(formData);
       if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
         if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
-          if (!!setFormErrors) setFormErrors("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
+          setFormErrors.current?.("companyDetailsUpload", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS" });
           return true;
         } else {
           clearFormDataErrors.current?.("companyDetailsUpload");
