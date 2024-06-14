@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.pucar.dristi.config.Configuration;
 import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -15,7 +16,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class WorkflowUtil {
 
