@@ -266,6 +266,7 @@ function EFilingCases({ path }) {
 
   const closeToast = () => {
     setShowErrorToast(false);
+    setErrorMsg("");
     setSuccessToast((prev) => ({
       ...prev,
       showSuccessToast: false,
@@ -568,16 +569,6 @@ function EFilingCases({ path }) {
     }));
     setConfirmDeleteModal(true);
     setFormdata(newArray);
-  };
-
-  const closeToast = () => {
-    setShowErrorToast(false);
-    setErrorMsg("");
-    setSuccessToast((prev) => ({
-      ...prev,
-      showSuccessToast: false,
-      successMsg: "",
-    }));
   };
 
   const chequeDateValidation = (formData, setError, clearErrors) => {
@@ -892,7 +883,6 @@ function EFilingCases({ path }) {
       }
     } else if (selected == "debtLiabilityDetails") {
       if (formData?.totalAmount) {
-        console.log("formData?.totalAmount", formData?.totalAmount);
         const formDataCopy = structuredClone(formData);
         for (const key in formDataCopy) {
           if (Object.hasOwnProperty.call(formDataCopy, key) && key === "totalAmount") {
