@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - develop
+      - task
   pull_request:
     branches:
       - develop
@@ -15,6 +15,7 @@ jobs:
       run_job_order: ${{ steps.check_files.outputs.run_job_order }}
       run_job_application: ${{ steps.check_files.outputs.run_job_application }}
       run_job_evidence: ${{ steps.check_files.outputs.run_job_evidence }}
+      run_job_task: ${{ steps.check_files.outputs.run_job_task }}
       run_job_digit_ui: ${{ steps.check_files.outputs.run_job_digit_ui }}
     runs-on: ubuntu-latest
     steps:
@@ -43,6 +44,7 @@ jobs:
           run_job_order=false
           run_job_application=false
           run_job_evidence=false
+          run_job_task=false
           run_job_digit_ui=false
           while IFS= read -r file
           do
@@ -61,7 +63,10 @@ jobs:
             elif [[ $file == backend/evidence/* ]]; then
               echo "This modified file is under the 'evidence' folder."
               run_job_evidence=true
-            elif [[ $file == frontend/micro-ui/* ]]; then
+            elif [[ $file == backend/task/* ]]; then
+              echo "This modified file is under the 'task' folder."
+              run_job_task=true
+            elif [[ $file == frontend/task/* ]]; then
               echo "This modified file is under the 'digit_ui' folder."
               run_job_digit_ui=true
             fi
@@ -73,6 +78,7 @@ jobs:
           echo "::set-output name=run_job_order::$run_job_order"
           echo "::set-output name=run_job_application::$run_job_application"
           echo "::set-output name=run_job_evidence::$run_job_evidence"
+          echo "::set-output name=run_job_task::$run_job_task"
           echo "::set-output name=run_job_digit_ui::$run_job_digit_ui"
 
       - name: Build and analyze advocate
@@ -111,6 +117,13 @@ jobs:
       - name: Login to Azure Container Registry
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
+      - name: Build and analyze task
+        if: ${{ steps.check_files.outputs.run_job_task == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/task/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_task -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+
       - name: Build and Push Docker image for advocate
         if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
         run: |
@@ -131,7 +144,7 @@ jobs:
           docker build --build-arg WORK_DIR="backend/case" -t pucar_case:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_case:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
-      - name: Build and Push Docker image for case_DB
+      - name: Build and Push Docker image for case_DBdevelop
         if: ${{ steps.check_files.outputs.run_job_case == 'true' }}
         run: |
           docker build -t pucar_case_db:v1.0.0-${{ github.sha }} -f Dockerfile .
@@ -179,6 +192,20 @@ jobs:
           docker tag pucar_evidence_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
         working-directory: backend/evidence/src/main/resources/db
+      - name: Build and Push Docker image for task
+        if: ${{ steps.check_files.outputs.run_job_task == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/task" -t pucar_task:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_task:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_task:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_task:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for task_DB
+        if: ${{ steps.check_files.outputs.run_job_task == 'true' }}
+        run: |
+          docker build -t pucar_task_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_task_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_task_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_task_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/task/src/main/resources/db
+
 
       - name: Build and Push Docker image for digit-ui
         if: ${{ steps.check_files.outputs.run_job_digit-ui == 'true' }}
