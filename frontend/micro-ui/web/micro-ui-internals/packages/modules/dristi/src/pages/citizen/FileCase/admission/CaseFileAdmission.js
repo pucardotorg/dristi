@@ -14,7 +14,7 @@ function CaseFileAdmission({ t }) {
   const onSubmit = () => {
     setSubmitModalInfo({
       header: "The case file has been admitted successfully.",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
       caseInfo: [
         {
           key: "Case Number",
@@ -49,7 +49,7 @@ function CaseFileAdmission({ t }) {
   const onSaveDraft = () => {
     setSubmitModalInfo({
       header: "The case file has been sent back for correction",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
       caseInfo: {
         key: "Case File Number",
         value: "KA08293928392",
@@ -63,7 +63,7 @@ function CaseFileAdmission({ t }) {
   const onSendBack = () => {
     setSubmitModalInfo({
       header: "The case file has been sent back for correction",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
       caseInfo: [{ key: "Case File Number", value: "KA08293928392" }],
       backButtonText: "Back to Home",
       nextButtonText: "Next Case",

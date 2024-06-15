@@ -123,7 +123,7 @@ const witnessFormConfig = [
         key: "addressDetails",
         formType: "Witness",
         withoutLabel: true,
-        error: "sample required message",
+        error: "CORE_REQUIRED_FIELD_ERROR",
         required: false,
         isMandatory: true,
         populators: {
