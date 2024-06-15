@@ -12,7 +12,6 @@ const Vakalath = () => {
   };
 
   const selectedCase = window.Digit.SessionStorage.get("PUCAR_CASE_DATA");
-  console.log(selectedCase, " selectedCase");
 
   const reqCreate = {
     url: `/case/case/v1/_update`,
@@ -27,8 +26,9 @@ const Vakalath = () => {
 
   function transformCreateData(data) {
     data.workflow.action = "SAVE_DRAFT";
-    const cases = [data];
-    return { cases: cases };
+    return {
+      cases: data,
+    };
   }
 
   const onSubmit = async (data) => {
@@ -43,11 +43,11 @@ const Vakalath = () => {
       },
       {
         onSuccess: async (result) => {
-          history.push(`/${window?.contextPath}/employee/cases/litigant-success`);
+          history.push(`/${window?.contextPath}/employee/cases/advocate-join-case`);
         },
         onError: (result) => {
           setShowToast({ key: "error", label: t("ERROR_WHILE_SUBMITING") });
-          history.push(`/${window?.contextPath}/employee/cases/litigant-success`);
+          history.push(`/${window?.contextPath}/employee/cases/advocate-join-case`);
         },
       }
     );
