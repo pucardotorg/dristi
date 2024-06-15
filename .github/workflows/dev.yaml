@@ -69,7 +69,9 @@ jobs:
             elif [[ $file == backend/task/* ]]; then
               echo "This modified file is under the 'task' folder."
               run_job_task=true
-            elif [[ $file == frontend/task/* ]]; then
+            elif [[ $file == backend/task/* ]]; then
+              echo "This modified file is under the 'task' folder."
+              run_job_task=true
             elif [[ $file == backend/casemanagement/* ]]; then
               echo "This modified file is under the 'casemanagement' folder."
               run_job_casemanagement=true
