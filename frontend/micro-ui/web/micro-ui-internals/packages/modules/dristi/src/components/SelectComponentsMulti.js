@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import LocationComponent from "./LocationComponent";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
 import { generateUUID } from "../Utils";
+import isEqual from "lodash/isEqual";
 
 const selectCompMultiConfig = {
   type: "component",
@@ -78,7 +79,20 @@ const selectCompMultiConfig = {
 };
 
 const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
-  const [locationData, setLocationData] = useState([{ id: generateUUID() }]);
+  const [locationData, setLocationData] = useState([formData?.[config?.key] ? formData?.[config?.key] : { id: generateUUID() }]);
+
+  useEffect(() => {
+    if (
+      Array.isArray(formData?.[config?.key]) &&
+      locationData?.length === 1 &&
+      !locationData?.[0]?.addressDetails &&
+      !isEqual(locationData, formData?.[config?.key])
+    ) {
+      setLocationData(formData?.[config?.key]);
+    } else {
+      setLocationData(locationData);
+    }
+  }, [formData]);
 
   const addressLabel = useMemo(() => {
     return formData?.respondentType?.code;
@@ -112,35 +126,38 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
 
   return (
     <div>
-      {locationData.map((data, index) => (
-        <div key={data.id}>
-          <div style={{ display: "flex", gap: "4px", justifyContent: "space-between", alignItems: "center" }}>
-            <b>
-              <h1>{` ${addressLabel == "INDIVIDUAL"
-                  ? t("CS_RESPONDENT_ADDRESS_DETAIL")
-                  : addressLabel == "REPRESENTATIVE"
+      {Array.isArray(locationData) &&
+        locationData?.[0]?.id &&
+        locationData.map((data, index) => (
+          <div key={data.id}>
+            <div style={{ display: "flex", gap: "4px", justifyContent: "space-between", alignItems: "center" }}>
+              <b>
+                <h1>{` ${
+                  addressLabel == "INDIVIDUAL"
+                    ? t("CS_RESPONDENT_ADDRESS_DETAIL")
+                    : addressLabel == "REPRESENTATIVE"
                     ? t("CS_COMPANY_LOCATION")
                     : config?.formType == "Witness"
-                      ? t("CS_COMMON_ADDRESS_WITNESS")
-                      : t("CS_COMMON_ADDRESS_DETAIL")
+                    ? t("CS_COMMON_ADDRESS_WITNESS")
+                    : t("CS_COMMON_ADDRESS_DETAIL")
                 } ${index + 1}`}</h1>
-            </b>
-            <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
-              <CrossIcon></CrossIcon>
-            </span>
+              </b>
+              <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
+                <CrossIcon></CrossIcon>
+              </span>
+            </div>
+            <LocationComponent
+              t={t}
+              config={selectCompMultiConfig}
+              locationFormData={data}
+              onLocationSelect={(key, value) => {
+                onChange(key, value, data.id);
+              }}
+              errors={{}}
+              mapIndex={data.id}
+            ></LocationComponent>
           </div>
-          <LocationComponent
-            t={t}
-            config={selectCompMultiConfig}
-            locationFormData={data}
-            onLocationSelect={(key, value) => {
-              onChange(key, value, data.id);
-            }}
-            errors={{}}
-            mapIndex={data.id}
-          ></LocationComponent>
-        </div>
-      ))}
+        ))}
       <Button
         className={"add-location-btn"}
         label={"Add Location"}

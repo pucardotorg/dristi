@@ -202,8 +202,40 @@ export const checkIfscValidation = ({ formData, setValue, selected }) => {
   }
 };
 
-export const checkNameValidation = ({ formData, setValue, selected }) => {
-  if (selected === "complaintDetails" || selected === "respondentDetails") {
+export const checkNameValidation = ({ formData, setValue, selected, reset, index, formdata }) => {
+  if (selected === "respondentDetails") {
+    if (formData?.respondentFirstName || formData?.respondentMiddleName || formData?.respondentLastName) {
+      const formDataCopy = structuredClone(formData);
+      for (const key in formDataCopy) {
+        if (Object.hasOwnProperty.call(formDataCopy, key)) {
+          const oldValue = formDataCopy[key];
+          let value = oldValue;
+          if (typeof value === "string") {
+            if (value.length > 100) {
+              value = value.slice(0, 100);
+            }
+
+            let updatedValue = value
+              .replace(/[^a-zA-Z\s]/g, "")
+              .trimStart()
+              .replace(/ +/g, " ")
+              .toLowerCase()
+              .replace(/\b\w/g, (char) => char.toUpperCase());
+            if (updatedValue !== oldValue) {
+              const element = document.querySelector(`[name="${key}"]`);
+              const start = element?.selectionStart;
+              const end = element?.selectionEnd;
+              setValue(key, updatedValue);
+              setTimeout(() => {
+                element?.setSelectionRange(start, end);
+              }, 0);
+            }
+          }
+        }
+      }
+    }
+  }
+  if (selected === "complaintDetails") {
     if (formData?.firstName || formData?.middleName || formData?.lastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
@@ -440,8 +472,12 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
   }
 };
 
-export const createIndividualUser = async (data, documentData, tenantId) => {
-  const identifierId = documentData ? documentData?.file?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
+export const createIndividualUser = async ({ data, documentData, tenantId }) => {
+  const identifierId = documentData
+    ? documentData?.fileStore
+      ? documentData?.fileStore
+      : documentData?.file?.files?.[0]?.fileStoreId
+    : data?.complainantId?.complainantId;
   const identifierIdDetails = documentData
     ? {
         fileStoreId: identifierId,
@@ -520,11 +556,13 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
 };
 
-export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, caseDetails, selected, formdata, pageConfig }) => {
+export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, caseDetails, selected, formdata, pageConfig, setFormDataValue }) => {
   const data = {};
   setIsDisabled(true);
   if (selected === "complaintDetails") {
-    const litigants = await Promise.all(
+    let litigants = [];
+    const complainantVerification = {};
+    litigants = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data, index) => {
@@ -537,14 +575,26 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
               partyType: index === 0 ? "complainant.primary" : "complainant.additional",
             };
           } else {
-            if (data?.data?.complainantId?.complainantId) {
+            if (data?.data?.complainantId?.complainantId && isCompleted === true) {
               if (data?.data?.complainantId?.verificationType !== "AADHAR") {
                 const documentData = await onDocumentUpload(
                   data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
                   data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
                   tenantId
                 );
+                !!setFormDataValue &&
+                  setFormDataValue("complainantVerification", {
+                    individualDetails: {
+                      document: [documentData],
+                    },
+                  });
                 const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
+                complainantVerification[index] = {
+                  individualDetails: {
+                    document: [documentData],
+                    individualId: Individual?.Individual?.individualId,
+                  },
+                };
                 return {
                   tenantId,
                   caseId: caseDetails?.id,
@@ -571,8 +621,35 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
-        .map(async (data) => {
+        .map(async (data, index) => {
           let documentData = [];
+          const idProof = {
+            complainantId: { complainantId: { complainantId: {} } },
+          };
+          const individualDetails = {};
+          if (data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file) {
+            const uploadedData = await onDocumentUpload(
+              data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+              data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+              tenantId
+            );
+            idProof.complainantId.complainantId.complainantId = {
+              ID_Proof: [
+                [
+                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+                  {
+                    file: {
+                      documentType: uploadedData.fileType || uploadedData?.documentType,
+                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || uploadedData?.fileStore,
+                      documentName: uploadedData.filename || uploadedData?.documentName,
+                    },
+                    fileStoreId: uploadedData?.file?.files?.[0]?.fileStoreId || uploadedData?.fileStore,
+                  },
+                ],
+              ],
+            };
+            individualDetails.document = [uploadedData];
+          }
           if (data?.data?.companyDetailsUpload?.document) {
             documentData = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
@@ -598,11 +675,14 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
               },
               individualDetails: {
                 ...data?.data?.complainantVerification?.individualDetails,
+                individualDetails,
               },
               complainantVerification: {
                 ...data?.data?.complainantVerification,
+                ...complainantVerification[index],
                 isUserVerified: !!data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.mobileNumber,
               },
+              ...(data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file && idProof),
             },
           };
         })
@@ -669,16 +749,16 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
     };
   }
   if (selected === "chequeDetails") {
-    const documentData = {
-      bouncedChequeFileUpload: {},
-      depositChequeFileUpload: {},
-      returnMemoFileUpload: {},
-    };
     const infoBoxData = { header: "CS_COMMON_NOTE", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
+          const documentData = {
+            bouncedChequeFileUpload: {},
+            depositChequeFileUpload: {},
+            returnMemoFileUpload: {},
+          };
           if (data?.data?.bouncedChequeFileUpload?.document) {
             documentData.bouncedChequeFileUpload.document = await Promise.all(
               data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
@@ -799,11 +879,11 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
     };
   }
   if (selected === "demandNoticeDetails") {
-    const documentData = {};
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
+          const documentData = {};
           if (
             data?.data?.SelectCustomDragDrop &&
             typeof data?.data?.SelectCustomDragDrop === "object" &&
@@ -848,11 +928,11 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
     };
   }
   if (selected === "delayApplications") {
-    const condonationDocumentData = { condonationFileUpload: {} };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
+          const condonationDocumentData = { condonationFileUpload: {} };
           if (data?.data?.condonationFileUpload?.document) {
             condonationDocumentData.condonationFileUpload.document = await Promise.all(
               data?.data?.condonationFileUpload?.document?.map(async (document) => {
@@ -886,16 +966,17 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
     };
   }
   if (selected === "prayerSwornStatement") {
-    const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
     const infoBoxData = { header: "", data: "" };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
+          const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
+          debugger;
           if (data?.data?.SelectUploadDocWithName) {
             documentData.SelectUploadDocWithName = await Promise.all(
               data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
-                if (!docWithNameData?.document[0]?.fileStore) {
+                if (docWithNameData?.document?.[0] && !docWithNameData?.document?.[0]?.fileStore) {
                   const document = await onDocumentUpload(docWithNameData?.document[0], docWithNameData?.document[0]?.name, tenantId).then(
                     async (data) => {
                       const evidenceData = await DRISTIService.createEvidence({
@@ -1008,6 +1089,7 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
               infoBoxData.data = data?.data?.caseSettlementCondition?.text;
             }
           }
+          debugger;
           return {
             ...data,
             data: {
@@ -1031,11 +1113,11 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
     };
   }
   if (selected === "advocateDetails") {
-    const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
+          const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
           if (data?.data?.vakalatnamaFileUpload?.document) {
             vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
               data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {

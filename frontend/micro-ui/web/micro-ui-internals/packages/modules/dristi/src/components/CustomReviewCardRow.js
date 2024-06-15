@@ -194,7 +194,7 @@ const CustomReviewCardRow = ({
             <div className="label">{t(label)}</div>
             <div className="value">
               {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-              {!Array.isArray(numbers) && `+91-${numbers}`}
+              {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
             </div>
             {isScrutiny && (
               <div
@@ -221,10 +221,10 @@ const CustomReviewCardRow = ({
       let hasImages = false;
       files.forEach((file) => {
         if (file && file?.length > 0) {
-          hasImages=true
+          hasImages = true;
         }
       });
-      if(!hasImages){
+      if (!hasImages) {
         return null;
       }
       return (

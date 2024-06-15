@@ -52,7 +52,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-              ? formData &&
+            ? formData &&
               formData[config.key] &&
               Array.isArray(input.dependentKey[input.isDependentOn]) &&
               input.dependentKey[input.isDependentOn].reduce((res, curr) => {
@@ -60,11 +60,9 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                 res = formData[config.key][input.isDependentOn][curr];
                 return res;
               }, true)
-              : true;
+            : true;
         return (
           <React.Fragment key={index}>
-            {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-
             {showDependentFields && (
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
@@ -127,7 +125,6 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                     />
                   )}
 
-                  {input.hasBreakPoint && <div style={{ margin: 20, textAlign: "center", width: "100%", maxWidth: 540 }}>{"( Or )"}</div>}
                   {currentValue &&
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
@@ -137,6 +134,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                         <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>
                     )}
+                  {errors[config.key] && <CardLabelError>{t(input.error)}</CardLabelError>}
                 </div>
               </LabelFieldPair>
             )}
