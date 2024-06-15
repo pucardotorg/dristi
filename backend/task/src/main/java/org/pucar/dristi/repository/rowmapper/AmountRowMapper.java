@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
+
 @Component
 @Slf4j
 public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
@@ -41,8 +43,8 @@ public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while processing Task ResultSet :: {}", e.toString());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Task ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing Task amount ResultSet :: {}", e.toString());
+            throw new CustomException(ROW_MAPPER_EXCEPTION, "Error occurred while processing Task amount ResultSet: " + e.getMessage());
         }
         return amountMap;
     }

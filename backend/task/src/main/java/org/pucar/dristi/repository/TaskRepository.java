@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.EXIST_TASK_ERR;
+import static org.pucar.dristi.config.ServiceConstants.SEARCH_TASK_ERR;
+
 @Slf4j
 @Repository
 public class TaskRepository {
@@ -65,7 +68,7 @@ public class TaskRepository {
 
             String amountQuery = "";
             amountQuery = queryBuilder.getAmountSearchQuery(ids, preparedStmtAm);
-            log.info("Final Amount query: {}", amountQuery);
+            log.info("Final Amount query :: {}", amountQuery);
             Map<UUID, Amount> amountMap = jdbcTemplate.query(amountQuery, preparedStmtAm.toArray(), amountRowMapper);
             log.info("DB Amount map :: {}", amountMap);
             if (amountMap != null) {
@@ -76,7 +79,7 @@ public class TaskRepository {
 
             String documentQuery = "";
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtDc);
-            log.info("Final document query: {}", documentQuery);
+            log.info("Final document query :: {}", documentQuery);
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtDc.toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
@@ -89,7 +92,7 @@ public class TaskRepository {
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching task application list :: {}", e.toString());
-            throw new CustomException("SEARCH_TASK_ERR", "Exception while fetching task application list: " + e.getMessage());
+            throw new CustomException(SEARCH_TASK_ERR, "Exception while fetching task application list: " + e.getMessage());
         }
     }
 
@@ -108,7 +111,7 @@ public class TaskRepository {
             throw e;
         } catch (Exception e) {
             log.error("Error while checking task exist :: {} ", e.toString());
-            throw new CustomException("SEARCH_TASK_ERR", "Custom exception while checking task exist : " + e.getMessage());
+            throw new CustomException(EXIST_TASK_ERR, "Custom exception while checking task exist : " + e.getMessage());
         }
     }
 }

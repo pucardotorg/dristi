@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.CREATE_TASK_ERR;
-import static org.pucar.dristi.config.ServiceConstants.VALIDATION_ERR;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Service
 @Slf4j
@@ -44,7 +43,6 @@ public class TaskService {
     @Autowired
     private Producer producer;
 
-
     @Autowired
     public void setValidator(@Lazy TaskRegistrationValidator validator) {
         this.validator = validator;
@@ -57,7 +55,7 @@ public class TaskService {
 
             enrichmentUtil.enrichTaskRegistration(body);
 
-            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getCnrNumber(),
+            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
                     config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
 
             producer.push(config.getTaskCreateTopic(), body);
@@ -67,7 +65,7 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while creating task");
+            log.error("Error occurred while creating task :: {}",e.toString());
             throw new CustomException(CREATE_TASK_ERR, e.getMessage());
         }
     }
@@ -86,8 +84,8 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
-            throw new CustomException("SEARCH_TASK_ERR", e.getMessage());
+            log.error("Error while fetching task results :: {}", e.toString());
+            throw new CustomException(SEARCH_TASK_ERR, e.getMessage());
         }
     }
 
@@ -111,8 +109,8 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating task");
-            throw new CustomException("UPDATE_TASK_ERR", "Error occurred while updating task: " + e.getMessage());
+            log.error("Error occurred while updating task :: {}",e.toString());
+            throw new CustomException(UPDATE_TASK_ERR, "Error occurred while updating task: " + e.getMessage());
         }
 
     }
@@ -123,8 +121,8 @@ public class TaskService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist task");
-            throw new CustomException("TASK_EXIST_ERR", e.getMessage());
+            log.error("Error while fetching to exist task :: {}",e.toString());
+            throw new CustomException(EXIST_TASK_ERR, e.getMessage());
         }
     }
 }
