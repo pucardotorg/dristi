@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+
 @Component
 @Slf4j
 public class OrderRegistrationEnrichment {
@@ -41,10 +43,10 @@ public class OrderRegistrationEnrichment {
                 orderRequest.getOrder().setOrderNumber(orderRegistrationIdList.get(0));
             }
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while enriching order : {}", e.getMessage());
+            log.error("Custom Exception occurred while enriching order :: {}", e.toString());
             throw e;
         } catch (Exception e) {
-            log.error("Exception occurred while enriching order : {}", e.getMessage());
+            log.error("Exception occurred while enriching order :: {}", e.toString());
             throw e;
         }
     }
@@ -55,8 +57,8 @@ public class OrderRegistrationEnrichment {
                 orderRequest.getOrder().getAuditDetails().setLastModifiedTime(System.currentTimeMillis());
                 orderRequest.getOrder().getAuditDetails().setLastModifiedBy(orderRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
-            log.error("Error enriching advocate application upon update: {}", e.getMessage());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in order enrichment service during order update process: " + e.getMessage());
+            log.error("Error enriching advocate application upon update :: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in order enrichment service during order update process: " + e.getMessage());
         }
     }
 }

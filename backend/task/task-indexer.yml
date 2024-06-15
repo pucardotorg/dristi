@@ -1,0 +1,189 @@
+ServiceMaps:
+  serviceName: task services
+  version: 1.0.0
+  mappings:
+    - topic: save-task-application
+      configKey: INDEX
+      indexes:
+        - name: task-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.task
+          customJsonMapping:
+            indexMapping: { "Data": { "taskDetails": {}, "history": {} } }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.taskDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.taskDetails.tenantId
+              - inJsonPath: $.orderId
+                outJsonPath: $.Data.taskDetails.orderId
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.taskDetails.createdDate
+              - inJsonPath: $.taskDescription
+                outJsonPath: $.Data.taskDetails.taskDescription
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.taskDetails.filingNumber
+              - inJsonPath: $.dateCloseBy
+                outJsonPath: $.Data.taskDetails.dateCloseBy
+              - inJsonPath: $.dateClosed
+                outJsonPath: $.Data.taskDetails.dateClosed
+              - inJsonPath: $.taskNumber
+                outJsonPath: $.Data.taskDetails.taskNumber
+              - inJsonPath: $.taskType
+                outJsonPath: $.Data.taskDetails.taskType
+              - inJsonPath: $.amount
+                outJsonPath: $.Data.taskDetails.amount
+              - inJsonPath: $.taskDetails
+                outJsonPath: $.Data.taskDetails.taskDetails
+              - inJsonPath: $.status
+                outJsonPath: $.Data.taskDetails.status
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.taskDetails.isActive
+              - inJsonPath: $.assignedTo
+                outJsonPath: $.Data.taskDetails.assignedTo
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.taskDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.taskDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.taskDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.taskDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.taskDetails.additionalDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.taskNumber,tenantId=$.tenantId,history=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "apiId": "",
+                        "ver": "1.0",
+                        "ts": 1502890899493,
+                        "action": "asd",
+                        "did": "4354648646",
+                        "key": "xyz",
+                        "msgId": "654654",
+                        "requesterId": "61",
+                        "authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8",
+                        "userInfo":
+                          {
+                            "id": 1,
+                            "uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+                            "type": "EMPLOYEE",
+                            "tenantId": "pg",
+                            "roles":
+                              [
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                          },
+                      },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+
+    - topic: update-task-application
+      configKey: INDEX
+      indexes:
+        - name: task-index
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.task
+          customJsonMapping:
+            indexMapping: { "Data": { "taskDetails": {}, "history": {} } }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.taskDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.taskDetails.tenantId
+              - inJsonPath: $.orderId
+                outJsonPath: $.Data.taskDetails.orderId
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.taskDetails.createdDate
+              - inJsonPath: $.taskDescription
+                outJsonPath: $.Data.taskDetails.taskDescription
+              - inJsonPath: $.filingNumber
+                outJsonPath: $.Data.taskDetails.filingNumber
+              - inJsonPath: $.taskNumber
+                outJsonPath: $.Data.taskDetails.taskNumber
+              - inJsonPath: $.dateCloseBy
+                outJsonPath: $.Data.taskDetails.dateCloseBy
+              - inJsonPath: $.dateClosed
+                outJsonPath: $.Data.taskDetails.dateClosed
+              - inJsonPath: $.taskType
+                outJsonPath: $.Data.taskDetails.taskType
+              - inJsonPath: $.amount
+                outJsonPath: $.Data.taskDetails.amount
+              - inJsonPath: $.taskDetails
+                outJsonPath: $.Data.taskDetails.taskDetails
+              - inJsonPath: $.status
+                outJsonPath: $.Data.taskDetails.status
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.taskDetails.isActive
+              - inJsonPath: $.assignedTo
+                outJsonPath: $.Data.taskDetails.assignedTo
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.taskDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.taskDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.taskDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.taskDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.taskDetails.additionalDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.taskNumber,tenantId=$.tenantId,history=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "apiId": "",
+                        "ver": "1.0",
+                        "ts": 1502890899493,
+                        "action": "asd",
+                        "did": "4354648646",
+                        "key": "xyz",
+                        "msgId": "654654",
+                        "requesterId": "61",
+                        "authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8",
+                        "userInfo":
+                          {
+                            "id": 1,
+                            "uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+                            "type": "EMPLOYEE",
+                            "tenantId": "pg",
+                            "roles":
+                              [
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                          },
+                      },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
