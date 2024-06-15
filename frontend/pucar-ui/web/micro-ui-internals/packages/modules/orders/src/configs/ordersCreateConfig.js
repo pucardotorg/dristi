@@ -1,271 +1,470 @@
- export const configs = [
+export const configs = [
+  {
+ head: "Order 1",   
+  body: [
     {
-   head: "Create Individual",   
-    body: [
-        {
-          inline: true,
-          label: "Applicant Name",
-          isMandatory: false,
-          key: "applicantname",
-          type: "text",
-          disable: false,
-          populators: { name: "applicantname", error: "Required", validation: { pattern: /^[A-Za-z]+$/i } },
+      isMandatory: true,
+      key: "Order Type",
+      type: "dropdown",
+      label: "order type",
+      disable: false,
+      populators: {
+        name: "genders",
+        optionsKey: "name",
+        error: "required ",
+        mdmsConfig: {
+          masterName: "OrderType",
+          moduleName: "Order",
+          localePrefix: "ORDER_TYPE",
         },
-        {
+      },
+    },
+    // {
+    //   isMandatory: true,
+    //   key: "Document Type",
+    //   type: "dropdown",
+    //   label: "document type",
+    //   disable: false,
+    //   populators: {
+    //     name: "genders",
+    //     optionsKey: "name",
+    //     error: "required ",
+    //     mdmsConfig: {
+    //       masterName: "GenderType",
+    //       moduleName: "common-masters",
+    //       localePrefix: "COMMON_GENDER",
+    //     },
+    //   },
+    // },
+    // {
+    //   isMandatory: true,
+    //   key: "Party / parties to make submission",
+    //   type: "dropdown",
+    //   label: "Order for document Submission",
+    //   disable: false,
+    //   populators: {
+    //     name: "genders",
+    //     optionsKey: "name",
+    //     error: "required ",
+    //     mdmsConfig: {
+    //       masterName: "GenderType",
+    //       moduleName: "common-masters",
+    //       localePrefix: "COMMON_GENDER",
+    //     },
+    //   },
+    // },
+    //   {
+    //     inline: true,
+    //     label: "deadline for submission",
+    //     isMandatory: false,
+    //     key: "dob",
+    //     type: "date",
+    //     disable: false,
+    //     populators: { name: "dob", error: "Required"},
+    //   },
+
+    //   {
+    //     label: "Additional notes",
+    //     isMandatory: true,
+    //     key: "phno",
+    //     type: "number",
+    //     disable: false,
+    //     populators: { name: "phno", error: "Required", validation: { min: 0, max: 9999999999 } },
+    //   },
+    ],
+  },
+];
+
+export const configsCreateOrderSchedule = [
+  {
+    head: "Order 1",
+    defaultValues:{
+     orderType:{
+      "id": 8,
+      "type": "NEXT_HEARING",
+      "isactive": true,
+      "code": "NEXT_HEARING"
+    }
+ },    
+     body: [
+       {
+         isMandatory: true,
+         key: "Order Type",
+         type: "dropdown",
+         label: "ORDER_TYPE",
+         disable: true,
+         populators: {
+           name: "orderType",
+           optionsKey: "code",
+           error: "required ",
+           mdmsConfig: {
+             masterName: "OrderType",
+             moduleName: "Order",
+             localePrefix: "ORDER_TYPE",
+           },
+         },
+       },
+       {
+        isMandatory: true,
+        key: "Hearing Type",
+        type: "dropdown",
+        label: "HEARING_TYPE",
+        disable: false,
+        populators: {
+          name: "hearingType",
+          optionsKey: "code",
+          error: "required ",
+          mdmsConfig: {
+            masterName: "HearingType",
+            moduleName: "Hearing",
+            localePrefix: "HEARING_TYPE",
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        key: "Parties to Attend",
+        type: "dropdown",
+        label: "PARTIES_TO_ATTEND",
+        disable: false,
+        populators: {
+          name: "hearingType",
+          optionsKey: "code",
+          error: "required ",
+          mdmsConfig: {
+            masterName: "HearingType",
+            moduleName: "Hearing",
+            localePrefix: "HEARING_TYPE",
+          },
+        },
+      },
+       {
+         inline: true,
+         label: "DATE_OF_HEARING",
+         isMandatory: true,
+         key: "doh",
+         type: "date",
+         disable: false,
+         populators: { name: "doh", error: "Required"},
+       },
+       {
+        inline: true,
+        label: "Purpose of Hearing",
+        isMandatory: true,
+        description: "",
+        type: "textarea",
+        disable: false,
+        populators: { name: "purpose", error: "Error!" },
+      },
+      {
+        inline: true,
+        label: "Additional notes (optional)",
+        isMandatory: true,
+        description: "",
+        type: "textarea",
+        disable: false,
+        populators: { name: "additionalNotes", error: "Error!" },
+      },
+       ],
+     },
+  ];
+
+  export const configsCreateOrderWarrant = [
+    {
+   head: "Order 1",
+   defaultValues:{
+    orderType:{
+      "id": 5,
+      "type": "WARRANT",
+      "isactive": true,
+      "code": "WARRANT"
+    }
+},    
+    body: [
+      {
+        isMandatory: true,
+        key: "Order Type",
+        type: "dropdown",
+        label: "ORDER_TYPE",
+        disable: true,
+        populators: {
+          name: "orderType",
+          optionsKey: "code",
+          error: "required ",
+          mdmsConfig: {
+            masterName: "OrderType",
+            moduleName: "Order",
+            localePrefix: "ORDER_TYPE",
+          },
+        },
+      },
+      {
+        inline: true,
+        label: "DATE_OF_HEARING",
+        isMandatory: true,
+        key: "doh",
+        type: "date",
+        disable: false,
+        populators: { name: "doh", error: "Required"},
+      },
+      {
+        isMandatory: true,
+        key: "Warrant For",
+        type: "dropdown",
+        label: "WARRANT_FOR_PARTY",
+        disable: false,
+        populators: {
+          name: "warrantFor",
+          optionsKey: "code",
+          error: "required ",
+          mdmsConfig: {
+            masterName: "OrderType",
+            moduleName: "Order",
+            localePrefix: "ORDER_TYPE",
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        key: "Warrant Type",
+        type: "dropdown",
+        label: "WARRANT_TYPE",
+        disable: false,
+        populators: {
+          name: "warrantType",
+          optionsKey: "code",
+          error: "required ",
+          mdmsConfig: {
+            masterName: "OrderType",
+            moduleName: "Order",
+            localePrefix: "ORDER_TYPE",
+          },
+        },
+      },
+      {
+        isMandatory: true,
+        type: "radio",
+        key: "bailable",
+        label: "Is this a bailable warrant?",
+        disable: false,
+        populators: {
+          name: "bailable",
+          optionsKey: "name",
+          error: "Error!",
+          required: false,
+          options: [
+            {
+              code: "Yes",
+              name: "ES_COMMON_YES",
+            },
+            {
+              code: "No",
+              name: "ES_COMMON_NO",
+            }
+          ],
+        },
+      },
+      // {
+      //   isMandatory: true,
+      //   key: "Document Type",
+      //   type: "dropdown",
+      //   label: "document type",
+      //   disable: false,
+      //   populators: {
+      //     name: "genders",
+      //     optionsKey: "name",
+      //     error: "required ",
+      //     mdmsConfig: {
+      //       masterName: "GenderType",
+      //       moduleName: "common-masters",
+      //       localePrefix: "COMMON_GENDER",
+      //     },
+      //   },
+      // },
+      // {
+      //   isMandatory: true,
+      //   key: "Party / parties to make submission",
+      //   type: "dropdown",
+      //   label: "Order for document Submission",
+      //   disable: false,
+      //   populators: {
+      //     name: "genders",
+      //     optionsKey: "name",
+      //     error: "required ",
+      //     mdmsConfig: {
+      //       masterName: "GenderType",
+      //       moduleName: "common-masters",
+      //       localePrefix: "COMMON_GENDER",
+      //     },
+      //   },
+      // },
+        // {
+        //   inline: true,
+        //   label: "deadline for submission",
+        //   isMandatory: false,
+        //   key: "dob",
+        //   type: "date",
+        //   disable: false,
+        //   populators: { name: "dob", error: "Required"},
+        // },
+
+      //   {
+      //     label: "Additional notes",
+      //     isMandatory: true,
+      //     key: "phno",
+      //     type: "number",
+      //     disable: false,
+      //     populators: { name: "phno", error: "Required", validation: { min: 0, max: 9999999999 } },
+      //   },
+      ],
+    },
+  ];
+
+  export const configsCreateOrderSummon = [
+    {
+      head: "Order 1",
+      defaultValues:{
+       orderType:{
+        "id": 4,
+        "type": "SUMMONS",
+        "isactive": true,
+        "code": "SUMMONS"
+      }
+   },    
+       body: [
+         {
+           isMandatory: true,
+           key: "Order Type",
+           type: "dropdown",
+           label: "ORDER_TYPE",
+           disable: true,
+           populators: {
+             name: "orderType",
+             optionsKey: "code",
+             error: "required ",
+             mdmsConfig: {
+               masterName: "OrderType",
+               moduleName: "Order",
+               localePrefix: "ORDER_TYPE",
+             },
+           },
+         },
+         {
           inline: true,
-          label: "date of birth",
-          isMandatory: false,
-          key: "dob",
+          label: "DATE_OF_HEARING",
+          isMandatory: true,
+          key: "doh",
           type: "date",
           disable: false,
-          populators: { name: "dob", error: "Required"},
+          populators: { name: "doh", error: "Required"},
         },
-
-
         {
           isMandatory: true,
-          key: "genders",
+          key: "Parties to SUMMON",
           type: "dropdown",
-          label: "Enter Gender",
+          label: "PARTIES_TO_SUMMON",
           disable: false,
           populators: {
-            name: "genders",
-            optionsKey: "name",
+            name: "partyToSummon",
+            optionsKey: "code",
             error: "required ",
             mdmsConfig: {
-              masterName: "GenderType",
-              moduleName: "common-masters",
-              localePrefix: "COMMON_GENDER",
+              masterName: "HearingType",
+              moduleName: "Hearing",
+              localePrefix: "HEARING_TYPE",
             },
           },
         },
-
-        {
-          label: "Phone number",
-          isMandatory: true,
-          key: "phno",
-          type: "number",
-          disable: false,
-          populators: { name: "phno", error: "Required", validation: { min: 0, max: 9999999999 } },
-        },
-      ],
-    },
-    {
-      head: "Residential Details",
-      body: [
-        {
-          inline: true,
-          label: "Pincode",
-          isMandatory: true,
-          key: "pincode",
-          type: "number",
-          disable: false,
-          populators: { name: "pincode", error: "Required " },
-        },
-        {
-          inline: true,
-          label: "City",
-          isMandatory: true,
-          key: "city",
-          type: "text",
-          disable: false,
-          populators: { name: "city", error: " Required ", validation: { pattern: /^[A-Za-z]+$/i } },
-        },
         {
           isMandatory: false,
-          key: "locality",
-          type: "dropdown",
-          label: "Enter locality",
+          key: "deliveryChannels",
+          type: "component", // for custom component
+          component: "DeliveryChannels", // name of the component as per component registry
+          withoutLabel: true,
           disable: false,
+          customProps: {},
           populators: {
-            name: "locality",
-            optionsKey: "name",
-            error: " Required",
+            name: "deliveryChannels",
             required: true,
-
-            options: [
-              {
-                  "code": "SUN01",
-                  "name": "Ajit Nagar - Area1",
-                  "label": "Locality",
-                  "latitude": "31.63089",
-                  "longitude": "74.871552",
-                  "area": "Area1",
-                  "pincode": [
-                      143001
-                  ],
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN02",
-                  "name": "Back Side 33 KVA Grid Patiala Road",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area1",
-                  "pincode": [
-                      143001
-                  ],
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN03",
-                  "name": "Bharath Colony",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area1",
-                  "pincode": [
-                      143001
-                  ],
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN10",
-                  "name": "Backside Brijbala Hospital - Area3",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area3",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN11",
-                  "name": "Bigharwal Chowk to Railway Station - Area2",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area2",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN12",
-                  "name": "Chandar Colony Biggarwal Road - Area2",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area2",
-                  "pincode": [
-                      143001
-                  ],
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN20",
-                  "name": "Aggarsain Chowk to Mal Godown - Both Sides - Area3",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area3",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN21",
-                  "name": "ATAR SINGH COLONY - Area2",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area2",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN22",
-                  "name": "Back Side Naina Devi Mandir - Area2",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area2",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN30",
-                  "name": "Bakhtaur Nagar - Area1",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area1",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN31",
-                  "name": "Bhai Mool Chand Sahib Colony - Area1",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area1",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN32",
-                  "name": "College Road (Southern side) - Area2",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area2",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              },
-              {
-                  "code": "SUN33",
-                  "name": "Ekta Colony (Southern Side) - Area1",
-                  "label": "Locality",
-                  "latitude": null,
-                  "longitude": null,
-                  "area": "Area1",
-                  "pincode": null,
-                  "boundaryNum": 1,
-                  "children": []
-              }
-          ],
           },
         },
+         ],
+       },
+  ];
 
-        {
-          inline: true,
-          label: "Street",
-          isMandatory: false,
-          key: "street",
-          type: "text",
-          disable: false,
-          populators: { name: "street", error: "Required ", validation: { pattern: /^[A-Za-z]+$/i } },
+  export const configsCreateOrderReIssueSummon = [
+    {
+   head: "Order 1",   
+    body: [
+      {
+        isMandatory: true,
+        key: "Order Type",
+        type: "dropdown",
+        label: "order type",
+        disable: false,
+        populators: {
+          name: "genders",
+          optionsKey: "name",
+          error: "required ",
+          mdmsConfig: {
+            masterName: "OrderType",
+            moduleName: "Order",
+            localePrefix: "ORDER_TYPE",
+          },
         },
-        {
-          inline: true,
-          label: "Door Number",
-          isMandatory: true,
-          key: "doorno",
-          type: "number",
-          disable: false,
-          populators: { name: "doorno", error: " Required ", validation: { min: 0, max: 9999999999 } },
-        },
-        {
-          inline: true,
-          label: "Landmark",
-          isMandatory: false,
-          key: "landmark",
-          type: "text",
-          disable: false,
-          populators: { name: "landmark", error: " Required", validation: { pattern: /^[A-Za-z]+$/i } },
-        },
+      },
+      // {
+      //   isMandatory: true,
+      //   key: "Document Type",
+      //   type: "dropdown",
+      //   label: "document type",
+      //   disable: false,
+      //   populators: {
+      //     name: "genders",
+      //     optionsKey: "name",
+      //     error: "required ",
+      //     mdmsConfig: {
+      //       masterName: "GenderType",
+      //       moduleName: "common-masters",
+      //       localePrefix: "COMMON_GENDER",
+      //     },
+      //   },
+      // },
+      // {
+      //   isMandatory: true,
+      //   key: "Party / parties to make submission",
+      //   type: "dropdown",
+      //   label: "Order for document Submission",
+      //   disable: false,
+      //   populators: {
+      //     name: "genders",
+      //     optionsKey: "name",
+      //     error: "required ",
+      //     mdmsConfig: {
+      //       masterName: "GenderType",
+      //       moduleName: "common-masters",
+      //       localePrefix: "COMMON_GENDER",
+      //     },
+      //   },
+      // },
+      //   {
+      //     inline: true,
+      //     label: "deadline for submission",
+      //     isMandatory: false,
+      //     key: "dob",
+      //     type: "date",
+      //     disable: false,
+      //     populators: { name: "dob", error: "Required"},
+      //   },
+
+      //   {
+      //     label: "Additional notes",
+      //     isMandatory: true,
+      //     key: "phno",
+      //     type: "number",
+      //     disable: false,
+      //     populators: { name: "phno", error: "Required", validation: { min: 0, max: 9999999999 } },
+      //   },
       ],
     },
   ];

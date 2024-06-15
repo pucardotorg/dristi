@@ -3,10 +3,14 @@ import { initLibraries } from "@egovernments/digit-ui-libraries";
 import { DigitUI } from "@egovernments/digit-ui-module-core";
 // import { initHRMSComponents } from "@egovernments/digit-ui-module-hrms";
 import { UICustomizations } from "./Customisations/UICustomizations";
-import { initWorkbenchComponents } from "@egovernments/digit-ui-module-workbench";
 import { initUtilitiesComponents } from "@egovernments/digit-ui-module-utilities";
-import { initWorkbenchHCMComponents } from "@egovernments/digit-ui-module-hcmworkbench";
 import {initSampleComponents} from "@egovernments/digit-ui-module-sample";
+import {initPucarComponents} from "@egovernments/digit-ui-module-pucar";
+import {initHearingsComponents} from "@egovernments/digit-ui-module-hearings";
+import {initOrdersComponents} from "@egovernments/digit-ui-module-orders";
+import {initCasesComponents} from "@egovernments/digit-ui-module-cases";
+import { initSubmissionsComponents } from "@egovernments/digit-ui-module-submissions";
+
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 const enabledModules = [
@@ -17,7 +21,13 @@ const enabledModules = [
   "Engagement",
   "Workbench",
   "HCMWORKBENCH",
-  "sample"
+  "sample",
+  "Orders",
+  "Cases",
+  // "Pucar",
+  "Hearings",
+  "Submissions"
+
 ];
 
 const moduleReducers = (initData) => ({
@@ -32,9 +42,13 @@ const initDigitUI = () => {
   };
   // initHRMSComponents();
   initUtilitiesComponents();
-  initWorkbenchComponents();
-  initWorkbenchHCMComponents();
   initSampleComponents();
+  initSampleComponents();
+  initPucarComponents();
+  initHearingsComponents();
+  initOrdersComponents();
+  initCasesComponents();
+  initSubmissionsComponents();
 
 };
 
