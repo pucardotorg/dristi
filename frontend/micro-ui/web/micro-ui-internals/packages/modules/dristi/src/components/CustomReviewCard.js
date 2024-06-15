@@ -13,7 +13,7 @@ function CustomReviewCard({
   dataErrors,
   configKey,
   titleHeading,
-  setIsImageModal,
+  handleClickImage
 }) {
   return (
     <div className="item-body">
@@ -33,7 +33,7 @@ function CustomReviewCard({
             dataError={dataError}
             t={t}
             titleHeading={titleHeading}
-            setIsImageModal={setIsImageModal}
+            handleClickImage={handleClickImage}
           />
         );
       })}

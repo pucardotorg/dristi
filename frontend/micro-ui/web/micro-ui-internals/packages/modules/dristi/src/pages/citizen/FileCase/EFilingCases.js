@@ -1,18 +1,18 @@
+import { Button, CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import Accordion from "../../../components/Accordion";
-import { sideMenuConfig } from "./Config";
-import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
+import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import Modal from "../../../components/Modal";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
-import EditFieldsModal from "./EditFieldsModal";
-import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
-import { formatDate } from "./CaseType";
 import { userTypeOptions } from "../registration/config";
+import { formatDate } from "./CaseType";
+import { sideMenuConfig } from "./Config";
+import EditFieldsModal from "./EditFieldsModal";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -79,7 +79,7 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [{ setFormErrors, resetFormData, setFormDataValue, clearFormDataErrors }, setState] = useState({
+  const [{ setFormErrors, resetFormData, setFormDataValue }, setState] = useState({
     setFormErrors: null,
     resetFormData: null,
     setFormDataValue: null,
@@ -870,7 +870,7 @@ function EFilingCases({ path }) {
           }
         }
       }
-    } else if (selected == "debtLiabilityDetails") {
+    } else if (selected === "debtLiabilityDetails") {
       if (formData?.totalAmount) {
         console.log("formData?.totalAmount", formData?.totalAmount);
         const formDataCopy = structuredClone(formData);
@@ -921,7 +921,6 @@ function EFilingCases({ path }) {
   const demandNoticeFileValidation = (formData) => {
     if (selected === "demandNoticeDetails") {
       const formDataCopy = structuredClone(formData);
-      debugger;
       if ("SelectCustomDragDrop" in formDataCopy) {
         if (
           ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some(

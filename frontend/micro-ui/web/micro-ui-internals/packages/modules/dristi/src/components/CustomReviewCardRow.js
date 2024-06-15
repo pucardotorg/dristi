@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import { InfoCard } from "@egovernments/digit-ui-components";
+import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
+import React from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
-import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
-import { InfoCard } from "@egovernments/digit-ui-components";
 
 const CustomReviewCardRow = ({
   isScrutiny,
@@ -16,7 +16,7 @@ const CustomReviewCardRow = ({
   t,
   config,
   titleHeading,
-  setIsImageModal,
+  handleClickImage,
 }) => {
   const { type = null, label = null, value = null, badgeType = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -37,13 +37,7 @@ const CustomReviewCardRow = ({
   };
   const handleImageClick = (configKey, name, dataIndex, fieldName, data) => {
     if (isScrutiny && data) {
-      setIsImageModal({
-        fieldName,
-        configKey,
-        name,
-        dataIndex,
-        data,
-      });
+      handleClickImage(null, configKey, name, dataIndex, fieldName, data);
     }
     return null;
   };
@@ -58,7 +52,7 @@ const CustomReviewCardRow = ({
       return (
         <div className={`title-main ${isScrutiny && dataError && "error"}`}>
           <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-            <div>{`${titleIndex}. ${titleHeading == true ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
+            <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
             {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
             {isScrutiny && (
