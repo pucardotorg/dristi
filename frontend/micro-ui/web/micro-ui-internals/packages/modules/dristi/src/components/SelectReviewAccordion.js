@@ -13,6 +13,7 @@ import {
 import CustomPopUp from "./CustomPopUp";
 import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
+import { transform } from "lodash";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -260,7 +261,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         </div>
       </div>
       {isPopupOpen && (
-        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: -345 }}>
+        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
           <Fragment>
             <div>{t("CS_ERROR_DESCRIPTION")}</div>
             <TextArea
