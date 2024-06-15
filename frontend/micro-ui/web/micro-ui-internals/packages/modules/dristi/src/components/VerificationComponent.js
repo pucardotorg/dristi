@@ -1,10 +1,11 @@
-import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CardLabelError, CloseSvg, FormComposerV2, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import React, { useCallback, useMemo, useState } from "react";
 import Button from "./Button";
 import { idProofVerificationConfig } from "../configs/component";
 import Modal from "./Modal";
 import RenderFileCard from "./RenderFileCard";
+import { useToast } from "./Toast/useToast";
 
 const extractValue = (data, key) => {
   if (!key.includes(".")) {
@@ -42,7 +43,7 @@ function generateAadhaar() {
   return aadhaar;
 }
 
-function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
+function VerificationComponent({ t, config, onSelect, formData = {}, errors, setError, clearErrors }) {
   const [{ showModal, verificationType, modalData, isAadharVerified }, setState] = useState({
     showModal: false,
     verificationType: "",
@@ -50,6 +51,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
     isAadharVerified: false,
   });
   const [isDisabled, setIsDisabled] = useState(false);
+  const toast = useToast();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -75,6 +77,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
       idProofVerificationConfig.forEach((curr) => {
         if (isDisabled) return;
         if (!(curr.body[0].key in formData) || !formData[curr.body[0].key]) {
+          isDisabled = true;
           return;
         }
         curr.body[0].populators.inputs.forEach((input) => {
@@ -208,7 +211,8 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
               <Modal
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
-                actionCancelOnSubmit={() => { }}
+                actionCancelOnSubmit={() => {}}
+                isDisabled={isDisabled}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });

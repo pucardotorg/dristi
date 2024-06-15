@@ -56,7 +56,7 @@ export const sideMenuConfig = [
         isCompleted: false,
         isDisabled: false,
         pageConfig: respondentconfig,
-        mandatoryFields: ["respondentType", "firstName", "lastName"],
+        mandatoryFields: ["respondentType", "respondentFirstName", "respondentLastName"],
         ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
