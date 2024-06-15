@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
 import { sideMenuConfig } from "./Config";
@@ -12,7 +12,6 @@ import { DRISTIService } from "../../../services";
 import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
 import { formatDate } from "./CaseType";
-import { userTypeOptions } from "../registration/config";
 import { useToast } from "../../../components/Toast/useToast";
 import {
   checkIfscValidation,
@@ -265,7 +264,7 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining(fieldsRemainingCopy);
+      setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
     }
   }, [caseDetails]);
 
@@ -490,10 +489,7 @@ function EFilingCases({ path }) {
                       }
                       if (selected === "respondentDetails") {
                         if (
-<<<<<<< HEAD
-=======
-                          Array.isArray(data?.additionalDetails) &&
->>>>>>> origin/dev-env
+                          Array.isArray(data?.addressDetails) &&
                           data?.addressDetails?.some(
                             (address) =>
                               address?.addressDetails?.pincode !==
@@ -504,6 +500,11 @@ function EFilingCases({ path }) {
                           delete input.isOptional;
                           return {
                             ...input,
+                          };
+                        } else {
+                          return {
+                            ...input,
+                            isOptional: "CS_IS_OPTIONAL",
                           };
                         }
                       }
@@ -742,28 +743,44 @@ function EFilingCases({ path }) {
   };
 
   const onSubmit = async () => {
-    if (formdata.some((data) => respondentValidation({ formData: data?.data, caseDetails, selected, setShowErrorToast }))) {
+    if (
+      formdata
+        .filter((data) => data.isEnabled)
+        .some((data) => respondentValidation({ formData: data?.data, caseDetails, selected, setShowErrorToast }))
+    ) {
       return;
     }
-    if (formdata.some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+    if (formdata.filter((data) => data.isEnabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
       return;
     }
-    if (formdata.some((data) => complainantValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+    if (formdata.filter((data) => data.isEnabled).some((data) => complainantValidation({ formData: data?.data, selected, setShowErrorToast }))) {
       return;
     }
-    if (formdata.some((data) => signatureValidation({ formData: data?.data, selected, setShowErrorToast, setErrorMsg }))) {
+    if (
+      formdata
+        .filter((data) => data.isEnabled)
+        .some((data) => signatureValidation({ formData: data?.data, selected, setShowErrorToast, setErrorMsg }))
+    ) {
       return;
     }
     if (selected === "addSignature") {
       setOpenConfirmCourtModal(true);
     } else {
-      updateCaseDetails({ isCompleted: true, caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+      updateCaseDetails({
+        isCompleted: true,
+        caseDetails,
+        formdata,
+        pageConfig,
+        selected,
+        setIsDisabled,
+        tenantId,
+        setFormDataValue: setFormDataValue.current,
+      })
         .then(() => {
           if (resetFormData.current) {
             resetFormData.current();
             setIsDisabled(false);
           }
-          debugger;
 
           return refetchCaseData().then(() => {
             const caseData =
@@ -780,7 +797,6 @@ function EFilingCases({ path }) {
         });
     }
   };
-
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
     updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })

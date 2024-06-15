@@ -49,7 +49,7 @@ const respondentFromconfig = [
         label: "FIRST_NAME",
         isMandatory: true,
         populators: {
-          name: "firstName",
+          name: "respondentFirstName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
@@ -68,7 +68,7 @@ const respondentFromconfig = [
         label: "MIDDLE_NAME",
         labelChildren: "optional",
         populators: {
-          name: "middleName",
+          name: "respondentMiddleName",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -84,7 +84,7 @@ const respondentFromconfig = [
         label: "LAST_NAME",
         isMandatory: true,
         populators: {
-          name: "lastName",
+          name: "respondentLastName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {

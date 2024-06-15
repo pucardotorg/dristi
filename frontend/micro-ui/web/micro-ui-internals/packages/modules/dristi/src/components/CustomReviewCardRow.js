@@ -194,7 +194,7 @@ const CustomReviewCardRow = ({
             <div className="label">{t(label)}</div>
             <div className="value">
               {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-              {!Array.isArray(numbers) && `+91-${numbers}`}
+              {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
             </div>
             {isScrutiny && (
               <div
