@@ -17,6 +17,8 @@ import ImageModal from "./ImageModal";
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
+  const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
+
   const [isOpen, setOpen] = useState(true);
   const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
@@ -161,6 +163,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     setValue("scrutinyMessage", null, "popupInfo");
     setScrutinyError("");
   };
+  console.log(isJudge);
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
@@ -181,7 +184,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     {input?.icon && <Icon icon={input?.icon} />}
                     <span>{t(input?.label)}</span>
                   </div>
-                  {(!isScrutiny || sectionError) && (
+                  {(!isScrutiny || sectionError) && !isJudge && (
                     <div
                       className="header-right"
                       onClick={(e) => {
@@ -207,7 +210,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     </div>
                   )}
                 </div>
-                {sectionError && (
+                {sectionError && isScrutiny && (
                   <div className="scrutiny-error section">
                     <FlagIcon isError={true} />
                     {sectionError}

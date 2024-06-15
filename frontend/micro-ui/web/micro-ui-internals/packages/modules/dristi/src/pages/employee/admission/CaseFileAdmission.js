@@ -7,6 +7,7 @@ import { Redirect, useHistory, useLocation } from "react-router-dom/cjs/react-ro
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { DRISTIService } from "../../../services";
 import { formatDate } from "../../citizen/FileCase/CaseType";
+import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 
 const DIGIT = window.Digit;
 
@@ -23,6 +24,91 @@ function CaseFileAdmission({ t, path }) {
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    Boolean(caseId)
+  );
+  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+
+  const formConfig = useMemo(() => {
+    if (!caseDetails) return null;
+    return [
+      ...reviewCaseFileFormConfig.map((form) => {
+        return {
+          ...form,
+          body: form.body.map((section) => {
+            return {
+              ...section,
+              populators: {
+                ...section.populators,
+                inputs: section.populators.inputs?.map((input) => {
+                  delete input.data;
+                  return {
+                    ...input,
+                    data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                  };
+                }),
+              },
+            };
+          }),
+        };
+      }),
+    ];
+  }, [reviewCaseFileFormConfig, caseDetails]);
+
+  const updateCaseDetails = async (action, data = {}) => {
+    console.log(data);
+    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
+
+    return DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...newcasedetails,
+          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+          filingDate: formatDate(new Date()),
+          workflow: {
+            ...caseDetails?.workflow,
+            action,
+          },
+        },
+        tenantId,
+      },
+      tenantId
+    );
+  };
+
+  const caseInfo = [
+    {
+      key: "Case Number",
+      value: caseDetails?.caseNumber,
+    },
+    {
+      key: "Case Category",
+      value: caseDetails?.caseCategory,
+    },
+    {
+      key: "Case Type",
+      value: "NIA S138",
+    },
+    {
+      key: "Court Name",
+      value: "Kerala City Criminal Court",
+    },
+    {
+      key: "Submitted on",
+      value: caseDetails?.filingDate,
+    },
+  ];
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
       setFormdata((prev) => {
@@ -33,29 +119,8 @@ function CaseFileAdmission({ t, path }) {
   const onSubmit = () => {
     setSubmitModalInfo({
       header: "The case file has been admitted successfully.",
-      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE.",
-      caseInfo: [
-        {
-          key: "Case Number",
-          value: caseDetails?.caseNumber,
-        },
-        {
-          key: "Case Category",
-          value: caseDetails?.caseCategory,
-        },
-        {
-          key: "Case Type",
-          value: "NIA S138",
-        },
-        {
-          key: "Court Name",
-          value: "Kerala City Criminal Court",
-        },
-        {
-          key: "Submitted on",
-          value: caseDetails?.filingDate,
-        },
-      ],
+      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      caseInfo: caseInfo,
       backButtonText: "Back to Home",
       nextButtonText: "Schedule next hearing",
       isArrow: false,
@@ -134,70 +199,8 @@ function CaseFileAdmission({ t, path }) {
     setShowErrorToast(false);
   };
 
-  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
-    {
-      criteria: [
-        {
-          caseId: caseId,
-        },
-      ],
-      tenantId,
-    },
-    {},
-    "dristi",
-    caseId,
-    Boolean(caseId)
-  );
-  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
-
-  const formConfig = useMemo(() => {
-    if (!caseDetails) return null;
-    return [
-      ...reviewCaseFileFormConfig.map((form) => {
-        return {
-          ...form,
-          body: form.body.map((section) => {
-            return {
-              ...section,
-              populators: {
-                ...section.populators,
-                inputs: section.populators.inputs?.map((input) => {
-                  delete input.data;
-                  return {
-                    ...input,
-                    data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
-                  };
-                }),
-              },
-            };
-          }),
-        };
-      }),
-    ];
-  }, [reviewCaseFileFormConfig, caseDetails]);
-
-  const updateCaseDetails = async (action, data = {}) => {
-    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
-
-    return DRISTIService.caseUpdateService(
-      {
-        cases: {
-          ...newcasedetails,
-          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-          filingDate: formatDate(new Date()),
-          workflow: {
-            ...caseDetails?.workflow,
-            action,
-          },
-        },
-        tenantId,
-      },
-      tenantId
-    );
-  };
-
   const handleSendCaseBack = (props) => {
-    updateCaseDetails("SEND_BACK", props?.commentForLitigant).then((res) => {
+    updateCaseDetails("SEND_BACK", { comment: props?.commentForLitigant }).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
     });
   };
@@ -207,8 +210,7 @@ function CaseFileAdmission({ t, path }) {
     });
   };
   const handleScheduleCase = (props) => {
-    console.log(props);
-    updateCaseDetails("SCHEDULE_ADMISSION_HEARING", formdata).then((res) => {
+    updateCaseDetails("SCHEDULE_ADMISSION_HEARING", props).then((res) => {
       setModalInfo({ ...modalInfo, page: 2 });
     });
   };
@@ -256,6 +258,7 @@ function CaseFileAdmission({ t, path }) {
               </div>
             </div>
           </div>
+          <CustomCaseInfoDiv data={caseInfo} />
           <FormComposerV2
             label={t("CS_ADMIT_CASE")}
             config={formConfig}
