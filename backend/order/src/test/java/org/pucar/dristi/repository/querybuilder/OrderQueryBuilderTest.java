@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 class OrderQueryBuilderTest {
 
@@ -27,9 +28,8 @@ class OrderQueryBuilderTest {
         String id = "ID-123";
         String status = "Active";
 
-        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.cnrNumber = 'CNR-123' OR orders.filingnumber ='FN-123' OR orders.tenantid ='tenant-123' OR orders.id = 'ID-123' OR orders.status ='Active' ORDER BY orders.createdtime DESC ";
-
-        String actualQuery = orderQueryBuilder.getOrderSearchQuery(cnrNumber, filingNumber, tenantId, id, status);
+        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.applicationNumber::text LIKE '%\"APP-123\"%' AND orders.cnrNumber = 'CNR-123' AND orders.filingnumber ='FN-123' AND orders.tenantid ='tenant-123' AND orders.id = 'ID-123' AND orders.status ='Active' ORDER BY orders.createdtime DESC ";
+        String actualQuery = orderQueryBuilder.getOrderSearchQuery(applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -43,9 +43,8 @@ class OrderQueryBuilderTest {
         String id = null;
         String status = "Active";
 
-        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.filingnumber ='FN-123' OR orders.tenantid ='tenant-123' OR orders.status ='Active' ORDER BY orders.createdtime DESC ";
-
-        String actualQuery = orderQueryBuilder.getOrderSearchQuery(cnrNumber, filingNumber, tenantId, id, status);
+        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.filingnumber ='FN-123' AND orders.tenantid ='tenant-123' AND orders.status ='Active' ORDER BY orders.createdtime DESC ";
+        String actualQuery = orderQueryBuilder.getOrderSearchQuery(applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -80,9 +79,9 @@ class OrderQueryBuilderTest {
     @Test
     void testGetOrderSearchQueryException() {
         try {
-            orderQueryBuilder.getOrderSearchQuery(null, null, null, null, null);
+            orderQueryBuilder.getOrderSearchQuery(null, null, null, null, null,null);
         } catch (CustomException e) {
-            assertEquals("ORDER_SEARCH_QUERY_EXCEPTION", e.getCode());
+            assertEquals(ORDER_SEARCH_EXCEPTION, e.getCode());
         }
     }
 
@@ -91,7 +90,7 @@ class OrderQueryBuilderTest {
         try {
             orderQueryBuilder.getDocumentSearchQuery(null, null);
         } catch (CustomException e) {
-            assertEquals("DOCUMENT_SEARCH_QUERY_EXCEPTION", e.getCode());
+            assertEquals(DOCUMENT_SEARCH_QUERY_EXCEPTION, e.getCode());
         }
     }
 
@@ -100,7 +99,7 @@ class OrderQueryBuilderTest {
         try {
             orderQueryBuilder.getStatuteSectionSearchQuery(null, null);
         } catch (CustomException e) {
-            assertEquals("DOCUMENT_SEARCH_QUERY_EXCEPTION", e.getCode());
+            assertEquals(STATUTE_SEARCH_QUERY_EXCEPTION, e.getCode());
         }
     }
 }
