@@ -264,7 +264,7 @@ function EFilingCases({ path }) {
     setFormdata(data);
   }, [selected, caseDetails]);
 
-  const closeToast = () => {
+  const closeToast = useCallback(() => {
     setShowErrorToast(false);
     setErrorMsg("");
     setSuccessToast((prev) => ({
@@ -272,7 +272,7 @@ function EFilingCases({ path }) {
       showSuccessToast: false,
       successMsg: "",
     }));
-  };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
