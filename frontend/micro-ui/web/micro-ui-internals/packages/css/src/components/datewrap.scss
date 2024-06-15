@@ -19,3 +19,128 @@
     }
   }
 }
+
+.custom-navigator {
+  font-family: "Roboto";
+  font-size: 16px;
+  line-height: 20px;
+  text-align: left;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.custom-navigator button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.custom-navigator span {
+  font-size: 16px;
+  font-weight: bold;
+}
+.calendar-bottom-div {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  align-items: center;
+  border-top: 1px solid #e1e1e1;
+}
+
+.rdrDay:hover .rdrDayNumber span {
+  background: none !important;
+  /* color: inherit !important; */
+  border: none !important;
+}
+
+.rdrDayNumber span {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+.rdrDayNumber span::before,
+.rdrDayNumber span::after {
+  content: none !important;
+}
+
+.rdrCalendarWrapper {
+  background-color: #ffffff;
+}
+
+.rdrDayNumber span {
+  color: #333;
+}
+
+.rdrSelected {
+  background: #007e7e !important;
+  color: #fff !important;
+}
+
+.rdrDayToday .rdrDayNumber span:after {
+  border: 1px solid #007e7e;
+  color: #fff !important;
+}
+.rdrDayStartPreview {
+  height: 40px !important;
+  width: 40px !important;
+  border-radius: 100px !important;
+  border-right-width: 1px;
+  right: 0;
+  color: #007e7e !important;
+}
+.rdrDayEndPreview {
+  height: 40px !important;
+  width: 40px !important;
+  border-radius: 100px !important;
+  border-right-width: 1px;
+  right: 0;
+  color: #007e7e !important;
+}
+.rdrSelected {
+  border-radius: 100px !important;
+  height: 40px !important;
+  width: 40px !important;
+  color: #007e7e !important;
+}
+.rdrDayHovered span:after {
+  border-radius: 100px !important;
+  height: 40px !important;
+  width: 40px !important;
+  color: #007e7e;
+}
+.rdrDayHovered {
+  border-radius: 100px !important;
+  height: 40px !important;
+  width: 40px !important;
+  color: #007e7e;
+}
+.rdrDayActive {
+  border-radius: 100px !important;
+  height: 40px !important;
+  width: 40px !important;
+  color: #007e7e;
+}
+.rdrDay {
+  height: 40px !important;
+  line-height: 40px !important;
+}
+.rdrMonth {
+  margin-top: 20px !important;
+  width: 321px !important;
+  padding: 0px !important;
+}
+.rdrWeekDay {
+  color: #111827 !important;
+}
+.rdrDayDisabled {
+  background-color: #ffffff !important;
+  color: #9ca3af !important;
+}

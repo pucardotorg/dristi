@@ -1,6 +1,7 @@
-import { CloseSvg, Modal } from "@egovernments/digit-ui-react-components";
+import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import SelectCustomDragDrop from "./SelectCustomDragDrop";
+import Modal from "./Modal";
 
 function UploadSignatureModal({ t, setOpenUploadSignatureModal, config, onSelect, formData, name }) {
   function setValue(value, input) {
@@ -43,9 +44,12 @@ function UploadSignatureModal({ t, setOpenUploadSignatureModal, config, onSelect
       actionSaveOnSubmit={onSubmit}
       formId="modal-action"
       headerBarMain={<Heading label={t("CS_UPLOAD_SIGNATURE")} />}
-      className="case-types"
+      className="upload-signature-modal"
+      submitTextClassName="upload-signature-button"
     >
-      <SelectCustomDragDrop config={config} t={t} onSelect={onSelect} formData={formData} />
+      <div className="upload-signature-modal-main">
+        <SelectCustomDragDrop config={config} t={t} onSelect={onSelect} formData={formData} />
+      </div>
     </Modal>
   );
 }

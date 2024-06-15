@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 import { FileUploader } from "react-drag-drop-files";
-import { UploadIcon } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
 import { FileUploadIcon } from "../icons/svgIndex";
 
@@ -29,17 +29,17 @@ const DragDropJSX = ({ t, currentValue }) => {
   );
 };
 
-function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
+function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
         {
           documentHeader: "Aadhar",
           documentSubText: "subtext",
-          isOptional: "optional",
+          isOptional: "CS_IS_OPTIONAL",
           infoTooltipMessage: "Tooltip",
           type: "DragDropComponent",
-          uploadGuidelines: "Upload .png",
+          uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],
@@ -58,7 +58,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           return res;
         }, {}),
       });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+    } else {
+      onSelect(config.key, { ...formData[config.key], [input]: value });
+    }
   }
 
   const fileValidator = (file, input) => {
@@ -66,6 +68,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
     // if (fileType && !input.fileTypes.includes(fileType)) {
     //   return { [input?.name]: "Invalid File Type", ...uploadErrorInfo };
     // }
+    if (file?.fileStore) return null;
     const maxFileSize = input?.maxFileSize * 1024 * 1024;
     return file.size > maxFileSize ? t(input?.maxFileErrorMessage) : null;
   };
@@ -86,32 +89,16 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     let fileErrors = currentValue.map((file) => fileValidator(file, input));
     const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
+    console.log(errors);
     return (
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">
           <div className="drag-drop-heading">
-            <span>
-              <h2 className="card-label">{t(input?.documentHeader)}</h2>
-              {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`(${t(input?.isOptional)})`}</span>}
-            </span>
+            <h1 className="card-label custom-document-header">{t(input?.documentHeader)}</h1>
+            {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
             <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
-          {input.documentSubText && <p>{t(input.documentSubText)}</p>}
-        </div>
-
-        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
-          <FileUploader
-            handleChange={(data) => {
-              handleChange(data, input);
-            }}
-            name="file"
-            types={input?.fileTypes}
-            children={<DragDropJSX t={t} currentValue={currentValue} />}
-            key={input?.name}
-          />
-          <div className="upload-guidelines-div">
-            {input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}
-          </div>
+          {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
         </div>
 
         {currentValue.map((file, index) => (
@@ -127,27 +114,42 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect }) {
           />
         ))}
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-          {input?.downloadTemplateText && t(input?.downloadTemplateText)}
-          {input?.downloadTemplateLink && (
-            <a
-              href={input?.downloadTemplateLink}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: "flex",
-                color: "#9E400A",
-                textDecoration: "none",
-                width: 250,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {t("CS__DOWNLOAD_TEMPLATE")}
-            </a>
-          )}
+        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
+          <FileUploader
+            handleChange={(data) => {
+              handleChange(data, input);
+            }}
+            name="file"
+            types={input?.fileTypes}
+            children={<DragDropJSX t={t} currentValue={currentValue} />}
+            key={input?.name}
+          />
+          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
         </div>
+        {input.downloadTemplateText && input.downloadTemplateLink && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
+            {input?.downloadTemplateText && t(input?.downloadTemplateText)}
+            {input?.downloadTemplateLink && (
+              <a
+                href={input?.downloadTemplateLink}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: "flex",
+                  color: "#9E400A",
+                  textDecoration: "none",
+                  width: 250,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {t("CS__DOWNLOAD_TEMPLATE")}
+              </a>
+            )}
+          </div>
+        )}
+        {/* {errors?.[config.key] && <CardLabelError>{t(errors[config.key]?.message || "CORE_COMMON_INVALID")}</CardLabelError>} */}
       </div>
     );
   });

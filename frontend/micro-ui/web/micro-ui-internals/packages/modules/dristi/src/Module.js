@@ -3,12 +3,15 @@ import React from "react";
 import { useRouteMatch } from "react-router-dom";
 import AddressComponent from "./components/AddressComponent";
 import SelectComponents from "./components/SelectComponents";
-import CitizenApp from "./pages/citizen";
 
+import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
+import CustomRadioCard from "./components/CustomRadioCard";
 import AdhaarInput from "./components/AdhaarInput";
 import AdvocateDetailComponent from "./components/AdvocateDetailComponent";
-import CustomRadioCard from "./components/CustomRadioCard";
-import SelectUserTypeComponent from "./components/SelectUserTypeComponent";
+
+import Registration from "./pages/citizen/registration";
+import EmployeeApp from "./pages/employee";
+import CitizenApp from "./pages/citizen";
 
 import CustomInput from "./components/CustomInput";
 import DRISTICard from "./components/DRISTICard";
@@ -26,13 +29,14 @@ import { ToastProvider } from "./components/Toast/useToast";
 import VerificationComponent from "./components/VerificationComponent";
 import VerifyPhoneNumber from "./components/VerifyPhoneNumber";
 import { UICustomizations } from "./configs/UICustomizations";
+import SelectEmptyComponent from "./components/SelectEmptyComponent";
+import ScrutinyInfo from "./components/ScrutinyInfo";
+import AdvocateNameDetails from "./components/AdvocateNameDetails";
 import { CustomizedHooks } from "./hooks";
 import FileCase from "./pages/citizen/FileCase";
 import Login from "./pages/citizen/Login";
-import Registration from "./pages/citizen/registration";
 import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
 import CitizenResponse from "./pages/citizen/registration/Response";
-import EmployeeApp from "./pages/employee";
 import Inbox from "./pages/employee/Inbox";
 const Digit = window?.Digit || {};
 
@@ -85,6 +89,9 @@ const componentsToRegister = {
   AdvocateDetailComponent,
   SelectUploadFiles,
   SelectUploadDocWithName,
+  SelectEmptyComponent,
+  ScrutinyInfo,
+  AdvocateNameDetails,
 };
 
 const overrideHooks = () => {
