@@ -34,7 +34,7 @@ public class OrderQueryBuilder {
 
     private static final String FROM_STATUTE_SECTION_TABLE = " FROM dristi_order_statute_section stse";
 
-    private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders WHERE ";
+    private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders";
 
     public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber) {
         try {
