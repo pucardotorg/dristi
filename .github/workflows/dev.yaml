@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - task
+      - develop
   pull_request:
     branches:
       - develop
