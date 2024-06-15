@@ -9,6 +9,8 @@ import {initPucarComponents} from "@egovernments/digit-ui-module-pucar";
 import {initHearingsComponents} from "@egovernments/digit-ui-module-hearings";
 import {initOrdersComponents} from "@egovernments/digit-ui-module-orders";
 import {initCasesComponents} from "@egovernments/digit-ui-module-cases";
+import { initSubmissionsComponents } from "@egovernments/digit-ui-module-submissions";
+
 window.contextPath = window?.globalConfigs?.getConfig("CONTEXT_PATH");
 
 const enabledModules = [
@@ -23,7 +25,9 @@ const enabledModules = [
   "Orders",
   "Cases",
   // "Pucar",
-  "Hearings"
+  "Hearings",
+  "Submissions"
+
 ];
 
 const moduleReducers = (initData) => ({
@@ -44,6 +48,7 @@ const initDigitUI = () => {
   initHearingsComponents();
   initOrdersComponents();
   initCasesComponents();
+  initSubmissionsComponents();
 
 };
 

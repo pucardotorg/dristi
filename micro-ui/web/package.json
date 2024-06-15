@@ -21,6 +21,7 @@
     "@egovernments/digit-ui-module-cases": "0.0.1",
     "@egovernments/digit-ui-module-pucar": "0.0.1",
     "@egovernments/digit-ui-module-hearings": "0.0.1",
+    "@egovernments/digit-ui-module-submissions": "0.0.1",
     "@egovernments/digit-ui-module-orders": "0.0.1",
     "babel-loader": "8.1.0",
     "clean-webpack-plugin": "4.0.0",
