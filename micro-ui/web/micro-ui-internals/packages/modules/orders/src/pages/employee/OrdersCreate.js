@@ -2,7 +2,7 @@ import React,{useState,useEffect} from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import {  Header,Loader } from "@egovernments/digit-ui-react-components";
-import { FormComposerV2 } from "@egovernments/digit-ui-components";
+import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 //TODO: Some dropdown data is static, pls update these configs once data comes from previous flows
 import { configsCreateOrderSchedule,configsCreateOrderWarrant,configsCreateOrderSummon } from "../../configs/ordersCreateConfig";
 import { transformCreateData } from "../../utils/createUtils";

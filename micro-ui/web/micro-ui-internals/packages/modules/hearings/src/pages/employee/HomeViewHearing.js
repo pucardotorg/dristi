@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { Header, InboxSearchComposer, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import { TabSearchconfig } from "../../configs/HearingsHomeConfig";
 import UpcomingHearings from "../../components/UpComingHearing";
 import TasksComponent from "../../components/TaskComponent";
