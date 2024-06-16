@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import OrdersResponse from "./OrdersResponse";
 import OrdersCreate from "./OrdersCreate";
-import OrdersSearch from "./OrdersSearch";
 import OrdersHome from "./OrdersHome";
 import GenerateOrders from "./GenerateOrders";
 import MakeSubmission from "./MakeSubmission";
@@ -35,7 +34,6 @@ const App = ({ path, stateCode, userType, tenants }) => {
         </React.Fragment>
         <PrivateRoute path={`${path}/orders-response`} component={() => <OrdersResponse></OrdersResponse>} />
         <PrivateRoute path={`${path}/orders-create`} component={() => <OrdersCreate />} />
-        <PrivateRoute path={`${path}/orders-search`} component={() => <OrdersSearch></OrdersSearch>} />
         <PrivateRoute path={`${path}/orders-home`} component={() => <OrdersHome />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <MakeSubmission />} />
