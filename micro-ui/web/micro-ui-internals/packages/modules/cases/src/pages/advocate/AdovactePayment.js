@@ -1,7 +1,6 @@
 import { Button, Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { searchconfig } from "../../configs/casesSearchConfig";
 import { useHistory } from "react-router-dom";
 
 const AdvocatePayment = () => {
@@ -21,20 +20,6 @@ const AdvocatePayment = () => {
       onButtonClick={() => handleNavigate("/employee/cases/advocate-join-case")}
       >
       </Button>
-      {/* <button
-        onClick={() => handleNavigate("/employee/cases/advocate-join-case")}
-        style={{
-          backgroundColor: "blue",
-          color: "white",
-          padding: "10px 20px",
-          borderRadius: "5px",
-          border: "none",
-          cursor: "pointer",
-          margin: "2px",
-        }}
-      >
-        Make payment
-      </button> */}
     </div>
   );
 };

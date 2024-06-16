@@ -3,8 +3,6 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Switch } from "react-router-dom";
 import CasesResponse from "./CasesResponse";
-import CasesCreate from "./CasesCreate";
-import CasesSearch from "./CasesSearch";
 import JoinCaseHome from "./JoinCaseHome";
 import AdvocateRegistration from "./advocateRegistration";
 const bredCrumbStyle = { maxWidth: "min-content" };
@@ -17,6 +15,7 @@ import AdvocateJoinCase from "../advocate/AdvocateJoinCase";
 import AdvocateJoinSucess from "../advocate/AdvocateJoinSucess";
 import CaseAndFilingSearch from "./CaseAndFilingSearch";
 import LitigantSucess from "./LitigantSuccess";
+
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
@@ -42,8 +41,6 @@ const App = ({ path, stateCode, userType, tenants }) => {
           <ProjectBreadCrumb location={location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/cases-response`} component={() => <CasesResponse></CasesResponse>} />
-        <PrivateRoute path={`${path}/cases-create`} component={() => <CasesCreate />} />
-        <PrivateRoute path={`${path}/cases-search`} component={() => <CasesSearch></CasesSearch>} />
         <PrivateRoute path={`${path}/join-case`} component={() => <JoinCaseHome />} />
         <PrivateRoute path={`${path}/join-case-litigant`} component={() => <AdvocateRegistration></AdvocateRegistration>} />
         <PrivateRoute path={`${path}/search-case`} component={() => <SearchCase />} />
