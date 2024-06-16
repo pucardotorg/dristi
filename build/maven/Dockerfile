@@ -18,8 +18,8 @@ RUN mvn -B -f /app/pom.xml package
 
 # Create runtime image
 #FROM egovio/8-openjdk-alpine
-FROM ghcr.io/egovernments/8-openjdk-alpine:latest
-
+#FROM ghcr.io/egovernments/8-openjdk-alpine:latest
+FROM openjdk:17-jdk-alpine
 
 WORKDIR /opt/egov
 
