@@ -44,7 +44,7 @@ export const reviewCaseFileFormConfig = [
               label: "CS_RESPONDENT_DETAILS",
               icon: "RespondentDetailsIcon",
               config: [
-                { type: "title", value: ["firstName", "lastName"], badgeType: "respondentType.name" },
+                { type: "title", value: ["respondentFirstName", "respondentLastName"], badgeType: "respondentType.name" },
                 { type: "phonenumber", label: "PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
                 { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
