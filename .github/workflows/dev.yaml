@@ -14,6 +14,7 @@ jobs:
       run_job_case: ${{ steps.check_files.outputs.run_job_case }}
       run_job_order: ${{ steps.check_files.outputs.run_job_order }}
       run_job_digit_ui: ${{ steps.check_files.outputs.run_job_digit_ui }}
+      run_job_pucar_ui: ${{ steps.check_files.outputs.run_job_pucar_ui }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,6 +41,7 @@ jobs:
           run_job_case=false 
           run_job_order=false
           run_job_digit_ui=false
+          run_job_pucar_ui=false
           while IFS= read -r file
           do
             if [[ $file == backend/advocate/* ]]; then
@@ -54,6 +56,9 @@ jobs:
             elif [[ $file == frontend/micro-ui/* ]]; then
               echo "This modified file is under the 'digit_ui' folder."
               run_job_digit_ui=true
+            elif [[ $file == frontend/pucar-ui/* ]]; then
+              echo "This modified file is under the 'pucar_ui' folder."
+              run_job_pucar_ui=true
             fi
           done < files.txt
           
@@ -62,6 +67,7 @@ jobs:
           echo "::set-output name=run_job_case::$run_job_case"
           echo "::set-output name=run_job_order::$run_job_order"
           echo "::set-output name=run_job_digit_ui::$run_job_digit_ui"
+          echo "::set-output name=run_job_pucar_ui::$run_job_pucar_ui"
           
       - name: Build and analyze advocate
         if: ${{ steps.check_files.outputs.run_job_advocate == 'true' }}
@@ -135,4 +141,12 @@ jobs:
           docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
           docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
+        working-directory: frontend/micro-ui
+
+      - name: Build and Push Docker image for pucar-ui
+        if: ${{ steps.check_files.outputs.run_job_pucar-ui == 'true' }}
+        run: |
+          docker build -t pucar-ui:v0.0.1-${{ github.sha }} -f web/docker/Dockerfile .
+          docker tag pucar-ui:v0.0.1-${{ github.sha }} pucardev.azurecr.io/pucar-ui:v0.0.1-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar-ui:v0.0.1-${{ github.sha }}
         working-directory: frontend/micro-ui
