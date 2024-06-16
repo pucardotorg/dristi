@@ -1,13 +1,12 @@
-import { ArrowForward, ArrowRightInbox, Banner, Card, CardText, Modal, TextArea, Toast } from "@egovernments/digit-ui-react-components";
+import { CardText, Modal, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 
-import { modalConfig, selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
+import { modalConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import CustomSubmitModal from "../../../components/CustomSubmitModal";
 import ScheduleAdmission from "./ScheduleAdmission";
 import SelectParticipant from "./SelectParticipant";
-import { Calendar } from "react-date-range";
 import CustomCalendar from "../../../components/CustomCalendar";
 import { WhiteRightArrow } from "../../../icons/svgIndex";
 import { formatDateInMonth } from "../../../Utils";
@@ -47,6 +46,7 @@ function AdmissionActionModal({
   handleSendCaseBack,
   handleAdmitCase,
   handleScheduleCase,
+  updatedConfig,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -189,7 +189,7 @@ function AdmissionActionModal({
           hideSubmit={true}
         >
           <SelectParticipant
-            config={selectParticipantConfig}
+            config={updatedConfig}
             setShowModal={setShowModal}
             modalInfo={modalInfo}
             setModalInfo={setModalInfo}

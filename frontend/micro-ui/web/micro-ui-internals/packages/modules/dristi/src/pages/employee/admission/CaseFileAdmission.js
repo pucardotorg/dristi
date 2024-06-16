@@ -8,6 +8,7 @@ import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { DRISTIService } from "../../../services";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
+import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 
 const DIGIT = window.Digit;
 
@@ -39,6 +40,8 @@ function CaseFileAdmission({ t, path }) {
     Boolean(caseId)
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+  const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complaintDetails?.formdata || null, [caseDetails]);
+  const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
 
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
@@ -213,6 +216,44 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 2 });
     });
   };
+  const updateConfigWithCaseDetails = (config, caseDetails) => {
+    const complainantNames = complainantFormData?.map((form) => {
+      const firstName = form?.data?.firstName || "";
+      const middleName = form?.data?.middleName || "";
+      const lastName = form?.data?.lastName || "";
+      return `${firstName} ${middleName} ${lastName}`.trim();
+    });
+
+    const respondentNames = respondentFormData?.map((form) => {
+      const firstName = form?.data?.respondentFirstName || "";
+      const lastName = form?.data?.respondentLastName || "";
+      return `${firstName} ${lastName}`.trim();
+    });
+
+    config.checkBoxes.forEach((checkbox) => {
+      if (checkbox.name === "Compliant") {
+        checkbox.dependentFields = complainantNames;
+      } else if (checkbox.name === "Respondent") {
+        checkbox.dependentFields = respondentNames;
+      }
+    });
+
+    return config;
+  };
+
+  const updatedConfig = caseDetails && updateConfigWithCaseDetails(selectParticipantConfig, caseDetails);
+  console.log(updatedConfig, "config");
+  const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
+  const labels = {
+    litigentDetails: "CS_LITIGENT_DETAILS",
+    caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
+    additionalDetails: "CS_ADDITIONAL_DETAILS",
+  };
+  const complainantFirstName = complainantFormData?.[0].data?.firstName;
+  const complainantLastName = complainantFormData?.[0].data?.lastName;
+
+  const respondentFirstName = respondentFormData?.[0].data?.respondentFirstName;
+  const respondentLastName = respondentFormData?.[0].data?.respondentLastName;
 
   if (!caseId) {
     return <Redirect to="admission" />;
@@ -234,26 +275,11 @@ function CaseFileAdmission({ t, path }) {
         handleAdmitCase={handleAdmitCase}
         path={path}
         handleScheduleCase={handleScheduleCase}
+        updatedConfig={updatedConfig}
       ></AdmissionActionModal>
     );
   }
-  const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
-  const labels = {
-    litigentDetails: "CS_LITIGENT_DETAILS",
-    caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
-    additionalDetails: "CS_ADDITIONAL_DETAILS",
-  };
-  const complainantFirstName = caseDetails?.additionalDetails?.complaintDetails?.formdata[0].data?.firstName;
-  const complainantLastName = caseDetails?.additionalDetails?.complaintDetails?.formdata[0].data?.lastName;
 
-  const complainantFullName =
-    complainantFirstName && complainantLastName
-      ? `${complainantFirstName} ${complainantLastName}`
-      : complainantFirstName || complainantLastName || "Unknown";
-
-  const respondentFirstName = caseDetails?.additionalDetails?.respondentDetails?.formdata[0].data?.firstName;
-
-  const respondentFullName = respondentFirstName || "Unknown";
   return (
     <div className="view-case-file">
       <div className="file-case">
@@ -273,7 +299,8 @@ function CaseFileAdmission({ t, path }) {
             <div className="header-content">
               <div className="header-details">
                 <Header>
-                  {complainantFullName} <span style={{ color: "#77787B" }}>vs</span> {respondentFullName}
+                  {`${complainantFirstName}  ${complainantLastName}`.trim()} <span style={{ color: "#77787B" }}>vs</span>{" "}
+                  {`${respondentFirstName}  ${respondentLastName}`.trim()}
                 </Header>
                 <div className="header-icon" onClick={() => {}}>
                   <CustomArrowDownIcon />
