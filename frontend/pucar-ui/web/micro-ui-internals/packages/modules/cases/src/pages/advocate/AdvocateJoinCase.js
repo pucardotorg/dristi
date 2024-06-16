@@ -1,8 +1,6 @@
-import { Header, InboxSearchComposer, TextInput } from "@egovernments/digit-ui-react-components";
+import { TextInput } from "@egovernments/digit-ui-react-components";
 import { Button } from "@egovernments/digit-ui-react-components";
-import React, { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { searchconfig } from "../../configs/casesSearchConfig";
+import React from "react";
 import { useHistory } from "react-router-dom";
 
 const AdvocateJoinCase = () => {

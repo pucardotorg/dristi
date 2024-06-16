@@ -13,33 +13,17 @@ const HearingsCard = () => {
 
     ],
     links: [
-   
       {
-        label: t("Hearings  Search"),
-        link: `/${window?.contextPath}/employee/hearings/hearings-search`,
-
-      },
-      {
-        label: t("Hearings  Create"),
-        link: `/${window?.contextPath}/employee/hearings/hearings-create`,
-
-      },
-    
-      {
-        label: t("Hearings Response"),
-        link: `/${window?.contextPath}/employee/hearings/hearings-response`,
-
+        label: t("Home"),
+        link: `/${window?.contextPath}/employee/hearings/home`,
       },
       {
         label: t("Inside Hearing"),
         link: `/${window?.contextPath}/employee/hearings/inside-hearing`,
-
       },
-
       {
-        label: t("Home"),
-        link: `/${window?.contextPath}/employee/hearings/home`,
-
+        label: t("ADMISSION HEARING"),
+        link: `/${window?.contextPath}/employee/hearings/view-hearing`,
       },
       
     ],
