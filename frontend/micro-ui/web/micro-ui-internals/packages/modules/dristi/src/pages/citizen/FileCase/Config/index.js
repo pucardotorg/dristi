@@ -119,7 +119,7 @@ export const sideMenuConfig = [
         pageConfig: debtliabilityconfig,
         mandatoryFields: ["liabilityNature", "liabilityType"],
         initialMandatoryFieldCount: 2,
-        dependentMandatoryFields: [{ field: "Terms_Conditions", dependentOn: "liabilityType", dependentOnKey: "showAmountCovered" }],
+        dependentMandatoryFields: [{ field: "totalAmount", dependentOn: "liabilityType", dependentOnKey: "showAmountCovered" }],
         optionalFields: ["debtLiabilityFileUpload.document", "additionalDebtLiabilityDetails.text"],
         dependentOptionalFields: [],
         initialOptionalFieldCount: 2,
