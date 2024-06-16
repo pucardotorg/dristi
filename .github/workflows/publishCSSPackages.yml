@@ -1,14 +1,14 @@
-name: Node.js Publish UI Packages
+name: Node.js Publish UI Packages CSS
 
 on:
   push:
-    branches: [ 'pucar' ]
+    branches: [ 'develop' ]
     paths:
-      - 'micro-ui/web/micro-ui-internals/**'
+      - 'frontend/pucar-ui/web/micro-ui-internals/**'
     
   pull_request:
     branches: 
-      - 'dev-hcm'
+      - 'develop'
       # Push events to branches matching refs/heads/mona/octocat
 
 jobs:
@@ -20,6 +20,6 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: cd micro-ui/web/micro-ui-internals/ && bash ./publish-develop.sh
+      - run: cd frontend/pucar-ui/web/micro-ui-internals/ && bash ./publish-develop.sh
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
