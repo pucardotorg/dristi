@@ -3,13 +3,12 @@ import ReactDOM from 'react-dom';
 import { initLibraries } from "@egovernments/digit-ui-libraries";
 import "./index.css";
 import App from './App';
-import { TLCustomisations } from './Customisations/tl/TLCustomisation';
 
 
 initLibraries();
 
 
-window.Digit.Customizations = { PGR: {} ,TL:TLCustomisations};
+window.Digit.Customizations = { PGR: {} };
 
 const user = window.Digit.SessionStorage.get("User");
 

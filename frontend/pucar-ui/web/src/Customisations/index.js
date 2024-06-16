@@ -1,11 +1,9 @@
-import { ptComponents } from "./pt";
-import { tlComponents } from "./tl";
+
 
 var Digit = window.Digit || {};
 
 const customisedComponent = {
-    ...ptComponents,
-    ...tlComponents
+
 }
 
 
