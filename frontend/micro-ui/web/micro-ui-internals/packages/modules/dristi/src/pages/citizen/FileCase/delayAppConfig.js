@@ -77,10 +77,10 @@ export const delayAppConfig = [
             {
               name: "document",
               documentHeader: "Aadhar",
-              isOptional: "optional",
+              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
+              uploadGuidelines: "UPLOAD_DOC_50",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_1_MB",
               fileTypes: ["JPG", "PNG", "PDF"],

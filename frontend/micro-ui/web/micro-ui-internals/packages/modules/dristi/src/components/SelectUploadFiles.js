@@ -8,34 +8,34 @@ import MultiUploadWrapper from "./MultiUploadWrapper";
 import Modal from "./Modal";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-const textAreaJSX = (t, input, handleChange) => {
+const textAreaJSX = (value, t, input, handleChange) => {
   return (
     <div className="custom-text-area-main-div" style={input?.style}>
       <div className="custom-text-area-header-div">
-        <h1 className={`${input?.headerClassName}`} style={{ margin: "0px" }}>
+        <h1 className={`text-area-upload-header ${input?.headerClassName}`} style={{ margin: "0px" }}>
           {t(input?.textAreaHeader)}
         </h1>
         {
           <div>
             <span>
-              <p className={`${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
+              <p className={`text-area-upload-sub-header ${input?.subHeaderClassName}`} style={{ margin: "0px" }}>
                 {`${t(input?.textAreaSubHeader)}`}
-                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;(optional)</span>}
+                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{t("CS_IS_OPTIONAL")}</span>}
               </p>
             </span>
           </div>
         }
       </div>
-      <div>
-        <textarea
-          onChange={(data) => {
-            handleChange(data, input);
-          }}
-          rows={5}
-          className="custom-textarea-style"
-          placeholder={input?.placeholder}
-        ></textarea>
-      </div>
+
+      <textarea
+        value={value}
+        onChange={(data) => {
+          handleChange(data, input);
+        }}
+        rows={5}
+        className="custom-textarea-style"
+        placeholder={input?.placeholder}
+      ></textarea>
     </div>
   );
 };
@@ -53,10 +53,20 @@ const Heading = (props) => {
 };
 
 function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
-  // const [onStartingPage, setOnStartingPage] = useState(true);
-  const [showTextArea, setShowTextArea] = useState(true);
+  const checkIfTextPresent = () => {
+    if (formData && formData?.[config.key]?.document) {
+      return false;
+    } else return true;
+  };
+
+  const checkIfFilesPresent = () => {
+    if (formData && formData?.[config.key]?.document) {
+      return true;
+    } else return false;
+  };
+  const [showTextArea, setShowTextArea] = useState(checkIfTextPresent);
   const [showModal, setShowModal] = useState(false);
-  const [isFileAdded, setIsFileAdded] = useState(false);
+  const [isFileAdded, setIsFileAdded] = useState(checkIfFilesPresent);
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
 
   const inputs = useMemo(
@@ -73,10 +83,11 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           name: "document",
           documentHeader: "Aadhar",
           documentSubText: "subtext",
-          isOptional: "optional",
+          isOptional: "CS_IS_OPTIONAL",
           infoTooltipMessage: "Tooltip",
+          label: "Title",
           type: "DragDropComponent",
-          uploadGuidelines: "Upload .png",
+          uploadGuidelines: t("UPLOAD_DOC_50"),
           maxFileSize: 50,
           maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
           fileTypes: ["JPG", "PNG", "PDF"],
@@ -156,7 +167,9 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   }
 
   const handleTextChange = (data, input) => {
-    onSelect(config.key, { ...formData[config.key], [input.name]: data.target.value });
+    const formDataCopy = structuredClone(formData);
+    delete formDataCopy[config.key]?.document;
+    onSelect(config.key, { ...formDataCopy[config.key], [input.name]: data.target.value });
     return;
   };
 
@@ -164,20 +177,21 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     const currentDocs = (formData && formData[config.key] && formData?.[config.key]?.["document"]) || [];
     if (input.type === "TextAreaComponent" && showTextArea) {
       return (
-        <div>
-          {textAreaJSX(t, input, handleTextChange)}
+        <div className="text-area-and-upload">
+          {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange)}
           {!isFileAdded && (
-            <div>
-              <p>want to upload a file instead?</p>
+            <div className="text-upload-file-main">
+              <p>{t("CS_WANT_TO_UPLOAD")}</p>
               <span onClick={opneModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
-                Browse in my files
+                {t("WBH_BULK_BROWSE_FILES")}
               </span>
             </div>
           )}
         </div>
       );
-    } else {
-      const currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
+    }
+    if (input.type === "DragDropComponent") {
+      const currentValue = (formData && formData[config.key] && formData[config.key].document) || [];
       let fileErrors = [];
       if (currentValue.length > 0) {
         fileErrors = currentValue.map((file) => fileValidator(file, input));
@@ -190,7 +204,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
               <div className="drag-drop-heading-main">
                 <div className="drag-drop-heading">
                   <h2 className="card-label">{t(input?.documentHeader)}</h2>
-                  {input?.isOptional && <h3>{`(${t(input?.isOptional)})`}</h3>}
+                  {input?.isOptional && <h3>{t(input?.isOptional)}</h3>}
                   <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
                 </div>
                 {<p>{t(input?.documentSubText)}</p>}
@@ -208,16 +222,18 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                 />
               ))}
               {showFileUploader && (
-                <div className="file-uploader-div-main">
-                  <FileUploader
-                    handleChange={(data) => {
-                      handleChange(data, input);
-                    }}
-                    name="file"
-                    types={input?.fileTypes}
-                    children={dragDropJSX}
-                    key={input?.name}
-                  />
+                <div className={`file-uploader-div-main show-file-uploader select-UploadFiles`}>
+                  <div className="file-uploader">
+                    <FileUploader
+                      handleChange={(data) => {
+                        handleChange(data, input);
+                      }}
+                      name="file"
+                      types={input?.fileTypes}
+                      children={dragDropJSX}
+                      key={input?.name}
+                    />
+                  </div>
                   <div className="upload-guidelines-div">
                     <p>{t(input?.uploadGuidelines)}</p>
                   </div>
@@ -228,16 +244,18 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {showModal && (
             <Modal
               headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-              actionCancelOnSubmit={() => {}}
+              actionCancelOnSubmit={() => { }}
               actionSaveLabel={t("ADD")}
               actionSaveOnSubmit={(data) => handleAddFileInModal(data)}
               // hideSubmit={false}
               isDisabled={isAddButtonDisabled}
               formId="modal-action"
-              headerBarMain={<Heading label={t("UPLOAD_ID_PROOF_HEADER")} />}
+              headerBarMain={<Heading label={t("UPLOAD_FILE")} />}
               submitTextClassName={"verification-button-text-modal"}
             >
               <div>
+              {<h1>{t(input.label)}</h1>}
+
                 <MultiUploadWrapper
                   t={t}
                   module="works"
@@ -249,8 +267,11 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
                   extraStyleName={{ padding: "0.5rem" }}
                   customClass={input?.customClass}
                   containerStyles={{ ...input?.containerStyles }}
+                  allowedFileTypesRegex={input.allowedFileTypes}
+                  noteMsg={input?.noteMsg}
+                  notSupportedError={input?.notSupportedError}
+                  maxFileErrorMessage={input?.maxFileErrorMessage}
                 />
-                {<h1>t(CS_COMMON_FILE_UPLOAD_BLURB)</h1>}
                 {Array.isArray(formData?.[config.key]?.[input.name]) && formData?.[config.key]?.[input.name].length > 0 && (
                   <DocViewerWrapper
                     selectedDocs={[formData?.[config.key]?.[input.name][0]]}

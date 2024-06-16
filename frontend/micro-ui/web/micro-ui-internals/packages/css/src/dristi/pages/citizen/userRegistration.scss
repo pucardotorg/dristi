@@ -29,6 +29,33 @@
     margin: 0px;
   }
 
+  .take-user-to-registration {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    align-items: center;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+
+    button {
+      background: none;
+      color: #007e7e;
+      box-shadow: none;
+      max-width: 273px;
+
+      .svg-div {
+        display: flex;
+        align-items: center;
+        svg {
+          margin: 0px 0px 0px 15px;
+        }
+      }
+    }
+  }
+
   .response-main {
     padding: 40px;
     background-color: #ffffff;
@@ -108,11 +135,12 @@
         }
         .input-otp-wrap {
           margin-bottom: 0px !important;
-          display: flex;
+          display: grid;
+          grid-template-columns: 1fr 1fr 1fr;
           width: 100%;
           gap: 16px;
           input {
-            width: 165px !important;
+            width: 165px;
             margin-bottom: 0px;
             margin-right: 0px;
           }
@@ -126,22 +154,32 @@
       }
     }
 
+    .login-form.register {
+      .card {
+        .card-header {
+          font-size: 24px !important;
+        }
+      }
+    }
+
     .login-form {
       padding: 40px;
       margin: 0px;
       background-color: #ffffff;
+
       .card {
         box-shadow: none;
         padding: 0px;
         margin: 0px !important;
         .card-header {
           margin: 0px;
-          font-family: Roboto Condensed;
+          font-family: Roboto;
           font-size: 40px;
           font-weight: 700;
-          line-height: 46.88px;
+          line-height: 30px;
           text-align: center;
           color: #0b0c0c;
+          padding-bottom: 12px;
         }
         .card-text {
           margin: 0px;
@@ -215,18 +253,31 @@
       }
     }
 
+    .upload-id {
+      .upload-file-upload-button-div {
+        width: 25%;
+        input {
+          display: none;
+        }
+      }
+    }
+
     .advocate-additional-details {
       padding: 40px !important;
       background-color: #ffffff;
-      max-width: 593px;
+      width: 593px;
+      margin: 24px;
 
       .card {
         box-shadow: none;
         padding: 0px;
         margin: 0px !important;
         align-items: center;
+        div {
+          width: 100% !important;
+        }
         .card-section-header:first-child {
-          margin: 0px;
+          margin: 0px !important;
           font-family: Roboto Condensed;
           font-size: 24px;
           font-weight: 700;
@@ -257,6 +308,17 @@
             }
             .documentUpload {
               margin-top: 24px;
+              .upload-file-div-main {
+                .upload-file-div-sub {
+                  width: 75%;
+                }
+                .upload-file-upload-button-div {
+                  width: 25%;
+                  input {
+                    display: none;
+                  }
+                }
+              }
             }
           }
         }
@@ -274,6 +336,7 @@
       background-color: #ffffff;
       box-shadow: none;
       max-width: 553px;
+      margin: 24px;
 
       .card {
         margin: 0px !important;
@@ -295,7 +358,7 @@
             padding-top: 8px;
             font-family: Roboto;
             font-size: 14px;
-            font-weight: 400;
+            font-weight: 400 !important;
             line-height: 24px;
             text-align: center;
             color: #0b0c0c;
@@ -309,7 +372,7 @@
         }
         .submit-bar {
           width: 100% !important;
-          box-shadow: none;
+          box-shadow: none !important;
         }
         .radio-wrap {
           .card {
@@ -414,15 +477,18 @@
         }
         .address-card-input {
           gap: 16px;
+          .field {
+            width: 273px;
+          }
         }
 
         button {
           width: 100%;
-          box-shadow: none;
+          box-shadow: none !important;
           margin-top: 32px;
         }
         input {
-          width: 273px;
+          width: 100%;
         }
       }
     }
@@ -482,9 +548,10 @@
   .card-label-error {
     margin-bottom: 0px;
   }
-  .popup-module {
+  .popup-module.otp-modal-class {
+    width: unset !important;
     .header-wrap {
-      padding-left: 16px;
+      padding: 0px 0px 0px 16px;
       border-bottom: none;
 
       .header-end {
@@ -499,7 +566,7 @@
       }
 
       h1 {
-        padding: 28px 0px 16px 0px;
+        padding: 28px 0px 0px;
         margin: 0px;
         font-family: Roboto;
         font-size: 24px;
@@ -523,6 +590,7 @@
     .popup-module-main {
       margin-top: 32px;
       padding: 0px 16px 16px !important;
+      width: 100%;
 
       .card {
         padding: 0px;
@@ -554,7 +622,8 @@
             text-align: left;
             color: #0b0c0c;
             .resend-link {
-              color: #0b0c0c;
+              color: #007e7e;
+              text-decoration: underline;
               cursor: pointer;
               &.disabled {
                 color: #bbbbbd;
@@ -566,6 +635,11 @@
         .card-label-error {
           margin: 0px;
         }
+      }
+      .popup-module-action-bar {
+        margin: 0px !important;
+        gap: 0px;
+        min-width: 120px !important;
       }
     }
   }
@@ -590,12 +664,15 @@ body {
   padding: 40px !important;
   background-color: #ffffff !important;
   box-shadow: none !important;
+  margin: 24px;
+  flex-direction: column !important;
   .card {
     margin: 0px !important;
     padding: 0px !important;
     display: flex !important;
-    align-items: flex-start !important;
-    .card-header {
+    align-items: center !important;
+    flex-direction: column;
+    .card-section-header {
       font-family: Roboto !important;
       font-size: 24px !important;
       font-weight: 700 !important;
@@ -648,5 +725,200 @@ body {
   }
   .toast-success {
     display: none !important;
+  }
+}
+
+@media (max-width: 450px) and (orientation: portrait) {
+  .main {
+    padding-top: 72px !important;
+    min-height: calc(100vh - 72px) !important;
+  }
+  .user-registration {
+    background-color: #ffffff;
+    width: 100% !important;
+    min-height: calc(100vh - 72px) !important;
+    align-items: flex-start !important;
+    padding-top: 56px;
+    .citizen-form-wrapper {
+      width: 100% !important;
+      .login-form {
+        padding: 0px 16px !important;
+        margin-bottom: 88px !important;
+        .card {
+          .card-header {
+            font-size: 32px !important;
+            font-weight: 700;
+            line-height: 37.5px;
+          }
+          .submit-bar,
+          .submit-bar-disabled {
+            position: static;
+            margin-top: 24px !important;
+            padding: 0px;
+            header {
+              margin-top: 0px !important;
+              background-color: #007e7e;
+              padding: 0px;
+            }
+          }
+        }
+      }
+      .login-form.register {
+        .card {
+          .card-header {
+            font-size: 24px !important;
+          }
+          .submit-bar,
+          .submit-bar-disabled {
+            margin: 0px !important;
+            border-top: 1px #00000026 solid;
+            position: fixed;
+            bottom: 48px;
+            left: 0px;
+            background-color: #ffffff;
+            padding: 0px 8px !important;
+            header {
+              margin-top: 24px !important;
+              background-color: #007e7e;
+            }
+          }
+        }
+      }
+      .select-user,
+      .id-verification,
+      .registration-select-name {
+        margin: 0px 16px 84px !important;
+        padding: 0px !important;
+      }
+      .advocate-additional-details {
+        width: 100% !important;
+        padding: 40px 16px !important;
+        margin: 0px 0px 84px !important;
+        input {
+          min-width: 100% !important;
+        }
+      }
+      .enter-addhar {
+        padding: 40px 16px !important;
+        margin-bottom: 84px !important;
+        .card {
+          .card-section-header {
+            text-align: left !important;
+          }
+        }
+        .input-otp-wrap {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr 1fr !important;
+          .input-otp {
+            width: 100% !important;
+          }
+        }
+      }
+      .user-address {
+        padding: 0px 16px 40px !important;
+        margin: 0px 0px 84px !important;
+        .map-wrap {
+          .map {
+            height: 250px;
+          }
+        }
+        .address-card-input {
+          grid-template-columns: 1fr !important;
+          .field {
+            width: 100% !important;
+          }
+        }
+      }
+      .id-verification {
+        form {
+          .card {
+            .label-field-pair {
+              .card-header {
+                display: flex;
+                justify-content: start;
+              }
+              .card-text {
+                text-align: left !important;
+              }
+            }
+          }
+        }
+      }
+      .registration-select-name {
+        .card {
+          align-items: start !important;
+          #select-name-subtext_DES,
+          .card-section-header {
+            text-align: left !important;
+          }
+
+          #select-name-subtext_DES {
+            width: 100% !important;
+          }
+        }
+      }
+    }
+    .submit-bar,
+    .submit-bar-disabled {
+      margin: 0px !important;
+      border-top: 1px #00000026 solid;
+      position: fixed;
+      bottom: 48px;
+      left: 0px;
+      background-color: #ffffff;
+      header {
+        margin-top: 24px !important;
+        padding: 0px 8px;
+        background-color: #007e7e;
+      }
+    }
+    .response-main {
+      padding: 0px !important;
+      margin: 0px 16px 84px !important;
+      box-shadow: none;
+    }
+  }
+
+  .popup-module.otp-modal-class {
+    width: 100% !important;
+    .header-wrap {
+      padding: 0px;
+      height: fit-content !important;
+      .header-content {
+        margin: 16px 0px 0px 16px;
+        .heading-m {
+          padding: 0px;
+          margin: 20px 0px 8px !important;
+        }
+      }
+      .header-end {
+        .icon-bg-secondary {
+          height: 20px;
+          width: 20px;
+        }
+      }
+    }
+    .popup-module-main {
+      margin-top: 16px !important;
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+      form {
+        width: 100%;
+        .card {
+          .input-otp-wrap {
+            justify-content: space-between;
+            .input-otp {
+              width: 38px !important;
+            }
+          }
+          .message {
+            p {
+              margin-bottom: 16px !important;
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -9,7 +9,7 @@ export const ComplainantDummy = [
         commonFields: true,
         isEnabled: true,
       },
-      addressDetailsSelect: {
+      "addressDetails-select": {
         pincode: "500084",
         state: "Telangana",
         district: "Rangareddy",

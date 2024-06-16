@@ -90,6 +90,7 @@ module.exports = function (app) {
     "/advocate",
     "/clerk",
     "/case",
+    "/evidence",
     "/project-factory/v1/data/_autoGenerateBoundaryCode",
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));

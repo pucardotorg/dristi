@@ -160,7 +160,6 @@ const ApplicationDetails = ({ location, match }) => {
   }
 
   function onActionSelect(action) {
-    console.log(action);
     if (action === "APPROVE") {
       takeAction(action);
     }
@@ -178,13 +177,12 @@ const ApplicationDetails = ({ location, match }) => {
   const addressLine2 = individualData?.Individual?.[0]?.address[0]?.addressLine2 || "";
   const buildingName = individualData?.Individual?.[0]?.address[0]?.buildingName || "";
   const street = individualData?.Individual?.[0]?.address[0]?.street || "";
-  const landmark = individualData?.Individual?.[0]?.address[0]?.landmark || "";
   const city = individualData?.Individual?.[0]?.address[0]?.city || "";
   const pincode = individualData?.Individual?.[0]?.address[0]?.pincode || "";
   const latitude = useMemo(() => individualData?.Individual?.[0]?.address[0]?.latitude || "", [individualData?.Individual]);
   const longitude = useMemo(() => individualData?.Individual?.[0]?.address[0]?.longitude || "", [individualData?.Individual]);
 
-  const address = `${addressLine1} ${addressLine2} ${buildingName} ${street} ${landmark} ${city} ${pincode}`.trim();
+  const address = `${addressLine1} ${addressLine2} ${buildingName} ${street} ${street} ${city} ${pincode}`.trim();
 
   const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
   const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
@@ -202,21 +200,14 @@ const ApplicationDetails = ({ location, match }) => {
   );
   const barDetails = useMemo(() => {
     return [
-      { title: "Bar Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
+      { title: "BAR Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
       {
-        title: "Bar Council ID",
+        title: "BAR Council ID",
         image: true,
         content: fileName,
       },
       {
-        doc: (
-          <DocViewerWrapper
-            style={{ maxWidth: "100px", maxHeight: "100px" }}
-            fileStoreId={fileStoreId}
-            tenantId={tenantId}
-            docViewerCardClassName={"doc-card"}
-          ></DocViewerWrapper>
-        ),
+        doc: <DocViewerWrapper fileStoreId={fileStoreId} tenantId={tenantId} docViewerCardClassName={"doc-card"}></DocViewerWrapper>,
         image: true,
       },
     ];
@@ -247,14 +238,12 @@ const ApplicationDetails = ({ location, match }) => {
   return (
     <React.Fragment>
       <div className="view-application">
-        <div className="application-main" >
+        <div className="application-main">
           <Header className="application-header">{header}</Header>
           <div className="application-card">
             <DocumentDetailCard cardData={aadharData} />
             <DocumentDetailCard cardData={personalData} />
-            {type === "advocate" && userType !== "ADVOCATE_CLERK" && (
-              <DocumentDetailCard cardData={barDetails} />
-            )}
+            {type === "advocate" && userType !== "ADVOCATE_CLERK" && <DocumentDetailCard cardData={barDetails} />}
           </div>
           {!applicationNo && (
             <div className="action-button-application">

@@ -2,9 +2,9 @@ import React from "react";
 import FormStep from "../../../components/FormStep";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
-const SelectMobileNumber = ({ t, onSelect, mobileNumber, onMobileChange, config, canSubmit, isRegister, isUserLoggedIn }) => {
+const SelectMobileNumber = ({ t, onSelect, mobileNumber, onMobileChange, config, canSubmit, isRegister, isUserLoggedIn, className }) => {
   return (
-    <div className="login-form">
+    <div className={`login-form ${className}`}>
       <FormStep
         isDisabled={!(mobileNumber.length === 10 && mobileNumber.match(window?.Digit.Utils.getPattern("MobileNo")) && canSubmit)}
         onSelect={onSelect}

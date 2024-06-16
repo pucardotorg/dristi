@@ -25,6 +25,9 @@ public class CaseCriteria {
     @JsonProperty("caseId")
     private String caseId = null;
 
+    @JsonProperty("defaultFields")
+    private Boolean defaultFields = false;
+
     @JsonProperty("cnrNumber")
     private String cnrNumber = null;
 
@@ -49,6 +52,18 @@ public class CaseCriteria {
     @JsonProperty("registrationToDate")
     @Valid
     private LocalDate registrationToDate = null;
+
+    @JsonProperty("litigantId")
+    @Valid
+    private String litigantId = null;
+
+    @JsonProperty("advocateId")
+    @Valid
+    private String advocateId = null;
+
+    @JsonProperty("status")
+    @Valid
+    private String status = null;
 
     @JsonProperty("responseList")
     @Valid
