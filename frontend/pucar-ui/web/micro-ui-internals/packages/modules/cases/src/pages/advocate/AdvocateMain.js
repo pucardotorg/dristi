@@ -1,7 +1,6 @@
 import { Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { searchconfig } from "../../configs/casesSearchConfig";
 import { useHistory } from "react-router-dom";
 import { advocateSearchconfig } from "../../configs/advocateSearchConfig";
 import { useLocation } from "react-router-dom";

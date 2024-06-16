@@ -13,12 +13,12 @@ const OrdersCard = () => {
 
     ],
     links: [
-   
-      {
-        label: t("Orders  Search"),
-        link: `/${window?.contextPath}/employee/orders/orders-search`,
 
+      {
+        label: t("Orders Home"),
+        link: `/${window?.contextPath}/employee/orders/orders-home`,
       },
+   
       {
         label: t("Create Scheduling of Hearing"),
         link: `/${window?.contextPath}/employee/orders/orders-create?orderType=SCHEDULE`,
@@ -40,15 +40,6 @@ const OrdersCard = () => {
 
       },
 
-      {
-        label: t("Orders Response"),
-        link: `/${window?.contextPath}/employee/orders/orders-response`,
-
-      },
-      {
-        label: t("Orders Home"),
-        link: `/${window?.contextPath}/employee/orders/orders-home`,
-      }
       
     ],
   };
