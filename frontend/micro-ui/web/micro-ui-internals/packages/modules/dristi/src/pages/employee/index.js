@@ -8,7 +8,6 @@ import Home from "./home";
 import { useToast } from "../../components/Toast/useToast";
 import ApplicationDetails from "./ApplicationDetails";
 import ViewCaseFile from "./scrutiny/ViewCaseFile";
-import JudgeScreen from "./Judge/JudgeScreen";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -16,6 +15,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { toastMessage, toastType, closeToast } = useToast();
   const Inbox = window?.Digit?.ComponentRegistryService?.getComponent("Inbox");
   const hideHomeCrumb = [`${path}/cases`];
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
   const employeeCrumbs = [
     {
       path: `/digit-ui/employee`,
@@ -45,10 +46,12 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
               <BackButton />
 
               {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
-              <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
-                <span style={{ color: "#f47738" }}>Help</span>
-                <HelpOutlineIcon />
-              </span>
+              {!isJudge && (
+                <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
+                  <span style={{ color: "#f47738" }}>Help</span>
+                  <HelpOutlineIcon />
+                </span>
+              )}
             </div>
           )}
           <PrivateRoute exact path={`${path}/registration-requests`} component={Inbox} />
@@ -57,9 +60,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
             <PrivateRoute exact path={`${path}/cases`} component={Home} />
           </div>
           <div className={"file-case-main"}>
-            <PrivateRoute exact path={`${path}/admission/info`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
+            <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
             <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
-            <PrivateRoute exact path={`${path}/admission`} component={(props) => <JudgeScreen {...props} t={t} path={path} />} />
           </div>
         </div>
         {toastMessage && (

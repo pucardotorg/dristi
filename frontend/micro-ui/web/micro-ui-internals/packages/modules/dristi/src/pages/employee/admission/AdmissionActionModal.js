@@ -10,6 +10,7 @@ import SelectParticipant from "./SelectParticipant";
 import { Calendar } from "react-date-range";
 import CustomCalendar from "../../../components/CustomCalendar";
 import { WhiteRightArrow } from "../../../icons/svgIndex";
+import { formatDateInMonth } from "../../../Utils";
 
 const Heading = (props) => {
   return <h1 className="heading-m">{props.label}</h1>;
@@ -47,7 +48,6 @@ function AdmissionActionModal({
   handleAdmitCase,
   handleScheduleCase,
 }) {
-  const [reasons, setReasons] = useState(null);
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const closeToast = () => {
@@ -73,7 +73,6 @@ function AdmissionActionModal({
     )
   );
   const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
-  const [sendCaseBack, setSendCaseBack] = useState({});
 
   const onSubmit = (props) => {
     if (!props?.commentForLitigant) {
@@ -87,25 +86,21 @@ function AdmissionActionModal({
     const { page, type } = modalInfo;
     return (page === 1 && (type === "admitCase" || type === "sendCaseBack")) || (page === 2 && type === "schedule");
   };
-  // const onCalendarConfirm = () => {};
   const [selectedCustomDate, setSelectedCustomDate] = useState(new Date());
 
   const handleSelect = (date) => {
+    setScheduleHearingParam({ ...scheduleHearingParams, date: formatDateInMonth(date) });
     setSelectedCustomDate(date);
   };
   const onCalendarConfirm = () => {
     setModalInfo({ ...modalInfo, page: 0, showDate: false, showCustomDate: true });
-    setDateSelected(false);
+    setSelectedChip(null);
   };
   const [selectedChip, setSelectedChip] = React.useState(null);
 
   const setPurposeValue = (value, input) => {
     setScheduleHearingParam({ ...scheduleHearingParams, purpose: value });
   };
-  const handleChipClick = (chipLabel) => {
-    setSelectedChip(chipLabel);
-  };
-  const [dateSelected, setDateSelected] = useState(false);
 
   const showCustomDateModal = () => {
     setModalInfo({ ...modalInfo, showDate: true });
@@ -115,8 +110,16 @@ function AdmissionActionModal({
   const handleInputChange = (values) => {
     setSelectedValues(values);
   };
+  const handleClickDate = (label) => {
+    const newSelectedChip = selectedChip === label ? null : label;
+    setSelectedChip(newSelectedChip);
+    setScheduleHearingParam({
+      ...scheduleHearingParams,
+      date: newSelectedChip,
+    });
+  };
   return (
-    <div>
+    <React.Fragment>
       {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
         <Modal
           headerBarMain={<Heading label={t(stepItems[0].headModal)} />}
@@ -168,17 +171,14 @@ function AdmissionActionModal({
             setShowModal={setShowModal}
             setModalInfo={setModalInfo}
             modalInfo={modalInfo}
-            selectedCustomDate={selectedCustomDate}
             selectedChip={selectedChip}
             setSelectedChip={setSelectedChip}
-            handleChipClick={handleChipClick}
-            dateSelected={dateSelected}
-            setDateSelected={setDateSelected}
             showCustomDateModal={showCustomDateModal}
             setPurposeValue={setPurposeValue}
             scheduleHearingParams={scheduleHearingParams}
             setScheduleHearingParam={setScheduleHearingParam}
             submitModalInfo={submitModalInfo}
+            handleClickDate={handleClickDate}
           />
         </Modal>
       )}
@@ -242,7 +242,7 @@ function AdmissionActionModal({
           <CustomSubmitModal submitModalInfo={submitModalInfo} />
         </Modal>
       )}
-    </div>
+    </React.Fragment>
   );
 }
 

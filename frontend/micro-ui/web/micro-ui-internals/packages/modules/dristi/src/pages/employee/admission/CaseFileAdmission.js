@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
-import { CustomArrowDownIcon } from "../../../icons/svgIndex";
+import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import AdmissionActionModal from "./AdmissionActionModal";
 import { Redirect, useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
@@ -67,7 +67,6 @@ function CaseFileAdmission({ t, path }) {
   }, [reviewCaseFileFormConfig, caseDetails]);
 
   const updateCaseDetails = async (action, data = {}) => {
-    console.log(data);
     const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
 
     return DRISTIService.caseUpdateService(
@@ -222,7 +221,6 @@ function CaseFileAdmission({ t, path }) {
   if (isLoading) {
     return <Loader />;
   }
-
   if (showModal) {
     return (
       <AdmissionActionModal
@@ -239,44 +237,72 @@ function CaseFileAdmission({ t, path }) {
       ></AdmissionActionModal>
     );
   }
+  const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
+  const labels = {
+    litigentDetails: "CS_LITIGENT_DETAILS",
+    caseSpecificDetails: "CS_CASE_SPECIFIC_DETAILS",
+    additionalDetails: "CS_ADDITIONAL_DETAILS",
+  };
+  const complainantFirstName = caseDetails?.additionalDetails?.complaintDetails?.formdata[0].data?.firstName;
+  const complainantLastName = caseDetails?.additionalDetails?.complaintDetails?.formdata[0].data?.lastName;
+
+  const complainantFullName =
+    complainantFirstName && complainantLastName
+      ? `${complainantFirstName} ${complainantLastName}`
+      : complainantFirstName || complainantLastName || "Unknown";
+
+  const respondentFirstName = caseDetails?.additionalDetails?.respondentDetails?.formdata[0].data?.firstName;
+
+  const respondentFullName = respondentFirstName || "Unknown";
   return (
-    <div className="file-case">
-      <div className="file-case-side-stepper">
-        <div className="file-case-select-form-section">
-          <div className="accordion-wrapper">Litigent Details</div>
-          <div className="accordion-wrapper">Case Specific Details</div>
-          <div className="accordion-wrapper">Additional Details</div>
+    <div className="view-case-file">
+      <div className="file-case">
+        <div className="file-case-side-stepper">
+          <div className="file-case-select-form-section">
+            {sidebar.map((key, index) => (
+              <div className="accordion-wrapper">
+                <div key={index} className="accordion-title">
+                  <div>{`${index + 1}. ${t(labels[key])}`}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="file-case-form-section">
-        <div className="employee-card-wrapper">
-          <div className="header-content">
-            <div className="header-details">
-              <Header>{t("Review Case")}</Header>
-              <div className="header-icon" onClick={() => {}}>
-                <CustomArrowDownIcon />
+        <div className="file-case-form-section">
+          <div className="employee-card-wrapper">
+            <div className="header-content">
+              <div className="header-details">
+                <Header>
+                  {complainantFullName} <span style={{ color: "#77787B" }}>vs</span> {respondentFullName}
+                </Header>
+                <div className="header-icon" onClick={() => {}}>
+                  <CustomArrowDownIcon />
+                </div>
               </div>
             </div>
+            <CustomCaseInfoDiv data={caseInfo} style={{ margin: "24px 0px" }} />
+            <FormComposerV2
+              label={t("CS_ADMIT_CASE")}
+              config={formConfig}
+              onSubmit={onSubmit}
+              // defaultValues={}
+              onSecondayActionClick={onSaveDraft}
+              defaultValues={{}}
+              onFormValueChange={onFormValueChange}
+              cardStyle={{ minWidth: "100%" }}
+              isDisabled={isDisabled}
+              cardClassName={`e-filing-card-form-style review-case-file`}
+              secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
+              showSecondaryLabel={true}
+              // actionClassName="admission-action-buttons"
+              actionClassName="e-filing-action-bar"
+              showSkip={true}
+              onSkip={onSendBack}
+              noBreakLine
+              submitIcon={<RightArrow />}
+            />
+            {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
           </div>
-          <CustomCaseInfoDiv data={caseInfo} />
-          <FormComposerV2
-            label={t("CS_ADMIT_CASE")}
-            config={formConfig}
-            onSubmit={onSubmit}
-            // defaultValues={}
-            onSecondayActionClick={onSaveDraft}
-            defaultValues={{}}
-            onFormValueChange={onFormValueChange}
-            cardStyle={{ minWidth: "100%" }}
-            isDisabled={isDisabled}
-            cardClassName={`e-filing-card-form-style`}
-            secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
-            showSecondaryLabel={true}
-            actionClassName="admission-action-buttons"
-            showSkip={"FDSJKLDFSJL"}
-            onSkip={onSendBack}
-          />
-          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>
     </div>

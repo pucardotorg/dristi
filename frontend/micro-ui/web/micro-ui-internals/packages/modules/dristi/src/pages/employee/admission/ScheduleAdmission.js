@@ -3,6 +3,7 @@ import CustomChooseDate from "../../../components/CustomChooseDate";
 import { Button, CardLabel, CardText, DateRange, EventCalendar, SubmitBar, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
+import { formatDateInMonth } from "../../../Utils";
 
 function ScheduleAdmission({
   config,
@@ -10,46 +11,23 @@ function ScheduleAdmission({
   setShowModal,
   setModalInfo,
   modalInfo,
-  selectedDate,
   selectedChip,
-  setSelectedChip,
-  handleChipClick,
-  dateSelected,
-  setDateSelected,
   showCustomDateModal,
-  selectedCustomDate,
   setPurposeValue,
   setScheduleHearingParam,
   scheduleHearingParams,
   submitModalInfo,
+  handleClickDate,
 }) {
   const getNextNDates = (n) => {
     const today = new Date();
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-    const formatWithSuffix = (day) => {
-      if (day > 3 && day < 21) return `${day}th`;
-      switch (day % 10) {
-        case 1:
-          return `${day}st`;
-        case 2:
-          return `${day}nd`;
-        case 3:
-          return `${day}rd`;
-        default:
-          return `${day}th`;
-      }
-    };
 
     const datesArray = [];
 
     for (let i = 1; i <= n; i++) {
       const nextDate = new Date(today);
       nextDate.setDate(today.getDate() + i);
-      const day = formatWithSuffix(nextDate.getDate());
-      const month = monthNames[nextDate.getMonth()];
-      const year = nextDate.getFullYear();
-      datesArray.push(`${day} ${month} ${year}`);
+      datesArray.push(formatDateInMonth(nextDate));
     }
 
     return datesArray;
@@ -68,23 +46,16 @@ function ScheduleAdmission({
     return () => clearTimeout(timer);
   }, [closeToast]);
 
-  const date = new Date(selectedCustomDate);
-
-  const options = { day: "2-digit", month: "2-digit", year: "2-digit" };
-  const formattedDate = date.toLocaleDateString("en-GB", options).replace(/\//g, "/");
-
   const handleSubmit = (props) => {
-    if (!dateSelected && !modalInfo?.showCustomDate) {
+    if (!scheduleHearingParams?.date && !modalInfo?.showCustomDate) {
       setShowErrorToast(true);
     } else {
-      setScheduleHearingParam({ ...scheduleHearingParams, date: selectedCustomDate || dateSelected });
       setModalInfo({ ...modalInfo, page: 1 });
     }
   };
-
   return (
     <div>
-      {dateSelected && <CustomCaseInfoDiv data={submitModalInfo?.shortCaseInfo} />}
+      {selectedChip && <CustomCaseInfoDiv data={submitModalInfo?.shortCaseInfo} style={{ marginTop: "24px" }} />}
 
       <CardText className="card-label-smaller">{t(config.label)}</CardText>
       <TextInput
@@ -98,13 +69,12 @@ function ScheduleAdmission({
       />
       {!modalInfo?.showCustomDate && (
         <div>
-          <CardText>Select a date</CardText>
+          <CardText>{t("CS_SELECT_DATE")}</CardText>
           <CustomChooseDate
             data={nextFourDates}
             selectedChip={selectedChip}
-            onChipClick={handleChipClick}
-            dateSelected={dateSelected}
-            setDateSelected={setDateSelected}
+            handleClick={handleClickDate}
+            scheduleHearingParams={scheduleHearingParams}
           />
         </div>
       )}
@@ -122,21 +92,21 @@ function ScheduleAdmission({
           variation="primary"
           onSubmit={handleSubmit}
           className="primary-label-btn"
-          label={dateSelected ? "Continue" : "Select Participants"}
+          label={selectedChip ? "Continue" : "Select Participants"}
         ></SubmitBar>
       </div>
       {modalInfo?.showCustomDate ? (
         <h3>
-          {formattedDate}{" "}
+          {scheduleHearingParams?.date}{" "}
           <span style={{ color: "#007E7E" }} onClick={() => showCustomDateModal()}>
-            {String(t("Select Another Date"))}
+            {String(t("SELECT_ANOTHER_DATE"))}
           </span>
         </h3>
       ) : (
         <h3>
           {t("Dates don’t work?")}{" "}
           <span style={{ color: "#007E7E" }} onClick={() => showCustomDateModal()}>
-            {String(t("Select Custom Date"))}
+            {String(t("CS_SELECT_CUSTOM_DATE"))}
           </span>
         </h3>
       )}

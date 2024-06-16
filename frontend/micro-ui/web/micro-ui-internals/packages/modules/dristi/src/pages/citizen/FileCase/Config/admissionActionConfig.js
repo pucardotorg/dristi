@@ -34,20 +34,20 @@ export const modalConfig = [
     submitText: "Yes, I’m sure",
   },
   {
-    headModal: "Schedule Admission Hearing",
-    label: "Purpose of Hearing",
+    headModal: "CS_SCHEDULE_ADMISSION_HEARING",
+    label: "PURPOSE_OF_HEARING",
     name: "purposeOfHearing",
   },
   {
-    headModal: "Select Custom Date",
-    label: "Hearings Scheduled",
+    headModal: "CS_SELECT_CUSTOM_DATE",
+    label: "CS_HEARINGS_SCHEDULED",
     showBottomBar: true,
     buttonText: "CS_COMMON_CONFIRM",
   },
 ];
 export const selectParticipantConfig = {
   header: "Choose participants for the hearing",
-  checkBoxText: "Who should be present for the hearing on 29 March 2024?",
+  checkBoxText: "Who should be present for the hearing on ",
   checkBoxes: [
     {
       name: "Compliant",
