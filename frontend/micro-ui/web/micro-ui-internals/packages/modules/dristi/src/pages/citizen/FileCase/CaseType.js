@@ -1,12 +1,12 @@
-import { ButtonSelector, CitizenInfoLabel, Close, CloseSvg, DownloadIcon } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
-import CustomDetailsCard from "../../../components/CustomDetailsCard";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import Modal from "../../../components/Modal";
-import Button from "../../../components/Button";
-import { ReactComponent as FileDownload } from "../../../icons/file_download.svg";
-import { DRISTIService } from "../../../services";
 import { Loader } from "@egovernments/digit-ui-components";
+import { CitizenInfoLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import Button from "../../../components/Button";
+import CustomDetailsCard from "../../../components/CustomDetailsCard";
+import Modal from "../../../components/Modal";
+import { FileDownloadIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 
 export const formatDate = (date) => {
@@ -117,7 +117,7 @@ function CaseType({ t }) {
     }
     return (
       <div className="submit-bar-div">
-        <Button icon={<FileDownload />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
+        <Button icon={<FileDownloadIcon />} className="download-button" label={t("CS_COMMON_DOWNLOAD")} />
         <div className="right-div">
           <Button
             className="cancel-button"
@@ -151,12 +151,12 @@ function CaseType({ t }) {
                 litigants: [],
                 representatives: advocateId
                   ? [
-                    {
-                      advocateId: advocateId,
-                      tenantId,
-                      representing: [],
-                    },
-                  ]
+                      {
+                        advocateId: advocateId,
+                        tenantId,
+                        representing: [],
+                      },
+                    ]
                   : [],
                 documents: [],
                 workflow: {
@@ -175,76 +175,77 @@ function CaseType({ t }) {
                 additionalDetails: {
                   ...(advocateId
                     ? {
-                      advocateDetails: {
-                        formdata: [
-                          {
-                            isenabled: true,
-                            displayindex: 0,
-                            data: {
-                              isAdvocateRepresenting: {
-                                code: "YES",
-                                name: "Yes",
-                                showForm: true,
-                                isEnabled: true,
+                        advocateDetails: {
+                          formdata: [
+                            {
+                              isenabled: true,
+                              displayindex: 0,
+                              data: {
+                                isAdvocateRepresenting: {
+                                  code: "YES",
+                                  name: "Yes",
+                                  showForm: true,
+                                  isEnabled: true,
+                                },
                               },
                             },
-                          },
-                        ],
-                      },
-                    }
+                          ],
+                        },
+                      }
                     : {
-                      complaintDetails: {
-                        formdata: [
-                          {
-                            isenabled: true,
-                            data: {
-                              complainantType: {
-                                code: "INDIVIDUAL",
-                                name: "Individual",
-                                showCompanyDetails: false,
-                                complainantLocation: true,
-                                commonFields: true,
-                                isEnabled: true,
-                              },
-                              "addressDetails-select": {
-                                pincode: pincode,
-                                district: addressLine2,
-                                city: city,
-                                state: addressLine1,
-                                locality: address,
-                              },
-                              complainantId: { complainantId: true },
-                              firstName: givenName,
-                              middleName: otherNames,
-                              lastName: familyName,
-                              complainantVerification: {
-                                mobileNumber: userInfo?.userName,
-                                otpNumber: "123456",
-                                individualDetails: {
-                                  individualId: individualId,
-                                  document: identifierIdDetails?.fileStoreId
-                                    ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
-                                    : null,
+                        complaintDetails: {
+                          formdata: [
+                            {
+                              isenabled: true,
+                              data: {
+                                complainantType: {
+                                  code: "INDIVIDUAL",
+                                  name: "Individual",
+                                  showCompanyDetails: false,
+                                  complainantLocation: true,
+                                  commonFields: true,
+                                  isEnabled: true,
+                                  isIndividual: true,
                                 },
-                                isUserVerified: true,
-                              },
-                              addressDetails: {
-                                pincode: pincode,
-                                district: addressLine2,
-                                city: city,
-                                state: addressLine1,
-                                coordinates: {
-                                  longitude: latitude,
-                                  latitude: longitude,
+                                "addressDetails-select": {
+                                  pincode: pincode,
+                                  district: addressLine2,
+                                  city: city,
+                                  state: addressLine1,
+                                  locality: address,
                                 },
-                                locality: address,
+                                complainantId: { complainantId: true },
+                                firstName: givenName,
+                                middleName: otherNames,
+                                lastName: familyName,
+                                complainantVerification: {
+                                  mobileNumber: userInfo?.userName,
+                                  otpNumber: "123456",
+                                  individualDetails: {
+                                    individualId: individualId,
+                                    document: identifierIdDetails?.fileStoreId
+                                      ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                                      : null,
+                                  },
+                                  isUserVerified: true,
+                                },
+                                addressDetails: {
+                                  pincode: pincode,
+                                  district: addressLine2,
+                                  city: city,
+                                  state: addressLine1,
+                                  coordinates: {
+                                    longitude: latitude,
+                                    latitude: longitude,
+                                  },
+                                  locality: address,
+                                },
                               },
+                              displayindex: 0,
                             },
-                            displayindex: 0,
-                          },
-                        ],
-                      },
-                    }),
+                          ],
+                        },
+                      }),
                 },
               };
               DRISTIService.caseCreateService({ cases, tenantId })
@@ -261,12 +262,12 @@ function CaseType({ t }) {
 
   const detailsCardList = useMemo(() => {
     const caseTypeDetails = [
-      { header: "Case Category", subtext: "Criminal", },
+      { header: "Case Category", subtext: "Criminal" },
       {
         header: "Status / Act",
         subtext: "Negotiable Instrument Act",
       },
-      { header: "Section", subtext: "138", },
+      { header: "Section", subtext: "138" },
     ];
     const listDocumentDetails = [
       {

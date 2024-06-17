@@ -45,7 +45,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
   return (
-    <div>
+    <React.Fragment>
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         const showDependentFields =
@@ -63,8 +63,6 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
             : true;
         return (
           <React.Fragment key={index}>
-            {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
-
             {showDependentFields && (
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
@@ -92,6 +90,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                         showHintBelow={input?.showHintBelow ? true : false}
                         setuploadedstate={formData?.[config.key]?.[input.name] || []}
                         allowedFileTypesRegex={input.allowedFileTypes}
+                        acceptFiles={input?.acceptFiles}
                         allowedMaxSizeInMB={input.allowedMaxSizeInMB || "5"}
                         hintText={input.hintText}
                         maxFilesAllowed={input.maxFilesAllowed || "1"}
@@ -126,7 +125,6 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                     />
                   )}
 
-                  {input.hasBreakPoint && <div style={{ margin: 20, textAlign: "center", width: "100%", maxWidth: 540 }}>{"( Or )"}</div>}
                   {currentValue &&
                     currentValue.length > 0 &&
                     !["documentUpload", "radioButton"].includes(input.type) &&
@@ -136,13 +134,14 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                         <span style={{ color: "#FF0000" }}> {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</span>
                       </CardLabelError>
                     )}
+                  {errors[config.key] && <CardLabelError>{t(input.error)}</CardLabelError>}
                 </div>
               </LabelFieldPair>
             )}
           </React.Fragment>
         );
       })}
-    </div>
+    </React.Fragment>
   );
 };
 

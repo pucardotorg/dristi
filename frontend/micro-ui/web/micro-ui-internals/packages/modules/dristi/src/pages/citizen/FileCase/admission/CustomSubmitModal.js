@@ -1,12 +1,11 @@
-import { Banner, Card, CardLabel, CardText, Modal, TextArea } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
+import React from "react";
 import CustomCaseInfoDiv from "./CustomCaseInfoDiv";
 import CustomCopyTextDiv from "./CustomCopyTextDiv";
-import Button from "../../../../components/Button";
 
 const mockSubmitModalInfo = {
   header: "The case file has been admitted successfully.",
-  subHeader: "Case updates with file number has been sent to all parties via SMS.",
+  subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE.",
   caseInfo: [
     {
       key: "Case Number",

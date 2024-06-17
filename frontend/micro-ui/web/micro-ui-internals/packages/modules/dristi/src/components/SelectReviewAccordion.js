@@ -1,6 +1,6 @@
 import { Button, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom";
 import {
   ChequeDetailsIcon,
   CustomArrowDownIcon,
@@ -13,7 +13,6 @@ import {
 import CustomPopUp from "./CustomPopUp";
 import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
-import { transform } from "lodash";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
@@ -133,6 +132,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     setScrutinyError("");
     setValue("scrutinyMessage", null, "imagePopupInfo");
   };
+
   const handleDeleteError = () => {
     const { name, configKey, index, fieldName } = popupInfo;
     let currentMessage =

@@ -11,7 +11,7 @@ const debtLiabilityFromconfig = [
           name: "liabilityNature",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
@@ -52,7 +52,7 @@ const debtLiabilityFromconfig = [
           name: "liabilityType",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -97,7 +97,7 @@ const debtLiabilityFromconfig = [
           validation: {
             maxLength: 12,
             max: 999999999999,
-          }
+          },
         },
       },
     ],
