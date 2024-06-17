@@ -128,14 +128,14 @@ public class CaseQueryBuilder {
 
                 if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.id = ?)");
+                    query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?)");
                     preparedStmtList.add(criteria.getLitigantId());
                     firstCriteria = false;
                 }
 
                 if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.id = ?)");
+                    query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?)");
                     preparedStmtList.add(criteria.getAdvocateId());
                     firstCriteria = false;
                 }

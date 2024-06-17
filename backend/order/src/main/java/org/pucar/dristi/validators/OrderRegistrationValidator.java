@@ -19,8 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.pucar.dristi.config.ServiceConstants.CREATE_ORDER_ERR;
-import static org.pucar.dristi.config.ServiceConstants.MDMS_DATA_NOT_FOUND;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -56,11 +55,11 @@ public class OrderRegistrationValidator {
     public Order validateApplicationExistence(OrderRequest orderRequest) {
         Order order = orderRequest.getOrder();
         RequestInfo requestInfo = orderRequest.getRequestInfo();
-        List<Order> existingApplications = repository.getApplications(order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
+        List<Order> existingApplications = repository.getApplications("", order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
                 String.valueOf(order.getId()), order.getStatus());
         log.info("Existing application :: {}", existingApplications.size());
         if (existingApplications.isEmpty())
-            throw new CustomException("VALIDATION EXCEPTION", "Order does not exist");
+            throw new CustomException(VALIDATION_EXCEPTION, "Order does not exist");
 
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, order.getTenantId(), "Order", createMasterDetails());
 
