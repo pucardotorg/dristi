@@ -68,10 +68,6 @@ jobs:
             elif [[ $file == backend/evidence/* ]]; then
               echo "This modified file is under the 'evidence' folder."
               run_job_evidence=true
-
-            elif [[ $file == backend/task/* ]]; then
-              echo "This modified file is under the 'task' folder."
-              run_job_task=true
             elif [[ $file == backend/task/* ]]; then
               echo "This modified file is under the 'task' folder."
               run_job_task=true
