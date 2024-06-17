@@ -1,4 +1,15 @@
-import { BackButton, CheckSvg, CloseButton, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
+import {
+  BackButton,
+  CheckSvg,
+  CloseButton,
+  CloseSvg,
+  EditIcon,
+  FormComposerV2,
+  Header,
+  Loader,
+  TextInput,
+  Toast,
+} from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useLocation, Redirect, useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
@@ -220,7 +231,7 @@ function ViewCaseFile({ t }) {
     return <Loader />;
   }
   if (isScrutiny && state !== "UNDER_SCRUTINY") {
-    // if state is not under scrutiny, don't allow 
+    // if state is not under scrutiny, don't allow
     // history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
@@ -266,179 +277,192 @@ function ViewCaseFile({ t }) {
     return <h1 className="heading-m">{props.label}</h1>;
   };
 
-  console.log('caseDetails', caseDetails)
   return (
-    <div className="view-case-file">
-      <div className="file-case">
-        <div className="file-case-side-stepper">
-          <div className="file-case-select-form-section">
-            {sidebar.map((key, index) => (
-              <div className="accordion-wrapper">
-                <div key={index} className="accordion-title">
-                  <div>{`${index + 1}. ${t(labels[key])}`}</div>
-                  <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="file-case-form-section">
-          <div className="employee-card-wrapper">
-            <div className="back-button-home">
-              <BackButton />
-            </div>
-            <div className="header-content">
-              <div className="header-details">
-                <div className="header-title-icon">
-                  <Header>
-                    {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
-
-                  </Header>
-                  <div className="case-edit-icon" onClick={() => { setShowEditCaseNameModal(true) }}><EditIcon /></div>
-                </div>
-                <div className="header-icon" onClick={() => { }}>
-                  <CustomArrowDownIcon />
-                </div>
-              </div>
-              <CustomCaseInfoDiv data={caseInfo} t={t} />
-            </div>
-            <FormComposerV2
-              label={primaryButtonLabel}
-              config={formConfig}
-              onSubmit={handlePrimaryButtonClick}
-              onSecondayActionClick={handleSecondaryButtonClick}
-              defaultValues={defaultScrutinyErrors?.data}
-              onFormValueChange={onFormValueChange}
-              cardStyle={{ minWidth: "100%" }}
-              isDisabled={isDisabled}
-              cardClassName={`e-filing-card-form-style review-case-file`}
-              secondaryLabel={secondaryButtonLabel}
-              showSecondaryLabel={true}
-              actionClassName="e-filing-action-bar"
-            />
-
-            <div className="error-flag-class">
-              <FlagIcon />
-              <h3>No Errors</h3>
-            </div>
-
-            {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
-          </div>
-        </div>
-        <div className="file-case-checklist">
-          <div className="checklist-main">
-            <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-            {checkList.map((item, index) => {
-              return (
-                <div className="checklist-item" key={index}>
-                  <div className="item-logo">
-                    <CheckSvg />
+    <div className={"case-and-admission"}>
+      <div className="view-case-file">
+        <div className="file-case">
+          <div className="file-case-side-stepper">
+            <div className="file-case-select-form-section">
+              {sidebar.map((key, index) => (
+                <div className="accordion-wrapper">
+                  <div key={index} className="accordion-title">
+                    <div>{`${index + 1}. ${t(labels[key])}`}</div>
+                    <div>{scrutinyErrors[key]?.total ? `${scrutinyErrors[key].total} ${t("CS_ERRORS")}` : t("CS_NO_ERRORS")}</div>
                   </div>
-                  <h3 className="item-text">{t(item)}</h3>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
+          <div className="file-case-form-section">
+            <div className="employee-card-wrapper">
+              <div className="back-button-home">
+                <BackButton />
+              </div>
+              <div className="header-content">
+                <div className="header-details">
+                  <div className="header-title-icon">
+                    <Header>
+                      {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+                    </Header>
+                    <div
+                      className="case-edit-icon"
+                      onClick={() => {
+                        setShowEditCaseNameModal(true);
+                      }}
+                    >
+                      <EditIcon />
+                    </div>
+                  </div>
+                  <div className="header-icon" onClick={() => {}}>
+                    <CustomArrowDownIcon />
+                  </div>
+                </div>
+                <CustomCaseInfoDiv data={caseInfo} t={t} />
+              </div>
+              <FormComposerV2
+                label={primaryButtonLabel}
+                config={formConfig}
+                onSubmit={handlePrimaryButtonClick}
+                onSecondayActionClick={handleSecondaryButtonClick}
+                defaultValues={defaultScrutinyErrors?.data}
+                onFormValueChange={onFormValueChange}
+                cardStyle={{ minWidth: "100%" }}
+                isDisabled={isDisabled}
+                cardClassName={`e-filing-card-form-style review-case-file`}
+                secondaryLabel={secondaryButtonLabel}
+                showSecondaryLabel={true}
+                actionClassName="e-filing-action-bar"
+              />
+
+              <div className="error-flag-class">
+                <FlagIcon />
+                <h3>No Errors</h3>
+              </div>
+
+              {showErrorToast && (
+                <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
+              )}
+            </div>
+          </div>
+          <div className="file-case-checklist">
+            <div className="checklist-main">
+              <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
+              {checkList.map((item, index) => {
+                return (
+                  <div className="checklist-item" key={index}>
+                    <div className="item-logo">
+                      <CheckSvg />
+                    </div>
+                    <h3 className="item-text">{t(item)}</h3>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {showEditCaseNameModal && (
+            <Modal
+              headerBarEnd={
+                <CloseBtn
+                  onClick={() => {
+                    setShowEditCaseNameModal(false);
+                  }}
+                />
+              }
+              // actionCancelLabel={t(actionCancelLabel)}
+              actionCancelOnSubmit={() => setShowEditCaseNameModal(false)}
+              actionSaveLabel={"Confirm"}
+              actionSaveOnSubmit={() => {
+                setNewCaseName(modalCaseName);
+                setShowEditCaseNameModal(false);
+              }}
+              formId="modal-action"
+              headerBarMain={<Heading label={"Change Case Name"} />}
+              className="edit-case-name-modal"
+            >
+              <h3 className="input-label">Case Name</h3>
+              <TextInput type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+            </Modal>
+          )}
+          {actionModal == "sendCaseBack" && (
+            <SendCaseBackModal
+              actionCancelLabel={"CS_COMMON_BACK"}
+              actionSaveLabel={"CS_COMMON_CONFIRM"}
+              t={t}
+              totalErrors={totalErrors?.total || 0}
+              onCancel={handleCloseModal}
+              onSubmit={handleSendCaseBack}
+              heading={"CS_SEND_CASE_BACK"}
+              type="sendCaseBack"
+            />
+          )}
+          {actionModal == "registerCase" && (
+            <SendCaseBackModal
+              actionCancelLabel={"CS_COMMON_BACK"}
+              actionSaveLabel={"CS_COMMON_CONFIRM"}
+              t={t}
+              totalErrors={totalErrors?.total || 0}
+              onCancel={handleCloseModal}
+              onSubmit={handleRegisterCase}
+              heading={"CS_REGISTER_CASE"}
+              type="registerCase"
+            />
+          )}
+
+          {actionModal == "sendCaseBackPotential" && (
+            <SendCaseBackModal
+              actionCancelLabel={"CS_NO_REGISTER_CASE"}
+              actionSaveLabel={"CS_COMMON_CONFIRM"}
+              t={t}
+              totalErrors={totalErrors?.total || 0}
+              handleCloseModal={handleCloseModal}
+              onCancel={handlePotentialConfirm}
+              onSubmit={handleSendCaseBack}
+              heading={"CS_SEND_CASE_BACK"}
+              type="sendCaseBackPotential"
+            />
+          )}
+          {actionModal == "caseRegisterPotential" && (
+            <SendCaseBackModal
+              actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
+              actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
+              t={t}
+              totalErrors={totalErrors?.total || 0}
+              onCancel={handleCloseModal}
+              onSubmit={handleSendCaseBack}
+              heading={"CS_SEND_CASE_BACK"}
+              type="sendCaseBackPotential"
+            />
+          )}
+
+          {actionModal === "caseSendBackSuccess" && (
+            <SuccessModal
+              header={"Vaibhav"}
+              t={t}
+              actionCancelLabel={"CS_COMMON_CLOSE"}
+              actionSaveLabel={"CS_NEXT_CASE"}
+              bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
+              onCancel={handleCloseSucessModal}
+              onSubmit={handleNextCase}
+              type={"caseSendBackSuccess"}
+              data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+            />
+          )}
+
+          {actionModal === "caseRegisterSuccess" && (
+            <SuccessModal
+              header={"Vaibhav"}
+              t={t}
+              actionCancelLabel={"CS_COMMON_CLOSE"}
+              actionSaveLabel={"CS_ALLOCATE_JUDGE"}
+              bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
+              onCancel={handleCloseSucessModal}
+              onSubmit={handleAllocationJudge}
+              type={"caseRegisterSuccess"}
+              data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+            />
+          )}
         </div>
-
-        {
-          showEditCaseNameModal && <Modal
-            headerBarEnd={
-              <CloseBtn onClick={() => { setShowEditCaseNameModal(false) }} />
-            }
-            // actionCancelLabel={t(actionCancelLabel)}
-            actionCancelOnSubmit={() => setShowEditCaseNameModal(false)}
-            actionSaveLabel={"Confirm"}
-            actionSaveOnSubmit={() => {
-              setNewCaseName(modalCaseName);
-              setShowEditCaseNameModal(false);
-            }}
-            formId="modal-action"
-            headerBarMain={<Heading label={"Change Case Name"} />}
-            className="edit-case-name-modal"
-          >
-            <h3 className="input-label">Case Name</h3>
-            <TextInput type="text" onChange={(e) => setModalCaseName(e.target.value)} />
-          </Modal>
-        }
-        {actionModal == "sendCaseBack" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
-            type="sendCaseBack"
-          />
-        )}
-        {actionModal == "registerCase" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleRegisterCase}
-            heading={"CS_REGISTER_CASE"}
-            type="registerCase"
-          />
-        )}
-
-        {actionModal == "sendCaseBackPotential" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_NO_REGISTER_CASE"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            handleCloseModal={handleCloseModal}
-            onCancel={handlePotentialConfirm}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
-            type="sendCaseBackPotential"
-          />
-        )}
-        {actionModal == "caseRegisterPotential" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
-            actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
-            type="sendCaseBackPotential"
-          />
-        )}
-
-        {actionModal === "caseSendBackSuccess" && (
-          <SuccessModal
-            header={"Vaibhav"}
-            t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_NEXT_CASE"}
-            bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
-            onCancel={handleCloseSucessModal}
-            onSubmit={handleNextCase}
-            type={"caseSendBackSuccess"}
-            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
-          />
-        )}
-
-        {actionModal === "caseRegisterSuccess" && (
-          <SuccessModal
-            header={"Vaibhav"}
-            t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_ALLOCATE_JUDGE"}
-            bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
-            onCancel={handleCloseSucessModal}
-            onSubmit={handleAllocationJudge}
-            type={"caseRegisterSuccess"}
-            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
-          />
-        )}
       </div>
     </div>
   );

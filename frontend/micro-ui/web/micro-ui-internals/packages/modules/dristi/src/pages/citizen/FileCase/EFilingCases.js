@@ -20,6 +20,7 @@ import {
   checkOnlyCharInCheque,
   chequeDateValidation,
   complainantValidation,
+  delayApplicationValidation,
   demandNoticeFileValidation,
   prayerAndSwornValidation,
   respondentValidation,
@@ -28,6 +29,8 @@ import {
   signatureValidation,
   updateCaseDetails,
   validateDateForDelayApplication,
+  chequeDetailFileValidation,
+  advocateDetailsFileValidation,
 } from "./EfilingValidationUtils";
 import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 
@@ -252,7 +255,6 @@ function EFilingCases({ path }) {
 
   const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
 
-  console.debug(state);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -297,12 +299,14 @@ function EFilingCases({ path }) {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, 2000);
-
+    let timer;
+    if (showErrorToast || showSuccessToast) {
+      timer = setTimeout(() => {
+        closeToast();
+      }, 2000);
+    }
     return () => clearTimeout(timer);
-  }, [closeToast]);
+  }, [showErrorToast, showSuccessToast]);
 
   const getDefaultValues = useCallback(
     (index) =>
@@ -432,6 +436,7 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
+      return modifiedFormData;
     }
     return modifiedFormData.map(({ data }, index) => {
       let disableConfigFields = [];
@@ -481,6 +486,11 @@ function EFilingCases({ path }) {
                   body.disable = true;
                 }
               }
+
+              if (body?.labelChildren === "optional" && Object.keys(caseDetails?.additionalDetails?.scrutiny?.data || {}).length === 0) {
+                body.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+              }
+
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
                   ...body,
@@ -546,34 +556,40 @@ function EFilingCases({ path }) {
               scrutiny[key] = scrutinyObj[item][key];
             });
           });
-          console.debug(scrutiny);
-          const updatedBody = config.body
-            .map((formComponent) => {
-              const key = formComponent.key || formComponent.populators?.name;
-              const modifiedFormComponent = structuredClone(formComponent);
-              if (modifiedFormComponent?.labelChildren === "optional") {
-                modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
-              }
-              modifiedFormComponent.disable = true;
-              if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
-                modifiedFormComponent.disable = false;
-                modifiedFormComponent.withoutLabel = true;
-                return [
-                  {
-                    type: "component",
-                    component: "ScrutinyInfo",
-                    key: `${key}Scrutiny`,
-                    label: modifiedFormComponent.label,
-                    populators: {
-                      scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+          let updatedBody = [];
+          if (Object.keys(scrutinyObj).length > 0) {
+            updatedBody = config.body
+              .map((formComponent) => {
+                const key = formComponent.key || formComponent.populators?.name;
+                const modifiedFormComponent = structuredClone(formComponent);
+                if (modifiedFormComponent?.labelChildren === "optional") {
+                  modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+                }
+                modifiedFormComponent.disable = true;
+                if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
+                  modifiedFormComponent.disable = false;
+                  modifiedFormComponent.withoutLabel = true;
+                  return [
+                    {
+                      type: "component",
+                      component: "ScrutinyInfo",
+                      key: `${key}Scrutiny`,
+                      label: modifiedFormComponent.label,
+                      populators: {
+                        scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+                      },
                     },
-                  },
-                  modifiedFormComponent,
-                ];
-              }
-              return modifiedFormComponent;
-            })
-            .flat();
+                    modifiedFormComponent,
+                  ];
+                }
+                return modifiedFormComponent;
+              })
+              .flat();
+          } else {
+            updatedBody = config.body.map((formComponent) => {
+              return formComponent;
+            });
+          }
           return {
             ...config,
             body: updatedBody,
@@ -626,7 +642,7 @@ function EFilingCases({ path }) {
         setReceiptDemandNoticeModal,
         setServiceOfDemandNoticeModal,
       });
-      validateDateForDelayApplication({ setValue, caseDetails, selected });
+      validateDateForDelayApplication({ setValue, caseDetails, selected, toast, t, history, caseId });
       showToastForComplainant({ formData, setValue, selected, setSuccessToast });
       setFormdata(
         formdata.map((item, i) => {
@@ -772,10 +788,25 @@ function EFilingCases({ path }) {
     if (formdata.filter((data) => data.isenabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
       return;
     }
+    if (formdata.filter((data) => data.isenabled).some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+      return;
+    }
+    if (
+      formdata.filter((data) => data.isenabled).some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast }))
+    ) {
+      return;
+    }
     if (
       formdata
         .filter((data) => data.isenabled)
         .some((data) => complainantValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => delayApplicationValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
     ) {
       return;
     }
@@ -958,7 +989,7 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
-
+  console.log(formdata);
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1065,7 +1096,7 @@ function EFilingCases({ path }) {
                 <FormComposerV2
                   label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
-                  onSubmit={(data) => onSubmit(data, index)}
+                  onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {

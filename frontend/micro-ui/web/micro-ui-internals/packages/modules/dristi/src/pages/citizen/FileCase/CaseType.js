@@ -173,6 +173,7 @@ function CaseType({ t }) {
                   ],
                 },
                 additionalDetails: {
+                  payerMobileNo: individualData?.mobileNumber,
                   ...(advocateId
                     ? {
                         advocateDetails: {

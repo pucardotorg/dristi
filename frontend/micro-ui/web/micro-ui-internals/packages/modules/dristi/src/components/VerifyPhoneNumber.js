@@ -91,10 +91,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       userType: getUserType(),
     };
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    setTimeLeft(10);
     if (!err) {
       return;
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
+      setTimeLeft(10);
       return;
     }
   };

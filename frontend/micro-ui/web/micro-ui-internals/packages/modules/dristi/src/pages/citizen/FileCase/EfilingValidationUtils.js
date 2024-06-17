@@ -76,8 +76,20 @@ export const showDemandNoticeModal = ({
   }
 };
 
-export const validateDateForDelayApplication = ({ selected, setValue, caseDetails }) => {
+export const validateDateForDelayApplication = ({ selected, setValue, caseDetails, toast, t, history, caseId }) => {
   if (selected === "delayApplications") {
+    if (
+      !caseDetails?.caseDetails ||
+      (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
+    ) {
+      setValue("delayApplicationType", {
+        isEnabled: false,
+      });
+      toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
+      setTimeout(() => {
+        history.push(`?caseId=${caseId}&selected=demandNoticeDetails`);
+      }, 3000);
+    }
     if (
       caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
         (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
@@ -241,7 +253,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
       }
     }
   }
-  if (selected === "complaintDetails") {
+  if (selected === "complaintDetails" || selected === "witnessDetails") {
     if (formData?.firstName || formData?.middleName || formData?.lastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
@@ -415,6 +427,36 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
   }
 };
 
+export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast }) => {
+  if (selected === "chequeDetails") {
+    if (
+      ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"].some(
+        (data) => !Object.keys(formData?.[data]?.document || {}).length
+      )
+    ) {
+      setShowErrorToast(true);
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
+export const advocateDetailsFileValidation = ({ formData, selected, setShowErrorToast }) => {
+  if (selected === "advocateDetails") {
+    if (["vakalatnamaFileUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)) {
+      setShowErrorToast(true);
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
 export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast }) => {
   if (selected === "complaintDetails") {
     const formDataCopy = structuredClone(formData);
@@ -494,6 +536,20 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
           break;
       }
     }
+  }
+};
+
+export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+  if (selected === "delayApplications") {
+    if (
+      formData?.delayApplicationType?.code === "NO" &&
+      (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
+    ) {
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
+  } else {
+    return false;
   }
 };
 
