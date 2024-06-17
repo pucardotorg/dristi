@@ -1,26 +1,53 @@
-import React from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Calendar } from "react-date-range";
 import { CalendarLeftArrow, CalendarRightArrow } from "../icons/svgIndex";
 import { Button, CardHeader } from "@egovernments/digit-ui-react-components";
+import useGetHearings from "../hooks/dristi/useGetHearings";
 
-function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, hearingDetails }) {
-  const hearingCounts = {};
+function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, tenantId }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date()); // State to track the current month
+  const { data: hearingResponse, refetch: refetch } = useGetHearings(
+    { hearing: { tenantId }, tenantId },
+    { applicationNumber: "", cnrNumber: "", tenantId },
+    "dristi",
+    true
+  );
 
-  // Count the number of hearings for each date
-  hearingDetails &&
-    hearingDetails.forEach((hearing) => {
-      const date = new Date(hearing.startTime).toLocaleDateString("en-CA"); // Format as YYYY-MM-DD
-      if (hearingCounts[date]) {
-        hearingCounts[date]++;
-      } else {
-        hearingCounts[date] = 1;
+  const hearingDetails = useMemo(() => hearingResponse?.HearingList || null, [hearingResponse]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await refetch(); // Call your refetch function from useGetHearings hook
+      } catch (error) {
+        console.error("Error refetching data:", error);
       }
+    };
+
+    fetchData();
+  }, [currentMonth, refetch]);
+
+  const hearingCounts = useMemo(() => {
+    const counts = {};
+    const filteredHearings = hearingDetails.filter((hearing) => {
+      const hearingDate = new Date(hearing.startTime);
+      return hearingDate.getMonth() === currentMonth.getMonth() && hearingDate.getFullYear() === currentMonth.getFullYear();
     });
 
-  const renderCustomDay = (date) => {
-    const dateStr = date.toLocaleDateString("en-CA"); // Get the date string in YYYY-MM-DD format
-    const hearingCount = hearingCounts[dateStr] || 0; // Get the count of hearings for the date
+    filteredHearings.forEach((hearing) => {
+      const date = new Date(hearing.startTime).toLocaleDateString("en-CA");
+      counts[date] = counts[date] ? counts[date] + 1 : 1;
+    });
 
+    return counts;
+  }, [currentMonth, hearingDetails]);
+
+  const monthlyCount = useMemo(() => {
+    return Object.values(hearingCounts).reduce((sum, value) => sum + value, 0);
+  }, [hearingCounts]);
+
+  const renderCustomDay = (date) => {
+    const dateStr = date.toLocaleDateString("en-CA");
+    const hearingCount = hearingCounts[dateStr] || 0;
     return (
       <div>
         <span className="rdrDayNumber">{date.getDate()}</span>
@@ -49,7 +76,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
     );
   };
 
-  const minDate = new Date(); // For example, today
+  const minDate = new Date();
   const maxDate = new Date(2025, 11, 31);
 
   return (
@@ -61,11 +88,14 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
         maxDate={maxDate}
         dayContentRenderer={renderCustomDay}
         navigatorRenderer={navigatorRenderer}
+        onShownDateChange={(date) => {
+          setCurrentMonth(date);
+        }}
       />
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
           <CardHeader>
-            {hearingDetails?.length} {t(config?.label)}
+            {monthlyCount} {t(config?.label)}
           </CardHeader>
           <Button variation="primary" onButtonClick={() => onCalendarConfirm()} label={t(config?.buttonText)}></Button>
         </div>

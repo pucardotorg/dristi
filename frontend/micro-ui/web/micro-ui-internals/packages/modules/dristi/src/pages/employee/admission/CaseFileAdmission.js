@@ -251,7 +251,8 @@ function CaseFileAdmission({ t, path }) {
         path={path}
         handleScheduleCase={handleScheduleCase}
         updatedConfig={updatedConfig}
-        hearingDetails={hearingDetails}
+        // hearingDetails={hearingDetails}
+        tenantId={tenantId}
       ></AdmissionActionModal>
     );
   }
