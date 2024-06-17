@@ -56,11 +56,10 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          {
-            !location.pathname.endsWith("/registration-requests") &&
+          {!location.pathname.endsWith("/registration-requests") &&
             !location.pathname.includes("/pending-payment-inbox") &&
-            (!location.pathname.includes("/case") && location.search.includes("?caseId")) &&
-            (
+            !location.pathname.includes("/case") &&
+            location.search.includes("?caseId") && (
               <div className="back-button-home">
                 <BackButton />
                 {!isJudge && (
@@ -85,10 +84,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
             <PrivateRoute exact path={`${path}/cases`} component={Home} />
           </div>
-          <div className={"case-and-admission"}>
-            <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
-            <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
-          </div>
+          <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
+          <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
         </div>
         {toastMessage && (
           <Toast
