@@ -11,8 +11,8 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 
 const paymentCalculation = [
   { key: "Amount Due", value: 600, currency: "Rs" },
-  { key: "Court Fees", value: 100, currency: "Rs" },
-  { key: "Advocate Fees", value: 800, currency: "Rs" },
+  { key: "Court Fees", value: 400, currency: "Rs" },
+  { key: "Advocate Fees", value: 1000, currency: "Rs" },
   { key: "Total Fees", value: 2000, currency: "Rs", isTotalFee: true },
 ];
 
@@ -95,21 +95,25 @@ const ViewPaymentDetails = ({ location, match }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [isAction, setIsAction] = useState(false);
 
-  const { caseId } = window?.Digit.Hooks.useQueryParams();
+  const { caseId, filingNumber } = window?.Digit.Hooks.useQueryParams();
 
   const { data: caseData, isLoading: isCaseSearchLoading } = useSearchCaseService(
     {
       criteria: [
-        {
-          caseId: caseId,
-        },
+        caseId
+          ? {
+              caseId,
+            }
+          : {
+              filingNumber,
+            },
       ],
       tenantId,
     },
     {},
     "dristi",
-    caseId,
-    caseId
+    caseId || filingNumber,
+    caseId || filingNumber
   );
 
   const caseDetails = useMemo(
@@ -143,6 +147,16 @@ const ViewPaymentDetails = ({ location, match }) => {
     {
       criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
       tenantId,
+    },
+    {},
+    applicationNo + individualId,
+    userType && individualId,
+    userType === "ADVOCATE" ? "/advocate/advocate/v1/_search" : "/advocate/clerk/v1/_search"
+  );
+  const { data: fetchBillData, isLoading: isFetchBillLoading } = window?.Digit.Hooks.useFetchBillsForBuissnessService(
+    {
+      // criteria: [applicationNo ? { applicationNumber: applicationNo } : { individualId }],
+      // tenantId,
     },
     {},
     applicationNo + individualId,
@@ -185,21 +199,22 @@ const ViewPaymentDetails = ({ location, match }) => {
   }, [searchResult]);
 
   const onSubmitCase = async () => {
-    await DRISTIService.caseUpdateService(
-      {
-        cases: {
-          ...caseDetails,
-          caseTitle: `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
-          filingDate: formatDate(new Date()),
-          workflow: {
-            ...caseDetails?.workflow,
-            action: "MAKE_PAYMENT",
-          },
-        },
-        tenantId,
-      },
-      tenantId
-    );
+    const resposne = await window?.Digit.PaymentService.createReciept(tenantId, {});
+    // await DRISTIService.caseUpdateService(
+    //   {
+    //     cases: {
+    //       ...caseDetails,
+    //       caseTitle: `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+    //       filingDate: formatDate(new Date()),
+    //       workflow: {
+    //         ...caseDetails?.workflow,
+    //         action: "MAKE_PAYMENT",
+    //       },
+    //     },
+    //     tenantId,
+    //   },
+    //   tenantId
+    // );
     history.push(`/${window?.contextPath}/employee/dristi/home/pending-payment-inbox`);
   };
 

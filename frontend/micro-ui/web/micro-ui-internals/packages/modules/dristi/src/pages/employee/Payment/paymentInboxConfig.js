@@ -5,7 +5,6 @@ export const paymentInboxConfig = {
     serviceName: "/case/case/v1/_search",
     requestParam: {},
     requestBody: {
-      tenantId: "pg",
       criteria: [
         {
           defaultValues: true,
@@ -31,7 +30,6 @@ export const paymentInboxConfig = {
         defaultValues: {
           filingNumber: "",
           isActive: false,
-          tenantId: "pg",
         },
         fields: [
           {
@@ -67,17 +65,20 @@ export const paymentInboxConfig = {
             jsonPath: "caseTitle",
           },
           {
+            label: "Case Type",
+            jsonPath: "caseType",
+            additionalCustomization: true,
+          },
+          {
             label: "Stage",
             jsonPath: "",
+            additionalCustomization: true,
           },
 
           {
-            label: "Case Type",
-            jsonPath: "",
-          },
-          {
-            label: "Days Since Filing",
-            jsonPath: "filingDate",
+            label: "Amount Due",
+            jsonPath: "amountDue",
+            additionalCustomization: true,
           },
           {
             label: "Action",

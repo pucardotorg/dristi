@@ -297,12 +297,14 @@ function EFilingCases({ path }) {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      closeToast();
-    }, 2000);
-
+    let timer;
+    if (showErrorToast) {
+      timer = setTimeout(() => {
+        closeToast();
+      }, 2000);
+    }
     return () => clearTimeout(timer);
-  }, [closeToast]);
+  }, [showErrorToast]);
 
   const getDefaultValues = useCallback(
     (index) =>
@@ -432,6 +434,7 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
+      return modifiedFormData;
     }
     return modifiedFormData.map(({ data }, index) => {
       let disableConfigFields = [];
@@ -546,34 +549,40 @@ function EFilingCases({ path }) {
               scrutiny[key] = scrutinyObj[item][key];
             });
           });
-          console.debug(scrutiny);
-          const updatedBody = config.body
-            .map((formComponent) => {
-              const key = formComponent.key || formComponent.populators?.name;
-              const modifiedFormComponent = structuredClone(formComponent);
-              if (modifiedFormComponent?.labelChildren === "optional") {
-                modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
-              }
-              modifiedFormComponent.disable = true;
-              if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
-                modifiedFormComponent.disable = false;
-                modifiedFormComponent.withoutLabel = true;
-                return [
-                  {
-                    type: "component",
-                    component: "ScrutinyInfo",
-                    key: `${key}Scrutiny`,
-                    label: modifiedFormComponent.label,
-                    populators: {
-                      scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+          let updatedBody = [];
+          if (Object.keys(scrutinyObj).length > 0) {
+            updatedBody = config.body
+              .map((formComponent) => {
+                const key = formComponent.key || formComponent.populators?.name;
+                const modifiedFormComponent = structuredClone(formComponent);
+                if (modifiedFormComponent?.labelChildren === "optional") {
+                  modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+                }
+                modifiedFormComponent.disable = true;
+                if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
+                  modifiedFormComponent.disable = false;
+                  modifiedFormComponent.withoutLabel = true;
+                  return [
+                    {
+                      type: "component",
+                      component: "ScrutinyInfo",
+                      key: `${key}Scrutiny`,
+                      label: modifiedFormComponent.label,
+                      populators: {
+                        scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+                      },
                     },
-                  },
-                  modifiedFormComponent,
-                ];
-              }
-              return modifiedFormComponent;
-            })
-            .flat();
+                    modifiedFormComponent,
+                  ];
+                }
+                return modifiedFormComponent;
+              })
+              .flat();
+          } else {
+            updatedBody = config.body.map((formComponent) => {
+              return formComponent;
+            });
+          }
           return {
             ...config,
             body: updatedBody,
@@ -958,7 +967,7 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
-
+  console.log(formdata);
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1065,7 +1074,7 @@ function EFilingCases({ path }) {
                 <FormComposerV2
                   label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
-                  onSubmit={(data) => onSubmit(data, index)}
+                  onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {

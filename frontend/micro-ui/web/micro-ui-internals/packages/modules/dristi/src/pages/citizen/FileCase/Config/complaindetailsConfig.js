@@ -254,6 +254,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_STATE_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -264,6 +268,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -337,6 +345,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_STATE_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -348,6 +360,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },

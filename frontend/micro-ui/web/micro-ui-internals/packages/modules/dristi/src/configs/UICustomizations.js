@@ -319,15 +319,21 @@ export const UICustomizations = {
         case "Case ID":
           return (
             <span className="link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}>
+              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${value}`}>
                 {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
               </Link>
             </span>
           );
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return <span>E-filing</span>;
+        case "Amount Due":
+          return <span>Rs 2000</span>;
         case "Action":
           return (
             <span className="action-link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("Verify")}</Link>
+              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("CS_RECORD_PAYMENT")}</Link>
             </span>
           );
         default:
