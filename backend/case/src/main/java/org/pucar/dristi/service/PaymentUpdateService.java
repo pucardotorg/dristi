@@ -65,7 +65,7 @@ public class PaymentUpdateService {
             throw new CustomException("INVALID RECEIPT",
                     "No applications found for the consumerCode " + criteria.getFilingNumber());
 
-        Role role = Role.builder().code("SYSTEM_PAYMENT").tenantId(tenantId).build();
+        Role role = Role.builder().code("SYSTEM_ADMIN").tenantId(tenantId).build();
         requestInfo.getUserInfo().getRoles().add(role);
 
         caseCriterias.forEach(caseCriteria -> {
