@@ -1210,65 +1210,6 @@
   }
 }
 
-.view-case-file {
-  padding-top: 60px;
-  padding-left: 20px;
-  background-color: #ffffff;
-  .file-case-side-stepper {
-    width: 22.5% !important;
-  }
-  .file-case-form-section {
-    width: 60% !important;
-    max-width: 60% !important;
-  }
-  .file-case-checklist {
-    width: 17.5% !important;
-    height: fit-content;
-    margin-left: 40px;
-    .checklist-main {
-      width: 17.5%;
-      border: 1px #e8e8e8 solid;
-      padding: 16px 20px;
-      border-radius: 4px;
-      position: fixed;
-      bottom: 78px;
-      right: 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      .checklist-title {
-        font-family: Roboto;
-        font-size: 16px;
-        font-weight: 700;
-        line-height: 18.75px;
-        text-align: left;
-        color: #3d3c3c;
-        margin: 0px;
-      }
-      .checklist-item {
-        display: flex;
-        gap: 12px;
-        .item-logo {
-          height: 16px;
-          width: 16px;
-          svg {
-            fill: #3d3c3c;
-          }
-        }
-        h3.item-text {
-          font-family: Roboto;
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 16.41px;
-          text-align: left;
-          color: #3d3c3c;
-          margin: 0px;
-        }
-      }
-    }
-  }
-}
-
 .signature {
   padding: 0px;
   border: none;
@@ -1399,5 +1340,180 @@
     box-shadow: none;
     width: fit-content;
     padding: 8px 24px;
+  }
+}
+
+.case-and-admission {
+  min-height: calc(100vh - 140px);
+  padding: 24px 16px;
+  background-color: #ffffff;
+
+  .view-case-file {
+    background-color: #ffffff;
+    .file-case-side-stepper {
+      width: 22.5% !important;
+      .file-case-select-form-section {
+        width: 22.5%;
+        position: fixed;
+        padding-right: 40px;
+      }
+    }
+    .file-case-form-section {
+      width: 60% !important;
+      max-width: 60% !important;
+      .employee-card-wrapper {
+        .back-button-home {
+          position: relative;
+          padding: 0px 0px 16px;
+          .back-btn2 {
+            margin: 0px;
+          }
+
+          p {
+            margin: 0px;
+          }
+        }
+        .header-content {
+          .header-details {
+            .header-title-icon {
+              display: flex;
+              gap: 16px;
+              align-items: center;
+              header.h1 {
+                font-family: Roboto;
+                font-size: 32px;
+                font-weight: 700;
+                line-height: 37.5px;
+                text-align: left;
+                color: #0b0c0c;
+                margin-bottom: 0px;
+              }
+              .case-edit-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                svg {
+                  display: inline;
+                  path {
+                    fill: #3d3c3c;
+                  }
+                }
+              }
+            }
+          }
+          .custom-case-info-div {
+            margin: 16px 0px 32px;
+          }
+        }
+        .error-flag-class {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          width: fit-content;
+          position: fixed;
+          bottom: 16px;
+          z-index: 1001;
+          left: 24px;
+          h3 {
+            font-family: Lato;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 18px;
+            text-align: left;
+            color: #3d3c3c;
+            margin: 0px;
+          }
+        }
+      }
+    }
+    .file-case-checklist {
+      width: 17.5% !important;
+      height: fit-content;
+      margin-left: 40px;
+      .checklist-main {
+        width: 17.5%;
+        border: 1px #e8e8e8 solid;
+        padding: 16px 20px;
+        border-radius: 4px;
+        position: fixed;
+        bottom: 78px;
+        right: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        .checklist-title {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #3d3c3c;
+          margin: 0px;
+          word-wrap: break-word;
+        }
+        .checklist-item {
+          display: flex;
+          gap: 12px;
+          .item-logo {
+            height: 16px;
+            width: 16px;
+            svg {
+              fill: #3d3c3c;
+            }
+          }
+          h3.item-text {
+            width: calc(100% - 28px);
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 16.41px;
+            text-align: left;
+            color: #3d3c3c;
+            margin: 0px;
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
+  }
+}
+
+.custom-case-info-div {
+  background-color: #f7f5f3;
+  padding: 0px 24px;
+  table {
+    width: 100%;
+    border-spacing: 0px 24px;
+    tr {
+      margin-bottom: 24px;
+    }
+    tr:last-child {
+      margin-bottom: 0px;
+    }
+    td {
+      border-right: 1px #0000001a solid;
+      padding: 0px 16px;
+    }
+
+    td:last-child {
+      border-right: none;
+      padding-right: 0px;
+    }
+    td:first-child {
+      padding-left: 0px;
+    }
+
+    td {
+      .case-info-title {
+        font-family: Roboto;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 16.41px;
+        text-align: left;
+        color: #77787b;
+        margin: 0px 0px 8px;
+      }
+    }
   }
 }
