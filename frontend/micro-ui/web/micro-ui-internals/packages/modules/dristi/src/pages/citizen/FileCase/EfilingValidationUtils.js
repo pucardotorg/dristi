@@ -1191,6 +1191,15 @@ export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, 
       },
     };
   }
+  if (selected === "reviewCaseFile") {
+    data.additionalDetails = {
+      ...caseDetails.additionalDetails,
+      reviewCaseFile: {
+        formdata: formdata,
+        isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
+      },
+    };
+  }
   return DRISTIService.caseUpdateService(
     {
       cases: {

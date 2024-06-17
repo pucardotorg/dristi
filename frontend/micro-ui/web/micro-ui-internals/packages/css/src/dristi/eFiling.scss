@@ -1007,6 +1007,13 @@
 .file-case-main {
   padding: 0px 20px;
   background-color: white;
+
+  &.payment-wrapper {
+    padding: 0 !important;
+    .citizen-form-wrapper {
+      margin: 0 !important;
+    }
+  }
 }
 
 .file-case {
@@ -1105,9 +1112,53 @@
 }
 
 .e-filing-payment {
+  min-width: 55%;
+  width: 800px;
+  height: 490px;
+  display: flex;
+  padding: 40px;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fff;
+  .e-filing-card-label {
+    font-family: Roboto;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 28.5px;
+    text-align: center;
+    margin: 0;
+  }
+  .e-filing-table-data-style {
+    border-left: none;
+    padding: 10px;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+
+    .case-info-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .case-info-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+      }
+    }
+  }
   .button-field {
+    display: flex;
+    width: 100% !important;
+    justify-content: space-between;
     .tertiary-button-selector {
       background-color: #007e7e !important;
+      box-shadow: none;
+      min-width: 44%;
+    }
+    .secondary-button-selector {
+      min-width: 44%;
     }
   }
 }

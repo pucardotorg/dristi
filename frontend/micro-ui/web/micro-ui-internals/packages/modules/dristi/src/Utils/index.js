@@ -37,3 +37,26 @@ export function generateUUID() {
     return v.toString(16);
   });
 }
+
+const formatWithSuffix = (day) => {
+  if (day > 3 && day < 21) return `${day}th`;
+  switch (day % 10) {
+    case 1:
+      return `${day}st`;
+    case 2:
+      return `${day}nd`;
+    case 3:
+      return `${day}rd`;
+    default:
+      return `${day}th`;
+  }
+};
+
+// Function to format a date object into "20th June 2024"
+export const formatDateInMonth = (date) => {
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const day = formatWithSuffix(date.getDate());
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+};

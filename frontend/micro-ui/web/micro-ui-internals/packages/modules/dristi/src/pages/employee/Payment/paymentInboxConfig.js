@@ -1,4 +1,4 @@
-export const litigantInboxConfig = {
+export const paymentInboxConfig = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
@@ -6,11 +6,17 @@ export const litigantInboxConfig = {
     requestParam: {},
     requestBody: {
       tenantId: "pg",
-      criteria: [{}],
+      criteria: [
+        {
+          defaultValues: true,
+          status: "PAYMENT_PENDING",
+          filingNumber: "",
+        },
+      ],
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
-    moduleName: "litigantInboxConfig",
+    moduleName: "paymentInboxConfig",
     searchFormJsonPath: "requestBody.criteria[0]",
     tableFormJsonPath: "requestBody.inbox",
   },
@@ -52,6 +58,11 @@ export const litigantInboxConfig = {
       uiConfig: {
         columns: [
           {
+            label: "Case ID",
+            jsonPath: "caseNumber",
+            additionalCustomization: true,
+          },
+          {
             label: "Case Name",
             jsonPath: "caseTitle",
           },
@@ -59,10 +70,7 @@ export const litigantInboxConfig = {
             label: "Stage",
             jsonPath: "",
           },
-          {
-            label: "Case ID",
-            jsonPath: "caseNumber",
-          },
+
           {
             label: "Case Type",
             jsonPath: "",
@@ -70,6 +78,11 @@ export const litigantInboxConfig = {
           {
             label: "Days Since Filing",
             jsonPath: "filingDate",
+          },
+          {
+            label: "Action",
+            jsonPath: "id",
+            additionalCustomization: true,
           },
         ],
         enableGlobalSearch: false,
@@ -81,4 +94,5 @@ export const litigantInboxConfig = {
     },
   },
   additionalSections: {},
+  additionalDetails: "filingNumber",
 };

@@ -4,6 +4,34 @@ import React from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
+const LocationIcon = () => (
+  <svg width="10" height="14" viewBox="0 0 10 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M4.9987 0.0820312C2.4187 0.0820312 0.332031 2.1687 0.332031 4.7487C0.332031 8.2487 4.9987 13.4154 4.9987 13.4154C4.9987 13.4154 9.66537 8.2487 9.66537 4.7487C9.66537 2.1687 7.5787 0.0820312 4.9987 0.0820312ZM4.9987 6.41536C4.0787 6.41536 3.33203 5.6687 3.33203 4.7487C3.33203 3.8287 4.0787 3.08203 4.9987 3.08203C5.9187 3.08203 6.66536 3.8287 6.66536 4.7487C6.66536 5.6687 5.9187 6.41536 4.9987 6.41536Z"
+      fill="#77787B"
+    />
+  </svg>
+);
+const LocationContent = ({ latitude = 17.2, longitude = 17.2 }) => {
+  return (
+    <div style={{ fontSize: "14px", display: "flex", marginTop: "-2px", alignItems: "center" }}>
+      <div>
+        <a
+          href={`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`}
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: "#77787B" }}
+        >
+          View on map
+        </a>
+      </div>
+      <div style={{ marginLeft: "10px", display: "flex" }}>
+        <LocationIcon></LocationIcon>
+      </div>
+    </div>
+  );
+};
+
 const CustomReviewCardRow = ({
   isScrutiny,
   data,
@@ -318,11 +346,17 @@ const CustomReviewCardRow = ({
       let address = [""];
       if (Array.isArray(addressDetails)) {
         address = addressDetails.map(({ addressDetails }) => {
-          return `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`;
+          return {
+            address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+            coordinates: addressDetails?.coordinates,
+          };
         });
       } else {
         address = [
-          `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+          {
+            address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+            coordinates: addressDetails?.coordinates,
+          },
         ];
       }
 
@@ -331,9 +365,14 @@ const CustomReviewCardRow = ({
           <div className="address">
             <div className="label">{t(label)}</div>
             <div className={`value ${!isScrutiny ? "column" : ""}`}>
-              {address.map((item) => (
-                <p>{item}</p>
-              ))}
+              {address.map((item) => {
+                return (
+                  <p>
+                    {item?.address}{" "}
+                    <LocationContent latitude={item?.coordinates?.latitude || 31.6160638} longitude={item?.coordinates?.longitude || 74.8978579} />
+                  </p>
+                );
+              })}
             </div>
 
             {isScrutiny && (

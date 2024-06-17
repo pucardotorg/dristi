@@ -275,4 +275,95 @@ export const UICustomizations = {
       }
     },
   },
+  paymentInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      ];
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      };
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case ID":
+          return (
+            <span className="link">
+              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}>
+                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link>
+            </span>
+          );
+        case "Action":
+          return (
+            <span className="action-link">
+              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("Verify")}</Link>
+            </span>
+          );
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
+  litigantInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId,
+          ...additionalDetails,
+        },
+      ];
+      if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails.searchKey]: "",
+          ...additionalDetails,
+          tenantId,
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId,
+        },
+      };
+    },
+  },
 };

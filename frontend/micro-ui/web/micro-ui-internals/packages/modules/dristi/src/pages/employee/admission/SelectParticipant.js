@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
-import { Button, CardHeader, CardLabel, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
+import { Button, CardHeader, CardLabel, CardText, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
+import { formatDateInMonth } from "../../../Utils";
 
 function SelectParticipant({
   config,
@@ -40,6 +41,12 @@ function SelectParticipant({
   return (
     <div>
       <CardLabel>{config?.header}</CardLabel>
+      {config?.checkBoxText && (
+        <CardText>
+          {config?.checkBoxText}
+          {scheduleHearingParams?.date} ?
+        </CardText>
+      )}
       <DependentCheckBoxComponent options={config} onInputChange={handleInputChange} selectedValues={selectedValues} />
       <div className="action-button-application">
         <Button

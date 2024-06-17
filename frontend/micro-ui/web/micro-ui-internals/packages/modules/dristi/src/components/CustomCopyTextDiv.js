@@ -4,7 +4,6 @@ import { CopyIcon } from "../icons/svgIndex";
 
 const CustomCopyTextDiv = ({ data, t }) => {
   const handleCopy = (text) => {
-    console.log(text);
     navigator.clipboard.writeText(text);
   };
 
