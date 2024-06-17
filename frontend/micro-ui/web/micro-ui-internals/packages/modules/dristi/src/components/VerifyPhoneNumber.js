@@ -1,12 +1,12 @@
-import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import { CardLabelError, CardText } from "@egovernments/digit-ui-components";
+import { CardLabel, CloseSvg, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import Modal from "./Modal";
-import Button from "./Button";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
-import { DRISTIService } from "../services";
 import { InfoIconRed } from "../icons/svgIndex";
+import { DRISTIService } from "../services";
+import Button from "./Button";
+import Modal from "./Modal";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -299,7 +299,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       {showModal && (
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-          actionCancelOnSubmit={() => {}}
+          actionCancelOnSubmit={() => { }}
           actionSaveLabel={t("VERIFY")}
           actionSaveOnSubmit={() => {
             if (!formData[config.key]?.[input?.name])
@@ -320,16 +320,15 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             <LabelFieldPair>
               <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                 {t(input.label) +
-                  `${
-                    input?.hasMobileNo
-                      ? formData[config.key]?.[input?.mobileNoKey]
-                        ? input?.isMobileSecret
-                          ? input?.mobileCode
-                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
-                        : ""
+                  `${input?.hasMobileNo
+                    ? formData[config.key]?.[input?.mobileNoKey]
+                      ? input?.isMobileSecret
+                        ? input?.mobileCode
+                          ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                        : ` ${formData[config.key]?.[input?.mobileNoKey]}`
                       : ""
+                    : ""
                   }`}
               </CardLabel>
               <div className="field">

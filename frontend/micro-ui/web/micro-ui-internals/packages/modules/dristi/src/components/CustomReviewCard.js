@@ -13,7 +13,7 @@ function CustomReviewCard({
   dataErrors,
   configKey,
   titleHeading,
-  setIsImageModal,
+  handleClickImage
 }) {
   if (data?.isAdvocateRepresenting?.code === "NO") {
     return null;
@@ -36,7 +36,7 @@ function CustomReviewCard({
             dataError={dataError}
             t={t}
             titleHeading={titleHeading}
-            setIsImageModal={setIsImageModal}
+            handleClickImage={handleClickImage}
           />
         );
       })}

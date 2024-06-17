@@ -1,18 +1,18 @@
+import { Button, CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
 import Accordion from "../../../components/Accordion";
-import { sideMenuConfig } from "./Config";
-import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
-import Modal from "../../../components/Modal";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { DRISTIService } from "../../../services";
-import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
-import { formatDate } from "./CaseType";
+import Modal from "../../../components/Modal";
 import { useToast } from "../../../components/Toast/useToast";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { formatDate } from "./CaseType";
+import { sideMenuConfig } from "./Config";
+import EditFieldsModal from "./EditFieldsModal";
 import {
   checkIfscValidation,
   checkNameValidation,

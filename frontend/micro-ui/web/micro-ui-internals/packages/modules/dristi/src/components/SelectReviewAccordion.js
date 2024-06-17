@@ -1,5 +1,6 @@
 import { Button, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   ChequeDetailsIcon,
   CustomArrowDownIcon,
@@ -9,9 +10,8 @@ import {
   PrayerSwornIcon,
   RespondentDetailsIcon,
 } from "../icons/svgIndex";
-import CustomReviewCard from "./CustomReviewCard";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import CustomPopUp from "./CustomPopUp";
+import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
@@ -20,7 +20,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
 
   const [isOpen, setOpen] = useState(true);
-  const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
@@ -28,6 +27,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const popupAnchor = useRef();
   const popupInfo = useMemo(() => {
     return formData?.scrutinyMessage?.popupInfo;
+  }, [formData]);
+  const imagePopupInfo = useMemo(() => {
+    return formData?.scrutinyMessage?.imagePopupInfo;
   }, [formData]);
 
   const isPopupOpen = useMemo(() => {
@@ -97,9 +99,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     }
   };
   const handleOpenPopup = (e, configKey, name, index = null, fieldName) => {
-    if (e) {
-      popupAnchor.current = e.currentTarget;
-    }
     setValue(
       "scrutinyMessage",
       {
@@ -111,9 +110,29 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       "popupInfo"
     );
   };
+
+  const handleClickImage = (e, configKey, name, index = null, fieldName, data) => {
+    setValue(
+      "scrutinyMessage",
+      {
+        name,
+        index,
+        fieldName,
+        configKey,
+        data,
+      },
+      "imagePopupInfo"
+    );
+  };
+
   const handleClosePopup = () => {
     setScrutinyError("");
     setValue("scrutinyMessage", null, "popupInfo");
+  };
+
+  const handleCloseImageModal = () => {
+    setScrutinyError("");
+    setValue("scrutinyMessage", null, "imagePopupInfo");
   };
 
   const handleDeleteError = () => {
@@ -229,12 +248,12 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         dataIndex={index}
                         t={t}
                         handleOpenPopup={handleOpenPopup}
+                        handleClickImage={handleClickImage}
                         formData={formData}
                         input={input}
                         dataErrors={dataErrors}
                         configKey={config.key}
                         titleHeading={titleHeading}
-                        setIsImageModal={setIsImageModal}
                       />
                     );
                   })}
@@ -244,7 +263,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         </div>
       </div>
       {isPopupOpen && (
-        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: -345 }}>
+        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
           <Fragment>
             <div>{t("CS_ERROR_DESCRIPTION")}</div>
             <TextArea
@@ -278,13 +297,14 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           </Fragment>
         </CustomPopUp>
       )}
-      {isImageModal && (
+      {imagePopupInfo && (
         <ImageModal
-          imageInfo={isImageModal}
+          imageInfo={imagePopupInfo}
           t={t}
+          anchorRef={popupAnchor}
           handleOpenPopup={handleOpenPopup}
           handleCloseModal={() => {
-            setIsImageModal(false);
+            handleCloseImageModal();
           }}
         />
       )}

@@ -93,7 +93,7 @@ public class OrderRegistrationValidatorTest {
         // Mock repository response
         List<Order> existingApplications = new ArrayList<>();
         existingApplications.add(order);
-        when(repository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(existingApplications);
+        when(repository.getApplications(anyString(),anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(existingApplications);
 
         // Mock MDMS data
         Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
@@ -102,7 +102,7 @@ public class OrderRegistrationValidatorTest {
 
         // Perform validation
         assertDoesNotThrow(() -> validator.validateApplicationExistence(orderRequest));
-        assertEquals("expectedTenantId", existingApplications.get(0).getTenantId());
+        assertEquals("tenantId", existingApplications.get(0).getTenantId());
     }
 
 }
