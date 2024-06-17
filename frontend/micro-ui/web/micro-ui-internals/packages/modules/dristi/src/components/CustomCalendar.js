@@ -1,20 +1,38 @@
-import React, { useState } from "react";
+import React from "react";
 import { Calendar } from "react-date-range";
 import { CalendarLeftArrow, CalendarRightArrow } from "../icons/svgIndex";
 import { Button, CardHeader } from "@egovernments/digit-ui-react-components";
 
-function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate }) {
+function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCustomDate, hearingDetails }) {
+  const hearingCounts = {};
+
+  // Count the number of hearings for each date
+  hearingDetails &&
+    hearingDetails.forEach((hearing) => {
+      const date = new Date(hearing.startTime).toLocaleDateString("en-CA"); // Format as YYYY-MM-DD
+      if (hearingCounts[date]) {
+        hearingCounts[date]++;
+      } else {
+        hearingCounts[date] = 1;
+      }
+    });
+
   const renderCustomDay = (date) => {
-    const isToday = date.getDate() === new Date().getDate(); // Check if the date is today
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Check if the date is a weekend
+    const dateStr = date.toLocaleDateString("en-CA"); // Get the date string in YYYY-MM-DD format
+    const hearingCount = hearingCounts[dateStr] || 0; // Get the count of hearings for the date
 
     return (
       <div>
-        <span class="rdrDayNumber">{date.getDate()}</span>
-        {isToday && <div style={{ fontSize: "8px", color: "#931847", marginTop: "20px" }}>10 {t("HEARINGS")}</div>}
+        <span className="rdrDayNumber">{date.getDate()}</span>
+        {hearingCount > 0 && (
+          <div style={{ fontSize: "8px", color: "#931847", marginTop: "2px" }}>
+            {hearingCount} {t("HEARINGS")}
+          </div>
+        )}
       </div>
     );
   };
+
   const navigatorRenderer = (currentDate, changeShownDate, props) => {
     return (
       <div className="custom-navigator">
@@ -30,6 +48,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
       </div>
     );
   };
+
   const minDate = new Date(); // For example, today
   const maxDate = new Date(2025, 11, 31);
 
@@ -38,14 +57,16 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
       <Calendar
         date={selectedCustomDate}
         onChange={handleSelect}
-        minDate={minDate}
+        // minDate={minDate}
         maxDate={maxDate}
         dayContentRenderer={renderCustomDay}
         navigatorRenderer={navigatorRenderer}
       />
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
-          <CardHeader>12 {t(config?.label)}</CardHeader>
+          <CardHeader>
+            {hearingDetails?.length} {t(config?.label)}
+          </CardHeader>
           <Button variation="primary" onButtonClick={() => onCalendarConfirm()} label={t(config?.buttonText)}></Button>
         </div>
       )}

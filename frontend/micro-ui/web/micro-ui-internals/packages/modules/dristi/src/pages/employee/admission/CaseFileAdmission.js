@@ -10,6 +10,7 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
+import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -36,6 +37,15 @@ function CaseFileAdmission({ t, path }) {
     caseId,
     Boolean(caseId)
   );
+  const { data: hearingResponse } = useGetHearings(
+    {
+      hearing: { tenantId },
+    },
+    { applicationNumber: "", cnrNumber: "" },
+    "dristi",
+    true
+  );
+  const hearingDetails = useMemo(() => hearingResponse?.HearingList || null, [hearingResponse]);
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
   const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complaintDetails?.formdata || null, [caseDetails]);
   const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
@@ -241,6 +251,7 @@ function CaseFileAdmission({ t, path }) {
         path={path}
         handleScheduleCase={handleScheduleCase}
         updatedConfig={updatedConfig}
+        hearingDetails={hearingDetails}
       ></AdmissionActionModal>
     );
   }

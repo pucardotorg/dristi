@@ -92,4 +92,13 @@ export const DRISTIService = {
       data,
       params,
     }),
+  searchHearings: (data, params) => {
+    return Request({
+      url: Urls.dristi.searchHearings,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    });
+  },
 };
