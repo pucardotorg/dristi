@@ -95,7 +95,7 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(caseRequest);
 
-            if (caseRequest.getCases().getStatus().equals(CREATE_DEMAND_STATUS)){
+            if (CREATE_DEMAND_STATUS.equals(caseRequest.getCases().getStatus())){
                 billingUtil.createDemand(caseRequest);
             }
 
