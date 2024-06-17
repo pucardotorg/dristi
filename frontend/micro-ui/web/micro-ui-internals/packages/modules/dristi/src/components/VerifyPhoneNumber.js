@@ -124,7 +124,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           const identifierIdDetails = JSON.parse(
             individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
           );
-          const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street ? street + "," : ""}`.trim();
+          const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
 
           const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
           const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";

@@ -39,6 +39,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfIssuance",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -51,6 +54,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfDispatch",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -149,6 +155,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfService",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -223,6 +232,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfReply",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -259,6 +271,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfAccrual",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
