@@ -1,6 +1,6 @@
 package org.pucar.dristi.kafka;
 
-import digit.service.PaymentUpdateService;
+import org.pucar.dristi.service.PaymentUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
