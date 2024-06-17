@@ -97,7 +97,7 @@ function SendCaseBack({ t, setShowModal, setSubmitModalInfo, submitModalInfo }) 
 
           // actionSaveOnSubmit={onModalSubmit}
         >
-          <CustomSubmitModal submitModalInfo={submitModalInfo} />
+          <CustomSubmitModal t={t} submitModalInfo={submitModalInfo} />
         </Modal>
       )}
     </div>
