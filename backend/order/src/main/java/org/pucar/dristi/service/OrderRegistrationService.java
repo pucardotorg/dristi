@@ -17,6 +17,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Service
 @Slf4j
 public class OrderRegistrationService {
@@ -55,8 +57,8 @@ public class OrderRegistrationService {
             throw e;
         }
         catch (Exception e) {
-            log.error("Error occurred while creating order");
-            throw new CustomException("ORDER_CREATE_EXCEPTION", e.getMessage());
+            log.error("Error occurred while creating order :: {}",e.toString());
+            throw new CustomException(ORDER_CREATE_EXCEPTION, e.getMessage());
         }
     }
 
@@ -64,7 +66,7 @@ public class OrderRegistrationService {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(cnrNumber,filingNumber, tenantId, id, status);
+            List<Order> orderList = orderRepository.getApplications(applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
@@ -75,8 +77,8 @@ public class OrderRegistrationService {
             return orderList;
 
         } catch (Exception e) {
-            log.error("Error while fetching to search results");
-            throw new CustomException("CASE_SEARCH_EXCEPTION", e.getMessage());
+            log.error("Error while fetching to search results :: {}",e.toString());
+            throw new CustomException(ORDER_SEARCH_EXCEPTION, e.getMessage());
         }
     }
 
@@ -89,8 +91,8 @@ public class OrderRegistrationService {
             try {
                 existingApplication = validator.validateApplicationExistence(body);
             } catch (Exception e) {
-                log.error("Error validating existing application");
-                throw new CustomException("ORDER_UPDATE_EXCEPTION", "Error validating existing application: " + e.getMessage());
+                log.error("Error validating existing application :: {}",e.toString());
+                throw new CustomException(ORDER_UPDATE_EXCEPTION, "Error validating existing application: " + e.getMessage());
             }
             existingApplication.setWorkflow(body.getOrder().getWorkflow());
 
@@ -104,11 +106,11 @@ public class OrderRegistrationService {
             return body.getOrder();
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating order");
+            log.error("Custom Exception occurred while updating order :: {}",e.toString());
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating order");
-            throw new CustomException("ORDER_UPDATE_EXCEPTION", "Error occurred while updating order: " + e.getMessage());
+            throw new CustomException(ORDER_UPDATE_EXCEPTION, "Error occurred while updating order: " + e.getMessage());
         }
 
     }
@@ -118,12 +120,12 @@ public class OrderRegistrationService {
             return orderRepository.checkOrderExists(orderExistsRequest.getOrder());
         }
         catch (CustomException e){
-            log.error("Custom Exception occurred while searching");
+            log.error("Custom Exception occurred while searching :: {}",e.toString());
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching to search order results");
-            throw new CustomException("ORDER_EXIST_EXCEPTION",e.getMessage());
+            log.error("Error while fetching to search order results :: {}",e.toString());
+            throw new CustomException(ORDER_EXISTS_EXCEPTION,e.getMessage());
         }
     }
 }

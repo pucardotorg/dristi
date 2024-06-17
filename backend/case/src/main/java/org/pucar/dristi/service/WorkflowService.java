@@ -42,9 +42,9 @@ public class WorkflowService {
                 ProcessInstance processInstance = getProcessInstance(caseRequest.getCases(), caseRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(caseRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
-                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
-                log.info("Application Status :: {}", applicationStatus);
-                caseRequest.getCases().setStatus(applicationStatus);
+                String state=callWorkFlow(workflowRequest).getState();
+                log.info("Workflow State for filing number :: {} and state :: {}",caseRequest.getCases().getFilingNumber(), state);
+                caseRequest.getCases().setStatus(state);
             } catch(CustomException e){
                 throw e;
             } catch (Exception e) {

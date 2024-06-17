@@ -48,7 +48,7 @@ const EnterAdhaar = ({ t, onSelect, config, params, pathOnRefresh }) => {
         submitInForm
       ></FormComposerV2>
 
-      {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+      {showErrorToast && <Toast error={true} label={t("INVALID_AADHAAR_ERROR_MESSAGE")} isDleteBtn={true} onClose={closeToast} />}
     </div>
   );
 };

@@ -66,7 +66,8 @@ public class CaseRegistrationValidator {
             throw new CustomException(VALIDATION_ERR, "caseCategory is mandatory for creating case");
         if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
             throw new CustomException(VALIDATION_ERR, "statute and sections is mandatory for creating case");
-        if (!courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION)) {
+        if (!(courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION) ||
+                courtCase.getWorkflow().getAction().equalsIgnoreCase(DELETE_DRAFT_WORKFLOW_ACTION))) {
             if (ObjectUtils.isEmpty(courtCase.getLitigants()))
                 throw new CustomException(VALIDATION_ERR, "litigants is mandatory for creating case");
         }
@@ -83,7 +84,8 @@ public class CaseRegistrationValidator {
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
             throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for updating case");
         if (!(courtCase.getWorkflow().getAction().equalsIgnoreCase(SUBMIT_CASE_WORKFLOW_ACTION) ||
-                courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION))){
+                courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION) ||
+                courtCase.getWorkflow().getAction().equalsIgnoreCase(DELETE_DRAFT_WORKFLOW_ACTION))){
             if(ObjectUtils.isEmpty(courtCase.getFilingDate()))
                 throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
         }

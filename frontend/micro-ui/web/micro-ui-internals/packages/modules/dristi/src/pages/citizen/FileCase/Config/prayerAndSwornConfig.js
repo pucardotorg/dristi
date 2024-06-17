@@ -10,6 +10,7 @@ const prayerAndSwornFormConfig = [
             {
               infoHeader: "CS_COMMON_NOTE",
               infoText: "CS_NOTETEXT_PRAYER_AND_SWORN",
+              infoTooltipMessage: "Tooltip",
               type: "InfoComponent",
             },
           ],
@@ -42,7 +43,7 @@ const prayerAndSwornFormConfig = [
               name: "NO",
             },
             {
-              code: "Maybe",
+              code: "MAYBE",
               name: "Maybe",
             },
           ],
@@ -56,6 +57,7 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectCustomTextArea",
         key: "caseSettlementCondition",
+        withoutLabel: true,
         populators: {
           inputs: [
             {
@@ -75,6 +77,7 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectUploadFiles",
         key: "memorandumOfComplaint",
+        isMandatory: true,
         populators: {
           inputs: [
             {
@@ -91,10 +94,15 @@ const prayerAndSwornFormConfig = [
               // isOptional: "optional",
               // infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
-              maxFileSize: 5,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              label: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
+              uploadGuidelines: "CS_DOCUMENT_BLURB",
+              allowedFileTypes: /(.*?)(doc|docx|pdf|txt)$/i,
+              maxFileSize: 25,
+              maxFileErrorMessage: "CS_FILE_LIMIT_25_MB",
+              allowedMaxSizeInMB: 25,
+              noteMsg: "CS_DOCUMENT_BLURB",
+              notSupportedError: "NOT_SUPPORTED_ERROR",
+              fileTypes: ["PDF"],
               isMultipleUpload: true,
             },
           ],
@@ -108,12 +116,13 @@ const prayerAndSwornFormConfig = [
         type: "component",
         component: "SelectUploadFiles",
         key: "prayerForRelief",
+        isMandatory: true,
         populators: {
           inputs: [
             {
               name: "text",
               textAreaHeader: "CS_PRAYER_FOR_RELIEF_HEADER",
-              textAreaSubHeader: "CS_PRAYER_FOR_RELIEF_SUBHEADER",
+              textAreaSubHeader: "CS_MEMORANDUM_OF_COMPLAINT_SUBHEADER",
               type: "TextAreaComponent",
               isOptional: false,
               headerClassName: "dristi-font-bold",
@@ -124,10 +133,15 @@ const prayerAndSwornFormConfig = [
               // isOptional: "optional",
               // infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
-              uploadGuidelines: "Upload .png",
-              maxFileSize: 50,
-              maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              label: "CS_PRAYER_FOR_RELIEF_HEADER",
+              uploadGuidelines: "CS_DOCUMENT_BLURB",
+              allowedFileTypes: /(.*?)(doc|docx|pdf|txt)$/i,
+              maxFileSize: 25,
+              allowedMaxSizeInMB: 25,
+              maxFileErrorMessage: "CS_FILE_LIMIT_25_MB",
+              noteMsg: "CS_DOCUMENT_BLURB",
+              notSupportedError: "NOT_SUPPORTED_ERROR",
+              fileTypes: ["PDF"],
               isMultipleUpload: true,
             },
           ],
@@ -152,8 +166,9 @@ const prayerAndSwornFormConfig = [
               type: "DragDropComponent",
               maxFileSize: 50,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["PDF"],
               isMultipleUpload: false,
+              uploadGuidelines: "UPLOAD_PDF_50",
             },
           ],
         },
@@ -170,9 +185,8 @@ const prayerAndSwornFormConfig = [
           inputs: [
             {
               name: "text",
-              textAreaSubHeader: "CS_SWORN_PAGE_ADDITIONAL_DETAILS_SUBHEADER",
+              textAreaSubHeader: "CS_ADDITIONAL_DETAILS",
               type: "TextAreaComponent",
-              isOptional: true,
             },
           ],
         },
@@ -189,10 +203,11 @@ const prayerAndSwornFormConfig = [
           inputs: [
             {
               name: "text",
-              textAreaHeader: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
+              textAreaSubHeader: "CS_SWORN_PAGE_ADDITIONAL_ACTS_SECTIONS_HEADER",
               type: "TextAreaComponent",
               isOptional: true,
               headerClassName: "dristi-font-bold",
+              subHeaderClassName: "subheader-bold-class",
             },
           ],
         },
@@ -228,8 +243,10 @@ const prayerAndSwornFormConfig = [
               type: "DragDropComponent",
               maxFileSize: 5,
               maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
-              fileTypes: ["JPG", "PNG", "PDF"],
+              fileTypes: ["PDF"],
+              uploadGuidelines: "UPLOAD_PDF_50",
               isMultipleUpload: false,
+              uploadGuidelines: "UPLOAD_MAX_PDF_DOCUMENT_SIZE",
             },
           ],
           validation: {},
@@ -242,5 +259,11 @@ const prayerAndSwornFormConfig = [
 export const prayerAndSwornConfig = {
   formconfig: prayerAndSwornFormConfig,
   header: "CS_PRAYER_AND_SWORN_STATEMENT_HEADING",
-  subtext: "CS_PRAYER_AND_SWORN_STATEMENT_SUBTEXT",
+  // addFormText: "ADD_DOCUMENT",
+  className: "prayer-and-sworm",
+  selectDocumentName: {
+    memorandumOfComplaint: "CS_MEMORANDUM_OF_COMPLAINT_HEADER",
+    prayerForRelief: "CS_PRAYER_FOR_RELIEF_HEADER",
+    swornStatement: "CS_SWORN_STATEMENT_HEADER",
+  },
 };

@@ -27,9 +27,9 @@ const AadhaarInput = (props) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!inputRefs.some((ref) => ref.current.contains(event.target))) {
+      if (!inputRefs?.some((ref) => ref.current?.contains(event.target))) {
         if (focusedInput !== null) {
-          inputRefs[focusedInput].current.focus();
+          inputRefs[focusedInput].current?.focus();
         }
       }
     };
@@ -106,7 +106,6 @@ const AadhaarInput = (props) => {
                 onChange={(e) => handleChange(input.name, e.target.value, index)}
                 onFocus={() => handleFocus(index)}
                 onKeyUp={(e) => handleKeyUp(index, e)}
-                style={{ width: "165px" }}
                 className="input-otp"
               />
             ))}

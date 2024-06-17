@@ -76,4 +76,20 @@ export const DRISTIService = {
       data,
       params,
     }),
+  updateEvidence: (data, params) =>
+    Request({
+      url: Urls.dristi.evidenceUpdate,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
+  createEvidence: (data, params) =>
+    Request({
+      url: Urls.dristi.evidenceCreate,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
 };

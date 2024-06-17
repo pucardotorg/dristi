@@ -27,20 +27,8 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
           }
         });
       }
-      if (input?.type && input.type === "documentUpload" && value?.length === 0) {
-        onSelect(config.key, { ...formData[config.key], [name]: [] });
-        return;
-      }
       onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
     } else onSelect(config.key, { ...formData[config.key], [name]: value });
-
-    // if (
-    //   value &&
-    //   typeof value === "string" &&
-    //   !value?.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern)
-    // ) {
-    //   setError(config.key, { ...formData[config.key], [name]: value });
-    // }
   }
   function getFileStoreData(filesData, input) {
     const numberOfFiles = filesData.length;
@@ -111,6 +99,9 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
                         customClass={input?.customClass}
                         containerStyles={{ ...input?.containerStyles }}
                         requestSpecifcFileRemoval={removeFile}
+                        noteMsg={input?.noteMsg}
+                        notSupportedError={input?.notSupportedError}
+                        maxFileErrorMessage={input?.maxFileErrorMessage}
                       />
                       {Array.isArray(formData?.[config.key]?.[input.name]) && formData?.[config.key]?.[input.name].length > 0 && (
                         <DocViewerWrapper
