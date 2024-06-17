@@ -20,6 +20,7 @@ import {
   chequeDateValidation,
   complainantValidation,
   demandNoticeFileValidation,
+  prayerAndSwornValidation,
   respondentValidation,
   showDemandNoticeModal,
   showToastForComplainant,
@@ -243,6 +244,8 @@ function EFilingCases({ path }) {
     }),
     [caseData]
   );
+  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+  console.debug(state);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -276,7 +279,7 @@ function EFilingCases({ path }) {
     setFormdata(data);
   }, [selected, caseDetails]);
 
-  const closeToast = useCallback(() => {
+  const closeToast = () => {
     setShowErrorToast(false);
     setErrorMsg("");
     setSuccessToast((prev) => ({
@@ -284,7 +287,7 @@ function EFilingCases({ path }) {
       showSuccessToast: false,
       successMsg: "",
     }));
-  }, []);
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -528,7 +531,14 @@ function EFilingCases({ path }) {
           };
         })
         .map((config) => {
-          const { scrutiny } = caseDetails.additionalDetails || { scrutiny: {} };
+          const scrutinyObj = caseDetails?.additionalDetails?.scrutiny?.data || {};
+          const scrutiny = {};
+          Object.keys(scrutinyObj).forEach((item) => {
+            Object.keys(scrutinyObj[item]).forEach((key) => {
+              scrutiny[key] = scrutinyObj[item][key];
+            });
+          });
+          console.debug(scrutiny);
           const updatedBody = config.body
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;
@@ -745,20 +755,31 @@ function EFilingCases({ path }) {
   const onSubmit = async () => {
     if (
       formdata
-        .filter((data) => data.isEnabled)
-        .some((data) => respondentValidation({ formData: data?.data, caseDetails, selected, setShowErrorToast }))
+        .filter((data) => data.isenabled)
+        .some((data) => respondentValidation({ t, formData: data?.data, caseDetails, selected, setShowErrorToast, toast }))
     ) {
       return;
     }
-    if (formdata.filter((data) => data.isEnabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
-      return;
-    }
-    if (formdata.filter((data) => data.isEnabled).some((data) => complainantValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+    if (formdata.filter((data) => data.isenabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
       return;
     }
     if (
       formdata
-        .filter((data) => data.isEnabled)
+        .filter((data) => data.isenabled)
+        .some((data) => complainantValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast }))
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
         .some((data) => signatureValidation({ formData: data?.data, selected, setShowErrorToast, setErrorMsg }))
     ) {
       return;

@@ -273,7 +273,7 @@ const CustomReviewCardRow = ({
                                 tenantId={tenantId}
                                 docWidth="250px"
                                 showDownloadOption={false}
-                                documentName={docName?.[value]}
+                                documentName={ data?.fileName}
                               />
                             </div>
                           );
@@ -293,7 +293,7 @@ const CustomReviewCardRow = ({
                                   tenantId={tenantId}
                                   docWidth="250px"
                                   showDownloadOption={false}
-                                  documentName={docName?.[value]}
+                                  documentName={ data?.fileName}
                                 />
                               </div>
                             );
@@ -316,7 +316,7 @@ const CustomReviewCardRow = ({
                           tenantId={tenantId}
                           docWidth="250px"
                           showDownloadOption={false}
-                          documentName={docName?.[value]}
+                          documentName={ data?.fileName}
                         />
                       </div>
                     ) : null
