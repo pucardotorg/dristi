@@ -4,6 +4,7 @@
 .popup-module.confirm-delete-modal,
 .popup-module.verify-mobile-modal,
 .popup-module.verification-complainant-modal,
+.popup-module.edit-case-name-modal,
 .popup-module.case-types {
   width: 536px;
   max-height: 560px;
@@ -158,6 +159,7 @@
   .popup-module.confirm-delete-modal,
   .popup-module.verify-mobile-modal,
   .popup-module.verification-complainant-modal,
+  .popup-module.edit-case-name-modal,
   .popup-module.case-types {
     margin: auto 16px;
     max-height: 564px;
@@ -283,6 +285,22 @@
           }
         }
       }
+    }
+  }
+}
+
+.popup-module.edit-case-name-modal {
+  .popup-module-main {
+    padding: 16px 24px 16px !important;
+
+    h3 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0b0c0c;
+      margin: 0px 0px 12px;
     }
   }
 }

@@ -1,3 +1,4 @@
+import { useToast } from "../../../components/Toast/useToast";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
 import { formatDate } from "./CaseType";
@@ -115,6 +116,11 @@ export const showToastForComplainant = ({ formData, setValue, selected, setSucce
         successMsg: "CS_AADHAR_VERIFIED_SUCCESS_MSG",
       }));
     }
+    const formDataCopy = structuredClone(formData);
+    const addressDet = formDataCopy?.complainantVerification?.individualDetails?.addressDetails;
+    const addressDetSelect = formDataCopy?.complainantVerification?.individualDetails?.["addressDetails-select"];
+    setValue("addressDetails", addressDet);
+    setValue("addressDetails-select", addressDetSelect);
   }
 };
 
@@ -353,9 +359,19 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
   }
 };
 
-export const respondentValidation = ({ formData, selected, caseDetails, setShowErrorToast }) => {
+export const respondentValidation = ({ t, formData, selected, caseDetails, setShowErrorToast, toast }) => {
   if (selected === "respondentDetails") {
     const formDataCopy = structuredClone(formData);
+    const respondentMobileNUmbers = formData?.phonenumbers?.mobileNumber;
+    const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
+    if (respondentMobileNUmbers && respondentMobileNUmbers) {
+      for (let i = 0; i < respondentMobileNUmbers.length; i++) {
+        if (respondentMobileNUmbers[i] === complainantMobileNumber) {
+          toast.error(t("RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM"));
+          return true;
+        }
+      }
+    }
     if ("inquiryAffidavitFileUpload" in formDataCopy) {
       if (
         formData?.addressDetails?.some(
@@ -399,22 +415,31 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
   }
 };
 
-export const complainantValidation = ({ formData, selected, setShowErrorToast }) => {
+export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast }) => {
   if (selected === "complaintDetails") {
     const formDataCopy = structuredClone(formData);
     if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
       if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
         setShowErrorToast(true);
         return true;
-      } else {
-        return false;
       }
     }
     if (!formData?.complainantId?.complainantId) {
       setShowErrorToast(true);
       return true;
-    } else {
-      return false;
+    }
+    const respondentData = caseDetails?.additionalDetails?.respondentDetails;
+    const complainantMobileNumber = formData?.complainantVerification?.mobileNumber;
+    if (respondentData) {
+      const respondentMobileNumbers = respondentData?.formdata?.[0]?.data?.phonenumbers?.mobileNumber;
+      if (respondentMobileNumbers && complainantMobileNumber) {
+        for (let i = 0; i < respondentMobileNumbers.length; i++) {
+          if (respondentMobileNumbers[i] === complainantMobileNumber) {
+            toast.error(t("CHANGE_RESPONDENT_MOBILE_NUMBER_REGISTERED"));
+            return true;
+          }
+        }
+      }
     }
   } else {
     return false;
@@ -469,6 +494,28 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
           break;
       }
     }
+  }
+};
+
+export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+  if (selected === "prayerSwornStatement") {
+    if (
+      !Object.keys(formData?.memorandumOfComplaint)?.length > 0 ||
+      !Object.keys(formData?.prayerForRelief)?.length > 0 ||
+      (!("document " in formData?.memorandumOfComplaint) &&
+        "text" in formData?.memorandumOfComplaint &&
+        !formData?.memorandumOfComplaint?.text.length > 0) ||
+      (!("text " in formData?.memorandumOfComplaint) &&
+        "document" in formData?.memorandumOfComplaint &&
+        !formData?.memorandumOfComplaint?.document.length > 0) ||
+      (!("document " in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
+      (!("text " in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
+    ) {
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
+  } else {
+    return false;
   }
 };
 
@@ -599,10 +646,41 @@ export const updateCaseDetails = async ({
                     },
                   });
                 const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
+
+                const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
+                const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
+                const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
+                const street = Individual?.Individual?.address[0]?.street || "";
+                const city = Individual?.Individual?.address[0]?.city || "";
+                const pincode = Individual?.Individual?.address[0]?.pincode || "";
+                const latitude = Individual?.Individual?.address[0]?.latitude || "";
+                const longitude = Individual?.Individual?.address[0]?.longitude || "";
+                const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+
+                const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
+
                 complainantVerification[index] = {
                   individualDetails: {
                     document: [documentData],
                     individualId: Individual?.Individual?.individualId,
+                    "addressDetails-select": {
+                      pincode: pincode,
+                      district: addressLine2,
+                      city: city,
+                      state: addressLine1,
+                      locality: address,
+                    },
+                    addressDetails: {
+                      pincode: pincode,
+                      district: addressLine2,
+                      city: city,
+                      state: addressLine1,
+                      coordinates: {
+                        longitude: latitude,
+                        latitude: longitude,
+                      },
+                      locality: address,
+                    },
                   },
                 };
                 return {
@@ -982,7 +1060,6 @@ export const updateCaseDetails = async ({
         .filter((item) => item.isenabled)
         .map(async (data) => {
           const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
-          debugger;
           if (data?.data?.SelectUploadDocWithName) {
             documentData.SelectUploadDocWithName = await Promise.all(
               data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
@@ -1099,7 +1176,6 @@ export const updateCaseDetails = async ({
               infoBoxData.data = data?.data?.caseSettlementCondition?.text;
             }
           }
-          debugger;
           return {
             ...data,
             data: {
