@@ -98,7 +98,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
-  const handleOpenPopup = (e, configKey, name, index = null, fieldName) => {
+  const handleOpenPopup = (e, configKey, name, index = null, fieldName, inputlist = []) => {
     setValue(
       "scrutinyMessage",
       {
@@ -106,6 +106,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         index,
         fieldName,
         configKey,
+        inputlist,
       },
       "popupInfo"
     );
@@ -136,7 +137,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   };
 
   const handleDeleteError = () => {
-    const { name, configKey, index, fieldName } = popupInfo;
+    const { name, configKey, index, fieldName, inputlist } = popupInfo;
     let currentMessage =
       formData && formData[configKey]
         ? { ...formData[config.key]?.[name] }
@@ -147,9 +148,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     if (index == null) {
       currentMessage.scrutinyMessage = { FSOError: "" };
     } else {
+      let fieldObj = { [fieldName]: { FSOError: "" } };
+      inputlist.forEach((key) => (fieldObj[key] = { FSOError: "" }));
       currentMessage.form[index] = {
         ...currentMessage.form[index],
-        [fieldName]: { FSOError: "" },
+        ...fieldObj,
       };
     }
     setScrutinyError("");
@@ -162,7 +165,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     if (!trimmedError) {
       return;
     }
-    const { name, configKey, index, fieldName } = popupInfo;
+    const { name, configKey, index, fieldName, inputlist } = popupInfo;
+    let fieldObj = { [fieldName]: { FSOError: trimmedError } };
+    inputlist.forEach((key) => (fieldObj[key] = { FSOError: trimmedError }));
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
         ? { ...formData[config.key]?.[name] }
@@ -175,7 +180,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     } else {
       currentMessage.form[index] = {
         ...(currentMessage?.form?.[index] || {}),
-        [fieldName]: { FSOError: trimmedError },
+        ...fieldObj,
       };
     }
     setValue(config.key, currentMessage, name);

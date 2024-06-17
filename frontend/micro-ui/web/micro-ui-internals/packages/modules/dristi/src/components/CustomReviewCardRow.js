@@ -87,7 +87,7 @@ const CustomReviewCardRow = ({
               <div
                 className="flag"
                 onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value);
+                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, value);
                 }}
                 key={dataIndex}
               >
@@ -162,23 +162,6 @@ const CustomReviewCardRow = ({
               className={`adhaar-verification-info-card`}
             />
           </div>
-          {isScrutiny && (
-            <div
-              className="flag"
-              onClick={(e) => {
-                handleOpenPopup(e, configKey, name, dataIndex, value);
-              }}
-              key={dataIndex}
-            >
-              {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
-            </div>
-          )}
-          {dataError && isScrutiny && (
-            <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
-              {dataError}
-            </div>
-          )}
         </div>
       );
 
@@ -254,10 +237,10 @@ const CustomReviewCardRow = ({
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
             <div className="label">{t(label)}</div>
             <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
-              {Array.isArray(value)
-                ? value?.map((value) =>
-                    extractValue(data, value) && Array.isArray(extractValue(data, value)) ? (
-                      extractValue(data, value)?.map((data, index) => {
+              {Array.isArray(files)
+                ? files?.map((file, fileindex) => {
+                    return file && Array.isArray(file) ? (
+                      file?.map((data, index) => {
                         if (data?.fileStore) {
                           return (
                             <div
@@ -267,13 +250,13 @@ const CustomReviewCardRow = ({
                               }}
                             >
                               <DocViewerWrapper
-                                key={`${value}-${index}`}
+                                key={`${fileindex}-${index}`}
                                 fileStoreId={data?.fileStore}
                                 displayFilename={data?.fileName}
                                 tenantId={tenantId}
                                 docWidth="250px"
                                 showDownloadOption={false}
-                                documentName={ data?.fileName}
+                                documentName={data?.fileName}
                               />
                             </div>
                           );
@@ -287,13 +270,13 @@ const CustomReviewCardRow = ({
                                 }}
                               >
                                 <DocViewerWrapper
-                                  key={`${value}-${index}`}
+                                  key={`${fileindex}-${index}`}
                                   fileStoreId={data?.fileStore}
                                   displayFilename={data?.fileName}
                                   tenantId={tenantId}
                                   docWidth="250px"
                                   showDownloadOption={false}
-                                  documentName={ data?.fileName}
+                                  documentName={data?.fileName}
                                 />
                               </div>
                             );
@@ -302,7 +285,7 @@ const CustomReviewCardRow = ({
                           return null;
                         }
                       })
-                    ) : extractValue(data, value) ? (
+                    ) : file ? (
                       <div
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -310,23 +293,23 @@ const CustomReviewCardRow = ({
                         }}
                       >
                         <DocViewerWrapper
-                          key={`${value}-${extractValue(data, value)?.name}`}
-                          fileStoreId={extractValue(data, value)?.fileStore}
-                          displayFilename={extractValue(data, value)?.fileName}
+                          key={`${fileindex}-${file?.name}`}
+                          fileStoreId={file?.fileStore}
+                          displayFilename={file?.fileName}
                           tenantId={tenantId}
                           docWidth="250px"
                           showDownloadOption={false}
-                          documentName={ data?.fileName}
+                          documentName={data?.fileName}
                         />
                       </div>
-                    ) : null
-                  )
+                    ) : null;
+                  })
                 : null}
             </div>
             <div
               className="flag"
               onClick={(e) => {
-                handleOpenPopup(e, configKey, name, dataIndex, value);
+                handleOpenPopup(e, configKey, name, dataIndex, "image", value);
               }}
               key={dataIndex}
             >

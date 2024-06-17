@@ -183,12 +183,15 @@ function ViewCaseFile({ t }) {
   };
   const handleNextCase = () => {
     setActionModal(false);
+    history.push("/digit-ui/employee/dristi/cases");
   };
   const handleAllocationJudge = () => {
     setActionModal(false);
+    history.push("/digit-ui/employee/dristi/cases");
   };
   const handleCloseSucessModal = () => {
     setActionModal(false);
+    history.push("/digit-ui/employee/dristi/cases");
   };
   const handleRegisterCase = () => {
     updateCaseDetails("VALIDATE").then((res) => {
@@ -215,7 +218,7 @@ function ViewCaseFile({ t }) {
     return <Loader />;
   }
   if (isScrutiny && state !== "UNDER_SCRUTINY") {
-    // if state is not under scrutiny, don't allow 
+    // if state is not under scrutiny, don't allow
     // history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
@@ -247,6 +250,7 @@ function ViewCaseFile({ t }) {
                 </div>
               </div>
             ))}
+            <div>{totalErrors.total ? `${totalErrors.total} ${t("CS_TOTAL_ERRORS")}` : t("CS_NO_ERRORS")}</div>
           </div>
         </div>
         <div className="file-case-form-section">
