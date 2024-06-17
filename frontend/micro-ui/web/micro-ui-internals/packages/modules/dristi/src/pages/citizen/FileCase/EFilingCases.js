@@ -29,6 +29,8 @@ import {
   signatureValidation,
   updateCaseDetails,
   validateDateForDelayApplication,
+  chequeDetailFileValidation,
+  advocateDetailsFileValidation,
 } from "./EfilingValidationUtils";
 import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 
@@ -298,13 +300,13 @@ function EFilingCases({ path }) {
 
   useEffect(() => {
     let timer;
-    if (showErrorToast) {
+    if (showErrorToast || showSuccessToast) {
       timer = setTimeout(() => {
         closeToast();
       }, 2000);
     }
     return () => clearTimeout(timer);
-  }, [showErrorToast]);
+  }, [showErrorToast, showSuccessToast]);
 
   const getDefaultValues = useCallback(
     (index) =>
@@ -484,6 +486,11 @@ function EFilingCases({ path }) {
                   body.disable = true;
                 }
               }
+
+              if (body?.labelChildren === "optional" && Object.keys(caseDetails?.additionalDetails?.scrutiny?.data || {}).length === 0) {
+                body.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+              }
+
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
                   ...body,
@@ -779,6 +786,14 @@ function EFilingCases({ path }) {
       return;
     }
     if (formdata.filter((data) => data.isenabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+      return;
+    }
+    if (formdata.filter((data) => data.isenabled).some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+      return;
+    }
+    if (
+      formdata.filter((data) => data.isenabled).some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast }))
+    ) {
       return;
     }
     if (

@@ -253,7 +253,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
       }
     }
   }
-  if (selected === "complaintDetails") {
+  if (selected === "complaintDetails" || selected === "witnessDetails") {
     if (formData?.firstName || formData?.middleName || formData?.lastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
@@ -427,6 +427,36 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
   }
 };
 
+export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast }) => {
+  if (selected === "chequeDetails") {
+    if (
+      ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"].some(
+        (data) => !Object.keys(formData?.[data]?.document || {}).length
+      )
+    ) {
+      setShowErrorToast(true);
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
+export const advocateDetailsFileValidation = ({ formData, selected, setShowErrorToast }) => {
+  if (selected === "advocateDetails") {
+    if (["vakalatnamaFileUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)) {
+      setShowErrorToast(true);
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+};
+
 export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast }) => {
   if (selected === "complaintDetails") {
     const formDataCopy = structuredClone(formData);
@@ -511,7 +541,10 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
 
 export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
   if (selected === "delayApplications") {
-    if (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0)) {
+    if (
+      formData?.delayApplicationType?.code === "NO" &&
+      (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
+    ) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
