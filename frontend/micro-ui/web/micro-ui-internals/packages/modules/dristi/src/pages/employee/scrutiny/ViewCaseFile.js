@@ -1,13 +1,15 @@
-import { CheckSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { BackButton, CheckSvg, CloseButton, CloseSvg, EditIcon, FormComposerV2, Header, Loader, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useLocation, Redirect, useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon } from "../../../icons/svgIndex";
+import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import SendCaseBackModal from "../../../components/SendCaseBackModal";
 import SuccessModal from "../../../components/SuccessModal";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import { DRISTIService } from "../../../services";
+import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
+import Modal from "../../../components/Modal";
 
 function ViewCaseFile({ t }) {
   const history = useHistory();
@@ -20,6 +22,9 @@ function ViewCaseFile({ t }) {
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
   const [actionModal, setActionModal] = useState(false);
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [showEditCaseNameModal, setShowEditCaseNameModal] = useState(false);
+  const [newCaseName, setNewCaseName] = useState("");
+  const [modalCaseName, setModalCaseName] = useState("");
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -237,6 +242,34 @@ function ViewCaseFile({ t }) {
     "CS_WRONG_JURISDICTION",
     "CS_PHOTO_MISMATCH",
   ];
+  const caseInfo = [
+    {
+      key: "CASE_CATEGORY",
+      value: caseDetails?.caseCategory,
+    },
+    {
+      key: "CASE_TYPE",
+      value: "NIA S138",
+    },
+    {
+      key: "SUBMITTED_ON",
+      value: caseDetails?.filingDate,
+    },
+  ];
+
+  const CloseBtn = (props) => {
+    return (
+      <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+        <CloseSvg />
+      </div>
+    );
+  };
+
+  const Heading = (props) => {
+    return <h1 className="heading-m">{props.label}</h1>;
+  };
+
+  console.log('caseDetails', caseDetails)
   return (
     <div className="view-case-file">
       <div className="file-case">
@@ -255,13 +288,23 @@ function ViewCaseFile({ t }) {
         </div>
         <div className="file-case-form-section">
           <div className="employee-card-wrapper">
+            <div className="back-button-home">
+              <BackButton />
+            </div>
             <div className="header-content">
               <div className="header-details">
-                <Header>{t("Review Case")}</Header>
-                <div className="header-icon" onClick={() => {}}>
+                <div className="header-title-icon">
+                  <Header>
+                    {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+
+                  </Header>
+                  <div className="case-edit-icon" onClick={() => { setShowEditCaseNameModal(true) }}><EditIcon /></div>
+                </div>
+                <div className="header-icon" onClick={() => { }}>
                   <CustomArrowDownIcon />
                 </div>
               </div>
+              <CustomCaseInfoDiv data={caseInfo} t={t} />
             </div>
             <FormComposerV2
               label={primaryButtonLabel}
@@ -277,6 +320,11 @@ function ViewCaseFile({ t }) {
               showSecondaryLabel={true}
               actionClassName="e-filing-action-bar"
             />
+
+            <div className="error-flag-class">
+              <FlagIcon />
+              <h3>No Errors</h3>
+            </div>
 
             {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
           </div>
@@ -296,6 +344,27 @@ function ViewCaseFile({ t }) {
             })}
           </div>
         </div>
+
+        {
+          showEditCaseNameModal && <Modal
+            headerBarEnd={
+              <CloseBtn onClick={() => { setShowEditCaseNameModal(false) }} />
+            }
+            // actionCancelLabel={t(actionCancelLabel)}
+            actionCancelOnSubmit={() => setShowEditCaseNameModal(false)}
+            actionSaveLabel={"Confirm"}
+            actionSaveOnSubmit={() => {
+              setNewCaseName(modalCaseName);
+              setShowEditCaseNameModal(false);
+            }}
+            formId="modal-action"
+            headerBarMain={<Heading label={"Change Case Name"} />}
+            className="edit-case-name-modal"
+          >
+            <h3 className="input-label">Case Name</h3>
+            <TextInput type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+          </Modal>
+        }
         {actionModal == "sendCaseBack" && (
           <SendCaseBackModal
             actionCancelLabel={"CS_COMMON_BACK"}

@@ -54,13 +54,22 @@ const Heading = (props) => {
 
 function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   const checkIfTextPresent = () => {
-    if (formData && formData?.[config.key]?.document) {
+    if (Object.keys(formData).length === 0) {
+      return true;
+    }
+    if (Object.keys(formData?.[config.key]).length === 0) {
+      return true;
+    } else if (formData?.[config.key]?.text) {
+      return true;
+    } else if (formData && !formData?.[config.key]?.text && formData?.[config.key]?.document && formData?.[config.key]?.document.length === 0) {
+      return true;
+    } else {
       return false;
-    } else return true;
+    }
   };
 
   const checkIfFilesPresent = () => {
-    if (formData && formData?.[config.key]?.document) {
+    if (formData && formData?.[config.key]?.document && formData?.[config.key]?.document.length !== 0) {
       return true;
     } else return false;
   };
@@ -119,7 +128,8 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   const handleChange = (file, input, index = Infinity) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1, file);
-    setValue(currentValue, input?.name);
+    // setValue(currentValue, input?.name);
+    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue });
   };
 
   const handleDeleteFile = (input, index) => {
@@ -129,7 +139,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
       setShowTextArea(true);
       setIsFileAdded(false);
     }
-    setValue(currentValue, input?.name);
+    onSelect(config.key, undefined);
   };
 
   const dragDropJSX = (
@@ -154,6 +164,11 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     setShowTextArea(false);
     setShowModal(false);
     setIsFileAdded(true);
+    const dataCopy = structuredClone(formData[config.key]);
+    if ("text" in dataCopy) {
+      delete dataCopy.text;
+    }
+    onSelect(config.key, dataCopy);
   };
 
   function getFileStoreData(filesData, input) {
@@ -244,7 +259,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {showModal && (
             <Modal
               headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-              actionCancelOnSubmit={() => { }}
+              actionCancelOnSubmit={() => {}}
               actionSaveLabel={t("ADD")}
               actionSaveOnSubmit={(data) => handleAddFileInModal(data)}
               // hideSubmit={false}
@@ -254,7 +269,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
               submitTextClassName={"verification-button-text-modal"}
             >
               <div>
-              {<h1>{t(input.label)}</h1>}
+                {<h1>{t(input.label)}</h1>}
 
                 <MultiUploadWrapper
                   t={t}

@@ -108,8 +108,8 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
       {documentData.length > 0 &&
         documentData.map((data, index) => {
           return (
-            <div key={index} className="file-uploader-with-name-sub" >
-              <div className="file-uploader-with-name-header" >
+            <div key={index} className="file-uploader-with-name-sub">
+              <div className="file-uploader-with-name-header">
                 <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${index + 1}`}</h1>
                 <span
                   onClick={() => {
@@ -120,7 +120,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                   <DeleteFileIcon />
                 </span>
               </div>
-              <div className="drag-drop-visible-main-with-custom-name" >
+              <div className="drag-drop-visible-main-with-custom-name">
                 {inputs.map((input) => {
                   let currentValue = data && data[input.name];
                   if (input.type === "text") {
