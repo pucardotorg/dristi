@@ -157,9 +157,9 @@ export const UICustomizations = {
     getNames: () => {
       return {
         url: "/advocate/advocate/v1/status/_search",
-        params: { status: "ACTIVE", tenantId: "pg" },
+        params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
         body: {
-          tenantId: "pg",
+          tenantId: window?.Digit.ULBService.getStateId(),
         },
         config: {
           select: (data) => {
