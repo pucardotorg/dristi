@@ -9,6 +9,8 @@ on:
   pull_request:
     branches: 
       - 'develop'
+    paths:
+      - 'frontend/pucar-ui/web/micro-ui-internals/**'
       # Push events to branches matching refs/heads/mona/octocat
 
 jobs:
