@@ -200,7 +200,7 @@ export const sideMenuConfig = [
         isDisabled: false,
         pageConfig: witnessConfig,
         mandatoryFields: [
-          "firstName", // checkThis- whole witness details form is optional.
+          "firstName", // whole witness details form is optional.
           "lastName",
         ],
         ifMultipleAddressLocations: {
