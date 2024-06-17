@@ -2,6 +2,8 @@ package org.pucar.dristi.config;
 
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class ServiceConstants {
 
@@ -47,6 +49,7 @@ public class ServiceConstants {
 	public static final String BUSINESS_SERVICES = "&businessServices=";
 	public static final String INDIVIDUAL_NOT_FOUND = "INDIVIDUAL_NOT_FOUND";
 	public static final String ERROR_WHILE_FETCHING_FROM_ADVOCATE = "ERROR_WHILE_FETCHING_FROM_ADVOCATE";
+	public static final String ERROR_WHILE_CREATING_DEMAND_FOR_CASE = "ERROR_WHILE_CREATING_DEMAND_FOR_CASE";
 	public static final String CREATE_CASE_ERR = "CREATE_CASE_ERR";
 	public static final String SEARCH_CASE_ERR = "CASE_NOT_FOUND";
 	public static final String UPDATE_CASE_ERR = "UPDATE_CASE_ERR";
@@ -82,5 +85,9 @@ public class ServiceConstants {
 	public static final String SAVE_DRAFT_CASE_WORKFLOW_ACTION = "SAVE_DRAFT";
 	public static final String SUBMIT_CASE_WORKFLOW_ACTION = "SUBMIT_CASE";
 	public static final String DELETE_DRAFT_WORKFLOW_ACTION = "DELETE_DRAFT";
-
+	public static final Long TAX_PERIOD_FROM = 1680287400000l;
+	public static final Long TAX_PERIOD_TO = 1711909799000l;
+	public static final BigDecimal TAX_AMOUNt = BigDecimal.valueOf(2000.00);
+	public static final String TAX_HEADMASTER_CODE = "CASE_ADVANCE_CARRYFORWARD";
+	public static final String CREATE_DEMAND_STATUS = "PENDING_PAYMENT";
 }
