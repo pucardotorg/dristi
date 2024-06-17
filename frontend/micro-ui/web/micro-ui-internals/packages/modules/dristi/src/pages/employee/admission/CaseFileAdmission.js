@@ -9,18 +9,15 @@ import { DRISTIService } from "../../../services";
 import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
-
-const DIGIT = window.Digit;
+import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
-  // const { caseId } = DIGIT.hooks.useQueryParams();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalInfo, setModalInfo] = useState(null);
   const [submitModalInfo, setSubmitModalInfo] = useState(null);
   const [formdata, setFormdata] = useState({ isenabled: true, data: {}, displayindex: 0 });
-  const roles = Digit.UserService.getUser()?.info?.roles;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const caseId = searchParams.get("caseId");
@@ -91,23 +88,23 @@ function CaseFileAdmission({ t, path }) {
 
   const caseInfo = [
     {
-      key: "Case Number",
+      key: "CASE_NUMBER",
       value: caseDetails?.caseNumber,
     },
     {
-      key: "Case Category",
+      key: "CASE_CATEGORY",
       value: caseDetails?.caseCategory,
     },
     {
-      key: "Case Type",
+      key: "CASE_TYPE",
       value: "NIA S138",
     },
     {
-      key: "Court Name",
+      key: "COURT_NAME",
       value: "Kerala City Criminal Court",
     },
     {
-      key: "Submitted on",
+      key: "SUBMITTED_ON",
       value: caseDetails?.filingDate,
     },
   ];
@@ -119,79 +116,37 @@ function CaseFileAdmission({ t, path }) {
     }
   };
   const onSubmit = () => {
-    setSubmitModalInfo({
-      header: "The case file has been admitted successfully.",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
-      caseInfo: caseInfo,
-      backButtonText: "Back to Home",
-      nextButtonText: "Schedule next hearing",
-      isArrow: false,
-      showTable: true,
-    });
+    setSubmitModalInfo({ ...admitCaseSubmitConfig, caseInfo: caseInfo });
 
     setModalInfo({ type: "admitCase", page: "0" });
     setShowModal(true);
   };
   const onSaveDraft = () => {
+    setShowModal(true);
     setSubmitModalInfo({
-      header: "Admission hearing has been successfully scheduled",
-      caseInfo: [
-        {
-          key: "Case Number",
-          value: caseDetails?.caseNumber,
-        },
-        {
-          key: "Case Category",
-          value: caseDetails?.caseCategory,
-        },
-        {
-          key: "Case Type",
-          value: "NIA S138",
-        },
-        {
-          key: "Court Name",
-          value: "Kerala City Criminal Court",
-        },
-        {
-          key: "Submitted on",
-          value: caseDetails?.filingDate,
-        },
-        {
-          key: "Next Hearing Date",
-          value: "17 March 2024",
-        },
-      ],
+      ...scheduleCaseSubmitConfig,
+      caseInfo: [...caseInfo],
       shortCaseInfo: [
         {
-          key: "Case Number",
+          key: "CASE_NUMBER",
           value: caseDetails?.caseNumber,
         },
         {
-          key: "Court Name",
+          key: "COURT_NAME",
           value: "Kerala City Criminal Court",
         },
         {
-          key: "Case Type",
+          key: "CASE_TYPE",
           value: "NIA S138",
         },
       ],
-      backButtonText: "Back to Home",
-      nextButtonText: "Next Case",
-      isArrow: true,
-      showTable: true,
     });
-    setShowModal(true);
     setModalInfo({ type: "schedule", page: "0" });
   };
   const onSendBack = () => {
     setSubmitModalInfo({
-      header: "The case file has been sent back for correction",
-      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE.",
-      caseInfo: [{ key: "Case File Number", value: caseDetails?.filingNumber }],
-      backButtonText: "Back to Home",
-      nextButtonText: "Next Case",
-      isArrow: true,
-      showCopytext: true,
+      ...sendBackCase,
+      caseInfo: [{ key: "CASE_FILE_NUMBER", value: caseDetails?.filingNumber }],
     });
     setShowModal(true);
     setModalInfo({ type: "sendCaseBack", page: "0" });
@@ -205,6 +160,7 @@ function CaseFileAdmission({ t, path }) {
     updateCaseDetails("SEND_BACK", { comment: props?.commentForLitigant }).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
     });
+    setModalInfo({ ...modalInfo, page: 1 });
   };
   const handleAdmitCase = () => {
     updateCaseDetails("ADMIT", formdata).then((res) => {
@@ -212,6 +168,16 @@ function CaseFileAdmission({ t, path }) {
     });
   };
   const handleScheduleCase = (props) => {
+    setSubmitModalInfo({
+      ...scheduleCaseSubmitConfig,
+      caseInfo: [
+        ...caseInfo,
+        {
+          key: "CS_NEXT_HEARING",
+          value: props.date,
+        },
+      ],
+    });
     updateCaseDetails("SCHEDULE_ADMISSION_HEARING", props).then((res) => {
       setModalInfo({ ...modalInfo, page: 2 });
     });
@@ -231,9 +197,9 @@ function CaseFileAdmission({ t, path }) {
     });
 
     config.checkBoxes.forEach((checkbox) => {
-      if (checkbox.name === "Compliant") {
+      if (checkbox.key === "Compliant") {
         checkbox.dependentFields = complainantNames;
-      } else if (checkbox.name === "Respondent") {
+      } else if (checkbox.key === "Respondent") {
         checkbox.dependentFields = respondentNames;
       }
     });
@@ -242,7 +208,6 @@ function CaseFileAdmission({ t, path }) {
   };
 
   const updatedConfig = caseDetails && updateConfigWithCaseDetails(selectParticipantConfig, caseDetails);
-  console.log(updatedConfig, "config");
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
     litigentDetails: "CS_LITIGENT_DETAILS",
@@ -307,7 +272,7 @@ function CaseFileAdmission({ t, path }) {
                 </div>
               </div>
             </div>
-            <CustomCaseInfoDiv data={caseInfo} style={{ margin: "24px 0px" }} />
+            <CustomCaseInfoDiv t={t} data={caseInfo} style={{ margin: "24px 0px" }} />
             <FormComposerV2
               label={t("CS_ADMIT_CASE")}
               config={formConfig}

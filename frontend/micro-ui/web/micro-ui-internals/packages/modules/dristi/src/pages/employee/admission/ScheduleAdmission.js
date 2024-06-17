@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import CustomChooseDate from "../../../components/CustomChooseDate";
 import { Button, CardLabel, CardText, DateRange, EventCalendar, SubmitBar, TextInput, Toast } from "@egovernments/digit-ui-react-components";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { formatDateInMonth } from "../../../Utils";
 
@@ -55,7 +54,7 @@ function ScheduleAdmission({
   };
   return (
     <div>
-      {selectedChip && <CustomCaseInfoDiv data={submitModalInfo?.shortCaseInfo} style={{ marginTop: "24px" }} />}
+      {selectedChip && <CustomCaseInfoDiv t={t} data={submitModalInfo?.shortCaseInfo} style={{ marginTop: "24px" }} />}
 
       <CardText className="card-label-smaller">{t(config.label)}</CardText>
       <TextInput
@@ -92,7 +91,7 @@ function ScheduleAdmission({
           variation="primary"
           onSubmit={handleSubmit}
           className="primary-label-btn"
-          label={selectedChip ? "Continue" : "Select Participants"}
+          label={selectedChip ? "CS_COMMON_CONTINUE" : "CS_SELECT_PARTICIPANT"}
         ></SubmitBar>
       </div>
       {modalInfo?.showCustomDate ? (
@@ -104,7 +103,7 @@ function ScheduleAdmission({
         </h3>
       ) : (
         <h3>
-          {t("Dates don’t work?")}{" "}
+          {t("DATE_DONT_WORK")}{" "}
           <span style={{ color: "#007E7E" }} onClick={() => showCustomDateModal()}>
             {String(t("CS_SELECT_CUSTOM_DATE"))}
           </span>

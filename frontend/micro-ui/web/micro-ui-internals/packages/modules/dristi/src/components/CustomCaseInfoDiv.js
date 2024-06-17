@@ -1,7 +1,7 @@
 import React from "react";
 import { CardSubHeader, FormComposerV2, Toast } from "@egovernments/digit-ui-react-components";
 
-const CustomCaseInfoDiv = ({ data, style }) => {
+const CustomCaseInfoDiv = ({ t, data, style }) => {
   // Function to partition the data into rows of three items each
   const partitionData = (data) => {
     const result = [];
@@ -22,7 +22,7 @@ const CustomCaseInfoDiv = ({ data, style }) => {
                   key={cellIndex}
                   style={{ borderLeft: cellIndex !== 0 || cellIndex !== partitionData?.length - 1 ? "1px solid gray" : "none", padding: "10px" }}
                 >
-                  <CardSubHeader>{key}</CardSubHeader>
+                  <CardSubHeader>{t(key)}</CardSubHeader>
                   <div>{value}</div>
                 </td>
               ))}
