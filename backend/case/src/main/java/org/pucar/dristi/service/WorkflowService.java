@@ -141,10 +141,10 @@ public class WorkflowService {
         CaseCriteria caseCriteria = updateRequest.getCriteria().get(0);
 
         ProcessInstance process = ProcessInstance.builder()
-                .businessService("case")
+                .businessService(config.getCaseBusinessServiceName())
                 .businessId(caseCriteria.getFilingNumber())
                 .comment("Payment for Case processed")
-                .moduleName("BillingService")
+                .moduleName(config.getCaseBusinessName())
                 .tenantId(tenantId)
                 .action("MAKE_PAYMENT")
                 .build();
