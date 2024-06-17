@@ -184,8 +184,8 @@ public class WorkflowUtil {
                 return response.getProcessInstances().get(0);
             return null;
         } catch (Exception e) {
-            log.error("Error getting current workflow: {}", e.getMessage());
-            throw new CustomException("GET_WORKFLOW_EXCEPTION", e.getMessage());
+            log.error("Error getting current workflow :: {}", e.toString());
+            throw new CustomException(GET_WORKFLOW_EXCEPTION, e.getMessage());
         }
     }
 
