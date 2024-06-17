@@ -41,14 +41,10 @@ public class BillingUtil {
 		Demand demand = new Demand();
 		demand.setTenantId(caseRequest.getCases().getTenantId());
 		demand.setConsumerCode(caseRequest.getCases().getFilingNumber());
-//		Party party = caseRequest.getCases().getLitigants().stream().filter(l -> l.getPartyType().equals("COMPLAINAINT_PRIMARY")).collect(Collectors.toList()).get(0);
-//		User user = new User();
-//		user.setTenantId(party.getTenantId());
-//		user.setUuid(party.getId().toString());
 		demand.setPayer(caseRequest.getRequestInfo().getUserInfo());
-		demand.setPayer(user);
 		demand.setTaxPeriodFrom(TAX_PERIOD_FROM);
 		demand.setTaxPeriodTo(TAX_PERIOD_TO);
+
 		DemandDetail demandDetail = new DemandDetail();
 		demandDetail.setTaxAmount(TAX_AMOUNt);
 		demandDetail.setTaxHeadMasterCode(TAX_HEADMASTER_CODE);
