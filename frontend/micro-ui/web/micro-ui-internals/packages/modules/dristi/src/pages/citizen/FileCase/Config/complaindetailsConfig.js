@@ -13,7 +13,7 @@ const complainantDetailsFormConfig = [
           label: "SELECT_COMPLAINANT_TYPE",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -25,11 +25,13 @@ const complainantDetailsFormConfig = [
               complainantLocation: true,
               commonFields: true,
               isEnabled: true,
+              isIndividual: true,
             },
             {
               code: "REPRESENTATIVE",
               name: "Representative of an Entity",
               showCompanyDetails: true,
+              isIndividual: false,
               commonFields: true,
               isVerified: true,
               hasBarRegistrationNo: true,
@@ -60,6 +62,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         isMandatory: true,
         populators: {
+          name: "complainantId",
           inputs: [
             {
               label: "COMPLAINANT_ID",
@@ -91,7 +94,7 @@ const complainantDetailsFormConfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
-            maxLength: 100,
+            // maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -126,7 +129,7 @@ const complainantDetailsFormConfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
-            maxLength: 100,
+            // maxLength: 100,
             title: "",
             patternType: "Name",
           },

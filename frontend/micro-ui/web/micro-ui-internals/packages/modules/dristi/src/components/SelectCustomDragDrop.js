@@ -4,6 +4,7 @@ import { FileUploader } from "react-drag-drop-files";
 import { CardLabelError, UploadIcon } from "@egovernments/digit-ui-react-components";
 import RenderFileCard from "./RenderFileCard";
 import { FileUploadIcon } from "../icons/svgIndex";
+import { useToast } from "./Toast/useToast";
 
 const DragDropJSX = ({ t, currentValue }) => {
   return (
@@ -30,6 +31,7 @@ const DragDropJSX = ({ t, currentValue }) => {
 };
 
 function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
+  const toast = useToast();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -96,7 +98,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
           <div className="drag-drop-heading">
             <h1 className="card-label custom-document-header">{t(input?.documentHeader)}</h1>
             {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
-            <CustomErrorTooltip message={t(input?.infoTooltipMessage)} showTooltip={Boolean(input?.infoTooltipMessage)} />
+            <CustomErrorTooltip message={t("")} showTooltip={Boolean(input?.infoTooltipMessage)} />
           </div>
           {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
         </div>
@@ -123,6 +125,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             types={input?.fileTypes}
             children={<DragDropJSX t={t} currentValue={currentValue} />}
             key={input?.name}
+            onTypeError={() => {
+              toast.error("Invalid File type");
+            }}
           />
           <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
         </div>

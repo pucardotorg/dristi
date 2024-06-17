@@ -13,7 +13,7 @@ const respondentFromconfig = [
           label: "SELECT_RESPONDENT_TYPE",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -49,7 +49,7 @@ const respondentFromconfig = [
         label: "FIRST_NAME",
         isMandatory: true,
         populators: {
-          name: "firstName",
+          name: "respondentFirstName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
@@ -57,7 +57,7 @@ const respondentFromconfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
-            maxLength: 100,
+            // maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -68,7 +68,7 @@ const respondentFromconfig = [
         label: "MIDDLE_NAME",
         labelChildren: "optional",
         populators: {
-          name: "middleName",
+          name: "respondentMiddleName",
           validation: {
             pattern: {
               message: "CORE_COMMON_APPLICANT_NAME_INVALID",
@@ -84,7 +84,7 @@ const respondentFromconfig = [
         label: "LAST_NAME",
         isMandatory: true,
         populators: {
-          name: "lastName",
+          name: "respondentLastName",
           error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
@@ -92,7 +92,7 @@ const respondentFromconfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
-            maxLength: 100,
+            // maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -167,7 +167,7 @@ const respondentFromconfig = [
           type: "radioButton",
           name: "whatsAppConfirmation",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -227,7 +227,7 @@ const respondentFromconfig = [
           name: "emailConfirmation",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -292,7 +292,7 @@ const respondentFromconfig = [
         component: "SelectComponentsMulti",
         key: "addressDetails",
         withoutLabel: true,
-        error: "sample required message",
+        error: "CORE_REQUIRED_FIELD_ERROR",
         required: false,
         isMandatory: true,
         populators: {

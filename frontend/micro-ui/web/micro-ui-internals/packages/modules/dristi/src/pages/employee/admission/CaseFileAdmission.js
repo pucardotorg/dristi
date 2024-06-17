@@ -33,7 +33,7 @@ function CaseFileAdmission({ t, path }) {
   const onSubmit = () => {
     setSubmitModalInfo({
       header: "The case file has been admitted successfully.",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
       caseInfo: [
         {
           key: "Case Number",
@@ -119,7 +119,7 @@ function CaseFileAdmission({ t, path }) {
   const onSendBack = () => {
     setSubmitModalInfo({
       header: "The case file has been sent back for correction",
-      subHeader: "Case updates with file number has been sent to all parties via SMS.",
+      subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
       caseInfo: [{ key: "Case File Number", value: caseDetails?.filingNumber }],
       backButtonText: "Back to Home",
       nextButtonText: "Next Case",

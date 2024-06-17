@@ -29,15 +29,20 @@ export const sideMenuConfig = [
           "firstName",
           "lastName",
           "complainantVerification.otpNumber", // checkThis- make sure to unset otpNumber if otp model is closed or canceled.
-          "addressDetails-select.pincode",
-          "addressDetails-select.state",
-          "addressDetails-select.district",
-          "addressDetails-select.city",
-          "addressDetails-select.locality",
         ],
         initialMandatoryFieldCount: 10,
         dependentMandatoryFields: [
-          { field: "company_Name.companyName", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressCompanyDetails-select.pincode", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressCompanyDetails-select.state", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressCompanyDetails-select.district", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressCompanyDetails-select.city", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressCompanyDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
+          { field: "addressDetails-select.pincode", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
+          { field: "addressDetails-select.state", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
+          { field: "addressDetails-select.district", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
+          { field: "addressDetails-select.city", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
+          { field: "addressDetails-select.locality", dependentOn: "complainantType", dependentOnKey: "isIndividual" },
+          { field: "companyName", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
           { field: "companyDetailsUpload.document", dependentOn: "complainantType", dependentOnKey: "showCompanyDetails" },
         ],
         optionalFields: ["middleName"],
@@ -51,8 +56,8 @@ export const sideMenuConfig = [
         isCompleted: false,
         isDisabled: false,
         pageConfig: respondentconfig,
-        mandatoryFields: ["respondentType", "firstName", "lastName"],
-        ifDataKeyHasValueAsArray: {
+        mandatoryFields: ["respondentType", "respondentFirstName", "respondentLastName"],
+        ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
           mandatoryFields: [
@@ -65,7 +70,7 @@ export const sideMenuConfig = [
         },
         initialMandatoryFieldCount: 8,
         dependentMandatoryFields: [
-          { field: "company_Name.companyName", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
+          { field: "companyName", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
           { field: "companyDetailsUpload.document", dependentOn: "respondentType", dependentOnKey: "showCompanyDetails" },
         ],
         optionalFields: ["middleName", "phonenumbers.mobileNumber", "emails.emailId", "inquiryAffidavitFileUpload.document"],
@@ -198,7 +203,7 @@ export const sideMenuConfig = [
           "firstName", // checkThis- whole witness details form is optional.
           "lastName",
         ],
-        ifDataKeyHasValueAsArray: {
+        ifMultipleAddressLocations: {
           // using this for counting mandatory fields in case of multiple locations .
           dataKey: "addressDetails",
           mandatoryFields: [
@@ -209,7 +214,7 @@ export const sideMenuConfig = [
             "addressDetails.locality",
           ],
         },
-        initialMandatoryFieldCount: 6,
+        initialMandatoryFieldCount: 0,
         dependentMandatoryFields: [],
         optionalFields: ["middleName", "phonenumbers.mobileNumber", "emails.emailId", "witnessAdditionalDetails.text"],
         dependentOptionalFields: [],

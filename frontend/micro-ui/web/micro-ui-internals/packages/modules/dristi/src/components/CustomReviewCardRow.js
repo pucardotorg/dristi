@@ -18,7 +18,7 @@ const CustomReviewCardRow = ({
   titleHeading,
   setIsImageModal,
 }) => {
-  const { type = null, label = null, value = null, badgeType = null } = config;
+  const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
@@ -194,7 +194,7 @@ const CustomReviewCardRow = ({
             <div className="label">{t(label)}</div>
             <div className="value">
               {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-              {!Array.isArray(numbers) && `+91-${numbers}`}
+              {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
             </div>
             {isScrutiny && (
               <div
@@ -217,6 +217,16 @@ const CustomReviewCardRow = ({
         </div>
       );
     case "image":
+      const files = value?.map((value) => extractValue(data, value)) || [];
+      let hasImages = false;
+      files.forEach((file) => {
+        if (file && file?.length > 0) {
+          hasImages = true;
+        }
+      });
+      if (!hasImages) {
+        return null;
+      }
       return (
         <div className={`image-main ${isScrutiny && dataError && "error"}`}>
           <div className={`image ${!isScrutiny ? "column" : ""}`}>
@@ -241,6 +251,7 @@ const CustomReviewCardRow = ({
                                 tenantId={tenantId}
                                 docWidth="250px"
                                 showDownloadOption={false}
+                                documentName={docName?.[value]}
                               />
                             </div>
                           );
@@ -260,6 +271,7 @@ const CustomReviewCardRow = ({
                                   tenantId={tenantId}
                                   docWidth="250px"
                                   showDownloadOption={false}
+                                  documentName={docName?.[value]}
                                 />
                               </div>
                             );
@@ -282,6 +294,7 @@ const CustomReviewCardRow = ({
                           tenantId={tenantId}
                           docWidth="250px"
                           showDownloadOption={false}
+                          documentName={docName?.[value]}
                         />
                       </div>
                     ) : null
