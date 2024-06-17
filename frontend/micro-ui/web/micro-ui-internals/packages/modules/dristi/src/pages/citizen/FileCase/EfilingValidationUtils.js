@@ -76,8 +76,20 @@ export const showDemandNoticeModal = ({
   }
 };
 
-export const validateDateForDelayApplication = ({ selected, setValue, caseDetails }) => {
+export const validateDateForDelayApplication = ({ selected, setValue, caseDetails, toast, t, history, caseId }) => {
   if (selected === "delayApplications") {
+    if (
+      !caseDetails?.caseDetails ||
+      (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
+    ) {
+      setValue("delayApplicationType", {
+        isEnabled: false,
+      });
+      toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
+      setTimeout(() => {
+        history.push(`?caseId=${caseId}&selected=demandNoticeDetails`);
+      }, 3000);
+    }
     if (
       caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
         (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
@@ -494,6 +506,17 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
           break;
       }
     }
+  }
+};
+
+export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+  if (selected === "delayApplications") {
+    if (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0)) {
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
+  } else {
+    return false;
   }
 };
 

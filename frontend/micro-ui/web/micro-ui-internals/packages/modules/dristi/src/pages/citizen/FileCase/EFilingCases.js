@@ -20,6 +20,7 @@ import {
   checkOnlyCharInCheque,
   chequeDateValidation,
   complainantValidation,
+  delayApplicationValidation,
   demandNoticeFileValidation,
   prayerAndSwornValidation,
   respondentValidation,
@@ -252,7 +253,6 @@ function EFilingCases({ path }) {
 
   const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
 
-  console.debug(state);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -635,7 +635,7 @@ function EFilingCases({ path }) {
         setReceiptDemandNoticeModal,
         setServiceOfDemandNoticeModal,
       });
-      validateDateForDelayApplication({ setValue, caseDetails, selected });
+      validateDateForDelayApplication({ setValue, caseDetails, selected, toast, t, history, caseId });
       showToastForComplainant({ formData, setValue, selected, setSuccessToast });
       setFormdata(
         formdata.map((item, i) => {
@@ -785,6 +785,13 @@ function EFilingCases({ path }) {
       formdata
         .filter((data) => data.isenabled)
         .some((data) => complainantValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => delayApplicationValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
     ) {
       return;
     }
