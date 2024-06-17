@@ -1,13 +1,13 @@
-import { ButtonSelector, CitizenInfoLabel, Close, CloseSvg, DownloadIcon } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
-import CustomDetailsCard from "../../../components/CustomDetailsCard";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import Modal from "../../../components/Modal";
-import Button from "../../../components/Button";
-import { DRISTIService } from "../../../services";
 import { Loader } from "@egovernments/digit-ui-components";
-import { userTypeOptions } from "../registration/config";
+import { CitizenInfoLabel, CloseSvg } from "@egovernments/digit-ui-react-components";
+import React, { useMemo, useState } from "react";
+import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
+import Button from "../../../components/Button";
+import CustomDetailsCard from "../../../components/CustomDetailsCard";
+import Modal from "../../../components/Modal";
 import { FileDownloadIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { userTypeOptions } from "../registration/config";
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");

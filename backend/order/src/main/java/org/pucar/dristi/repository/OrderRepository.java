@@ -17,6 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.ORDER_EXISTS_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.ORDER_SEARCH_EXCEPTION;
+
 
 @Slf4j
 @Repository
@@ -37,15 +40,15 @@ public class OrderRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Order> getApplications(String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public List<Order> getApplications(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
 
         try {
             List<Order> orderList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String orderQuery = "";
-            orderQuery = queryBuilder.getOrderSearchQuery(cnrNumber,filingNumber, tenantId, id, status);
-            log.info("Final order query: {}", orderQuery);
+            orderQuery = queryBuilder.getOrderSearchQuery(applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
+            log.info("Final order query :: {}", orderQuery);
             List<Order> list = jdbcTemplate.query(orderQuery, rowMapper);
             log.info("DB order list :: {}", list);
             if (list != null) {
@@ -63,7 +66,7 @@ public class OrderRepository {
             String statueAndSectionQuery = "";
             preparedStmtListSt = new ArrayList<>();
             statueAndSectionQuery = queryBuilder.getStatuteSectionSearchQuery(ids, preparedStmtListSt);
-            log.info("Final statue and sections query: {}", statueAndSectionQuery);
+            log.info("Final statue and sections query :: {}", statueAndSectionQuery);
             Map<UUID, StatuteSection> statuteSectionsMap = jdbcTemplate.query(statueAndSectionQuery, preparedStmtListSt.toArray(), statuteSectionRowMapper);
             log.info("DB statute sections map :: {}", statuteSectionsMap);
             if (statuteSectionsMap != null) {
@@ -75,7 +78,7 @@ public class OrderRepository {
             String documentQuery = "";
             preparedStmtListDoc = new ArrayList<>();
             documentQuery = queryBuilder.getDocumentSearchQuery(ids, preparedStmtListDoc);
-            log.info("Final document query: {}", documentQuery);
+            log.info("Final document query :: {}", documentQuery);
             Map<UUID, List<Document>> documentMap = jdbcTemplate.query(documentQuery, preparedStmtListDoc.toArray(), documentRowMapper);
             log.info("DB document map :: {}", documentMap);
             if (documentMap != null) {
@@ -86,12 +89,12 @@ public class OrderRepository {
             return orderList;
         }
         catch (CustomException e){
-            log.error("Custom Exception while fetching order list");
+            log.error("Custom Exception while fetching order list :: {}",e.toString());
             throw e;
         }
         catch (Exception e){
-            log.error("Error while fetching order list");
-            throw new CustomException("ORDER_SEARCH_EXCEPTION","Error while fetching order list: "+e.getMessage());
+            log.error("Error while fetching order list :: {}",e.toString());
+            throw new CustomException(ORDER_SEARCH_EXCEPTION,"Error while fetching order list: "+e.getMessage());
         }
     }
 
@@ -102,7 +105,7 @@ public class OrderRepository {
                     orderExists.setExists(false);
                 } else {
                     String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber());
-                    log.info("Final order exist query: {}", orderExistQuery);
+                    log.info("Final order exist query :: {}", orderExistQuery);
                     Integer count = jdbcTemplate.queryForObject(orderExistQuery, Integer.class);
                     orderExists.setExists(count != null && count > 0);
                 }
@@ -111,8 +114,8 @@ public class OrderRepository {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            log.error("Error while checking order exist");
-            throw new CustomException("ORDER_EXIST_ERROR", "Custom exception while checking order exist : " + e.getMessage());
+            log.error("Error while checking order exist :: {}",e.toString());
+            throw new CustomException(ORDER_EXISTS_EXCEPTION, "Custom exception while checking order exist : " + e.getMessage());
         }
     }
 

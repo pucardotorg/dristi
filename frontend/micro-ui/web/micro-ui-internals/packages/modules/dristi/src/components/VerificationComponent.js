@@ -1,8 +1,8 @@
-import { CardLabel, CardLabelError, CloseSvg, FormComposerV2, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { InfoCard } from "@egovernments/digit-ui-components";
+import { CardLabel, CloseSvg, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useMemo, useState } from "react";
-import Button from "./Button";
 import { idProofVerificationConfig } from "../configs/component";
+import Button from "./Button";
 import Modal from "./Modal";
 import RenderFileCard from "./RenderFileCard";
 import { useToast } from "./Toast/useToast";

@@ -1,9 +1,9 @@
+import isEqual from "lodash/isEqual";
 import React, { useEffect, useMemo, useState } from "react";
-import LocationComponent from "./LocationComponent";
+import { generateUUID } from "../Utils";
 import { ReactComponent as CrossIcon } from "../images/cross.svg";
 import Button from "./Button";
-import { generateUUID } from "../Utils";
-import isEqual from "lodash/isEqual";
+import LocationComponent from "./LocationComponent";
 
 const selectCompMultiConfig = {
   type: "component",
