@@ -11,7 +11,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
     return (
       <div>
         <span class="rdrDayNumber">{date.getDate()}</span>
-        {isToday && <div style={{ fontSize: "8px", color: "#931847", marginTop: "20px" }}>10 Hearings</div>}
+        {isToday && <div style={{ fontSize: "8px", color: "#931847", marginTop: "20px" }}>10 {t("HEARINGS")}</div>}
       </div>
     );
   };
@@ -45,7 +45,7 @@ function CustomCalendar({ config, t, handleSelect, onCalendarConfirm, selectedCu
       />
       {config?.showBottomBar && (
         <div className="calendar-bottom-div">
-          <CardHeader>12 {config?.label}</CardHeader>
+          <CardHeader>12 {t(config?.label)}</CardHeader>
           <Button variation="primary" onButtonClick={() => onCalendarConfirm()} label={t(config?.buttonText)}></Button>
         </div>
       )}
