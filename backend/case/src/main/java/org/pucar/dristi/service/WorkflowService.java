@@ -9,9 +9,7 @@ import org.egov.common.contract.workflow.*;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
-import org.pucar.dristi.web.models.CaseRequest;
-import org.pucar.dristi.web.models.CourtCase;
-import org.pucar.dristi.web.models.RequestInfoWrapper;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -136,6 +134,26 @@ public class WorkflowService {
             log.error("Error getting process instance for case registration payment :: {}", e.toString());
             throw new CustomException(WORKFLOW_SERVICE_EXCEPTION, e.getMessage());
         }
+    }
+
+    public ProcessInstanceRequest getProcessInstanceForCasePayment(CaseSearchRequest updateRequest, String tenantId) {
+
+        CaseCriteria caseCriteria = updateRequest.getCriteria().get(0);
+
+        ProcessInstance process = ProcessInstance.builder()
+                .businessService(config.getCaseBusinessServiceName())
+                .businessId(caseCriteria.getFilingNumber())
+                .comment("Payment for Case processed")
+                .moduleName(config.getCaseBusinessName())
+                .tenantId(tenantId)
+                .action("MAKE_PAYMENT")
+                .build();
+
+        return ProcessInstanceRequest.builder()
+                .requestInfo(updateRequest.getRequestInfo())
+                .processInstances(Arrays.asList(process))
+                .build();
+
     }
 
     public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {

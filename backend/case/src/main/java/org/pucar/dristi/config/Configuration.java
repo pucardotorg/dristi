@@ -136,4 +136,11 @@ public class Configuration {
 	@Value("${egov.workflow.case.business.service.name}")
 	private String caseBusinessServiceName;
 
+	//Billing
+	@Value("${egov.billing.host}")
+	private String billingHost;
+
+	@Value("${egov.demand.create.endpoint}")
+	private String demandCreateEndPoint;
+
 }
