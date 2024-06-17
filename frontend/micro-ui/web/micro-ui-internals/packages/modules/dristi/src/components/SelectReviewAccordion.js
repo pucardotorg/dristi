@@ -136,7 +136,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   };
 
   const handleDeleteError = () => {
-    debugger;
     const { name, configKey, index, fieldName } = popupInfo;
     let currentMessage =
       formData && formData[configKey]
