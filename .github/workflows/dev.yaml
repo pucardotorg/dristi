@@ -231,7 +231,7 @@ jobs:
           docker push pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
 
       - name: Build and Push Docker image for digit-ui
-        if: ${{ steps.check_files.outputs.run_job_digit-ui == 'true' }}
+        if: ${{ steps.check_files.outputs.run_job_digit_ui == 'true' }}
         run: |
           docker build -t digit-ui:v1.0.0-${{ github.sha }} -f web/docker/Dockerfile .
           docker tag digit-ui:v1.0.0-${{ github.sha }} pucardev.azurecr.io/digit-ui:v1.0.0-${{ github.sha }}
