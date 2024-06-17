@@ -244,6 +244,8 @@ function EFilingCases({ path }) {
     }),
     [caseData]
   );
+  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+  console.debug(state);
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -529,7 +531,14 @@ function EFilingCases({ path }) {
           };
         })
         .map((config) => {
-          const { scrutiny } = caseDetails.additionalDetails || { scrutiny: {} };
+          const scrutinyObj = caseDetails?.additionalDetails?.scrutiny?.data || {};
+          const scrutiny = {};
+          Object.keys(scrutinyObj).forEach((item) => {
+            Object.keys(scrutinyObj[item]).forEach((key) => {
+              scrutiny[key] = scrutinyObj[item][key];
+            });
+          });
+          console.debug(scrutiny);
           const updatedBody = config.body
             .map((formComponent) => {
               const key = formComponent.key || formComponent.populators?.name;

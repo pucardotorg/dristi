@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 
-function SelectCustomNote({ t, config }) {
+function SelectCustomNote({ t, config, onClick }) {
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -23,6 +23,11 @@ function SelectCustomNote({ t, config }) {
           <h2>{t(input?.infoHeader)}</h2>
         </div>
         <div className="custom-note-info-div">{<p>{t(input?.infoText)}</p>}</div>
+        {input?.linkText && (
+          <span style={{ color: "#007E7E" }} onClick={onClick}>
+            {String(t(input?.linkText))}
+          </span>
+        )}
       </div>
     );
   });

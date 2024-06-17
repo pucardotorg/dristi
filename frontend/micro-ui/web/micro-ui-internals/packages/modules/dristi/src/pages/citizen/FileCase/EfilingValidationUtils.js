@@ -603,7 +603,7 @@ const onDocumentUpload = async (fileData, filename, tenantId) => {
   return { file: fileUploadRes?.data, fileType: fileData.type, filename };
 };
 
-export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, caseDetails, selected, formdata, pageConfig, setFormDataValue }) => {
+export const updateCaseDetails = async ({ isCompleted, setIsDisabled, tenantId, caseDetails, selected, formdata, pageConfig, setFormDataValue , action}) => {
   const data = {};
   setIsDisabled(true);
   if (selected === "complaintDetails") {
