@@ -34,7 +34,7 @@ export const reviewCaseFileFormConfig = [
                     "companyDetailsUpload.document": "CS_COMPANY_DETAILS",
                   },
                 },
-                { type: "address", label: "ADDRESS", value: "addressDetails-select" },
+                { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
               data: ComplainantDummy,
             },

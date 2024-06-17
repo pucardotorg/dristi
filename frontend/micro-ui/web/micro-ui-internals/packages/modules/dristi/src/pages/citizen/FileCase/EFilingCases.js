@@ -264,7 +264,7 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
+      setFieldsRemaining(fieldsRemainingCopy);
     }
   }, [caseDetails]);
 
@@ -848,8 +848,23 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
-  const onSubmitCase = (data) => {
+  const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
+    await DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...caseDetails,
+          caseTitle: `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+          filingDate: formatDate(new Date()),
+          workflow: {
+            ...caseDetails?.workflow,
+            action: "SUBMIT_CASE",
+          },
+        },
+        tenantId,
+      },
+      tenantId
+    );
     history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };
 

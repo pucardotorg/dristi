@@ -8,6 +8,9 @@ import Home from "./home";
 import { useToast } from "../../components/Toast/useToast";
 import ApplicationDetails from "./ApplicationDetails";
 import ViewCaseFile from "./scrutiny/ViewCaseFile";
+import Breadcrumb from "../../components/BreadCrumb";
+import PaymentInbox from "./Payment/PaymentInbox";
+import ViewPaymentDetails from "./Payment/ViewPaymentDetails";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -15,7 +18,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { toastMessage, toastType, closeToast } = useToast();
   const Inbox = window?.Digit?.ComponentRegistryService?.getComponent("Inbox");
   const hideHomeCrumb = [`${path}/cases`];
-  const roles = Digit.UserService.getUser()?.info?.roles;
+  const roles = window?.Digit.UserService.getUser()?.info?.roles;
   const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
   const employeeCrumbs = [
     {
@@ -31,6 +34,18 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
       isLast: !location.pathname.includes("/details"),
     },
     {
+      path: `${path}/pending-payment-inbox`,
+      content: t("CS_PENDING_PAYMENT_INBOX"),
+      show: location.pathname.includes("/pending-payment-inbox"),
+      isLast: !location.pathname.includes("/pending-payment-inbox"),
+    },
+    {
+      path: `${path}/pending-payment-inbox/pending-payment-details`,
+      content: t("CS_PENDING_PAYMENT_DETAILS"),
+      show: location.pathname.includes("/pending-payment-details"),
+      isLast: true,
+    },
+    {
       path: ``,
       content: t("ES_APPLICATION_DETAILS"),
       show: location.pathname.includes("/registration-requests/details"),
@@ -41,11 +56,10 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          {!location.pathname.endsWith("/registration-requests") && (
+          {!location.pathname.endsWith("/registration-requests") && !location.pathname.includes("/pending-payment-inbox") && (
             <div className="back-button-home">
               <BackButton />
 
-              {/* <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb> */}
               {!isJudge && (
                 <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
                   <span style={{ color: "#f47738" }}>Help</span>
@@ -54,8 +68,17 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
               )}
             </div>
           )}
+          {location.pathname.includes("/pending-payment-inbox") && (
+            <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
+          )}
           <PrivateRoute exact path={`${path}/registration-requests`} component={Inbox} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
+          <PrivateRoute exact path={`${path}/pending-payment-inbox`} component={(props) => <PaymentInbox {...props} />} />
+          <PrivateRoute
+            exact
+            path={`${path}/pending-payment-inbox/pending-payment-details`}
+            component={(props) => <ViewPaymentDetails {...props} />}
+          />
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
             <PrivateRoute exact path={`${path}/cases`} component={Home} />
           </div>

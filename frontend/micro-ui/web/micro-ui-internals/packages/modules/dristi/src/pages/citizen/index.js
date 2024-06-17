@@ -129,7 +129,15 @@ const App = ({ stateCode, tenantId }) => {
             <PrivateRoute exact path={`${path}/home/application-details`} component={(props) => <ApplicationDetails {...props} />} />
           )}
           <PrivateRoute exact path={`${path}/response`} component={Response} />
-          <div className={location.pathname.includes("/file-case") ? "file-case-main" : ""}>
+          <div
+            className={
+              location.pathname.includes("/file-case")
+                ? location.pathname.includes("/file-case/e-filing-payment")
+                  ? "file-case-main payment-wrapper"
+                  : "file-case-main"
+                : ""
+            }
+          >
             <PrivateRoute path={`${path}/home/file-case`}>
               <FileCase t={t}></FileCase>
             </PrivateRoute>
