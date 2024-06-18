@@ -54,6 +54,9 @@ const Heading = (props) => {
 
 function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
   const checkIfTextPresent = () => {
+    if (!formData) {
+      return true;
+    }
     if (Object.keys(formData).length === 0) {
       return true;
     }
@@ -139,7 +142,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
       setShowTextArea(true);
       setIsFileAdded(false);
     }
-    onSelect(config.key, undefined);
+    onSelect(config.key, { ...formData[config.key], [input?.name]: currentValue });
   };
 
   const dragDropJSX = (
@@ -151,7 +154,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     </div>
   );
 
-  const opneModal = () => {
+  const openModal = () => {
     setShowModal(true);
     onSelect(config.key, { ...formData[config.key], document: [] });
   };
@@ -197,7 +200,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {!isFileAdded && (
             <div className="text-upload-file-main">
               <p>{t("CS_WANT_TO_UPLOAD")}</p>
-              <span onClick={opneModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
+              <span onClick={openModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
                 {t("WBH_BULK_BROWSE_FILES")}
               </span>
             </div>

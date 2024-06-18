@@ -561,14 +561,14 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
     if (
       !Object.keys(formData?.memorandumOfComplaint)?.length > 0 ||
       !Object.keys(formData?.prayerForRelief)?.length > 0 ||
-      (!("document " in formData?.memorandumOfComplaint) &&
+      (!("document" in formData?.memorandumOfComplaint) &&
         "text" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.text.length > 0) ||
-      (!("text " in formData?.memorandumOfComplaint) &&
+      (!("text" in formData?.memorandumOfComplaint) &&
         "document" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.document.length > 0) ||
-      (!("document " in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
-      (!("text " in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
+      (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
+      (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
     ) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
@@ -1194,7 +1194,7 @@ export const updateCaseDetails = async ({
               return result;
             }, Promise.resolve({}));
           }
-          if (data?.data?.memorandumOfComplaint?.document) {
+          if (data?.data?.memorandumOfComplaint?.document && data?.data?.memorandumOfComplaint?.document.length > 0) {
             documentData.memorandumOfComplaint.document = await Promise.all(
               data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
                 if (document) {
@@ -1211,7 +1211,7 @@ export const updateCaseDetails = async ({
           } else if (data?.data?.memorandumOfComplaint?.text) {
             documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
           }
-          if (data?.data?.prayerForRelief?.document) {
+          if (data?.data?.prayerForRelief?.document && data?.data?.prayerForRelief?.document.length > 0) {
             documentData.prayerForRelief.document = await Promise.all(
               data?.data?.prayerForRelief?.document?.map(async (document) => {
                 if (document) {
