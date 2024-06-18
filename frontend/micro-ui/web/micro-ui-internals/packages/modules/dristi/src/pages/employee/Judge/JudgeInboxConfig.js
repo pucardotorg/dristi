@@ -67,7 +67,7 @@ export const judgeInboxConfig = {
           },
           {
             label: "Case ID",
-            jsonPath: "caseNumber",
+            jsonPath: "filingNumber",
           },
           {
             label: "Case Type",

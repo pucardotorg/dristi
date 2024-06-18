@@ -57,7 +57,7 @@ export const paymentInboxConfig = {
         columns: [
           {
             label: "Case ID",
-            jsonPath: "caseNumber",
+            jsonPath: "filingNumber",
             additionalCustomization: true,
           },
           {
