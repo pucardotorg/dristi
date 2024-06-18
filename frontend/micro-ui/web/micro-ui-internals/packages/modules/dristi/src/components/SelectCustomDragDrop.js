@@ -91,7 +91,6 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     let fileErrors = currentValue.map((file) => fileValidator(file, input));
     const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
-    console.log(errors);
     return (
       <div className="drag-drop-visible-main">
         <div className="drag-drop-heading-main">

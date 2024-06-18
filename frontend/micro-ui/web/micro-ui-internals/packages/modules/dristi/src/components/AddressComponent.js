@@ -16,14 +16,14 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },
       ],
     [config?.populators?.inputs]
   );
-  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => { } });
+  const [coordinateData, setCoordinateData] = useState({ callbackFunc: () => {} });
 
   const getLatLngByPincode = async (pincode) => {
     const response = await Axios.get(
@@ -153,19 +153,19 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                         isFirstRender && formData[config.key]
                           ? formData[config.key]["locality"]
                           : (() => {
-                            const plusCode = getLocation(location, "plus_code");
-                            const neighborhood = getLocation(location, "neighborhood");
-                            const sublocality_level_1 = getLocation(location, "sublocality_level_1");
-                            const sublocality_level_2 = getLocation(location, "sublocality_level_2");
-                            return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
-                              .reduce((result, current) => {
-                                if (current) {
-                                  result.push(current);
-                                }
-                                return result;
-                              }, [])
-                              .join(", ");
-                          })(),
+                              const plusCode = getLocation(location, "plus_code");
+                              const neighborhood = getLocation(location, "neighborhood");
+                              const sublocality_level_1 = getLocation(location, "sublocality_level_1");
+                              const sublocality_level_2 = getLocation(location, "sublocality_level_2");
+                              return [plusCode, neighborhood, sublocality_level_1, sublocality_level_2]
+                                .reduce((result, current) => {
+                                  if (current) {
+                                    result.push(current);
+                                  }
+                                  return result;
+                                }, [])
+                                .join(", ");
+                            })(),
                       coordinates,
                       buildingName: formData && isFirstRender && formData[config.key] ? formData[config.key]["buildingName"] : "",
                       doorNo: formData && isFirstRender && formData[config.key] ? formData[config.key]["doorNo"] : "",
@@ -207,9 +207,7 @@ const AddressComponent = ({ t, config, onSelect, formData = {}, errors }) => {
                     currentValue.length > 0 &&
                     input.validation &&
                     !currentValue.match(window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern) && (
-                      <CardLabelError>
-                        {t(input.validation?.errMsg || "CORE_COMMON_INVALID")}
-                      </CardLabelError>
+                      <CardLabelError>{t(input.validation?.errMsg || "CORE_COMMON_INVALID")}</CardLabelError>
                     )}
                 </div>
               </React.Fragment>
