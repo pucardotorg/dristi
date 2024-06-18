@@ -9,7 +9,7 @@ import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egov.common.contract.request.User;
-
+import org.egov.common.contract.models.AuditDetails;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
