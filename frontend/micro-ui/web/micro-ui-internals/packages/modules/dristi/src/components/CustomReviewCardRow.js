@@ -166,23 +166,6 @@ const CustomReviewCardRow = ({
                 className={`adhaar-verification-info-card`}
               />
             </div>
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
-                }}
-                key={dataIndex}
-              >
-                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
-              </div>
-            )}
-            {dataError && isScrutiny && (
-              <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
-                {dataError}
-              </div>
-            )}
           </div>
         );
 

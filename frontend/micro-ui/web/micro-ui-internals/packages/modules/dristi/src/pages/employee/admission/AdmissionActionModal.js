@@ -235,9 +235,7 @@ function AdmissionActionModal({
             </div>
           }
           actionCancelLabel={t(submitModalInfo?.backButtonText)}
-          actionCancelOnSubmit={() => {
-            setShowModal(false);
-          }}
+          actionCancelOnSubmit={() => history.push(`/employee`)} // to be changed aster per req, for next hearing
           actionSaveOnSubmit={() => history.push(`/employee`)}
           className="case-types"
           formId="modal-action"
