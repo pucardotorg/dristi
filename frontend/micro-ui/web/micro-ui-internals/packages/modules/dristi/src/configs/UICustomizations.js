@@ -265,21 +265,67 @@ export const UICustomizations = {
           return <span>{formattedDate}</span>;
         case "Due Since (no of days)":
           const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
-
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span>{differenceInDays}</span>;
+        case "User Name":
+          const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
+          return displayName;
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
+  scrutinyInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      ];
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      };
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Stage":
+          return <span>{t("CS_UNDER_SCRUTINY")}</span>;
+        case "Case Type":
+          return <span>NIA S138</span>;
         case "Days Since Filing":
+          const today = new Date();
+          const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const datearr = value.split("-");
           const filedAt = new Date(datearr[2], datearr[1] - 1, datearr[0]);
           const formattedFiledAt = new Date(filedAt.getFullYear(), filedAt.getMonth(), filedAt.getDate());
           const diffInTime = formattedToday.getTime() - formattedFiledAt.getTime();
           const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
           return <span>{diffInDays}</span>;
-        case "User Name":
-          const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
-          return displayName;
         default:
           return t("ES_COMMON_NA");
       }
