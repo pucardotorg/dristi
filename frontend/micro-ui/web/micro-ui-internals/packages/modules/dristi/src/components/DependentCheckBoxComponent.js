@@ -1,12 +1,12 @@
 import { CardText, CheckBox } from "@egovernments/digit-ui-react-components";
 import React from "react";
 
-function CheckboxItem({ name, checked, onToggle }) {
+function CheckboxItem({ name, checked, onToggle, t }) {
   return (
     <CheckBox
       onChange={onToggle}
       checked={checked}
-      value={name}
+      value={t(name)}
       label={name}
       name={"Checkbox"}
       styles={{ alignItems: "center", textAlign: "center" }}
@@ -14,10 +14,10 @@ function CheckboxItem({ name, checked, onToggle }) {
   );
 }
 
-function DependentFields({ option, selectedValues, handleInputChange }) {
+function DependentFields({ t, option, selectedValues, handleInputChange }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", marginLeft: "20px" }}>
-      <CardText>{option.dependentText}</CardText>
+      <CardText>{t(option.dependentText)}</CardText>
       {option.dependentFields.map((field) => (
         <div key={field}>
           <label>
@@ -36,7 +36,7 @@ function DependentFields({ option, selectedValues, handleInputChange }) {
   );
 }
 
-function DependentCheckBoxComponent({ options, onInputChange, selectedValues }) {
+function DependentCheckBoxComponent({ t, options, onInputChange, selectedValues }) {
   const toggleCheckbox = (option) => {
     const updatedValues = {
       ...selectedValues,
@@ -59,9 +59,9 @@ function DependentCheckBoxComponent({ options, onInputChange, selectedValues }) 
       <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
         {options?.checkBoxes?.map((option) => (
           <div key={option?.name} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-            <CheckboxItem name={option?.name} checked={!!selectedValues[option?.name]} onToggle={() => toggleCheckbox(option?.name)} />
+            <CheckboxItem t={t} name={t(option?.name)} checked={!!selectedValues[option?.name]} onToggle={() => toggleCheckbox(option?.name)} />
             {selectedValues[option?.name] && (
-              <DependentFields option={option} selectedValues={selectedValues[option?.name]} handleInputChange={handleInputChange} />
+              <DependentFields t={t} option={option} selectedValues={selectedValues[option?.name]} handleInputChange={handleInputChange} />
             )}
           </div>
         ))}

@@ -170,7 +170,6 @@ function CaseFileAdmission({ t, path }) {
     updateCaseDetails("SEND_BACK", { comment: props?.commentForLitigant }).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
     });
-    setModalInfo({ ...modalInfo, page: 1 });
   };
   const handleAdmitCase = () => {
     updateCaseDetails("ADMIT", formdata).then((res) => {
@@ -258,54 +257,58 @@ function CaseFileAdmission({ t, path }) {
   }
 
   return (
-    <div className="view-case-file">
-      <div className="file-case">
-        <div className="file-case-side-stepper">
-          <div className="file-case-select-form-section">
-            {sidebar.map((key, index) => (
-              <div className="accordion-wrapper">
-                <div key={index} className="accordion-title">
-                  <div>{`${index + 1}. ${t(labels[key])}`}</div>
+    <div className={"case-and-admission"}>
+      <div className="view-case-file">
+        <div className="file-case">
+          <div className="file-case-side-stepper">
+            <div className="file-case-select-form-section">
+              {sidebar.map((key, index) => (
+                <div className="accordion-wrapper">
+                  <div key={index} className="accordion-title">
+                    <div>{`${index + 1}. ${t(labels[key])}`}</div>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="file-case-form-section">
-          <div className="employee-card-wrapper">
-            <div className="header-content">
-              <div className="header-details">
-                <Header>
-                  {`${complainantFirstName}  ${complainantLastName}`.trim()} <span style={{ color: "#77787B" }}>vs</span>{" "}
-                  {`${respondentFirstName}  ${respondentLastName}`.trim()}
-                </Header>
-                <div className="header-icon" onClick={() => {}}>
-                  <CustomArrowDownIcon />
-                </div>
-              </div>
+              ))}
             </div>
-            <CustomCaseInfoDiv t={t} data={caseInfo} style={{ margin: "24px 0px" }} />
-            <FormComposerV2
-              label={t("CS_ADMIT_CASE")}
-              config={formConfig}
-              onSubmit={onSubmit}
-              // defaultValues={}
-              onSecondayActionClick={onSaveDraft}
-              defaultValues={{}}
-              onFormValueChange={onFormValueChange}
-              cardStyle={{ minWidth: "100%" }}
-              isDisabled={isDisabled}
-              cardClassName={`e-filing-card-form-style review-case-file`}
-              secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
-              showSecondaryLabel={true}
-              // actionClassName="admission-action-buttons"
-              actionClassName="e-filing-action-bar"
-              showSkip={true}
-              onSkip={onSendBack}
-              noBreakLine
-              submitIcon={<RightArrow />}
-            />
-            {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          </div>
+          <div className="file-case-form-section">
+            <div className="employee-card-wrapper">
+              <div className="header-content">
+                <div className="header-details">
+                  <Header>
+                    {`${complainantFirstName}  ${complainantLastName}`.trim()} <span style={{ color: "#77787B" }}>vs</span>{" "}
+                    {`${respondentFirstName}  ${respondentLastName}`.trim()}
+                  </Header>
+                  <div className="header-icon" onClick={() => {}}>
+                    <CustomArrowDownIcon />
+                  </div>
+                </div>
+              </div>
+              <CustomCaseInfoDiv t={t} data={caseInfo} style={{ margin: "24px 0px" }} />
+              <FormComposerV2
+                label={t("CS_ADMIT_CASE")}
+                config={formConfig}
+                onSubmit={onSubmit}
+                // defaultValues={}
+                onSecondayActionClick={onSaveDraft}
+                defaultValues={{}}
+                onFormValueChange={onFormValueChange}
+                cardStyle={{ minWidth: "100%" }}
+                isDisabled={isDisabled}
+                cardClassName={`e-filing-card-form-style review-case-file`}
+                secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
+                showSecondaryLabel={true}
+                // actionClassName="admission-action-buttons"
+                actionClassName="e-filing-action-bar"
+                showSkip={true}
+                onSkip={onSendBack}
+                noBreakLine
+                submitIcon={<RightArrow />}
+              />
+              {showErrorToast && (
+                <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
+              )}
+            </div>
           </div>
         </div>
       </div>

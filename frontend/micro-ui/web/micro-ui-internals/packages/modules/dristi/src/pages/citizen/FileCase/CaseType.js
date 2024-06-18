@@ -173,6 +173,7 @@ function CaseType({ t }) {
                   ],
                 },
                 additionalDetails: {
+                  payerMobileNo: individualData?.mobileNumber,
                   ...(advocateId
                     ? {
                         advocateDetails: {
@@ -226,6 +227,24 @@ function CaseType({ t }) {
                                     document: identifierIdDetails?.fileStoreId
                                       ? [{ name: idType, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
                                       : null,
+                                    "addressDetails-select": {
+                                      pincode: pincode,
+                                      district: addressLine2,
+                                      city: city,
+                                      state: addressLine1,
+                                      locality: address,
+                                    },
+                                    addressDetails: {
+                                      pincode: pincode,
+                                      district: addressLine2,
+                                      city: city,
+                                      state: addressLine1,
+                                      coordinates: {
+                                        longitude: latitude,
+                                        latitude: longitude,
+                                      },
+                                      locality: address,
+                                    },
                                   },
                                   isUserVerified: true,
                                 },
