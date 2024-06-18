@@ -71,11 +71,16 @@ const ViewPaymentDetails = ({ location, match }) => {
     }),
     [caseData]
   );
-  const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchPayment({
-    tenantId: tenantId,
-    consumerCode: caseDetails?.filingNumber,
-    businessService: "case",
-  });
+  const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
+    {
+      tenantId: tenantId,
+      consumerCode: caseDetails?.filingNumber,
+      businessService: "case",
+    },
+    {
+      enabled: Boolean(tenantId && caseDetails?.filingNumber),
+    }
+  );
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
   const onSubmitCase = async () => {
@@ -92,7 +97,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         tenantId,
         paymentMode: "CASH",
         paidBy: modeOfPayment?.code,
-        mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "8347457438",
+        mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
         payerName: payer,
         totalAmountPaid: 2000,
       },

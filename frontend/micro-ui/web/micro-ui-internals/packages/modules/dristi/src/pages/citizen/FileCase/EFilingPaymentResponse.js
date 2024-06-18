@@ -31,7 +31,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
   };
   return (
     <div className=" user-registration">
-      <div className="e-filing-payment">
+      <div className="e-filing-payment" style={{ maxHeight: "330px" }}>
         <Banner
           whichSvg={"tick"}
           successful={true}

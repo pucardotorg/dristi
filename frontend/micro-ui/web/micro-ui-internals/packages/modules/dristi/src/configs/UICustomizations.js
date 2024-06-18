@@ -228,6 +228,10 @@ export const UICustomizations = {
       const individualId = row?.businessObject?.individual?.individualId;
       const applicationNumber =
         row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
+
+      const today = new Date();
+      const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
       switch (key) {
         case "Application No":
           return (
@@ -261,12 +265,18 @@ export const UICustomizations = {
           return <span>{formattedDate}</span>;
         case "Due Since (no of days)":
           const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
-          const today = new Date();
+
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
-          const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span>{differenceInDays}</span>;
+        case "Days Since Filing":
+          const datearr = value.split("-");
+          const filedAt = new Date(datearr[2], datearr[1] - 1, datearr[0]);
+          const formattedFiledAt = new Date(filedAt.getFullYear(), filedAt.getMonth(), filedAt.getDate());
+          const diffInTime = formattedToday.getTime() - formattedFiledAt.getTime();
+          const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+          return <span>{diffInDays}</span>;
         case "User Name":
           const displayName = `${value?.givenName || ""} ${value?.familyName || ""} ${value?.otherNames || ""}`;
           return displayName;
@@ -368,6 +378,34 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId,
+        },
+      };
+    },
+  },
+  judgeInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      ];
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId: window?.Digit.ULBService.getStateId(),
         },
       };
     },

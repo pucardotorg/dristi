@@ -183,7 +183,11 @@ function ViewCaseFile({ t }) {
     }
   }, [isScrutiny]);
   const updateCaseDetails = async (action, data = {}) => {
-    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data } };
+    const newcasedetails = {
+      ...caseDetails,
+      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data },
+      caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
+    };
 
     return DRISTIService.caseUpdateService(
       {
@@ -217,12 +221,15 @@ function ViewCaseFile({ t }) {
   };
   const handleNextCase = () => {
     setActionModal(false);
+    history.push("/digit-ui/employee/dristi/cases");
   };
   const handleAllocationJudge = () => {
     setActionModal(false);
+    history.push("/digit-ui/employee/dristi/cases");
   };
   const handleCloseSucessModal = () => {
     setActionModal(false);
+    history.push("/digit-ui/employee/dristi/cases");
   };
   const handleRegisterCase = () => {
     updateCaseDetails("VALIDATE").then((res) => {
@@ -348,13 +355,17 @@ function ViewCaseFile({ t }) {
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
                 secondaryLabel={t(secondaryButtonLabel)}
-                showSecondaryLabel={true}
+                showSecondaryLabel={totalErrors?.total > 0}
                 actionClassName="e-filing-action-bar"
               />
 
               <div className="error-flag-class">
-                <FlagIcon />
-                <h3>No Errors</h3>
+                <FlagIcon isError={totalErrors?.total > 0} />
+                <h3>
+                  {totalErrors.total
+                    ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
+                    : t("CS_NO_ERRORS")}
+                </h3>
               </div>
 
               {showErrorToast && (
@@ -389,17 +400,17 @@ function ViewCaseFile({ t }) {
               }
               // actionCancelLabel={t(actionCancelLabel)}
               actionCancelOnSubmit={() => setShowEditCaseNameModal(false)}
-              actionSaveLabel={"Confirm"}
+              actionSaveLabel={t("CS_COMMON_CONFIRM")}
               actionSaveOnSubmit={() => {
                 setNewCaseName(modalCaseName);
                 setShowEditCaseNameModal(false);
               }}
               formId="modal-action"
-              headerBarMain={<Heading label={"Change Case Name"} />}
+              headerBarMain={<Heading label={t("CS_Change_Case_Name")} />}
               className="edit-case-name-modal"
             >
-              <h3 className="input-label">Case Name</h3>
-              <TextInput type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+              <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
+              <TextInput defaultValue={caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
             </Modal>
           )}
           {actionModal == "sendCaseBack" && (
