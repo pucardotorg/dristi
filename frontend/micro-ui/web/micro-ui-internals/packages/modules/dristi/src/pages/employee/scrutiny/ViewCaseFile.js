@@ -294,6 +294,7 @@ function ViewCaseFile({ t }) {
                   </div>
                 </div>
               ))}
+              <div>{totalErrors.total ? `${totalErrors.total} ${t("CS_TOTAL_ERRORS")}` : t("CS_NO_ERRORS")}</div>
             </div>
           </div>
           <div className="file-case-form-section">
@@ -374,17 +375,17 @@ function ViewCaseFile({ t }) {
               }
               // actionCancelLabel={t(actionCancelLabel)}
               actionCancelOnSubmit={() => setShowEditCaseNameModal(false)}
-              actionSaveLabel={"Confirm"}
+              actionSaveLabel={t("CS_COMMON_CONFIRM")}
               actionSaveOnSubmit={() => {
                 setNewCaseName(modalCaseName);
                 setShowEditCaseNameModal(false);
               }}
               formId="modal-action"
-              headerBarMain={<Heading label={"Change Case Name"} />}
+              headerBarMain={<Heading label={t("CS_Change_Case_Name")} />}
               className="edit-case-name-modal"
             >
-              <h3 className="input-label">Case Name</h3>
-              <TextInput type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+              <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
+              <TextInput defaultValue={caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
             </Modal>
           )}
           {actionModal == "sendCaseBack" && (
