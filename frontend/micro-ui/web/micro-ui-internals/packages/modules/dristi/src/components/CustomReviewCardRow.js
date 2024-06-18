@@ -304,6 +304,7 @@ const CustomReviewCardRow = ({
                             docWidth="250px"
                             showDownloadOption={false}
                             documentName={data?.fileName}
+                            preview
                           />
                         </div>
                       ) : null

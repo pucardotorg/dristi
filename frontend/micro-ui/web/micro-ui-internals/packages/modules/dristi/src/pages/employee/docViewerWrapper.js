@@ -35,6 +35,7 @@ const DocViewerWrapper = ({
   showDownloadOption = true,
   docWidth = "262px",
   docHeight = "206px",
+  preview,
 }) => {
   const Digit = window?.Digit || {};
   const { t } = useTranslation();
@@ -77,7 +78,7 @@ const DocViewerWrapper = ({
                   defaultZoom: 1.1, // 1 as default,
                   zoomJump: 0.2, // 0.1 as default,
                 },
-                pdfVerticalScrollByDefault: true, // false as default
+                pdfVerticalScrollByDefault: !preview, // false as default
               }}
             />{" "}
           </>
