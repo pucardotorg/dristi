@@ -58,11 +58,12 @@ export const scrutinyInboxConfig = {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "",
+            jsonPath: "caseTitle",
           },
           {
             label: "Stage",
             jsonPath: "",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",
@@ -71,10 +72,12 @@ export const scrutinyInboxConfig = {
           {
             label: "Case Type",
             jsonPath: "",
+            additionalCustomization: true,
           },
           {
             label: "Days Since Filing",
             jsonPath: "filingDate",
+            additionalCustomization: true,
           },
         ],
         enableGlobalSearch: false,
