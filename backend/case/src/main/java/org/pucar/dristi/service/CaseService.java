@@ -98,6 +98,7 @@ public class CaseService {
             if (CREATE_DEMAND_STATUS.equals(caseRequest.getCases().getStatus())){
                 billingUtil.createDemand(caseRequest);
             }
+            enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
