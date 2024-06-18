@@ -78,5 +78,5 @@ public class ServiceConstants {
     public static final String INVALID_LINKEDCASE_ID = "INVALID_LINKEDCASE_ID";
 
 	public static final String INDIVIDUAL_UTILITY_EXCEPTION = "INDIVIDUAL_UTILITY_EXCEPTION";
-
+	public static final String CASE_ADMIT_STATUS = "CASE_ADMITTED";
 }
