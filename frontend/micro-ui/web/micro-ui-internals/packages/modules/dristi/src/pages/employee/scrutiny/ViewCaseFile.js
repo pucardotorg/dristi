@@ -10,7 +10,7 @@ import {
   TextInput,
   Toast,
 } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useLocation, Redirect, useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
@@ -36,6 +36,7 @@ function ViewCaseFile({ t }) {
   const [showEditCaseNameModal, setShowEditCaseNameModal] = useState(false);
   const [newCaseName, setNewCaseName] = useState("");
   const [modalCaseName, setModalCaseName] = useState("");
+  const [isDisabled, setIsDisabled] = useState(true);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -108,7 +109,24 @@ function ViewCaseFile({ t }) {
       inputErrors,
     };
   }, [scrutinyErrors]);
-  const isDisabled = useMemo(() => totalErrors?.total > 0);
+
+  useEffect(() => {
+    if (totalErrors?.total > 0) {
+      setIsDisabled(true);
+    }
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY + 10 >= document.body.offsetHeight) {
+        if (totalErrors?.total > 0) setIsDisabled(true);
+        else setIsDisabled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [totalErrors]);
 
   const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
     {
@@ -313,7 +331,7 @@ function ViewCaseFile({ t }) {
                       <EditIcon />
                     </div>
                   </div>
-                  <div className="header-icon" onClick={() => {}}>
+                  <div className="header-icon" onClick={() => { }}>
                     <CustomArrowDownIcon />
                   </div>
                 </div>
@@ -329,7 +347,7 @@ function ViewCaseFile({ t }) {
                 cardStyle={{ minWidth: "100%" }}
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
-                secondaryLabel={secondaryButtonLabel}
+                secondaryLabel={t(secondaryButtonLabel)}
                 showSecondaryLabel={true}
                 actionClassName="e-filing-action-bar"
               />
@@ -404,7 +422,7 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleRegisterCase}
-              heading={"CS_REGISTER_CASE"}
+              heading={t("CS_REGISTER_CASE")}
               type="registerCase"
             />
           )}
