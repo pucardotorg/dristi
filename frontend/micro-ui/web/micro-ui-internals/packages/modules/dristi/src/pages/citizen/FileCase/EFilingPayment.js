@@ -19,6 +19,13 @@ const mockSubmitModalInfo = {
   showTable: true,
 };
 
+const paymentCalculation = [
+  { key: "Amount Due", value: 600, currency: "Rs" },
+  { key: "Court Fees", value: 400, currency: "Rs" },
+  { key: "Advocate Fees", value: 1000, currency: "Rs" },
+  { key: "Total Fees", value: 2000, currency: "Rs", isTotalFee: true },
+];
+
 const CloseBtn = (props) => {
   return (
     <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
@@ -125,21 +132,44 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
             actionSaveOnSubmit={() => history.push(`${path}/e-filing-payment-response`)}
             headerBarMain={<Heading label={t("CS_PAY_TO_FILE_CASE")} />}
           >
-            <div>
-              <div>
-                {`${t("CS_DUE_PAYMENT")}`}
-                <span>Rs {amount}/-.</span>
-                {`${t("CS_MANDATORY_STEP_TO_FILE_CASE")}`}
+            <div className="payment-due-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+              <div className="payment-due-text" style={{ fontSize: "18px" }}>
+                {`${t("CS_DUE_PAYMENT")} `}
+                <span style={{ fontWeight: 700 }}>Rs {amount}/-.</span>
+                {` ${t("CS_MANDATORY_STEP_TO_FILE_CASE")}`}
               </div>
-              <div></div>
+              <div className="payment-calculator-wrapper" style={{ display: "flex", flexDirection: "column" }}>
+                {paymentCalculation.map((item) => (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      borderTop: item.isTotalFee && "1px solid #BBBBBD",
+                      fontSize: item.isTotalFee && "16px",
+                      fontWeight: item.isTotalFee && "700",
+                      paddingTop: item.isTotalFee && "12px",
+                    }}
+                  >
+                    <span>{item.key}</span>
+                    <span>
+                      {item.currency} {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
               <div>
                 <InfoCard
                   variant={"default"}
                   label={"CS_COMMON_NOTE"}
                   style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
-                  additionalElements={[<Link>{t("CS_LEARN_MORE")}</Link>]}
+                  additionalElements={[
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <span>{t("CS_OFFLINE_PAYMENT_STEP_TEXT")}</span>
+                      <Link style={{ fontWeight: 700, color: "#0A0A0A" }}>{t("CS_LEARN_MORE")}</Link>
+                    </div>,
+                  ]}
                   inline
-                  text={"CS_OFFLINE_PAYMENT_STEP_TEXT"}
                   textStyle={{}}
                   className={"adhaar-verification-info-card"}
                 />
