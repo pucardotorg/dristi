@@ -58,7 +58,7 @@ public class ApplicationValidatorTest {
         application.setOnBehalfOf(onBehalfOf);
         application.setCnrNumber("cnrNumber");
         application.setCaseId("caseId");
-        application.setApplicationType(UUID.randomUUID());
+        application.setApplicationType(1);
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
@@ -117,7 +117,7 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnrNumber");
         application.setCaseId("caseId");
         application.setTenantId("tId");
-        application.setApplicationType(UUID.randomUUID());
+        application.setApplicationType(1);
         application.setFilingNumber("filingNumber");
         application.setStatus("status1");
         application.setReferenceId(UUID.randomUUID());

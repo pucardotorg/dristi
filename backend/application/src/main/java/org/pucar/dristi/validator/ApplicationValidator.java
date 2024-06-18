@@ -40,7 +40,7 @@ public class ApplicationValidator {
         if(ObjectUtils.isEmpty(application.getTenantId())) {
                 throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for creating application");
             }
-        if(ObjectUtils.isEmpty(application.getApplicationType())){
+        if(ObjectUtils.isEmpty(application.getApplicationType()) || application.getApplicationType() == null){
             throw new CustomException(VALIDATION_ERR, "applicationType is mandatory for creating application");
         }
     }
@@ -60,7 +60,7 @@ public class ApplicationValidator {
         if(ObjectUtils.isEmpty(application.getTenantId())) {
             throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for updating application");
         }
-        if(ObjectUtils.isEmpty(application.getApplicationType())){
+        if(ObjectUtils.isEmpty(application.getApplicationType()) || application.getApplicationType() == null){
             throw new CustomException(VALIDATION_ERR, "applicationType is mandatory for updating application");
         }
 

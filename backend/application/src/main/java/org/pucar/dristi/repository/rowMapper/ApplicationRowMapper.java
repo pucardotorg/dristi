@@ -43,6 +43,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
 
                     application = Application.builder()
                             .applicationNumber(rs.getString("applicationnumber"))
+                            .applicationType(rs.getInt("applicationtype"))
                             .cnrNumber(rs.getString("cnrnumber"))
                             .caseId(rs.getString("caseid"))
                             .filingNumber(rs.getString("filingnumber"))

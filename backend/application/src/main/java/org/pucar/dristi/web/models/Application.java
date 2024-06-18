@@ -71,7 +71,7 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
-                private UUID applicationType = null;
+                private Integer applicationType = null;
 
         @JsonProperty("applicationNumber")
 
