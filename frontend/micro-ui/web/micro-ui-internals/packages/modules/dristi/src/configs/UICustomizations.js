@@ -375,22 +375,19 @@ export const UICustomizations = {
   judgeInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
-      const tenantId = window?.Digit.ULBService.getStateId();
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          tenantId,
-          ...additionalDetails,
+          tenantId: window?.Digit.ULBService.getStateId(),
         },
       ];
-      if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
         criteria.splice(0, 1, {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          [additionalDetails.searchKey]: "",
-          ...additionalDetails,
-          tenantId,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
         });
       }
       return {
@@ -398,7 +395,7 @@ export const UICustomizations = {
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId,
+          tenantId: window?.Digit.ULBService.getStateId(),
         },
       };
     },
