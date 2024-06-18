@@ -220,11 +220,9 @@ public class CaseRegistrationEnrichment {
     }
     public void enrichCaseNumberAndCNRNumber(CaseRequest caseRequest) {
         try {
-            if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())){
                 List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
                 caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
                 caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
-            }
         } catch (Exception e) {
             log.error("Error enriching case number and cnr number: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
