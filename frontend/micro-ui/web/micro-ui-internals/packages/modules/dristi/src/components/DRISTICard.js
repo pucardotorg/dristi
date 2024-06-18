@@ -10,6 +10,11 @@ const DRISTICard = () => {
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
+  const isNyayMitra = ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
+    if (!res) return res;
+    res = roles.some((role) => role.code === curr);
+    return res;
+  }, true);
   const advocateClerkRequestBody = {
     inbox: {
       processSearchCriteria: {
@@ -97,7 +102,7 @@ const DRISTICard = () => {
                     className="custom-card-style"
                     // showNumber={749}
                     onClick={() => {
-                      history.push("/digit-ui/employee/dristi/cases");
+                      isNyayMitra ? history.push("/digit-ui/employee/dristi/pending-payment-inbox") : history.push("/digit-ui/employee/dristi/cases");
                     }}
                   />
                 </div>
