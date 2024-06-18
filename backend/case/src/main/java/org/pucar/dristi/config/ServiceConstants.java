@@ -90,4 +90,5 @@ public class ServiceConstants {
 	public static final BigDecimal TAX_AMOUNT = BigDecimal.valueOf(2000.00);
 	public static final String TAX_HEADMASTER_CODE = "CASE_ADVANCE_CARRYFORWARD";
 	public static final String CREATE_DEMAND_STATUS = "PENDING_PAYMENT";
+	public static final String CASE_ADMIT_STATUS = "CASE_ADMITTED";
 }
