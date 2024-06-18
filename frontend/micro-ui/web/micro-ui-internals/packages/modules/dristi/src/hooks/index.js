@@ -21,6 +21,7 @@ export const Urls = {
     evidenceSearch: "/evidence/artifacts/v1/_search",
     evidenceCreate: "/evidence/artifacts/v1/_create",
     evidenceUpdate: "/evidence/artifacts/v1/_update",
+    demandCreate: "/billing-service/demand/_create",
   },
   FileFetchById: "/filestore/v1/files/id",
 };

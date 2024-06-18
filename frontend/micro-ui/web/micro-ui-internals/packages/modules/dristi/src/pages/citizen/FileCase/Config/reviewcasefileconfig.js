@@ -1,11 +1,3 @@
-import { AdvocateDummy } from "../AdvocateDummy";
-import { CheckqueDummy } from "../ChequeDummy";
-import { ComplainantDummy } from "../ComplainantDummy";
-import { DebtDummy } from "../DebtDummy";
-import { DemandDummy } from "../DemandDummy";
-import { RespondentDummy } from "../RespondentDummy";
-import { WitnessDummy } from "../WitnessDummy";
-
 export const reviewCaseFileFormConfig = [
   {
     body: [
@@ -32,7 +24,7 @@ export const reviewCaseFileFormConfig = [
                 },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
-              data: ComplainantDummy,
+              data: {},
             },
             {
               key: "respondentDetails",
@@ -45,7 +37,7 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
-              data: RespondentDummy,
+              data: {},
             },
           ],
         },
@@ -80,7 +72,7 @@ export const reviewCaseFileFormConfig = [
                   value: ["bouncedChequeFileUpload.document", "depositChequeFileUpload.document", "returnMemoFileUpload.document"],
                 },
               ],
-              data: CheckqueDummy,
+              data: {},
             },
             {
               key: "debtLiabilityDetails",
@@ -96,7 +88,7 @@ export const reviewCaseFileFormConfig = [
                   value: ["debtLiabilityFileUpload.document"],
                 },
               ],
-              data: DebtDummy,
+              data: {},
             },
             {
               key: "demandNoticeDetails",
@@ -120,7 +112,7 @@ export const reviewCaseFileFormConfig = [
                   ],
                 },
               ],
-              data: DemandDummy,
+              data: {},
             },
             {
               key: "delayApplications",
@@ -136,7 +128,7 @@ export const reviewCaseFileFormConfig = [
                   value: ["condonationFileUpload.document"],
                 },
               ],
-              data: DemandDummy,
+              data: {},
             },
           ],
         },
@@ -160,7 +152,7 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
-              data: WitnessDummy,
+              data: {},
             },
             {
               key: "prayerSwornStatement",
@@ -170,7 +162,6 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "infoBox", value: "infoBoxData" },
                 { type: "text", label: "CS_PRAYER_FOR_RELIEF_HEADER", value: "prayerForRelief.text" },
-                { type: "text", label: "ADDRESS", value: "addressDetails" },
                 {
                   type: "image",
                   label: "CS_DOCUMENT",
@@ -216,7 +207,7 @@ export const reviewCaseFileFormConfig = [
                   value: ["vakalatnamaFileUpload.document"],
                 },
               ],
-              data: AdvocateDummy,
+              data: {},
             },
           ],
         },

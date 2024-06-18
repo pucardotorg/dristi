@@ -1,6 +1,6 @@
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { EditPencilIcon } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import { FlagIcon } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
@@ -63,25 +63,29 @@ const CustomReviewCardRow = ({
     });
     return value;
   };
-  const handleImageClick = (configKey, name, dataIndex, fieldName, data) => {
-    if (isScrutiny && data) {
-      handleClickImage(null, configKey, name, dataIndex, fieldName, data);
-    }
-    return null;
-  };
-  switch (type) {
-    case "title":
-      let title = "";
-      if (Array.isArray(value)) {
-        title = value.map((key) => extractValue(data, key)).join(" ");
-      } else {
-        title = extractValue(data, value);
+  const handleImageClick = useCallback(
+    (configKey, name, dataIndex, fieldName, data) => {
+      if (isScrutiny && data) {
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data);
       }
-      return (
-        <div className={`title-main ${isScrutiny && dataError && "error"}`}>
-          <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-            <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
-            {badgeType && <div>{extractValue(data, badgeType)}</div>}
+      return null;
+    },
+    [handleClickImage, isScrutiny]
+  );
+  const renderCard = useMemo(() => {
+    switch (type) {
+      case "title":
+        let title = "";
+        if (Array.isArray(value)) {
+          title = value.map((key) => extractValue(data, key)).join(" ");
+        } else {
+          title = extractValue(data, value);
+        }
+        return (
+          <div className={`title-main ${isScrutiny && dataError && "error"}`}>
+            <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
+              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
+              {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
             {isScrutiny && (
               <div
@@ -343,70 +347,90 @@ const CustomReviewCardRow = ({
         ];
       }
 
-      return (
-        <div className={`address-main ${isScrutiny && dataError && "error"}`}>
-          <div className="address">
-            <div className="label">{t(label)}</div>
-            <div className={`value ${!isScrutiny ? "column" : ""}`}>
-              {address.map((item) => {
-                return (
-                  <p>
-                    {item?.address}{" "}
-                    <LocationContent latitude={item?.coordinates?.latitude || 31.6160638} longitude={item?.coordinates?.longitude || 74.8978579} />
-                  </p>
-                );
-              })}
-            </div>
+        return (
+          <div className={`address-main ${isScrutiny && dataError && "error"}`}>
+            <div className="address">
+              <div className="label">{t(label)}</div>
+              <div className={`value ${!isScrutiny ? "column" : ""}`}>
+                {address.map((item) => {
+                  return (
+                    <p>
+                      {item?.address}{" "}
+                      <LocationContent latitude={item?.coordinates?.latitude || 31.6160638} longitude={item?.coordinates?.longitude || 74.8978579} />
+                    </p>
+                  );
+                })}
+              </div>
 
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
-                }}
-                key={dataIndex}
-              >
-                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+              {isScrutiny && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, value);
+                  }}
+                  key={dataIndex}
+                >
+                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                </div>
+              )}
+            </div>
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
               </div>
             )}
           </div>
-          {dataError && isScrutiny && (
+        );
+      default:
+        const defaulValue = extractValue(data, value);
+        return (
+          <div>
+            <div className="text">
+              <div className="label">{t(label)}</div>
+              <div className="value">
+                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
+                {!Array.isArray(defaulValue) && defaulValue}
+              </div>
+              {isScrutiny && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, value);
+                  }}
+                  key={dataIndex}
+                >
+                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                </div>
+              )}
+            </div>
             <div className="scrutiny-error input">
               <FlagIcon isError={true} />
               {dataError}
             </div>
-          )}
-        </div>
-      );
-    default:
-      const defaulValue = extractValue(data, value);
-      return (
-        <div>
-          <div className="text">
-            <div className="label">{t(label)}</div>
-            <div className="value">
-              {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
-              {!Array.isArray(defaulValue) && defaulValue}
-            </div>
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
-                }}
-                key={dataIndex}
-              >
-                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
-              </div>
-            )}
           </div>
-          <div className="scrutiny-error input">
-            <FlagIcon isError={true} />
-            {dataError}
-          </div>
-        </div>
-      );
-  }
+        );
+    }
+  }, [
+    badgeType,
+    configKey,
+    data,
+    dataError,
+    dataIndex,
+    handleImageClick,
+    handleOpenPopup,
+    isScrutiny,
+    label,
+    name,
+    t,
+    tenantId,
+    titleHeading,
+    titleIndex,
+    type,
+    value,
+  ]);
+
+  return renderCard;
 };
 
 export default CustomReviewCardRow;

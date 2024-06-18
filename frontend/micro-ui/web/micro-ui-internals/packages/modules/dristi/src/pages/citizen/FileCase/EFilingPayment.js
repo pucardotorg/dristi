@@ -93,11 +93,11 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
         {submitInfoData?.subHeader && <CardLabel className={"e-filing-card-label"}>{submitInfoData?.subHeader}</CardLabel>}
         {submitInfoData?.showTable && (
           <CustomCaseInfoDiv
+            t={t}
             data={submitInfoData?.caseInfo}
             tableDataClassName={"e-filing-table-data-style"}
             copyData={true}
             tableValueClassName={"e-filing-table-value-style"}
-            t={t}
           />
         )}
         <div className="button-field">
