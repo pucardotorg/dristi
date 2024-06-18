@@ -97,7 +97,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         tenantId,
         paymentMode: "CASH",
         paidBy: modeOfPayment?.code,
-        mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "8347457438",
+        mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
         payerName: payer,
         totalAmountPaid: 2000,
       },
