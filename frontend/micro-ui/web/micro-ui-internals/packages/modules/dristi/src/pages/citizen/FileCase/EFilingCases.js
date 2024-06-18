@@ -778,6 +778,9 @@ function EFilingCases({ path }) {
   };
 
   const onSubmit = async (action) => {
+    if (!Array.isArray(formdata)) {
+      return;
+    }
     if (
       formdata
         .filter((data) => data.isenabled)
