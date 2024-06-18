@@ -4,7 +4,6 @@ import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.service.CaseService;
 import org.pucar.dristi.service.IndividualService;
@@ -66,8 +65,8 @@ public class CaseRegistrationValidator {
             throw new CustomException(VALIDATION_ERR, "caseCategory is mandatory for creating case");
         if (ObjectUtils.isEmpty(courtCase.getStatutesAndSections()))
             throw new CustomException(VALIDATION_ERR, "statute and sections is mandatory for creating case");
-        if (!(courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION) ||
-                courtCase.getWorkflow().getAction().equalsIgnoreCase(DELETE_DRAFT_WORKFLOW_ACTION))) {
+        if (!(SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) ||
+                DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()))) {
             if (ObjectUtils.isEmpty(courtCase.getLitigants()))
                 throw new CustomException(VALIDATION_ERR, "litigants is mandatory for creating case");
         }
@@ -83,9 +82,9 @@ public class CaseRegistrationValidator {
 
         if (ObjectUtils.isEmpty(courtCase.getTenantId()))
             throw new CustomException(VALIDATION_ERR, "tenantId is mandatory for updating case");
-        if (!(courtCase.getWorkflow().getAction().equalsIgnoreCase(SUBMIT_CASE_WORKFLOW_ACTION) ||
-                courtCase.getWorkflow().getAction().equalsIgnoreCase(SAVE_DRAFT_CASE_WORKFLOW_ACTION) ||
-                courtCase.getWorkflow().getAction().equalsIgnoreCase(DELETE_DRAFT_WORKFLOW_ACTION))){
+        if (!(SUBMIT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) ||
+                SAVE_DRAFT_CASE_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()) ||
+                DELETE_DRAFT_WORKFLOW_ACTION.equalsIgnoreCase(courtCase.getWorkflow().getAction()))){
             if(ObjectUtils.isEmpty(courtCase.getFilingDate()))
                 throw new CustomException(VALIDATION_ERR, "filingDate is mandatory for updating case");
         }
