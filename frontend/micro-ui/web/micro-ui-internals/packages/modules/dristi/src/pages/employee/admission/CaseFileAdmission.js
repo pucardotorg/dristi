@@ -160,7 +160,6 @@ function CaseFileAdmission({ t, path }) {
     updateCaseDetails("SEND_BACK", { comment: props?.commentForLitigant }).then((res) => {
       setModalInfo({ ...modalInfo, page: 1 });
     });
-    setModalInfo({ ...modalInfo, page: 1 });
   };
   const handleAdmitCase = () => {
     updateCaseDetails("ADMIT", formdata).then((res) => {

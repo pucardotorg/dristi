@@ -91,7 +91,7 @@ function ScheduleAdmission({
           variation="primary"
           onSubmit={handleSubmit}
           className="primary-label-btn"
-          label={selectedChip ? "CS_COMMON_CONTINUE" : "CS_SELECT_PARTICIPANT"}
+          label={selectedChip ? t("CS_COMMON_CONTINUE") : t("CS_SELECT_PARTICIPANT")}
         ></SubmitBar>
       </div>
       {modalInfo?.showCustomDate ? (

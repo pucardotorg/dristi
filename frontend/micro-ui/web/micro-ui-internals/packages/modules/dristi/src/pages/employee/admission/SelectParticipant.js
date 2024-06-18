@@ -40,14 +40,14 @@ function SelectParticipant({
   }, [closeToast]);
   return (
     <div>
-      <CardLabel>{config?.header}</CardLabel>
+      <CardLabel>{t(config?.header)}</CardLabel>
       {config?.checkBoxText && (
         <CardText>
-          {config?.checkBoxText}
+          {t(config?.checkBoxText)}
           {scheduleHearingParams?.date} ?
         </CardText>
       )}
-      <DependentCheckBoxComponent options={config} onInputChange={handleInputChange} selectedValues={selectedValues} />
+      <DependentCheckBoxComponent t={t} options={config} onInputChange={handleInputChange} selectedValues={selectedValues} />
       <div className="action-button-application">
         <Button
           variation="secondary"
