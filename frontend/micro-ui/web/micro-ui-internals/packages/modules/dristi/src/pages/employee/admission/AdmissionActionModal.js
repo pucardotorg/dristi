@@ -47,6 +47,8 @@ function AdmissionActionModal({
   handleAdmitCase,
   handleScheduleCase,
   updatedConfig,
+  tenantId,
+  // hearingDetails,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -220,6 +222,7 @@ function AdmissionActionModal({
             onCalendarConfirm={onCalendarConfirm}
             handleSelect={handleSelect}
             selectedCustomDate={selectedCustomDate}
+            tenantId={tenantId}
           />
         </Modal>
       )}
@@ -235,11 +238,11 @@ function AdmissionActionModal({
           actionCancelOnSubmit={() => {
             setShowModal(false);
           }}
-          actionSaveOnSubmit={() => history.push(`${path}/admission`)}
+          actionSaveOnSubmit={() => history.push(`/employee`)}
           className="case-types"
           formId="modal-action"
         >
-          <CustomSubmitModal submitModalInfo={submitModalInfo} />
+          <CustomSubmitModal submitModalInfo={submitModalInfo} t={t} />
         </Modal>
       )}
     </React.Fragment>

@@ -71,11 +71,16 @@ const ViewPaymentDetails = ({ location, match }) => {
     }),
     [caseData]
   );
-  const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchPayment({
-    tenantId: tenantId,
-    consumerCode: caseDetails?.filingNumber,
-    businessService: "case",
-  });
+  const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
+    {
+      tenantId: tenantId,
+      consumerCode: caseDetails?.filingNumber,
+      businessService: "case",
+    },
+    {
+      enabled: Boolean(tenantId && caseDetails?.filingNumber),
+    }
+  );
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
   const onSubmitCase = async () => {
