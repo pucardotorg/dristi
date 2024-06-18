@@ -47,6 +47,8 @@ function AdmissionActionModal({
   handleAdmitCase,
   handleScheduleCase,
   updatedConfig,
+  tenantId,
+  // hearingDetails,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
@@ -220,6 +222,7 @@ function AdmissionActionModal({
             onCalendarConfirm={onCalendarConfirm}
             handleSelect={handleSelect}
             selectedCustomDate={selectedCustomDate}
+            tenantId={tenantId}
           />
         </Modal>
       )}
