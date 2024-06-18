@@ -36,9 +36,7 @@ public class CaseRegistrationEnrichment {
             CourtCase courtCase = caseRequest.getCases();
 
             List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumberCp(), null, 1);
-            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseNumberCc(), null, 1);
             log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
-            log.info("Court Case Registration Case Number CC Id List :: {}", courtCaseRegistrationCaseNumberIdList);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             courtCase.setAuditdetails(auditDetails);
 
@@ -102,8 +100,6 @@ public class CaseRegistrationEnrichment {
             }
 
             courtCase.setFilingNumber(courtCaseRegistrationFillingNumberIdList.get(0));
-            courtCase.setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-            courtCase.setCourCaseNumber(caseUtil.getCNRNumber(courtCase.getFilingNumber()));
 
         } catch (Exception e) {
             e.printStackTrace();

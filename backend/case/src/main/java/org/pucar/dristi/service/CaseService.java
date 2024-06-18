@@ -6,6 +6,8 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.util.CaseUtil;
+import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,6 @@ import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 
-
 @Service
 @Slf4j
 public class CaseService {
@@ -28,7 +29,8 @@ public class CaseService {
 
     @Autowired
     private CaseRegistrationEnrichment enrichmentUtil;
-
+    @Autowired
+    private IdgenUtil idgenUtil;
     @Autowired
     private CaseRepository caseRepository;
 
@@ -37,7 +39,8 @@ public class CaseService {
 
     @Autowired
     private Configuration config;
-
+    @Autowired
+    private CaseUtil caseUtil;
     @Autowired
     private Producer producer;
 
@@ -93,7 +96,11 @@ public class CaseService {
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
 
             workflowService.updateWorkflowStatus(caseRequest);
-
+            if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())){
+                List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
+                caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+                caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
+            }
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
             return caseRequest.getCases();

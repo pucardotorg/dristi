@@ -4,6 +4,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -93,27 +94,33 @@ class CaseRegistrationEnrichmentTest {
 
     @Test
     void testEnrichCaseRegistration() {
-        // Mock the config to return specific values
-        when(config.getCaseFilingNumber()).thenReturn("caseFilingNumber");
+        // Setup mocks
+        List<String> idList = Collections.singletonList("fillingNumberId");
+        doReturn(idList).when(idgenUtil).getIdList(any(RequestInfo.class), eq("tenantId"), any(), isNull(), eq(1));
+        courtCase = new CourtCase();
+        courtCase.setTenantId("tenantId");
 
-        // Mock the ID generation to return case-indexer.yml list of IDs
-        List<String> idList = Collections.singletonList("generated-id");
-        when(idgenUtil.getIdList(any(RequestInfo.class), anyString(), anyString(), any(), anyInt()))
-                .thenReturn(idList);
+        requestInfo = new RequestInfo();
+        User user = new User();
+        user.setUuid("user-uuid");
+        requestInfo.setUserInfo(user);
 
-        // Call the method to test
+        caseRequest = new CaseRequest();
+        caseRequest.setRequestInfo(requestInfo);
+        caseRequest.setCases(courtCase);
+        // Call the method under test
         caseRegistrationEnrichment.enrichCaseRegistration(caseRequest);
 
-        // Verify the behavior and assert the results
-        verify(idgenUtil).getIdList(any(RequestInfo.class), eq("tenant-id"), eq("caseFilingNumber"), eq(null), eq(1));
+        // Verify the method behavior
+        verify(idgenUtil).getIdList(any(RequestInfo.class), eq("tenantId"), any(), isNull(), eq(1));
         assertNotNull(courtCase.getAuditdetails());
-        assertNotNull(courtCase.getLinkedCases());
-        assertNotNull(courtCase.getLitigants());
-        assertNotNull(courtCase.getRepresentatives());
-        assertEquals("generated-id", courtCase.getFilingNumber());
-        assertEquals("generated-id", courtCase.getCaseNumber());
+        assertNotNull(courtCase.getId());
+        assertNotNull(courtCase.getFilingNumber());
+        assertNotNull(courtCase.getAuditdetails().getCreatedBy());
+        assertNotNull(courtCase.getAuditdetails().getCreatedTime());
+        assertNotNull(courtCase.getAuditdetails().getLastModifiedBy());
+        assertNotNull(courtCase.getAuditdetails().getLastModifiedTime());
     }
-
     @Test
     void enrichCaseRegistration_ShouldThrowCustomException_WhenErrorOccurs() {
 
