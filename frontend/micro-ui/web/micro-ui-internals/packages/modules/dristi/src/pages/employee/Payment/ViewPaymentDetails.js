@@ -102,7 +102,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         totalAmountPaid: 2000,
       },
     });
-    history.push(`/${window?.contextPath}/employee/dristi/home/pending-payment-inbox`);
+    history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
   };
 
   if (isCaseSearchLoading || isFetchBillLoading) {
