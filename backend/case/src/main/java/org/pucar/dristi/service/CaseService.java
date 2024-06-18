@@ -93,9 +93,8 @@ public class CaseService {
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
 
             workflowService.updateWorkflowStatus(caseRequest);
-
+            enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
             producer.push(config.getCaseUpdateTopic(), caseRequest);
-
             return caseRequest.getCases();
 
         } catch(CustomException e){

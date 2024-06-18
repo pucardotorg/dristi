@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
 import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @Component
@@ -36,9 +37,7 @@ public class CaseRegistrationEnrichment {
             CourtCase courtCase = caseRequest.getCases();
 
             List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumberCp(), null, 1);
-            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseNumberCc(), null, 1);
             log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
-            log.info("Court Case Registration Case Number CC Id List :: {}", courtCaseRegistrationCaseNumberIdList);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             courtCase.setAuditdetails(auditDetails);
 
@@ -102,11 +101,7 @@ public class CaseRegistrationEnrichment {
             }
 
             courtCase.setFilingNumber(courtCaseRegistrationFillingNumberIdList.get(0));
-            courtCase.setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-            courtCase.setCourCaseNumber(caseUtil.getCNRNumber(courtCase.getFilingNumber()));
-
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("Error enriching case application: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, e.getMessage());
         }
@@ -137,6 +132,19 @@ public class CaseRegistrationEnrichment {
         } catch (Exception e) {
             log.error("Error enriching case application upon update: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service during case update process: " + e.getMessage());
+        }
+    }
+
+    public void enrichCaseNumberAndCNRNumber(CaseRequest caseRequest) {
+        try {
+            if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())){
+                List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
+                caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+                caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
+            }
+        } catch (Exception e) {
+            log.error("Error enriching case number and cnr number: {}", e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
         }
     }
 }
