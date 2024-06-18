@@ -50,7 +50,6 @@ public class ApplicationValidator {
             throw new CustomException(VALIDATION_ERR, "caseId is mandatory for updating application");
         }
         CaseExistsRequest caseExistsRequest = createCaseExistsRequest(requestInfo, application);
-
         if(!caseUtil.fetchCaseDetails(caseExistsRequest)){
             throw new CustomException(VALIDATION_ERR, "case does not exist");
         }
