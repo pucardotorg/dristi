@@ -71,7 +71,7 @@ public class Application   {
         @JsonProperty("applicationType")
           @NotNull
           @Valid
-                private Integer applicationType = null;
+                private List<Integer> applicationType = null;
 
         @JsonProperty("applicationNumber")
 

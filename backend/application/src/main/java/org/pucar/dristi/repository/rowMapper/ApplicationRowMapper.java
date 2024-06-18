@@ -1,5 +1,6 @@
 package org.pucar.dristi.repository.rowMapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
@@ -43,7 +44,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
 
                     application = Application.builder()
                             .applicationNumber(rs.getString("applicationnumber"))
-                            .applicationType(rs.getInt("applicationtype"))
+                            .applicationType(stringToList(rs.getString("applicationtype")))
                             .cnrNumber(rs.getString("cnrnumber"))
                             .caseId(rs.getString("caseid"))
                             .filingNumber(rs.getString("filingnumber"))
@@ -68,10 +69,25 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
         }
         return new ArrayList<>(applicationMap.values());
     }
+
     private UUID toUUID(String toUuid) {
         if(toUuid == null) {
             return null;
         }
         return UUID.fromString(toUuid);
+    }
+
+    public List<Integer> stringToList(String str) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<Integer> list = new ArrayList<>();
+        try {
+            if (str != null) {
+                list = objectMapper.readValue(str, new TypeReference<List<Integer>>() {});
+            }
+        } catch (Exception e) {
+            log.error("Error occurred while converting string to list: {}", e.getMessage());
+        }
+        return list;
     }
 }
