@@ -53,18 +53,17 @@ const CustomCaseInfoDiv = ({ t, data, style, ...props }) => {
   };
 
   return (
-    <div style={{ ...style, borderRadius: "10px", backgroundColor: "#F7F5F3", padding: "10px", width: "100%" }}>
-      <table style={{ width: "100%" }}>
+    <div className="custom-case-info-div">
+      <table>
         <tbody>
           {partitionData(data).map((row, rowIndex) => (
             <tr key={rowIndex}>
               {row.map(({ key, value }, cellIndex) => (
                 <td
                   key={cellIndex}
-                  style={{ borderLeft: cellIndex !== 0 || cellIndex !== partitionData?.length - 1 ? "1px solid gray" : "none", padding: "10px" }}
                   className={props?.tableDataClassName}
                 >
-                  <CardSubHeader>{t(key)}</CardSubHeader>
+                  <h2 className="case-info-title">{t(key)}</h2>
                   <div className={"case-info-value"}>
                     <span className={props?.tableValueClassName}>{value}</span>{" "}
                     {props?.copyData && (

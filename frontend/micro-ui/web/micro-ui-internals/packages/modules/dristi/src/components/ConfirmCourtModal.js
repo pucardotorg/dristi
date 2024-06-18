@@ -1,17 +1,19 @@
-import React from "react";
 import { CloseSvg, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
-function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
-  const CloseBtn = (props) => {
-    return (
-      <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
-        <CloseSvg />
-      </div>
-    );
-  };
+import React from "react";
 
-  const Heading = (props) => {
-    return <h1 className="heading-m">{props.label}</h1>;
-  };
+const CloseBtn = (props) => {
+  return (
+    <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
+      <CloseSvg />
+    </div>
+  );
+};
+
+const Heading = (props) => {
+  return <h1 className="heading-m">{props.label}</h1>;
+};
+
+function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
 
   const onCancel = () => {
     setOpenConfirmCourtModal(false);

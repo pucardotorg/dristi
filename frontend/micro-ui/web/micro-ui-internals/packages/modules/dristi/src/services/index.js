@@ -92,4 +92,12 @@ export const DRISTIService = {
       data,
       params,
     }),
+  createDemand: (data, params) =>
+    Request({
+      url: Urls.dristi.demandCreate,
+      useCache: false,
+      userService: false,
+      data,
+      params,
+    }),
 };

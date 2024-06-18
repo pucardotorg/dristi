@@ -1,4 +1,4 @@
-import { Button, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
+import { Button, CardText, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
@@ -16,8 +16,8 @@ import ImageModal from "./ImageModal";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
-  const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
-  const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
+  const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
+  const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
 
   const [isOpen, setOpen] = useState(true);
   const history = useHistory();
@@ -35,7 +35,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const isPopupOpen = useMemo(() => {
     return popupInfo?.configKey === config.key;
   }, [config.key, popupInfo]);
-
+  const [deletePopup, setDeletePopup] = useState(false);
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -144,6 +144,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             scrutinyMessage: "",
             form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
           };
+
     if (index == null) {
       currentMessage.scrutinyMessage = { FSOError: "" };
     } else {
@@ -152,6 +153,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         [fieldName]: { FSOError: "" },
       };
     }
+    setDeletePopup(false);
     setScrutinyError("");
     setValue(config.key, currentMessage, name);
     setValue("scrutinyMessage", null, "popupInfo");
@@ -272,6 +274,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 const { value } = e.target;
                 setScrutinyError(value);
               }}
+              maxlength="255"
               style={{ minWidth: "300px", maxWidth: "300px", maxHeight: "150px", minHeight: "50px" }}
             ></TextArea>
             <div
@@ -282,7 +285,16 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 gap: "20px",
               }}
             >
-              <Button label={!defaultError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
+              <Button
+                label={!defaultError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")}
+                onButtonClick={() => {
+                  if (!defaultError) {
+                    handleDeleteError();
+                  } else {
+                    setDeletePopup(true);
+                  }
+                }}
+              />
               <Button
                 label={!defaultError ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
                 onButtonClick={() => {
@@ -293,6 +305,34 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   }
                 }}
               />
+            </div>
+          </Fragment>
+        </CustomPopUp>
+      )}
+      {deletePopup && (
+        <CustomPopUp
+          anchorRef={popupAnchor.current}
+          popupstyle={{ minWidth: "400px", maxWidth: "400px", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+        >
+          <Fragment>
+            <div>{t("CS_DELETE_COMMENT")}</div>
+            <CardText>{t("CS_DELETE_HEADER")}</CardText>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Button
+                label={t("CS_COMMON_CANCEL")}
+                onButtonClick={() => {
+                  setDeletePopup(false);
+                }}
+              />
+              <Button label={t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
             </div>
           </Fragment>
         </CustomPopUp>

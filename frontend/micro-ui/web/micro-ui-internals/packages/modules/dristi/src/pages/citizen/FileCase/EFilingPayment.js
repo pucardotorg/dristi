@@ -1,4 +1,4 @@
-import { Banner, Card, CardLabel, CardText, CloseSvg, Loader, Modal, TextArea } from "@egovernments/digit-ui-react-components";
+import { Banner, CardLabel, CloseSvg, Loader, Modal } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import Button from "../../../components/Button";
 import { InfoCard } from "@egovernments/digit-ui-components";
@@ -93,6 +93,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
         {submitInfoData?.subHeader && <CardLabel className={"e-filing-card-label"}>{submitInfoData?.subHeader}</CardLabel>}
         {submitInfoData?.showTable && (
           <CustomCaseInfoDiv
+            t={t}
             data={submitInfoData?.caseInfo}
             tableDataClassName={"e-filing-table-data-style"}
             copyData={true}

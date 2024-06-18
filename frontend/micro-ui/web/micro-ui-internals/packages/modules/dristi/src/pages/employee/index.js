@@ -56,18 +56,20 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
     <Switch>
       <React.Fragment>
         <div className="ground-container">
-          {!location.pathname.endsWith("/registration-requests") && !location.pathname.includes("/pending-payment-inbox") && (
-            <div className="back-button-home">
-              <BackButton />
-
-              {!isJudge && (
-                <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
-                  <span style={{ color: "#f47738" }}>Help</span>
-                  <HelpOutlineIcon />
-                </span>
-              )}
-            </div>
-          )}
+          {!location.pathname.endsWith("/registration-requests") &&
+            !location.pathname.includes("/pending-payment-inbox") &&
+            !location.pathname.includes("/case") &&
+            location.search.includes("?caseId") && (
+              <div className="back-button-home">
+                <BackButton />
+                {!isJudge && (
+                  <span style={{ display: "flex", justifyContent: "right", gap: "5px" }}>
+                    <span style={{ color: "#f47738" }}>Help</span>
+                    <HelpOutlineIcon />
+                  </span>
+                )}
+              </div>
+            )}
           {location.pathname.includes("/pending-payment-inbox") && (
             <Breadcrumb crumbs={employeeCrumbs} breadcrumbStyle={{ paddingLeft: 20 }}></Breadcrumb>
           )}
@@ -82,10 +84,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
             <PrivateRoute exact path={`${path}/cases`} component={Home} />
           </div>
-          <div className={"file-case-main"}>
-            <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
-            <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
-          </div>
+          <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
+          <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
         </div>
         {toastMessage && (
           <Toast
