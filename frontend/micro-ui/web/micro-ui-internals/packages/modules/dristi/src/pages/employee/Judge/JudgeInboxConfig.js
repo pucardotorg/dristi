@@ -6,12 +6,18 @@ export const judgeInboxConfig = {
     requestParam: {},
     requestBody: {
       tenantId: "pg",
-      criteria: [{}],
+      criteria: [
+        {
+          defaultValues: true,
+          status: "PENDING_ADMISSION",
+          filingNumber: "",
+        },
+      ],
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
-    moduleName: "registrationRequestsConfig",
-    searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
+    moduleName: "judgeInboxConfig",
+    searchFormJsonPath: "requestBody.criteria[0]",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
@@ -23,7 +29,7 @@ export const judgeInboxConfig = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          filingNumber: "",
           isActive: false,
           tenantId: "pg",
         },
@@ -34,7 +40,7 @@ export const judgeInboxConfig = {
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "filingNumber",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -81,4 +87,5 @@ export const judgeInboxConfig = {
     },
   },
   additionalSections: {},
+  additionalDetails: "filingNumber",
 };

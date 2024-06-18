@@ -372,4 +372,35 @@ export const UICustomizations = {
       };
     },
   },
+  judgeInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId,
+          ...additionalDetails,
+        },
+      ];
+      if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails.searchKey]: "",
+          ...additionalDetails,
+          tenantId,
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId,
+        },
+      };
+    },
+  },
 };
