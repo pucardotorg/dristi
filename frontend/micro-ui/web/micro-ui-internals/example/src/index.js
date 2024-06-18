@@ -5,6 +5,7 @@ import { DigitUI, initCoreComponents } from "@egovernments/digit-ui-module-core"
 import { initOrdersComponents } from "@egovernments/digit-ui-module-orders";
 import { initSubmissionsComponents } from "@egovernments/digit-ui-module-submissions";
 import { initHearingsComponents } from "@egovernments/digit-ui-module-hearings";
+import { initCasesComponents } from "@egovernments/digit-ui-module-cases";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
 
 
@@ -14,7 +15,7 @@ import { UICustomizations } from "./UICustomizations";
 
 var Digit = window.Digit || {};
 
-const enabledModules = ["DRISTI", "Submissions", "Orders", "Hearings"];
+const enabledModules = ["DRISTI", "Submissions", "Orders", "Hearings", "Cases"];
 
 const initTokens = (stateCode) => {
   const userType = window.sessionStorage.getItem("userType") || process.env.REACT_APP_USER_TYPE || "CITIZEN";
@@ -55,6 +56,7 @@ const initDigitUI = () => {
   initDRISTIComponents();
   initOrdersComponents();
   initHearingsComponents();
+  initCasesComponents();
   initSubmissionsComponents();
   const moduleReducers = (initData) => ({});
 
