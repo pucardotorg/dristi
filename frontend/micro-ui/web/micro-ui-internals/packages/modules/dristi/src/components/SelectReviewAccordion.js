@@ -112,7 +112,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     );
   };
 
-  const handleClickImage = (e, configKey, name, index = null, fieldName, data) => {
+  const handleClickImage = (e, configKey, name, index = null, fieldName, data, inputlist = []) => {
     setValue(
       "scrutinyMessage",
       {
@@ -121,6 +121,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         fieldName,
         configKey,
         data,
+        inputlist,
       },
       "imagePopupInfo"
     );
@@ -150,7 +151,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       currentMessage.scrutinyMessage = { FSOError: "" };
     } else {
       let fieldObj = { [fieldName]: { FSOError: "" } };
-      inputlist.forEach((key) => (fieldObj[key] = { FSOError: "" }));
+      inputlist.forEach((key) => {
+        fieldObj[key] = { FSOError: "" };
+      });
       currentMessage.form[index] = {
         ...currentMessage.form[index],
         ...fieldObj,
@@ -169,7 +172,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     }
     const { name, configKey, index, fieldName, inputlist } = popupInfo;
     let fieldObj = { [fieldName]: { FSOError: trimmedError } };
-    inputlist.forEach((key) => (fieldObj[key] = { FSOError: trimmedError }));
+    inputlist.forEach((key) => {
+      fieldObj[key] = { FSOError: trimmedError };
+    });
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
         ? { ...formData[config.key]?.[name] }
@@ -186,7 +191,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       };
     }
     setValue(config.key, currentMessage, name);
-    setValue("scrutinyMessage", null, "popupInfo");
+    setValue("scrutinyMessage", { popupInfo: null, imagePopupInfo: null }, ["popupInfo", "imagePopupInfo"]);
     setScrutinyError("");
   };
   return (

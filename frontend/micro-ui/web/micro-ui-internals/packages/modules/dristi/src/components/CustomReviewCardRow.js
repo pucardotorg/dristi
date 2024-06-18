@@ -66,7 +66,7 @@ const CustomReviewCardRow = ({
   const handleImageClick = useCallback(
     (configKey, name, dataIndex, fieldName, data) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, [type, fieldName]);
       }
       return null;
     },
