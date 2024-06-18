@@ -38,7 +38,8 @@ const CasesCard = () => {
     ],
   };
 
-  return <EmployeeModuleCard {...propsForModuleCard} />;
+  return <div />;
+  // return <EmployeeModuleCard {...propsForModuleCard} />;
 };
 
 export default CasesCard;
