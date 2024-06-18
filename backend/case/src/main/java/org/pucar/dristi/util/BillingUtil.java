@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -39,13 +41,19 @@ public class BillingUtil {
 		demand.setPayer(caseRequest.getRequestInfo().getUserInfo());
 		demand.setTaxPeriodFrom(TAX_PERIOD_FROM);
 		demand.setTaxPeriodTo(TAX_PERIOD_TO);
+		demand.setBusinessService(configs.getCaseBusinessServiceName());
+		demand.setConsumerType(configs.getCaseBusinessServiceName());
+		demand.setAuditDetails(caseRequest.getCases().getAuditdetails());
 
 		DemandDetail demandDetail = new DemandDetail();
 		demandDetail.setTaxAmount(TAX_AMOUNT);
 		demandDetail.setTaxHeadMasterCode(TAX_HEADMASTER_CODE);
 		demand.addDemandDetailsItem(demandDetail);
-		demand.setBusinessService(configs.getCaseBusinessServiceName());
-		demand.setConsumerType(configs.getCaseBusinessServiceName());
+		
+		List<Demand> demands = new ArrayList<>();
+		demands.add(demand);
+		demandRequest.setDemands(demands);
+
 		Object response = new HashMap<>();
 		try {
 			response = restTemplate.postForObject(uri.toString(), demandRequest, Map.class);
