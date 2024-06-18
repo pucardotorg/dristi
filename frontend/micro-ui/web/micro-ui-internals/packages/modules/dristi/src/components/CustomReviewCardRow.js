@@ -91,7 +91,7 @@ const CustomReviewCardRow = ({
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value);
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
                   }}
                   key={dataIndex}
                 >
@@ -330,7 +330,7 @@ const CustomReviewCardRow = ({
               <div
                 className="flag"
                 onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
+                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
                 }}
                 key={dataIndex}
               >
