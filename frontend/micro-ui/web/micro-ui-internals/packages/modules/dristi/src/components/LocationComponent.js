@@ -16,7 +16,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },

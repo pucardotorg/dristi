@@ -9,7 +9,7 @@ const IdProofUploadComponent = ({ t, config, onSelect, formData = {}, errors, fo
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: "correspondenceCity",
         },

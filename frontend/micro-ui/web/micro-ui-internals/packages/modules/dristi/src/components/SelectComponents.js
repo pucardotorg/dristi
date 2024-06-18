@@ -20,7 +20,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
     () => ({
       inputs: config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },
@@ -137,7 +137,6 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
           }, {}),
         });
       }
-      
     } else {
       onSelect(`${configKey}.${input}`, value, { shouldValidate: true });
     }
