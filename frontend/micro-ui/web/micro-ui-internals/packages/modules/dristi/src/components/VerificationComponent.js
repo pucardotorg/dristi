@@ -56,7 +56,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },
