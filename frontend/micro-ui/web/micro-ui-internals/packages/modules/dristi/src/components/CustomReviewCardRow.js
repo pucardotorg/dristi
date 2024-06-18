@@ -87,185 +87,182 @@ const CustomReviewCardRow = ({
               <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, value);
-                }}
-                key={dataIndex}
-              >
-                {/* {badgeType && <div>{extractValue(data, badgeType)}</div>} */}
-                {dataError ? <EditPencilIcon /> : <FlagIcon />}
+              {isScrutiny && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value);
+                  }}
+                  key={dataIndex}
+                >
+                  {/* {badgeType && <div>{extractValue(data, badgeType)}</div>} */}
+                  {dataError ? <EditPencilIcon /> : <FlagIcon />}
+                </div>
+              )}
+            </div>
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
               </div>
             )}
           </div>
-          {dataError && isScrutiny && (
-            <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
-              {dataError}
+        );
+      case "text":
+        const textValue = extractValue(data, value);
+        return (
+          <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+            <div className="text">
+              <div className="label">{t(label)}</div>
+              <div className="value">
+                {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
+                {!Array.isArray(textValue) && textValue}
+              </div>
+              {isScrutiny && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, value);
+                  }}
+                  key={dataIndex}
+                >
+                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      );
-    case "text":
-      const textValue = extractValue(data, value);
-      return (
-        <div className={`text-main ${isScrutiny && dataError && "error"}`}>
-          <div className="text">
-            <div className="label">{t(label)}</div>
-            <div className="value">
-              {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
-              {!Array.isArray(textValue) && textValue}
-            </div>
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
-                }}
-                key={dataIndex}
-              >
-                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
               </div>
             )}
           </div>
-          {dataError && isScrutiny && (
-            <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
-              {dataError}
-            </div>
-          )}
-        </div>
-      );
+        );
 
-    case "infoBox":
-      if (!data?.[value]?.header) {
-        return null;
-      }
-      return (
-        <div className={`text-main ${isScrutiny && dataError && "error"}`}>
-          <div className="value info-box">
-            <InfoCard
-              variant={"default"}
-              label={t(data?.[value]?.header)}
-              additionalElements={[
-                <React.Fragment>
-                  {Array.isArray(data?.[value]?.data) && (
-                    <ul style={{ listStyleType: "disc", margin: "4px" }}>
-                      {data?.[value]?.data.map((data) => (
-                        <li>{t(data)}</li>
-                      ))}
-                    </ul>
-                  )}
-                </React.Fragment>,
-              ]}
-              inline
-              text={typeof data?.[value]?.data === "string" && data?.[value]?.data}
-              textStyle={{}}
-              className={`adhaar-verification-info-card`}
-            />
-          </div>
-        </div>
-      );
-
-    case "amount":
-      return (
-        <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
-          <div className="amount">
-            <div className="label">{t(label)}</div>
-            <div className="value"> {`₹${extractValue(data, value)}`} </div>
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
-                }}
-                key={dataIndex}
-              >
-                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
-              </div>
-            )}
-          </div>
-          {dataError && isScrutiny && (
-            <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
-              {dataError}
-            </div>
-          )}
-        </div>
-      );
-    case "phonenumber":
-      const numbers = extractValue(data, value);
-      return (
-        <div className={`phone-number-main ${isScrutiny && dataError && "error"}`}>
-          <div className="phone-number">
-            <div className="label">{t(label)}</div>
-            <div className="value">
-              {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-              {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
-            </div>
-            {isScrutiny && (
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, value);
-                }}
-                key={dataIndex}
-              >
-                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
-              </div>
-            )}
-          </div>
-          {dataError && isScrutiny && (
-            <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
-              {dataError}
-            </div>
-          )}
-        </div>
-      );
-    case "image":
-      const files = value?.map((value) => extractValue(data, value)) || [];
-      let hasImages = false;
-      files.forEach((file) => {
-        if (file && file?.length > 0) {
-          hasImages = true;
+      case "infoBox":
+        if (!data?.[value]?.header) {
+          return null;
         }
-      });
-      if (!hasImages) {
-        return null;
-      }
-      return (
-        <div className={`image-main ${isScrutiny && dataError && "error"}`}>
-          <div className={`image ${!isScrutiny ? "column" : ""}`}>
-            <div className="label">{t(label)}</div>
-            <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
-              {Array.isArray(files)
-                ? files?.map((file, fileindex) => {
-                    return file && Array.isArray(file) ? (
-                      file?.map((data, index) => {
-                        if (data?.fileStore) {
-                          return (
-                            <div
-                              style={{ cursor: "pointer" }}
-                              onClick={() => {
-                                handleImageClick(configKey, name, dataIndex, value, data);
-                              }}
-                            >
-                              <DocViewerWrapper
-                                key={`${fileindex}-${index}`}
-                                fileStoreId={data?.fileStore}
-                                displayFilename={data?.fileName}
-                                tenantId={tenantId}
-                                docWidth="250px"
-                                showDownloadOption={false}
-                                documentName={data?.fileName}
-                              />
-                            </div>
-                          );
-                        } else if (data?.document) {
-                          return data?.document?.map((data, index) => {
+        return (
+          <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+            <div className="value info-box">
+              <InfoCard
+                variant={"default"}
+                label={t(data?.[value]?.header)}
+                additionalElements={[
+                  <React.Fragment>
+                    {Array.isArray(data?.[value]?.data) && (
+                      <ul style={{ listStyleType: "disc", margin: "4px" }}>
+                        {data?.[value]?.data.map((data) => (
+                          <li>{t(data)}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </React.Fragment>,
+                ]}
+                inline
+                text={typeof data?.[value]?.data === "string" && data?.[value]?.data}
+                textStyle={{}}
+                className={`adhaar-verification-info-card`}
+              />
+            </div>
+            {isScrutiny && (
+              <div
+                className="flag"
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+              >
+                {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+              </div>
+            )}
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
+              </div>
+            )}
+          </div>
+        );
+
+      case "amount":
+        return (
+          <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
+            <div className="amount">
+              <div className="label">{t(label)}</div>
+              <div className="value"> {`₹${extractValue(data, value)}`} </div>
+              {isScrutiny && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, value);
+                  }}
+                  key={dataIndex}
+                >
+                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                </div>
+              )}
+            </div>
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
+              </div>
+            )}
+          </div>
+        );
+      case "phonenumber":
+        const numbers = extractValue(data, value);
+        return (
+          <div className={`phone-number-main ${isScrutiny && dataError && "error"}`}>
+            <div className="phone-number">
+              <div className="label">{t(label)}</div>
+              <div className="value">
+                {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
+                {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
+              </div>
+              {isScrutiny && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, value);
+                  }}
+                  key={dataIndex}
+                >
+                  {dataError && isScrutiny ? <EditPencilIcon /> : <FlagIcon />}
+                </div>
+              )}
+            </div>
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
+              </div>
+            )}
+          </div>
+        );
+      case "image":
+        const files = value?.map((value) => extractValue(data, value)) || [];
+        let hasImages = false;
+        files.forEach((file) => {
+          if (file && file?.length > 0) {
+            hasImages = true;
+          }
+        });
+        if (!hasImages) {
+          return null;
+        }
+        return (
+          <div className={`image-main ${isScrutiny && dataError && "error"}`}>
+            <div className={`image ${!isScrutiny ? "column" : ""}`}>
+              <div className="label">{t(label)}</div>
+              <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
+                {Array.isArray(files)
+                  ? files?.map((file) =>
+                      file && Array.isArray(file) ? (
+                        file?.map((data, index) => {
+                          if (data?.fileStore) {
                             return (
                               <div
                                 style={{ cursor: "pointer" }}
@@ -274,7 +271,7 @@ const CustomReviewCardRow = ({
                                 }}
                               >
                                 <DocViewerWrapper
-                                  key={`${fileindex}-${index}`}
+                                  key={`${file.fileStore}-${index}`}
                                   fileStoreId={data?.fileStore}
                                   displayFilename={data?.fileName}
                                   tenantId={tenantId}
@@ -284,68 +281,88 @@ const CustomReviewCardRow = ({
                                 />
                               </div>
                             );
-                          });
-                        } else {
-                          return null;
-                        }
-                      })
-                    ) : file ? (
-                      <div
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          handleImageClick(configKey, name, dataIndex, value, data);
-                        }}
-                      >
-                        <DocViewerWrapper
-                          key={`${fileindex}-${file?.name}`}
-                          fileStoreId={file?.fileStore}
-                          displayFilename={file?.fileName}
-                          tenantId={tenantId}
-                          docWidth="250px"
-                          showDownloadOption={false}
-                          documentName={data?.fileName}
-                        />
-                      </div>
-                    ) : null;
-                  })
-                : null}
+                          } else if (data?.document) {
+                            return data?.document?.map((data, index) => {
+                              return (
+                                <div
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    handleImageClick(configKey, name, dataIndex, value, data);
+                                  }}
+                                >
+                                  <DocViewerWrapper
+                                    key={`${file.fileStore}-${index}`}
+                                    fileStoreId={data?.fileStore}
+                                    displayFilename={data?.fileName}
+                                    tenantId={tenantId}
+                                    docWidth="250px"
+                                    showDownloadOption={false}
+                                    documentName={data?.fileName}
+                                  />
+                                </div>
+                              );
+                            });
+                          } else {
+                            return null;
+                          }
+                        })
+                      ) : file ? (
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            handleImageClick(configKey, name, dataIndex, value, data);
+                          }}
+                        >
+                          <DocViewerWrapper
+                            key={`${value}-${file?.name}`}
+                            fileStoreId={file?.fileStore}
+                            displayFilename={file?.fileName}
+                            tenantId={tenantId}
+                            docWidth="250px"
+                            showDownloadOption={false}
+                            documentName={data?.fileName}
+                          />
+                        </div>
+                      ) : null
+                    )
+                  : null}
+              </div>
+              <div
+                className="flag"
+                onClick={(e) => {
+                  handleOpenPopup(e, configKey, name, dataIndex, value);
+                }}
+                key={dataIndex}
+              >
+                {isScrutiny && (dataError ? <EditPencilIcon /> : <FlagIcon />)}
+              </div>
             </div>
-            <div
-              className="flag"
-              onClick={(e) => {
-                handleOpenPopup(e, configKey, name, dataIndex, "image", value);
-              }}
-              key={dataIndex}
-            >
-              {isScrutiny && (dataError ? <EditPencilIcon /> : <FlagIcon />)}
-            </div>
+            {dataError && isScrutiny && (
+              <div className="scrutiny-error input">
+                <FlagIcon isError={true} />
+                {dataError}
+              </div>
+            )}
           </div>
-          {dataError && isScrutiny && (
-            <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
-              {dataError}
-            </div>
-          )}
-        </div>
-      );
-    case "address":
-      const addressDetails = extractValue(data, value);
-      let address = [""];
-      if (Array.isArray(addressDetails)) {
-        address = addressDetails.map(({ addressDetails }) => {
-          return {
-            address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
-            coordinates: addressDetails?.coordinates,
-          };
-        });
-      } else {
-        address = [
-          {
-            address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
-            coordinates: addressDetails?.coordinates,
-          },
-        ];
-      }
+        );
+      case "address":
+        const addressDetails = extractValue(data, value);
+        let address = [""];
+        if (Array.isArray(addressDetails)) {
+          address = addressDetails.map(({ addressDetails }) => {
+            return {
+              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              coordinates: addressDetails?.coordinates,
+            };
+          });
+        } else {
+          address = [
+            {
+              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              coordinates: addressDetails?.coordinates,
+            },
+          ];
+        }
 
         return (
           <div className={`address-main ${isScrutiny && dataError && "error"}`}>
