@@ -26,7 +26,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef
           ref={anchorRef}
           className="flag-icon"
           onClick={(e) => {
-            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.dataIndex, imageInfo.fieldName);
+            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.index, imageInfo.fieldName, imageInfo.inputlist);
           }}
         >
           <FlagIcon />

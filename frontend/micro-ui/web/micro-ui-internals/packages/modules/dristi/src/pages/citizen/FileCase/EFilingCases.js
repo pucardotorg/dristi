@@ -436,7 +436,9 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
-      return modifiedFormData;
+      if (!isErrorCorrectionMode) {
+        return modifiedFormData;
+      }
     }
     return modifiedFormData.map(({ data }, index) => {
       let disableConfigFields = [];
@@ -560,7 +562,10 @@ function EFilingCases({ path }) {
           if (Object.keys(scrutinyObj).length > 0) {
             updatedBody = config.body
               .map((formComponent) => {
-                const key = formComponent.key || formComponent.populators?.name;
+                let key = formComponent.key || formComponent.populators?.name;
+                if (formComponent.type === "component" && formComponent.component === "SelectCustomDragDrop") {
+                  key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
@@ -776,7 +781,6 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
-
   const onSubmit = async (action) => {
     if (!Array.isArray(formdata)) {
       return;

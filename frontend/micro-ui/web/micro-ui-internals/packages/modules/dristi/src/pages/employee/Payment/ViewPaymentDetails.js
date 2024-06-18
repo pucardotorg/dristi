@@ -108,7 +108,6 @@ const ViewPaymentDetails = ({ location, match }) => {
   if (isCaseSearchLoading || isFetchBillLoading) {
     return <Loader />;
   }
-  console.debug(payer, modeOfPayment);
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>

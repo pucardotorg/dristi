@@ -66,7 +66,7 @@ const CustomReviewCardRow = ({
   const handleImageClick = useCallback(
     (configKey, name, dataIndex, fieldName, data) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, [type, fieldName]);
       }
       return null;
     },
@@ -261,6 +261,7 @@ const CustomReviewCardRow = ({
                                   docWidth="250px"
                                   showDownloadOption={false}
                                   documentName={data?.fileName}
+                                  preview
                                 />
                               </div>
                             );
@@ -281,6 +282,7 @@ const CustomReviewCardRow = ({
                                     docWidth="250px"
                                     showDownloadOption={false}
                                     documentName={data?.fileName}
+                                    preview
                                   />
                                 </div>
                               );
