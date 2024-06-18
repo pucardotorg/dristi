@@ -165,7 +165,11 @@ function ViewCaseFile({ t }) {
     }
   }, [isScrutiny]);
   const updateCaseDetails = async (action, data = {}) => {
-    const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data } };
+    const newcasedetails = {
+      ...caseDetails,
+      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data },
+      caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
+    };
 
     return DRISTIService.caseUpdateService(
       {
@@ -294,7 +298,6 @@ function ViewCaseFile({ t }) {
                   </div>
                 </div>
               ))}
-              <div>{totalErrors.total ? `${totalErrors.total} ${t("CS_TOTAL_ERRORS")}` : t("CS_NO_ERRORS")}</div>
             </div>
           </div>
           <div className="file-case-form-section">
@@ -334,13 +337,17 @@ function ViewCaseFile({ t }) {
                 isDisabled={isDisabled}
                 cardClassName={`e-filing-card-form-style review-case-file`}
                 secondaryLabel={secondaryButtonLabel}
-                showSecondaryLabel={true}
+                showSecondaryLabel={totalErrors?.total > 0}
                 actionClassName="e-filing-action-bar"
               />
 
               <div className="error-flag-class">
-                <FlagIcon />
-                <h3>No Errors</h3>
+                <FlagIcon isError={totalErrors?.total > 0} />
+                <h3>
+                  {totalErrors.total
+                    ? `${totalErrors.inputErrors} ${t("CS_TOTAL_INPUT_ERRORS")} & ${totalErrors.sectionErrors} ${t("CS_TOTAL_SECTION_ERRORS")}`
+                    : t("CS_NO_ERRORS")}
+                </h3>
               </div>
 
               {showErrorToast && (
