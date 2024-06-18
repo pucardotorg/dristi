@@ -72,6 +72,31 @@ const CustomReviewCardRow = ({
     },
     [handleClickImage, isScrutiny]
   );
+  const getDocumentRendered = (fileList) => {
+    const documentList = [];
+    if (Array.isArray(fileList)) {
+      fileList.forEach((file, index) => {
+        if (index < 3) {
+          documentList.push(
+            <DocViewerWrapper
+              key={`${file.data?.fileStore}-${index}`}
+              fileStoreId={file.data?.fileStore}
+              displayFilename={file.data?.fileName}
+              tenantId={tenantId}
+              docWidth="100%"
+              showDownloadOption={false}
+              documentName={file.data?.fileName}
+            />
+          )
+        } else if (index == 3) {
+          documentList.push(<div className="more-section" onClick={() => alert(`+${fileList.length - 3} more`)}>
+            {`+${fileList.length - 3} more`}
+          </div>)
+        }
+      });
+    }
+    return documentList;
+  }
   const renderCard = useMemo(() => {
     switch (type) {
       case "title":
@@ -253,16 +278,78 @@ const CustomReviewCardRow = ({
         if (!hasImages) {
           return null;
         }
+
+        const fileList = [];
+        if (Array.isArray(files)) {
+          files.forEach((file) => {
+            if (file && Array.isArray(file)) {
+              file.forEach((data) => {
+                if (data?.fileStore) {
+                  fileList.push({
+                    data,
+                    configKey,
+                    dataIndex,
+                    name,
+                  })
+                }
+                else if (data?.document) {
+                  if (Array.isArray(data.document)) {
+                    data.document.forEach((data) => {
+                      fileList.push({
+                        data,
+                        configKey,
+                        dataIndex,
+                        name,
+                      })
+                    })
+                  }
+                }
+              })
+            } else if (file) {
+              fileList.push({
+                data: file,
+                configKey,
+                dataIndex,
+                name,
+              })
+            }
+          })
+        }
+
         return (
           <div className={`image-main ${isScrutiny && dataError && "error"}`}>
             <div className={`image ${!isScrutiny ? "column" : ""}`}>
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
-                {Array.isArray(files)
+
+                {
+                  getDocumentRendered(fileList)
+                }
+                {/* {Array.isArray(files)
                   ? files?.map((file) =>
-                      file && Array.isArray(file) ? (
-                        file?.map((data, index) => {
-                          if (data?.fileStore) {
+                    file && Array.isArray(file) ? (
+                      file?.map((data, index) => {
+                        if (data?.fileStore) {
+                          return (
+                            <div
+                              style={{ cursor: "pointer" }}
+                              onClick={() => {
+                                handleImageClick(configKey, name, dataIndex, value, data);
+                              }}
+                            >
+                              <DocViewerWrapper
+                                key={`${file.fileStore}-${index}`}
+                                fileStoreId={data?.fileStore}
+                                displayFilename={data?.fileName}
+                                tenantId={tenantId}
+                                docWidth="250px"
+                                showDownloadOption={false}
+                                documentName={data?.fileName}
+                              />
+                            </div>
+                          );
+                        } else if (data?.document) {
+                          return data?.document?.map((data, index) => {
                             return (
                               <div
                                 style={{ cursor: "pointer" }}
@@ -281,51 +368,31 @@ const CustomReviewCardRow = ({
                                 />
                               </div>
                             );
-                          } else if (data?.document) {
-                            return data?.document?.map((data, index) => {
-                              return (
-                                <div
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => {
-                                    handleImageClick(configKey, name, dataIndex, value, data);
-                                  }}
-                                >
-                                  <DocViewerWrapper
-                                    key={`${file.fileStore}-${index}`}
-                                    fileStoreId={data?.fileStore}
-                                    displayFilename={data?.fileName}
-                                    tenantId={tenantId}
-                                    docWidth="250px"
-                                    showDownloadOption={false}
-                                    documentName={data?.fileName}
-                                  />
-                                </div>
-                              );
-                            });
-                          } else {
-                            return null;
-                          }
-                        })
-                      ) : file ? (
-                        <div
-                          style={{ cursor: "pointer" }}
-                          onClick={() => {
-                            handleImageClick(configKey, name, dataIndex, value, data);
-                          }}
-                        >
-                          <DocViewerWrapper
-                            key={`${value}-${file?.name}`}
-                            fileStoreId={file?.fileStore}
-                            displayFilename={file?.fileName}
-                            tenantId={tenantId}
-                            docWidth="250px"
-                            showDownloadOption={false}
-                            documentName={data?.fileName}
-                          />
-                        </div>
-                      ) : null
-                    )
-                  : null}
+                          });
+                        } else {
+                          return null;
+                        }
+                      })
+                    ) : file ? (
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          handleImageClick(configKey, name, dataIndex, value, data);
+                        }}
+                      >
+                        <DocViewerWrapper
+                          key={`${value}-${file?.name}`}
+                          fileStoreId={file?.fileStore}
+                          displayFilename={file?.fileName}
+                          tenantId={tenantId}
+                          docWidth="250px"
+                          showDownloadOption={false}
+                          documentName={data?.fileName}
+                        />
+                      </div>
+                    ) : null
+                  )
+                  : null} */}
               </div>
               <div
                 className="flag"

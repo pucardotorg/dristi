@@ -958,8 +958,8 @@
 
               .value {
                 display: grid;
-                grid-template-columns: 50% 50%;
-                gap: 20px;
+                grid-template-columns: 50% 50% 50% 50%;
+                gap: 16px;
 
                 &.column {
                   display: flex;
