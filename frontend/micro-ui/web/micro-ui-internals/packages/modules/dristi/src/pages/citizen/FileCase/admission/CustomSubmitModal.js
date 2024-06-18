@@ -44,7 +44,7 @@ function CustomSubmitModal({ t, setShowModal, header, subHeader, submitModalInfo
         headerStyles={{ fontSize: "32px" }}
         style={{ minWidth: "100%", marginTop: "10px" }}
       ></Banner>
-      {submitModalInfo?.subHeader && <CardLabel>{submitModalInfo?.subHeader}</CardLabel>}
+      {submitModalInfo?.subHeader && <CardLabel>{t(submitModalInfo?.subHeader)}</CardLabel>}
       {submitModalInfo?.showTable && <CustomCaseInfoDiv data={submitModalInfo?.caseInfo} t={t}/>}
       {submitModalInfo?.showCopytext && <CustomCopyTextDiv data={submitModalInfo?.caseInfo} />}
     </div>
