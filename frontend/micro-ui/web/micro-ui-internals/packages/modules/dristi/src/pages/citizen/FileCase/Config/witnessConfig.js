@@ -8,11 +8,11 @@ const witnessFormConfig = [
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "VERIFY_PHONE_ERROR_TEXT",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
             title: "",
@@ -28,8 +28,8 @@ const witnessFormConfig = [
           name: "middleName",
           validation: {
             pattern: {
-              message: "VERIFY_PHONE_ERROR_TEXT",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             title: "",
             patternType: "Name",
@@ -42,11 +42,11 @@ const witnessFormConfig = [
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "CORE_REQUIRED_FIELD_ERROR",
+          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "VERIFY_PHONE_ERROR_TEXT",
-              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
             title: "",
@@ -123,7 +123,7 @@ const witnessFormConfig = [
         key: "addressDetails",
         formType: "Witness",
         withoutLabel: true,
-        error: "sample required message",
+        error: "CORE_REQUIRED_FIELD_ERROR",
         required: false,
         isMandatory: true,
         populators: {

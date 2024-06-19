@@ -5,12 +5,17 @@ export const scrutinyInboxConfig = {
     serviceName: "/case/case/v1/_search",
     requestParam: {},
     requestBody: {
-      tenantId: "pg",
-      criteria: [{}],
+      criteria: [
+        {
+          defaultValues: true,
+          status: "UNDER_SCRUTINY",
+          filingNumber: "",
+        },
+      ],
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
-    moduleName: "registrationRequestsConfig",
+    moduleName: "scrutinyInboxConfig",
     searchFormJsonPath: "requestBody.inbox.moduleSearchCriteria",
     tableFormJsonPath: "requestBody.inbox",
   },
@@ -23,18 +28,18 @@ export const scrutinyInboxConfig = {
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
         minReqFields: 1,
         defaultValues: {
-          applicationNumber: "",
+          filingNumber: "",
           isActive: false,
           tenantId: "pg",
         },
         fields: [
           {
-            label: "Application No",
+            label: "CS_CASE_NO",
             type: "text",
             isMandatory: false,
             disable: false,
             populators: {
-              name: "applicationNumber",
+              name: "filingNumber",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -44,7 +49,7 @@ export const scrutinyInboxConfig = {
           },
         ],
       },
-      label: "Registration-Requests",
+      label: "CS_YOUR_CASES",
       children: {},
       show: true,
     },
@@ -54,23 +59,26 @@ export const scrutinyInboxConfig = {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "",
+            jsonPath: "caseTitle",
           },
           {
             label: "Stage",
             jsonPath: "",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",
-            jsonPath: "caseNumber",
+            jsonPath: "filingNumber",
           },
           {
             label: "Case Type",
             jsonPath: "",
+            additionalCustomization: true,
           },
           {
             label: "Days Since Filing",
             jsonPath: "filingDate",
+            additionalCustomization: true,
           },
         ],
         enableGlobalSearch: false,
@@ -82,4 +90,5 @@ export const scrutinyInboxConfig = {
     },
   },
   additionalSections: {},
+  additionalDetails: "filingNumber",
 };

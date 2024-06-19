@@ -14,7 +14,7 @@ const demandNoticeFormConfig = [
               type: "dropdown",
               name: "modeOfDispatchType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               required: false,
               isMandatory: true,
               options: [
@@ -39,6 +39,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfIssuance",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -51,6 +54,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfDispatch",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -111,10 +117,11 @@ const demandNoticeFormConfig = [
         label: "CS_DELAY_APPLICATION_TYPE",
         isMandatory: true,
         populators: {
+          name: "proofOfService",
           label: "CS_DELAY_APPLICATION_TYPE",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -148,6 +155,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfService",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -184,10 +194,11 @@ const demandNoticeFormConfig = [
         label: "CS_REPLY_NOTICE",
         isMandatory: true,
         populators: {
+          name: "proofOfReply",
           label: "CS_REPLY_NOTICE",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -221,6 +232,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfReply",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -257,6 +271,9 @@ const demandNoticeFormConfig = [
         isMandatory: true,
         populators: {
           name: "dateOfAccrual",
+          validation: {
+            max: new Date().toISOString().split("T")[0],
+          },
         },
       },
     ],
@@ -269,11 +286,11 @@ const demandNoticeFormConfig = [
         label: "CS_PAYER_FAIL_TO_PAY",
         isMandatory: true,
         populators: {
+          name: "delayApplicationType",
           label: "CS_PAYER_FAIL_TO_PAY",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
-          name: "delayApplicationType",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,

@@ -1,12 +1,12 @@
-import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import { CardLabelError, CardText } from "@egovernments/digit-ui-components";
+import { CardLabel, CloseSvg, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import Modal from "./Modal";
-import Button from "./Button";
 import { verifyMobileNoConfig } from "../configs/component";
 import useInterval from "../hooks/useInterval";
-import { DRISTIService } from "../services";
 import { InfoIconRed } from "../icons/svgIndex";
+import { DRISTIService } from "../services";
+import Button from "./Button";
+import Modal from "./Modal";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
@@ -81,6 +81,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       ...prev,
       showModal: false,
     }));
+    onSelect(config?.key, { ...formData?.[config.key], otpNumber: "" });
   };
 
   const resendOtp = async (input) => {
@@ -90,10 +91,12 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
       userType: getUserType(),
     };
     const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+    setTimeLeft(10);
     if (!err) {
       return;
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, name: DEFAULT_USER, ...TYPE_REGISTER } });
+      setTimeLeft(10);
       return;
     }
   };
@@ -123,7 +126,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           const identifierIdDetails = JSON.parse(
             individualData?.Individual?.[0]?.additionalFields?.fields?.find((obj) => obj.key === "identifierIdDetails")?.value || "{}"
           );
-          const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street ? street + "," : ""}`.trim();
+          const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
 
           const givenName = individualData?.Individual?.[0]?.name?.givenName || "";
           const otherNames = individualData?.Individual?.[0]?.name?.otherNames || "";
@@ -160,6 +163,8 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               document: identifierIdDetails?.fileStoreId
                 ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
                 : null,
+              "addressDetails-select": data["addressDetails-select"],
+              addressDetails: data["addressDetails-select"],
             },
             [config?.disableConfigKey]: true,
           });
@@ -333,13 +338,16 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               <div className="field">
                 {input?.type === "text" && (
                   <TextInput
-                    className={`field desktop-w-full verify-mobile-otp-input ${formData?.[config.key][input.name] &&
+                    className={`field desktop-w-full verify-mobile-otp-input ${
+                      formData?.[config.key][input.name] &&
                       formData?.[config.key][input.name].length > 0 &&
                       !["documentUpload", "radioButton"].includes(input.type) &&
                       input.validation &&
                       !formData?.[config.key][input.name].match(
                         window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
-                      ) && "error"}`}
+                      ) &&
+                      "error"
+                    }`}
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {

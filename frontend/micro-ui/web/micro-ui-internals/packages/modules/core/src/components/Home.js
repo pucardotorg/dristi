@@ -109,12 +109,12 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
                     Info={
                       code === "OBPS"
                         ? () => (
-                          <CitizenInfoLabel
-                            style={{ margin: "0px", padding: "10px" }}
-                            info={t("CS_FILE_APPLICATION_INFO_LABEL")}
-                            text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
-                          />
-                        )
+                            <CitizenInfoLabel
+                              style={{ margin: "0px", padding: "10px" }}
+                              info={t("CS_FILE_APPLICATION_INFO_LABEL")}
+                              text={t(`BPA_CITIZEN_HOME_STAKEHOLDER_INCLUDES_INFO_LABEL`)}
+                            />
+                          )
                         : null
                     }
                     isInfo={code === "OBPS" ? true : false}
@@ -129,6 +129,8 @@ const CitizenHome = ({ modules, getCitizenMenu, fetchedCitizen, isLoading }) => 
 };
 
 const EmployeeHome = ({ modules, additionalComponent }) => {
+  const roles = Digit.UserService.getUser()?.info?.roles;
+  const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
   return (
     <>
       <div className="employee-app-container">
@@ -136,7 +138,7 @@ const EmployeeHome = ({ modules, additionalComponent }) => {
           <span style={{ color: "#007E7E" }}>Help</span>
           <HelpOutlineIcon />
         </div> */}
-        <div className="ground-container moduleCardWrapper gridModuleWrapper">
+        <div className={isJudge ? "ground-container" : "ground-container moduleCardWrapper gridModuleWrapper"}>
           {modules.map(({ code }, index) => {
             const Card = Digit.ComponentRegistryService.getComponent(`${code}Card`) || (() => <React.Fragment />);
             return <Card key={index} />;

@@ -3,6 +3,8 @@
 .popup-module.e-sign-aadhar-modal,
 .popup-module.confirm-delete-modal,
 .popup-module.verify-mobile-modal,
+.popup-module.verification-complainant-modal,
+.popup-module.edit-case-name-modal,
 .popup-module.case-types {
   width: 536px;
   max-height: 560px;
@@ -111,8 +113,13 @@
         border: none;
         box-shadow: none !important;
         justify-content: center;
+        svg {
+          path {
+            fill: #007e7e;
+          }
+        }
         h2 {
-          color: #9e400a;
+          color: #007e7e;
           font-family: Roboto;
           font-size: 16px;
           font-weight: 700;
@@ -151,6 +158,8 @@
   .popup-module.e-sign-aadhar-modal,
   .popup-module.confirm-delete-modal,
   .popup-module.verify-mobile-modal,
+  .popup-module.verification-complainant-modal,
+  .popup-module.edit-case-name-modal,
   .popup-module.case-types {
     margin: auto 16px;
     max-height: 564px;
@@ -260,6 +269,38 @@
   .popup-module-main {
     .employeeCard {
       height: calc(100vh - 154px);
+    }
+  }
+}
+
+.popup-module.popup-module.verification-complainant-modal {
+  .popup-module-main {
+    form {
+      padding: 16px 24px 0px !important;
+      .field {
+        .label-field-pair {
+          margin-bottom: 16px !important;
+          .select-wrap {
+            margin-bottom: 0px !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+.popup-module.edit-case-name-modal {
+  .popup-module-main {
+    padding: 16px 24px 16px !important;
+
+    h3 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0b0c0c;
+      margin: 0px 0px 12px;
     }
   }
 }

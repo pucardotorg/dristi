@@ -13,7 +13,7 @@ const complainantDetailsFormConfig = [
           label: "SELECT_COMPLAINANT_TYPE",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -25,11 +25,13 @@ const complainantDetailsFormConfig = [
               complainantLocation: true,
               commonFields: true,
               isEnabled: true,
+              isIndividual: true,
             },
             {
               code: "REPRESENTATIVE",
               name: "Representative of an Entity",
               showCompanyDetails: true,
+              isIndividual: false,
               commonFields: true,
               isVerified: true,
               hasBarRegistrationNo: true,
@@ -60,6 +62,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         isMandatory: true,
         populators: {
+          name: "complainantId",
           inputs: [
             {
               label: "COMPLAINANT_ID",
@@ -91,7 +94,7 @@ const complainantDetailsFormConfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
-            maxLength: 100,
+            // maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -126,7 +129,7 @@ const complainantDetailsFormConfig = [
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
-            maxLength: 100,
+            // maxLength: 100,
             title: "",
             patternType: "Name",
           },
@@ -222,7 +225,7 @@ const complainantDetailsFormConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_PIN_LOCATION",
+              label: "CS_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
               key: "locationSearch",
@@ -251,6 +254,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_STATE_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -261,6 +268,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -303,7 +314,7 @@ const complainantDetailsFormConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_PIN_LOCATION",
+              label: "CS_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
               key: "locationCompanySearch",
@@ -334,6 +345,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_STATE_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },
@@ -345,6 +360,10 @@ const complainantDetailsFormConfig = [
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
+                pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
+                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                patternType: "Name",
+                title: "",
               },
               isMandatory: true,
             },

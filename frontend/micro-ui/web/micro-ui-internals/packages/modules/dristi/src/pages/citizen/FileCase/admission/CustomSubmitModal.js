@@ -1,12 +1,11 @@
-import { Banner, Card, CardLabel, CardText, Modal, TextArea } from "@egovernments/digit-ui-react-components";
-import React, { useMemo, useState } from "react";
+import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
+import React from "react";
 import CustomCaseInfoDiv from "./CustomCaseInfoDiv";
 import CustomCopyTextDiv from "./CustomCopyTextDiv";
-import Button from "../../../../components/Button";
 
 const mockSubmitModalInfo = {
   header: "The case file has been admitted successfully.",
-  subHeader: "Case updates with file number has been sent to all parties via SMS.",
+  subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE.",
   caseInfo: [
     {
       key: "Case Number",
@@ -45,8 +44,8 @@ function CustomSubmitModal({ t, setShowModal, header, subHeader, submitModalInfo
         headerStyles={{ fontSize: "32px" }}
         style={{ minWidth: "100%", marginTop: "10px" }}
       ></Banner>
-      {submitModalInfo?.subHeader && <CardLabel>{submitModalInfo?.subHeader}</CardLabel>}
-      {submitModalInfo?.showTable && <CustomCaseInfoDiv data={submitModalInfo?.caseInfo} />}
+      {submitModalInfo?.subHeader && <CardLabel>{t(submitModalInfo?.subHeader)}</CardLabel>}
+      {submitModalInfo?.showTable && <CustomCaseInfoDiv data={submitModalInfo?.caseInfo} t={t}/>}
       {submitModalInfo?.showCopytext && <CustomCopyTextDiv data={submitModalInfo?.caseInfo} />}
     </div>
   );

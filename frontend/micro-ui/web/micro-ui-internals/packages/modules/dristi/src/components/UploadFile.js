@@ -180,6 +180,7 @@ const UploadFile = (props) => {
         >
           <input
             type="file"
+            accept={props.accept}
             onChange={(e) => props.onUpload(e)}
             onClick={(event) => {
               if (props?.disabled) {

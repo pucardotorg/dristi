@@ -4,7 +4,6 @@ import { CopyIcon } from "../icons/svgIndex";
 
 const CustomCopyTextDiv = ({ data, t }) => {
   const handleCopy = (text) => {
-    console.log(text);
     navigator.clipboard.writeText(text);
   };
 
@@ -13,10 +12,10 @@ const CustomCopyTextDiv = ({ data, t }) => {
       {data.map(({ key, value }, index) => (
         <div key={index} style={{ display: "flex", marginBottom: "10px" }}>
           <div style={{ flex: 1 }}>
-            <CardText>{key}</CardText>
+            <CardText>{t(key)}</CardText>
           </div>
           <div style={{ display: "flex", alignItems: "center", paddingLeft: "10px" }}>
-            <CardText>{value}</CardText>
+            <CardText>{t(value)}</CardText>
 
             <Button
               variation="secondary"

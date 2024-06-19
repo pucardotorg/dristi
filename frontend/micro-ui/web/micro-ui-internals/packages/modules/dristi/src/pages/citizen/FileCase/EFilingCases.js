@@ -1,18 +1,38 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Button, CloseSvg, FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CloseSvg, FormComposerV2, Header, Loader, Toast, Button } from "@egovernments/digit-ui-react-components";
-import { useHistory, useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
-import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import Accordion from "../../../components/Accordion";
-import { sideMenuConfig } from "./Config";
-import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
-import Modal from "../../../components/Modal";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { DRISTIService } from "../../../services";
-import EditFieldsModal from "./EditFieldsModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
+import Modal from "../../../components/Modal";
+import { useToast } from "../../../components/Toast/useToast";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
+import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
 import { formatDate } from "./CaseType";
-import { userTypeOptions } from "../registration/config";
+import { sideMenuConfig } from "./Config";
+import EditFieldsModal from "./EditFieldsModal";
+import {
+  checkIfscValidation,
+  checkNameValidation,
+  checkOnlyCharInCheque,
+  chequeDateValidation,
+  complainantValidation,
+  delayApplicationValidation,
+  demandNoticeFileValidation,
+  prayerAndSwornValidation,
+  respondentValidation,
+  showDemandNoticeModal,
+  showToastForComplainant,
+  signatureValidation,
+  updateCaseDetails,
+  validateDateForDelayApplication,
+  chequeDetailFileValidation,
+  advocateDetailsFileValidation,
+} from "./EfilingValidationUtils";
+import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -74,17 +94,16 @@ const getTotalCountFromSideMenuConfig = (sideMenuConfig, selected) => {
 
 function EFilingCases({ path }) {
   const [params, setParmas] = useState({});
-  const Digit = window?.Digit || {};
   const { t } = useTranslation();
+  const toast = useToast();
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [{ setFormErrors, resetFormData, setFormDataValue, clearFormDataErrors }, setState] = useState({
-    setFormErrors: null,
-    resetFormData: null,
-    setFormDataValue: null,
-    clearFormDataErrors: null,
-  });
+  const setFormErrors = useRef(null);
+  const resetFormData = useRef(null);
+  const setFormDataValue = useRef(null);
+  const clearFormDataErrors = useRef(null);
+
   const urlParams = new URLSearchParams(window.location.search);
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
@@ -94,11 +113,13 @@ function EFilingCases({ path }) {
 
   const [openConfigurationModal, setOpenConfigurationModal] = useState(false);
   const [openConfirmCourtModal, setOpenConfirmCourtModal] = useState(false);
+  const [openConfirmCorrectionModal, setOpenConfirmCorrectionModal] = useState(false);
   const [receiptDemandNoticeModal, setReceiptDemandNoticeModal] = useState(false);
   const [serviceOfDemandNoticeModal, setServiceOfDemandNoticeModal] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
@@ -229,6 +250,11 @@ function EFilingCases({ path }) {
     }),
     [caseData]
   );
+
+  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+
+  const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
+
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
   }, [selected]);
@@ -261,6 +287,34 @@ function EFilingCases({ path }) {
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
   }, [selected, caseDetails]);
+
+  const closeToast = () => {
+    setShowErrorToast(false);
+    setErrorMsg("");
+    setSuccessToast((prev) => ({
+      ...prev,
+      showSuccessToast: false,
+      successMsg: "",
+    }));
+  };
+
+  useEffect(() => {
+    let timer;
+    if (showErrorToast || showSuccessToast) {
+      timer = setTimeout(() => {
+        closeToast();
+      }, 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [showErrorToast, showSuccessToast]);
+
+  const getDefaultValues = useCallback(
+    (index) =>
+      caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+      caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
+      formdata[index]?.data,
+    [caseDetails?.additionalDetails, caseDetails?.caseDetails, formdata, selected]
+  );
 
   const accordion = useMemo(() => {
     return sideMenuConfig.map((parent, pIndex) => ({
@@ -314,8 +368,9 @@ function EFilingCases({ path }) {
   }, [formConfig]);
 
   const modifiedFormConfig = useMemo(() => {
+    let modifiedFormData = formdata;
     if (!isDependentEnabled) {
-      return formdata.map(() => {
+      modifiedFormData = modifiedFormData.map(() => {
         if (selected === "reviewCaseFile") {
           return formConfig.map((config) => {
             return {
@@ -381,8 +436,11 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
+      if (!isErrorCorrectionMode) {
+        return modifiedFormData;
+      }
     }
-    return formdata.map(({ data }, index) => {
+    return modifiedFormData.map(({ data }, index) => {
       let disableConfigFields = [];
       formConfig.forEach((config) => {
         config.body.forEach((body) => {
@@ -430,6 +488,11 @@ function EFilingCases({ path }) {
                   body.disable = true;
                 }
               }
+
+              if (body?.labelChildren === "optional" && Object.keys(caseDetails?.additionalDetails?.scrutiny?.data || {}).length === 0) {
+                body.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+              }
+
               if ("inputs" in body?.populators && Array.isArray(body?.populators.inputs)) {
                 return {
                   ...body,
@@ -449,6 +512,7 @@ function EFilingCases({ path }) {
                       }
                       if (selected === "respondentDetails") {
                         if (
+                          Array.isArray(data?.addressDetails) &&
                           data?.addressDetails?.some(
                             (address) =>
                               address?.addressDetails?.pincode !==
@@ -459,6 +523,11 @@ function EFilingCases({ path }) {
                           delete input.isOptional;
                           return {
                             ...input,
+                          };
+                        } else {
+                          return {
+                            ...input,
+                            isOptional: "CS_IS_OPTIONAL",
                           };
                         }
                       }
@@ -482,49 +551,50 @@ function EFilingCases({ path }) {
           };
         })
         .map((config) => {
-          const { scrutiny } = caseDetails.additionalDetails || { scrutiny: {} };
-          // const scrutiny = {
-          //   complaintDetails: {
-          //     scrutinyMessage: "",
-          //     form: [
-          //       {
-          //         firstName: "Name does not match",
-          //         lastname: "Doest not match",
-          //       },
-          //       {},
-          //     ],
-          //   },
-          //   respondentDetails: {
-          //     scrutinyMessage: "",
-          //     form: [{}, {}],
-          //   },
-          // };
-          const updatedBody = config.body
-            .map((formComponent) => {
-              const key = formComponent.key || formComponent.populators?.name;
-              const modifiedFormComponent = structuredClone(formComponent);
-              if (modifiedFormComponent?.labelChildren === "optional") {
-                modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
-              }
-              if (scrutiny?.[selected]) modifiedFormComponent.disable = true;
-              if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
-                modifiedFormComponent.disable = false;
-                modifiedFormComponent.withoutLabel = true;
-                return [
-                  {
-                    type: "component",
-                    component: "ScrutinyInfo",
-                    key: "firstNameScrutiny",
-                    populators: {
-                      scrutinyMessage: scrutiny?.[selected].form[index][key],
+          const scrutinyObj = caseDetails?.additionalDetails?.scrutiny?.data || {};
+          const scrutiny = {};
+          Object.keys(scrutinyObj).forEach((item) => {
+            Object.keys(scrutinyObj[item]).forEach((key) => {
+              scrutiny[key] = scrutinyObj[item][key];
+            });
+          });
+          let updatedBody = [];
+          if (Object.keys(scrutinyObj).length > 0) {
+            updatedBody = config.body
+              .map((formComponent) => {
+                let key = formComponent.key || formComponent.populators?.name;
+                if (formComponent.type === "component" && formComponent.component === "SelectCustomDragDrop") {
+                  key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                }
+                const modifiedFormComponent = structuredClone(formComponent);
+                if (modifiedFormComponent?.labelChildren === "optional") {
+                  modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
+                }
+                modifiedFormComponent.disable = true;
+                if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
+                  modifiedFormComponent.disable = false;
+                  modifiedFormComponent.withoutLabel = true;
+                  return [
+                    {
+                      type: "component",
+                      component: "ScrutinyInfo",
+                      key: `${key}Scrutiny`,
+                      label: modifiedFormComponent.label,
+                      populators: {
+                        scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+                      },
                     },
-                  },
-                  modifiedFormComponent,
-                ];
-              }
-              return modifiedFormComponent;
-            })
-            .flat();
+                    modifiedFormComponent,
+                  ];
+                }
+                return modifiedFormComponent;
+              })
+              .flat();
+          } else {
+            updatedBody = config.body.map((formComponent) => {
+              return formComponent;
+            });
+          }
           return {
             ...config,
             body: updatedBody,
@@ -541,421 +611,15 @@ function EFilingCases({ path }) {
     setFormdata([...formdata, { isenabled: true, data: {}, displayindex: activeForms }]);
   };
 
-  const handleDeleteForm = (index) => {
-    const newArray = formdata.map((item, i) => ({
-      ...item,
-      isenabled: index === i ? false : item.isenabled,
-      displayindex: i < index ? item.displayindex : i === index ? -Infinity : item.displayindex - 1,
-    }));
-    setConfirmDeleteModal(true);
-    setFormdata(newArray);
-  };
-
-  const closeToast = () => {
-    setShowErrorToast(false);
-    setSuccessToast((prev) => ({
-      ...prev,
-      showSuccessToast: false,
-      successMsg: "",
-    }));
-  };
-
-  const chequeDateValidation = (formData, setError, clearErrors) => {
-    if (selected === "chequeDetails") {
-      for (const key in formData) {
-        switch (key) {
-          case "issuanceDate":
-            if (new Date(formData?.issuanceDate).getTime() > new Date().getTime()) {
-              setError("issuanceDate", { message: "CS_DATE_ERROR_MSG" });
-            } else {
-              clearErrors("issuanceDate");
-            }
-            break;
-          case "depositDate":
-            if (
-              formData?.depositDate &&
-              formData?.issuanceDate &&
-              new Date(formData?.issuanceDate).getTime() > new Date(formData?.depositDate).getTime()
-            ) {
-              setError("depositDate", { message: "CS_DEPOSIT_DATE_ERROR_MSG" });
-            } else if (selected === "chequeDetails" && new Date(formData?.depositDate).getTime() > new Date().getTime()) {
-              setError("depositDate", { message: "CS_DATE_ERROR_MSG" });
-            } else {
-              clearErrors("depositDate");
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  };
-
-  const showDemandNoticeModal = (setValue, formData, setError, clearErrors, index) => {
-    if (selected === "demandNoticeDetails") {
-      for (const key in formData) {
-        switch (key) {
-          case "dateOfService":
-            if (formData?.dateOfService && new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000 > new Date().getTime()) {
-              setServiceOfDemandNoticeModal(true);
-              setError("dateOfService", { message: " CS_SERVICE_DATE_ERROR_MSG" });
-              setValue("dateOfAccrual", "");
-            } else {
-              clearErrors("dateOfService");
-              let formattedDate = "";
-              if (formData?.dateOfService) {
-                const milliseconds = new Date(formData?.dateOfService).getTime() + 15 * 24 * 60 * 60 * 1000;
-                const date = new Date(milliseconds);
-                const year = date.getFullYear();
-                const month = String(date.getMonth() + 1).padStart(2, "0");
-                const day = String(date.getDate()).padStart(2, "0");
-                formattedDate = `${year}-${month}-${day}`;
-              }
-              setValue("dateOfAccrual", formattedDate);
-            }
-            break;
-
-          case "dateOfIssuance":
-            if (new Date(formData?.dateOfIssuance).getTime() > new Date().getTime()) {
-              setError("dateOfIssuance", { message: "CS_DATE_ERROR_MSG" });
-            } else if (
-              new Date(formData?.dateOfIssuance).getTime() <
-              new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[index]?.data?.depositDate).getTime()
-            ) {
-              setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" });
-            } else clearErrors("dateOfIssuance");
-            break;
-
-          case "dateOfDispatch":
-            if (new Date(formData?.dateOfDispatch).getTime() > new Date().getTime()) {
-              setError("dateOfDispatch", { message: "CS_DATE_ERROR_MSG" });
-            } else if (
-              formData?.dateOfDispatch &&
-              formData?.dateOfIssuance &&
-              new Date(formData?.dateOfIssuance).getTime() > new Date(formData?.dateOfDispatch).getTime()
-            ) {
-              setError("dateOfDispatch", { message: "CS_DISPATCH_DATE_ERROR_MSG" });
-            } else {
-              clearErrors("dateOfDispatch");
-            }
-            break;
-          case "delayApplicationType":
-            if (formData?.delayApplicationType?.code === "NO") {
-              setReceiptDemandNoticeModal(true);
-              // setError("delayApplicationType", { message: " CS_DELAY_APPLICATION_TYPE_ERROR_MSG" });
-            } else {
-              clearErrors("delayApplicationType");
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  };
-
-  const validateDateForDelayApplication = (setValue) => {
-    if (selected === "delayApplications") {
-      if (
-        caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-          (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
-        )
-      ) {
-        setValue("delayApplicationType", {
-          code: "NO",
-          name: "NO",
-          showForm: true,
-          isVerified: true,
-          hasBarRegistrationNo: true,
-          isEnabled: true,
-        });
-      } else if (
-        caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
-          (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 >= new Date().getTime()
-        )
-      ) {
-        setValue("delayApplicationType", {
-          code: "YES",
-          name: "YES",
-          showForm: false,
-          isEnabled: true,
-        });
-      }
-    }
-  };
-
-  const showToastForComplainant = (formData, setValue) => {
-    if (selected === "complaintDetails") {
-      if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType && formData?.complainantId?.isFirstRender) {
-        setValue("complainantId", { ...formData?.complainantId, isFirstRender: false });
-        setSuccessToast((prev) => ({
-          ...prev,
-          showSuccessToast: true,
-          successMsg: "CS_AADHAR_VERIFIED_SUCCESS_MSG",
-        }));
-      }
-    }
-  };
-  const checkIfscValidation = (formData, setValue) => {
-    if (selected === "chequeDetails") {
-      const formDataCopy = structuredClone(formData);
-      for (const key in formDataCopy) {
-        switch (key) {
-          case "ifsc":
-            if (Object.hasOwnProperty.call(formDataCopy, key)) {
-              const oldValue = formDataCopy[key];
-              let value = oldValue;
-
-              if (typeof value === "string") {
-                let updatedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "");
-                if (updatedValue?.length > 11) {
-                  updatedValue = updatedValue.substring(0, 11);
-                }
-
-                if (updatedValue?.length >= 5) {
-                  updatedValue = updatedValue.slice(0, 4).replace(/[^A-Z]/g, "") + "0" + updatedValue.slice(5);
-                }
-
-                if (updatedValue?.length === 11) {
-                  updatedValue = updatedValue.slice(0, 4) + "0" + updatedValue.slice(5, 11).replace(/[^A-Z0-9]/g, "");
-                }
-
-                if (updatedValue !== oldValue) {
-                  const element = document.querySelector(`[name="${key}"]`);
-                  const start = element?.selectionStart;
-                  const end = element?.selectionEnd;
-                  setValue(key, updatedValue);
-                  setTimeout(() => {
-                    element?.setSelectionRange(start, end);
-                  }, 0);
-                }
-              }
-            }
-            break;
-          case "chequeAmount":
-            if (Object.hasOwnProperty.call(formDataCopy, key)) {
-              const oldValue = formDataCopy[key];
-              let value = oldValue;
-
-              let updatedValue = value?.replace(/\D/g, "");
-              if (updatedValue?.length > 12) {
-                updatedValue = updatedValue.substring(0, 12);
-              }
-
-              if (updatedValue !== oldValue) {
-                const element = document?.querySelector(`[name="${key}"]`);
-                const start = element?.selectionStart;
-                const end = element?.selectionEnd;
-                setValue(key, updatedValue);
-                setTimeout(() => {
-                  element?.setSelectionRange(start, end);
-                }, 0);
-              }
-            }
-            break;
-          case "chequeNumber":
-            if (Object.hasOwnProperty.call(formDataCopy, key)) {
-              const oldValue = formDataCopy[key];
-              let value = oldValue;
-
-              let updatedValue = value?.replace(/\D/g, "");
-              if (updatedValue?.length > 6) {
-                updatedValue = updatedValue?.substring(0, 6);
-              }
-              if (updatedValue !== oldValue) {
-                const element = document?.querySelector(`[name="${key}"]`);
-                const start = element?.selectionStart;
-                const end = element?.selectionEnd;
-                setValue(key, updatedValue);
-                setTimeout(() => {
-                  element?.setSelectionRange(start, end);
-                }, 0);
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-    }
-  };
-  const checkNameValidation = (formData, setValue) => {
-    if (selected === "complaintDetails" || selected === "respondentDetails") {
-      if (formData?.firstName || formData?.middleName || formData?.lastName) {
-        const formDataCopy = structuredClone(formData);
-        for (const key in formDataCopy) {
-          if (Object.hasOwnProperty.call(formDataCopy, key)) {
-            const oldValue = formDataCopy[key];
-            let value = oldValue;
-            if (typeof value === "string") {
-              if (value.length > 100) {
-                value = value.slice(0, 100);
-              }
-
-              let updatedValue = value
-                .replace(/[^a-zA-Z\s]/g, "")
-                .trimStart()
-                .replace(/ +/g, " ")
-                .toLowerCase()
-                .replace(/\b\w/g, (char) => char.toUpperCase());
-              if (updatedValue !== oldValue) {
-                const element = document.querySelector(`[name="${key}"]`);
-                const start = element?.selectionStart;
-                const end = element?.selectionEnd;
-                setValue(key, updatedValue);
-                setTimeout(() => {
-                  element?.setSelectionRange(start, end);
-                }, 0);
-              }
-            }
-          }
-        }
-      }
-    }
-  };
-
-  const checkOnlyCharInCheque = (formData, setValue) => {
-    if (selected === "chequeDetails") {
-      if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
-        const formDataCopy = structuredClone(formData);
-        for (const key in formDataCopy) {
-          if (Object.hasOwnProperty.call(formDataCopy, key)) {
-            const oldValue = formDataCopy[key];
-            let value = oldValue;
-            if (key === "chequeSignatoryName" || key === "name") {
-              if (typeof value === "string") {
-                if (value.length > 100) {
-                  value = value.slice(0, 100);
-                }
-
-                let updatedValue = value
-                  .replace(/[^a-zA-Z\s]/g, "")
-                  .trimStart()
-                  .replace(/ +/g, " ")
-                  .toLowerCase()
-                  .replace(/\b\w/g, (char) => char.toUpperCase());
-                if (updatedValue !== oldValue) {
-                  const element = document.querySelector(`[name="${key}"]`);
-                  const start = element?.selectionStart;
-                  const end = element?.selectionEnd;
-                  setValue(key, updatedValue);
-                  setTimeout(() => {
-                    element?.setSelectionRange(start, end);
-                  }, 0);
-                }
-              }
-            } else if (key === "bankName") {
-              if (typeof value === "string") {
-                if (value.length > 200) {
-                  value = value.slice(0, 200);
-                }
-
-                let updatedValue = value
-                  .replace(/[^a-zA-Z0-9 ]/g, "")
-                  .trimStart()
-                  .replace(/ +/g, " ")
-                  .toLowerCase()
-                  .replace(/\b\w/g, (char) => char.toUpperCase());
-                if (updatedValue !== oldValue) {
-                  const element = document.querySelector(`[name="${key}"]`);
-                  const start = element?.selectionStart;
-                  const end = element?.selectionEnd;
-                  setValue(key, updatedValue);
-                  setTimeout(() => {
-                    element?.setSelectionRange(start, end);
-                  }, 0);
-                }
-              }
-            }
-          }
-        }
-      }
-    } else if (selected == "debtLiabilityDetails") {
-      if (formData?.totalAmount) {
-        console.log("formData?.totalAmount", formData?.totalAmount);
-        const formDataCopy = structuredClone(formData);
-        for (const key in formDataCopy) {
-          if (Object.hasOwnProperty.call(formDataCopy, key) && key === "totalAmount") {
-            const oldValue = formDataCopy[key];
-            let value = oldValue;
-            if (typeof value === "string") {
-              if (value.length > 12) {
-                value = value.slice(0, 12);
-              }
-
-              if (value !== oldValue) {
-                const element = document.querySelector(`[name="${key}"]`);
-                const start = element?.selectionStart;
-                const end = element?.selectionEnd;
-                setValue(key, value);
-                setTimeout(() => {
-                  element?.setSelectionRange(start, end);
-                }, 0);
-              }
-            }
-          }
-        }
-      }
-    }
-  };
-  const respondentValidation = (formData) => {
-    if (selected === "respondentDetails") {
-      const formDataCopy = structuredClone(formData);
-      if ("inquiryAffidavitFileUpload" in formDataCopy) {
-        if (
-          formData?.addressDetails?.some(
-            (address) =>
-              address?.addressDetails?.pincode !== caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode
-          ) &&
-          !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
-        ) {
-          setShowErrorToast(true);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-  };
-
-  const demandNoticeFileValidation = (formData) => {
-    if (selected === "demandNoticeDetails") {
-      const formDataCopy = structuredClone(formData);
-      debugger;
-      if ("SelectCustomDragDrop" in formDataCopy) {
-        if (
-          ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some(
-            (data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length
-          )
-        ) {
-          setShowErrorToast(true);
-          return true;
-        } else if (
-          formData?.proofOfService?.code === "YES" &&
-          ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
-        ) {
-          setShowErrorToast(true);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-  };
-
-  const complainantValidation = (formData) => {
-    if (selected === "complaintDetails") {
-      const formDataCopy = structuredClone(formData);
-      if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
-        if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
-          setShowErrorToast(true);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-  };
+  // const handleDeleteForm = (index) => {
+  //   const newArray = formdata.map((item, i) => ({
+  //     ...item,
+  //     isenabled: index === i ? false : item.isenabled,
+  //     displayindex: i < index ? item.displayindex : i === index ? -Infinity : item.displayindex - 1,
+  //   }));
+  //   setConfirmDeleteModal(true);
+  //   setFormdata(newArray);
+  // };
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
@@ -967,14 +631,24 @@ function EFilingCases({ path }) {
         },
       ]);
     }
-    checkIfscValidation(formData, setValue);
-    checkNameValidation(formData, setValue);
-    checkOnlyCharInCheque(formData, setValue);
+    checkIfscValidation({ formData, setValue, selected });
+    checkNameValidation({ formData, setValue, selected, formdata, index, reset });
+    checkOnlyCharInCheque({ formData, setValue, selected });
     if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
-      chequeDateValidation(formData, setError, clearErrors);
-      showDemandNoticeModal(setValue, formData, setError, clearErrors, index);
-      validateDateForDelayApplication(setValue);
-      showToastForComplainant(formData, setValue);
+      chequeDateValidation({ formData, setError, clearErrors, selected });
+      showDemandNoticeModal({
+        setValue,
+        formData,
+        setError,
+        clearErrors,
+        index,
+        caseDetails,
+        selected,
+        setReceiptDemandNoticeModal,
+        setServiceOfDemandNoticeModal,
+      });
+      validateDateForDelayApplication({ setValue, caseDetails, selected, toast, t, history, caseId });
+      showToastForComplainant({ formData, setValue, selected, setSuccessToast });
       setFormdata(
         formdata.map((item, i) => {
           return i === index
@@ -986,15 +660,12 @@ function EFilingCases({ path }) {
         })
       );
     }
-    if (!setFormErrors) {
-      setState((prev) => ({
-        ...prev,
-        setFormErrors: setError,
-        resetFormData: reset,
-        setFormDataValue: setValue,
-        clearFormDataErrors: clearErrors,
-      }));
-    }
+
+    setFormErrors.current = setError;
+    resetFormData.current = reset;
+    setFormDataValue.current = setValue;
+    clearFormDataErrors.current = clearErrors;
+
     // if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
     //   setIsDisabled(true);
     // }
@@ -1003,85 +674,6 @@ function EFilingCases({ path }) {
   const handleAccordionClick = (index) => {
     setParentOpen((prevParentOpen) => (prevParentOpen === index ? -1 : index));
   };
-  const onDocumentUpload = async (fileData, filename) => {
-    if (fileData?.fileStore) return fileData;
-    const fileUploadRes = await Digit.UploadServices.Filestorage("DRISTI", fileData, tenantId);
-    return { file: fileUploadRes?.data, fileType: fileData.type, filename };
-  };
-
-  const createIndividualUser = async (data, documentData) => {
-    const identifierId = documentData ? documentData?.filedata?.files?.[0]?.fileStoreId : data?.complainantId?.complainantId;
-    const identifierIdDetails = documentData
-      ? {
-          fileStoreId: identifierId,
-          filename: documentData?.filename,
-          documentType: documentData?.fileType,
-        }
-      : {};
-    const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
-    let Individual = {
-      Individual: {
-        tenantId: tenantId,
-        name: {
-          givenName: data?.firstName,
-          familyName: data?.lastName,
-          otherNames: data?.middleName,
-        },
-        userDetails: {
-          username: data?.complainantVerification?.userDetails?.userName,
-          roles: [
-            {
-              code: "CITIZEN",
-              name: "Citizen",
-              tenantId: tenantId,
-            },
-            ...["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"]?.map((role) => ({
-              code: role,
-              name: role,
-              tenantId: tenantId,
-            })),
-          ],
-
-          type: data?.complainantVerification?.userDetails?.type,
-        },
-        userUuid: data?.complainantVerification?.userDetails?.uuid,
-        userId: data?.complainantVerification?.userDetails?.id,
-        mobileNumber: data?.complainantVerification?.userDetails?.mobileNumber,
-        address: [
-          {
-            tenantId: tenantId,
-            type: "PERMANENT",
-            latitude: data?.addressDetails?.coordinates?.latitude,
-            longitude: data?.addressDetails?.coordinates?.longitude,
-            city: data?.addressDetails?.city,
-            pincode: data?.addressDetails?.pincode,
-            addressLine1: data?.addressDetails?.state,
-            addressLine2: data?.addressDetails?.district,
-            street: data?.addressDetails?.locality,
-          },
-        ],
-        identifiers: [
-          {
-            identifierType: identifierType,
-            identifierId: identifierId,
-          },
-        ],
-        isSystemUser: true,
-        skills: [],
-        additionalFields: {
-          fields: [
-            { key: "userType", value: userTypeOptions?.[0]?.code },
-            { key: "userTypeDetail", value: JSON.stringify(userTypeOptions) },
-            { key: "identifierIdDetails", value: JSON.stringify(identifierIdDetails) },
-          ],
-        },
-        clientAuditDetails: {},
-        auditDetails: {},
-      },
-    };
-    const response = await Digit.DRISTIService.postIndividualService(Individual, tenantId);
-    return response;
-  };
 
   const setMandatoryAndOptionalRemainingFields = (currentPageData, currentSelected) => {
     let totalMandatoryLeft = 0;
@@ -1089,7 +681,7 @@ function EFilingCases({ path }) {
 
     if (currentPageData.length === 0) {
       // this case is specially for witness details page (which is optional),
-      // so there might not be any witness at all hence empty currentPageData will be received.
+      // so there might not be any witness at all.
       totalMandatoryLeft = 0;
       totalOptionalLeft = 1;
     } else {
@@ -1137,7 +729,7 @@ function EFilingCases({ path }) {
           }
         }
 
-        if ("ifDataKeyHasValueAsArray" in currentPage) {
+        if ("ifMultipleAddressLocations" in currentPage) {
           const arrayValue = currentIndexData?.data[currentPage?.ifDataKeyHasValueAsArray?.dataKey] || [];
           for (let i = 0; i < arrayValue.length; i++) {
             const mandatoryFields = currentPage?.ifDataKeyHasValueAsArray?.mandatoryFields || [];
@@ -1189,636 +781,94 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
-
-  const updateCaseDetails = async (isCompleted, key) => {
-    const data = {};
-    setIsDisabled(true);
-    if (selected === "complaintDetails") {
-      const litigants = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data, index) => {
-            if (data?.data?.complainantVerification?.individualDetails) {
-              return {
-                tenantId,
-                caseId: caseDetails?.id,
-                partyCategory: data?.data?.complainantType?.code,
-                individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
-                partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-              };
-            } else {
-              if (data?.data?.complainantId?.complainantId) {
-                if (data?.data?.complainantId?.verificationType !== "AADHAR") {
-                  const documentData = await onDocumentUpload(
-                    data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-                    data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0]
-                  );
-                  const Individual = await createIndividualUser(data?.data, documentData);
-                  return {
-                    tenantId,
-                    caseId: caseDetails?.id,
-                    partyCategory: data?.data?.complainantType?.code,
-                    individualId: Individual?.Individual?.individualId,
-                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                  };
-                } else {
-                  const Individual = await createIndividualUser(data?.data);
-                  return {
-                    tenantId,
-                    caseId: caseDetails?.id,
-                    partyCategory: data?.data?.complainantType?.code,
-                    individualId: Individual?.Individual?.individualId,
-                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                  };
-                }
-              }
-              return {};
-            }
-          })
-      );
-
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            let documentData = [];
-            if (data?.data?.companyDetailsUpload?.document) {
-              documentData = await Promise.all(
-                data?.data?.companyDetailsUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: "Company documents",
-                    };
-                  }
-                })
-              );
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                companyDetailsUpload: {
-                  ...data?.data?.companyDetailsUpload,
-                  document: documentData,
-                },
-                individualDetails: {
-                  ...data?.data?.complainantVerification?.individualDetails,
-                },
-                complainantVerification: {
-                  ...data?.data?.complainantVerification,
-                  isUserVerified: !!data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.mobileNumber,
-                },
-              },
-            };
-          })
-      );
-      const representatives = (caseDetails?.representatives ? [...caseDetails?.representatives] : [])
-        ?.filter((representative) => representative?.advocateId)
-        .map((representative) => ({
-          ...representative,
-          caseId: caseDetails?.id,
-          representing: representative?.advocateId ? [...litigants] : [],
-        }));
-      data.litigants = [...litigants].map((item, index) => ({
-        ...(caseDetails.litigants?.[index] ? caseDetails.litigants?.[index] : {}),
-        ...item,
-      }));
-      data.representatives = [...representatives];
-      data.additionalDetails = {
-        ...caseDetails.additionalDetails,
-        complaintDetails: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+  const onSubmit = async (action) => {
+    if (!Array.isArray(formdata)) {
+      return;
     }
-    if (selected === "respondentDetails") {
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            let documentData = [];
-            if (data?.data?.inquiryAffidavitFileUpload?.document) {
-              documentData = await Promise.all(
-                data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: "Company documents",
-                    };
-                  }
-                })
-              );
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                inquiryAffidavitFileUpload: {
-                  ...data?.data?.inquiryAffidavitFileUpload,
-                  document: documentData,
-                },
-              },
-            };
-          })
-      );
-      data.additionalDetails = {
-        ...caseDetails.additionalDetails,
-        respondentDetails: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => respondentValidation({ t, formData: data?.data, caseDetails, selected, setShowErrorToast, toast }))
+    ) {
+      return;
     }
-    if (selected === "chequeDetails") {
-      const documentData = {
-        bouncedChequeFileUpload: {},
-        depositChequeFileUpload: {},
-        returnMemoFileUpload: {},
-      };
-      const infoBoxData = { header: "CS_COMMON_NOTE", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            if (data?.data?.bouncedChequeFileUpload?.document) {
-              documentData.bouncedChequeFileUpload.document = await Promise.all(
-                data?.data?.bouncedChequeFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["bouncedChequeFileUpload"],
-                    };
-                  }
-                })
-              );
-            }
-            if (data?.data?.depositChequeFileUpload?.document) {
-              documentData.depositChequeFileUpload.document = await Promise.all(
-                data?.data?.depositChequeFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["depositChequeFileUpload"],
-                    };
-                  }
-                })
-              );
-            }
-            if (data?.data?.returnMemoFileUpload?.document) {
-              documentData.returnMemoFileUpload.document = await Promise.all(
-                data?.data?.returnMemoFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["returnMemoFileUpload"],
-                    };
-                  }
-                })
-              );
-            }
-
-            if (
-              data?.data?.depositDate &&
-              data?.data?.issuanceDate &&
-              new Date(data?.data?.issuanceDate).getTime() + 6 * 30 * 24 * 60 * 60 * 1000 > new Date(data?.data?.depositDate).getTime()
-            ) {
-              infoBoxData.data.splice(0, 0, "CS_SIX_MONTH_BEFORE_DEPOSIT_TEXT");
-            }
-
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                ...documentData,
-                infoBoxData,
-              },
-            };
-          })
-      );
-      data.caseDetails = {
-        ...caseDetails.caseDetails,
-        chequeDetails: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (formdata.filter((data) => data.isenabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+      return;
     }
-    if (selected === "debtLiabilityDetails") {
-      const debtDocumentData = { debtLiabilityFileUpload: {} };
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            if (data?.data?.debtLiabilityFileUpload?.document) {
-              debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
-                data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["debtLiabilityFileUpload"],
-                    };
-                  }
-                })
-              );
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                ...debtDocumentData,
-              },
-            };
-          })
-      );
-      data.caseDetails = {
-        ...caseDetails.caseDetails,
-        debtLiabilityDetails: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (formdata.filter((data) => data.isenabled).some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+      return;
     }
-    if (selected === "witnessDetails") {
-      data.additionalDetails = {
-        ...caseDetails.additionalDetails,
-        witnessDetails: {
-          formdata: formdata.filter((item) => item.isenabled),
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (
+      formdata.filter((data) => data.isenabled).some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast }))
+    ) {
+      return;
     }
-    if (selected === "demandNoticeDetails") {
-      const documentData = {};
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            if (
-              data?.data?.SelectCustomDragDrop &&
-              typeof data?.data?.SelectCustomDragDrop === "object" &&
-              Object.keys(data?.data?.SelectCustomDragDrop).length > 0
-            ) {
-              documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).reduce(async (res, curr) => {
-                const result = await res;
-                result[curr] = await Promise.all(
-                  data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                    if (document) {
-                      const uploadedData = await onDocumentUpload(document, document.name);
-                      return {
-                        documentType: uploadedData.fileType || document?.documentType,
-                        fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                        documentName: uploadedData.filename || document?.documentName,
-                        fileName: pageConfig?.selectDocumentName?.[curr],
-                      };
-                    }
-                  })
-                );
-                return result;
-              }, Promise.resolve({}));
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                SelectCustomDragDrop: {
-                  ...data?.data?.SelectCustomDragDrop,
-                  ...documentData.SelectCustomDragDrop,
-                },
-              },
-            };
-          })
-      );
-      data.caseDetails = {
-        ...caseDetails.caseDetails,
-        demandNoticeDetails: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => complainantValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+    ) {
+      return;
     }
-    if (selected === "delayApplications") {
-      const condonationDocumentData = { condonationFileUpload: {} };
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            if (data?.data?.condonationFileUpload?.document) {
-              condonationDocumentData.condonationFileUpload.document = await Promise.all(
-                data?.data?.condonationFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["condonationFileUpload"],
-                    };
-                  }
-                })
-              );
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                ...condonationDocumentData,
-              },
-            };
-          })
-      );
-      data.caseDetails = {
-        ...caseDetails.caseDetails,
-        delayApplications: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.caseDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => delayApplicationValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+    ) {
+      return;
     }
-    if (selected === "prayerSwornStatement") {
-      const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
-      const infoBoxData = { header: "", data: "" };
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            if (data?.data?.SelectUploadDocWithName) {
-              documentData.SelectUploadDocWithName = await Promise.all(
-                data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
-                  if (!docWithNameData?.document[0]?.fileStore) {
-                    const document = await onDocumentUpload(docWithNameData?.document[0], docWithNameData?.document[0]?.name).then(async (data) => {
-                      const evidenceData = await DRISTIService.createEvidence({
-                        artifact: {
-                          caseId: caseDetails?.id,
-                          tenantId,
-                          comments: [],
-                          file: {
-                            documentType: data.fileType || data?.documentType,
-                            fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
-                            additionalDetails: {
-                              name: docWithNameData?.docName,
-                            },
-                          },
-                          workflow: {
-                            action: "TYPE DEPOSITION",
-                            documents: [
-                              {
-                                documentType: data.fileType,
-                                fileName: data.fileName,
-                                fileStoreId: data.file?.files?.[0]?.fileStoreId,
-                              },
-                            ],
-                          },
-                        },
-                      });
-                      return [
-                        {
-                          documentType: data.fileType || data?.documentType,
-                          fileStore: data.file?.files?.[0]?.fileStoreId || data?.fileStore,
-                          documentName: data.filename || data?.documentName,
-                          artifactId: evidenceData?.artifact?.id,
-                          fileName: docWithNameData?.document[0]?.name,
-                        },
-                      ];
-                    });
-                    return {
-                      document: document,
-                      docName: docWithNameData?.docName,
-                    };
-                  } else {
-                    return docWithNameData;
-                  }
-                })
-              );
-            }
-            if (
-              data?.data?.SelectCustomDragDrop &&
-              typeof data?.data?.SelectCustomDragDrop === "object" &&
-              Object.keys(data?.data?.SelectCustomDragDrop).length > 0
-            ) {
-              documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).reduce(async (res, curr) => {
-                const result = await res;
-                result[curr] = await Promise.all(
-                  data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                    if (document) {
-                      const uploadedData = await onDocumentUpload(document, document.name);
-                      return {
-                        documentType: uploadedData.fileType || document?.documentType,
-                        fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                        documentName: uploadedData.filename || document?.documentName,
-                        fileName: pageConfig?.selectDocumentName?.[curr],
-                      };
-                    }
-                  })
-                );
-                return result;
-              }, Promise.resolve({}));
-            }
-            if (data?.data?.memorandumOfComplaint?.document) {
-              documentData.memorandumOfComplaint.document = await Promise.all(
-                data?.data?.memorandumOfComplaint?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["memorandumOfComplaint"],
-                    };
-                  }
-                })
-              );
-            } else if (data?.data?.memorandumOfComplaint?.text) {
-              documentData.memorandumOfComplaint.text = data?.data?.memorandumOfComplaint?.text;
-            }
-            if (data?.data?.prayerForRelief?.document) {
-              documentData.prayerForRelief.document = await Promise.all(
-                data?.data?.prayerForRelief?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["prayerForRelief"],
-                    };
-                  }
-                })
-              );
-            } else if (data?.data?.prayerForRelief?.text) {
-              documentData.prayerForRelief.text = data?.data?.prayerForRelief?.text;
-            }
-
-            if (["MAYBE", "YES"].includes(data?.data?.prayerAndSwornStatementType?.code)) {
-              infoBoxData.header = "CS_RESOLVE_WITH_ADR";
-              if (data?.data?.caseSettlementCondition?.text) {
-                infoBoxData.data = data?.data?.caseSettlementCondition?.text;
-              }
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                ...documentData,
-                SelectCustomDragDrop: {
-                  ...data?.data?.SelectCustomDragDrop,
-                  ...documentData.SelectCustomDragDrop,
-                },
-                infoBoxData,
-              },
-            };
-          })
-      );
-      data.additionalDetails = {
-        ...caseDetails.additionalDetails,
-        prayerSwornStatement: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast }))
+    ) {
+      return;
     }
-    if (selected === "advocateDetails") {
-      const vakalatnamaDocumentData = { vakalatnamaFileUpload: {} };
-      const newFormData = await Promise.all(
-        formdata
-          .filter((item) => item.isenabled)
-          .map(async (data) => {
-            if (data?.data?.vakalatnamaFileUpload?.document) {
-              vakalatnamaDocumentData.vakalatnamaFileUpload.document = await Promise.all(
-                data?.data?.vakalatnamaFileUpload?.document?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.["vakalatnamaFileUpload"],
-                    };
-                  }
-                })
-              );
-            }
-            return {
-              ...data,
-              data: {
-                ...data.data,
-                ...vakalatnamaDocumentData,
-                advocateBarRegNumberWithName: data?.data?.advocateBarRegNumberWithName?.map((item) => {
-                  return {
-                    barRegistrationNumber: item?.barRegistrationNumber,
-                    advocateName: item?.advocateName,
-                    advocateId: item?.advocateId,
-                    barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
-                  };
-                }),
-                advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-                barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
-                barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
-              },
-            };
-          })
-      );
-      let representatives = [];
-      if (formdata?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
-        representatives = formdata
-          .filter((item) => item.isenabled)
-          .map((data, index) => {
-            return {
-              ...(caseDetails.representatives?.[index] ? caseDetails.representatives?.[index] : {}),
-              caseId: caseDetails?.id,
-              representing: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId
-                ? [
-                    ...(caseDetails?.litigants && Array.isArray(caseDetails?.litigants)
-                      ? caseDetails?.litigants?.map((data, key) => ({
-                          ...(caseDetails.representatives?.[index]?.representing?.[key]
-                            ? caseDetails.representatives?.[index]?.representing?.[key]
-                            : {}),
-                          tenantId,
-                          caseId: data?.caseId,
-                          partyCategory: data?.partyCategory,
-                          individualId: data?.individualId,
-                          partyType: data?.partyType,
-                        }))
-                      : []),
-                  ]
-                : [],
-              advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
-              tenantId,
-            };
-          });
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => signatureValidation({ formData: data?.data, selected, setShowErrorToast, setErrorMsg }))
+    ) {
+      return;
+    }
+    if (isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE) {
+      if (selected !== "addSignature") {
+        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+        return;
+      } else {
+        return setOpenConfirmCorrectionModal(true);
       }
-      data.representatives = [...representatives];
-      data.additionalDetails = {
-        ...caseDetails.additionalDetails,
-        advocateDetails: {
-          formdata: newFormData,
-          isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
-        },
-      };
     }
-    return DRISTIService.caseUpdateService(
-      {
-        cases: {
-          ...caseDetails,
-          ...data,
-          linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
-          filingDate: formatDate(new Date()),
-          ...(!caseDetails?.litigants && { litigants: [] }),
-          workflow: {
-            ...caseDetails?.workflow,
-            action: "SAVE_DRAFT",
-          },
-        },
-        tenantId,
-      },
-      tenantId
-    );
-  };
 
-  const onSubmit = async () => {
-    if (formdata.some((data) => respondentValidation(data?.data))) {
-      return;
-    }
-    if (formdata.some((data) => demandNoticeFileValidation(data?.data))) {
-      return;
-    }
-    if (formdata.some((data) => complainantValidation(data?.data))) {
-      return;
-    }
-    if (selected === "addSignature") {
+    if (selected === "addSignature" && !(isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE)) {
       setOpenConfirmCourtModal(true);
     } else {
-      updateCaseDetails(true)
+      updateCaseDetails({
+        isCompleted: true,
+        caseDetails,
+        formdata,
+        pageConfig,
+        selected,
+        setIsDisabled,
+        tenantId,
+        setFormDataValue: setFormDataValue.current,
+        action,
+      })
         .then(() => {
-          if (!!resetFormData) {
-            resetFormData();
+          if (resetFormData.current) {
+            resetFormData.current();
+            setIsDisabled(false);
           }
-          refetchCaseData().then(() => {
+          return refetchCaseData().then(() => {
             const caseData =
               caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
               caseDetails?.caseDetails?.[nextSelected]?.formdata ||
               (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
             setFormdata(caseData);
             setIsDisabled(false);
+            if (action === CaseWorkflowAction.EDIT_CASE) {
+              return history.push(`/${window.contextPath}/citizen/dristi/home`);
+            }
             history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           });
         })
@@ -1830,7 +880,7 @@ function EFilingCases({ path }) {
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails()
+    updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
       .then(() => {
         refetchCaseData().then(() => {
           const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -1841,7 +891,15 @@ function EFilingCases({ path }) {
       })
       .catch(() => {
         setIsDisabled(false);
+      })
+      .finally(() => {
+        toast.success("Successfully Saved Draft");
       });
+  };
+
+  const onErrorCorrectionSubmit = () => {
+    setOpenConfirmCorrectionModal(false);
+    onSubmit(CaseWorkflowAction.EDIT_CASE);
   };
 
   const handlePageChange = (key, isConfirm) => {
@@ -1854,30 +912,47 @@ function EFilingCases({ path }) {
     }
     setParmas({ ...params, [pageConfig.key]: formdata });
     setFormdata([{ isenabled: true, data: {}, displayindex: 0 }]);
-    if (!!resetFormData) {
-      resetFormData();
+    if (resetFormData.current) {
+      resetFormData.current();
       setIsDisabled(false);
     }
     setIsOpen(false);
-    updateCaseDetails("PAGE_CHANGE")
-      .then(() => {
-        refetchCaseData().then(() => {
-          const caseData =
-            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
-            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-          setFormdata(caseData);
+    if (state !== CaseWorkflowState.CASE_RE_ASSIGNED) {
+      updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+        .then(() => {
+          refetchCaseData().then(() => {
+            const caseData =
+              caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+              caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+              (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+            setFormdata(caseData);
+            setIsDisabled(false);
+          });
+        })
+        .catch(() => {
           setIsDisabled(false);
         });
-      })
-      .catch(() => {
-        setIsDisabled(false);
-      });
+    }
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
-  const onSubmitCase = (data) => {
+  const onSubmitCase = async (data) => {
     setOpenConfirmCourtModal(false);
+    await DRISTIService.caseUpdateService(
+      {
+        cases: {
+          ...caseDetails,
+          caseTitle: `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+          filingDate: formatDate(new Date()),
+          workflow: {
+            ...caseDetails?.workflow,
+            action: "SUBMIT_CASE",
+          },
+        },
+        tenantId,
+      },
+      tenantId
+    );
     history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };
 
@@ -1928,7 +1003,6 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
-
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -2033,23 +1107,18 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  key={selected}
                   label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
                   config={config}
-                  onSubmit={(data) => onSubmit(data, index)}
+                  onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
-                  defaultValues={
-                    caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
-                    caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
-                    formdata[index]?.data
-                  }
+                  defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
                   cardStyle={{ minWidth: "100%" }}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
-                  showSecondaryLabel={true}
+                  showSecondaryLabel={!isErrorCorrectionMode}
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
@@ -2086,6 +1155,7 @@ function EFilingCases({ path }) {
                   {
                     cases: {
                       ...caseDetails,
+                      litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
                       filingDate: formatDate(new Date()),
                       workflow: {
                         ...caseDetails?.workflow,
@@ -2102,7 +1172,7 @@ function EFilingCases({ path }) {
               actionSaveLabel={t("CS_NOT_PAID_FULL")}
               children={<div style={{ padding: "16px 0" }}>{t("CS_NOT_PAID_FULL_TEXT")}</div>}
               actionSaveOnSubmit={async () => {
-                setFormDataValue("delayApplicationType", {
+                setFormDataValue.current?.("delayApplicationType", {
                   code: "YES",
                   name: "YES",
                   showForm: false,
@@ -2130,6 +1200,7 @@ function EFilingCases({ path }) {
                   {
                     cases: {
                       ...caseDetails,
+                      litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
                       filingDate: formatDate(new Date()),
                       workflow: {
                         ...caseDetails?.workflow,
@@ -2183,11 +1254,21 @@ function EFilingCases({ path }) {
               handlePageChange={handlePageChange}
             />
           )}
-          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showErrorToast && (
+            <Toast
+              error={true}
+              label={t(errorMsg ? errorMsg : "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")}
+              isDleteBtn={true}
+              onClose={closeToast}
+            />
+          )}
           {showSuccessToast && <Toast label={t(successMsg)} isDleteBtn={true} onClose={closeToast} />}
         </div>
       </div>
       {openConfirmCourtModal && <ConfirmCourtModal setOpenConfirmCourtModal={setOpenConfirmCourtModal} t={t} onSubmitCase={onSubmitCase} />}
+      {openConfirmCorrectionModal && (
+        <ConfirmCorrectionModal onCorrectionCancel={() => setOpenConfirmCorrectionModal(false)} onSubmit={onErrorCorrectionSubmit} />
+      )}
       {isDisabled && (
         <div
           style={{

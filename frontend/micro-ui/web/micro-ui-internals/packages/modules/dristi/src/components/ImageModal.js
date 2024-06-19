@@ -4,7 +4,7 @@ import { FlagIcon, LeftArrow } from "../icons/svgIndex";
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
+function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef }) {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const Heading = (props) => {
     return (
@@ -14,7 +14,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
         </div>
         <div className="heading-title">
           <h1 className="heading-m">{props.label}</h1>
-          <p>{`cheque_bounced.jpeg  |  2MB`}</p>
+          <p>{props.fileName}</p>
         </div>
       </div>
     );
@@ -23,9 +23,10 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
     return (
       <React.Fragment>
         <div
+          ref={anchorRef}
           className="flag-icon"
           onClick={(e) => {
-            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.dataIndex, imageInfo.fieldName);
+            handleOpenPopup(null, imageInfo.configKey, imageInfo.name, imageInfo.index, imageInfo.fieldName, imageInfo.inputlist);
           }}
         >
           <FlagIcon />
@@ -40,7 +41,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t }) {
     <Modal
       headerBarEnd={<HeaderBarEnd />}
       formId="modal-action"
-      headerBarMain={<Heading label={t("CS_BOUNCED_CHEQUE")} />}
+      headerBarMain={<Heading label={t(imageInfo.data?.fileName)} fileName={imageInfo.data?.documentName} />}
       className="view-image-modal"
       hideSubmit
       style={{ height: "100%", width: "100%" }}
