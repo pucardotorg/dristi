@@ -33,7 +33,7 @@ public class ApplicationRowMapperTest {
         when(resultSet.getLong("createdtime")).thenReturn(123456789L, 987654321L);
         when(resultSet.getString("lastmodifiedby")).thenReturn("Doe", "Smith");
         when(resultSet.getString("applicationnumber")).thenReturn("APP-001", "APP-002");
-        when(resultSet.getString("applicationtype")).thenReturn("1");
+        when(resultSet.getString("applicationtype")).thenReturn("[1]");
         when(resultSet.getString("cnrnumber")).thenReturn("CN-001", "CN-002");
         when(resultSet.getString("filingnumber")).thenReturn("F-001", "F-002");
         when(resultSet.getString("caseid")).thenReturn("Case-001", "Case-002");
