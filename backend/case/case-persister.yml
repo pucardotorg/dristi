@@ -301,3 +301,17 @@ serviceMaps:
             - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedBy
             - jsonPath: $.cases.representatives.*.representing.*.auditDetails.createdTime
             - jsonPath: $.cases.representatives.*.representing.*.auditDetails.lastModifiedTime
+
+    - version: 1.0
+      description: Update case status in tables
+      fromTopic: update-case-status-application
+      isTransaction: true
+      queryMaps:
+        - query: UPDATE dristi_cases SET status = ?, lastmodifiedby = ?,  lastmodifiedtime = ? WHERE filingNumber=?;
+          basePath: $
+          jsonMaps:
+            - jsonPath: $.status
+            - jsonPath: $.auditDetails.lastModifiedBy
+            - jsonPath: $.auditDetails.lastModifiedTime
+            - jsonPath: $.filingNumber
+
