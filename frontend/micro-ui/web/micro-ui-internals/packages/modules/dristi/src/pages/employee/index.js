@@ -11,6 +11,7 @@ import ViewCaseFile from "./scrutiny/ViewCaseFile";
 import Breadcrumb from "../../components/BreadCrumb";
 import PaymentInbox from "./Payment/PaymentInbox";
 import ViewPaymentDetails from "./Payment/ViewPaymentDetails";
+import EFilingPaymentResponse from "./Payment/EFilingPaymentResponse";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -75,12 +76,9 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           )}
           <PrivateRoute exact path={`${path}/registration-requests`} component={Inbox} />
           <PrivateRoute exact path={`${path}/registration-requests/details`} component={(props) => <ApplicationDetails {...props} />} />
-          <PrivateRoute exact path={`${path}/pending-payment-inbox`} component={(props) => <PaymentInbox {...props} />} />
-          <PrivateRoute
-            exact
-            path={`${path}/pending-payment-inbox/pending-payment-details`}
-            component={(props) => <ViewPaymentDetails {...props} />}
-          />
+          <PrivateRoute exact path={`${path}/pending-payment-inbox`} component={PaymentInbox} />
+          <PrivateRoute exact path={`${path}/pending-payment-inbox/response`} component={EFilingPaymentResponse} />
+          <PrivateRoute exact path={`${path}/pending-payment-inbox/pending-payment-details`} component={ViewPaymentDetails} />
           <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}></div>
           <PrivateRoute exact path={`${path}/cases`} component={Home} />
           <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
