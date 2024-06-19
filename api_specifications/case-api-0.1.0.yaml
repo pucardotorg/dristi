@@ -279,6 +279,12 @@ components:
             case. In the case of e-courts, it will be courtId. The court is a combination of judge + courtroom + other associated court staff. A courtroom will be associated with a single judge or bench. Judges can be associated with one or more courtrooms. 
           minLength: 2
           maxLength: 64
+        judgeId:
+          type: string
+        stage:
+          type: string
+        substage:
+          type: string
         benchId:
           type: string
           description: >-
