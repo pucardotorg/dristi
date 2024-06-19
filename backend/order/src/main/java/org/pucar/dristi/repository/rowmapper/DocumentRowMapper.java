@@ -21,7 +21,7 @@ public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Docum
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String orderId = rs.getString("order_id");
-                UUID uuid = UUID.fromString(orderId!=null ? orderId : "00000000-0000-0000-0000-000000000000");
+                UUID uuid = UUID.fromString(orderId);
                 Document document = Document.builder()
                         .id(rs.getString("id"))
                         .documentType(rs.getString("documenttype"))
@@ -44,7 +44,7 @@ public class DocumentRowMapper implements ResultSetExtractor<Map<UUID,List<Docum
             }
         }
         catch (Exception e){
-            log.error("Error occurred while processing document ResultSet: {}", e.getMessage());
+            log.error("Error occurred while processing document ResultSet :: {}", e.toString());
             throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing document ResultSet: "+ e.getMessage());
         }
         return documentMap;
