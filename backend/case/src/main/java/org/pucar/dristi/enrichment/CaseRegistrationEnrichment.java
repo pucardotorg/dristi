@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.CASE_ADMIT_STATUS;
@@ -220,12 +221,20 @@ public class CaseRegistrationEnrichment {
     }
     public void enrichCaseNumberAndCNRNumber(CaseRequest caseRequest) {
         try {
-                List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
-                caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-                caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
+            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
+            caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
         } catch (Exception e) {
             log.error("Error enriching case number and cnr number: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
         }
     }
+        public void enrichAccessCode(CaseRequest caseRequest){
+            try {
+                caseRequest.getCases().setAccessCode(Integer.toString(10000000 + new Random().nextInt(90000000)));
+            } catch (Exception e) {
+                log.error("Error enriching access code: {}", e.getMessage());
+                throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
+            }
+        }
 }
