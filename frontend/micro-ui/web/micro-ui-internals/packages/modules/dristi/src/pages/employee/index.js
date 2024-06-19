@@ -81,9 +81,8 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
             path={`${path}/pending-payment-inbox/pending-payment-details`}
             component={(props) => <ViewPaymentDetails {...props} />}
           />
-          <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}>
-            <PrivateRoute exact path={`${path}/cases`} component={Home} />
-          </div>
+          <div className={location.pathname.endsWith("employee/dristi/cases") ? "file-case-main" : ""}></div>
+          <PrivateRoute exact path={`${path}/cases`} component={Home} />
           <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
           <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
         </div>
