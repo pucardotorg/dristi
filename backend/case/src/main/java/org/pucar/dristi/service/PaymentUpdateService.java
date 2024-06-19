@@ -1,6 +1,8 @@
 package org.pucar.dristi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.web.models.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.egov.common.contract.models.AuditDetails;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +32,11 @@ public class PaymentUpdateService {
 
     @Autowired
     private CaseRepository repository;
+    @Autowired
+    private Producer producer;
+
+    @Autowired
+    private Configuration configuration;
 
     public void process(HashMap<String, Object> record) {
 
@@ -61,7 +69,7 @@ public class PaymentUpdateService {
         criterias.add(criteria);
         List<CaseCriteria> caseCriterias = repository.getApplications(criterias);
 
-        if (CollectionUtils.isEmpty(caseCriterias))
+        if (CollectionUtils.isEmpty(caseCriterias.get(0).getResponseList()))
             throw new CustomException("INVALID RECEIPT",
                     "No applications found for the consumerCode " + criteria.getFilingNumber());
 
@@ -77,6 +85,13 @@ public class PaymentUpdateService {
 
             State state = workflowService.callWorkFlow(wfRequest);
 
+            CourtCase courtCase = updateRequest.getCriteria().get(0).getResponseList().get(0);
+            courtCase.setStatus(state.getState());
+            AuditDetails auditDetails = courtCase.getAuditdetails();
+            auditDetails.setLastModifiedBy(paymentDetail.getAuditDetails().getLastModifiedBy());
+            auditDetails.setLastModifiedTime(paymentDetail.getAuditDetails().getLastModifiedTime());
+            courtCase.setAuditdetails(auditDetails);
+            producer.push(configuration.getCaseUpdateStatusTopic(),courtCase);
         });
     }
 
