@@ -6,14 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.egov.common.contract.response.ResponseInfo;
+import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * CaseResponse
+ * CaseSearchRequest
  */
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
@@ -21,19 +21,19 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CaseResponse {
-	@JsonProperty("ResponseInfo")
+public class CaseExistsRequest {
 
-	@Valid
-	private ResponseInfo responseInfo = null;
+    @JsonProperty("RequestInfo")
+    @Valid
+    private RequestInfo requestInfo = null;
 
-	@JsonProperty("cases")
-	@Valid
-	private List<CourtCase> cases = new ArrayList<>();
+    @JsonProperty("criteria")
+    @Valid
+    private List<CaseExists> criteria = new ArrayList<>();
 
-	public CaseResponse addCasesItem(CourtCase casesItem) {
-		this.cases.add(casesItem);
-		return this;
-	}
+    public CaseExistsRequest addCriteriaItem(CaseExists criteriaItem) {
+        this.criteria.add(criteriaItem);
+        return this;
+    }
 
 }

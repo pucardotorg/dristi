@@ -20,6 +20,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.tenantId
               - inJsonPath: $.applicationNumber
                 outJsonPath: $.Data.orderDetails.applicationNumber
+              - inJsonPath: $.orderType
+                outJsonPath: $.Data.orderDetails.orderType
               - inJsonPath: $.filingNumber
                 outJsonPath: $.Data.orderDetails.filingNumber
               - inJsonPath: $.hearingNumber
@@ -28,6 +30,10 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.orderNumber
               - inJsonPath: $.cnrNumber
                 outJsonPath: $.Data.orderDetails.cnrNumber
+              - inJsonPath: $.orderCategory
+                outJsonPath: $.Data.orderDetails.orderCategory
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.orderDetails.createdDate
               - inJsonPath: $.status
                 outJsonPath: $.Data.orderDetails.status
               - inJsonPath: $.comments
@@ -87,6 +93,12 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.orderNumber
               - inJsonPath: $.cnrNumber
                 outJsonPath: $.Data.orderDetails.cnrNumber
+              - inJsonPath: $.orderType
+                outJsonPath: $.Data.orderDetails.orderType
+              - inJsonPath: $.orderCategory
+                outJsonPath: $.Data.orderDetails.orderCategory
+              - inJsonPath: $.createdDate
+                outJsonPath: $.Data.orderDetails.createdDate
               - inJsonPath: $.status
                 outJsonPath: $.Data.orderDetails.status
               - inJsonPath: $.comments

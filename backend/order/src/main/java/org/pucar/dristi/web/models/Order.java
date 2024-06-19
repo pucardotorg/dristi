@@ -67,7 +67,7 @@ public class Order {
     @JsonProperty("orderType")
     @NotNull
     @Valid
-    private List<UUID> orderType = new ArrayList<>();
+    private List<Integer> orderType = new ArrayList<>();
 
     @JsonProperty("orderCategory")
     private String orderCategory = null;
@@ -108,7 +108,7 @@ public class Order {
         return this;
     }
 
-    public Order addOrderTypeItem(UUID orderTypeItem) {
+    public Order addOrderTypeItem(Integer orderTypeItem) {
         this.orderType.add(orderTypeItem);
         return this;
     }

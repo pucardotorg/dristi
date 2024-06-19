@@ -271,7 +271,7 @@ components:
         orderType:
           type: array
           items:
-            type: string
+            type: integer
             format: uuid
             minLength: 36
             maxLength: 36

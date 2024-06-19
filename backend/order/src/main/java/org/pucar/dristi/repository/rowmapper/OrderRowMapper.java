@@ -5,15 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
-import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.Order;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Component
@@ -44,7 +40,11 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
                             .orderNumber(rs.getString("ordernumber"))
-                            .orderNumber(rs.getString("hearingnumber"))
+                            .hearingNumber(UUID.fromString(rs.getString("hearingnumber")))
+                            .cnrNumber(rs.getString("cnrnumber"))
+                            .orderCategory(rs.getString("ordercategory"))
+                            .isActive(rs.getBoolean("isactive"))
+                            .comments(rs.getString("comments"))
                             .filingNumber(rs.getString("filingnumber"))
                             .status(rs.getString("status"))
                             .auditDetails(auditdetails)
@@ -54,15 +54,23 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                 if(pgObject1!=null)
                     order.setApplicationNumber(objectMapper.readValue(pgObject1.getValue(),List.class));
 
-                PGobject pgObject2 = (PGobject) rs.getObject("additionalDetails");
+                PGobject pgObject2 = (PGobject) rs.getObject("additionaldetails");
                 if(pgObject2!=null)
                     order.setAdditionalDetails(objectMapper.readTree(pgObject2.getValue()));
+
+                PGobject pgObject3 = (PGobject) rs.getObject("ordertype");
+                if(pgObject3!=null)
+                    order.setOrderType(objectMapper.readValue(pgObject3.getValue(), List.class));
+
+                PGobject pgObject4 = (PGobject) rs.getObject("issuedby");
+                if(pgObject4!=null)
+                    order.setIssuedBy(objectMapper.readTree(pgObject4.getValue()));
 
                 orderMap.put(uuid, order);
             }
         }
         catch (Exception e){
-            log.error("Error occurred while processing order ResultSet: {}", e.getMessage());
+            log.error("Error occurred while processing order ResultSet :: {}", e.toString());
             throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing order ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(orderMap.values());

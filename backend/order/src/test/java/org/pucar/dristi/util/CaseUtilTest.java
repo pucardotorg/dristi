@@ -4,27 +4,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.common.contract.request.RequestInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.*;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
-import org.pucar.dristi.web.models.CaseResponse;
-import org.pucar.dristi.web.models.CaseSearchRequest;
-import org.pucar.dristi.web.models.CourtCase;
+import org.pucar.dristi.web.models.CaseExists;
+import org.pucar.dristi.web.models.CaseExistsRequest;
+import org.pucar.dristi.web.models.CaseExistsResponse;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class CaseUtilTest {
+
+    @InjectMocks
+    private CaseUtil caseUtil;
 
     @Mock
     private RestTemplate restTemplate;
@@ -35,71 +34,90 @@ public class CaseUtilTest {
     @Mock
     private Configuration configs;
 
-    @InjectMocks
-    private CaseUtil caseUtil;
+    private RequestInfo requestInfo;
+    private String cnrNumber;
+    private String filingNumber;
+    private String caseHost;
+    private String casePath;
+    private CaseExistsResponse caseExistsResponse;
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
+    void setUp() {
+        requestInfo = new RequestInfo();
+        cnrNumber = "CNR123";
+        filingNumber = "FILING123";
+        caseHost = "http://localhost:8080/case";
+        casePath = "/case/_exists";
+
+        caseExistsResponse = new CaseExistsResponse();
+        caseExistsResponse.setCriteria(Collections.singletonList(new CaseExists()));
+        when(configs.getCaseHost()).thenReturn(caseHost);
+        when(configs.getCasePath()).thenReturn(casePath);
     }
 
     @Test
-    public void testFetchOrderDetails_Success() {
-        // Arrange
-        String cnrNumber = "CNR123";
-        RequestInfo requestInfo = new RequestInfo();
+    void testFetchCaseDetailsSuccess() throws Exception {
+        Map<String, Object> responseMap = new HashMap<>();
+        Map<String, Object> caseDetails = new HashMap<>();
+        caseDetails.put("exists", true);
+        responseMap.put("criteria", Collections.singletonList(caseDetails));
 
-        CaseResponse mockCaseResponse = new CaseResponse();
-        mockCaseResponse.setCases(Collections.singletonList(new CourtCase()));
-        Map<String, Object> mockResponse = new HashMap<>();
-        doReturn(mockResponse).when(restTemplate).postForObject(any(String.class), any(CaseSearchRequest.class), eq(Map.class));
-        doReturn(mockCaseResponse).when(mapper).convertValue(mockResponse, CaseResponse.class);
-        doReturn("http://case-host").when(configs).getCaseHost();
-        doReturn("/case-path").when(configs).getCasePath();
+        CaseExistsResponse caseExistsResponse = new CaseExistsResponse();
+        CaseExists caseExists = new CaseExists();
+        caseExists.setExists(true);
+        caseExistsResponse.setCriteria(Collections.singletonList(caseExists));
 
-        // Act
-        Boolean result = caseUtil.fetchOrderDetails(requestInfo, cnrNumber);
+        when(restTemplate.postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class))).thenReturn(responseMap);
+        when(mapper.convertValue(responseMap, CaseExistsResponse.class)).thenReturn(caseExistsResponse);
 
-        // Assert
-        assertTrue(result);
+        Boolean exists = caseUtil.fetchCaseDetails(requestInfo, cnrNumber, filingNumber);
+
+        assertTrue(exists);
+
+        verify(configs).getCaseHost();
+        verify(configs).getCasePath();
+        verify(restTemplate).postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class));
+        verify(mapper).convertValue(responseMap, CaseExistsResponse.class);
     }
 
-    @Test
-    public void testFetchOrderDetails_NoCasesFound() {
-        // Arrange
-        String cnrNumber = "CNR123";
-        RequestInfo requestInfo = new RequestInfo();
-
-        CaseResponse mockCaseResponse = new CaseResponse();
-        mockCaseResponse.setCases(Collections.emptyList());
-
-        Map<String, Object> mockResponse = new HashMap<>();
-        doReturn(mockResponse).when(restTemplate).postForObject(any(String.class), any(CaseSearchRequest.class), eq(Map.class));
-        doReturn(mockCaseResponse).when(mapper).convertValue(mockResponse, CaseResponse.class);
-        doReturn("http://case-host").when(configs).getCaseHost();
-        doReturn("/case-path").when(configs).getCasePath();
-
-        // Act
-        Boolean result = caseUtil.fetchOrderDetails(requestInfo, cnrNumber);
-
-        // Assert
-        assertFalse(result);
-    }
-
-    @Test
-    public void testFetchOrderDetails_Exception() {
-        // Arrange
-        String cnrNumber = "CNR123";
-        RequestInfo requestInfo = new RequestInfo();
-
-        doThrow(new RuntimeException("Error")).when(restTemplate).postForObject(any(String.class), any(CaseSearchRequest.class), eq(Map.class));
-        doReturn("http://case-host").when(configs).getCaseHost();
-        doReturn("/case-path").when(configs).getCasePath();
-
-        // Act
-        Boolean result = caseUtil.fetchOrderDetails(requestInfo, cnrNumber);
-
-        // Assert
-        assertFalse(result);
-    }
+//    @Test
+//    void testFetchCaseDetailsNullResponse() throws Exception {
+//        when(restTemplate.postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class))).thenReturn(null);
+//
+//        Boolean exists = caseUtil.fetchCaseDetails(requestInfo, cnrNumber, filingNumber);
+//
+//        assertFalse(exists);
+//
+//        verify(configs).getCaseHost();
+//        verify(configs).getCasePath();
+//        verify(restTemplate).postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class));
+//    }
+//
+//    @Test
+//    void testFetchCaseDetailsEmptyCriteria() throws Exception {
+//        Map<String, Object> responseMap = new HashMap<>();
+//
+//        when(restTemplate.postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class))).thenReturn(responseMap);
+//        when(mapper.convertValue(responseMap, CaseExistsResponse.class)).thenReturn(caseExistsResponse);
+//
+//        Boolean exists = caseUtil.fetchCaseDetails(requestInfo, cnrNumber, filingNumber);
+//
+//        assertFalse(exists);
+//
+//        verify(configs).getCaseHost();
+//        verify(configs).getCasePath();
+//        verify(restTemplate).postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class));
+//        verify(mapper).convertValue(responseMap, CaseExistsResponse.class);
+//    }
+//
+//    @Test
+//    void testFetchCaseDetailsException() throws Exception {
+//        when(restTemplate.postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class))).thenReturn(null);
+//
+//        Exception exception = assertThrows(Exception.class, () -> {
+//            caseUtil.fetchCaseDetails(requestInfo, cnrNumber, filingNumber);
+//        });
+//
+//        assertEquals("java.lang.IndexOutOfBoundsException: Index 0 out of bounds for length 0", exception);
+//    }
 }

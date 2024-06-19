@@ -12,7 +12,7 @@ serviceMaps:
       auditAttributeBasePath: $.order
       queryMaps:
 
-        - query: INSERT INTO dristi_orders(id, tenantid, filingnumber, hearingnumber, applicationnumber,ordernumber, cnrnumber, comments, status, isactive, issuedBy, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        - query: INSERT INTO dristi_orders(id, tenantid, filingnumber, hearingnumber, applicationnumber, ordertype, ordernumber, cnrnumber, comments, status, ordercategory, createddate,isactive, issuedBy, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
           basePath: order
           jsonMaps:
             - jsonPath: $.order.id
@@ -22,10 +22,15 @@ serviceMaps:
             - jsonPath: $.order.applicationNumber
               type: JSON
               dbType: JSONB
+            - jsonPath: $.order.orderType
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.order.orderNumber
             - jsonPath: $.order.cnrNumber
             - jsonPath: $.order.comments
             - jsonPath: $.order.status
+            - jsonPath: $.order.orderCategory
+            - jsonPath: $.order.createdDate
             - jsonPath: $.order.isActive
             - jsonPath: $.order.issuedBy
               type: JSON
@@ -78,14 +83,19 @@ serviceMaps:
       fromTopic: update-order-application
       isTransaction: true
       queryMaps:
-        - query: INSERT INTO dristi_orders(id, tenantid, filingnumber, hearingnumber, applicationnumber, ordernumber, cnrnumber, comments, status, isactive, issuedBy, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, filingnumber = EXCLUDED.filingnumber, hearingnumber = EXCLUDED.hearingnumber, applicationnumber = EXCLUDED.applicationnumber, ordernumber = EXCLUDED.ordernumber, cnrnumber = EXCLUDED.cnrnumber,  comments = EXCLUDED.comments, status = EXCLUDED.status, isactive = EXCLUDED.isactive, issuedBy = EXCLUDED.issuedBy, additionaldetails = EXCLUDED.additionaldetails, createdby = EXCLUDED.createdby, lastmodifiedby = EXCLUDED.lastmodifiedby, createdtime = EXCLUDED.createdtime, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+        - query: INSERT INTO dristi_orders(id, tenantid, filingnumber, hearingnumber, ordercategory, createddate, applicationnumber, ordertype, ordernumber, cnrnumber, comments, status, isactive, issuedBy, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ,?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, filingnumber = EXCLUDED.filingnumber, ordercategory = EXCLUDED.ordercategory, hearingnumber = EXCLUDED.hearingnumber,  createddate = EXCLUDED.createddate, applicationnumber = EXCLUDED.applicationnumber, ordertype = EXCLUDED.ordertype, ordernumber = EXCLUDED.ordernumber, cnrnumber = EXCLUDED.cnrnumber, comments = EXCLUDED.comments, status = EXCLUDED.status, isactive = EXCLUDED.isactive, issuedBy = EXCLUDED.issuedBy, additionaldetails = EXCLUDED.additionaldetails, createdby = EXCLUDED.createdby, lastmodifiedby = EXCLUDED.lastmodifiedby, createdtime = EXCLUDED.createdtime, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
           basePath: order
           jsonMaps:
             - jsonPath: $.order.id
             - jsonPath: $.order.tenantId
             - jsonPath: $.order.filingNumber
             - jsonPath: $.order.hearingNumber
+            - jsonPath: $.order.orderCategory
+            - jsonPath: $.order.createdDate
             - jsonPath: $.order.applicationNumber
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.orderType
               type: JSON
               dbType: JSONB
             - jsonPath: $.order.orderNumber
@@ -103,6 +113,29 @@ serviceMaps:
             - jsonPath: $.order.auditDetails.lastModifiedBy
             - jsonPath: $.order.auditDetails.createdTime
             - jsonPath: $.order.auditDetails.lastModifiedTime
+
+        - query: INSERT INTO dristi_order_statute_section(id, tenantId, statute, sections, subsections, strsections, strsubsections, order_id, additionalDetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET tenantid = EXCLUDED.tenantid, statute = EXCLUDED.statute, sections = EXCLUDED.sections, subsections = EXCLUDED.subsections, strsections = EXCLUDED.strsections, order_id = EXCLUDED.order_id, strsubsections = EXCLUDED.strsubsections,  additionalDetails = EXCLUDED.additionalDetails, subsections = EXCLUDED.subsections, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime, createdtime = EXCLUDED.createdtime, createdBy = EXCLUDED.createdBy;
+          basePath: order.statuteSection
+          jsonMaps:
+            - jsonPath: $.order.statuteSection.id
+            - jsonPath: $.order.statuteSection.tenantId
+            - jsonPath: $.order.statuteSection.statute
+            - jsonPath: $.order.statuteSection.sections
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.statuteSection.subsections
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.statuteSection.strSections
+            - jsonPath: $.order.statuteSection.strSubsections
+            - jsonPath: $.order.id
+            - jsonPath: $.order.statuteSection.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.order.statuteSection.auditDetails.createdBy
+            - jsonPath: $.order.statuteSection.auditDetails.lastModifiedBy
+            - jsonPath: $.order.statuteSection.auditDetails.createdTime
+            - jsonPath: $.order.statuteSection.auditDetails.lastModifiedTime
 
 
 
