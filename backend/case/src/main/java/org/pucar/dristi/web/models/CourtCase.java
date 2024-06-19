@@ -109,6 +109,15 @@ public class CourtCase {
 	//@Size(min = 2, max = 64)
 	private String caseCategory = null;
 
+	@JsonProperty("judgeId")
+	private String judgeId = null;
+
+	@JsonProperty("stage")
+	private String stage = null;
+
+	@JsonProperty("substage")
+	private String substage = null;
+
 	@JsonProperty("natureOfPleading")
 	//@Size(min = 2, max = 64)
 	private String natureOfPleading = null;

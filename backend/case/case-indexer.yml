@@ -32,6 +32,12 @@ ServiceMaps:
                 outJsonPath: $.Data.caseDetails.courtId
               - inJsonPath: $.benchId
                 outJsonPath: $.Data.caseDetails.benchId
+              - inJsonPath: $.judgeId
+                outJsonPath: $.Data.caseDetails.judgeId
+              - inJsonPath: $.stage
+                outJsonPath: $.Data.caseDetails.stage
+              - inJsonPath: $.substage
+                outJsonPath: $.Data.caseDetails.substage
               - inJsonPath: $.filingDate
                 outJsonPath: $.Data.caseDetails.filingDate
               - inJsonPath: $.registrationDate
@@ -127,6 +133,12 @@ ServiceMaps:
                 outJsonPath: $.Data.caseDetails.courtId
               - inJsonPath: $.benchId
                 outJsonPath: $.Data.caseDetails.benchId
+              - inJsonPath: $.judgeId
+                outJsonPath: $.Data.caseDetails.judgeId
+              - inJsonPath: $.stage
+                outJsonPath: $.Data.caseDetails.stage
+              - inJsonPath: $.substage
+                outJsonPath: $.Data.caseDetails.substage
               - inJsonPath: $.filingDate
                 outJsonPath: $.Data.caseDetails.filingDate
               - inJsonPath: $.registrationDate
