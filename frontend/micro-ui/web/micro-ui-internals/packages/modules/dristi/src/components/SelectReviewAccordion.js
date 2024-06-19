@@ -99,7 +99,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
-  const handleOpenPopup = (e, configKey, name, index = null, fieldName, inputlist = []) => {
+  const handleOpenPopup = (e, configKey, name, index = null, fieldName, inputlist = [], fileName = null) => {
     setValue(
       "scrutinyMessage",
       {
@@ -108,6 +108,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         fieldName,
         configKey,
         inputlist,
+        fileName,
       },
       "popupInfo"
     );
@@ -171,10 +172,10 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     if (!trimmedError) {
       return;
     }
-    const { name, configKey, index, fieldName, inputlist } = popupInfo;
+    const { name, configKey, index, fieldName, inputlist, fileName } = popupInfo;
     let fieldObj = { [fieldName]: { FSOError: trimmedError } };
     inputlist.forEach((key) => {
-      fieldObj[key] = { FSOError: trimmedError };
+      fieldObj[key] = { FSOError: trimmedError, fileName };
     });
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
@@ -184,7 +185,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
           };
     if (index == null) {
-      currentMessage.scrutinyMessage = { FSOError: trimmedError };
+      currentMessage.scrutinyMessage = { FSOError: trimmedError, fileName };
     } else {
       currentMessage.form[index] = {
         ...(currentMessage?.form?.[index] || {}),

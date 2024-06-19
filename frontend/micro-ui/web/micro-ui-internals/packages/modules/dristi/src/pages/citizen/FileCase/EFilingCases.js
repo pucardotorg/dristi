@@ -120,6 +120,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const homepagePath = "/digit-ui/citizen/dristi/home";
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
@@ -254,6 +255,7 @@ function EFilingCases({ path }) {
   const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
 
   const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
+  const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);
 
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -782,6 +784,10 @@ function EFilingCases({ path }) {
     return obj;
   };
   const onSubmit = async (action) => {
+    if (isDisableAllFieldsMode) {
+      selected === "addSignature" ? history.push(homepagePath) : history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+      return;
+    }
     if (!Array.isArray(formdata)) {
       return;
     }
@@ -917,7 +923,7 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    if (state !== CaseWorkflowState.CASE_RE_ASSIGNED) {
+    if (!isDisableAllFieldsMode) {
       updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
         .then(() => {
           refetchCaseData().then(() => {
@@ -1003,6 +1009,9 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
+  if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
+    history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+  }
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1107,7 +1116,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? (isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_SUBMIT_CASE")) : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}

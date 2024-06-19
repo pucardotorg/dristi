@@ -13,7 +13,7 @@ function CustomReviewCard({
   dataErrors,
   configKey,
   titleHeading,
-  handleClickImage
+  handleClickImage,
 }) {
   if (data?.isAdvocateRepresenting?.code === "NO") {
     return null;
@@ -21,7 +21,7 @@ function CustomReviewCard({
   return (
     <div className="item-body">
       {config.map((item, i) => {
-        const dataError = Array.isArray(item.value) ? dataErrors?.[item.type]?.FSOError : dataErrors?.[item.value]?.FSOError;
+        const dataError = Array.isArray(item.value) ? dataErrors : dataErrors?.[item.value]?.FSOError;
         return (
           <CustomReviewCardRow
             config={item}
