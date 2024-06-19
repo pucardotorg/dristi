@@ -161,7 +161,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
               <div>
                 <InfoCard
                   variant={"default"}
-                  label={"CS_COMMON_NOTE"}
+                  label={"CS_PAYMENT_NOTE"}
                   style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
                   additionalElements={[
                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
