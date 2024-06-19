@@ -70,7 +70,7 @@ const CustomReviewCardRow = ({
       }
       return null;
     },
-    [handleClickImage, isScrutiny]
+    [handleClickImage, isScrutiny, type]
   );
   const renderCard = useMemo(() => {
     switch (type) {

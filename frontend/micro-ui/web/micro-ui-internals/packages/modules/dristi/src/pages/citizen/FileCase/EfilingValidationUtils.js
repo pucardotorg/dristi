@@ -1299,7 +1299,11 @@ export const updateCaseDetails = async ({
         })
     );
     let representatives = [];
-    if (formdata?.filter((item) => item.isenabled).some((data) => data?.data?.isAdvocateRepresenting?.code === "YES")) {
+    if (
+      formdata
+        ?.filter((item) => item.isenabled)
+        .some((data) => data?.data?.isAdvocateRepresenting?.code && data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId)
+    ) {
       representatives = formdata
         .filter((item) => item.isenabled)
         .map((data, index) => {
@@ -1318,6 +1322,7 @@ export const updateCaseDetails = async ({
                         partyCategory: data?.partyCategory,
                         individualId: data?.individualId,
                         partyType: data?.partyType,
+                        isActive: data?.data?.isAdvocateRepresenting?.code === "YES" ? true : false,
                       }))
                     : []),
                 ]

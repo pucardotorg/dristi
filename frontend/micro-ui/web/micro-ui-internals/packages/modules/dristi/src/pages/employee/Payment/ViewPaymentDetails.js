@@ -43,6 +43,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [payer, setPayer] = useState("");
   const [modeOfPayment, setModeOfPayment] = useState(null);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const { caseId, filingNumber } = window?.Digit.Hooks.useQueryParams();
 
@@ -84,6 +85,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
   const onSubmitCase = async () => {
+    setIsDisabled(true);
     await window?.Digit.PaymentService.createReciept(tenantId, {
       Payment: {
         paymentDetails: [
@@ -102,6 +104,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         totalAmountPaid: 2000,
       },
     });
+    setIsDisabled(false);
     history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
   };
 
@@ -175,7 +178,7 @@ const ViewPaymentDetails = ({ location, match }) => {
         <ActionBar>
           <SubmitBar
             label={t("CS_GENERATE_RECEIPT")}
-            disabled={!payer || Object.keys(!modeOfPayment ? {} : modeOfPayment).length === 0}
+            disabled={!payer || Object.keys(!modeOfPayment ? {} : modeOfPayment).length === 0 || isDisabled}
             onSubmit={() => {
               onSubmitCase();
             }}
