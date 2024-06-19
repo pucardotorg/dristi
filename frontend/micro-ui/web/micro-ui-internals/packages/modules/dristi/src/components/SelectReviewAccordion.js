@@ -20,6 +20,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
 
   const [isOpen, setOpen] = useState(true);
+  const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");

@@ -7,7 +7,6 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
-import org.pucar.dristi.web.models.CaseCriteria;
 import org.pucar.dristi.web.models.Order;
 import org.pucar.dristi.web.models.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,8 +46,8 @@ public class OrderRegistrationValidator {
         if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
 
-//        if (!caseUtil.fetchOrderDetails(requestInfo, orderRequest.getOrder().getCnrNumber()))
-//            throw new CustomException("INVALID_CNR_NUMBER", "Invalid CNR number");
+        if (!caseUtil.fetchCaseDetails(requestInfo, orderRequest.getOrder().getCnrNumber(), orderRequest.getOrder().getFilingNumber()))
+            throw new CustomException("INVALID_CASE_DETAILS", "Invalid Case");
     }
 
     public Order validateApplicationExistence(OrderRequest orderRequest) {
@@ -66,9 +64,6 @@ public class OrderRegistrationValidator {
         if (mdmsData.get("Order") == null)
             throw new CustomException(MDMS_DATA_NOT_FOUND, "MDMS data does not exist");
 
-//        if (!caseUtil.fetchOrderDetails(requestInfo, order.getCnrNumber()))
-//            throw new CustomException("INVALID_CNR_NUMBER", "Invalid CNR number");
-
         return existingApplications.get(0);
     }
 
@@ -81,6 +76,4 @@ public class OrderRegistrationValidator {
         masterList.add("OrderType");
         return masterList;
     }
-
-
 }

@@ -131,6 +131,14 @@
 @import "../src/pages/employee/nyayMitra.scss";
 @import "../src/dristi/pages/citizen/Home/litigantHome.scss";
 
+@import "./components/microplanning.scss";
+@import "./pages/employee/index.scss";
+@import "./pages/employee/evidenceheader.scss";
+@import "./pages/employee/hearingsidecard.scss";
+@import "./components/upcomingHearing.scss";
+@import "./pages/employee/taskcomponent.scss";
+@import "./pages/employee/homehearing.scss";
+
 .wbh-header-container {
   display: flex !important;
   align-items: center;

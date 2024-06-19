@@ -474,6 +474,99 @@ function ViewCaseFile({ t }) {
             />
           )}
         </div>
+        <div className="file-case-checklist">
+          <div className="checklist-main">
+            <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
+            {checkList.map((item, index) => {
+              return (
+                <div className="checklist-item" key={index}>
+                  <div className="item-logo">
+                    <CheckSvg />
+                  </div>
+                  <h3 className="item-text">{t(item)}</h3>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        {actionModal == "sendCaseBack" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_COMMON_BACK"}
+            actionSaveLabel={"CS_COMMON_CONFIRM"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            onCancel={handleCloseModal}
+            onSubmit={handleSendCaseBack}
+            heading={"CS_SEND_CASE_BACK"}
+            type="sendCaseBack"
+          />
+        )}
+        {actionModal == "registerCase" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_COMMON_BACK"}
+            actionSaveLabel={"CS_COMMON_CONFIRM"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            onCancel={handleCloseModal}
+            onSubmit={handleRegisterCase}
+            heading={"CS_REGISTER_CASE"}
+            type="registerCase"
+          />
+        )}
+
+        {actionModal == "sendCaseBackPotential" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_NO_REGISTER_CASE"}
+            actionSaveLabel={"CS_COMMON_CONFIRM"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            handleCloseModal={handleCloseModal}
+            onCancel={handlePotentialConfirm}
+            onSubmit={handleSendCaseBack}
+            heading={"CS_SEND_CASE_BACK"}
+            type="sendCaseBackPotential"
+          />
+        )}
+        {actionModal == "caseRegisterPotential" && (
+          <SendCaseBackModal
+            actionCancelLabel={"CS_SEE_POTENTIAL_ERRORS"}
+            actionSaveLabel={"CS_DELETE_ERRORS_REGISTER"}
+            t={t}
+            totalErrors={totalErrors?.total || 0}
+            onCancel={handleCloseModal}
+            onSubmit={handleSendCaseBack}
+            heading={"CS_SEND_CASE_BACK"}
+            type="sendCaseBackPotential"
+          />
+        )}
+
+        {actionModal === "caseSendBackSuccess" && (
+          <SuccessModal
+            header={"Vaibhav"}
+            t={t}
+            actionCancelLabel={"CS_COMMON_CLOSE"}
+            actionSaveLabel={"CS_NEXT_CASE"}
+            bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
+            onCancel={handleCloseSucessModal}
+            onSubmit={handleNextCase}
+            type={"caseSendBackSuccess"}
+            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+          />
+        )}
+
+        {actionModal === "caseRegisterSuccess" && (
+          <SuccessModal
+            header={"Vaibhav"}
+            t={t}
+            actionCancelLabel={"CS_COMMON_CLOSE"}
+            actionSaveLabel={"CS_ALLOCATE_JUDGE"}
+            bannerMessage={"CS_CASE_REGISTERED_SUCCESS"}
+            onCancel={handleCloseSucessModal}
+            onSubmit={handleAllocationJudge}
+            type={"caseRegisterSuccess"}
+            data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+          />
+        )}
       </div>
     </div>
   );

@@ -262,7 +262,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {showModal && (
             <Modal
               headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-              actionCancelOnSubmit={() => {}}
+              actionCancelOnSubmit={() => { }}
               actionSaveLabel={t("ADD")}
               actionSaveOnSubmit={(data) => handleAddFileInModal(data)}
               // hideSubmit={false}

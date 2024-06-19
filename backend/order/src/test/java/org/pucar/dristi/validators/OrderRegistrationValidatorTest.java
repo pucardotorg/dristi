@@ -60,7 +60,8 @@ public class OrderRegistrationValidatorTest {
         when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("Order"), anyList())).thenReturn(mdmsData);
 
         // Perform validation
-        assertDoesNotThrow(() -> validator.validateOrderRegistration(orderRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateOrderRegistration(orderRequest));
+        assertEquals("Invalid Case", exception.getMessage());
     }
 
     @Test

@@ -59,6 +59,7 @@ public class ServiceConstants {
     public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
     public static final String VALIDATION_ERR = "VALIDATION_ERR";
     public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
+    public static final String JSON_PARSE_ERROR = "JSON_PARSE_ERROR";
 
 
 }
