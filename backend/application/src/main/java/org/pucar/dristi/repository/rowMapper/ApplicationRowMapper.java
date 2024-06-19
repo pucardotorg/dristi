@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.pucar.dristi.config.ServiceConstants.JSON_PARSE_ERROR;
 import static org.pucar.dristi.config.ServiceConstants.ROW_MAPPER_EXCEPTION;
 
 @Component
@@ -87,6 +88,7 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
             }
         } catch (Exception e) {
             log.error("Error occurred while converting string to list: {}", e.getMessage());
+            throw new CustomException(JSON_PARSE_ERROR, "Failed to parse application type from JSON: " + e.getMessage());
         }
         return list;
     }
