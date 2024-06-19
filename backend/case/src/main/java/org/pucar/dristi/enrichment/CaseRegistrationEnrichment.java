@@ -2,11 +2,13 @@ package org.pucar.dristi.enrichment;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.ServiceConstants;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,8 @@ public class CaseRegistrationEnrichment {
 
     @Autowired
     private IdgenUtil idgenUtil;
-
+    @Autowired
+    private CaseUtil caseUtil;
     @Autowired
     private Configuration config;
 
@@ -32,16 +35,16 @@ public class CaseRegistrationEnrichment {
         try {
             CourtCase courtCase = caseRequest.getCases();
 
-            List<String> courtCaseRegistrationIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumber(), null, 1);
-            log.info("Court Case Registration Id List :: {}", courtCaseRegistrationIdList);
+            List<String> courtCaseRegistrationFillingNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), courtCase.getTenantId(), config.getCaseFilingNumberCp(), null, 1);
+            log.info("Court Case Registration Filling Number cp Id List :: {}", courtCaseRegistrationFillingNumberIdList);
             AuditDetails auditDetails = AuditDetails.builder().createdBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(caseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
             courtCase.setAuditdetails(auditDetails);
 
             courtCase.setId(UUID.randomUUID());
             enrichCaseRegistrationUponCreateAndUpdate(courtCase, auditDetails);
 
-            courtCase.setFilingNumber(courtCaseRegistrationIdList.get(0));
-            courtCase.setCaseNumber(courtCase.getFilingNumber());
+            courtCase.setFilingNumber(courtCaseRegistrationFillingNumberIdList.get(0));
+
 
         } catch (Exception e) {
             log.error("Error enriching case application :: {}", e.toString());
@@ -215,4 +218,23 @@ public class CaseRegistrationEnrichment {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service during case update process: " + e.getMessage());
         }
     }
+    public void enrichCaseNumberAndCNRNumber(CaseRequest caseRequest) {
+        try {
+            List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
+            caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
+        } catch (Exception e) {
+            log.error("Error enriching case number and cnr number: {}", e.getMessage());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
+        }
+    }
+        public void enrichAccessCode(CaseRequest caseRequest){
+            try {
+                String accessCode = RandomStringUtils.random(8, true, true);
+                caseRequest.getCases().setAccessCode(accessCode);
+            } catch (Exception e) {
+                log.error("Error enriching access code: {}", e.getMessage());
+                throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
+            }
+        }
 }

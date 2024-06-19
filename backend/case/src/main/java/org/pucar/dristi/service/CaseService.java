@@ -6,6 +6,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.util.BillingUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ public class CaseService {
 
     @Autowired
     private Producer producer;
+
+    @Autowired
+    private BillingUtil billingUtil;
 
     @Autowired
     public void setValidator(@Lazy CaseRegistrationValidator validator) {
@@ -91,6 +95,13 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(caseRequest);
 
+            if (CREATE_DEMAND_STATUS.equals(caseRequest.getCases().getStatus())){
+                billingUtil.createDemand(caseRequest);
+            }
+            if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())) {
+                enrichmentUtil.enrichAccessCode(caseRequest);
+                enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
+            }
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
             return caseRequest.getCases();

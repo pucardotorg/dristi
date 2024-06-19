@@ -49,6 +49,8 @@ public class ApplicationValidatorTest {
     @Test
     public void testValidateApplication_Success() {
         User user = new User();
+        List<Integer> applicationType = new ArrayList<>();
+        applicationType.add(1);
         List<UUID> onBehalfOf = new ArrayList<>();
         onBehalfOf.add(UUID.randomUUID());
         application.setTenantId("tenantId");
@@ -58,7 +60,7 @@ public class ApplicationValidatorTest {
         application.setOnBehalfOf(onBehalfOf);
         application.setCnrNumber("cnrNumber");
         application.setCaseId("caseId");
-        application.setApplicationType(UUID.randomUUID());
+        application.setApplicationType(applicationType);
         application.setFilingNumber("filingNumber");
         application.setReferenceId(UUID.randomUUID());
         when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
@@ -117,7 +119,7 @@ public class ApplicationValidatorTest {
         application.setCnrNumber("cnrNumber");
         application.setCaseId("caseId");
         application.setTenantId("tId");
-        application.setApplicationType(UUID.randomUUID());
+        application.setApplicationType(Collections.singletonList(1));
         application.setFilingNumber("filingNumber");
         application.setStatus("status1");
         application.setReferenceId(UUID.randomUUID());
