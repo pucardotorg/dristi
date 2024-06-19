@@ -133,6 +133,9 @@ public class Configuration {
 	@Value("${case.kafka.create.topic}")
 	private String caseCreateTopic;
 
+	@Value("${case.kafka.status.update.topic}")
+	private String caseUpdateStatusTopic;
+
 	@Value("${witness.kafka.create.topic}")
 	private String witnessCreateTopic;
 

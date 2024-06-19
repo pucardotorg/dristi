@@ -106,7 +106,7 @@ export const newConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_PIN_LOCATION",
+              label: "CS_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "buildingName", "doorNo"],
             },
@@ -216,7 +216,7 @@ export const newConfig = [
               type: "radioButton",
               name: "selectUserType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               required: false,
               isMandatory: true,
               clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
@@ -328,7 +328,7 @@ export const newConfig = [
               type: "radioButton",
               name: "selectIdType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               clearFields: { aadharNumber: "" },
               isMandatory: true,
@@ -415,7 +415,7 @@ export const newConfig = [
               type: "dropdown",
               name: "selectIdType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               validation: {},
               clearFields: { aadharNumber: "", ID_Proof: [] },
               clearFieldsType: { ID_Proof: "documentUpload" },

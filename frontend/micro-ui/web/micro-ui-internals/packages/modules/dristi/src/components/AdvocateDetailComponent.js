@@ -14,7 +14,7 @@ const AdvocateDetailComponent = ({ t, config, onSelect, formData = {}, errors })
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: "correspondenceCity",
         },

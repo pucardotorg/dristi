@@ -2,8 +2,10 @@ import { CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { ErrorInfoIcon } from "../icons/svgIndex";
 import Modal from "./Modal";
+import { useToast } from "./Toast/useToast";
 
 function EsignAdharModal({ t, setOpenAadharModal, name, onSelect, config, formData }) {
+  const toast = useToast();
   function setValue(value, input) {
     if (Array.isArray(input)) {
       onSelect(config.key, {
@@ -41,6 +43,7 @@ function EsignAdharModal({ t, setOpenAadharModal, name, onSelect, config, formDa
       setValue(["aadharsignature"], name);
       setOpenAadharModal(false);
     }
+    toast.success("CS_E_SIGN_VERIFIED");
   };
 
   const onCancel = () => {
@@ -100,7 +103,7 @@ function EsignAdharModal({ t, setOpenAadharModal, name, onSelect, config, formDa
             minlength={minLength}
             maxlength={maxLength}
           />
-          <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "3px", }}>
+          <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "3px" }}>
             {errorMessage && <ErrorInfoIcon />}
             <div style={{ color: errorMessage ? "#BB2C2F" : "black" }}>{bottomText}</div>
             {page === 1 && <div style={{ borderBottom: "1px", color: "#007E7E", textDecoration: "underline", cursor: "pointer" }}>Resend</div>}

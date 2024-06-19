@@ -16,7 +16,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },
@@ -127,7 +127,7 @@ const LocationComponent = ({ t, config, onLocationSelect, locationFormData, erro
                 <span>{input?.showOptional && ` ${t("CS_IS_OPTIONAL")}`}</span>
               </CardLabel>
               <div className="field">
-                {input?.type === "LocationSearch" ? (
+                {input?.type === "LocationSearch" && mapIndex ? (
                   <LocationSearch
                     locationStyle={{}}
                     position={locationFormData?.[config.key]?.coordinates || {}}

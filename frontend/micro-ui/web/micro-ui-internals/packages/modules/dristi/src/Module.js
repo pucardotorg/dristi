@@ -52,7 +52,11 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
 
   if (userType === "citizen") {
-    return <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />;
+    return (
+      <ToastProvider>
+        <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />
+      </ToastProvider>
+    );
   }
   return (
     <ToastProvider>

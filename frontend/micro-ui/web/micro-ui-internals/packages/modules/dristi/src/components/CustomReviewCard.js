@@ -13,8 +13,11 @@ function CustomReviewCard({
   dataErrors,
   configKey,
   titleHeading,
-  setIsImageModal,
+  handleClickImage
 }) {
+  if (data?.isAdvocateRepresenting?.code === "NO") {
+    return null;
+  }
   return (
     <div className="item-body">
       {config.map((item, i) => {
@@ -33,7 +36,7 @@ function CustomReviewCard({
             dataError={dataError}
             t={t}
             titleHeading={titleHeading}
-            setIsImageModal={setIsImageModal}
+            handleClickImage={handleClickImage}
           />
         );
       })}

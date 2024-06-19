@@ -1,11 +1,3 @@
-import { AdvocateDummy } from "../AdvocateDummy";
-import { CheckqueDummy } from "../ChequeDummy";
-import { ComplainantDummy } from "../ComplainantDummy";
-import { DebtDummy } from "../DebtDummy";
-import { DemandDummy } from "../DemandDummy";
-import { RespondentDummy } from "../RespondentDummy";
-import { WitnessDummy } from "../WitnessDummy";
-
 export const reviewCaseFileFormConfig = [
   {
     body: [
@@ -25,10 +17,14 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "title", value: ["firstName", "lastName"], badgeType: "complainantType.name" },
                 { type: "phonenumber", label: "PHONE_NUMBER", value: "complainantVerification.mobileNumber" },
-                { type: "image", label: "CS_ID_PROOF", value: ["individualDetails.document", "companyDetailsUpload.document"] },
-                { type: "address", label: "ADDRESS", value: "addressDetails-select" },
+                {
+                  type: "image",
+                  label: "CS_ID_PROOF",
+                  value: ["individualDetails.document", "companyDetailsUpload.document"],
+                },
+                { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
-              data: ComplainantDummy,
+              data: {},
             },
             {
               key: "respondentDetails",
@@ -36,12 +32,12 @@ export const reviewCaseFileFormConfig = [
               label: "CS_RESPONDENT_DETAILS",
               icon: "RespondentDetailsIcon",
               config: [
-                { type: "title", value: ["firstName", "lastName"], badgeType: "respondentType.name" },
+                { type: "title", value: ["respondentFirstName", "respondentLastName"], badgeType: "respondentType.name" },
                 { type: "phonenumber", label: "PHONE_NUMBER", value: "phonenumbers.mobileNumber" },
                 { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
-              data: RespondentDummy,
+              data: {},
             },
           ],
         },
@@ -76,7 +72,7 @@ export const reviewCaseFileFormConfig = [
                   value: ["bouncedChequeFileUpload.document", "depositChequeFileUpload.document", "returnMemoFileUpload.document"],
                 },
               ],
-              data: CheckqueDummy,
+              data: {},
             },
             {
               key: "debtLiabilityDetails",
@@ -86,9 +82,13 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "text", label: "CS_NATURE_OF_DEBT", value: "liabilityNature.name" },
                 { type: "text", label: "CS_CHEQUE_RECIEVED_FOR", value: "liabilityType.name" },
-                { type: "image", label: "CS_DOCUMENT", value: ["debtLiabilityFileUpload.document"] },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: ["debtLiabilityFileUpload.document"],
+                },
               ],
-              data: DebtDummy,
+              data: {},
             },
             {
               key: "demandNoticeDetails",
@@ -112,7 +112,23 @@ export const reviewCaseFileFormConfig = [
                   ],
                 },
               ],
-              data: DemandDummy,
+              data: {},
+            },
+            {
+              key: "delayApplications",
+              name: "delayApplications",
+              label: "CS_DELAY_CONDONATION_APPLICATION",
+              icon: "DemandDetailsNoticeIcon",
+              config: [
+                { type: "text", label: "CS_QUESTION_DELAY_APPLICATION", value: "delayApplicationType.name" },
+                { type: "text", label: "CS_TEXTAREA_HEADER_DELAY_REASON", value: "delayApplicationReason.reasonForDelay" },
+                {
+                  type: "image",
+                  label: "CS_DOCUMENT",
+                  value: ["condonationFileUpload.document"],
+                },
+              ],
+              data: {},
             },
           ],
         },
@@ -136,7 +152,7 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "CS_EMAIL_ID", value: "emails.emailId" },
                 { type: "address", label: "ADDRESS", value: "addressDetails" },
               ],
-              data: WitnessDummy,
+              data: {},
             },
             {
               key: "prayerSwornStatement",
@@ -146,7 +162,6 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "infoBox", value: "infoBoxData" },
                 { type: "text", label: "CS_PRAYER_FOR_RELIEF_HEADER", value: "prayerForRelief.text" },
-                { type: "text", label: "ADDRESS", value: "addressDetails" },
                 {
                   type: "image",
                   label: "CS_DOCUMENT",
@@ -186,9 +201,13 @@ export const reviewCaseFileFormConfig = [
               config: [
                 { type: "title", value: "advocateName" },
                 { type: "text", label: "CS_BAR_REGISTRATION", value: "barRegistrationNumber" },
-                { type: "image", label: "CS_ID_PROOF", value: ["vakalatnamaFileUpload.document"] },
+                {
+                  type: "image",
+                  label: "CS_ID_PROOF",
+                  value: ["vakalatnamaFileUpload.document"],
+                },
               ],
-              data: AdvocateDummy,
+              data: {},
             },
           ],
         },

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { getUserDetails, setCitizenDetail } from "../../../hooks/useGetAccessToken";
 
-const SelectUserType = ({ config, t, params = {}, setParams = () => { }, pathOnRefresh, userTypeRegister }) => {
+const SelectUserType = ({ config, t, params = {}, setParams = () => {}, pathOnRefresh, userTypeRegister }) => {
   const Digit = window.Digit || {};
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const history = useHistory();
@@ -145,7 +145,7 @@ const SelectUserType = ({ config, t, params = {}, setParams = () => { }, pathOnR
           {
             tenantId: tenantId,
             type: "PERMANENT",
-            latitude: data?.data?.address?.addressDetails?.coordinates?.latitude,
+            latitude: data?.address?.addressDetails?.coordinates?.latitude,
             longitude: data?.address?.addressDetails?.coordinates?.longitude,
             city: data?.address?.addressDetails?.city,
             pincode: data?.address?.addressDetails?.pincode,

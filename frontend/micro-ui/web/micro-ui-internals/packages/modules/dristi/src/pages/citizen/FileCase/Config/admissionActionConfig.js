@@ -1,6 +1,6 @@
 export const modalConfig = [
   {
-    headModal: "Send Case Back",
+    headModal: "CS_SEND_CASE_BACK",
     body: [
       {
         type: "component",
@@ -11,7 +11,7 @@ export const modalConfig = [
           inputs: [
             {
               infoHeader: "CS_COMMON_NOTE",
-              infoText: "Please make sure you have reviewed all the necessary case details and documents.  ",
+              infoText: "SEND_BACK_NOTE_INFO",
               infoTooltipMessage: "CS_NOTETOOLTIP_RESPONDENT_PERSONAL_DETAILS",
               type: "InfoComponent",
             },
@@ -20,7 +20,7 @@ export const modalConfig = [
       },
       {
         type: "textarea",
-        label: "Leave your comments for Litigants / Advocates to view",
+        label: "CS_COMMENT_HEADER",
         populators: {
           name: "commentForLitigant",
         },
@@ -28,36 +28,61 @@ export const modalConfig = [
     ],
   },
   {
-    headModal: "Are you sure you want to admit this case?",
-    text:
-      "By admitting this case, you confirm that you’ve considered all submissions and legal documents filed electronically and you ensure adherence to relevant statutes and judicial procedures",
-    submitText: "Yes, I’m sure",
+    headModal: "ADMIT_CASE_HEADER",
+    text: "ADMIT_SUB_HEADER",
+    submitText: "SURE_TEXT",
   },
   {
-    headModal: "Schedule Admission Hearing",
-    label: "Purpose of Hearing",
+    headModal: "CS_SCHEDULE_ADMISSION_HEARING",
+    label: "PURPOSE_OF_HEARING",
     name: "purposeOfHearing",
   },
   {
-    headModal: "Select Custom Date",
-    label: "Hearings Scheduled",
+    headModal: "CS_SELECT_CUSTOM_DATE",
+    label: "CS_HEARINGS_SCHEDULED",
     showBottomBar: true,
     buttonText: "CS_COMMON_CONFIRM",
   },
 ];
 export const selectParticipantConfig = {
-  header: "Choose participants for the hearing",
-  checkBoxText: "Who should be present for the hearing on 29 March 2024?",
+  header: "CHOOSE_PARTICIPANT",
+  checkBoxText: "HEADER_PARTICIPANT",
   checkBoxes: [
     {
-      name: "Compliant",
-      dependentText: "Select one or more Complainants",
-      dependentFields: ["Rajesh Khanna", "Suhani Bhati", "Kajol Chugh"],
+      key: "Compliant",
+      name: "CS_COMPLAINANT",
+      dependentText: "CS_COMPLAINANT_SELECT",
+      dependentFields: [],
     },
     {
-      name: "Respondent",
-      dependentText: "Select one or more Respondents",
-      dependentFields: ["Shikha S.", "Kopal Singh"],
+      key: "Respondent",
+      name: "CS_RESPONDANT",
+      dependentText: "CS_RESPONDANT_SELECT",
+      dependentFields: [],
     },
   ],
+};
+
+export const scheduleCaseSubmitConfig = {
+  header: "CS_ADMISSION_SUCCESS",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "NEXT_CASE",
+  isArrow: true,
+  showTable: true,
+};
+export const admitCaseSubmitConfig = {
+  header: "CS_ADMIT_SUCCESS",
+  subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "Schedule next hearing",
+  isArrow: false,
+  showTable: true,
+};
+export const sendBackCase = {
+  header: "SEND_BACK_SUBMIT",
+  subHeader: "CASE_UPDATES_SENT_VIA_SMS_MESSAGE",
+  backButtonText: "BACK_TO_HOME",
+  nextButtonText: "NEXT_CASE",
+  isArrow: true,
+  showCopytext: true,
 };

@@ -1,22 +1,21 @@
-export const judgeInboxConfig = {
+export const paymentInboxConfig = {
   label: "ES_COMMON_INBOX",
   type: "inbox",
   apiDetails: {
     serviceName: "/case/case/v1/_search",
     requestParam: {},
     requestBody: {
-      tenantId: "pg",
       criteria: [
         {
           defaultValues: true,
-          status: "PENDING_ADMISSION",
+          status: "PAYMENT_PENDING",
           filingNumber: "",
         },
       ],
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
-    moduleName: "judgeInboxConfig",
+    moduleName: "paymentInboxConfig",
     searchFormJsonPath: "requestBody.criteria[0]",
     tableFormJsonPath: "requestBody.inbox",
   },
@@ -31,7 +30,6 @@ export const judgeInboxConfig = {
         defaultValues: {
           filingNumber: "",
           isActive: false,
-          tenantId: "pg",
         },
         fields: [
           {
@@ -58,24 +56,34 @@ export const judgeInboxConfig = {
       uiConfig: {
         columns: [
           {
+            label: "Case ID",
+            jsonPath: "filingNumber",
+            additionalCustomization: true,
+          },
+          {
             label: "Case Name",
-            jsonPath: "",
+            jsonPath: "caseTitle",
+          },
+          {
+            label: "Case Type",
+            jsonPath: "caseType",
+            additionalCustomization: true,
           },
           {
             label: "Stage",
             jsonPath: "",
+            additionalCustomization: true,
+          },
+
+          {
+            label: "Amount Due",
+            jsonPath: "amountDue",
+            additionalCustomization: true,
           },
           {
-            label: "Case ID",
-            jsonPath: "filingNumber",
-          },
-          {
-            label: "Case Type",
-            jsonPath: "",
-          },
-          {
-            label: "Days Since Filing",
-            jsonPath: "filingDate",
+            label: "Action",
+            jsonPath: "id",
+            additionalCustomization: true,
           },
         ],
         enableGlobalSearch: false,

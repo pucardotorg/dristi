@@ -10,8 +10,8 @@ export const litigantInboxConfig = {
     },
     minParametersForSearchForm: 1,
     masterName: "commonUiConfig",
-    moduleName: "caseInboxConfig",
-    searchFormJsonPath: "criteria.[0]",
+    moduleName: "litigantInboxConfig",
+    searchFormJsonPath: "requestBody.criteria[0]",
     tableFormJsonPath: "requestBody.inbox",
   },
   sections: {
@@ -53,7 +53,7 @@ export const litigantInboxConfig = {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "",
+            jsonPath: "caseTitle",
           },
           {
             label: "Stage",
@@ -61,7 +61,7 @@ export const litigantInboxConfig = {
           },
           {
             label: "Case ID",
-            jsonPath: "caseNumber",
+            jsonPath: "filingNumber",
           },
           {
             label: "Case Type",
