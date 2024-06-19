@@ -848,6 +848,8 @@ components:
           type: string
         subStage:
           type: string
+        statute:
+          type: string
         filingFromDate:
           type: string
           format: date
