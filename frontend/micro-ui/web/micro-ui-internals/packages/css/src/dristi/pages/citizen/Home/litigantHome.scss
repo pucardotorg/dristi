@@ -1,0 +1,70 @@
+.home-screen-wrapper {
+  min-height: "calc(100vh - 90px)";
+  width: "100%";
+  padding: "30px";
+  .header-class {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    .header {
+      font-size: 32px;
+      font-weight: 600;
+    }
+    .button-field {
+      display: flex;
+      justify-content: flex-end;
+      gap: 30px;
+
+      .tertiary-button-selector {
+        background-color: #007e7e !important;
+        box-shadow: none;
+      }
+    }
+  }
+
+  .payment-calculator-wrapper {
+    width: 100%;
+    height: 100%;
+    max-height: 200px;
+    padding: 24px 32px 24px 32px;
+    gap: 20px;
+    border: 1px solid #bbbbbd;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+  }
+
+  .payment-case-detail-wrapper {
+    width: 100%;
+    height: 100%;
+    max-height: 250px;
+    padding: 24px 32px 24px 32px;
+    gap: 20px;
+    border: 1px solid #bbbbbd;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+
+    .card-label {
+      font-size: 16px !important;
+      font-weight: 400 !important;
+    }
+  }
+  .payment-case-name {
+    width: 100%;
+    height: 100%;
+    min-height: 53px;
+    gap: 20px;
+    border: 1px 1px 0px 1px solid #bbbbbd;
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 28.13px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    color: var(--Primary-Black, #0a0a0a);
+    padding-left: 32px;
+    background-color: #fff;
+  }
+}

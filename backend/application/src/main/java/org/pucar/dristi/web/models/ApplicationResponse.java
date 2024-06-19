@@ -19,7 +19,7 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class ApplicationResponse   {
-        @JsonProperty("responseInfo")
+        @JsonProperty("ResponseInfo")
 
           @Valid
                 private ResponseInfo responseInfo = null;

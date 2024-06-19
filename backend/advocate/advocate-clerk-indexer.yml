@@ -1,0 +1,241 @@
+ServiceMaps:
+  serviceName: Advocate Clerk Service
+  version: 1.0.0
+  mappings:
+    - topic: save-advocate-clerk
+      configKey: INDEX
+      indexes:
+        - name: advocate-clerk-index-test
+          type: general
+          id: $.clerk.id
+          isBulk: false
+          timeStampField: $.clerk.auditDetails.createdTime
+          customJsonMapping:
+            indexMapping:
+              {
+                "Data":
+                  { "clerkDetails": {}, "history": {}, "auditDetails": {} },
+              }
+            fieldMapping:
+              - inJsonPath: $.clerk
+                outJsonPath: $.Data.clerkDetails
+              - inJsonPath: $.clerk.auditDetails.createdBy
+                outJsonPath: $.Data.auditDetails.createdBy
+              - inJsonPath: $.clerk.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.auditDetails.lastModifiedBy
+              - inJsonPath: $.clerk.auditDetails.createdTime
+                outJsonPath: $.Data.auditDetails.createdTime
+              - inJsonPath: $.clerk.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.auditDetails.lastModifiedTime
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.clerk.applicationNumber,tenantId=$.clerk.tenantId,history=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "apiId": "",
+                        "ver": "1.0",
+                        "ts": 1502890899493,
+                        "action": "asd",
+                        "did": "4354648646",
+                        "key": "xyz",
+                        "msgId": "654654",
+                        "requesterId": "61",
+                        "authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8",
+                        "userInfo":
+                          {
+                            "id": 1,
+                            "uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+                            "type": "EMPLOYEE",
+                            "tenantId": "pg",
+                            "roles":
+                              [
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                          },
+                      },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+              - path: http://individual.egov:8080/individual/v1/_search
+                queryParam: limit=1000,offset=0,tenantId=$.clerk.tenantId,includeDeleted=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "authToken": "e87582e2-1ed6-4a0b-9bf5-57322015fd77",
+                        "userInfo":
+                          {
+                            "id": 198,
+                            "userName": "uatuser5004",
+                            "name": "Rama",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "7788995004",
+                            "roles":
+                              [
+                                {
+                                  "name": "ADVOCATE_APPROVER",
+                                  "code": "ADVOCATE_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_APPROVER",
+                                  "code": "ADVOCATE_CLERK_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_ROLE",
+                                  "code": "ADVOCATE_CLERK_ROLE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Super User",
+                                  "code": "SUPERUSER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_ROLE",
+                                  "code": "ADVOCATE_ROLE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                            "tenantId": "pg",
+                            "uuid": "dede7c1e-886f-40ea-8218-04fed1d24ad6",
+                          },
+                      },
+                    "Individual": { "individualId": $.clerk.individualId },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.Individual[0]
+                    outJsonPath: $.Data.individual
+
+    - topic: update-advocate-clerk-application
+      configKey: INDEX
+      indexes:
+        - name: advocate-clerk-index-test
+          type: general
+          id: $.clerk.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          customJsonMapping:
+            indexMapping:
+              {
+                "Data":
+                  { "clerkDetails": {}, "history": {}, "auditDetails": {} },
+              }
+            fieldMapping:
+              - inJsonPath: $.clerk
+                outJsonPath: $.Data.clerkDetails
+              - inJsonPath: $.clerk.auditDetails
+                outJsonPath: $.Data.auditDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.clerk.applicationNumber,tenantId=$.clerk.tenantId,history=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "apiId": "",
+                        "ver": "1.0",
+                        "ts": 1502890899493,
+                        "action": "asd",
+                        "did": "4354648646",
+                        "key": "xyz",
+                        "msgId": "654654",
+                        "requesterId": "61",
+                        "authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8",
+                        "userInfo":
+                          {
+                            "id": 1,
+                            "uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+                            "type": "EMPLOYEE",
+                            "tenantId": "pg",
+                            "roles":
+                              [
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                          },
+                      },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+              - path: http://individual.egov:8080/individual/v1/_search
+                queryParam: limit=1000,offset=0,tenantId=$.clerk.tenantId,includeDeleted=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "authToken": "e87582e2-1ed6-4a0b-9bf5-57322015fd77",
+                        "userInfo":
+                          {
+                            "id": 198,
+                            "userName": "uatuser5004",
+                            "name": "Rama",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "7788995004",
+                            "roles":
+                              [
+                                {
+                                  "name": "ADVOCATE_APPROVER",
+                                  "code": "ADVOCATE_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_APPROVER",
+                                  "code": "ADVOCATE_CLERK_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_ROLE",
+                                  "code": "ADVOCATE_CLERK_ROLE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Super User",
+                                  "code": "SUPERUSER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_ROLE",
+                                  "code": "ADVOCATE_ROLE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                            "tenantId": "pg",
+                            "uuid": "dede7c1e-886f-40ea-8218-04fed1d24ad6",
+                          },
+                      },
+                    "Individual": { "individualId": $.clerk.individualId },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.Individual[0]
+                    outJsonPath: $.Data.individual

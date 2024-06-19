@@ -1,0 +1,154 @@
+{
+	"info": {
+		"_postman_id": "60ba5483-7923-4bf2-a0f6-a80f6882d89b",
+		"name": "Evidence",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24809145"
+	},
+	"item": [
+		{
+			"name": "create evidence",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": 0,\n        \"action\": \"null\",\n        \"did\": \"null\",\n        \"key\": \"null\",\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"requesterId\": \"null\",\n        \"userInfo\": {\n            \"id\": 1324,\n            \"userName\": \"devuser24\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"DEPOSITION_ESIGN\",\n                    \"name\": \"DEPOSITION_ESIGN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_EDITOR\",\n                    \"name\": \"CASE_EDITOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_EDITOR\",\n                    \"name\": \"DEPOSITION_EDITOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_VIEWER\",\n                    \"name\": \"DEPOSITION_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_PUBLISHER\",\n                    \"name\": \"DEPOSITION_PUBLISHER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_VIEWER\",\n                    \"name\": \"CASE_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"createdDate\": \"03-06-2024 17:35:05\",\n            \"lastModifiedDate\": \"03-06-2024 17:35:05\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"01-09-2024 17:35:05\"\n        },\n        \"authToken\": \"7f6a545f-ca06-46fc-875e-e40dcd660930\"\n    },\n    \"tenantId\": \"pg\",\n    \"artifact\": {\n        \"tenantId\": \"pg\",\n        \"artifactNumber\": \"ARTIFACT-NO-2024-06-04-000019\",\n        \"evidenceNumber\": \"EN001\",\n        \"externalRefNumber\": \"ER001\",\n        \"caseId\": \"case123\",\n        \"application\": \"someApplication\",\n        \"hearing\": \"someHearing\",\n        \"order\": \"someOrder\",\n        \"mediaType\": \"court\",\n        \"artifactType\": \"court\",\n        \"sourceID\": \"source123\",\n        \"sourceName\": \"sourceName\",\n        \"applicableTo\": [\n            \"applicableToItem1\",\n            \"applicableToItem2\"\n        ],\n        \"createdDate\": 1687958400,\n        \"isActive\": false,\n        \"status\": \"INWORKFLOW\",\n        \"file\": {\n            \"id\": \"9ce8fdf3-f893-40c2-8abe-fc4fa17f6449\",\n            \"documentType\": \"pdf\",\n            \"fileStore\": null,\n            \"documentUid\": \"9ce8fdf3-f893-40c2-8abe-fc4fa17f6449\",\n            \"additionalDetails\": null\n        },\n        \"description\": \"This is a description of the artifact.\",\n        \"artifactDetails\": {\n            \"detailKey1\": \"detailValue1\",\n            \"detailKey2\": \"detailValue2\"\n        },\n        \"comments\": [\n            {\n                \"id\": \"59de349e-922b-4a78-b218-e52eded557e6\",\n                \"tenantId\": \"pg\",\n                \"artifactId\": \"artifact123\",\n                \"individualId\": \"individual123\",\n                \"comment\": \"This is a comment.\",\n                \"isActive\": true,\n                \"additionalDetails\": \"Additional details about the comment.\",\n                \"auditdetails\": {\n                    \"createdBy\": \"user123\",\n                    \"lastModifiedBy\": \"user123\",\n                    \"createdTime\": 1687958400,\n                    \"lastModifiedTime\": 1687958400\n                }\n            }\n        ],\n        \"additionalDetails\": \"Additional details about the artifact.\",\n        \"auditdetails\": {\n            \"createdBy\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"lastModifiedBy\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"createdTime\": 1717477569989,\n            \"lastModifiedTime\": 1717477569989\n        },\n        \"workflow\": {\n            \"id\": \"workflow123\",\n            \"action\": \"TYPE DEPOSITION\",\n            \"status\": \"in_progress\",\n            \"comments\": \"Workflow comments\",\n            \"documents\": [\n                {\n                    \"documentType\": \"pdf\",\n                    \"fileName\": \"workflow_document.pdf\",\n                    \"fileStoreId\": \"workflowStoreId123\",\n                    \"documentUid\": \"workflowDoc123\",\n                    \"auditDetails\": {\n                        \"createdBy\": \"user123\",\n                        \"lastModifiedBy\": \"user123\",\n                        \"createdTime\": 1687958400,\n                        \"lastModifiedTime\": 1687958400\n                    }\n                }\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/evidence/artifacts/v1/_create",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"evidence",
+						"artifacts",
+						"v1",
+						"_create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update evidence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": 0,\n        \"action\": \"null\",\n        \"did\": \"null\",\n        \"key\": \"null\",\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"requesterId\": \"null\",\n        \"userInfo\": {\n            \"id\": 1324,\n            \"userName\": \"devuser24\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"DEPOSITION_ESIGN\",\n                    \"name\": \"DEPOSITION_ESIGN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_EDITOR\",\n                    \"name\": \"CASE_EDITOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_EDITOR\",\n                    \"name\": \"DEPOSITION_EDITOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_VIEWER\",\n                    \"name\": \"DEPOSITION_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_PUBLISHER\",\n                    \"name\": \"DEPOSITION_PUBLISHER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_VIEWER\",\n                    \"name\": \"CASE_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"createdDate\": \"03-06-2024 17:35:05\",\n            \"lastModifiedDate\": \"03-06-2024 17:35:05\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"01-09-2024 17:35:05\"\n        },\n        \"authToken\": \"7f6a545f-ca06-46fc-875e-e40dcd660930\"\n    },\n    \"tenantId\": \"pg\",\n    \"artifact\": {\n        \"id\": \"277ee378-ad22-4786-abc5-004145529d11\",\n        \"tenantId\": \"pg\",\n        \"artifactNumber\": \"C-000027\",\n        \"evidenceNumber\": \"EN001\",\n        \"externalRefNumber\": \"ER001\",\n        \"caseId\": \"case123\",\n        \"application\": \"someApplication\",\n        \"hearing\": \"someHearing\",\n        \"order\": \"someOrder\",\n        \"mediaType\": \"court\",\n        \"artifactType\": \"court\",\n        \"sourceID\": \"source123\",\n        \"sourceName\": \"sourceName\",\n        \"applicableTo\": [\n            \"applicableToItem1\",\n            \"applicableToItem2\"\n        ],\n        \"createdDate\": 1687958400,\n        \"isActive\": false,\n        \"status\": \"INWORKFLOW\",\n        \"file\": {\n            \"id\": \"15fa4ca0-9a70-4e66-abaf-a1bad9956eff\",\n            \"documentType\": \"pdf\",\n            \"fileStore\": null,\n            \"documentUid\": \"15fa4ca0-9a70-4e66-abaf-a1bad9956eff\",\n            \"additionalDetails\": null\n        },\n        \"description\": \"This is a description of the artifact.\",\n        \"artifactDetails\": {\n            \"detailKey1\": \"detailValue1\",\n            \"detailKey2\": \"detailValue2\"\n        },\n        \"comments\": [\n            {\n                \"id\": \"921804da-d1b2-4d7e-a0e7-7efe4a482e1c\",\n                \"tenantId\": \"pg\",\n                \"artifactId\": \"artifact123\",\n                \"individualId\": \"individual123\",\n                \"comment\": \"This is a comment.\",\n                \"isActive\": true,\n                \"additionalDetails\": \"Additional details about the comment.\",\n                \"auditdetails\": {\n                    \"createdBy\": \"user123\",\n                    \"lastModifiedBy\": \"user123\",\n                    \"createdTime\": 1687958400,\n                    \"lastModifiedTime\": 1687958400\n                }\n            }\n        ],\n        \"additionalDetails\": \"Additional details about the artifact.\",\n        \"auditdetails\": {\n            \"createdBy\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"lastModifiedBy\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"createdTime\": 1718360403584,\n            \"lastModifiedTime\": 1718360403584\n        },\n        \"workflow\": {\n            \"action\": \"SIGN DEPOSITION\",\n            \"comments\": \"Workflow comments\",\n            \"documents\": [\n                {\n                    \"id\": null,\n                    \"documentType\": \"pdf\",\n                    \"fileStore\": null,\n                    \"documentUid\": \"workflowDoc123\",\n                    \"additionalDetails\": null\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    }\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/evidence/artifacts/v1/_update",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"evidence",
+						"artifacts",
+						"v1",
+						"_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search evidence",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json, text/plain, */*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-GB,en-US;q=0.9,en;q=0.8"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json;charset=UTF-8"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:3000"
+					},
+					{
+						"key": "Referer",
+						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "same-origin"
+					},
+					{
+						"key": "User-Agent",
+						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+					},
+					{
+						"key": "sec-ch-ua",
+						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
+					},
+					{
+						"key": "sec-ch-ua-mobile",
+						"value": "?0"
+					},
+					{
+						"key": "sec-ch-ua-platform",
+						"value": "\"Linux\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": 0,\n        \"action\": \"null\",\n        \"did\": \"null\",\n        \"key\": \"null\",\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"requesterId\": \"null\",\n        \"userInfo\": {\n            \"id\": 1324,\n            \"userName\": \"devuser24\",\n            \"salutation\": null,\n            \"name\": \"Ram babu\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"3989999999\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": 130,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 130,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"DEPOSITION_ESIGN\",\n                    \"name\": \"DEPOSITION_ESIGN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_EDITOR\",\n                    \"name\": \"CASE_EDITOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_EDITOR\",\n                    \"name\": \"DEPOSITION_EDITOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_VIEWER\",\n                    \"name\": \"DEPOSITION_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_CREATOR\",\n                    \"name\": \"CASE_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_PUBLISHER\",\n                    \"name\": \"DEPOSITION_PUBLISHER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CASE_VIEWER\",\n                    \"name\": \"CASE_VIEWER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"MDMS_ADMIN\",\n                    \"name\": \"MDMS ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"HRMS_ADMIN\",\n                    \"name\": \"HRMS_ADMIN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"DEPOSITION_CREATOR\",\n                    \"name\": \"DEPOSITION_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"176126da-469f-4f6e-a77c-149ff3b4d56f\",\n            \"createdDate\": \"03-06-2024 17:35:05\",\n            \"lastModifiedDate\": \"03-06-2024 17:35:05\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"01-09-2024 17:35:05\"\n        },\n        \"authToken\": \"7f6a545f-ca06-46fc-875e-e40dcd660930\"\n    },\n    \"tenantId\": \"pg\",\n    \"criteria\": {\n        \"id\": \"277ee378-ad22-4786-abc5-004145529d11\"\n\n    }\n}"
+				},
+				"url": {
+					"raw": "https://dristi-dev.pucar.org/evidence/artifacts/v1/_search",
+					"protocol": "https",
+					"host": [
+						"dristi-dev",
+						"pucar",
+						"org"
+					],
+					"path": [
+						"evidence",
+						"artifacts",
+						"v1",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

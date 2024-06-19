@@ -1,6 +1,7 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.pucar.dristi.config.Configuration;
 import static org.pucar.dristi.config.ServiceConstants.*;
 import org.egov.common.contract.request.RequestInfo;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class WorkflowUtil {
 
     @Autowired
@@ -67,11 +69,11 @@ public class WorkflowUtil {
     * @param wfModuleName
     * @return
     */
-    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId,
-        String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
-        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId,
-        businessServiceCode, workflow, wfModuleName);
+    public String updateWorkflowStatus(RequestInfo requestInfo, String tenantId, String businessId, String businessServiceCode, Workflow workflow, String wfModuleName) {
+        ProcessInstance processInstance = getProcessInstanceForWorkflow(requestInfo, tenantId, businessId, businessServiceCode, workflow, wfModuleName);
+
         ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(processInstance));
+
         State state = callWorkFlow(workflowRequest);
 
         return state.getApplicationStatus();
@@ -170,5 +172,27 @@ public class WorkflowUtil {
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
+    }
+
+    public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
+        try {
+            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
+            StringBuilder url = getSearchURLWithParams(tenantId, businessId);
+            Object res = repository.fetchResult(url, requestInfoWrapper);
+            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
+            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
+                return response.getProcessInstances().get(0);
+            return null;
+        } catch (Exception e) {
+            log.error("Error getting current workflow :: {}", e.toString());
+            throw new CustomException(GET_WORKFLOW_EXCEPTION, e.getMessage());
+        }
+    }
+
+    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
+        if(processInstance == null) {
+            return null;
+        }
+        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
     }
 }

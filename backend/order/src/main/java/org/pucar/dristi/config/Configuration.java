@@ -47,6 +47,12 @@ public class Configuration {
     @Value("${egov.idgen.path}")
     private String idGenPath;
 
+    // Case Config
+    @Value("${egov.case.host}")
+    private String caseHost;
+
+    @Value("${egov.case.path}")
+    private String casePath;
 
     //Workflow Config
     @Value("${egov.workflow.host}")
@@ -89,4 +95,19 @@ public class Configuration {
     //SMSNotification
     @Value("${egov.sms.notification.topic}")
     private String smsNotificationTopic;
+
+    //save order kafka topic
+    @Value("${egov.kafka.order.save.topic}")
+    private String saveOrderKafkaTopic;
+
+    //update order kafka topic
+    @Value("${egov.kafka.order.update.topic}")
+    private String updateOrderKafkaTopic;
+
+    @Value("${egov.workflow.order.business.name}")
+    private String orderBusinessName;
+
+    // Order Workflow/Business Service name
+    @Value("${egov.workflow.order.business.service.name}")
+    private String orderBusinessServiceName;
 }

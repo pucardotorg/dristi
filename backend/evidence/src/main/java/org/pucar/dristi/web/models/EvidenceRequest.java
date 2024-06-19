@@ -24,20 +24,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class EvidenceRequest {
-	@JsonProperty("requestInfo")
+	@JsonProperty("RequestInfo")
 
 	@Valid
 	private RequestInfo requestInfo = null;
 
-	@JsonProperty("artifacts")
+	@JsonProperty("artifact")
 	@Valid
-	private List<Artifact> artifacts = null;
+	private Artifact artifact;
 
-	public EvidenceRequest addArtifactsItem(Artifact artifactsItem) {
-		if (this.artifacts == null) {
-			this.artifacts = new ArrayList<>();
-		}
-		this.artifacts.add(artifactsItem);
+	public EvidenceRequest addArtifact(Artifact artifact) {
+		this.artifact = artifact;
 		return this;
 	}
 

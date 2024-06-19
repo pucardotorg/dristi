@@ -1,0 +1,285 @@
+ServiceMaps:
+  serviceName: Advocate services
+  version: 1.0.0
+  mappings:
+    - topic: save-advocate-application
+      configKey: INDEX
+      indexes:
+        - name: advocate-index-test
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.advocate
+          customJsonMapping:
+            indexMapping:
+              {
+                "Data":
+                  { "advocateDetails": {}, "history": {}, "auditDetails": {} },
+              }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.advocateDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.advocateDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.advocateDetails.applicationNumber
+              - inJsonPath: $.barRegistrationNumber
+                outJsonPath: $.Data.advocateDetails.barRegistrationNumber
+              - inJsonPath: $.advocateType
+                outJsonPath: $.Data.advocateDetails.advocateType
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.advocateDetails.individualId
+              - inJsonPath: $.organisationID
+                outJsonPath: $.Data.advocateDetails.organisationID
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.advocateDetails.isActive
+              - inJsonPath: $.status
+                outJsonPath: $.Data.advocateDetails.status
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.auditDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.auditDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.auditDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.auditDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.advocateDetails.additionalDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.applicationNumber,tenantId=$.tenantId,history=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "apiId": "",
+                        "ver": "1.0",
+                        "ts": 1502890899493,
+                        "action": "asd",
+                        "did": "4354648646",
+                        "key": "xyz",
+                        "msgId": "654654",
+                        "requesterId": "61",
+                        "authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8",
+                        "userInfo":
+                          {
+                            "id": 1,
+                            "uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+                            "type": "EMPLOYEE",
+                            "tenantId": "pg",
+                            "roles":
+                              [
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                          },
+                      },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+              - path: http://individual.egov:8080/individual/v1/_search
+                queryParam: limit=1000,offset=0,tenantId=$.tenantId,includeDeleted=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "authToken": "e87582e2-1ed6-4a0b-9bf5-57322015fd77",
+                        "userInfo":
+                          {
+                            "id": 198,
+                            "userName": "uatuser5004",
+                            "name": "Rama",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "7788995004",
+                            "roles":
+                              [
+                                {
+                                  "name": "ADVOCATE_APPROVER",
+                                  "code": "ADVOCATE_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_APPROVER",
+                                  "code": "ADVOCATE_CLERK_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_ROLE",
+                                  "code": "ADVOCATE_CLERK_ROLE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Super User",
+                                  "code": "SUPERUSER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_ROLE",
+                                  "code": "ADVOCATE_ROLE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                            "tenantId": "pg",
+                            "uuid": "dede7c1e-886f-40ea-8218-04fed1d24ad6",
+                          },
+                      },
+                    "Individual": { "individualId": $.individualId },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.Individual[0]
+                    outJsonPath: $.Data.individual
+
+    - topic: update-advocate-application
+      configKey: INDEX
+      indexes:
+        - name: advocate-index-test
+          type: general
+          id: $.id
+          isBulk: false
+          timeStampField: $.auditDetails.createdTime
+          jsonPath: $.advocate
+          customJsonMapping:
+            indexMapping:
+              {
+                "Data":
+                  { "advocateDetails": {}, "history": {}, "auditDetails": {} },
+              }
+            fieldMapping:
+              - inJsonPath: $.id
+                outJsonPath: $.Data.advocateDetails.id
+              - inJsonPath: $.tenantId
+                outJsonPath: $.Data.advocateDetails.tenantId
+              - inJsonPath: $.applicationNumber
+                outJsonPath: $.Data.advocateDetails.applicationNumber
+              - inJsonPath: $.barRegistrationNumber
+                outJsonPath: $.Data.advocateDetails.barRegistrationNumber
+              - inJsonPath: $.advocateType
+                outJsonPath: $.Data.advocateDetails.advocateType
+              - inJsonPath: $.individualId
+                outJsonPath: $.Data.advocateDetails.individualId
+              - inJsonPath: $.organisationID
+                outJsonPath: $.Data.advocateDetails.organisationID
+              - inJsonPath: $.isActive
+                outJsonPath: $.Data.advocateDetails.isActive
+              - inJsonPath: $.status
+                outJsonPath: $.Data.advocateDetails.status
+              - inJsonPath: $.auditDetails.createdBy
+                outJsonPath: $.Data.auditDetails.createdBy
+              - inJsonPath: $.auditDetails.lastModifiedBy
+                outJsonPath: $.Data.auditDetails.lastModifiedBy
+              - inJsonPath: $.auditDetails.createdTime
+                outJsonPath: $.Data.auditDetails.createdTime
+              - inJsonPath: $.auditDetails.lastModifiedTime
+                outJsonPath: $.Data.auditDetails.lastModifiedTime
+              - inJsonPath: $.additionalDetails
+                outJsonPath: $.Data.advocateDetails.additionalDetails
+            externalUriMapping:
+              - path: http://egov-workflow-v2.egov:8080/egov-workflow-v2/egov-wf/process/_search
+                queryParam: businessIds=$.applicationNumber,tenantId=$.tenantId,history=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "apiId": "",
+                        "ver": "1.0",
+                        "ts": 1502890899493,
+                        "action": "asd",
+                        "did": "4354648646",
+                        "key": "xyz",
+                        "msgId": "654654",
+                        "requesterId": "61",
+                        "authToken": "d9994555-7656-4a67-ab3a-a952a0d4dfc8",
+                        "userInfo":
+                          {
+                            "id": 1,
+                            "uuid": "1fec8102-0e02-4d0a-b283-cd80d5dab067",
+                            "type": "EMPLOYEE",
+                            "tenantId": "pg",
+                            "roles":
+                              [
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                          },
+                      },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.ProcessInstances
+                    outJsonPath: $.Data.history
+                  - inJsonPath: $.ProcessInstances[0]
+                    outJsonPath: $.Data.currentProcessInstance
+                  - inJsonPath: $.ProcessInstances[0].state.uuid
+                    outJsonPath: $.Data.status
+              - path: http://individual.egov:8080/individual/v1/_search
+                queryParam: limit=1000,offset=0,tenantId=$.tenantId,includeDeleted=true
+                apiRequest:
+                  {
+                    "RequestInfo":
+                      {
+                        "authToken": "e87582e2-1ed6-4a0b-9bf5-57322015fd77",
+                        "userInfo":
+                          {
+                            "id": 198,
+                            "userName": "uatuser5004",
+                            "name": "Rama",
+                            "type": "EMPLOYEE",
+                            "mobileNumber": "7788995004",
+                            "roles":
+                              [
+                                {
+                                  "name": "ADVOCATE_APPROVER",
+                                  "code": "ADVOCATE_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Employee",
+                                  "code": "EMPLOYEE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_APPROVER",
+                                  "code": "ADVOCATE_CLERK_APPROVER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_CLERK_ROLE",
+                                  "code": "ADVOCATE_CLERK_ROLE",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "Super User",
+                                  "code": "SUPERUSER",
+                                  "tenantId": "pg",
+                                },
+                                {
+                                  "name": "ADVOCATE_ROLE",
+                                  "code": "ADVOCATE_ROLE",
+                                  "tenantId": "pg",
+                                },
+                              ],
+                            "tenantId": "pg",
+                            "uuid": "dede7c1e-886f-40ea-8218-04fed1d24ad6",
+                          },
+                      },
+                    "Individual": { "individualId": $.individualId },
+                  }
+                uriResponseMapping:
+                  - inJsonPath: $.Individual[0]
+                    outJsonPath: $.Data.individual

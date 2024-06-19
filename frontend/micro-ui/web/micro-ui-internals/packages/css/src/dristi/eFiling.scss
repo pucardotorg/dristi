@@ -1,0 +1,1534 @@
+.e-filing-card-wrapper {
+  h2 {
+    margin-top: 0;
+  }
+
+  .e-filing-header-content {
+    .e-filing-header-subtext {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: var(--Grey-700, #3d3c3c);
+    }
+  }
+
+  .e-filing-form-container {
+    background-color: white;
+    border: 1px solid var(--Grey-200, #bbbbbd);
+
+    > h2 {
+      font-weight: 700;
+      font-size: 24px;
+      border-bottom: 1px solid var(--Grey-200, #bbbbbd);
+      padding: 12px 32px;
+      margin: 0;
+    }
+
+    form .card {
+      margin: 0;
+      box-shadow: none;
+      padding: 24px 32px;
+    }
+  }
+}
+
+.pt-citizen {
+  width: 100% !important;
+  padding: 0px !important;
+}
+
+.file-case-select-form-section {
+  width: 100%;
+}
+
+.file-case-form-section {
+  width: 100%;
+  max-width: 62%;
+  padding: 0px;
+  gap: 32px;
+
+  .jk-digit-primary-btn.add-location-btn {
+    background-color: white !important;
+    box-shadow: none !important;
+    border: 1px #007e7e solid;
+    margin-top: 24px;
+
+    h2 {
+      font-family: Roboto;
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      line-height: 18.75px !important;
+      text-align: center;
+      color: #007e7e !important;
+    }
+  }
+
+  .employee-card-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    .add-new-form {
+      margin-top: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      align-self: flex-start;
+      border: 0;
+      padding: 0px;
+      height: fit-content;
+
+      span {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e;
+      }
+      h2 {
+        margin: 0px !important;
+      }
+    }
+
+    .header-content {
+      .header-details {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        header.h1 {
+          font-family: Roboto;
+          font-size: 40px;
+          font-weight: 700;
+          line-height: 46.88px;
+          text-align: left;
+          color: #0a0a0a;
+          overflow-wrap: break-word;
+          margin: 0px 0px 4px 0px;
+        }
+
+        svg {
+          display: none;
+        }
+      }
+
+      p {
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #3d3c3c;
+      }
+    }
+
+    .form-wrapper-d {
+      margin-top: 32px;
+      border: none !important;
+
+      .card-label-error {
+        color: #bb2c2f !important;
+      }
+
+      .form-item-name {
+        width: 100%;
+        padding: 12px 32px 12px 32px;
+        gap: 20px;
+        border-width: 1px 1px 0px 1px !important;
+        border-style: solid;
+        border-color: #bbbbbd;
+        border-bottom: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        h1 {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .file-case-form-section {
+    max-width: 100%;
+
+    .employee-card-wrapper {
+      flex-direction: column;
+
+      .header-content {
+        .header-details {
+          .header-icon {
+            height: 24px;
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          header.h1 {
+            font-size: 24px;
+            line-height: 28.13px;
+            width: 90%;
+          }
+
+          svg {
+            display: inline;
+          }
+        }
+
+        p {
+          font-size: 14px;
+          line-height: 20px;
+        }
+      }
+
+      .form-item-name {
+        h1 {
+          font-size: 20px;
+          line-height: 23.44px;
+        }
+      }
+    }
+  }
+}
+
+.e-filing-card-form-style {
+  box-shadow: none;
+  border-radius: 0px;
+  padding: 24px 32px;
+  margin: 0px;
+  border: 1px #bbbbbd solid;
+
+  .card-section-header {
+    margin-top: 0px;
+  }
+
+  .card-label-error {
+    margin-left: 0 !important;
+  }
+
+  .drag-drop-heading {
+    margin-left: 0px !important;
+  }
+
+  .label-field-pair:last-child {
+    padding-bottom: 0px;
+  }
+
+  .label-field-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    .card-label {
+      margin: 0px !important;
+    }
+
+    .field {
+      width: 100%;
+
+      .radio-wrap {
+        gap: 24px !important;
+        margin: 0px !important;
+
+        div {
+          margin: 0px;
+        }
+
+        label {
+          font-family: Roboto;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 16.41px;
+          text-align: left;
+          color: #0a0a0a;
+          margin-left: 8px !important;
+        }
+      }
+
+      .label-field-pair {
+        padding-bottom: 4px;
+      }
+
+      div {
+        .info-banner-wrap {
+          margin-top: 20px !important;
+        }
+
+        .label-field-pair:last-child {
+          input {
+            margin-bottom: 0px !important;
+          }
+        }
+
+        .label-field-pair {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          gap: 8px !important;
+          padding-bottom: 0px;
+
+          .field {
+            width: 100%;
+            max-width: 100% !important;
+
+            div {
+              justify-content: space-between;
+            }
+
+            .map {
+              width: 343px;
+              height: 202px;
+            }
+          }
+
+          h2 {
+            width: 100%;
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0a0a0a;
+            margin: 0px !important;
+          }
+
+          .user-details-form-style {
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+.respondent,
+.cheque {
+  .card-label-error {
+    margin-top: -18px !important;
+  }
+}
+
+.demand-notice {
+  .card-label-error {
+    margin-top: -16px !important;
+  }
+}
+
+.witness-details,
+.respondent,
+.cheque,
+.debt-liability,
+.prayer-and-sworm,
+.complainant {
+  .card-section-header:first-child {
+    margin-bottom: 8px;
+  }
+  .label-field-pair {
+    margin-bottom: 20px;
+    padding-bottom: 0px !important;
+    .bolder {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a !important;
+    }
+  }
+  .card-section-header {
+    margin-bottom: 20px;
+    padding-bottom: 0px !important;
+  }
+  input {
+    margin: 0px !important;
+  }
+}
+
+.witness-details {
+}
+
+.debt-liability {
+  .select-wrap {
+    max-width: 100%;
+    margin-bottom: 0px;
+    .options-card {
+      margin-top: 40px;
+    }
+  }
+}
+
+.verification-component {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  h2.card-label {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  .button-field {
+    button {
+      width: fit-content !important;
+      padding: 8px 24px;
+    }
+  }
+}
+
+.phone-number-verification {
+  .citizen-card-input {
+    margin: 0px;
+  }
+  .digit-card-label-error {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+}
+
+.adhaar-verification-info-card {
+  padding: 8px;
+  background-color: #ecf3fd;
+  div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    h2 {
+      margin: 0px !important;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+  p {
+    margin: 0px;
+    padding-top: 8px;
+  }
+  &.user-verified {
+    background-color: #e4f2e4;
+  }
+}
+
+.prayer-and-sworm {
+  margin-bottom: 80px;
+  .custom-sub-header {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  .subheader-bold-class {
+    font-weight: 700 !important;
+  }
+  h2 {
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700 !important;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  .custom-text-area-main-div {
+    .custom-text-area-header-div {
+      gap: 12px !important;
+    }
+    .text-area-upload-sub-header {
+      margin-bottom: 5px !important;
+    }
+  }
+  .text-upload-file-main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+    p {
+      margin: 0px;
+    }
+  }
+
+  .file-uploader-with-name {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    .file-uploader-with-name-sub {
+      border: 1px #bbbbbd solid;
+      .file-uploader-with-name-header {
+        padding: 12px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px #bbbbbd solid;
+        h1 {
+          font-family: Roboto;
+          font-size: 24px;
+          font-weight: 700;
+          line-height: 28.13px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px;
+        }
+      }
+      .drag-drop-visible-main-with-custom-name {
+        padding: 24px 32px;
+        .file-name-field {
+          h1 {
+            font-family: Roboto;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 18.75px;
+            text-align: left;
+            color: #0a0a0a;
+            margin: 0px;
+            margin-bottom: 8px;
+          }
+          .field {
+            width: 50% !important;
+          }
+        }
+        .document-header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400 !important;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px;
+          margin-top: 16px !important;
+        }
+      }
+    }
+  }
+
+  .drag-drop-visible-main {
+    .drag-drop-heading-main {
+      .drag-drop-heading {
+        .custom-document-header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+      }
+      .custom-document-sub-header {
+        margin: 0px !important;
+        margin-top: 20px !important;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        color: #0a0a0a;
+      }
+    }
+  }
+
+  .label-field-pair:last-child {
+    margin-bottom: 0px !important;
+  }
+  .add-new-document {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    align-self: flex-start;
+    border: 0;
+    padding: 0px;
+    margin: 0px !important;
+    height: fit-content;
+    background-color: transparent !important;
+    position: relative;
+    top: 70px;
+    left: -40px;
+
+    .add-new-document-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700 !important;
+      line-height: 18.75px;
+      text-align: center;
+      color: #007e7e !important;
+      margin: 0px !important;
+    }
+    h2 {
+      margin-top: 0px !important;
+      margin-bottom: 0px !important;
+    }
+  }
+}
+
+.delay-application,
+.witness-details,
+.respondent,
+.cheque,
+.debt-liability,
+.demand-notice {
+  .label-field-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 4px !important;
+    padding-bottom: 16px;
+
+    h2 {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+
+    .field {
+      width: 100%;
+      max-width: 100%;
+
+      .field-container {
+        max-width: 100% !important;
+
+        .component-in-front {
+          height: 40px;
+          width: 40px;
+          background-color: #eeeeee !important;
+        }
+
+        .text-input {
+          max-width: 100%;
+
+          .employee-card-input {
+            margin: 0px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.demand-notice {
+  .select-wrap {
+    margin: 0px !important;
+    max-width: 100%;
+  }
+}
+
+.delay-application {
+  .label-field-pair {
+    padding-bottom: 16px;
+
+    h2.card-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+
+    .field {
+      width: 100%;
+      max-width: 100%;
+
+      .custom-text-area-main-div {
+        padding: 0px;
+
+        .text-area-header {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+          margin: 0px 0px 4px 0px;
+        }
+      }
+
+      .field-container {
+        max-width: 100% !important;
+
+        .component-in-front {
+          height: 40px;
+          width: 40px;
+          background-color: #eeeeee !important;
+        }
+
+        .text-input {
+          max-width: 100%;
+
+          .employee-card-input {
+            margin: 0px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.advocate-detail {
+  .select-wrap {
+    margin: 0px !important;
+    max-width: 100%;
+
+    .options-card {
+      .profile-dropdown--item {
+        span {
+          display: none;
+        }
+        span.icon {
+          width: 100%;
+          display: flex !important;
+        }
+      }
+    }
+  }
+
+  header {
+    margin-bottom: 20px;
+  }
+
+  .label-field-pair:nth-child(2) {
+    flex-direction: row !important;
+
+    h2 {
+      margin-right: 40px !important;
+    }
+
+    .card-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+
+  .label-field-pair {
+    flex-direction: column;
+    align-items: start;
+    gap: 4px !important;
+
+    .card-label {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+
+    .field {
+      .drag-drop-visible-main {
+        .card-label {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #0a0a0a;
+        }
+      }
+    }
+  }
+}
+
+.advocate-detail {
+  &.disable-form {
+    .select-wrap {
+      pointer-events: none;
+      background-color: #eee !important;
+    }
+    .radio-wrap {
+      pointer-events: none;
+    }
+  }
+}
+
+.delay-application {
+  &.disable-form {
+    .radio-wrap {
+      pointer-events: none;
+    }
+  }
+}
+
+.review-case-file {
+  border: none !important;
+  padding: 0px;
+
+  .label-field-pair {
+    padding-bottom: 32px;
+  }
+
+  .accordion-wrapper {
+    padding: 0px !important;
+
+    .accordion-title {
+      padding: 0px;
+    }
+
+    .accordion-item {
+      padding-top: 24px !important;
+
+      .accordion-content {
+        padding-top: 0px !important;
+
+        .content-item {
+          width: 100%;
+          padding: 20px 24px 20px 24px;
+          border-width: 1px 1px 0px 1px;
+          border-style: solid;
+          border-color: #e6e6e6;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+
+          &.error {
+            border-left: 2px #bb2c2f solid;
+          }
+
+          .scrutiny-error {
+            display: flex !important;
+            padding: 5px 16px;
+            border-radius: 10px;
+            justify-content: flex-start !important;
+            gap: 10px !important;
+            align-items: center !important;
+            width: 50%;
+
+            &.input {
+              background: white;
+            }
+
+            &.section {
+              background: #fce8e8;
+            }
+          }
+
+          .item-header {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+
+            .header-left {
+              display: flex;
+              gap: 16px;
+              align-items: center !important;
+
+              span {
+                font-family: Roboto;
+                font-size: 16px;
+                font-weight: 700;
+                line-height: 18.75px;
+                text-align: left;
+                color: #0a0a0a;
+              }
+            }
+
+            .header-right {
+              cursor: pointer;
+            }
+          }
+
+          .item-body {
+            border: 1px #e6e6e6 solid;
+            border-radius: 4px;
+
+            .title {
+              font-family: Roboto;
+              font-size: 16px;
+              font-weight: 700;
+              line-height: 18.75px;
+              text-align: left;
+              color: #77787b;
+            }
+
+            .title,
+            .phone-number,
+            .image,
+            .text,
+            .amount {
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+            }
+
+            .phone-number-main,
+            .text-main,
+            .amount-main,
+            .title-main,
+            .image-main {
+              border-bottom: 1px #e8e8e8 solid;
+              padding: 12px 16px;
+
+              &.error {
+                background-color: #fce8e8;
+              }
+            }
+
+            .address {
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+            }
+
+            .address-main {
+              padding: 12px 16px;
+
+              &.error {
+                background-color: #fce8e8;
+              }
+            }
+
+            .label {
+              width: 35%;
+              font-family: Roboto;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 21px;
+              text-align: left;
+              color: #414042;
+            }
+
+            .value {
+              width: 55%;
+              font-family: Roboto;
+              font-size: 14px;
+              font-weight: 400;
+              line-height: 22px;
+              text-align: left;
+              color: #0a0a0a;
+            }
+
+            .value.info-box {
+              width: 100%;
+            }
+
+            .flag {
+              width: 10%;
+              display: flex;
+              justify-content: flex-end;
+              cursor: pointer !important;
+            }
+
+            .image {
+              &.column {
+                flex-direction: column;
+              }
+
+              gap: 8px;
+
+              .value,
+              .label {
+                .docviewer-wrapper {
+                  margin-top: 0px !important;
+
+                  .card {
+                    max-width: fit-content !important;
+                  }
+                }
+              }
+
+              .value {
+                display: grid;
+                grid-template-columns: 50% 50%;
+                gap: 20px;
+
+                &.column {
+                  display: flex;
+                  gap: 20px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .advocate-detail {
+    .label-field-pair:nth-child(2) {
+      flex-direction: column !important;
+    }
+  }
+}
+
+@media (max-width: 900px) {
+  .e-filing-card-form-style {
+    .label-field-pair {
+      gap: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .map {
+      width: 100%;
+    }
+  }
+}
+
+.e-filing-card-form-style.respondent {
+  .label-field-pair {
+    .card-label.bolder {
+      margin-right: 40px;
+    }
+  }
+}
+
+.file-case-main {
+  padding: 0px 20px;
+  background-color: white;
+
+  &.payment-wrapper {
+    padding: 0 !important;
+    .citizen-form-wrapper {
+      margin: 0 !important;
+    }
+  }
+}
+
+.file-case {
+  display: flex;
+  gap: 40px;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 56px;
+
+  .file-case-side-stepper {
+    width: 22.5%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .side-stepper-info {
+      width: 100%;
+      padding: 12px 16px 12px 16px;
+      gap: 8px;
+      border-radius: 4px;
+      border: 1px #9e400a24 solid;
+      background-color: #f7f5f3;
+
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      p {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 24px;
+        text-align: left;
+        color: #3d3c3c;
+        line-height: 24px;
+        margin: 10px 0px 0px 0px;
+
+        .act-name {
+          color: #3d3c3c !important;
+        }
+
+        .place-name {
+          font-weight: 700;
+        }
+      }
+    }
+
+    .file-case-select-form-section {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 450px) {
+  .citizen-form-wrapper .app-container {
+    padding: 0px 16px;
+  }
+
+  .file-case {
+    flex-direction: column;
+
+    .file-case-side-stepper {
+      width: 100%;
+
+      .file-case-select-form-section {
+        display: none;
+      }
+    }
+  }
+}
+
+.e-filing-action-bar {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20px;
+}
+
+.admission-action-buttons {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 20px;
+}
+
+.label-field-pair {
+  .field-container {
+    max-width: unset !important;
+    align-items: flex-start;
+
+    .text-input-width {
+      max-width: unset;
+    }
+  }
+}
+
+.e-filing-payment {
+  min-width: 55%;
+  width: 800px;
+  height: 490px;
+  display: flex;
+  padding: 40px;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #fff;
+  .e-filing-card-label {
+    font-family: Roboto;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 28.5px;
+    text-align: center;
+    margin: 0;
+  }
+  .e-filing-table-data-style {
+    border-left: none;
+    padding: 10px;
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+
+    .case-info-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .case-info-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+      }
+    }
+  }
+  .button-field {
+    display: flex;
+    width: 100% !important;
+    justify-content: space-between;
+    .tertiary-button-selector {
+      background-color: #007e7e !important;
+      box-shadow: none;
+      min-width: 44%;
+    }
+    .secondary-button-selector {
+      min-width: 44%;
+    }
+  }
+  .payment-due-wrapper {
+    padding: 16px 0px;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px;
+    .payment-calculator-wrapper {
+      width: 100%;
+      height: 100%;
+      max-height: 124px;
+      gap: 12px;
+      display: flex !important;
+      flex-direction: column !important;
+      color: #77787b;
+    }
+  }
+}
+
+.bulk-input-class {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  h3.bulk-input-header {
+    margin: 0px !important;
+    width: 100%;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0a0a0a;
+  }
+  .bulk-input-main {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    .input-main {
+      display: flex !important;
+      width: calc(100% - 77px);
+      .citizen-card-input {
+        margin-bottom: 0px !important;
+      }
+      .text-input {
+        max-width: 100% !important;
+      }
+    }
+    button {
+      width: 77px;
+      box-shadow: none;
+      background-color: transparent !important;
+      border: 1px #77787b solid !important;
+      h2 {
+        text-align: center !important;
+        margin: 0px;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        color: #77787b;
+      }
+    }
+  }
+}
+
+.signature {
+  padding: 0px;
+  border: none;
+  .label-field-pair {
+    margin-bottom: 40px;
+  }
+  .upload-signature-modal {
+    .upload-signature-modal-main {
+      padding: 16px 24px 0px;
+    }
+  }
+  .popup-module-action-bar {
+    button {
+      width: unset !important;
+      height: 40px !important;
+      .e-sign-aadhar-button,
+      .upload-signature-button {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #ffffff !important;
+      }
+    }
+  }
+  .e-sign-aadhar-modal {
+    .e-sign-aadhar-main {
+      padding: 16px 24px 0px;
+      .e-sign-aadhar-title {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 18.75px;
+        text-align: left;
+        padding-bottom: 8px;
+        margin: 0px;
+      }
+      input {
+        margin: 0px;
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
+
+.select-signature-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  .select-signature-header {
+    width: 100%;
+    .signature-label {
+      font-family: Roboto;
+      font-size: 24px;
+      font-weight: 700;
+      line-height: 28.13px;
+      text-align: left;
+      color: #3d3c3c;
+      margin: 0px;
+    }
+  }
+  .select-signature-list {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    border-bottom: 1px #bbbbbd solid;
+  }
+  .signature-body {
+    width: 100%;
+    border-width: 1px 1px 0px 1px;
+    border-color: #bbbbbd;
+    border-style: solid;
+    padding: 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .icon-and-title,
+  .signed-button-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .icon-and-title {
+    .signature-title {
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 18.75px;
+      text-align: left;
+      color: #0a0a0a;
+    }
+  }
+  .signed-button-group {
+    button {
+      background-color: #ffffff !important;
+      box-shadow: none;
+      padding: 8px 24px;
+      .aadhar-sign-in,
+      .upload-signature-label {
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
+        color: #007e7e !important;
+        margin: 0px;
+        margin-top: 4px;
+      }
+    }
+    .upload-signature {
+      border: none;
+      svg {
+        margin: 0px 12px 0px 0px !important;
+      }
+    }
+  }
+}
+
+.action-bar-wrap.e-filing-action-bar {
+  .submit-bar {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: none;
+    width: fit-content;
+    padding: 8px 24px;
+  }
+}
+
+.case-and-admission {
+  min-height: calc(100vh - 140px);
+  padding: 24px 16px;
+  background-color: #ffffff;
+
+  .view-case-file {
+    background-color: #ffffff;
+    .file-case-side-stepper {
+      width: 22.5% !important;
+      .file-case-select-form-section {
+        width: 22.5%;
+        position: fixed;
+        padding-right: 40px;
+      }
+    }
+    .file-case-form-section {
+      width: 60% !important;
+      max-width: 60% !important;
+      .employee-card-wrapper {
+        .back-button-home {
+          position: relative;
+          padding: 0px 0px 16px;
+          .back-btn2 {
+            margin: 0px;
+          }
+
+          p {
+            margin: 0px;
+          }
+        }
+        .header-content {
+          .header-details {
+            .header-title-icon {
+              display: flex;
+              gap: 16px;
+              align-items: center;
+              header.h1 {
+                font-family: Roboto;
+                font-size: 32px;
+                font-weight: 700;
+                line-height: 37.5px;
+                text-align: left;
+                color: #0b0c0c;
+                margin-bottom: 0px;
+              }
+              .case-edit-icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                svg {
+                  display: inline;
+                  path {
+                    fill: #3d3c3c;
+                  }
+                }
+              }
+            }
+          }
+          .custom-case-info-div {
+            margin: 16px 0px 32px;
+          }
+        }
+        .error-flag-class {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+          width: fit-content;
+          position: fixed;
+          bottom: 16px;
+          z-index: 1001;
+          left: 24px;
+          h3 {
+            font-family: Lato;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 18px;
+            text-align: left;
+            color: #3d3c3c;
+            margin: 0px;
+          }
+        }
+      }
+    }
+    .file-case-checklist {
+      width: 17.5% !important;
+      height: fit-content;
+      margin-left: 40px;
+      .checklist-main {
+        width: 17.5%;
+        border: 1px #e8e8e8 solid;
+        padding: 16px 20px;
+        border-radius: 4px;
+        position: fixed;
+        bottom: 78px;
+        right: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        .checklist-title {
+          font-family: Roboto;
+          font-size: 16px;
+          font-weight: 700;
+          line-height: 18.75px;
+          text-align: left;
+          color: #3d3c3c;
+          margin: 0px;
+          word-wrap: break-word;
+        }
+        .checklist-item {
+          display: flex;
+          gap: 12px;
+          .item-logo {
+            height: 16px;
+            width: 16px;
+            svg {
+              fill: #3d3c3c;
+            }
+          }
+          h3.item-text {
+            width: calc(100% - 28px);
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 16.41px;
+            text-align: left;
+            color: #3d3c3c;
+            margin: 0px;
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
+  }
+}
+
+.custom-case-info-div {
+  background-color: #f7f5f3;
+  padding: 0px 24px;
+  table {
+    width: 100%;
+    border-spacing: 0px 24px;
+    tr {
+      margin-bottom: 24px;
+    }
+    tr:last-child {
+      margin-bottom: 0px;
+    }
+    td {
+      border-right: 1px #0000001a solid;
+      padding: 0px 16px;
+    }
+
+    td:last-child {
+      border-right: none;
+      padding-right: 0px;
+    }
+    td:first-child {
+      padding-left: 0px;
+    }
+
+    td {
+      .case-info-title {
+        font-family: Roboto;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 16.41px;
+        text-align: left;
+        color: #77787b;
+        margin: 0px 0px 8px;
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+serviceMaps:
+  serviceName: witness-services
+  mappings:
+    - version: 1.0
+      description: Persists witness details in tables
+      fromTopic: save-witness-application
+      isTransaction: true
+      module: WITNESS
+      objectIdJsonPath: $.id
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.witness
+      queryMaps:
+
+        - query: INSERT INTO dristi_witness(id, caseid, filingnumber, cnrnumber, witnessidentifier, individualid, remarks, isactive, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+          basePath: witness
+          jsonMaps:
+            - jsonPath: $.witness.id
+            - jsonPath: $.witness.caseId
+            - jsonPath: $.witness.filingNumber
+            - jsonPath: $.witness.cnrNumber
+            - jsonPath: $.witness.witnessIdentifier
+            - jsonPath: $.witness.individualId
+            - jsonPath: $.witness.remarks
+            - jsonPath: $.witness.isActive
+            - jsonPath: $.witness.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.witness.auditDetails.createdBy
+            - jsonPath: $.witness.auditDetails.lastModifiedBy
+            - jsonPath: $.witness.auditDetails.createdTime
+            - jsonPath: $.witness.auditDetails.lastModifiedTime
+    - version: 1.0
+      description: Update witness details in tables
+      fromTopic: update-witness-application
+      isTransaction: true
+      module: WITNESS
+      objectIdJsonPath: $.id
+      transactionCodeJsonPath: $.filingNumber
+      auditAttributeBasePath: $.witness
+      queryMaps:
+
+        - query: INSERT INTO dristi_witness (id, caseid, filingnumber, cnrnumber, witnessidentifier, individualid, remarks, isactive, additionaldetails, createdby, lastmodifiedby, createdtime, lastmodifiedtime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (id) DO UPDATE SET caseid = EXCLUDED.caseid, filingnumber = EXCLUDED.filingnumber, cnrnumber = EXCLUDED.cnrnumber, witnessidentifier = EXCLUDED.witnessidentifier, individualid = EXCLUDED.individualid, remarks = EXCLUDED.remarks, isactive = EXCLUDED.isactive, additionaldetails = EXCLUDED.additionaldetails, lastmodifiedby = EXCLUDED.lastmodifiedby, lastmodifiedtime = EXCLUDED.lastmodifiedtime;
+          basePath: witness
+          jsonMaps:
+            - jsonPath: $.witness.id
+            - jsonPath: $.witness.caseId
+            - jsonPath: $.witness.filingNumber
+            - jsonPath: $.witness.cnrNumber
+            - jsonPath: $.witness.witnessIdentifier
+            - jsonPath: $.witness.individualId
+            - jsonPath: $.witness.remarks
+            - jsonPath: $.witness.isActive
+            - jsonPath: $.witness.additionalDetails
+              type: JSON
+              dbType: JSONB
+            - jsonPath: $.witness.auditDetails.createdBy
+            - jsonPath: $.witness.auditDetails.lastModifiedBy
+            - jsonPath: $.witness.auditDetails.createdTime
+            - jsonPath: $.witness.auditDetails.lastModifiedTime
