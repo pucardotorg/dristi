@@ -157,9 +157,9 @@ export const UICustomizations = {
     getNames: () => {
       return {
         url: "/advocate/advocate/v1/status/_search",
-        params: { status: "ACTIVE", tenantId: "pg" },
+        params: { status: "ACTIVE", tenantId: window?.Digit.ULBService.getStateId(), offset: 0, limit: 1000 },
         body: {
-          tenantId: "pg",
+          tenantId: window?.Digit.ULBService.getStateId(),
         },
         config: {
           select: (data) => {
@@ -189,6 +189,7 @@ export const UICustomizations = {
       return !data?.applicationNumber.trim() ? { label: "Please enter a valid application Number", error: true } : false;
     },
     preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
       const moduleSearchCriteria = {
         ...requestCriteria?.body?.inbox?.moduleSearchCriteria,
         ...requestCriteria?.state?.searchForm,
@@ -227,6 +228,10 @@ export const UICustomizations = {
       const individualId = row?.businessObject?.individual?.individualId;
       const applicationNumber =
         row?.businessObject?.advocateDetails?.applicationNumber || row?.businessObject?.clerkDetails?.applicationNumber || row?.applicationNumber;
+
+      const today = new Date();
+      const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
       switch (key) {
         case "Application No":
           return (
@@ -260,9 +265,7 @@ export const UICustomizations = {
           return <span>{formattedDate}</span>;
         case "Due Since (no of days)":
           const createdAt = new Date(row?.businessObject?.auditDetails?.createdTime);
-          const today = new Date();
           const formattedCreatedAt = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate());
-          const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const differenceInTime = formattedToday.getTime() - formattedCreatedAt.getTime();
           const differenceInDays = Math.ceil(differenceInTime / (1000 * 3600 * 24));
           return <span>{differenceInDays}</span>;
@@ -272,6 +275,185 @@ export const UICustomizations = {
         default:
           return t("ES_COMMON_NA");
       }
+    },
+  },
+  scrutinyInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      ];
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      };
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Stage":
+          return <span>{t("CS_UNDER_SCRUTINY")}</span>;
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Days Since Filing":
+          const today = new Date();
+          const formattedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+          const datearr = value.split("-");
+          const filedAt = new Date(datearr[2], datearr[1] - 1, datearr[0]);
+          const formattedFiledAt = new Date(filedAt.getFullYear(), filedAt.getMonth(), filedAt.getDate());
+          const diffInTime = formattedToday.getTime() - formattedFiledAt.getTime();
+          const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24));
+          return <span>{diffInDays}</span>;
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
+  paymentInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      ];
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      };
+    },
+    additionalValidations: (type, data, keys) => {
+      if (type === "date") {
+        return data[keys.start] && data[keys.end] ? () => new Date(data[keys.start]).getTime() <= new Date(data[keys.end]).getTime() : true;
+      }
+    },
+    MobileDetailsOnClick: (row, tenantId) => {
+      let link;
+      Object.keys(row).map((key) => {
+        if (key === "Case ID") link = ``;
+      });
+      return link;
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case ID":
+          return (
+            <span className="link">
+              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?filingNumber=${value}`}>
+                {String(value ? (column?.translate ? t(column?.prefix ? `${column?.prefix}${value}` : value) : value) : t("ES_COMMON_NA"))}
+              </Link>
+            </span>
+          );
+        case "Case Type":
+          return <span>NIA S138</span>;
+        case "Stage":
+          return <span>E-filing</span>;
+        case "Amount Due":
+          return <span>Rs 2000</span>;
+        case "Action":
+          return (
+            <span className="action-link">
+              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("CS_RECORD_PAYMENT")}</Link>
+            </span>
+          );
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
+  },
+  litigantInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId,
+          ...additionalDetails,
+        },
+      ];
+      if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails.searchKey]: "",
+          ...additionalDetails,
+          tenantId,
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId,
+        },
+      };
+    },
+  },
+  judgeInboxConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      // We need to change tenantId "processSearchCriteria" here
+      const criteria = [
+        {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      ];
+      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
+        criteria.splice(0, 1, {
+          ...requestCriteria?.body?.criteria[0],
+          ...requestCriteria?.state?.searchForm,
+          [additionalDetails]: "",
+          tenantId: window?.Digit.ULBService.getStateId(),
+        });
+      }
+      return {
+        ...requestCriteria,
+        body: {
+          ...requestCriteria?.body,
+          criteria,
+          tenantId: window?.Digit.ULBService.getStateId(),
+        },
+      };
     },
   },
 };

@@ -1,10 +1,11 @@
-import { CardLabel, CloseSvg, FormComposerV2, LabelFieldPair } from "@egovernments/digit-ui-react-components";
 import { InfoCard } from "@egovernments/digit-ui-components";
+import { CardLabel, CloseSvg, FormComposerV2 } from "@egovernments/digit-ui-react-components";
 import React, { useCallback, useMemo, useState } from "react";
-import Button from "./Button";
 import { idProofVerificationConfig } from "../configs/component";
+import Button from "./Button";
 import Modal from "./Modal";
 import RenderFileCard from "./RenderFileCard";
+import { useToast } from "./Toast/useToast";
 
 const extractValue = (data, key) => {
   if (!key.includes(".")) {
@@ -42,7 +43,7 @@ function generateAadhaar() {
   return aadhaar;
 }
 
-function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
+function VerificationComponent({ t, config, onSelect, formData = {}, errors, setError, clearErrors }) {
   const [{ showModal, verificationType, modalData, isAadharVerified }, setState] = useState({
     showModal: false,
     verificationType: "",
@@ -50,11 +51,12 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
     isAadharVerified: false,
   });
   const [isDisabled, setIsDisabled] = useState(false);
+  const toast = useToast();
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },
@@ -75,6 +77,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
       idProofVerificationConfig.forEach((curr) => {
         if (isDisabled) return;
         if (!(curr.body[0].key in formData) || !formData[curr.body[0].key]) {
+          isDisabled = true;
           return;
         }
         curr.body[0].populators.inputs.forEach((input) => {
@@ -209,6 +212,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                 headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
                 // actionCancelLabel={page === 0 ? t("CORE_LOGOUT_CANCEL") : null}
                 actionCancelOnSubmit={() => {}}
+                isDisabled={isDisabled}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
                   onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });
@@ -221,19 +225,17 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors }) {
                 formId="modal-action"
                 headerBarMain={<Heading label={t("VERIFY_ID_PROOF")} />}
                 submitTextClassName={"verification-button-text-modal"}
-                className={"case-types"}
+                className={"verification-complainant-modal"}
               >
-                <div style={{ padding: "16px 24px" }}>
-                  <FormComposerV2
-                    config={idProofVerificationConfig}
-                    t={t}
-                    cardClassName={"form-composer-id-proof-card"}
-                    inline
-                    headingStyle={{ textAlign: "center" }}
-                    cardStyle={{ minWidth: "100%" }}
-                    onFormValueChange={onFormValueChange}
-                  ></FormComposerV2>
-                </div>
+                <FormComposerV2
+                  config={idProofVerificationConfig}
+                  t={t}
+                  cardClassName={"form-composer-id-proof-card"}
+                  inline
+                  headingStyle={{ textAlign: "center" }}
+                  cardStyle={{ minWidth: "100%" }}
+                  onFormValueChange={onFormValueChange}
+                ></FormComposerV2>
               </Modal>
             )}
           </React.Fragment>

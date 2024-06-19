@@ -10,7 +10,7 @@ const delayApplicationFormConfig = [
           label: "CS_QUESTION_DELAY_APPLICATION",
           type: "radioButton",
           optionsKey: "name",
-          error: "sample required message",
+          error: "CORE_REQUIRED_FIELD_ERROR",
           required: false,
           isMandatory: true,
           isDependent: true,
@@ -90,7 +90,6 @@ const delayApplicationFormConfig = [
             {
               name: "document",
               documentHeader: "CS_DELAY_CONDONATION_APPLICATION",
-              isOptional: "CS_IS_OPTIONAL",
               infoTooltipMessage: "Tooltip",
               type: "DragDropComponent",
               uploadGuidelines: "UPLOAD_DOC_50",

@@ -1,5 +1,6 @@
-import { Button, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
+import { Button, CardText, EditPencilIcon, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   ChequeDetailsIcon,
   CustomArrowDownIcon,
@@ -9,14 +10,15 @@ import {
   PrayerSwornIcon,
   RespondentDetailsIcon,
 } from "../icons/svgIndex";
-import CustomReviewCard from "./CustomReviewCard";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import CustomPopUp from "./CustomPopUp";
+import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
 
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
-  const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
+  const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
+  const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
+
   const [isOpen, setOpen] = useState(true);
   const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
@@ -27,16 +29,19 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const popupInfo = useMemo(() => {
     return formData?.scrutinyMessage?.popupInfo;
   }, [formData]);
+  const imagePopupInfo = useMemo(() => {
+    return formData?.scrutinyMessage?.imagePopupInfo;
+  }, [formData]);
 
   const isPopupOpen = useMemo(() => {
     return popupInfo?.configKey === config.key;
   }, [config.key, popupInfo]);
-
+  const [deletePopup, setDeletePopup] = useState(false);
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
         {
-          label: "CS_PIN_LOCATION",
+          label: "CS_LOCATION",
           type: "LocationSearch",
           name: [],
         },
@@ -94,10 +99,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
-  const handleOpenPopup = (e, configKey, name, index = null, fieldName) => {
-    if (e) {
-      popupAnchor.current = e.currentTarget;
-    }
+  const handleOpenPopup = (e, configKey, name, index = null, fieldName, inputlist = []) => {
     setValue(
       "scrutinyMessage",
       {
@@ -105,17 +107,39 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         index,
         fieldName,
         configKey,
+        inputlist,
       },
       "popupInfo"
     );
   };
+
+  const handleClickImage = (e, configKey, name, index = null, fieldName, data, inputlist = []) => {
+    setValue(
+      "scrutinyMessage",
+      {
+        name,
+        index,
+        fieldName,
+        configKey,
+        data,
+        inputlist,
+      },
+      "imagePopupInfo"
+    );
+  };
+
   const handleClosePopup = () => {
     setScrutinyError("");
     setValue("scrutinyMessage", null, "popupInfo");
   };
 
+  const handleCloseImageModal = () => {
+    setScrutinyError("");
+    setValue("scrutinyMessage", null, "imagePopupInfo");
+  };
+
   const handleDeleteError = () => {
-    const { name, configKey, index, fieldName } = popupInfo;
+    const { name, configKey, index, fieldName, inputlist } = popupInfo;
     let currentMessage =
       formData && formData[configKey]
         ? { ...formData[config.key]?.[name] }
@@ -123,14 +147,20 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             scrutinyMessage: "",
             form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
           };
+
     if (index == null) {
       currentMessage.scrutinyMessage = { FSOError: "" };
     } else {
+      let fieldObj = { [fieldName]: { FSOError: "" } };
+      inputlist.forEach((key) => {
+        fieldObj[key] = { FSOError: "" };
+      });
       currentMessage.form[index] = {
         ...currentMessage.form[index],
-        [fieldName]: { FSOError: "" },
+        ...fieldObj,
       };
     }
+    setDeletePopup(false);
     setScrutinyError("");
     setValue(config.key, currentMessage, name);
     setValue("scrutinyMessage", null, "popupInfo");
@@ -141,7 +171,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     if (!trimmedError) {
       return;
     }
-    const { name, configKey, index, fieldName } = popupInfo;
+    const { name, configKey, index, fieldName, inputlist } = popupInfo;
+    let fieldObj = { [fieldName]: { FSOError: trimmedError } };
+    inputlist.forEach((key) => {
+      fieldObj[key] = { FSOError: trimmedError };
+    });
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
         ? { ...formData[config.key]?.[name] }
@@ -154,11 +188,11 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     } else {
       currentMessage.form[index] = {
         ...(currentMessage?.form?.[index] || {}),
-        [fieldName]: { FSOError: trimmedError },
+        ...fieldObj,
       };
     }
     setValue(config.key, currentMessage, name);
-    setValue("scrutinyMessage", null, "popupInfo");
+    setValue("scrutinyMessage", { popupInfo: null, imagePopupInfo: null }, ["popupInfo", "imagePopupInfo"]);
     setScrutinyError("");
   };
   return (
@@ -181,7 +215,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     {input?.icon && <Icon icon={input?.icon} />}
                     <span>{t(input?.label)}</span>
                   </div>
-                  {(!isScrutiny || sectionError) && (
+                  {(!isScrutiny || sectionError) && !isJudge && (
                     <div
                       className="header-right"
                       onClick={(e) => {
@@ -207,7 +241,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     </div>
                   )}
                 </div>
-                {sectionError && (
+                {sectionError && isScrutiny && (
                   <div className="scrutiny-error section">
                     <FlagIcon isError={true} />
                     {sectionError}
@@ -227,12 +261,12 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         dataIndex={index}
                         t={t}
                         handleOpenPopup={handleOpenPopup}
+                        handleClickImage={handleClickImage}
                         formData={formData}
                         input={input}
                         dataErrors={dataErrors}
                         configKey={config.key}
                         titleHeading={titleHeading}
-                        setIsImageModal={setIsImageModal}
                       />
                     );
                   })}
@@ -242,7 +276,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         </div>
       </div>
       {isPopupOpen && (
-        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: -345 }}>
+        <CustomPopUp anchorRef={popupAnchor.current} popupstyle={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}>
           <Fragment>
             <div>{t("CS_ERROR_DESCRIPTION")}</div>
             <TextArea
@@ -251,6 +285,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 const { value } = e.target;
                 setScrutinyError(value);
               }}
+              maxlength="255"
               style={{ minWidth: "300px", maxWidth: "300px", maxHeight: "150px", minHeight: "50px" }}
             ></TextArea>
             <div
@@ -261,7 +296,16 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 gap: "20px",
               }}
             >
-              <Button label={!defaultError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
+              <Button
+                label={!defaultError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")}
+                onButtonClick={() => {
+                  if (!defaultError) {
+                    handleDeleteError();
+                  } else {
+                    setDeletePopup(true);
+                  }
+                }}
+              />
               <Button
                 label={!defaultError ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
                 onButtonClick={() => {
@@ -276,13 +320,42 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           </Fragment>
         </CustomPopUp>
       )}
-      {isImageModal && (
+      {deletePopup && (
+        <CustomPopUp
+          anchorRef={popupAnchor.current}
+          popupstyle={{ minWidth: "400px", maxWidth: "400px", left: "50%", top: "50%", transform: "translate(-50%, -50%)" }}
+        >
+          <Fragment>
+            <div>{t("CS_DELETE_COMMENT")}</div>
+            <CardText>{t("CS_DELETE_HEADER")}</CardText>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <Button
+                label={t("CS_COMMON_CANCEL")}
+                onButtonClick={() => {
+                  setDeletePopup(false);
+                }}
+              />
+              <Button label={t("CS_COMMON_DELETE")} onButtonClick={handleDeleteError} />
+            </div>
+          </Fragment>
+        </CustomPopUp>
+      )}
+      {imagePopupInfo && (
         <ImageModal
-          imageInfo={isImageModal}
+          imageInfo={imagePopupInfo}
           t={t}
+          anchorRef={popupAnchor}
           handleOpenPopup={handleOpenPopup}
           handleCloseModal={() => {
-            setIsImageModal(false);
+            handleCloseImageModal();
           }}
         />
       )}

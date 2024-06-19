@@ -16,7 +16,7 @@ function JudgeScreen({ path }) {
 
   return (
     <React.Fragment>
-      <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
+      <div className="registration-requests">
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
         </div>
@@ -27,10 +27,9 @@ function JudgeScreen({ path }) {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  console.log(props);
                   const searchParams = new URLSearchParams();
                   searchParams.set("caseId", props.original.id);
-                  history.push(`${path}/admission/info?${searchParams.toString()}`);
+                  history.push(`${path}/admission?${searchParams.toString()}`);
                 },
               },
             }}

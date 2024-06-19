@@ -18,7 +18,7 @@ export const delayAppConfig = [
               type: "radioButton",
               name: "selectEligibilityType",
               optionsKey: "name",
-              error: "sample required message",
+              error: "CORE_REQUIRED_FIELD_ERROR",
               //   clearFields: { stateOfRegistration: "", barRegistrationNumber: "", barCouncilId: [], stateRegnNumber: "" },
               options: [
                 { code: "YES", name: "YES", configName: "de" },
