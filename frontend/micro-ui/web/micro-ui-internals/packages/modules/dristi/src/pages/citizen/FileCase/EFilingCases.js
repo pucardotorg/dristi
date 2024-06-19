@@ -839,7 +839,8 @@ function EFilingCases({ path }) {
         return setOpenConfirmCorrectionModal(true);
       }
     }
-    if (selected === "addSignature" && isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE) {
+
+    if (selected === "addSignature" && !(isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE)) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails({

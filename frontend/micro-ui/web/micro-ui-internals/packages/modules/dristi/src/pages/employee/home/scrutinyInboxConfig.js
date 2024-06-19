@@ -8,7 +8,7 @@ export const scrutinyInboxConfig = {
       criteria: [
         {
           defaultValues: true,
-          status: "PAYMENT_PENDING",
+          status: "UNDER_SCRUTINY",
           filingNumber: "",
         },
       ],
