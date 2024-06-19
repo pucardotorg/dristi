@@ -29,13 +29,14 @@ function EFilingPaymentResponse({ submitModalInfo = mockSubmitModalInfo }) {
   const history = useHistory();
   const { t } = useTranslation();
   const { state } = useLocation();
+  debugger;
   return (
     <div className="user-registration">
       <div className="e-filing-payment" style={{ maxHeight: "330px" }}>
         <Banner
           whichSvg={"tick"}
-          successful={state?.success ? true : false}
-          message={state?.success ? "CS_PAYMENT_SUCCESSFUL" : "CS_PAYMENT_FAILED"}
+          successful={state?.state?.success ? true : false}
+          message={state?.state?.success ? "CS_PAYMENT_SUCCESSFUL" : "CS_PAYMENT_FAILED"}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>

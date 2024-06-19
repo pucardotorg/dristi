@@ -1,3 +1,4 @@
+import { ArrowDirection } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -389,7 +390,16 @@ export const UICustomizations = {
         case "Action":
           return (
             <span className="action-link">
-              <Link to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}> {t("CS_RECORD_PAYMENT")}</Link>
+              <Link
+                style={{ display: "flex", alignItem: "center", color: "#9E400A" }}
+                to={`/digit-ui/employee/dristi/pending-payment-inbox/pending-payment-details?caseId=${value}`}
+              >
+                {" "}
+                <span style={{ display: "flex", alignItem: "center", textDecoration: "underline", color: "#9E400A" }}>
+                  {t("CS_RECORD_PAYMENT")}
+                </span>{" "}
+                <ArrowDirection styles={{ height: "20px", width: "20px", fill: "#9E400A" }} />
+              </Link>
             </span>
           );
         default:
