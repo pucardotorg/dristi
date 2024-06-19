@@ -8,13 +8,13 @@ export const chequeDetailsFormConfig = [
         populators: {
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             patternType: "Name",
             minLength: 2,
           },
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           name: "chequeSignatoryName",
         },
       },
@@ -53,13 +53,13 @@ export const chequeDetailsFormConfig = [
         populators: {
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             patternType: "Name",
             minLength: 2,
           },
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           name: "name",
         },
       },
@@ -99,7 +99,7 @@ export const chequeDetailsFormConfig = [
         label: "CS_BANK_NAME",
         isMandatory: true,
         populators: {
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           name: "bankName",
         },
       },

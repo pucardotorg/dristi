@@ -22,13 +22,13 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
       <Fragment>
         <OTPInput length={6} onChange={onOtpChange} value={otp} />
         {timeLeft > 0 ? (
-          <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+          <CardText>{`${t("CORE_COMMON_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CORE_COMMON_RESEND_SECONDS")}`}</CardText>
         ) : (
           <p className="card-text-button resend-otp" onClick={handleResendOtp}>
-            {t("CS_RESEND_OTP")}
+            {t("CORE_COMMON_RESEND_OTP")}
           </p>
         )}
-        {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+        {!error && <CardLabelError>{t("CORE_COMMON_INVALID_OTP")}</CardLabelError>}
       </Fragment>
     );
   }
@@ -37,13 +37,13 @@ const SelectOtp = ({ config, otp, onOtpChange, onResend, onSelect, t, error, use
     <FormStep onSelect={onSelect} config={config} t={t} isDisabled={!(otp?.length === 6 && canSubmit)}>
       <OTPInput length={6} onChange={onOtpChange} value={otp} />
       {timeLeft > 0 ? (
-        <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+        <CardText>{`${t("CORE_COMMON_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CORE_COMMON_RESEND_SECONDS")}`}</CardText>
       ) : (
         <p className="card-text-button" onClick={handleResendOtp}>
-          {t("CS_RESEND_OTP")}
+          {t("CORE_COMMON_RESEND_OTP")}
         </p>
       )}
-      {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+      {!error && <CardLabelError>{t("CORE_COMMON_INVALID_OTP")}</CardLabelError>}
     </FormStep>
   );
 };

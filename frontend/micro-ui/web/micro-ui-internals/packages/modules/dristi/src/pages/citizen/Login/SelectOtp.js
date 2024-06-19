@@ -79,14 +79,14 @@ const SelectOtp = ({
         </div>
         {timeLeft > 0 ? (
           <CardText>
-            <span style={{ backgroundColor: "#fff" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</span>
+            <span style={{ backgroundColor: "#fff" }}>{`${t("CORE_COMMON_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CORE_COMMON_RESEND_SECONDS")}`}</span>
           </CardText>
         ) : (
           <p className="card-text-button resend-otp" onClick={handleResendOtp}>
-            {t("CS_RESEND_OTP")}
+            {t("CORE_COMMON_RESEND_OTP")}
           </p>
         )}
-        {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+        {!error && <CardLabelError>{t("CORE_COMMON_INVALID_OTP")}</CardLabelError>}
       </Fragment>
     );
   }
@@ -112,13 +112,13 @@ const SelectOtp = ({
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={onCancel} isMobileView={false} />}
-      actionSaveLabel={t("VERIFY")}
+      actionSaveLabel={t("CORE_COMMON_VERIFY")}
       actionSaveOnSubmit={onModalSubmit}
       isDisabled={!(otp?.length === 6 && canSubmit)}
       formId="modal-action"
       headerBarMain={
         <React.Fragment>
-          <Heading label={isAdhaar ? t("Verify_Otp_Aadhaar") : t("Verify_Otp_MOBILE")} />
+          <Heading label={isAdhaar ? t("REG_VERIFY_AADHAR_OTP") : t("REG_VERIFY_MOBILE_OTP")} />
           <CardText>{`${cardText}${mobileNumber ? " +91****" + mobileNumber.slice(-4) : ""}`}</CardText>
         </React.Fragment>
       }
@@ -134,13 +134,13 @@ const SelectOtp = ({
         <OTPInput length={6} onChange={onOtpChange} value={otp} />
         <div className="message">
           <p>
-            {timeLeft > 0 ? <span className="time-left">{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`} </span> : ""}
+            {timeLeft > 0 ? <span className="time-left">{`${t("CORE_COMMON_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CORE_COMMON_RESEND_SECONDS")}`} </span> : ""}
             <span className={`resend-link ${timeLeft > 0 ? "disabled" : ""}`} onClick={handleResendOtp}>
-              {t("CS_RESEND_OTP")}
+              {t("CORE_COMMON_RESEND_OTP")}
             </span>
           </p>
         </div>
-        {!error && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
+        {!error && <CardLabelError>{t("CORE_COMMON_INVALID_OTP")}</CardLabelError>}
       </FormStep>
     </Modal>
   );

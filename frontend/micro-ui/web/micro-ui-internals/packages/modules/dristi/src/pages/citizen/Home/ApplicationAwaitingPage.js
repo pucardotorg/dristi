@@ -70,11 +70,11 @@ function ApplicationAwaitingPage({ individualId }) {
         <WaitIcon />
       </div>
       <div style={{ "text-align": "center" }}>
-        <CardHeader> {t("APPROVAL_WAITING")}</CardHeader>
+        <CardHeader> {t("REG_APPROVAL_WAITING")}</CardHeader>
       </div>
       <div style={{ "text-align": "center", maxWidth: "50%" }}>
         <CardText>
-          {`Your registration (ID: ${applicationNumber}) is in progress. It takes 2-3 days for verification. You'll get an SMS when it's done.`}
+          {`${t("REG_APPROVAL_WAITING_INFO_MESSAGE_START")} ${applicationNumber}${t("REG_APPROVAL_WAITING_INFO_MESSAGE_END")}`}
         </CardText>
       </div>
       <div>
@@ -82,7 +82,7 @@ function ApplicationAwaitingPage({ individualId }) {
           onButtonClick={() => {
             history.push(`/digit-ui/citizen/dristi/home/application-details?individualId=${individualId}`);
           }}
-          label={t("View My Application")}
+          label={t("REG_VIEW_MY_APPLICATION")}
           style={{
             flex: 1,
             boxShadow: "none",

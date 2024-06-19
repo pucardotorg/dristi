@@ -81,11 +81,11 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
     }
     numberOfFiles > 0
       ? onDocumentUpload(filesData[0][1]?.file, filesData[0][0]).then((document) => {
-          setFileName(filesData[0][0]);
+        setFileName(filesData[0][0]);
 
-          setFileStoreID(document.file?.files?.[0]?.fileStoreId);
-          setShowDoc(true);
-        })
+        setFileStoreID(document.file?.files?.[0]?.fileStoreId);
+        setShowDoc(true);
+      })
       : setShowDoc(false);
     setValue(numberOfFiles > 0 ? filesData : [], input.name, input);
   }
@@ -144,7 +144,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
           Boolean(input.isDependentOn) && !Boolean(formData && formData[config.key])
             ? false
             : Boolean(formData && formData[config.key] && formData[config.key][input.isDependentOn])
-            ? formData &&
+              ? formData &&
               formData[config.key] &&
               Array.isArray(input.dependentKey[input.isDependentOn]) &&
               input.dependentKey[input.isDependentOn].reduce((res, curr) => {
@@ -152,7 +152,7 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
                 res = formData[config.key][input.isDependentOn][curr];
                 return res;
               }, true)
-            : true;
+              : true;
         return (
           <React.Fragment key={index}>
             {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
@@ -161,16 +161,15 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
               <LabelFieldPair>
                 <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
                   {t(input.label) +
-                    `${
-                      input?.hasMobileNo
-                        ? formData[config.key]?.[input?.mobileNoKey]
-                          ? input?.isMobileSecret
-                            ? input?.mobileCode
-                              ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                              : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
-                            : ` ${formData[config.key]?.[input?.mobileNoKey]}`
-                          : ""
+                    `${input?.hasMobileNo
+                      ? formData[config.key]?.[input?.mobileNoKey]
+                        ? input?.isMobileSecret
+                          ? input?.mobileCode
+                            ? ` ${input?.mobileCode}-******${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                            : ` ${formData[config.key]?.[input?.mobileNoKey]?.substring(6)}`
+                          : ` ${formData[config.key]?.[input?.mobileNoKey]}`
                         : ""
+                      : ""
                     }`}
                 </CardLabel>
 
@@ -265,10 +264,10 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
             {input?.hasResendOTP && (
               <React.Fragment>
                 {timeLeft > 0 ? (
-                  <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+                  <CardText>{`${t("CORE_COMMON_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CORE_COMMON_RESEND_SECONDS")}`}</CardText>
                 ) : (
                   <p className="card-text" onClick={() => resendOtp(input)} style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer" }}>
-                    {t("CS_RESEND_OTP")}
+                    {t("CORE_COMMON_RESEND_OTP")}
                   </p>
                 )}
               </React.Fragment>

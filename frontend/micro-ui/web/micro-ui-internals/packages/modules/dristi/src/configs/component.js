@@ -70,7 +70,7 @@ export const verifyMobileNoConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_LOGIN_OTP_TEXT",
+              label: "REG_VERIFY_MOBILE_OTP_SUB_TEXT",
               type: "text",
               name: "otpNumber",
               hasMobileNo: true,

@@ -126,7 +126,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
     () =>
       config?.populators?.inputs || [
         {
-          label: "FIRST_NAME",
+          label: "CORE_COMMON_FIRST_NAME",
           type: "text",
           name: "firstName",
         },
@@ -136,7 +136,7 @@ function AdvocateNameDetails({ t, config, onSelect, formData = {}, errors, regis
           name: "middleName",
         },
         {
-          label: "LAST_NAME",
+          label: "CORE_COMMON_LAST_NAME",
           type: "text",
           name: "lastName",
         },

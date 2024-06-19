@@ -83,14 +83,14 @@ const complainantDetailsFormConfig = [
     body: [
       {
         type: "text",
-        label: "FIRST_NAME",
+        label: "CORE_COMMON_FIRST_NAME",
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
@@ -108,7 +108,7 @@ const complainantDetailsFormConfig = [
           name: "middleName",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             title: "",
@@ -118,14 +118,14 @@ const complainantDetailsFormConfig = [
       },
       {
         type: "text",
-        label: "LAST_NAME",
+        label: "CORE_COMMON_LAST_NAME",
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
@@ -231,7 +231,7 @@ const complainantDetailsFormConfig = [
               key: "locationSearch",
             },
             {
-              label: "PINCODE",
+              label: "CORE_COMMON_PINCODE",
               type: "text",
               name: "pincode",
               inputFieldClassName: "user-details-form-style",
@@ -241,7 +241,7 @@ const complainantDetailsFormConfig = [
                 patternType: "Pincode",
                 pattern: "[0-9]+",
                 max: "9999999",
-                errMsg: "ADDRESS_PINCODE_INVALID",
+                errMsg: "CORE_COMMON_PINCODE_INVALID_ERROR",
                 isRequired: true,
                 title: "",
               },
@@ -262,21 +262,21 @@ const complainantDetailsFormConfig = [
               isMandatory: true,
             },
             {
-              label: "DISTRICT",
+              label: "CORE_COMMON_DISTRICT",
               type: "text",
               name: "district",
               inputFieldClassName: "user-details-form-style",
               validation: {
                 isRequired: true,
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                errMsg: "CORE_COMMON_DISTRICT_INVALID_ERROR",
                 patternType: "Name",
                 title: "",
               },
               isMandatory: true,
             },
             {
-              label: "CITY/TOWN",
+              label: "CORE_COMMON_CITY/TOWN",
               type: "text",
               name: "city",
               inputFieldClassName: "user-details-form-style",
@@ -320,7 +320,7 @@ const complainantDetailsFormConfig = [
               key: "locationCompanySearch",
             },
             {
-              label: "PINCODE",
+              label: "CORE_COMMON_PINCODE",
               type: "text",
               name: "pincode",
               shouldBeEnabled: true,
@@ -331,7 +331,7 @@ const complainantDetailsFormConfig = [
                 patternType: "Pincode",
                 pattern: "[0-9]+",
                 max: "9999999",
-                errMsg: "ADDRESS_PINCODE_INVALID",
+                errMsg: "CORE_COMMON_PINCODE_INVALID_ERROR",
                 isRequired: true,
                 title: "",
               },
@@ -353,7 +353,7 @@ const complainantDetailsFormConfig = [
               isMandatory: true,
             },
             {
-              label: "DISTRICT",
+              label: "CORE_COMMON_DISTRICT",
               type: "text",
               name: "district",
               shouldBeEnabled: true,
@@ -361,14 +361,14 @@ const complainantDetailsFormConfig = [
               validation: {
                 isRequired: true,
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                errMsg: "CORE_COMMON_DISTRICT_INVALID_ERROR",
                 patternType: "Name",
                 title: "",
               },
               isMandatory: true,
             },
             {
-              label: "CITY/TOWN",
+              label: "CORE_COMMON_CITY/TOWN",
               type: "text",
               name: "city",
               shouldBeEnabled: true,

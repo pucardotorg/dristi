@@ -63,7 +63,7 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
         {
           type: "dropdown",
           key: "district",
-          label: "DISTRICT",
+          label: "CORE_COMMON_DISTRICT",
           isMandatory: true,
           populators: {
             label: "SELECT_RESPONDENT_TYPE",

@@ -192,17 +192,17 @@ const ApplicationDetails = ({ location, match }) => {
 
   const personalData = useMemo(
     () => [
-      { title: "Name", content: fullName },
-      { title: "Location", content: <LocationContent latitude={latitude} longitude={longitude}></LocationContent> },
-      { title: "Address", content: address },
+      { title: t("CORE_COMMON_NAME"), content: fullName },
+      { title: t("CORE_COMMON_LOCATION"), content: <LocationContent latitude={latitude} longitude={longitude}></LocationContent> },
+      { title: t("CORE_COMMON_ADDRESS"), content: address },
     ],
     [address, fullName, latitude, longitude]
   );
   const barDetails = useMemo(() => {
     return [
-      { title: "BAR Registration Number", content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
+      { title: t("REG_BAR_REGISTRATION_NUMBER"), content: searchResult?.[0]?.[userTypeDetail?.apiDetails?.AdditionalFields?.[0]] || "N/A" },
       {
-        title: "BAR Council ID",
+        title: t("REG_BAR_COUNCIL_ID"),
         image: true,
         content: fileName,
       },
@@ -215,10 +215,10 @@ const ApplicationDetails = ({ location, match }) => {
 
   const aadharData = useMemo(() => {
     return [
-      { title: "Mobile Number", content: individualData?.Individual?.[0]?.mobileNumber },
-      { title: "ID Type", content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
+      { title: t("REG_MOBILE_NUMBER"), content: individualData?.Individual?.[0]?.mobileNumber },
+      { title: t("REG_ID_TYPE"), content: individualData?.Individual?.[0]?.identifiers[0]?.identifierType },
       {
-        title: identifierIdDetails?.fileStoreId ? "ID Proof" : "Aadhar Number",
+        title: identifierIdDetails?.fileStoreId ? t("REG_ID_PROOF") : t("REG_AADHAR_NUMBER"),
         content: identifierIdDetails?.fileStoreId ? (
           <DocViewerWrapper fileStoreId={identifierIdDetails?.fileStoreId} tenantId={tenantId} displayFilename={identifierIdDetails?.filename} />
         ) : (
@@ -229,7 +229,7 @@ const ApplicationDetails = ({ location, match }) => {
   }, [identifierIdDetails?.fileStoreId, identifierIdDetails?.filename, individualData?.Individual, tenantId]);
 
   const header = useMemo(() => {
-    return applicationNo || applicationNumber ? t(`Application Number ${applicationNo || applicationNumber}`) : "My Application";
+    return applicationNo || applicationNumber ? `${t(`REG_APPLICATION_NUMBER_TEXT`)} ${applicationNo || applicationNumber}` : t("REG_MY_APPLICATION_TEXT");
   }, [applicationNo, applicationNumber, t]);
 
   if (isSearchLoading || isGetUserLoading || isWorkFlowLoading) {
@@ -248,7 +248,7 @@ const ApplicationDetails = ({ location, match }) => {
           {!applicationNo && (
             <div className="action-button-application">
               <SubmitBar
-                label={t("Go_Back_Home")}
+                label={t("REG_GO_BACK_HOME")}
                 onSubmit={() => {
                   history.push(`/${window?.contextPath}/citizen/dristi/home`);
                 }}

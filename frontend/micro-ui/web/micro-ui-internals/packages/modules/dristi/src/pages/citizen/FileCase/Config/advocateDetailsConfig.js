@@ -74,7 +74,7 @@ const advocateDetailsFormConfig = [
         populators: {
           inputs: [
             {
-              label: "FIRST_NAME",
+              label: "CORE_COMMON_FIRST_NAME",
               type: "text",
               name: "firstName",
               isDisabled: true,
@@ -93,7 +93,7 @@ const advocateDetailsFormConfig = [
               validation: {},
             },
             {
-              label: "LAST_NAME",
+              label: "CORE_COMMON_LAST_NAME",
               type: "text",
               name: "lastName",
               isDisabled: true,

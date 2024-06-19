@@ -28,9 +28,9 @@ const Response = ({ refetch, setHideBack }) => {
       {location?.state?.response === "success" ? (
         <div className="response-main">
           <SuccessIcon />
-          <CardHeader>{location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}</CardHeader>
+          <CardHeader>{location?.state?.response === "success" ? t("REG_REGISTER_SUCCESS") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}</CardHeader>
           <CardText>
-            {location?.state?.response === "success" ? t("CS_REGISTER_SUCCESS_SUB_TEXT") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
+            {location?.state?.response === "success" ? t("REG_REGISTER_SUCCESS_SUB_TEXT") : t("USER_REGISTRATION_BOTTOM_FAILURE_MSG")}
           </CardText>
           {location?.state?.response === "success" && (
             <React.Fragment>
@@ -39,7 +39,7 @@ const Response = ({ refetch, setHideBack }) => {
                   refetch();
                   history.push(`/${window?.contextPath}/citizen/dristi/home/file-case`);
                 }}
-                label={t("File a case")}
+                label={t("REG_FILE_A_CASE")}
                 className={"file-a-case"}
               />
               <Button
@@ -47,7 +47,7 @@ const Response = ({ refetch, setHideBack }) => {
                   refetch();
                   history.push(`/${window?.contextPath}/citizen/dristi/home`);
                 }}
-                label={t("Join a case")}
+                label={t("REG_JOIN_A_CASE")}
                 className={"join-a-case"}
               />
             </React.Fragment>

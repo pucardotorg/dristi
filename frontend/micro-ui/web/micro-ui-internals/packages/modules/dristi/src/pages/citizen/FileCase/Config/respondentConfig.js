@@ -46,14 +46,14 @@ const respondentFromconfig = [
     body: [
       {
         type: "text",
-        label: "FIRST_NAME",
+        label: "CORE_COMMON_FIRST_NAME",
         isMandatory: true,
         populators: {
           name: "respondentFirstName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
@@ -71,7 +71,7 @@ const respondentFromconfig = [
           name: "respondentMiddleName",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             title: "",
@@ -81,14 +81,14 @@ const respondentFromconfig = [
       },
       {
         type: "text",
-        label: "LAST_NAME",
+        label: "CORE_COMMON_LAST_NAME",
         isMandatory: true,
         populators: {
           name: "respondentLastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i,
             },
             minLength: 2,
@@ -299,7 +299,7 @@ const respondentFromconfig = [
           inputs: [
             { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
             {
-              label: "PINCODE",
+              label: "CORE_COMMON_PINCODE",
               type: "text",
               name: "pincode",
               validation: {
@@ -308,7 +308,7 @@ const respondentFromconfig = [
                 patternType: "Pincode",
                 pattern: "[0-9]+",
                 max: "9999999",
-                errMsg: "ADDRESS_PINCODE_INVALID",
+                errMsg: "CORE_COMMON_PINCODE_INVALID_ERROR",
                 isRequired: true,
                 title: "",
               },
@@ -324,7 +324,7 @@ const respondentFromconfig = [
               isMandatory: true,
             },
             {
-              label: "DISTRICT",
+              label: "CORE_COMMON_DISTRICT",
               type: "text",
               name: "district",
               validation: {
@@ -333,7 +333,7 @@ const respondentFromconfig = [
               isMandatory: true,
             },
             {
-              label: "CITY/TOWN",
+              label: "CORE_COMMON_CITY/TOWN",
               type: "text",
               name: "city",
               validation: {

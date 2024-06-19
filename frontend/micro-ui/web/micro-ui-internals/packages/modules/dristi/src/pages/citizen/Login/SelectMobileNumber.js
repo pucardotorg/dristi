@@ -3,6 +3,7 @@ import FormStep from "../../../components/FormStep";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const SelectMobileNumber = ({ t, onSelect, mobileNumber, onMobileChange, config, canSubmit, isRegister, isUserLoggedIn, className }) => {
+  console.log('config', config)
   return (
     <div className={`login-form ${className}`}>
       <FormStep
@@ -19,7 +20,7 @@ const SelectMobileNumber = ({ t, onSelect, mobileNumber, onMobileChange, config,
       </FormStep>
       {!isRegister && (
         <h3>
-          {t("CS_REGISTER_ACCOUNT")}
+          {t("REG_SIGNIN_REGISTER_ACCOUNT")}
           <span className="link">
             <Link
               to={
@@ -28,7 +29,7 @@ const SelectMobileNumber = ({ t, onSelect, mobileNumber, onMobileChange, config,
                   : `/digit-ui/citizen/dristi/home/registration/user-name`
               }
             >
-              {String(t("CS_REGISTER_LINK"))}
+              {String(t("REG_SIGNIN_REGISTER_LINK"))}
             </Link>
           </span>
         </h3>

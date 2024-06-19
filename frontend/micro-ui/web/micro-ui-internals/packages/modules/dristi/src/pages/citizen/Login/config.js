@@ -1,8 +1,8 @@
 export const loginSteps = [
   {
     texts: {
-      header: "CS_SIGNIN_PROVIDE_MOBILE_NUMBER",
-      cardText: "CS_WELCOME",
+      header: "REG_SIGNIN_PROVIDE_MOBILE_NUMBER",
+      cardText: "REG_SIGNIN_WELCOME",
       nextText: "CS_SIGNIN_NEXT",
       submitBarLabel: "CS_SIGNIN_NEXT",
       submitInForm: true,
@@ -12,7 +12,7 @@ export const loginSteps = [
         label: "CORE_COMMON_PHONE_NUMBER",
         type: "text",
         name: "mobileNumber",
-        error: "ERR_HRMS_INVALID_MOB_NO",
+        error: "CORE_COMMON_INVALID_MOB_NO",
         validation: {
           required: true,
           minlength: 10,
@@ -69,7 +69,7 @@ export const loginSteps = [
   {
     texts: {
       header: "CS_LOGIN_OTP",
-      cardText: "CS_LOGIN_OTP_TEXT",
+      cardText: "REG_VERIFY_MOBILE_OTP_SUB_TEXT",
     },
   },
   {
@@ -123,7 +123,7 @@ export const loginSteps = [
               hasBreakPoint: true,
             },
             {
-              label: "ENTER_AADHAR_NUMBER",
+              label: "REG_ENTER_AADHAR_NUMBER",
               type: "text",
               name: "aadharNumber",
               validation: {
@@ -131,7 +131,7 @@ export const loginSteps = [
                 maxlength: 12,
                 patternType: "AadharNo",
                 pattern: "[0-9]+",
-                errMsg: "AADHAR_NUMBER_INVALID",
+                errMsg: "REG_AADHAR_NUMBER_INVALID",
                 title: "",
               },
               clearFields: { ID_Proof: [], selectIdTypeType: "" },

@@ -236,8 +236,8 @@ const Registration = ({ stateCode }) => {
       IdVerification: {
         selectIdType: {
           code: "OTHER ID",
-          name: "CS_OTHER",
-          subText: "CS_OTHER_SUB_TEXT",
+          name: "REG_OTHER",
+          subText: "REG_OTHER_SUB_TEXT",
         },
       },
     };

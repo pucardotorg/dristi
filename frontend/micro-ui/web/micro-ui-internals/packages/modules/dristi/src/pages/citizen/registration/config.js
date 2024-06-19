@@ -1,15 +1,15 @@
 export const userTypeOptions = [
   {
     code: "LITIGANT",
-    name: "LITIGANT_TEXT",
+    name: "REG_LITIGANT_TEXT",
     showBarDetails: false,
     isVerified: false,
     role: ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "DEPOSITION_CREATOR", "DEPOSITION_EDITOR", "DEPOSITION_VIEWER"],
-    subText: "LITIGANT_SUB_TEXT",
+    subText: "REG_LITIGANT_SUB_TEXT",
   },
   {
     code: "ADVOCATE",
-    name: "ADVOCATE_TEXT",
+    name: "REG_ADVOCATE_TEXT",
     showBarDetails: true,
     isVerified: true,
     hasBarRegistrationNo: true,
@@ -19,11 +19,11 @@ export const userTypeOptions = [
       requestKey: "advocate",
       AdditionalFields: ["barRegistrationNumber"],
     },
-    subText: "ADVOCATE_SUB_TEXT",
+    subText: "REG_ADVOCATE_SUB_TEXT",
   },
   {
     code: "ADVOCATE_CLERK",
-    name: "ADVOCATE_CLERK_TEXT",
+    name: "REG_ADVOCATE_CLERK_TEXT",
     showBarDetails: true,
     hasStateRegistrationNo: true,
     isVerified: true,
@@ -34,7 +34,7 @@ export const userTypeOptions = [
       AdditionalFields: ["stateRegnNumber"],
     },
 
-    subText: "ADVOCATE_CLERK_SUB_TEXT",
+    subText: "REG_ADVOCATE_CLERK_SUB_TEXT",
   },
 ];
 
@@ -43,14 +43,14 @@ export const newConfig = [
     body: [
       {
         type: "text",
-        label: "FIRST_NAME",
+        label: "CORE_COMMON_FIRST_NAME",
         isMandatory: true,
         populators: {
           name: "firstName",
           error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             title: "",
@@ -77,14 +77,14 @@ export const newConfig = [
       },
       {
         type: "text",
-        label: "LAST_NAME",
+        label: "CORE_COMMON_LAST_NAME",
         isMandatory: true,
         populators: {
           name: "lastName",
           error: "CORE_REQUIRED_FIELD_ERROR",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             title: "",
@@ -96,7 +96,7 @@ export const newConfig = [
     ],
   },
   {
-    head: "CS_ENTER_ADDRESS",
+    head: "CORE_COMMON_ENTER_ADDRESS",
     body: [
       {
         type: "component",
@@ -111,7 +111,7 @@ export const newConfig = [
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "buildingName", "doorNo"],
             },
             {
-              label: "PINCODE",
+              label: "CORE_COMMON_PINCODE",
               type: "text",
               name: "pincode",
               validation: {
@@ -120,7 +120,7 @@ export const newConfig = [
                 patternType: "Pincode",
                 pattern: "[0-9]+",
                 max: "9999999",
-                errMsg: "ADDRESS_PINCODE_INVALID",
+                errMsg: "CORE_COMMON_PINCODE_INVALID_ERROR",
                 isRequired: true,
                 title: "",
               },
@@ -140,20 +140,20 @@ export const newConfig = [
               isMandatory: true,
             },
             {
-              label: "DISTRICT",
+              label: "CORE_COMMON_DISTRICT",
               type: "text",
               name: "district",
               validation: {
                 isRequired: true,
                 pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-                errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+                errMsg: "CORE_COMMON_DISTRICT_INVALID_ERROR",
                 patternType: "Name",
                 title: "",
               },
               isMandatory: true,
             },
             {
-              label: "CITY/TOWN",
+              label: "CORE_COMMON_CITY/TOWN",
               type: "text",
               name: "city",
               validation: {
@@ -162,7 +162,7 @@ export const newConfig = [
               isMandatory: true,
             },
             {
-              label: "LOCALITY",
+              label: "CORE_COMMON_LOCALITY_INVALID_ERROR",
               type: "text",
               name: "locality",
               validation: {
@@ -171,11 +171,11 @@ export const newConfig = [
               isMandatory: true,
             },
             {
-              label: "BUILDING_NAME",
+              label: "CORE_COMMON_BUILDING_NAME",
               type: "text",
               name: "buildingName",
               validation: {
-                errMsg: "ADDRESS_BUILDING_NAME_INVALID",
+                errMsg: "CORE_COMMON_BUILDING_NAME_INVALID_ERROR",
                 isRequired: true,
                 minlength: 2,
                 title: "",
@@ -183,7 +183,7 @@ export const newConfig = [
               isMandatory: true,
             },
             {
-              label: "DOOR_NUMBER",
+              label: "CORE_COMMON_DOOR_NUMBER",
               type: "text",
               name: "doorNo",
               validation: {
@@ -211,8 +211,8 @@ export const newConfig = [
         populators: {
           inputs: [
             {
-              label: "SELECT_USER_TYPE_TEXT",
-              subLabel: "SELECT_USER_TYPE_SUB_TEXT",
+              label: "REG_SELECT_USER_TYPE_TEXT",
+              subLabel: "REG_SELECT_USER_TYPE_SUB_TEXT",
               type: "radioButton",
               name: "selectUserType",
               optionsKey: "name",
@@ -229,20 +229,20 @@ export const newConfig = [
     ],
   },
   {
-    head: "CS_ENTER_NAME",
-    subHead: "CS_ENTER_NAME_SUB_TEXT",
+    head: "REG_ENTER_NAME",
+    subHead: "REG_ENTER_NAME_SUB_TEXT",
     headId: "select-name-subtext", // for css
     body: [
       {
         type: "text",
-        label: "FIRST_NAME",
+        label: "CORE_COMMON_FIRST_NAME",
         isMandatory: true,
         populators: {
           name: "firstName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             minLength: 2,
@@ -258,7 +258,7 @@ export const newConfig = [
           name: "middleName",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             title: "",
@@ -268,14 +268,14 @@ export const newConfig = [
       },
       {
         type: "text",
-        label: "LAST_NAME",
+        label: "CORE_COMMON_LAST_NAME",
         isMandatory: true,
         populators: {
           name: "lastName",
-          error: "FIRST_LAST_NAME_MANDATORY_MESSAGE",
+          error: "CORE_COMMON_TEXT_MANDATORY_MESSAGE",
           validation: {
             pattern: {
-              message: "CORE_COMMON_APPLICANT_NAME_INVALID",
+              message: "CORE_COMMON_INVALID_NAME_ERROR",
               value: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
             },
             minLength: 2,
@@ -289,14 +289,14 @@ export const newConfig = [
   {
     texts: {
       // header: "CS_LOGIN_OTP",
-      cardText: "CS_LOGIN_OTP_TEXT",
+      cardText: "REG_VERIFY_MOBILE_OTP_SUB_TEXT",
     },
   },
   {
     texts: {
-      header: "CS_ENTER_MOBILE",
-      cardText: "CS_ENTER_MOBILE_SUB_TEXT",
-      submitBarLabel: "CS_COMMON_CONTINUE",
+      header: "REG_SIGNUP_PROVIDE_MOBILE_NUMBER",
+      cardText: "REG_SIGNUP_ENTER_MOBILE_SUB_TEXT",
+      submitBarLabel: "CORE_COMMON_CONTINUE",
       submitInForm: true,
     },
     inputs: [
@@ -304,7 +304,7 @@ export const newConfig = [
         label: "CORE_COMMON_MOBILE_NUMBER",
         type: "text",
         name: "mobileNumber",
-        error: "ERR_HRMS_INVALID_MOB_NO",
+        error: "CORE_COMMON_INVALID_MOB_NO",
         validation: {
           required: true,
           minlength: 10,
@@ -323,8 +323,8 @@ export const newConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_VERFIY_IDENTITY",
-              subLabel: "CS_VERFIY_IDENTITY_SUB_TEXT",
+              label: "REG_VERFIY_IDENTITY",
+              subLabel: "REG_VERFIY_IDENTITY_SUB_TEXT",
               type: "radioButton",
               name: "selectIdType",
               optionsKey: "name",
@@ -337,13 +337,13 @@ export const newConfig = [
               options: [
                 {
                   code: "AADHAR",
-                  name: "CS_ADHAAR",
-                  subText: "CS_ADHAAR_SUB_TEXT",
+                  name: "REG_AADHAR_RECOMMENDATION",
+                  subText: "REG_AADHAR_RECOMMENDATION_SUB_TEXT",
                 },
                 {
                   code: "OTHER ID",
-                  name: "CS_OTHER",
-                  subText: "CS_OTHER_SUB_TEXT",
+                  name: "REG_OTHER",
+                  subText: "REG_OTHER_SUB_TEXT",
                 },
               ],
               optionsCustomStyle: {
@@ -358,8 +358,8 @@ export const newConfig = [
     ],
   },
   {
-    head: "CS_ENTER_ADHAAR",
-    subHead: "CS_ENTER_ADHAAR_TEXT",
+    head: "REG_ENTER_ADHAAR",
+    subHead: "REG_ENTER_ADHAAR_SUB_TEXT",
     body: [
       {
         type: "component",
@@ -369,7 +369,7 @@ export const newConfig = [
         populators: {
           inputs: [
             {
-              label: "ENTER_AADHAR_NUMBER",
+              label: "REG_ENTER_AADHAR_NUMBER",
               type: "text",
               name: "aadharNumber",
               validation: {
@@ -377,7 +377,7 @@ export const newConfig = [
                 maxlength: 12,
                 patternType: "AadharNo",
                 pattern: "[0-9]+",
-                errMsg: "AADHAR_NUMBER_INVALID",
+                errMsg: "REG_AADHAR_NUMBER_INVALID",
                 title: "",
               },
               clearFields: { ID_Proof: [], selectIdTypeType: "" },
@@ -476,8 +476,8 @@ export const termsAndConditionConfig = [
 
 export const advocateClerkConfig = [
   {
-    head: "CORE_ADVOCATE_VERFICATION",
-    subHead: "CORE_ADVOCATE_VERFICATION_TEXT",
+    head: "REG_ADVOCATE_VERFICATION",
+    subHead: "REG_ADVOCATE_VERFICATION_SUB_TEXT",
 
     body: [
       {
@@ -490,13 +490,13 @@ export const advocateClerkConfig = [
         populators: {
           inputs: [
             {
-              label: "BAR_REGISTRATION_NUMBER",
+              label: "REG_BAR_REGISTRATION_NUMBER",
               type: "text",
               name: "barRegistrationNumber",
               validation: {
                 isRequired: true,
                 pattern: /^[0-9A-Z/]{0,20}$/,
-                errMsg: "BAR_REGISTRATION_NUMBER_INVALID",
+                errMsg: "REG_BAR_REGISTRATION_NUMBER_INVALID",
                 maxlength: 20,
               },
               isMandatory: true,
@@ -506,7 +506,7 @@ export const advocateClerkConfig = [
             },
 
             {
-              label: "BAR_COUNCIL_ID",
+              label: "REG_BAR_COUNCIL_ID",
               type: "documentUpload",
               name: "barCouncilId",
               validation: {

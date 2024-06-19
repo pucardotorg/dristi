@@ -222,7 +222,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         ...prev,
         isUserVerified: false,
         showModal: true,
-        errorMsg: "CS_INVALID_OTP",
+        errorMsg: "CORE_COMMON_INVALID_OTP",
       }));
     }
   };
@@ -304,14 +304,14 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
         <Modal
           headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
           actionCancelOnSubmit={() => { }}
-          actionSaveLabel={t("VERIFY")}
+          actionSaveLabel={t("CORE_COMMON_VERIFY")}
           actionSaveOnSubmit={() => {
             if (!formData[config.key]?.[input?.name])
               setState((prev) => ({
                 ...prev,
                 isUserVerified: false,
                 showModal: true,
-                errorMsg: "CS_INVALID_OTP",
+                errorMsg: "CORE_COMMON_INVALID_OTP",
               }));
             else selectOtp(input);
           }}
@@ -338,8 +338,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
               <div className="field">
                 {input?.type === "text" && (
                   <TextInput
-                    className={`field desktop-w-full verify-mobile-otp-input ${
-                      formData?.[config.key][input.name] &&
+                    className={`field desktop-w-full verify-mobile-otp-input ${formData?.[config.key][input.name] &&
                       formData?.[config.key][input.name].length > 0 &&
                       !["documentUpload", "radioButton"].includes(input.type) &&
                       input.validation &&
@@ -347,7 +346,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                         window?.Digit.Utils.getPattern(input.validation.patternType) || input.validation.pattern
                       ) &&
                       "error"
-                    }`}
+                      }`}
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : undefined}
                     onChange={(e) => {
@@ -376,7 +375,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             {input?.hasResendOTP && (
               <React.Fragment>
                 {timeLeft && !errorMsg > 0 ? (
-                  <CardText>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
+                  <CardText>{`${t("CORE_COMMON_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CORE_COMMON_RESEND_SECONDS")}`}</CardText>
                 ) : (
                   <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
                     <CardText style={{ margin: 0 }}>{errorMsg ? `${t(errorMsg)}` : `${t("CS_HAVE_NOT_RECEIVED_OTP")}`}</CardText>
@@ -386,7 +385,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                       onClick={() => resendOtp(input)}
                       style={{ backgroundColor: "#fff", color: "#007E7E", cursor: "pointer", margin: 0, textDecoration: "underline", fontSize: 16 }}
                     >
-                      {t("CS_RESEND_OTP")}
+                      {t("CORE_COMMON_RESEND_OTP")}
                     </p>
                   </div>
                 )}

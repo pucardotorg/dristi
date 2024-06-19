@@ -14,7 +14,7 @@ const selectCompMultiConfig = {
     inputs: [
       { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
       {
-        label: "PINCODE",
+        label: "CORE_COMMON_PINCODE",
         type: "text",
         name: "pincode",
         validation: {
@@ -23,7 +23,7 @@ const selectCompMultiConfig = {
           patternType: "Pincode",
           pattern: "[0-9]+",
           max: "9999999",
-          errMsg: "ADDRESS_PINCODE_INVALID",
+          errMsg: "CORE_COMMON_PINCODE_INVALID_ERROR",
           isRequired: true,
           title: "",
         },
@@ -43,20 +43,20 @@ const selectCompMultiConfig = {
         isMandatory: true,
       },
       {
-        label: "DISTRICT",
+        label: "CORE_COMMON_DISTRICT",
         type: "text",
         name: "district",
         validation: {
           isRequired: true,
           pattern: /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,50}$/i,
-          errMsg: "CORE_COMMON_APPLICANT_DISTRICT_INVALID",
+          errMsg: "CORE_COMMON_DISTRICT_INVALID_ERROR",
           patternType: "Name",
           title: "",
         },
         isMandatory: true,
       },
       {
-        label: "CITY/TOWN",
+        label: "CORE_COMMON_CITY/TOWN",
         type: "text",
         name: "city",
         validation: {
@@ -132,15 +132,14 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
           <div key={data.id}>
             <div style={{ display: "flex", gap: "4px", justifyContent: "space-between", alignItems: "center" }}>
               <b>
-                <h1>{` ${
-                  addressLabel == "INDIVIDUAL"
-                    ? t("CS_RESPONDENT_ADDRESS_DETAIL")
-                    : addressLabel == "REPRESENTATIVE"
+                <h1>{` ${addressLabel == "INDIVIDUAL"
+                  ? t("CS_RESPONDENT_ADDRESS_DETAIL")
+                  : addressLabel == "REPRESENTATIVE"
                     ? t("CS_COMPANY_LOCATION")
                     : config?.formType == "Witness"
-                    ? t("CS_COMMON_ADDRESS_WITNESS")
-                    : t("CS_COMMON_ADDRESS_DETAIL")
-                } ${index + 1}`}</h1>
+                      ? t("CS_COMMON_ADDRESS_WITNESS")
+                      : t("CS_COMMON_ADDRESS_DETAIL")
+                  } ${index + 1}`}</h1>
               </b>
               <span onClick={() => handleDeleteLocation(data.id)} style={locationData.length === 1 ? { display: "none" } : {}}>
                 <CrossIcon></CrossIcon>

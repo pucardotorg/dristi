@@ -122,7 +122,7 @@ const ChangePasswordComponent = ({ config: propsConfig, t }) => {
         <Header />
         <CardSubHeader style={{ textAlign: "center" }}> {propsConfig.texts.header} </CardSubHeader>
         <CardText>
-          {`${t(`CS_LOGIN_OTP_TEXT`)} `}
+          {`${t(`REG_VERIFY_MOBILE_OTP_SUB_TEXT`)} `}
           <b>
             {" "}
             {`${t(`+ 91 - `)}`} {mobileNumber}
