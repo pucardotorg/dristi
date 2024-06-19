@@ -225,7 +225,7 @@ const complainantDetailsFormConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_PIN_LOCATION",
+              label: "CS_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
               key: "locationSearch",
@@ -314,7 +314,7 @@ const complainantDetailsFormConfig = [
         populators: {
           inputs: [
             {
-              label: "CS_PIN_LOCATION",
+              label: "CS_LOCATION",
               type: "LocationSearch",
               name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
               key: "locationCompanySearch",

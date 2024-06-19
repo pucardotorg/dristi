@@ -436,7 +436,9 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
-      return modifiedFormData;
+      if (!isErrorCorrectionMode) {
+        return modifiedFormData;
+      }
     }
     return modifiedFormData.map(({ data }, index) => {
       let disableConfigFields = [];
@@ -560,7 +562,10 @@ function EFilingCases({ path }) {
           if (Object.keys(scrutinyObj).length > 0) {
             updatedBody = config.body
               .map((formComponent) => {
-                const key = formComponent.key || formComponent.populators?.name;
+                let key = formComponent.key || formComponent.populators?.name;
+                if (formComponent.type === "component" && formComponent.component === "SelectCustomDragDrop") {
+                  key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
@@ -776,7 +781,6 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
-
   const onSubmit = async (action) => {
     if (!Array.isArray(formdata)) {
       return;
@@ -828,9 +832,14 @@ function EFilingCases({ path }) {
       return;
     }
     if (isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE) {
-      return setOpenConfirmCorrectionModal(true);
+      if (selected !== "addSignature") {
+        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+        return;
+      } else {
+        return setOpenConfirmCorrectionModal(true);
+      }
     }
-    if (selected === "addSignature") {
+    if (selected === "addSignature" && isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails({
@@ -849,7 +858,6 @@ function EFilingCases({ path }) {
             resetFormData.current();
             setIsDisabled(false);
           }
-
           return refetchCaseData().then(() => {
             const caseData =
               caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -908,20 +916,22 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
-      .then(() => {
-        refetchCaseData().then(() => {
-          const caseData =
-            caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
-            caseDetails?.caseDetails?.[nextSelected]?.formdata ||
-            (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
-          setFormdata(caseData);
+    if (state !== CaseWorkflowState.CASE_RE_ASSIGNED) {
+      updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+        .then(() => {
+          refetchCaseData().then(() => {
+            const caseData =
+              caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
+              caseDetails?.caseDetails?.[nextSelected]?.formdata ||
+              (nextSelected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+            setFormdata(caseData);
+            setIsDisabled(false);
+          });
+        })
+        .catch(() => {
           setIsDisabled(false);
         });
-      })
-      .catch(() => {
-        setIsDisabled(false);
-      });
+    }
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -992,7 +1002,6 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
-  console.log(formdata);
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
