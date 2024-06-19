@@ -16,7 +16,7 @@ function Home() {
 
   return (
     <React.Fragment>
-      <div className="registration-requests">
+      <div className="scrutiny-inbox-table">
         <div className="inbox-search-wrapper">
           <InboxSearchComposer
             customStyle={sectionsParentStyle}
