@@ -99,6 +99,7 @@ public class CaseService {
                 billingUtil.createDemand(caseRequest);
             }
             if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())) {
+                enrichmentUtil.enrichAccessCode(caseRequest);
                 enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
             }
             producer.push(config.getCaseUpdateTopic(), caseRequest);
