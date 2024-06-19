@@ -46,7 +46,7 @@ class OrderRowMapperTest {
         PGobject pgObject = new PGobject();
         pgObject.setType("json");
         pgObject.setValue("{\"key\":\"value\"}");
-        when(resultSet.getObject("additionalDetails")).thenReturn(pgObject);
+        when(resultSet.getObject("additionaldetails")).thenReturn(pgObject);
 
         List<Order> orders = orderRowMapper.extractData(resultSet);
 

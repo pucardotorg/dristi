@@ -22,7 +22,7 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
                 String orderId = rs.getString("order_id");
-                UUID uuid = UUID.fromString(orderId!=null ? orderId : "00000000-0000-0000-0000-000000000000");
+                UUID uuid = UUID.fromString(orderId);
 
                 Long lastModifiedTime = rs.getLong("lastmodifiedtime");
 
@@ -43,25 +43,24 @@ public class StatuteSectionRowMapper implements ResultSetExtractor<Map<UUID, Sta
                         .auditdetails(auditdetails)
                         .build();
 
-                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
+                PGobject pgObject = (PGobject) rs.getObject("additionaldetails");
                 if (pgObject != null)
                     statuteSection.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                if (!statuteSectionMap.containsKey(uuid) ) {
-                    statuteSectionMap.put(uuid,statuteSection);
-                }
+                statuteSectionMap.put(uuid, statuteSection);
+
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing Case ResultSet: {}", e.getMessage());
+            log.error("Error occurred while processing Case ResultSet :: {}", e.toString());
             throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing Case ResultSet: " + e.getMessage());
         }
         return statuteSectionMap;
     }
 
-    public List<String> stringToList(String str){
+    public List<String> stringToList(String str) {
         List<String> list = new ArrayList<>();
-        if(str!=null){
-            StringTokenizer st = new StringTokenizer("str","|");
+        if (str != null) {
+            StringTokenizer st = new StringTokenizer("str", "|");
             while (st.hasMoreTokens()) {
                 list.add(st.nextToken());
             }

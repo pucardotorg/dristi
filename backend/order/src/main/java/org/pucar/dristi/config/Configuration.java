@@ -107,7 +107,7 @@ public class Configuration {
     @Value("${egov.workflow.order.business.name}")
     private String orderBusinessName;
 
-    // Advocate Workflow/Business Service name
+    // Order Workflow/Business Service name
     @Value("${egov.workflow.order.business.service.name}")
     private String orderBusinessServiceName;
 }
