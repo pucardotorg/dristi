@@ -23,22 +23,6 @@ const extractValue = (data, key) => {
   return value;
 };
 
-const extractValue = (data, key) => {
-  if (!key.includes(".")) {
-    return data[key];
-  }
-  const keyParts = key.split(".");
-  let value = data;
-  keyParts.forEach((part) => {
-    if (value && value.hasOwnProperty(part)) {
-      value = value[part];
-    } else {
-      value = undefined;
-    }
-  });
-  return value;
-};
-
 const CloseBtn = (props) => {
   return (
     <div onClick={props?.onClick} style={{ height: "100%", display: "flex", alignItems: "center", paddingRight: "20px", cursor: "pointer" }}>
