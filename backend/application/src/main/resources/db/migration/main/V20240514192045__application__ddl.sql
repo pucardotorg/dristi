@@ -8,7 +8,7 @@ CREATE TABLE dristi_application (
                                     createdDate varchar(64) NOT NULL,
                                     applicationCreatedBy varchar(64) NULL,
                                     onBehalfOf JSONB  NULL,
-                                    applicationType varchar(64)  NULL,
+                                    applicationType JSONB  NULL,
                                     applicationNumber varchar(64)  NULL,
                                     issuedBy JSONB NULL,
                                     status varchar(64) NOT NULL,

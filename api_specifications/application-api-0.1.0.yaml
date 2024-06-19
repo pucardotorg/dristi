@@ -265,9 +265,10 @@ components:
             format: uuid
             description: ID of the users for whom the application has been raised
         applicationType:
-          type: string
-          format: uuid
-          description: array of Master Data ID since an application can be of multiple application types
+          type: array
+          items:
+            type: integer
+            description: array of Master Data ID since an application can be of multiple application types
         applicationNumber:
           type: string
           minLength: 24
