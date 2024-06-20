@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "asyncordersubmission",
-      "business": "async-order-submission-services",
+      "businessService": "asyncordersubmissionwithresponse",
+      "business": "async-order-submission-withresponse-services",
       "businessServiceSla": 30,
       "states": [
         {
@@ -35,7 +35,7 @@
           "actions": [
             {
               "action": "SUBMIT",
-              "nextState": "COMPLETED",
+              "nextState": "PENDINGRESPONSE",
               "roles": [
                 "SUBMISSION_RESPONDER"
               ]
@@ -77,6 +77,38 @@
               "nextState": "PENDINGSUBMISSION",
               "roles": [
                 "SUBMISSION_APPROVER"
+              ]
+            },
+            {
+              "action": "ABANDON",
+              "nextState": "ABATED",
+              "roles": [
+                "WORKFLOW_ABANDON"
+              ]
+            }
+          ]
+        },
+        {
+          "sla": 5,
+          "state": "PENDINGRESPONSE",
+          "applicationStatus": "INWORKFLOW",
+          "docUploadRequired": false,
+          "isStartState": false,
+          "isTerminateState": false,
+          "isStateUpdatable": true,
+          "actions": [
+            {
+              "action": "SUBMIT",
+              "nextState": "COMPLETED",
+              "roles": [
+                "SUBMISSION_RESPONDER"
+              ]
+            },
+            {
+              "action": "AUTOESCALATE",
+              "nextState": "COMPLETED",
+              "roles": [
+                "WORKFLOW_AUTOAPPROVE"
               ]
             },
             {

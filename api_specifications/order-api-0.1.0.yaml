@@ -269,13 +269,8 @@ components:
             courtID:
               type: string
         orderType:
-          type: array
-          items:
-            type: string
-            format: uuid
-            minLength: 36
-            maxLength: 36
-          description: array of Master Data ID since an order can be of multiple order types
+          type: string
+          description: Master Data ID from OrderType master
         orderCategory:
           type: string
           description: Master data ID
