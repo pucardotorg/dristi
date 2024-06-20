@@ -1,11 +1,15 @@
-name: dristi workflow
+name: advocate workflow
 on:
   push:
     branches:
       - develop
+    paths:
+      - 'backend/advocate/**'
   pull_request:
     branches:
       - develop
+    paths:
+      - 'backend/advocate/**'
   workflow_dispatch:
 jobs:
   docker_image-build:
