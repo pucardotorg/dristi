@@ -1,17 +1,17 @@
-name: order workflow
+name: evidence workflow
 on:
   push:
     branches:
       - main
       - develop
     paths:
-      - 'backend/order/**'
+      - 'backend/evidence/**'
   pull_request:
     branches:
       - main
       - develop
     paths:
-      - 'backend/order/**'
+      - 'backend/evidence/**'
   workflow_dispatch:
 jobs:
   docker_image-build:
@@ -30,27 +30,27 @@ jobs:
           distribution: "temurin"
           cache: maven
 
-      - name: Build and analyze order
+      - name: Build and analyze evidence
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+        run: mvn -B -f backend/evidence/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_evidence -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Login to Azure Container Registry
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
-      - name: Build and Push Docker image for order
+      - name: Build and Push Docker image for evidence
         if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
-          docker build --build-arg WORK_DIR="backend/order" -t pucar_order:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
-          docker tag pucar_order:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/pucar_order:v1.0.0-${{ github.sha }}
+          docker build --build-arg WORK_DIR="backend/evidence" -t pucar_evidence:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_evidence:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_evidence:v1.0.0-${{ github.sha }}
 
-      - name: Build and Push Docker image for order_DB
+      - name: Build and Push Docker image for evidence_DB
         if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
-          docker build --build-arg WORK_DIR="backend/order/src/main/resources/db" -t pucar_order_db:v1.0.0-${{ github.sha }}  .
-          docker tag pucar_order_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
-          docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
-        working-directory: backend/order/src/main/resources/db
+          docker build --build-arg WORK_DIR="backend/evidence/src/main/resources/db" -t pucar_evidence_db:v1.0.0-${{ github.sha }}  .
+          docker tag pucar_evidence_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_evidence_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/evidence/src/main/resources/db
