@@ -252,7 +252,7 @@ function EFilingCases({ path }) {
     [caseData]
   );
 
-  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+  const state = useMemo(() => caseDetails?.status, [caseDetails]);
 
   const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
   const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);

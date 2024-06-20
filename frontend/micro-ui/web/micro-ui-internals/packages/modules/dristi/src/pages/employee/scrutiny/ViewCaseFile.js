@@ -21,6 +21,7 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import { DRISTIService } from "../../../services";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
+import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
 
 function ViewCaseFile({ t }) {
   const history = useHistory();
@@ -126,7 +127,7 @@ function ViewCaseFile({ t }) {
   );
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
   const defaultScrutinyErrors = useMemo(() => caseDetails?.additionalDetails?.scrutiny || {}, [caseDetails]);
-  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+  const state = useMemo(() => caseDetails?.status, [caseDetails]);
 
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
@@ -237,9 +238,9 @@ function ViewCaseFile({ t }) {
   if (isLoading) {
     return <Loader />;
   }
-  if (isScrutiny && state !== "UNDER_SCRUTINY") {
-    // if state is not under scrutiny, don't allow
-    // history.push("/digit-ui/employee/dristi/cases");
+  if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
+    // if state is not under scrutiny, don't allow FSO Officer to access the application Details page
+    history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
