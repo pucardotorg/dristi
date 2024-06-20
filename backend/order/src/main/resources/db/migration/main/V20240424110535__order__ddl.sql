@@ -6,7 +6,7 @@ CREATE TABLE dristi_orders (
                               orderNumber varchar(64) NULL,
                               filingNumber varchar(64) NULL,
                               cnrNumber varchar(64) NULL,
-                              orderType jsonb NULL,
+                              orderType varchar(64) NULL,
                               orderCategory varchar(64) NULL,
                               createdDate varchar(64) NULL,
                               comments varchar(64) NULL,
