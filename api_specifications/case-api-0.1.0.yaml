@@ -683,6 +683,12 @@ components:
           type: string
         filingNumber:
           type: string
+        judgeId:
+          type: string
+        stage:
+          type: string
+        substage:
+          type: string
         courtCaseNumber:
           type: string
         litigantId:
