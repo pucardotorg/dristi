@@ -785,9 +785,9 @@ function EFilingCases({ path }) {
     return obj;
   };
   const onSubmit = async (action) => {
-    // if (isDisableAllFieldsMode && selected !== "addSignature") {
-    //   return;
-    // }
+    if (isDisableAllFieldsMode) {
+      history.push(homepagePath);
+    }
     if (!Array.isArray(formdata)) {
       return;
     }
@@ -1115,7 +1115,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? (isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_SUBMIT_CASE")) : t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
@@ -1126,7 +1126,7 @@ function EFilingCases({ path }) {
                   cardStyle={{ minWidth: "100%" }}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
-                  showSecondaryLabel={!isErrorCorrectionMode}
+                  showSecondaryLabel={!isDisableAllFieldsMode}
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
@@ -1233,7 +1233,7 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={() => takeUserToRemainingMandatoryFieldsPage()}
             ></Modal>
           )}
-          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && (
+          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && !isDisableAllFieldsMode && (
             <Modal
               headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
               headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
