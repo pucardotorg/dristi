@@ -108,6 +108,7 @@ function EFilingCases({ path }) {
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
   const [formdata, setFormdata] = useState(selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+  const [errorCaseDetails, setErrorCaseDetails] = useState(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
 
@@ -254,7 +255,7 @@ function EFilingCases({ path }) {
 
   const state = useMemo(() => caseDetails?.status, [caseDetails]);
 
-  const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
+  const isCaseReAssigned = state === CaseWorkflowState.CASE_RE_ASSIGNED;
   const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);
   const isDraftInProgress = state === CaseWorkflowState.DRAFT_IN_PROGRESS;
 
@@ -312,10 +313,21 @@ function EFilingCases({ path }) {
   }, [showErrorToast, showSuccessToast]);
 
   const getDefaultValues = useCallback(
-    (index) =>
-      caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
-      caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
-      formdata[index]?.data,
+    (index) => {
+      if (isCaseReAssigned && errorCaseDetails) {
+        return (
+          errorCaseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+          errorCaseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
+          formdata[index]?.data
+        );
+      }
+
+      return (
+        caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+        caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
+        formdata[index]?.data
+      );
+    },
     [caseDetails?.additionalDetails, caseDetails?.caseDetails, formdata, selected]
   );
 
@@ -439,7 +451,7 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
-      if (!isErrorCorrectionMode) {
+      if (!isCaseReAssigned) {
         return modifiedFormData;
       }
     }
@@ -837,20 +849,16 @@ function EFilingCases({ path }) {
     ) {
       return;
     }
-    if (isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE) {
-      if (selected !== "addSignature") {
-        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
-        return;
-      } else {
-        return setOpenConfirmCorrectionModal(true);
-      }
+    if (selected === "addSignature" && isCaseReAssigned && !openConfirmCorrectionModal) {
+      return setOpenConfirmCorrectionModal(true);
     }
-    if (selected === "addSignature" && !(isErrorCorrectionMode && action === CaseWorkflowAction.EDIT_CASE)) {
+
+    if (selected === "addSignature" && isDraftInProgress) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails({
         isCompleted: true,
-        caseDetails,
+        caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
         formdata,
         pageConfig,
         selected,
@@ -858,6 +866,7 @@ function EFilingCases({ path }) {
         tenantId,
         setFormDataValue: setFormDataValue.current,
         action,
+        setErrorCaseDetails,
       })
         .then(() => {
           if (resetFormData.current) {
@@ -878,6 +887,7 @@ function EFilingCases({ path }) {
           });
         })
         .catch(() => {
+          history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           setIsDisabled(false);
         });
     }
@@ -922,9 +932,10 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    if (!isErrorCorrectionMode) {
-      updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
-        .then(() => {
+
+    updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+      .then(() => {
+        if (!isCaseReAssigned) {
           refetchCaseData().then(() => {
             const caseData =
               caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -933,11 +944,12 @@ function EFilingCases({ path }) {
             setFormdata(caseData);
             setIsDisabled(false);
           });
-        })
-        .catch(() => {
-          setIsDisabled(false);
-        });
-    }
+        }
+      })
+      .catch(() => {
+        setIsDisabled(false);
+      });
+
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
