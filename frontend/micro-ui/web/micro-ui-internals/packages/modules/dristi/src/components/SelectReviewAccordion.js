@@ -230,7 +230,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       <EditPencilIcon />
                     </div>
                   )}
-                  {!sectionError && isScrutiny && (
+                  {!sectionError && isScrutiny && sectionValue && (
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={(e) => {
