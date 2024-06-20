@@ -36,8 +36,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   /case/v1/_update:
     post:
       tags:
@@ -64,8 +63,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   /case/v1/_search:
     post:
       tags:
@@ -90,7 +88,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes'
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   /case/v1/summary/_search:
     post:
       tags:
@@ -115,8 +113,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   /case/v1/_exists:
     post:
       tags:
@@ -141,8 +138,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   /case/witness/v1/_create:
     post:
       tags:
@@ -169,8 +165,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   /case/witness/v1/_update:
      post:
       tags:
@@ -197,8 +192,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
   
   /case/witness/v1/_search:
      post:
@@ -226,8 +220,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: >-
-                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -321,9 +314,7 @@ components:
         filingDate:
           type: string
           format: date
-          description: >-
-            Date of case filing in epoch time. This is the date when the case
-            entered the judicial system.
+          description: Date of case filing in epoch time. This is the date when the case entered the judicial system.
           example: 1709542147
         registrationDate:
           type: string
@@ -454,9 +445,7 @@ components:
         filingDate:
           type: string
           format: date
-          description: >-
-            Date of case filing in epoch time. This is the date when the case
-            entered the judicial system.
+          description: Date of case filing in epoch time. This is the date when the case entered the judicial system.
           example: 1709542147
         registrationDate:
           type: string
@@ -853,18 +842,18 @@ components:
         filingFromDate:
           type: string
           format: date
-          description: search cases within filing date range. if only filingFromDate is specified, then cases for this filing date will be retrieved
+          description: search cases within filing epoch date range. if only filingFromDate is specified, then cases for this filing date will be retrieved
         filingToDate:
           type: string
           format: date
         registrationFromDate:
           type: string
           format: date
-          description: search cases within registration date range. if only registrationFromDate is specified, then cases for this registration date will be retrieved
+          description: search cases within registration epoch date range. if only registrationFromDate is specified, then cases for this registration date will be retrieved
         registrationToDate:
           type: string
           format: date
-
+          description: epoch date
     CaseSearchCriteria:
       type: object
       properties:

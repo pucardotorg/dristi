@@ -253,7 +253,7 @@ components:
         createdDate:
           type: string
           format: datetime
-          description: the date on which the application was created
+          description: the epoch datetime on which the application was created
         createdBy:
           type: string
           format: uuid
