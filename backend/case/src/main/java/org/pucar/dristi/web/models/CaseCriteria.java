@@ -53,6 +53,15 @@ public class CaseCriteria {
     @Valid
     private LocalDate registrationToDate = null;
 
+    @JsonProperty("judgeId")
+    private String judgeId = null;
+
+    @JsonProperty("stage")
+    private String stage = null;
+
+    @JsonProperty("substage")
+    private String substage = null;
+
     @JsonProperty("litigantId")
     @Valid
     private String litigantId = null;
