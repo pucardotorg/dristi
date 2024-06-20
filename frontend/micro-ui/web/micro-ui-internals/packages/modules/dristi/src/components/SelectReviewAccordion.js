@@ -209,6 +209,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           {inputs.map((input, index) => {
             const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
+            const prevSectionError = input?.prevErrors?.scrutinyMessage;
             return (
               <div className={`content-item ${sectionError && isScrutiny && "error"}`}>
                 <div className="item-header">
@@ -251,6 +252,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 {Array.isArray(input.data) &&
                   input.data.map((item, index) => {
                     const dataErrors = sectionValue?.form?.[index];
+                    const prevDataErrors = input?.prevErrors?.form?.[index] || {};
                     const titleHeading = input.name === "chequeDetails" ? true : false;
                     return (
                       <CustomReviewCard
@@ -266,8 +268,10 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         formData={formData}
                         input={input}
                         dataErrors={dataErrors}
+                        prevDataErrors={prevDataErrors}
                         configKey={config.key}
                         titleHeading={titleHeading}
+                        isPrevScrutiny={isPrevScrutiny}
                       />
                     );
                   })}

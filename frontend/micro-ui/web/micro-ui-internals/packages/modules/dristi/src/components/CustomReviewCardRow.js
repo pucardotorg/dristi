@@ -45,9 +45,14 @@ const CustomReviewCardRow = ({
   config,
   titleHeading,
   handleClickImage,
+  prevDataError,
+  isPrevScrutiny,
 }) => {
   const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  if (dataError && prevDataError) {
+    console.debug(dataError, prevDataError);
+  }
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
       return data[key];
