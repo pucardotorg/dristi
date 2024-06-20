@@ -1126,7 +1126,7 @@ function EFilingCases({ path }) {
                   cardStyle={{ minWidth: "100%" }}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
-                  showSecondaryLabel={!isDisableAllFieldsMode}
+                  showSecondaryLabel={isDraftInProgress}
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
