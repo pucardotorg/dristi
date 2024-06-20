@@ -37,7 +37,7 @@ jobs:
         run: mvn -B -f backend/case/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_case -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Login to Azure Container Registry
-        if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        if: (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: docker login -u pucardev -p ${{ secrets.ACR_PASSWORD }} pucardev.azurecr.io
 
       - name: Build and Push Docker image for case
