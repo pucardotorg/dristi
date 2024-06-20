@@ -51,3 +51,4 @@ jobs:
           docker build --build-arg WORK_DIR="backend/advocate/src/main/resources/db" -t pucar_advocate_db:v1.0.0-${{ github.sha }}  .
           docker tag pucar_advocate_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_advocate_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/advocate/src/main/resources/db
