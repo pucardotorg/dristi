@@ -52,6 +52,7 @@ public class CaseCriteria {
     @JsonProperty("registrationToDate")
     @Valid
     private LocalDate registrationToDate = null;
+    //todo judgeid, stage, substage
 
     @JsonProperty("litigantId")
     @Valid

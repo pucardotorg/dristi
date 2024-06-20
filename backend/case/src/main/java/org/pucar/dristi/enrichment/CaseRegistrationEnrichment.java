@@ -151,6 +151,10 @@ public class CaseRegistrationEnrichment {
         });
     }
 
+    public void enrichLitigantJoinCase(){
+
+    }
+
     private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         if(courtCase.getStatutesAndSections() == null) {
             return;

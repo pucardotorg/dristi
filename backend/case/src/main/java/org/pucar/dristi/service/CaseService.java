@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -119,6 +120,25 @@ public class CaseService {
         try {
             // Fetch applications from database according to the given search criteria
             return caseRepository.checkCaseExists(caseExistsRequest.getCriteria());
+        } catch(CustomException e){
+            throw e;
+        } catch (Exception e) {
+            log.error("Error while fetching to exist case :: {}",e.toString());
+            throw new CustomException(CASE_EXIST_ERR, e.getMessage());
+        }
+    }
+    public void verifyCase(JoinCaseRequest joinCaseRequest) {
+        try {
+            String filingNumber = joinCaseRequest.getCaseFilingNumber();
+            List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()));
+            if (existingApplications.isEmpty())
+                throw new CustomException(CASE_EXIST_ERR, "Error while fetching to exist case"); //todo error message fix
+            List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
+            String caseAccessCode = courtCaseList.get(0).getAccessCode();
+            if(joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode))
+                throw new CustomException(CASE_EXIST_ERR, "Error while fetching to exist case"); //todo error message fix
+
+
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
