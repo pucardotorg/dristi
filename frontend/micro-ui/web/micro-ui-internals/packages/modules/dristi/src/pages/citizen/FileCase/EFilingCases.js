@@ -256,6 +256,7 @@ function EFilingCases({ path }) {
 
   const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
   const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);
+  const isDraftInProgress = state === CaseWorkflowState.DRAFT_IN_PROGRESS;
 
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -784,10 +785,9 @@ function EFilingCases({ path }) {
     return obj;
   };
   const onSubmit = async (action) => {
-    if (isDisableAllFieldsMode) {
-      selected === "addSignature" ? history.push(homepagePath) : history.push(`?caseId=${caseId}&selected=${nextSelected}`);
-      return;
-    }
+    // if (isDisableAllFieldsMode && selected !== "addSignature") {
+    //   return;
+    // }
     if (!Array.isArray(formdata)) {
       return;
     }
@@ -845,8 +845,7 @@ function EFilingCases({ path }) {
         return setOpenConfirmCorrectionModal(true);
       }
     }
-
-    if (selected === "addSignature" && !(isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE)) {
+    if (selected === "addSignature" && !(isErrorCorrectionMode && action === CaseWorkflowAction.EDIT_CASE)) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails({
@@ -923,7 +922,7 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    if (!isDisableAllFieldsMode) {
+    if (!isErrorCorrectionMode) {
       updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
         .then(() => {
           refetchCaseData().then(() => {
@@ -1252,6 +1251,7 @@ function EFilingCases({ path }) {
               className="add-new-form"
               icon={<CustomAddIcon />}
               label={t(pageConfig.addFormText)}
+              isDisabled={!isDraftInProgress}
             ></Button>
           )}
           {openConfigurationModal && (
