@@ -127,22 +127,23 @@ public class CaseService {
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }
     }
-    public void verifyCase(JoinCaseRequest joinCaseRequest) {
+    public void verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
         try {
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()));
             if (existingApplications.isEmpty())
                 throw new CustomException(CASE_EXIST_ERR, "Error while fetching to exist case"); //todo error message fix
             List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
-            String caseAccessCode = courtCaseList.get(0).getAccessCode();
+            CourtCase courtCase = courtCaseList.get(0);
+            String caseAccessCode = courtCase.getAccessCode();
             if(joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode))
                 throw new CustomException(CASE_EXIST_ERR, "Error while fetching to exist case"); //todo error message fix
-
+            enrichmentUtil.enrichLitigantAndRepresentativeJoinCase(joinCaseRequest, courtCase.getId());
 
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist case :: {}",e.toString());
+            log.error("Error while fetching to exist case :: {}",e.toString());//todo error message fix and exceptions
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }
     }

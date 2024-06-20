@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -150,10 +151,18 @@ public class CaseRegistrationEnrichment {
             }
         });
     }
+    public void enrichLitigantAndRepresentativeJoinCase(JoinCaseRequest joinCaseRequest, UUID courtCaseId) {
+        //TODO REVIEW
+        AuditDetails auditDetails = AuditDetails.builder().createdBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
+        CourtCase courtCase = CourtCase.builder()
+                .id(courtCaseId)
+                .litigants(Collections.singletonList(joinCaseRequest.getLitigant()))
+                .representatives(Collections.singletonList(joinCaseRequest.getRepresentative()))
+                .build();
 
-    public void enrichLitigantJoinCase(){
-
-    }
+        enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+        enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        }
 
     private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         if(courtCase.getStatutesAndSections() == null) {
