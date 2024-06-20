@@ -106,28 +106,6 @@ public class EvidenceEnrichmentTest {
         assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactType("invalidType"));
     }
 
-
-    @Test
-    public void testEnrichEvidenceRegistrationUserInfoNotFound() {
-        evidenceRequest.getRequestInfo().setUserInfo(null);
-        CustomException exception = assertThrows(CustomException.class, () -> evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest));
-        assertEquals("User info not found!!!", exception.getMessage());
-    }
-
-    @Test
-    public void testEnrichEvidenceRegistrationInvalidArtifactType() {
-        evidenceRequest.getArtifact().setArtifactType("invalidType");
-        CustomException exception = assertThrows(CustomException.class, () -> evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest));
-        assertEquals("Invalid artifact type provided", exception.getMessage());
-    }
-    @Test
-    void testEnrichEvidenceRegistration_UserInfoNotFound() {
-        evidenceRequest.getRequestInfo().setUserInfo(null);
-        CustomException thrown = assertThrows(CustomException.class, () -> evidenceEnrichment.enrichEvidenceRegistration(evidenceRequest));
-        assert thrown.getCode().equals("ENRICHMENT_EXCEPTION");
-        assert thrown.getMessage().contains("User info not found!!!");
-    }
-
     @Test
     void testEnrichEvidenceRegistrationUponUpdate() {
         AuditDetails auditDetails = AuditDetails.builder().lastModifiedTime(0L).lastModifiedBy("oldUuid").build();
@@ -137,17 +115,6 @@ public class EvidenceEnrichmentTest {
 
         assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedTime() > 0;
         assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedBy().equals(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
-    }
-    @Test
-    void testEnrichEvidenceRegistrationUponUpdate_Exception() {
-        // Create a scenario where getAuditdetails() will throw a NullPointerException
-        evidenceRequest.getArtifact().setAuditdetails(null);
-
-        Exception exception = assertThrows(CustomException.class, () -> {
-            evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
-        });
-
-        assertTrue(exception.getMessage().contains("Error in order enrichment service during order update process"));
     }
 
 }

@@ -27,7 +27,7 @@ public class EvidenceService {
     @Autowired
     private EvidenceValidator validator;
     @Autowired
-    private EvidenceEnrichment enrichmentUtil;
+    private EvidenceEnrichment evidenceEnrichment;
     @Autowired
     private WorkflowService workflowService;
     @Autowired
@@ -43,7 +43,7 @@ public class EvidenceService {
             validator.validateEvidenceRegistration(body);
 
             // Enrich applications
-            enrichmentUtil.enrichEvidenceRegistration(body);
+            evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
             workflowService.updateWorkflowStatus(body);
@@ -97,11 +97,11 @@ public class EvidenceService {
             existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
 
             // Enrich application upon update
-            enrichmentUtil.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
+            evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
             workflowService.updateWorkflowStatus(evidenceRequest);
             if (ACTIVE_STATUS.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
-                evidenceRequest.getArtifact().setIsActive(true);
+                evidenceEnrichment.enrichEvidenceNumberAndIsActiveStatus(evidenceRequest);
             }
             producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
 

@@ -23,20 +23,14 @@ public class EvidenceEnrichment {
 
     public void enrichEvidenceRegistration(EvidenceRequest evidenceRequest) {
         try {
-            if (evidenceRequest.getRequestInfo().getUserInfo() != null) {
-                // Determine the ID format based on artifact type
-                String idFormat = getIdgenByArtifactType(evidenceRequest.getArtifact().getArtifactType());
-
-                // Generate the artifact number using the determined ID format
                 List<String> artifactRegistrationIdList = idgenUtil.getIdList(
                         evidenceRequest.getRequestInfo(),
                         evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
-                        idFormat,
+                        "artifact.artifact_number",
                         null,
                         1
                 );
 
-                int index = 0;
                 AuditDetails auditDetails = AuditDetails.builder()
                         .createdBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid())
                         .createdTime(System.currentTimeMillis())
@@ -52,15 +46,13 @@ public class EvidenceEnrichment {
                 }
 
                 evidenceRequest.getArtifact().setIsActive(false);
-                evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(index++));
+                evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(0));
 
                 if (evidenceRequest.getArtifact().getFile() != null) {
                     evidenceRequest.getArtifact().getFile().setId(String.valueOf(UUID.randomUUID()));
                     evidenceRequest.getArtifact().getFile().setDocumentUid(evidenceRequest.getArtifact().getFile().getId());
                 }
-            } else {
-                throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
-            }
+
         } catch (CustomException e) {
             log.error("Custom Exception occurred while Enriching evidence: {}", e.getMessage());
             throw e;
@@ -88,6 +80,24 @@ public class EvidenceEnrichment {
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type provided");
         }
     }
+    public void enrichEvidenceNumberAndIsActiveStatus(EvidenceRequest evidenceRequest) {
+        try {
+            String idName = getIdgenByArtifactType(evidenceRequest.getArtifact().getArtifactType());
+            List<String> evidenceNumberList = idgenUtil.getIdList(
+                    evidenceRequest.getRequestInfo(),
+                    evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
+                    idName,
+                    null,
+                    1
+            );
+            evidenceRequest.getArtifact().setEvidenceNumber(evidenceNumberList.get(0));
+            evidenceRequest.getArtifact().setIsActive(true);
+        }
+        catch (Exception e) {
+            log.error("Error enriching evidence number and isActive status upon update: {}", e.getMessage());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during evidence number and isActive status update process: " + e.getMessage());
+        }
+    }
 
 
     public void enrichEvidenceRegistrationUponUpdate(EvidenceRequest evidenceRequest) {
@@ -96,8 +106,8 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
-            log.error("Error enriching advocate application upon update: {}", e.getMessage());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in order enrichment service during order update process: " + e.getMessage());
+            log.error("Error enriching evidence application upon update: {}", e.getMessage());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during  update process: " + e.getMessage());
         }
     }
 }
