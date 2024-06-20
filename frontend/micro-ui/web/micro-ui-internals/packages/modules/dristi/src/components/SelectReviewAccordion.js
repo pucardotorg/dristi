@@ -18,7 +18,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
-
+  const isPrevScrutiny = config?.isPrevScrutiny || false;
   const [isOpen, setOpen] = useState(true);
   const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
@@ -230,7 +230,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       <EditPencilIcon />
                     </div>
                   )}
-                  {!sectionError && isScrutiny && sectionValue && (
+                  {!sectionError && isScrutiny && input?.data?.length > 0 && (
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={(e) => {
