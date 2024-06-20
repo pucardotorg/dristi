@@ -48,7 +48,7 @@ jobs:
       - name: Build and Push Docker image for application_DB
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
         run: |
-          docker build --build-arg WORK_DIR="backend/application/src/main/resources/db" -t pucar_application_db:v1.0.0-${{ github.sha }}  .
+          docker build -t pucar_application_db:v1.0.0-${{ github.sha }}  .
           docker tag pucar_application_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_application_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_application_db:v1.0.0-${{ github.sha }}
         working-directory: backend/application/src/main/resources/db
