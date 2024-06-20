@@ -23,8 +23,6 @@ serviceMaps:
               type: JSON
               dbType: JSONB
             - jsonPath: $.order.orderType
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.order.orderNumber
             - jsonPath: $.order.cnrNumber
             - jsonPath: $.order.comments
@@ -96,8 +94,6 @@ serviceMaps:
               type: JSON
               dbType: JSONB
             - jsonPath: $.order.orderType
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.order.orderNumber
             - jsonPath: $.order.cnrNumber
             - jsonPath: $.order.comments
