@@ -53,7 +53,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ResponseInfo with case details updated successfully
+          description: ResponseInfo with updated case details, including changes to attributes and workflow.
           content:
             '*/*':
               schema:
