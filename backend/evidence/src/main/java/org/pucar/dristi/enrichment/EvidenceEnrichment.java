@@ -62,27 +62,27 @@ public class EvidenceEnrichment {
         }
     }
 
-    String getIdgenByArtifactType(String artifactType) {
-        switch (artifactType) {
-            case "complainant":
-                return "document.evidence_complainant";
-            case "accused":
-                return "document.evidence_accused";
-            case "court":
-                return "document.evidence_court";
-            case "witness_complainant":
-                return "document.witness_complainant";
-            case "witness_accused":
-                return "document.witness_accused";
-            case "witness_court":
-                return "document.witness_court";
-            default:
-                throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type provided");
+    String getIdgenByArtifactTypeAndSourceType(String artifactType, String sourceType) {
+        if (("DOCUMENTARY".equals(artifactType) || "AFFIDAVIT".equals(artifactType)) && "COMPLAINANT".equals(sourceType)) {
+            return "document.evidence_complainant";
+        } else if (("DOCUMENTARY".equals(artifactType) || "AFFIDAVIT".equals(artifactType)) && "ACCUSED".equals(sourceType)) {
+            return "document.evidence_accused";
+        } else if (("DOCUMENTARY".equals(artifactType) || "AFFIDAVIT".equals(artifactType)) && "COURT".equals(sourceType)) {
+            return "document.evidence_court";
+        } else if ("DEPOSITION".equals(artifactType) && "COMPLAINANT".equals(sourceType)) {
+            return "document.witness_complainant";
+        } else if ("DEPOSITION".equals(artifactType) && "ACCUSED".equals(sourceType)) {
+            return "document.witness_accused";
+        } else if ("DEPOSITION".equals(artifactType) && "COURT".equals(sourceType)) {
+            return "document.witness_court";
+        } else {
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type or source type provided");
         }
     }
+
     public void enrichEvidenceNumberAndIsActiveStatus(EvidenceRequest evidenceRequest) {
         try {
-            String idName = getIdgenByArtifactType(evidenceRequest.getArtifact().getArtifactType());
+            String idName = getIdgenByArtifactTypeAndSourceType(evidenceRequest.getArtifact().getArtifactType(),evidenceRequest.getArtifact().getSourceType());
             List<String> evidenceNumberList = idgenUtil.getIdList(
                     evidenceRequest.getRequestInfo(),
                     evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),

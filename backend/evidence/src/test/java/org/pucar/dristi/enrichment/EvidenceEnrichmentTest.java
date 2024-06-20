@@ -96,15 +96,34 @@ public class EvidenceEnrichmentTest {
     }
 
     @Test
-    public void testGetIdgenByArtifactType() {
-        assertEquals("document.evidence_complainant", evidenceEnrichment.getIdgenByArtifactType("complainant"));
-        assertEquals("document.evidence_accused", evidenceEnrichment.getIdgenByArtifactType("accused"));
-        assertEquals("document.evidence_court", evidenceEnrichment.getIdgenByArtifactType("court"));
-        assertEquals("document.witness_complainant", evidenceEnrichment.getIdgenByArtifactType("witness_complainant"));
-        assertEquals("document.witness_accused", evidenceEnrichment.getIdgenByArtifactType("witness_accused"));
-        assertEquals("document.witness_court", evidenceEnrichment.getIdgenByArtifactType("witness_court"));
-        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactType("invalidType"));
+    public void testGetIdgenByArtifactTypeAndSourceTpye() {
+        // Test for "complainant" sourceType with "DOCUMENTARY" and "AFFIDAVIT" artifactType
+        assertEquals("document.evidence_complainant", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "COMPLAINANT"));
+        assertEquals("document.evidence_complainant", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("AFFIDAVIT", "COMPLAINANT"));
+
+        // Test for "accused" sourceType with "DOCUMENTARY" and "AFFIDAVIT" artifactType
+        assertEquals("document.evidence_accused", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "ACCUSED"));
+        assertEquals("document.evidence_accused", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("AFFIDAVIT", "ACCUSED"));
+
+        // Test for "court" sourceType with "DOCUMENTARY" and "AFFIDAVIT" artifactType
+        assertEquals("document.evidence_court", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "COURT"));
+        assertEquals("document.evidence_court", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("AFFIDAVIT", "COURT"));
+
+        // Test for "complainant" sourceType with "DEPOSITION" artifactType
+        assertEquals("document.witness_complainant", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DEPOSITION", "COMPLAINANT"));
+
+        // Test for "accused" sourceType with "DEPOSITION" artifactType
+        assertEquals("document.witness_accused", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DEPOSITION", "ACCUSED"));
+
+        // Test for "court" sourceType with "DEPOSITION" artifactType
+        assertEquals("document.witness_court", evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DEPOSITION", "COURT"));
+
+        // Test for invalid combinations
+        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("INVALID_TYPE", "COMPLAINANT"));
+        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("DOCUMENTARY", "invalidSource"));
+        assertThrows(CustomException.class, () -> evidenceEnrichment.getIdgenByArtifactTypeAndSourceType("INVALID_TYPE", "invalidSource"));
     }
+
 
     @Test
     void testEnrichEvidenceRegistrationUponUpdate() {

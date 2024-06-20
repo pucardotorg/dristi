@@ -79,6 +79,10 @@ public class Artifact {
 
 	private String artifactType = null;
 
+	@JsonProperty("sourceType")
+
+	private String sourceType = null;
+
 	@JsonProperty("sourceID")
 
 	private String sourceID = null;
