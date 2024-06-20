@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -59,6 +60,7 @@ public class Order {
     @JsonProperty("createdDate")
     @NotNull
     @Valid
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdDate = null;
 
     @JsonProperty("issuedBy")
