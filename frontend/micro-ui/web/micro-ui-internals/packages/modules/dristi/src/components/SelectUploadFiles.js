@@ -60,7 +60,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
     if (Object.keys(formData).length === 0) {
       return true;
     }
-    if (Object.keys(formData?.[config.key]).length === 0) {
+    if (Object.keys(formData?.[config.key] || {}).length === 0) {
       return true;
     } else if (formData?.[config.key]?.text) {
       return true;
@@ -262,7 +262,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect }) {
           {showModal && (
             <Modal
               headerBarEnd={<CloseBtn onClick={handleCloseModal} isMobileView={true} />}
-              actionCancelOnSubmit={() => { }}
+              actionCancelOnSubmit={() => {}}
               actionSaveLabel={t("ADD")}
               actionSaveOnSubmit={(data) => handleAddFileInModal(data)}
               // hideSubmit={false}

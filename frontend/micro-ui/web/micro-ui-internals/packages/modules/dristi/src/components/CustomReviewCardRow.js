@@ -64,9 +64,9 @@ const CustomReviewCardRow = ({
     return value;
   };
   const handleImageClick = useCallback(
-    (configKey, name, dataIndex, fieldName, data) => {
+    (configKey, name, dataIndex, fieldName, data, inputlist) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data, [type, fieldName]);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist);
       }
       return null;
     },
@@ -75,6 +75,7 @@ const CustomReviewCardRow = ({
   const renderCard = useMemo(() => {
     switch (type) {
       case "title":
+        const titleError = dataError?.title?.FSOError;
         let title = "";
         if (Array.isArray(value)) {
           title = value.map((key) => extractValue(data, key)).join(" ");
@@ -82,7 +83,7 @@ const CustomReviewCardRow = ({
           title = extractValue(data, value);
         }
         return (
-          <div className={`title-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`title-main ${isScrutiny && titleError && "error"}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
               <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
@@ -96,14 +97,14 @@ const CustomReviewCardRow = ({
                   key={dataIndex}
                 >
                   {/* {badgeType && <div>{extractValue(data, badgeType)}</div>} */}
-                  {dataError ? <EditPencilIcon /> : <FlagIcon />}
+                  {titleError ? <EditPencilIcon /> : <FlagIcon />}
                 </div>
               )}
             </div>
-            {dataError && isScrutiny && (
+            {titleError && isScrutiny && (
               <div className="scrutiny-error input">
                 <FlagIcon isError={true} />
-                {dataError}
+                {titleError}
               </div>
             )}
           </div>
@@ -226,6 +227,14 @@ const CustomReviewCardRow = ({
           </div>
         );
       case "image":
+        let FSOErrors = [];
+        if (typeof dataError === "object") {
+          value?.forEach((val) => {
+            if (dataError?.[val]?.FSOError) {
+              FSOErrors.push(dataError?.[val]);
+            }
+          });
+        }
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
         files.forEach((file) => {
@@ -237,12 +246,12 @@ const CustomReviewCardRow = ({
           return null;
         }
         return (
-          <div className={`image-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`image-main ${isScrutiny && FSOErrors.length > 0 && "error"}`}>
             <div className={`image ${!isScrutiny ? "column" : ""}`}>
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
                 {Array.isArray(files)
-                  ? files?.map((file) =>
+                  ? files?.map((file, fileIndex) =>
                       file && Array.isArray(file) ? (
                         file?.map((data, index) => {
                           if (data?.fileStore) {
@@ -250,7 +259,7 @@ const CustomReviewCardRow = ({
                               <div
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  handleImageClick(configKey, name, dataIndex, value, data);
+                                  handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
                                 }}
                               >
                                 <DocViewerWrapper
@@ -271,7 +280,7 @@ const CustomReviewCardRow = ({
                                 <div
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    handleImageClick(configKey, name, dataIndex, value, data);
+                                    handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
                                   }}
                                 >
                                   <DocViewerWrapper
@@ -295,7 +304,7 @@ const CustomReviewCardRow = ({
                         <div
                           style={{ cursor: "pointer" }}
                           onClick={() => {
-                            handleImageClick(configKey, name, dataIndex, value, data);
+                            handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
                           }}
                         >
                           <DocViewerWrapper
@@ -320,15 +329,18 @@ const CustomReviewCardRow = ({
                 }}
                 key={dataIndex}
               >
-                {isScrutiny && (dataError ? <EditPencilIcon /> : <FlagIcon />)}
+                {isScrutiny && (FSOErrors?.length > 0 ? <EditPencilIcon /> : <FlagIcon />)}
               </div>
             </div>
-            {dataError && isScrutiny && (
-              <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
-                {dataError}
-              </div>
-            )}
+            {FSOErrors?.length > 0 &&
+              FSOErrors.map((error, ind) => {
+                return (
+                  <div className="scrutiny-error input" key={ind}>
+                    <FlagIcon isError={true} />
+                    {`${error.fileName || ""}:${error.FSOError}`}
+                  </div>
+                );
+              })}
           </div>
         );
       case "address":

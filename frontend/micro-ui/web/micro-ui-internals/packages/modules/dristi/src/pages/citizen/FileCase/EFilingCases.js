@@ -120,6 +120,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const homepagePath = "/digit-ui/citizen/dristi/home";
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
@@ -251,9 +252,11 @@ function EFilingCases({ path }) {
     [caseData]
   );
 
-  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+  const state = useMemo(() => caseDetails?.status, [caseDetails]);
 
   const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
+  const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);
+  const isDraftInProgress = state === CaseWorkflowState.DRAFT_IN_PROGRESS;
 
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -782,6 +785,9 @@ function EFilingCases({ path }) {
     return obj;
   };
   const onSubmit = async (action) => {
+    if (isDisableAllFieldsMode) {
+      history.push(homepagePath);
+    }
     if (!Array.isArray(formdata)) {
       return;
     }
@@ -839,8 +845,7 @@ function EFilingCases({ path }) {
         return setOpenConfirmCorrectionModal(true);
       }
     }
-
-    if (selected === "addSignature" && !(isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE)) {
+    if (selected === "addSignature" && !(isErrorCorrectionMode && action === CaseWorkflowAction.EDIT_CASE)) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails({
@@ -917,7 +922,7 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    if (state !== CaseWorkflowState.CASE_RE_ASSIGNED) {
+    if (!isErrorCorrectionMode) {
       updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
         .then(() => {
           refetchCaseData().then(() => {
@@ -1003,6 +1008,9 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
+  if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
+    history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+  }
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1107,7 +1115,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
@@ -1118,7 +1126,7 @@ function EFilingCases({ path }) {
                   cardStyle={{ minWidth: "100%" }}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
-                  showSecondaryLabel={!isErrorCorrectionMode}
+                  showSecondaryLabel={isDraftInProgress}
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
@@ -1225,7 +1233,7 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={() => takeUserToRemainingMandatoryFieldsPage()}
             ></Modal>
           )}
-          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && (
+          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && !isDisableAllFieldsMode && (
             <Modal
               headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
               headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
@@ -1243,6 +1251,7 @@ function EFilingCases({ path }) {
               className="add-new-form"
               icon={<CustomAddIcon />}
               label={t(pageConfig.addFormText)}
+              isDisabled={!isDraftInProgress}
             ></Button>
           )}
           {openConfigurationModal && (
