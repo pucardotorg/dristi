@@ -2,7 +2,7 @@ name: dristi workflow
 on:
   push:
     branches:
-      - develop
+      - workflow
   pull_request:
     branches:
       - develop
@@ -13,6 +13,7 @@ jobs:
       run_job_advocate: ${{ steps.check_files.outputs.run_job_advocate }}
       run_job_case: ${{ steps.check_files.outputs.run_job_case }}
       run_job_order: ${{ steps.check_files.outputs.run_job_order }}
+      run_job_hearing: ${{ steps.check_files.outputs.run_job_hearing }}
       run_job_application: ${{ steps.check_files.outputs.run_job_application }}
       run_job_evidence: ${{ steps.check_files.outputs.run_job_evidence }}
       run_job_task: ${{ steps.check_files.outputs.run_job_task }}
@@ -44,6 +45,7 @@ jobs:
           run_job_advocate=false
           run_job_case=false 
           run_job_order=false
+          run_job_hearing=false
           run_job_application=false
           run_job_evidence=false
           run_job_task=false
@@ -61,6 +63,9 @@ jobs:
               run_job_case=true
             elif [[ $file == backend/order/* ]]; then
               echo "This modified file is under the 'order' folder."
+              run_job_order=true
+            elif [[ $file == backend/hearing/* ]]; then
+              echo "This modified file is under the 'hearing' folder."
               run_job_order=true
             elif [[ $file == backend/application/* ]]; then
               echo "This modified file is under the 'application' folder."
@@ -87,6 +92,7 @@ jobs:
           echo "::set-output name=run_job_advocate::$run_job_advocate"
           echo "::set-output name=run_job_case::$run_job_case"
           echo "::set-output name=run_job_order::$run_job_order"
+          echo "::set-output name=run_job_hearing::$run_job_hearing"
           echo "::set-output name=run_job_application::$run_job_application"
           echo "::set-output name=run_job_evidence::$run_job_evidence"
           echo "::set-output name=run_job_task::$run_job_task"
@@ -114,6 +120,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
         run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+
+      - name: Build and analyze hearing
+        if: ${{ steps.check_files.outputs.run_job_hearing == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
+        run: mvn -B -f backend/hearing/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_hearing -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
 
       - name: Build and analyze application
         if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
@@ -164,7 +177,7 @@ jobs:
           docker build --build-arg WORK_DIR="backend/case" -t pucar_case:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
           docker tag pucar_case:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_case:v1.0.0-${{ github.sha }}
-      - name: Build and Push Docker image for case_DBdevelop
+      - name: Build and Push Docker image for case_DB
         if: ${{ steps.check_files.outputs.run_job_case == 'true' }}
         run: |
           docker build -t pucar_case_db:v1.0.0-${{ github.sha }} -f Dockerfile .
@@ -185,6 +198,20 @@ jobs:
           docker tag pucar_order_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
         working-directory: backend/order/src/main/resources/db
+
+      - name: Build and Push Docker image for hearing
+        if: ${{ steps.check_files.outputs.run_job_hearing == 'true' }}
+        run: |
+          docker build --build-arg WORK_DIR="backend/hearing" -t pucar_hearing:v1.0.0-${{ github.sha }} -f build/maven/Dockerfile .
+          docker tag pucar_hearing:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_hearing:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_hearing:v1.0.0-${{ github.sha }}
+      - name: Build and Push Docker image for hearing_DB
+        if: ${{ steps.check_files.outputs.run_job_hearing == 'true' }}
+        run: |
+          docker build -t pucar_hearing_db:v1.0.0-${{ github.sha }} -f Dockerfile .
+          docker tag pucar_hearing_db:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_hearing_db:v1.0.0-${{ github.sha }}
+          docker push pucardev.azurecr.io/pucar_hearing_db:v1.0.0-${{ github.sha }}
+        working-directory: backend/hearing/src/main/resources/db
 
       - name: Build and Push Docker image for application
         if: ${{ steps.check_files.outputs.run_job_application == 'true' }}
