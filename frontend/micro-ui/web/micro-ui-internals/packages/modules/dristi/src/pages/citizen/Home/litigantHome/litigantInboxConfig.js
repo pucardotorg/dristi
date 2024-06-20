@@ -57,7 +57,7 @@ export const litigantInboxConfig = {
           },
           {
             label: "Stage",
-            jsonPath: "",
+            jsonPath: "status",
           },
           {
             label: "Case ID",
@@ -66,6 +66,7 @@ export const litigantInboxConfig = {
           {
             label: "Case Type",
             jsonPath: "",
+            additionalCustomization: true,
           },
           {
             label: "Days Since Filing",

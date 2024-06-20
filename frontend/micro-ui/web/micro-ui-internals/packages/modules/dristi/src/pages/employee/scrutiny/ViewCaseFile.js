@@ -240,7 +240,7 @@ function ViewCaseFile({ t }) {
   }
   if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
     // if state is not under scrutiny, don't allow FSO Officer to access the application Details page
-    history.push("/digit-ui/employee/dristi/cases");
+    // history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
@@ -393,7 +393,7 @@ function ViewCaseFile({ t }) {
               className="edit-case-name-modal"
             >
               <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
-              <TextInput defaultValue={caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
+              <TextInput defaultValue={newCaseName || caseDetails?.caseTitle} type="text" onChange={(e) => setModalCaseName(e.target.value)} />
             </Modal>
           )}
           {actionModal == "sendCaseBack" && (

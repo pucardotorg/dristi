@@ -437,6 +437,14 @@ export const UICustomizations = {
         },
       };
     },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        default:
+          return t("ES_COMMON_NA");
+      }
+    },
   },
   judgeInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {

@@ -228,7 +228,6 @@ const CustomReviewCardRow = ({
         );
       case "image":
         let FSOErrors = [];
-        console.debug(dataError);
         if (typeof dataError === "object") {
           value?.forEach((val) => {
             if (dataError?.[val]?.FSOError) {

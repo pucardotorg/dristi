@@ -34,7 +34,7 @@ const signatureFormConfig = [
               key: "complaintDetails",
               icon: "LitigentIcon",
               config: { title: "name" },
-              data: [{ name: "Sheetal Arora" }, { name: "Mehul Das" }, { name: "Shambhavi Goel" }],
+              data: [{ name: "Sheetal Arora" }],
             },
           ],
         },
