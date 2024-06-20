@@ -237,7 +237,7 @@ components:
           description: This is tenantId of the case
         caseId:
           type: string
-          description: This is the caseId of the associated case
+          description: This is the required caseId of the associated case, which uniquely identifies it.
         filingNumber:
           type: string
           description: the associated case
