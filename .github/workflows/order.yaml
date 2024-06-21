@@ -32,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
-        run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/
+        run: mvn -B -f backend/order/pom.xml verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=pucar_order -Dsonar.organization=pucar -Dsonar.host.url=https://sonarcloud.io/ -Dsonar.qualitygate.wait=true
 
       - name: Login to Azure Container Registry
         if: github.ref == 'refs/heads/develop' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
