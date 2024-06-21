@@ -26,8 +26,6 @@ serviceMaps:
               type: JSON
               dbType: JSONB
             - jsonPath: $.application.applicationType
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.application.applicationNumber
             - jsonPath: $.application.issuedBy
               type: JSON
@@ -100,8 +98,6 @@ serviceMaps:
               type: JSON
               dbType: JSONB
             - jsonPath: $.application.applicationType
-              type: JSON
-              dbType: JSONB
             - jsonPath: $.application.applicationNumber
             - jsonPath: $.application.issuedBy
               type: JSON
