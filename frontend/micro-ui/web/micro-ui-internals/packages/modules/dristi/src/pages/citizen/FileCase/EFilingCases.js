@@ -1150,6 +1150,9 @@ function EFilingCases({ path }) {
                   children={item.children}
                   parentIndex={index}
                   isOpen={item.isOpen}
+                  errorCount={scrutinyErrors?.[item.key]?.total || 0}
+                  isCaseReAssigned={isCaseReAssigned}
+                  isDraftInProgress={isDraftInProgress}
                 />
               ))}
             </div>
@@ -1170,6 +1173,9 @@ function EFilingCases({ path }) {
               parentIndex={index}
               isOpen={item.isOpen}
               showConfirmModal={confirmModalConfig ? true : false}
+              errorCount={scrutinyErrors?.[item.key]?.total || 0}
+              isCaseReAssigned={isCaseReAssigned}
+              isDraftInProgress={isDraftInProgress}
             />
           ))}
         </div>
