@@ -1048,6 +1048,12 @@
   }
 }
 
+.side-stepper-error-count {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .file-case {
   display: flex;
   gap: 40px;
@@ -1061,6 +1067,26 @@
     flex-direction: column;
     gap: 10px;
 
+
+    .total-error-count {
+      padding: 12px 24px;
+      border: 1px #BB2C2F solid;
+      background-color: #FCE8E8;
+      color: #BB2C2F;
+    }
+
+    .total-error-note {
+      background-color: #ECF3FD !important;
+      svg {
+        g {
+          path {
+            fill: #0F3B8C !important;
+          }
+        }
+      }
+    }
+
+    .total-error-note,
     .side-stepper-info {
       width: 100%;
       padding: 12px 16px 12px 16px;
@@ -1070,7 +1096,7 @@
       background-color: #f7f5f3;
 
       .header {
-        display: flex;
+        display: flex !important;
         align-items: center;
         gap: 12px;
       }

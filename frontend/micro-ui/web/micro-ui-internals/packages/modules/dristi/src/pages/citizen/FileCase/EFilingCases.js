@@ -252,6 +252,69 @@ function EFilingCases({ path }) {
     }),
     [caseData]
   );
+  const scrutinyObj = useMemo(() => {
+    return caseDetails?.additionalDetails?.scrutiny?.data || {};
+  }, [caseDetails]);
+
+  const countSectionErrors = (section) => {
+    let total = 0;
+    let sectionErrors = 0;
+    let inputErrors = 0;
+    Object.keys(section)?.forEach((key) => {
+      if (section[key]) {
+        if (section[key]?.scrutinyMessage?.FSOError) {
+          total++;
+          sectionErrors++;
+        }
+        section[key]?.form?.forEach((item) => {
+          Object.keys(item)?.forEach((field) => {
+            if (item[field]?.FSOError && field != "image" && field != "title") {
+              total++;
+              inputErrors++;
+            }
+          });
+        });
+      }
+    });
+
+    return { total, inputErrors, sectionErrors };
+  };
+
+  const scrutinyErrors = useMemo(() => {
+    const errorCount = {};
+    for (const key in scrutinyObj) {
+      if (typeof scrutinyObj[key] === "object" && scrutinyObj[key] !== null) {
+        if (!errorCount[key]) {
+          errorCount[key] = { total: 0, sectionErrors: 0, inputErrors: 0 };
+        }
+        const temp = countSectionErrors(scrutinyObj[key]);
+        errorCount[key] = {
+          total: errorCount[key].total + temp.total,
+          sectionErrors: errorCount[key].sectionErrors + temp.sectionErrors,
+          inputErrors: errorCount[key].inputErrors + temp.inputErrors,
+        };
+      }
+    }
+    return errorCount;
+  }, [scrutinyObj]);
+
+  const totalErrors = useMemo(() => {
+    let total = 0;
+    let sectionErrors = 0;
+    let inputErrors = 0;
+
+    for (const key in scrutinyErrors) {
+      total += scrutinyErrors[key].total || 0;
+      sectionErrors += scrutinyErrors[key].sectionErrors || 0;
+      inputErrors += scrutinyErrors[key].inputErrors || 0;
+    }
+
+    return {
+      total,
+      sectionErrors,
+      inputErrors,
+    };
+  }, [scrutinyErrors]);
 
   const state = useMemo(() => caseDetails?.status, [caseDetails]);
 
@@ -566,7 +629,6 @@ function EFilingCases({ path }) {
           };
         })
         .map((config) => {
-          const scrutinyObj = caseDetails?.additionalDetails?.scrutiny?.data || {};
           const scrutiny = {};
           Object.keys(scrutinyObj).forEach((item) => {
             Object.keys(scrutinyObj[item]).forEach((key) => {
@@ -1026,18 +1088,34 @@ function EFilingCases({ path }) {
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
-        <div className="side-stepper-info">
-          <div className="header">
-            <InfoIcon />
-            <span>
-              <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
-            </span>
+        {isDraftInProgress && (
+          <div className="side-stepper-info">
+            <div className="header">
+              <InfoIcon />
+              <span>
+                <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
+              </span>
+            </div>
+            <p>
+              {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
+              <span className="place-name">{` ${caseType.courtName}.`}</span>
+            </p>
           </div>
-          <p>
-            {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
-            <span className="place-name">{` ${caseType.courtName}.`}</span>
-          </p>
-        </div>
+        )}
+        {isCaseReAssigned && (
+          <div className="side-stepper-error-count">
+            <div className="total-error-count">{`${totalErrors.total} ${t("CS_ERRORS_MAKRED")}`}</div>
+            <div className="total-error-note">
+              <div className="header">
+                <InfoIcon />
+                <span>
+                  <b>{t("CS_COMMON_NOTE")}</b>
+                </span>
+              </div>
+              <p>{t("CS_FSO_ERROR_NOTE")}</p>
+            </div>
+          </div>
+        )}
         {isOpen && (
           <Modal
             headerBarEnd={
