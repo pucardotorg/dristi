@@ -52,8 +52,6 @@ function Home() {
     "/advocate/advocate/v1/_search"
   );
 
-  const { data: configdata, isLoading: isGetAllCasesLoading } = useGetAllCasesConfig();
-
   if (userType === "ADVOCATE" && searchData) {
     const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
     if (advocateBarRegNumber) {
@@ -75,10 +73,9 @@ function Home() {
     return searchResult?.[0]?.responseList?.[0]?.id;
   }, [searchResult]);
 
-  if (isLoading || isFetching || isSearchLoading || isGetAllCasesLoading) {
+  if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
   }
-  console.debug("configdata", configdata);
 
   return (
     <React.Fragment>

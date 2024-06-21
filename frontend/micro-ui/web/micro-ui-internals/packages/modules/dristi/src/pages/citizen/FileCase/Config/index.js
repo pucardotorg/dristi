@@ -69,7 +69,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "respondentConfig",
               },
             ],
           },
@@ -113,7 +113,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "chequeDetailsConfig",
               },
             ],
           },
@@ -148,7 +148,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "debtLiabilityConfig",
               },
             ],
           },
@@ -171,7 +171,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "demandNoticeConfig",
               },
             ],
           },
@@ -218,7 +218,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "delayApplicationFormConfig",
               },
             ],
           },
@@ -257,7 +257,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "witnessConfig",
               },
             ],
           },
@@ -294,7 +294,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "prayerAndSwornConfig",
               },
             ],
           },
@@ -328,7 +328,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "advocateDetailsConfig",
               },
             ],
           },
@@ -369,7 +369,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "reviewCaseFileConfig",
               },
             ],
           },

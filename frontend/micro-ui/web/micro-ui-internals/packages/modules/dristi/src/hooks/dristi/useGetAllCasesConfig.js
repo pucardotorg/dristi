@@ -15,18 +15,16 @@ function useGetAllCasesConfig() {
                 configData = await window?.Digit.MDMSService.call(tenantId, {
                   moduleDetails: child.pageConfig,
                 });
-                return configData;
-              } else return child.pageConfig;
+                return { ...child, pageConfig: configData?.MdmsRes?.commonUiConfig?.[child?.pageConfig?.[0]?.masterDetails?.[0]?.name]?.[0] };
+              } else return child;
             })
           );
-          console.log("children", children, data);
           return {
             ...data,
             children,
           };
         })
       );
-      console.log("configData", configData);
       return configData;
     },
     {
