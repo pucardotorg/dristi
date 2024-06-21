@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
@@ -15,8 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
+import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
 
 @Service
@@ -88,8 +92,8 @@ public class CaseService {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-            if (!validator.validateApplicationExistence(caseRequest))
-                throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
+//            if (!validator.validateApplicationExistence(caseRequest))//TODO TESTING
+//                throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
 
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
@@ -127,28 +131,80 @@ public class CaseService {
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
         }
     }
-    public void verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
+
+    private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
+//            if (!validator.validateLitigantJoinCase(joinCaseRequest)) //TODO TESTING
+//                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+
+            if(!joinCaseRequest.getLitigant().getCaseId().equalsIgnoreCase(caseObj.getId().toString()))
+                throw new CustomException(VALIDATION_ERR, "Invalid caseId");
+
+            log.info("enriching litigants");
+            enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
+
+            producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+    }
+
+    private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
+//            if (!validator.validateRepresentativeJoinCase(joinCaseRequest))//TODO TESTING
+//                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+            if (!joinCaseRequest.getRepresentative().getCaseId().equalsIgnoreCase(caseObj.getId().toString()))
+                throw new CustomException(VALIDATION_ERR, "Invalid caseId");
+
+            log.info("enriching representatives");
+            enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
+
+            producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+    }
+
+    public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
         try {
-            if (!validator.validateJoinCase(joinCaseRequest))
-                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()));
             List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
             if (courtCaseList.isEmpty()) {
-                throw new CustomException(CASE_EXIST_ERR, "Error while fetching to exist case"); //todo error message fix
+                throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
             }
+
             CourtCase courtCase = courtCaseList.get(0);
+            UUID caseId = courtCase.getId();
             String caseAccessCode = courtCase.getAccessCode();
-            if(joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode))
-                throw new CustomException(CASE_EXIST_ERR, "Error while fetching to exist case"); //todo error message fix
-            log.info("enriching litigants and representatives");
-            enrichmentUtil.enrichLitigantAndRepresentativeJoinCase(joinCaseRequest, courtCase.getId());
+
+            if(!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
+                throw new CustomException(VALIDATION_ERR, "Invalid access code");
+            }
+
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
+                    .createdTime(System.currentTimeMillis())
+                    .lastModifiedBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
+                    .lastModifiedTime(System.currentTimeMillis()).build();
+
+            CourtCase caseObj = CourtCase.builder()
+                    .id(caseId)
+                    .litigants(Collections.singletonList(joinCaseRequest.getLitigant()))
+                    .representatives(Collections.singletonList(joinCaseRequest.getRepresentative())).build();
+
+            if(joinCaseRequest.getLitigant() != null) {
+                verifyAndEnrichLitigant(joinCaseRequest, caseObj, auditDetails);
+            }
+            if(joinCaseRequest.getRepresentative() != null) {
+                verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
+            }
+
+            JoinCaseResponse response = JoinCaseResponse.builder()
+                    .accessCode(caseAccessCode)
+                    .caseFilingNumber(filingNumber)
+                    .representative(joinCaseRequest.getRepresentative())
+                    .litigant(joinCaseRequest.getLitigant()).build();
+
+            return response;
 
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Error while fetching to exist case :: {}",e.toString());//todo error message fix and exceptions
-            throw new CustomException(CASE_EXIST_ERR, e.getMessage());
+            log.error("Invalid request for joining a case :: {}",e.toString());//todo error message fix and exceptions
+            throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
         }
     }
 }
