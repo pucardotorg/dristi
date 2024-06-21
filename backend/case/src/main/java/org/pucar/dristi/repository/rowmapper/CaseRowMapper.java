@@ -26,7 +26,7 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String uuid = rs.getString("casenumber");
+                String uuid = rs.getString("id");
                 CourtCase courtCase = caseMap.get(uuid);
 
                 if (courtCase == null) {
