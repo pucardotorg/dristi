@@ -84,7 +84,7 @@ public class CaseRegistrationEnrichment {
         }
     }
 
-    private static void enrichRepresentativesOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+    public static void enrichRepresentativesOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         String courCaseId = courtCase.getId().toString();
         if (courtCase.getRepresentatives() == null) {
             return;
@@ -131,7 +131,7 @@ public class CaseRegistrationEnrichment {
         });
     }
 
-    private static void enrichLitigantsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+    public static void enrichLitigantsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         if(courtCase.getLitigants() == null) {
             return;
         }
@@ -151,20 +151,6 @@ public class CaseRegistrationEnrichment {
             }
         });
     }
-    public void enrichLitigantAndRepresentativeJoinCase(JoinCaseRequest joinCaseRequest, UUID courtCaseId) {
-        //TODO REVIEW
-        AuditDetails auditDetails = AuditDetails.builder().createdBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid()).createdTime(System.currentTimeMillis()).lastModifiedBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid()).lastModifiedTime(System.currentTimeMillis()).build();
-        CourtCase courtCase = CourtCase.builder()
-                .id(courtCaseId)
-                .litigants(Collections.singletonList(joinCaseRequest.getLitigant()))
-                .representatives(Collections.singletonList(joinCaseRequest.getRepresentative()))
-                .build();
-
-        log.info("enriching litigants");
-        enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
-        log.info("enriching representatives");
-        enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
-        }
 
     private void enrichStatuteAndSectionsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         if(courtCase.getStatutesAndSections() == null) {

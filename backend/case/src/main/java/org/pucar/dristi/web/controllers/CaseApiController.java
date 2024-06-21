@@ -82,9 +82,9 @@ public class CaseApiController {
     public ResponseEntity<JoinCaseResponse> verifyV1JoinCase (
             @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody JoinCaseRequest body){
 
-        caseService.verifyJoinCaseRequest(body);
+        JoinCaseResponse joinCaseResponse = caseService.verifyJoinCaseRequest(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        JoinCaseResponse joinCaseResponse = JoinCaseResponse.builder().responseInfo(responseInfo).build();
+        joinCaseResponse.setResponseInfo(responseInfo);
         return new ResponseEntity<>(joinCaseResponse, HttpStatus.OK);
     }
 
