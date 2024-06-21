@@ -160,7 +160,9 @@ public class CaseRegistrationEnrichment {
                 .representatives(Collections.singletonList(joinCaseRequest.getRepresentative()))
                 .build();
 
+        log.info("enriching litigants");
         enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+        log.info("enriching representatives");
         enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
         }
 
