@@ -15,6 +15,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_LITIGENT_DETAILS",
+    key: "litigentDetails",
     children: [
       {
         key: "complaintDetails",
@@ -101,6 +102,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_CASE_SPECIFIC_DETAILS",
+    key: "caseSpecificDetails",
     children: [
       {
         key: "chequeDetails",
@@ -245,6 +247,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_ADDITIONAL_DETAILS",
+    key: "additionalDetails",
     children: [
       {
         key: "witnessDetails",
@@ -357,6 +360,7 @@ export const sideMenuConfig = [
     isOpen: false,
     isDisabled: false,
     title: "CS_REVIEW_SIGN",
+    key: "reviewcasedetails",
     children: [
       {
         key: "reviewCaseFile",
