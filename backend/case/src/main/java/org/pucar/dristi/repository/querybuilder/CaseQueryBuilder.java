@@ -126,6 +126,27 @@ public class CaseQueryBuilder {
                     firstCriteria = false;
                 }
 
+                if (criteria.getJudgeId() != null && !criteria.getJudgeId().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.judgeid = ?");
+                    preparedStmtList.add(criteria.getJudgeId());
+                    firstCriteria = false;
+                }
+
+                if (criteria.getStage() != null && !criteria.getStage().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.stage = ?");
+                    preparedStmtList.add(criteria.getStage());
+                    firstCriteria = false;
+                }
+
+                if (criteria.getSubstage() != null && !criteria.getSubstage().isEmpty()) {
+                    addClauseIfRequired(query, firstCriteria);
+                    query.append("cases.substage = ?");
+                    preparedStmtList.add(criteria.getSubstage());
+                    firstCriteria = false;
+                }
+
                 if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
                     query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?)");
