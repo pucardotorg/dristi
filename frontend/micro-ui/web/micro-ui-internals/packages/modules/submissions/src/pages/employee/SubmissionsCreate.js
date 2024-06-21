@@ -1,7 +1,7 @@
+import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
-import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components";
 import { configs } from "../../configs/submissionsCreateConfig";
 import { transformCreateData } from "../../utils/createUtils";
 
