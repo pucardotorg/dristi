@@ -2,7 +2,7 @@ name: advocate workflow
 on:
   push:
     branches:
-      - quality-gate-test
+      - qualtiy-gate-test
 #    paths:
 #      - 'backend/advocate/**'
   pull_request:
