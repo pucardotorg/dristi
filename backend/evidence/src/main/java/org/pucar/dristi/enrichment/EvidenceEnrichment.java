@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.ARTIFACT_ID_NAME;
 import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Component
 @Slf4j
@@ -26,7 +27,7 @@ public class EvidenceEnrichment {
                 List<String> artifactRegistrationIdList = idgenUtil.getIdList(
                         evidenceRequest.getRequestInfo(),
                         evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
-                        "artifact.artifact_number",
+                        ARTIFACT_ID_NAME,
                         null,
                         1
                 );
