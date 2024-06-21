@@ -33,6 +33,7 @@ import {
   advocateDetailsFileValidation,
 } from "./EfilingValidationUtils";
 import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
+import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -108,6 +109,7 @@ function EFilingCases({ path }) {
   const selected = urlParams.get("selected") || sideMenuConfig?.[0]?.children?.[0]?.key;
   const caseId = urlParams.get("caseId");
   const [formdata, setFormdata] = useState(selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
+  const [errorCaseDetails, setErrorCaseDetails] = useState(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [parentOpen, setParentOpen] = useState(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
 
@@ -120,6 +122,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const homepagePath = "/digit-ui/citizen/dristi/home";
 
   const [{ showSuccessToast, successMsg }, setSuccessToast] = useState({
     showSuccessToast: false,
@@ -250,10 +253,75 @@ function EFilingCases({ path }) {
     }),
     [caseData]
   );
+  const scrutinyObj = useMemo(() => {
+    return caseDetails?.additionalDetails?.scrutiny?.data || {};
+  }, [caseDetails]);
 
-  const state = useMemo(() => caseDetails?.workflow?.action, [caseDetails]);
+  const countSectionErrors = (section) => {
+    let total = 0;
+    let sectionErrors = 0;
+    let inputErrors = 0;
+    Object.keys(section)?.forEach((key) => {
+      if (section[key]) {
+        if (section[key]?.scrutinyMessage?.FSOError) {
+          total++;
+          sectionErrors++;
+        }
+        section[key]?.form?.forEach((item) => {
+          Object.keys(item)?.forEach((field) => {
+            if (item[field]?.FSOError && field != "image" && field != "title") {
+              total++;
+              inputErrors++;
+            }
+          });
+        });
+      }
+    });
 
-  const isErrorCorrectionMode = state === CaseWorkflowState.CASE_RE_ASSIGNED;
+    return { total, inputErrors, sectionErrors };
+  };
+
+  const scrutinyErrors = useMemo(() => {
+    const errorCount = {};
+    for (const key in scrutinyObj) {
+      if (typeof scrutinyObj[key] === "object" && scrutinyObj[key] !== null) {
+        if (!errorCount[key]) {
+          errorCount[key] = { total: 0, sectionErrors: 0, inputErrors: 0 };
+        }
+        const temp = countSectionErrors(scrutinyObj[key]);
+        errorCount[key] = {
+          total: errorCount[key].total + temp.total,
+          sectionErrors: errorCount[key].sectionErrors + temp.sectionErrors,
+          inputErrors: errorCount[key].inputErrors + temp.inputErrors,
+        };
+      }
+    }
+    return errorCount;
+  }, [scrutinyObj]);
+
+  const totalErrors = useMemo(() => {
+    let total = 0;
+    let sectionErrors = 0;
+    let inputErrors = 0;
+
+    for (const key in scrutinyErrors) {
+      total += scrutinyErrors[key].total || 0;
+      sectionErrors += scrutinyErrors[key].sectionErrors || 0;
+      inputErrors += scrutinyErrors[key].inputErrors || 0;
+    }
+
+    return {
+      total,
+      sectionErrors,
+      inputErrors,
+    };
+  }, [scrutinyErrors]);
+
+  const state = useMemo(() => caseDetails?.status, [caseDetails]);
+
+  const isCaseReAssigned = state === CaseWorkflowState.CASE_RE_ASSIGNED;
+  const isDisableAllFieldsMode = !(state === CaseWorkflowState.CASE_RE_ASSIGNED || state === CaseWorkflowState.DRAFT_IN_PROGRESS);
+  const isDraftInProgress = state === CaseWorkflowState.DRAFT_IN_PROGRESS;
 
   useEffect(() => {
     setParentOpen(sideMenuConfig.findIndex((parent) => parent.children.some((child) => child.key === selected)));
@@ -309,10 +377,21 @@ function EFilingCases({ path }) {
   }, [showErrorToast, showSuccessToast]);
 
   const getDefaultValues = useCallback(
-    (index) =>
-      caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
-      caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
-      formdata[index]?.data,
+    (index) => {
+      if (isCaseReAssigned && errorCaseDetails) {
+        return (
+          errorCaseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+          errorCaseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
+          formdata[index]?.data
+        );
+      }
+
+      return (
+        caseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
+        caseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
+        formdata[index]?.data
+      );
+    },
     [caseDetails?.additionalDetails, caseDetails?.caseDetails, formdata, selected]
   );
 
@@ -328,10 +407,18 @@ function EFilingCases({ path }) {
     }));
   }, [caseDetails, parentOpen, selected]);
 
+  const { data: caseDetailsConfig, isLoading: isGetAllCasesLoading } = useGetAllCasesConfig();
+
   const pageConfig = useMemo(() => {
-    return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected))?.children?.find((child) => child.key === selected)
-      ?.pageConfig;
-  }, [selected]);
+    if (!caseDetailsConfig) {
+      return {
+        formconfig: [],
+      };
+    }
+    return caseDetailsConfig
+      .find((parent) => parent.children.some((child) => child.key === selected))
+      ?.children?.find((child) => child.key === selected)?.pageConfig;
+  }, [caseDetailsConfig, selected]);
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
@@ -436,7 +523,7 @@ function EFilingCases({ path }) {
         }
         return formConfig;
       });
-      if (!isErrorCorrectionMode) {
+      if (!isCaseReAssigned) {
         return modifiedFormData;
       }
     }
@@ -551,7 +638,6 @@ function EFilingCases({ path }) {
           };
         })
         .map((config) => {
-          const scrutinyObj = caseDetails?.additionalDetails?.scrutiny?.data || {};
           const scrutiny = {};
           Object.keys(scrutinyObj).forEach((item) => {
             Object.keys(scrutinyObj[item]).forEach((key) => {
@@ -782,6 +868,9 @@ function EFilingCases({ path }) {
     return obj;
   };
   const onSubmit = async (action) => {
+    if (isDisableAllFieldsMode) {
+      history.push(homepagePath);
+    }
     if (!Array.isArray(formdata)) {
       return;
     }
@@ -831,21 +920,16 @@ function EFilingCases({ path }) {
     ) {
       return;
     }
-    if (isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE) {
-      if (selected !== "addSignature") {
-        history.push(`?caseId=${caseId}&selected=${nextSelected}`);
-        return;
-      } else {
-        return setOpenConfirmCorrectionModal(true);
-      }
+    if (selected === "addSignature" && isCaseReAssigned && !openConfirmCorrectionModal) {
+      return setOpenConfirmCorrectionModal(true);
     }
 
-    if (selected === "addSignature" && !(isErrorCorrectionMode && action !== CaseWorkflowAction.EDIT_CASE)) {
+    if (selected === "addSignature" && isDraftInProgress) {
       setOpenConfirmCourtModal(true);
     } else {
       updateCaseDetails({
         isCompleted: true,
-        caseDetails,
+        caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
         formdata,
         pageConfig,
         selected,
@@ -853,6 +937,7 @@ function EFilingCases({ path }) {
         tenantId,
         setFormDataValue: setFormDataValue.current,
         action,
+        setErrorCaseDetails,
       })
         .then(() => {
           if (resetFormData.current) {
@@ -873,6 +958,7 @@ function EFilingCases({ path }) {
           });
         })
         .catch(() => {
+          history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           setIsDisabled(false);
         });
     }
@@ -917,9 +1003,10 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    if (state !== CaseWorkflowState.CASE_RE_ASSIGNED) {
-      updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
-        .then(() => {
+
+    updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+      .then(() => {
+        if (!isCaseReAssigned) {
           refetchCaseData().then(() => {
             const caseData =
               caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -928,11 +1015,12 @@ function EFilingCases({ path }) {
             setFormdata(caseData);
             setIsDisabled(false);
           });
-        })
-        .catch(() => {
-          setIsDisabled(false);
-        });
-    }
+        }
+      })
+      .catch(() => {
+        setIsDisabled(false);
+      });
+
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -979,7 +1067,7 @@ function EFilingCases({ path }) {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  if (isLoading) {
+  if (isLoading || isGetAllCasesLoading) {
     return <Loader />;
   }
 
@@ -1003,21 +1091,40 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
+  if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
+    history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+  }
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
-        <div className="side-stepper-info">
-          <div className="header">
-            <InfoIcon />
-            <span>
-              <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
-            </span>
+        {isDraftInProgress && (
+          <div className="side-stepper-info">
+            <div className="header">
+              <InfoIcon />
+              <span>
+                <b>{t("CS_YOU_ARE_FILING_A_CASE")}</b>
+              </span>
+            </div>
+            <p>
+              {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
+              <span className="place-name">{` ${caseType.courtName}.`}</span>
+            </p>
           </div>
-          <p>
-            {t("CS_UNDER")} <a href="#" className="act-name">{`S-${caseType.section}, ${caseType.act}`}</a> {t("CS_IN")}
-            <span className="place-name">{` ${caseType.courtName}.`}</span>
-          </p>
-        </div>
+        )}
+        {isCaseReAssigned && (
+          <div className="side-stepper-error-count">
+            <div className="total-error-count">{`${totalErrors.total} ${t("CS_ERRORS_MAKRED")}`}</div>
+            <div className="total-error-note">
+              <div className="header">
+                <InfoIcon />
+                <span>
+                  <b>{t("CS_COMMON_NOTE")}</b>
+                </span>
+              </div>
+              <p>{t("CS_FSO_ERROR_NOTE")}</p>
+            </div>
+          </div>
+        )}
         {isOpen && (
           <Modal
             headerBarEnd={
@@ -1107,7 +1214,7 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : t("CS_COMMON_CONTINUE")}
+                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_COMMON_CONTINUE")}
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
@@ -1118,7 +1225,7 @@ function EFilingCases({ path }) {
                   cardStyle={{ minWidth: "100%" }}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
-                  showSecondaryLabel={!isErrorCorrectionMode}
+                  showSecondaryLabel={isDraftInProgress}
                   actionClassName="e-filing-action-bar"
                   className={`${pageConfig.className} ${getFormClassName()}`}
                   noBreakLine
@@ -1225,7 +1332,7 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={() => takeUserToRemainingMandatoryFieldsPage()}
             ></Modal>
           )}
-          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && (
+          {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && !isDisableAllFieldsMode && (
             <Modal
               headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
               headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
@@ -1243,6 +1350,7 @@ function EFilingCases({ path }) {
               className="add-new-form"
               icon={<CustomAddIcon />}
               label={t(pageConfig.addFormText)}
+              isDisabled={!isDraftInProgress}
             ></Button>
           )}
           {openConfigurationModal && (

@@ -128,7 +128,7 @@ const witnessFormConfig = [
         isMandatory: true,
         populators: {
           inputs: [
-            { label: "CS_COMMON_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
+            { label: "CS_LOCATION", type: "LocationSearch", name: ["pincode", "state", "district", "city", "coordinates", "locality"] },
             {
               label: "CORE_COMMON_PINCODE",
               type: "text",

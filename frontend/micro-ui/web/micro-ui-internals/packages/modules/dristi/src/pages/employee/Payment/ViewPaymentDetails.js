@@ -1,8 +1,9 @@
-import { Loader, SubmitBar, ActionBar, CustomDropdown, CardLabel, LabelFieldPair, TextInput } from "@egovernments/digit-ui-react-components";
+import { Loader, SubmitBar, ActionBar, CustomDropdown, CardLabel, LabelFieldPair, TextInput, Toast } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { useToast } from "../../../components/Toast/useToast";
 
 const paymentCalculation = [
   { key: "Amount Due", value: 600, currency: "Rs" },
@@ -43,6 +44,7 @@ const ViewPaymentDetails = ({ location, match }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [payer, setPayer] = useState("");
   const [modeOfPayment, setModeOfPayment] = useState(null);
+  const toast = useToast();
 
   const { caseId, filingNumber } = window?.Digit.Hooks.useQueryParams();
 
@@ -84,25 +86,34 @@ const ViewPaymentDetails = ({ location, match }) => {
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
   const onSubmitCase = async () => {
-    await window?.Digit.PaymentService.createReciept(tenantId, {
-      Payment: {
-        paymentDetails: [
-          {
-            businessService: "case",
-            billId: bill.id,
-            totalDue: bill?.totalAmount,
-            totalAmountPaid: bill?.totalAmount || 2000,
-          },
-        ],
-        tenantId,
-        paymentMode: "CASH",
-        paidBy: modeOfPayment?.code,
-        mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
-        payerName: payer,
-        totalAmountPaid: 2000,
-      },
-    });
-    history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
+    if (!Object.keys(bill || {}).length) {
+      toast.error("CS_BILL_NOT_AVAILABLE");
+      history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
+      return;
+    }
+    try {
+      await window?.Digit.PaymentService.createReciept(tenantId, {
+        Payment: {
+          paymentDetails: [
+            {
+              businessService: "case",
+              billId: bill.id,
+              totalDue: bill?.totalAmount,
+              totalAmountPaid: bill?.totalAmount || 2000,
+            },
+          ],
+          tenantId,
+          paymentMode: "CASH",
+          paidBy: modeOfPayment?.code,
+          mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
+          payerName: payer,
+          totalAmountPaid: 2000,
+        },
+      });
+      history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`, { state: { success: true } });
+    } catch (err) {
+      history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`, { state: { success: false } });
+    }
   };
 
   if (isCaseSearchLoading || isFetchBillLoading) {

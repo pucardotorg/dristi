@@ -7,6 +7,7 @@ export const reviewCaseFileFormConfig = [
         key: "litigentDetails",
         label: "CS_LITIGENT_DETAILS",
         withoutLabel: true,
+        textAreaMaxLength: "255",
         populators: {
           inputs: [
             {
@@ -61,7 +62,7 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "CS_CHEQUE_ISSUED_TO", value: "name" },
                 { type: "text", label: "CS_PAYER_BANK", value: "payerbank" },
                 { type: "text", label: "CS_PAYEE_BANK", value: "bankName" },
-                { type: "text", label: "CS_NAME_SIGNATORY", value: "signatory" },
+                { type: "text", label: "CS_NAME_SIGNATORY", value: "chequeSignatoryName" },
                 { type: "text", label: "CS_IFSC_CODE", value: "ifsc" },
                 { type: "text", label: "CS_DATE_DEPOSITE", value: "depositDate" },
                 { type: "text", label: "CS_DATE_ISSUANCE", value: "issuanceDate" },

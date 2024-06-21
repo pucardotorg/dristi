@@ -672,6 +672,7 @@ export const updateCaseDetails = async ({
   pageConfig,
   setFormDataValue,
   action = "SAVE_DRAFT",
+  setErrorCaseDetails,
 }) => {
   const data = {};
   setIsDisabled(true);
@@ -1345,6 +1346,17 @@ export const updateCaseDetails = async ({
       },
     };
   }
+  setErrorCaseDetails({
+    ...caseDetails,
+    litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
+    ...data,
+    linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
+    filingDate: caseDetails.filingDate,
+    workflow: {
+      ...caseDetails?.workflow,
+      action: action,
+    },
+  });
   return DRISTIService.caseUpdateService(
     {
       cases: {

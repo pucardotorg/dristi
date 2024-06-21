@@ -18,7 +18,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
-
+  const isPrevScrutiny = config?.isPrevScrutiny || false;
   const [isOpen, setOpen] = useState(true);
   const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
@@ -99,7 +99,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         return <RespondentDetailsIcon />;
     }
   };
-  const handleOpenPopup = (e, configKey, name, index = null, fieldName, inputlist = []) => {
+  const handleOpenPopup = (e, configKey, name, index = null, fieldName, inputlist = [], fileName = null) => {
     setValue(
       "scrutinyMessage",
       {
@@ -108,6 +108,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         fieldName,
         configKey,
         inputlist,
+        fileName,
       },
       "popupInfo"
     );
@@ -171,10 +172,10 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     if (!trimmedError) {
       return;
     }
-    const { name, configKey, index, fieldName, inputlist } = popupInfo;
+    const { name, configKey, index, fieldName, inputlist, fileName } = popupInfo;
     let fieldObj = { [fieldName]: { FSOError: trimmedError } };
     inputlist.forEach((key) => {
-      fieldObj[key] = { FSOError: trimmedError };
+      fieldObj[key] = { FSOError: trimmedError, fileName };
     });
     let currentMessage =
       formData && formData[configKey] && formData[config.key]?.[name]
@@ -184,7 +185,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             form: inputs.find((item) => item.name === name)?.data?.map(() => ({})),
           };
     if (index == null) {
-      currentMessage.scrutinyMessage = { FSOError: trimmedError };
+      currentMessage.scrutinyMessage = { FSOError: trimmedError, fileName };
     } else {
       currentMessage.form[index] = {
         ...(currentMessage?.form?.[index] || {}),
@@ -229,7 +230,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       <EditPencilIcon />
                     </div>
                   )}
-                  {!sectionError && isScrutiny && (
+                  {!sectionError && isScrutiny && input?.data?.length > 0 && (
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={(e) => {
@@ -285,7 +286,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 const { value } = e.target;
                 setScrutinyError(value);
               }}
-              maxlength="255"
+              maxlength={config.textAreaMaxLength || "255"}
               style={{ minWidth: "300px", maxWidth: "300px", maxHeight: "150px", minHeight: "50px" }}
             ></TextArea>
             <div
