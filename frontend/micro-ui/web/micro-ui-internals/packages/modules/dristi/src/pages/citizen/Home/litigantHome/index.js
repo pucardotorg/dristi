@@ -5,6 +5,7 @@ import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { userTypeOptions } from "../../registration/config";
+import useGetAllCasesConfig from "../../../../hooks/dristi/useGetAllCasesConfig";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -75,6 +76,7 @@ function Home() {
   if (isLoading || isFetching || isSearchLoading) {
     return <Loader />;
   }
+
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
