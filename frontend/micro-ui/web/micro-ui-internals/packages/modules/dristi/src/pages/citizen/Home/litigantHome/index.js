@@ -5,6 +5,7 @@ import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { userTypeOptions } from "../../registration/config";
+import useGetAllCasesConfig from "../../../../hooks/dristi/useGetAllCasesConfig";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -51,6 +52,8 @@ function Home() {
     "/advocate/advocate/v1/_search"
   );
 
+  const { data: configdata, isLoading: isGetAllCasesLoading } = useGetAllCasesConfig();
+
   if (userType === "ADVOCATE" && searchData) {
     const advocateBarRegNumber = searchData?.advocates?.[0]?.responseList?.[0]?.barRegistrationNumber;
     if (advocateBarRegNumber) {
@@ -72,9 +75,11 @@ function Home() {
     return searchResult?.[0]?.responseList?.[0]?.id;
   }, [searchResult]);
 
-  if (isLoading || isFetching || isSearchLoading) {
+  if (isLoading || isFetching || isSearchLoading || isGetAllCasesLoading) {
     return <Loader />;
   }
+  console.debug("configdata", configdata);
+
   return (
     <React.Fragment>
       <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>

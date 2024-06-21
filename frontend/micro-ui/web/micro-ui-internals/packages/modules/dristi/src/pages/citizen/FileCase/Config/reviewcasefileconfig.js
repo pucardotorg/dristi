@@ -7,6 +7,7 @@ export const reviewCaseFileFormConfig = [
         key: "litigentDetails",
         label: "CS_LITIGENT_DETAILS",
         withoutLabel: true,
+        textAreaMaxLength: "255",
         populators: {
           inputs: [
             {

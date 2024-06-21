@@ -33,6 +33,7 @@ import {
   advocateDetailsFileValidation,
 } from "./EfilingValidationUtils";
 import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
+import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 
 function isEmptyValue(value) {
   if (!value) {
