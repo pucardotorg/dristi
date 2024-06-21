@@ -33,6 +33,7 @@ import {
   advocateDetailsFileValidation,
 } from "./EfilingValidationUtils";
 import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
+import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -406,10 +407,18 @@ function EFilingCases({ path }) {
     }));
   }, [caseDetails, parentOpen, selected]);
 
+  const { data: caseDetailsConfig, isLoading: isGetAllCasesLoading } = useGetAllCasesConfig();
+
   const pageConfig = useMemo(() => {
-    return sideMenuConfig.find((parent) => parent.children.some((child) => child.key === selected))?.children?.find((child) => child.key === selected)
-      ?.pageConfig;
-  }, [selected]);
+    if (!caseDetailsConfig) {
+      return {
+        formconfig: [],
+      };
+    }
+    return caseDetailsConfig
+      .find((parent) => parent.children.some((child) => child.key === selected))
+      ?.children?.find((child) => child.key === selected)?.pageConfig;
+  }, [caseDetailsConfig, selected]);
 
   const formConfig = useMemo(() => {
     return pageConfig?.formconfig;
@@ -1058,7 +1067,7 @@ function EFilingCases({ path }) {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  if (isLoading) {
+  if (isLoading || isGetAllCasesLoading) {
     return <Loader />;
   }
 
