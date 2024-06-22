@@ -196,6 +196,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     setValue("scrutinyMessage", { popupInfo: null, imagePopupInfo: null }, ["popupInfo", "imagePopupInfo"]);
     setScrutinyError("");
   };
+  let showFlagIcon = isScrutiny ? true : false;
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
@@ -210,6 +211,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
             const prevSectionError = input?.prevErrors?.scrutinyMessage;
+            if (isPrevScrutiny) {
+              showFlagIcon = prevSectionError ? true : false;
+            }
             return (
               <div className={`content-item ${sectionError && isScrutiny && "error"}`}>
                 <div className="item-header">
@@ -217,21 +221,17 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     {input?.icon && <Icon icon={input?.icon} />}
                     <span>{t(input?.label)}</span>
                   </div>
-                  {(!isScrutiny || sectionError) && !isJudge && (
+                  {!isScrutiny && !isJudge && (
                     <div
                       className="header-right"
                       onClick={(e) => {
-                        if (!isScrutiny) {
-                          history.push(`?caseId=${caseId}&selected=${input?.key}`);
-                        } else {
-                          handleOpenPopup(e, config.key, input?.name);
-                        }
+                        history.push(`?caseId=${caseId}&selected=${input?.key}`);
                       }}
                     >
                       <EditPencilIcon />
                     </div>
                   )}
-                  {!sectionError && isScrutiny && input?.data?.length > 0 && (
+                  {showFlagIcon && input?.data?.length > 0 && (
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={(e) => {
@@ -239,7 +239,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       }}
                       key={index}
                     >
-                      <FlagIcon />
+                      {sectionError ? <EditPencilIcon /> : <FlagIcon />}
                     </div>
                   )}
                 </div>

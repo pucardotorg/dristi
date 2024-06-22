@@ -378,7 +378,7 @@ function ViewCaseFile({ t }) {
                 config={formConfig}
                 onSubmit={handlePrimaryButtonClick}
                 onSecondayActionClick={handleSecondaryButtonClick}
-                defaultValues={defaultScrutinyErrors?.data}
+                defaultValues={structuredClone(defaultScrutinyErrors?.data)}
                 onFormValueChange={onFormValueChange}
                 cardStyle={{ minWidth: "100%" }}
                 isDisabled={isDisabled}

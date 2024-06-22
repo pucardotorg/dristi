@@ -34,6 +34,7 @@ import {
 } from "./EfilingValidationUtils";
 import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
+import ErrorsAccordion from "../../../components/ErrorsAccordion";
 
 function isEmptyValue(value) {
   if (!value) {
@@ -238,6 +239,21 @@ function EFilingCases({ path }) {
     );
   }, []);
 
+  const pagesLabels = useMemo(() => {
+    let keyValuePairs = {};
+    sideMenuConfig.forEach((parent) => {
+      if (parent.children && parent.children.length > 0) {
+        parent.children.forEach((child) => {
+          keyValuePairs[child.key] = child.label;
+          if (child.children && child.children.length > 0) {
+            traverseChildren(child.children);
+          }
+        });
+      }
+    });
+    return keyValuePairs;
+  }, [sideMenuConfig]);
+
   const nextSelected = useMemo(() => {
     const index = getAllKeys.indexOf(selected);
     if (index !== -1 && index + 1 < getAllKeys.length) {
@@ -261,24 +277,31 @@ function EFilingCases({ path }) {
     let total = 0;
     let sectionErrors = 0;
     let inputErrors = 0;
+    let pages = new Set();
     Object.keys(section)?.forEach((key) => {
+      let pageErrorCount = 0;
       if (section[key]) {
         if (section[key]?.scrutinyMessage?.FSOError) {
           total++;
           sectionErrors++;
+          pageErrorCount++;
         }
         section[key]?.form?.forEach((item) => {
           Object.keys(item)?.forEach((field) => {
             if (item[field]?.FSOError && field != "image" && field != "title") {
               total++;
               inputErrors++;
+              pageErrorCount++;
             }
           });
         });
       }
+      if (pageErrorCount) {
+        pages.add({ key, label: pagesLabels[key], errorCount: pageErrorCount });
+      }
     });
 
-    return { total, inputErrors, sectionErrors };
+    return { total, inputErrors, sectionErrors, pages: [...pages] };
   };
 
   const scrutinyErrors = useMemo(() => {
@@ -293,11 +316,18 @@ function EFilingCases({ path }) {
           total: errorCount[key].total + temp.total,
           sectionErrors: errorCount[key].sectionErrors + temp.sectionErrors,
           inputErrors: errorCount[key].inputErrors + temp.inputErrors,
+          pages: temp.pages,
         };
       }
     }
     return errorCount;
   }, [scrutinyObj]);
+
+  const errorPages = useMemo(() => {
+    return Object.values(scrutinyErrors)
+      .flatMap((val) => val?.pages)
+      .filter((val) => val !== undefined);
+  }, [scrutinyErrors]);
 
   const totalErrors = useMemo(() => {
     let total = 0;
@@ -1113,7 +1143,13 @@ function EFilingCases({ path }) {
         )}
         {isCaseReAssigned && (
           <div className="side-stepper-error-count">
-            <div className="total-error-count">{`${totalErrors.total} ${t("CS_ERRORS_MAKRED")}`}</div>
+            <ErrorsAccordion
+              t={t}
+              totalErrorCount={totalErrors.total}
+              pages={errorPages}
+              handlePageChange={handlePageChange}
+              showConfirmModal={confirmModalConfig ? true : false}
+            />
             <div className="total-error-note">
               <div className="header">
                 <InfoIcon />
