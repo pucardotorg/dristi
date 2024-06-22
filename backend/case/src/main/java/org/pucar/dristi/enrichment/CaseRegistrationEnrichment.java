@@ -2,7 +2,6 @@ package org.pucar.dristi.enrichment;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
@@ -18,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import static org.pucar.dristi.config.ServiceConstants.ACCESSCODE_LENGTH;
 import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 
 @Component
@@ -163,9 +163,7 @@ public class CaseRegistrationEnrichment {
             statuteSection.setAuditdetails(auditDetails);
         });
         List<StatuteSection> statutesAndSectionsListToUpdate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() != null).toList();
-        statutesAndSectionsListToUpdate.forEach(statuteSection -> {
-            statuteSection.setAuditdetails(auditDetails);
-        });
+        statutesAndSectionsListToUpdate.forEach(statuteSection -> statuteSection.setAuditdetails(auditDetails));
     }
 
     private static void enrichLinkedCaseOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
@@ -228,9 +226,11 @@ public class CaseRegistrationEnrichment {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
         }
     }
-        public void enrichAccessCode(CaseRequest caseRequest){
+
+    public void enrichAccessCode(CaseRequest caseRequest){
             try {
-                String accessCode = RandomStringUtils.random(8, true, true);
+
+                String accessCode = CaseUtil.generateAccessCode(ACCESSCODE_LENGTH);
                 caseRequest.getCases().setAccessCode(accessCode);
             } catch (Exception e) {
                 log.error("Error enriching access code: {}", e.getMessage());
