@@ -57,7 +57,7 @@ public class PaymentUpdateService {
 
     }
 
-    public void updateWorkflowForCasePayment(RequestInfo requestInfo, String tenantId, PaymentDetail paymentDetail) {
+    private void updateWorkflowForCasePayment(RequestInfo requestInfo, String tenantId, PaymentDetail paymentDetail) {
 
         Bill bill  = paymentDetail.getBill();
 
