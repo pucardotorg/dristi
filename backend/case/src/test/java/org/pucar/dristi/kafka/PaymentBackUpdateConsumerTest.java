@@ -42,6 +42,5 @@ public class PaymentBackUpdateConsumerTest {
 
         assertDoesNotThrow(() -> paymentBackUpdateConsumer.listenPayments(record, topic));
         verify(paymentUpdateService, times(1)).process(record);
-        verify(paymentUpdateService, times(1)).process(record);
     }
 }
