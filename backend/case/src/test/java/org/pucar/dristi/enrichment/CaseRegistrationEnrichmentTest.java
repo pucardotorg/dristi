@@ -230,5 +230,13 @@ class CaseRegistrationEnrichmentTest {
 
         assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest));
     }
+
+    @Test
+    void enrichAccessCode_handlesException() {
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(null);
+
+        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichAccessCode(caseRequest));
+    }
 }
 
