@@ -9,13 +9,8 @@ public class CaseUtil {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final SecureRandom random = new SecureRandom();
 
-    public String getCNRNumber(String fillingNumber) {
+    public String getCNRNumber(String fillingNumber, String state, String district, String establishmentCode) {
         String cnrNumber;
-
-        String state = "KL";
-        String district = "JL";
-        String establishmentCode = "01";
-
         String[] resp = fillingNumber.split("-");
         String sequenceNumber = resp[resp.length-1];
         String year = resp[resp.length-2];
