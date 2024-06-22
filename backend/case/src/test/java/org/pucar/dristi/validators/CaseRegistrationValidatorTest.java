@@ -2,7 +2,7 @@ package org.pucar.dristi.validators;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.pucar.dristi.config.ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 import net.minidev.json.JSONArray;
 import org.apache.kafka.common.protocol.types.Field;
@@ -179,6 +179,25 @@ public class CaseRegistrationValidatorTest {
         courtCase.setCaseCategory("category1");
         Workflow workflow = new Workflow();
         workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+        List<StatuteSection> statuteSectionList = new ArrayList<>();
+        statuteSectionList.add(StatuteSection.builder().tenantId("pb").build());
+        courtCase.setStatutesAndSections(statuteSectionList);
+        request.setCases(courtCase);
+
+        Exception exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(request));
+    }
+
+    @Test
+    void testValidateCaseRegistration_WithMissingLitigantsThrowNoExceptionOnDeleteCase() {
+        CaseRequest request = new CaseRequest();
+        request.setRequestInfo(new RequestInfo());
+        CourtCase courtCase = new CourtCase();
+        courtCase.setTenantId("pg");
+        courtCase.setFilingDate(LocalDate.now());
+        courtCase.setCaseCategory("category1");
+        Workflow workflow = new Workflow();
+        workflow.setAction(DELETE_DRAFT_WORKFLOW_ACTION);
         courtCase.setWorkflow(workflow);
         List<StatuteSection> statuteSectionList = new ArrayList<>();
         statuteSectionList.add(StatuteSection.builder().tenantId("pb").build());
@@ -401,6 +420,20 @@ public class CaseRegistrationValidatorTest {
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }
+    @Test
+    void testValidateApplicationExistence_ExistingApplicationMissingFilingDateNotThrowOnSaveDraft() {
+        CourtCase courtCase = new CourtCase();
+        CaseCriteria caseCriteria = new CaseCriteria();
+        courtCase.setTenantId("pg");
+        Workflow workflow = new Workflow();
+        workflow.setAction(SAVE_DRAFT_CASE_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(courtCase);
+        caseRequest.setRequestInfo(new RequestInfo());
+
+        assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
+    }
 
     @Test
     void testValidateApplicationExistence_ExistingApplication_INDIVIDUAL_NOT_FOUND() {
@@ -484,6 +517,25 @@ public class CaseRegistrationValidatorTest {
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
         lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+
+        assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
+    }
+
+    @Test
+    void testValidateApplicationExistence_ExistingApplicationMissingLitigantsNotThrowWhenWhenDeleteAction() {
+        CourtCase courtCase = new CourtCase();
+        courtCase.setTenantId("pg");
+        courtCase.setFilingDate(LocalDate.now());
+        courtCase.setCaseCategory("categ1");
+        courtCase.setStatutesAndSections(List.of(StatuteSection.builder().tenantId("pb").build()));
+        CaseCriteria caseCriteria = new CaseCriteria();
+        Workflow workflow = new Workflow();
+        workflow.setAction(DELETE_DRAFT_WORKFLOW_ACTION);
+        courtCase.setWorkflow(workflow);
+        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(courtCase);
+        caseRequest.setRequestInfo(new RequestInfo());
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }
