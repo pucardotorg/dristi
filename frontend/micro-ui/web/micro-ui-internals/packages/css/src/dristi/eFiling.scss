@@ -18,7 +18,7 @@
     background-color: white;
     border: 1px solid var(--Grey-200, #bbbbbd);
 
-    >h2 {
+    > h2 {
       font-weight: 700;
       font-size: 24px;
       border-bottom: 1px solid var(--Grey-200, #bbbbbd);
@@ -365,7 +365,8 @@
   }
 }
 
-.witness-details {}
+.witness-details {
+}
 
 .debt-liability {
   .select-wrap {
@@ -923,6 +924,9 @@
               &.error {
                 background-color: #fce8e8;
               }
+              &.preverror {
+                background-color: #ecf3fd;
+              }
             }
 
             .address {
@@ -936,6 +940,10 @@
 
               &.error {
                 background-color: #fce8e8;
+              }
+
+              &.preverror {
+                background-color: #bbbbbd;
               }
             }
 
@@ -1067,20 +1075,19 @@
     flex-direction: column;
     gap: 10px;
 
-
     .total-error-count {
       padding: 12px 24px;
-      border: 1px #BB2C2F solid;
-      background-color: #FCE8E8;
-      color: #BB2C2F;
+      border: 1px #bb2c2f solid;
+      background-color: #fce8e8;
+      color: #bb2c2f;
     }
 
     .total-error-note {
-      background-color: #ECF3FD !important;
+      background-color: #ecf3fd !important;
       svg {
         g {
           path {
-            fill: #0F3B8C !important;
+            fill: #0f3b8c !important;
           }
         }
       }

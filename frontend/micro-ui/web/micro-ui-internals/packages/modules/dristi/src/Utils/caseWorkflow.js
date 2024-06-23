@@ -6,4 +6,6 @@ export const CaseWorkflowState = {
 
 export const CaseWorkflowAction = {
   EDIT_CASE: "EDIT_CASE",
+  VALIDATE: "VALIDATE",
+  SEND_BACK: "SEND_BACK",
 };
