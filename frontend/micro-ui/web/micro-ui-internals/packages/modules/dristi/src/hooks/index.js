@@ -25,6 +25,9 @@ export const Urls = {
     evidenceUpdate: "/evidence/artifacts/v1/_update",
     searchHearings: "/hearing/v1/search",
     demandCreate: "/billing-service/demand/_create",
+    orderCreate: "/order/order/v1/create",
+    orderUpdate: "/order/order/v1/update",
+    orderSearch: "/order/order/v1/search",
   },
   FileFetchById: "/filestore/v1/files/id",
 };

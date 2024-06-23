@@ -155,7 +155,7 @@ export const configs = [
         type: "date",
         disable: false,
         populators: {
-          name: "submissionDeadlineDate",
+          name: "respondDeadlineDate",
           error: "Required",
           mdmsConfig: {
             moduleName: "Order",
