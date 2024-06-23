@@ -132,8 +132,8 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
-                {!Array.isArray(textValue) && textValue}
+                {Array.isArray(textValue) && textValue.map((text) => <div> {text || "NA"} </div>)}
+                {(!Array.isArray(textValue) && textValue) || "NA"}
               </div>
               {showFlagIcon && (
                 <div
@@ -365,14 +365,18 @@ const CustomReviewCardRow = ({
         if (Array.isArray(addressDetails)) {
           address = addressDetails.map(({ addressDetails }) => {
             return {
-              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              address: `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                addressDetails?.state || ""
+              } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             };
           });
         } else {
           address = [
             {
-              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              address: `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                addressDetails?.state || ""
+              } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             },
           ];
@@ -420,8 +424,8 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
-                {!Array.isArray(defaulValue) && defaulValue}
+                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || "NA"} </div>)}
+                {(!Array.isArray(defaulValue) && defaulValue) || "NA"}
               </div>
               {showFlagIcon && (
                 <div
@@ -450,9 +454,11 @@ const CustomReviewCardRow = ({
     dataIndex,
     handleImageClick,
     handleOpenPopup,
+    isPrevScrutiny,
     isScrutiny,
     label,
     name,
+    prevDataError,
     t,
     tenantId,
     titleHeading,

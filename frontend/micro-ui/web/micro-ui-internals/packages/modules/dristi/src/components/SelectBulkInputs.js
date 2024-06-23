@@ -1,3 +1,4 @@
+import { CardLabelError } from "@egovernments/digit-ui-components";
 import { Button, CardLabel, RemoveableTag, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 
@@ -80,8 +81,8 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
               name={input.name}
               minlength={input?.validation?.minLength}
               maxlength={input?.validation?.maxLength}
-              validation={input?.validation}
-              ValidationRequired={input?.validation}
+              // validation={input?.validation}
+              // ValidationRequired={input?.validation}
               title={input?.validation?.title}
               disable={input?.disable ? input?.disable : false}
               // textInputStyle={{ flex: 1 }}
@@ -94,12 +95,17 @@ function SelectBulkInputs({ t, config, onSelect, formData = {}, errors }) {
           <Button
             label={"Add"}
             style={{ alignItems: "center" }}
-            isDisabled={!enableAdd}
+            isDisabled={!enableAdd || errors?.[config?.key]?.[input.name]}
             onButtonClick={() => {
               handleAdd(currentValue, input);
             }}
           />
         </div>
+        {errors?.[config?.key]?.[input.name] && (
+          <CardLabelError className={errors?.[config?.key]?.[input.name] && "error-text"} style={{ margin: 0 }}>
+            {t(errors?.[config?.key]?.[input.name] && errors?.[config?.key]?.[input.name])}
+          </CardLabelError>
+        )}
         {chipList?.length > 0 ? (
           <div className="tag-container" style={{ width: "100%" }}>
             {chipList?.length > 0 &&

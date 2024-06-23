@@ -14,6 +14,22 @@ import CustomPopUp from "./CustomPopUp";
 import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
 
+const extractValue = (data, key) => {
+  if (!key.includes(".")) {
+    return data[key];
+  }
+  const keyParts = key.split(".");
+  let value = data;
+  keyParts.forEach((part) => {
+    if (value && value.hasOwnProperty(part)) {
+      value = value[part];
+    } else {
+      value = undefined;
+    }
+  });
+  return value;
+};
+
 function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, formState, control, setError }) {
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
@@ -254,10 +270,21 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     const dataErrors = sectionValue?.form?.[index];
                     const prevDataErrors = input?.prevErrors?.form?.[index] || {};
                     const titleHeading = input.name === "chequeDetails" ? true : false;
+                    const updatedConfig = input?.config?.filter((config) => {
+                      if (!config?.dependentOn || !config?.dependentValue) {
+                        return true;
+                      } else {
+                        debugger;
+                        if (extractValue(item.data, config?.dependentOn) === config?.dependentValue) {
+                          return true;
+                        }
+                        return false;
+                      }
+                    });
                     return (
                       <CustomReviewCard
                         isScrutiny={isScrutiny}
-                        config={input.config}
+                        config={updatedConfig}
                         titleIndex={index + 1}
                         data={item?.data}
                         key={index}
