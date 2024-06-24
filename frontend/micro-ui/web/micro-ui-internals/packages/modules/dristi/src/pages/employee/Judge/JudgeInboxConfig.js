@@ -35,7 +35,7 @@ export const judgeInboxConfig = {
         },
         fields: [
           {
-            label: "Filing No",
+            label: "CS_FILING_NO",
             type: "text",
             isMandatory: false,
             disable: false,

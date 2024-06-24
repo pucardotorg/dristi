@@ -49,7 +49,7 @@ export const scrutinyInboxConfig = {
           },
         ],
       },
-      label: "CS_YOUR_CASES",
+      label: "CS_YOUR_CASE",
       children: {},
       show: true,
     },

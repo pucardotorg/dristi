@@ -493,19 +493,19 @@ function ViewCaseFile({ t }) {
             />
           )}
 
-          {actionModal === "caseSendBackSuccess" && (
+          {/* {actionModal === "caseSendBackSuccess" && (
             <SuccessModal
               header={"Vaibhav"}
               t={t}
               actionCancelLabel={"CS_COMMON_CLOSE"}
-              actionSaveLabel={"CS_NEXT_CASE"}
+              actionSaveLabel={"NEXT_CASE"}
               bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
               onCancel={handleCloseSucessModal}
               onSubmit={handleNextCase}
               type={"caseSendBackSuccess"}
               data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
             />
-          )}
+          )} */}
 
           {actionModal === "caseRegisterSuccess" && (
             <SuccessModal
@@ -591,8 +591,8 @@ function ViewCaseFile({ t }) {
           <SuccessModal
             header={"Vaibhav"}
             t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_NEXT_CASE"}
+            actionCancelLabel={"BACK_TO_HOME"}
+            actionSaveLabel={"NEXT_CASE"}
             bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
             onCancel={handleCloseSucessModal}
             onSubmit={handleNextCase}
