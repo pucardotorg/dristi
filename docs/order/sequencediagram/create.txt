@@ -2,7 +2,7 @@
 
 title Create Order
 
-UI->Order: Create Order
+UI->Order: Create Orderasd
 
 Order->Case: Validate caseId
 Case-->Order: return true/false
