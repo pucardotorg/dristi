@@ -262,9 +262,6 @@ function EFilingCases({ path }) {
       if (parent.children && parent.children.length > 0) {
         parent.children.forEach((child) => {
           keyValuePairs[child.key] = child.label;
-          if (child.children && child.children.length > 0) {
-            traverseChildren(child.children);
-          }
         });
       }
     });
