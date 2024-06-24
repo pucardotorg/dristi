@@ -100,8 +100,11 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
             workflowService.updateWorkflowStatus(evidenceRequest);
-            if (ACTIVE_STATUS.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
-                evidenceEnrichment.enrichEvidenceNumberAndIsActiveStatus(evidenceRequest);
+            if (PUBLISHED_STATE.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
+                evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+            }
+            if (ABATED_STATE.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
+                evidenceEnrichment.enrichIsActive(evidenceRequest);
             }
             producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
 

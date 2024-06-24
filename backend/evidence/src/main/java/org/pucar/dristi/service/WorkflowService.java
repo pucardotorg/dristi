@@ -39,8 +39,8 @@ public class WorkflowService {
             try {
                 ProcessInstance processInstance = getProcessInstanceForArtifact(evidenceRequest.getArtifact(), evidenceRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(evidenceRequest.getRequestInfo(), Collections.singletonList(processInstance));
-                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
-                evidenceRequest.getArtifact().setStatus(applicationStatus);
+                String state=callWorkFlow(workflowRequest).getState();
+                evidenceRequest.getArtifact().setStatus(state);
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {

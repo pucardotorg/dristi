@@ -25,13 +25,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.ABATED_STATE;
+import static org.pucar.dristi.config.ServiceConstants.PUBLISHED_STATE;
 
 public class EvidenceServiceTest {
 
     @Mock
     private EvidenceValidator validator;
     @Mock
-    private EvidenceEnrichment enrichmentUtil;
+    private EvidenceEnrichment evidenceEnrichment;
     @Mock
     private WorkflowService workflowService;
     @Mock
@@ -301,5 +303,53 @@ public class EvidenceServiceTest {
         // Verify behavior
         verify(validator).validateApplicationExistence(evidenceRequest);
         verifyNoInteractions(workflowService, producer);
+    }
+
+    @Test
+    public void testUpdateEvidenceWithPublishedState() throws Exception {
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        Artifact artifact=new Artifact();
+        artifact.setStatus(PUBLISHED_STATE);
+        evidenceRequest.setArtifact(artifact);
+        when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(artifact);
+
+        // Act
+        evidenceService.updateEvidence(evidenceRequest);
+
+        // Assert
+        verify(evidenceEnrichment).enrichEvidenceNumber(evidenceRequest);
+        verify(evidenceEnrichment, never()).enrichIsActive(evidenceRequest);
+    }
+
+    @Test
+    public void testUpdateEvidenceWithAbatedState() throws Exception {
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        Artifact artifact=new Artifact();
+        artifact.setStatus(ABATED_STATE);
+        evidenceRequest.setArtifact(artifact);
+        when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(artifact);
+
+        // Act
+        evidenceService.updateEvidence(evidenceRequest);
+
+        // Assert
+        verify(evidenceEnrichment, never()).enrichEvidenceNumber(evidenceRequest);
+        verify(evidenceEnrichment).enrichIsActive(evidenceRequest);
+    }
+
+    @Test
+    public void testUpdateEvidenceWithOtherState() throws Exception {
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        Artifact artifact=new Artifact();
+        artifact.setStatus("OTHER_STATE");
+        evidenceRequest.setArtifact(artifact);
+        when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(artifact);
+
+        // Act
+        evidenceService.updateEvidence(evidenceRequest);
+
+        // Assert
+        verify(evidenceEnrichment, never()).enrichEvidenceNumber(evidenceRequest);
+        verify(evidenceEnrichment, never()).enrichIsActive(evidenceRequest);
     }
 }

@@ -46,7 +46,7 @@ public class EvidenceEnrichment {
                     comment.setId(UUID.randomUUID());
                 }
 
-                evidenceRequest.getArtifact().setIsActive(false);
+                evidenceRequest.getArtifact().setIsActive(true);
                 evidenceRequest.getArtifact().setArtifactNumber(artifactRegistrationIdList.get(0));
 
                 if (evidenceRequest.getArtifact().getFile() != null) {
@@ -81,9 +81,9 @@ public class EvidenceEnrichment {
         }
     }
 
-    public void enrichEvidenceNumberAndIsActiveStatus(EvidenceRequest evidenceRequest) {
+    public void enrichEvidenceNumber(EvidenceRequest evidenceRequest) {
         try {
-            String idName = getIdgenByArtifactTypeAndSourceType(evidenceRequest.getArtifact().getArtifactType(),evidenceRequest.getArtifact().getSourceType());
+            String idName = getIdgenByArtifactTypeAndSourceType(evidenceRequest.getArtifact().getArtifactType(), evidenceRequest.getArtifact().getSourceType());
             List<String> evidenceNumberList = idgenUtil.getIdList(
                     evidenceRequest.getRequestInfo(),
                     evidenceRequest.getRequestInfo().getUserInfo().getTenantId(),
@@ -92,12 +92,20 @@ public class EvidenceEnrichment {
                     1
             );
             evidenceRequest.getArtifact().setEvidenceNumber(evidenceNumberList.get(0));
-            evidenceRequest.getArtifact().setIsActive(true);
+            evidenceRequest.getArtifact().setIsEvidence(true);
+        } catch (Exception e) {
+            log.error("Error enriching evidence number upon update: {}", e.getMessage());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during evidence number update process: " + e.getMessage());
         }
-        catch (Exception e) {
-            log.error("Error enriching evidence number and isActive status upon update: {}", e.getMessage());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during evidence number and isActive status update process: " + e.getMessage());
-        }
+    }
+        public void enrichIsActive(EvidenceRequest evidenceRequest) {
+            try {
+                evidenceRequest.getArtifact().setIsActive(false);
+            }
+            catch (Exception e) {
+                log.error("Error enriching isActive status upon update: {}", e.getMessage());
+                throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during isActive status update process: " + e.getMessage());
+            }
     }
 
 

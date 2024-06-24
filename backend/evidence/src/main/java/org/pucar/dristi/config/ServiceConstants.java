@@ -50,7 +50,8 @@ public class ServiceConstants {
 	public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
 	public static final String COMMENT_SEARCH_QUERY_EXCEPTION = "COMMENT_SEARCH_QUERY_EXCEPTION";
 	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
-	public static final String ACTIVE_STATUS = "ACTIVE";
+	public static final String PUBLISHED_STATE = "PUBLISHED";
+	public static final String ABATED_STATE = "ABATED";
 	public static final String ARTIFACT_ID_NAME = "artifact.artifact_number";
 
 

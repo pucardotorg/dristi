@@ -12,7 +12,7 @@ ServiceMaps:
           timeStampField: $.auditdetails.createdTime
           jsonPath: $.artifact
           customJsonMapping:
-            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "","isEvidence": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.artifactDetails.id
@@ -48,6 +48,8 @@ ServiceMaps:
                 outJsonPath: $.Data.artifactDetails.createdDate
               - inJsonPath: $.isActive
                 outJsonPath: $.Data.artifactDetails.isActive
+              - inJsonPath: $.isEvidence
+                outJsonPath: $.Data.artifactDetails.isEvidence
               - inJsonPath: $.status
                 outJsonPath: $.Data.artifactDetails.status
               - inJsonPath: $.file
@@ -84,7 +86,7 @@ ServiceMaps:
           timeStampField: $.auditdetails.createdTime
           jsonPath: $.artifact
           customJsonMapping:
-            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
+            indexMapping: {"Data":{ artifactDetails:{"id": "", "tenantId": "", "artifactNumber": "", "evidenceNumber": "", "externalRefNumber": "", "caseId": "", "application": "", "hearing": "", "order": "", "mediaType": "", "artifactType": "", "sourceType": "", "sourceID": "", "sourceName": "", "applicableTo": [], "createdDate": "", "isActive": "","isEvidence": "", "status": "", "file": {}, "description": "", "artifactDetails": {}, "comments": [], "additionalDetails": ""},"history":{},"auditDetails":{},"currentProcessInstance":{}}}
             fieldMapping:
               - inJsonPath: $.id
                 outJsonPath: $.Data.artifactDetails.id
@@ -120,6 +122,8 @@ ServiceMaps:
                 outJsonPath: $.Data.artifactDetails.createdDate
               - inJsonPath: $.isActive
                 outJsonPath: $.Data.artifactDetails.isActive
+              - inJsonPath: $.isEvidence
+                outJsonPath: $.Data.artifactDetails.isEvidence
               - inJsonPath: $.status
                 outJsonPath: $.Data.artifactDetails.status
               - inJsonPath: $.file

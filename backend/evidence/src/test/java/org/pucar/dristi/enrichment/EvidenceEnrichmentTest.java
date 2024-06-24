@@ -85,7 +85,7 @@ public class EvidenceEnrichmentTest {
         assertNotNull(artifact.getAuditdetails());
         assertNotNull(artifact.getId());
         assertNotNull(artifact.getArtifactNumber());
-        assertFalse(artifact.getIsActive()); // Assuming set to false by default
+        assertTrue(artifact.getIsActive()); // Assuming set to false by default
         // Add more assertions as needed for other properties
 
         // If file is not null, ensure its properties are set correctly
@@ -135,5 +135,100 @@ public class EvidenceEnrichmentTest {
         assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedTime() > 0;
         assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedBy().equals(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
     }
+    @Test
+    public void testEnrichEvidenceNumber() {
+        // Arrange
+        Artifact artifact = new Artifact();
+        artifact.setSourceType("COURT");
+        artifact.setArtifactType("DOCUMENTARY");
 
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setTenantId("tenantId");
+        requestInfo.setUserInfo(userInfo);
+
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        evidenceRequest.setArtifact(artifact);
+        evidenceRequest.setRequestInfo(requestInfo);
+
+        String idName = "C-[SEQ_DOC_COURT]"; // This should match your getIdgenByArtifactTypeAndSourceType logic
+        List<String> evidenceNumberList = Collections.singletonList("EV12345");
+        when(idgenUtil.getIdList(any(RequestInfo.class), anyString(), anyString(), isNull(), eq(1)))
+                .thenReturn(evidenceNumberList);
+
+        // Act
+        evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+
+        // Assert
+        assertEquals("EV12345", artifact.getEvidenceNumber());
+        assertTrue(artifact.getIsEvidence());
+        verify(idgenUtil).getIdList(any(RequestInfo.class), anyString(), anyString(), isNull(), eq(1));
+    }
+
+    @Test
+    public void testEnrichEvidenceNumberWithException() {
+        // Arrange
+        Artifact artifact = new Artifact();
+        artifact.setSourceType("COURT");
+        artifact.setArtifactType("DOCUMENTARY");
+
+        RequestInfo requestInfo = new RequestInfo();
+        User userInfo = new User();
+        userInfo.setTenantId("tenantId");
+        requestInfo.setUserInfo(userInfo);
+
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        evidenceRequest.setArtifact(artifact);
+        evidenceRequest.setRequestInfo(requestInfo);
+
+        when(idgenUtil.getIdList(any(), anyString(), anyString(), isNull(), eq(1)))
+                .thenThrow(new RuntimeException("ID generation error"));
+
+        // Act & Assert
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+        });
+
+        assertEquals("ENRICHMENT_EXCEPTION", thrown.getCode());
+        assertTrue(thrown.getMessage().contains("Error in enrichment service during evidence number update process"));
+    }
+
+    @Test
+    public void testEnrichIsActive() {
+        // Arrange
+        Artifact artifact = new Artifact();
+        artifact.setSourceType("COURT");
+        artifact.setArtifactType("DOCUMENTARY");
+
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        evidenceRequest.setArtifact(artifact);
+
+        // Act
+        evidenceEnrichment.enrichIsActive(evidenceRequest);
+
+        // Assert
+        assertFalse(artifact.getIsActive());
+    }
+
+    @Test
+    public void testEnrichIsActiveWithException() {
+        // Arrange
+        Artifact artifact = new Artifact();
+        artifact.setSourceType("COURT");
+        artifact.setArtifactType("DOCUMENTARY");
+
+        Artifact artifactSpy = spy(artifact);
+        doThrow(new RuntimeException("Update error")).when(artifactSpy).setIsActive(false);
+
+        EvidenceRequest evidenceRequest = new EvidenceRequest();
+        evidenceRequest.setArtifact(artifactSpy);
+
+        // Act & Assert
+        CustomException thrown = assertThrows(CustomException.class, () -> {
+            evidenceEnrichment.enrichIsActive(evidenceRequest);
+        });
+
+        assertEquals("ENRICHMENT_EXCEPTION", thrown.getCode());
+        assertTrue(thrown.getMessage().contains("Error in enrichment service during isActive status update process"));
+    }
 }
