@@ -274,7 +274,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       if (!config?.dependentOn || !config?.dependentValue) {
                         return true;
                       } else {
-                        debugger;
                         if (extractValue(item.data, config?.dependentOn) === config?.dependentValue) {
                           return true;
                         }

@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-components";
 
-function DeleteOrderModal({ setDeleteOrderIndex, deleteOrderIndex }) {
+function OrderDeleteModal({ setDeleteOrderIndex, deleteOrderIndex, handleDeleteOrder }) {
   const deleteWarningText = useMemo(() => {
     return (
       <div className="delete-warning-text">
@@ -46,4 +46,4 @@ function DeleteOrderModal({ setDeleteOrderIndex, deleteOrderIndex }) {
   );
 }
 
-export default DeleteOrderModal;
+export default OrderDeleteModal;

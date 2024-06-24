@@ -29,7 +29,6 @@ function EFilingPaymentResponse({ submitModalInfo = mockSubmitModalInfo }) {
   const history = useHistory();
   const { t } = useTranslation();
   const { state } = useLocation();
-  debugger;
   return (
     <div className="user-registration">
       <div className="e-filing-payment" style={{ maxHeight: "330px" }}>

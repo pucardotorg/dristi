@@ -1,3 +1,26 @@
+export const applicationTypeConfig = [
+  {
+    body: [
+      {
+        isMandatory: true,
+        key: "orderType",
+        type: "dropdown",
+        label: "ORDER_TYPE",
+        disable: false,
+        populators: {
+          name: "orderType",
+          optionsKey: "name",
+          error: "required ",
+          mdmsConfig: {
+            moduleName: "Order",
+            masterName: "OrderType",
+            localePrefix: "ORDER_TYPE",
+          },
+        },
+      },
+    ],
+  },
+];
 export const configs = [
   {
     body: [
@@ -168,23 +191,22 @@ export const configs = [
   },
 ];
 
-export const configData = {
-  "SECTION_202_CRPC": configsOrderSection202CRPC,
-  "DOCUMENT_SUBMISSION": configsOrderMandatorySubmissions,
-  "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE": configsOrderSubmissionExtension,
-  "TRANSFER_TO_ADR": configsOrderTranferToADR,
-  "NEXT_HEARING": configsScheduleHearingDate,
-  "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE": configsRescheduleHearingDate,
-  "VOLUNTARY_SUBMISSION_STATUS": configsVoluntarySubmissionStatus,
-  "CASE_TRANSFER": configsCaseTransfer,
-  "CASE_SETTLEMENT": configsCaseSettlement,
-  "SUMMONS": configsIssueSummons,
-  "BAIL": configsBail
-}
+export const configKeys = {
+  SECTION_202_CRPC: configsOrderSection202CRPC,
+  DOCUMENT_SUBMISSION: configsOrderMandatorySubmissions,
+  EXTENSION_OF_DOCUMENT_SUBMISSION_DATE: configsOrderSubmissionExtension,
+  TRANSFER_TO_ADR: configsOrderTranferToADR,
+  NEXT_HEARING: configsScheduleHearingDate,
+  ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE: configsRescheduleHearingDate,
+  VOLUNTARY_SUBMISSION_STATUS: configsVoluntarySubmissionStatus,
+  CASE_TRANSFER: configsCaseTransfer,
+  CASE_SETTLEMENT: configsCaseSettlement,
+  SUMMONS: configsIssueSummons,
+  BAIL: configsBail,
+};
 
 export const configsOrderSection202CRPC = [
   {
-    head: "SECTION_202_CRPC",
     body: [
       {
         inline: true,
@@ -336,13 +358,12 @@ export const configsOrderSection202CRPC = [
         type: "text",
         populators: { name: "judgeName", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsOrderMandatorySubmissions = [
   {
-    head: "DOCUMENT_SUBMISSION",
     body: [
       {
         inline: true,
@@ -521,13 +542,12 @@ export const configsOrderMandatorySubmissions = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsOrderSubmissionExtension = [
   {
-    head: "EXTENSION_OF_DOCUMENT_SUBMISSION_DATE",
     body: [
       {
         inline: true,
@@ -649,13 +669,12 @@ export const configsOrderSubmissionExtension = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsOrderTranferToADR = [
   {
-    head: "TRANSFER_TO_ADR",
     body: [
       {
         inline: true,
@@ -748,13 +767,12 @@ export const configsOrderTranferToADR = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsScheduleHearingDate = [
   {
-    head: "NEXT_HEARING",
     body: [
       {
         inline: true,
@@ -848,13 +866,12 @@ export const configsScheduleHearingDate = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsRescheduleHearingDate = [
   {
-    head: "ORDER_TYPE_RESCHEDULE_OF_HEARING_DATE",
     body: [
       {
         inline: true,
@@ -953,13 +970,12 @@ export const configsRescheduleHearingDate = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsVoluntarySubmissionStatus = [
   {
-    head: "VOLUNTARY_SUBMISSION_STATUS",
     body: [
       {
         inline: true,
@@ -1066,13 +1082,12 @@ export const configsVoluntarySubmissionStatus = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsCaseTransfer = [
   {
-    head: "CASE_TRANSFER",
     body: [
       {
         inline: true,
@@ -1187,13 +1202,12 @@ export const configsCaseTransfer = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsCaseSettlement = [
   {
-    head: "CASE_SETTLEMENT",
     body: [
       {
         inline: true,
@@ -1302,13 +1316,12 @@ export const configsCaseSettlement = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsIssueSummons = [
   {
-    head: "SUMMONS",
     body: [
       {
         inline: true,
@@ -1390,13 +1403,12 @@ export const configsIssueSummons = [
         type: "text",
         populators: { name: "judgeDesignation", hideInForm: true },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsBail = [
   {
-    head: "BAIL",
     body: [
       {
         inline: true,
@@ -1505,13 +1517,12 @@ export const configsBail = [
         type: "text",
         populators: { name: "otherConditions" },
       },
-    ]
-  }
+    ],
+  },
 ];
 
 export const configsCreateOrderSchedule = [
   {
-    head: "Order 1",
     defaultValues: {
       orderType: {
         id: 8,
@@ -1605,7 +1616,6 @@ export const configsCreateOrderSchedule = [
 
 export const configsCreateOrderWarrant = [
   {
-    head: "Order 1",
     defaultValues: {
       orderType: {
         id: 5,
@@ -1756,7 +1766,6 @@ export const configsCreateOrderWarrant = [
 
 export const configsCreateOrderSummon = [
   {
-    head: "Order 1",
     defaultValues: {
       orderType: {
         id: 4,
@@ -1828,7 +1837,6 @@ export const configsCreateOrderSummon = [
 
 export const configsCreateOrderReIssueSummon = [
   {
-    head: "Order 1",
     body: [
       {
         isMandatory: true,
