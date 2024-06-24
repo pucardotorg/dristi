@@ -241,9 +241,6 @@ components:
             description: application number the order is based on. Could be null if not based on any application
         hearingNumber:
           type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
           type: string

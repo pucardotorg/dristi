@@ -51,7 +51,7 @@ public class Order {
 
     @JsonProperty("hearingNumber")
     @Valid
-    private UUID hearingNumber = null;
+    private String hearingNumber = null;
 
     @JsonProperty("orderNumber")
     @Size(min = 24, max = 256)
