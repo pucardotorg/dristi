@@ -43,7 +43,7 @@ function EsignAdharModal({ t, setOpenAadharModal, name, onSelect, config, formDa
       setValue(["aadharsignature"], name);
       setOpenAadharModal(false);
     }
-    toast.success("CS_E_SIGN_VERIFIED");
+    toast.success(t("CS_E_SIGN_VERIFIED"));
   };
 
   const onCancel = () => {
