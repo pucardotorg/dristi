@@ -55,6 +55,27 @@ public class OrderUtilTest {
     }
 
     @Test
+    void testFetchOrderDetails_Returns_false() throws Exception {
+        Map<String, Object> responseMap = new HashMap<>();
+        Map<String, Object> orderDetails = new HashMap<>();
+        orderDetails.put("exists", false);
+        responseMap.put("order", Collections.singletonList(orderDetails));
+
+        OrderExistsResponse orderExistsResponse = new OrderExistsResponse();
+
+        when(restTemplate.postForObject(anyString(), any(OrderExistsRequest.class), eq(Map.class))).thenReturn(responseMap);
+        when(mapper.convertValue(responseMap, OrderExistsResponse.class)).thenReturn(orderExistsResponse);
+
+        Boolean exists = orderUtil.fetchOrderDetails(requestInfo, orderId);
+
+        assertFalse(exists);
+
+        verify(configs).getOrderHost();
+        verify(configs).getOrderPath();
+        verify(restTemplate).postForObject(anyString(), any(OrderExistsRequest.class), eq(Map.class));
+        verify(mapper).convertValue(responseMap, OrderExistsResponse.class);
+    }
+    @Test
     void testFetchOrderDetailsSuccess() throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         Map<String, Object> orderDetails = new HashMap<>();
