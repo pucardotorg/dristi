@@ -8,7 +8,7 @@ on:
       - develop
   workflow_dispatch:
 jobs: 
-    pull_request_check: 
+    docker_image-build: 
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
