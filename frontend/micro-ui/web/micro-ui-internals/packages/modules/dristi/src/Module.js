@@ -63,8 +63,6 @@ export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   }
   if (path?.includes(`/${window?.contextPath}/citizen`)) {
     history.push(`/${window?.contextPath}/employee`);
-  } else {
-    history.push(`/${window?.contextPath}/citizen`);
   }
   return (
     <ToastProvider>
