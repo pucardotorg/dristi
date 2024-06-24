@@ -41,7 +41,7 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .tenantId(rs.getString("tenantid"))
                             .orderNumber(rs.getString("ordernumber"))
                             .orderNumber(rs.getString("linkedordernumber"))
-                            .hearingNumber(UUID.fromString(rs.getString("hearingnumber")))
+                            .hearingNumber(rs.getString("hearingnumber"))
                             .cnrNumber(rs.getString("cnrnumber"))
                             .orderCategory(rs.getString("ordercategory"))
                             .isActive(rs.getBoolean("isactive"))
