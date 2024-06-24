@@ -47,6 +47,7 @@ const CustomReviewCardRow = ({
   handleClickImage,
   prevDataError,
   isPrevScrutiny,
+  setShowImageModal,
 }) => {
   const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -101,7 +102,7 @@ const CustomReviewCardRow = ({
         return (
           <div className={`title-main ${isScrutiny && titleError && "error"}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
-              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
+              <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("CS_NOT_AVAILABLE")}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
               {showFlagIcon && (
@@ -132,8 +133,8 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(textValue) && textValue.map((text) => <div> {text || "NA"} </div>)}
-                {(!Array.isArray(textValue) && textValue) || "NA"}
+                {Array.isArray(textValue) && textValue.map((text) => <div> {text || t("CS_NOT_AVAILABLE")} </div>)}
+                {(!Array.isArray(textValue) && textValue) || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -219,8 +220,8 @@ const CustomReviewCardRow = ({
             <div className="phone-number">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
-                {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
+                {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}` || t("CS_NOT_AVAILABLE")} </div>)}
+                {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -276,6 +277,18 @@ const CustomReviewCardRow = ({
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
                                   handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
+                                  if (!isScrutiny)
+                                    setShowImageModal({
+                                      openModal: true,
+                                      imageInfo: {
+                                        configKey,
+                                        name,
+                                        index: dataIndex,
+                                        fieldName: value[fileIndex],
+                                        data,
+                                        inputlist: [value[fileIndex]],
+                                      },
+                                    });
                                 }}
                               >
                                 <DocViewerWrapper
@@ -297,6 +310,18 @@ const CustomReviewCardRow = ({
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
                                     handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
+                                    if (!isScrutiny)
+                                      setShowImageModal({
+                                        openModal: true,
+                                        imageInfo: {
+                                          configKey,
+                                          name,
+                                          index: dataIndex,
+                                          fieldName: value[fileIndex],
+                                          data,
+                                          inputlist: [value[fileIndex]],
+                                        },
+                                      });
                                   }}
                                 >
                                   <DocViewerWrapper
@@ -424,8 +449,8 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || "NA"} </div>)}
-                {(!Array.isArray(defaulValue) && defaulValue) || "NA"}
+                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || t("CS_NOT_AVAILABLE")} </div>)}
+                {(!Array.isArray(defaulValue) && defaulValue) || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -459,6 +484,7 @@ const CustomReviewCardRow = ({
     label,
     name,
     prevDataError,
+    setShowImageModal,
     t,
     tenantId,
     titleHeading,

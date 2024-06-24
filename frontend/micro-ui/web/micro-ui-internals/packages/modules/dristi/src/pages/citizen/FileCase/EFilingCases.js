@@ -139,6 +139,7 @@ function EFilingCases({ path }) {
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
+  const [showReviewCorrectionModal, setShowReviewCorrectionModal] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
 
@@ -188,7 +189,7 @@ function EFilingCases({ path }) {
   }, [fieldsRemaining]);
 
   const showMandatoryFieldsRemainingModal = useMemo(() => {
-    if (selected === "reviewCaseFile" || selected === "addSignature") {
+    if (selected === "reviewCaseFile") {
       if (mandatoryFieldsLeftTotalCount > 0) {
         setShowConfirmMandatoryModal(true);
         return true;
@@ -198,7 +199,7 @@ function EFilingCases({ path }) {
   }, [selected, mandatoryFieldsLeftTotalCount]);
 
   const showOptionalFieldsRemainingModal = useMemo(() => {
-    if (selected === "reviewCaseFile" || selected === "addSignature") {
+    if (selected === "reviewCaseFile") {
       if (checkAndGetOptionalFieldLeftPages.length !== 0) {
         setShowConfirmOptionalModal(true);
         return true;
@@ -398,6 +399,10 @@ function EFilingCases({ path }) {
       caseDetails?.caseDetails?.[selected]?.formdata ||
       (selected === "witnessDetails" ? [{}] : [{ isenabled: true, data: {}, displayindex: 0 }]);
     setFormdata(data);
+
+    if (selected === "addSignature" && !caseDetails?.additionalDetails?.["reviewCaseFile"]?.isCompleted) {
+      setShowReviewCorrectionModal(true);
+    }
   }, [selected, caseDetails]);
 
   const closeToast = () => {
@@ -513,7 +518,12 @@ function EFilingCases({ path }) {
                     inputs: body?.populators?.inputs?.map((input) => {
                       return {
                         ...input,
-                        data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                        data:
+                          input?.key === "advocateDetails"
+                            ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
+                              ? caseDetails?.additionalDetails?.[input?.key]?.formdata
+                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                            : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
                       };
                     }),
                   },
@@ -526,29 +536,40 @@ function EFilingCases({ path }) {
           return formConfig.map((config) => {
             return {
               ...config,
-              body: config?.body?.map((body) => {
-                return {
-                  ...body,
-                  populators: {
-                    inputs: body?.populators?.inputs?.map((input) => {
-                      return {
-                        ...input,
-                        data:
-                          input.key === "advocateDetails"
-                            ? [
-                                {
-                                  name:
-                                    caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
-                                },
-                              ] || [{ name: "" }]
-                            : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
-                                name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
-                              })),
-                      };
-                    }),
-                  },
-                };
-              }),
+              body: config?.body
+                ?.filter((data) => {
+                  if (
+                    data.dependentOn &&
+                    !extractValue(caseDetails?.additionalDetails?.[data.dependentOn]?.formdata?.[0]?.data, data?.dependentKey)
+                  ) {
+                    return false;
+                  }
+                  return true;
+                })
+                .map((body) => {
+                  return {
+                    ...body,
+                    populators: {
+                      inputs: body?.populators?.inputs?.map((input) => {
+                        return {
+                          ...input,
+                          data:
+                            input.key === "advocateDetails"
+                              ? [
+                                  {
+                                    name:
+                                      caseDetails?.additionalDetails?.[input.key]?.formdata?.[0]?.data?.advocateBarRegNumberWithName?.[0]
+                                        ?.advocateName,
+                                  },
+                                ] || []
+                              : caseDetails?.additionalDetails?.[input.key]?.formdata?.map((data) => ({
+                                  name: `${data?.data?.firstName || ""} ${data?.data?.middleName || ""} ${data?.data?.lastName || ""}`,
+                                })),
+                        };
+                      }),
+                    },
+                  };
+                }),
             };
           });
         }
@@ -615,6 +636,18 @@ function EFilingCases({ path }) {
                     ](body?.populators?.validation?.pattern?.patternType),
                     message: body?.populators?.validation?.pattern?.message,
                   };
+                }
+
+                if (
+                  body?.populators?.validation &&
+                  body?.populators?.validation?.max &&
+                  body?.populators?.validation?.max?.moduleName &&
+                  body?.populators?.validation?.max?.masterName &&
+                  body?.populators?.validation?.max?.patternType
+                ) {
+                  validationUpdate.max = Digit?.Customizations?.[body?.populators?.validation?.max?.masterName]?.[
+                    body?.populators?.validation?.max?.moduleName
+                  ](body?.populators?.validation?.max?.patternType);
                 }
 
                 return {
@@ -937,7 +970,7 @@ function EFilingCases({ path }) {
   //   setConfirmDeleteModal(true);
   //   setFormdata(newArray);
   // };
-
+  console.log(modifiedFormConfig);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
       setValue("advocateBarRegNumberWithName", [
@@ -1099,6 +1132,7 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
+  console.log("form", formdata);
   const onSubmit = async (action) => {
     if (isDisableAllFieldsMode) {
       history.push(homepagePath);
@@ -1127,7 +1161,18 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => complainantValidation({ formData: data?.data, t, caseDetails, selected, setShowErrorToast, toast }))
+        .some((data) =>
+          complainantValidation({
+            formData: data?.data,
+            t,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+            clearFormDataErrors: clearFormDataErrors.current,
+          })
+        )
     ) {
       return;
     }
@@ -1585,6 +1630,25 @@ function EFilingCases({ path }) {
               actionSaveLabel={t("FILL_NOW")}
               children={optionalFieldsRemainingText(optionalFieldsLeftTotalCount)}
               actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
+            ></Modal>
+          )}
+          {showReviewCorrectionModal && (
+            <Modal
+              headerBarMain={<Heading label={t("REVIEW_CASE_HEADER")} />}
+              headerBarEnd={
+                <CloseBtn
+                  onClick={() => {
+                    history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+                    setShowReviewCorrectionModal(false);
+                  }}
+                />
+              }
+              actionSaveLabel={t("REVIEW_CASE")}
+              children={<div style={{ margin: "16px 0px" }}>{t("PLEASE_REVIEW_CASE_TEXT")}</div>}
+              actionSaveOnSubmit={() => {
+                history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+                setShowReviewCorrectionModal(false);
+              }}
             ></Modal>
           )}
           {pageConfig?.addFormText && (

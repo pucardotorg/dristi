@@ -75,7 +75,7 @@ function EsignAdharModal({ t, setOpenAadharModal, name, onSelect, config, formDa
   }, [page, errorMessage]);
 
   const isDisabled = useMemo(() => {
-    return (page === 0 && aadharNumber < minLength) || errorMessage || (page === 1 && otp.length < minLength) ? true : false;
+    return (page === 0 && aadharNumber.length < minLength) || errorMessage || (page === 1 && otp.length < minLength) ? true : false;
   }, [aadharNumber, errorMessage, minLength, otp.length, page]);
 
   return (

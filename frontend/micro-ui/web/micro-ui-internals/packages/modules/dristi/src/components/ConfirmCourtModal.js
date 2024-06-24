@@ -1,5 +1,6 @@
 import { CloseSvg, FormComposerV2, Modal } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import { isEqual } from "lodash";
+import React, { useState } from "react";
 
 const CloseBtn = (props) => {
   return (
@@ -14,10 +15,10 @@ const Heading = (props) => {
 };
 
 function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
-
   const onCancel = () => {
     setOpenConfirmCourtModal(false);
   };
+  const [courtFormData, setCourtFormData] = useState({});
 
   const config = [
     {
@@ -113,6 +114,22 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
     },
   ];
 
+  const onFormValueChange = (setValue, formData, formState) => {
+    if (formData.court && !isEqual(courtFormData, formData)) {
+      setCourtFormData(formData);
+      setValue("state", {
+        code: "Kerala",
+        name: "Kerala",
+        isEnabled: true,
+      });
+      setValue("district", {
+        code: "Kollam",
+        name: "Kollam",
+        isEnabled: true,
+      });
+    }
+  };
+
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={onCancel} />}
@@ -125,8 +142,20 @@ function ConfirmCourtModal({ t, setOpenConfirmCourtModal, onSubmitCase }) {
         label={t("CS_COMMON_CONFIRM")}
         config={config}
         onSubmit={onSubmitCase}
-        defaultValues={{}}
+        defaultValues={{
+          state: {
+            code: "Kerala",
+            name: "Kerala",
+            isEnabled: true,
+          },
+          district: {
+            code: "Kollam",
+            name: "Kollam",
+            isEnabled: true,
+          },
+        }}
         cardStyle={{ minWidth: "100%" }}
+        onFormValueChange={onFormValueChange}
         submitInForm={true}
       ></FormComposerV2>
     </Modal>

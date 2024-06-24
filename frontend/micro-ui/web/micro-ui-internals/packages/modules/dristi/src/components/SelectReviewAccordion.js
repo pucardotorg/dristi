@@ -13,6 +13,8 @@ import {
 import CustomPopUp from "./CustomPopUp";
 import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
+import useSearchCaseService from "../hooks/dristi/useSearchCaseService";
+import { CaseWorkflowState } from "../Utils/caseWorkflow";
 
 const extractValue = (data, key) => {
   if (!key.includes(".")) {
@@ -36,12 +38,41 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
   const isPrevScrutiny = config?.isPrevScrutiny || false;
   const [isOpen, setOpen] = useState(true);
-  const [isImageModal, setIsImageModal] = useState(false);
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
   const caseId = urlParams.get("caseId");
   const [scrutinyError, setScrutinyError] = useState("");
+  const [showImageModal, setShowImageModal] = useState({ openModal: false, imageInfo: {} });
   const popupAnchor = useRef();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
+  const { data: caseData } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    caseId
+  );
+
+  const caseDetails = useMemo(
+    () => ({
+      ...caseData?.criteria?.[0]?.responseList?.[0],
+    }),
+    [caseData]
+  );
+
+  const state = useMemo(() => caseDetails?.status, [caseDetails]);
+
+  const isCaseReAssigned = useMemo(() => state === CaseWorkflowState.CASE_RE_ASSIGNED, [state]);
+  const isDraftInProgress = state === CaseWorkflowState.DRAFT_IN_PROGRESS;
+
   const popupInfo = useMemo(() => {
     return formData?.scrutinyMessage?.popupInfo;
   }, [formData]);
@@ -237,7 +268,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                     {input?.icon && <Icon icon={input?.icon} />}
                     <span>{t(input?.label)}</span>
                   </div>
-                  {!isScrutiny && !isJudge && (
+                  {!isScrutiny && !isJudge && (isCaseReAssigned || isDraftInProgress) && (
                     <div
                       className="header-right"
                       onClick={(e) => {
@@ -274,7 +305,6 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       if (!config?.dependentOn || !config?.dependentValue) {
                         return true;
                       } else {
-                        debugger;
                         if (extractValue(item.data, config?.dependentOn) === config?.dependentValue) {
                           return true;
                         }
@@ -292,6 +322,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         t={t}
                         handleOpenPopup={handleOpenPopup}
                         handleClickImage={handleClickImage}
+                        setShowImageModal={setShowImageModal}
                         formData={formData}
                         input={input}
                         dataErrors={dataErrors}
@@ -380,14 +411,17 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           </Fragment>
         </CustomPopUp>
       )}
-      {imagePopupInfo && (
+      {(imagePopupInfo || showImageModal.openModal) && (
         <ImageModal
-          imageInfo={imagePopupInfo}
+          imageInfo={showImageModal.openModal ? showImageModal.imageInfo : imagePopupInfo}
           t={t}
           anchorRef={popupAnchor}
-          handleOpenPopup={handleOpenPopup}
+          showFlag={showImageModal.openModal ? false : true}
+          handleOpenPopup={!showImageModal.openModal && handleOpenPopup}
           handleCloseModal={() => {
-            handleCloseImageModal();
+            if (showImageModal.openModal) {
+              setShowImageModal({ showImageModal: false, imageInfo: {} });
+            } else handleCloseImageModal();
           }}
         />
       )}
