@@ -1,6 +1,6 @@
 import { advocateDetailsConfig } from "./advocateDetailsConfig";
 import { chequeDetailsConfig } from "./chequedetailsConfig";
-import { complaintDetailsConfig } from "./complaindetailsConfig";
+import { complaintDetailsConfig, complaintdetailconfig } from "./complaindetailsConfig";
 import { debtliabilityconfig } from "./debtLiabilityConfig";
 import { delayApplicationConfig } from "./delayApplicationConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";

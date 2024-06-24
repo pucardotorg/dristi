@@ -1,6 +1,7 @@
 export const modalConfig = [
   {
     headModal: "CS_SEND_CASE_BACK",
+    wordCount: "50",
     body: [
       {
         type: "component",

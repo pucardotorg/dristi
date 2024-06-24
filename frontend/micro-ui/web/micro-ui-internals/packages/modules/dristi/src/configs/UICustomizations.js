@@ -474,4 +474,24 @@ export const UICustomizations = {
       };
     },
   },
+  patternValidation: (key) => {
+    switch (key) {
+      case "contact":
+        return /^[6-9]\d{9}$/;
+      case "email":
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      case "userName":
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i;
+      default:
+        return;
+    }
+  },
+  maxDateValidation: (key) => {
+    switch (key) {
+      case "date":
+        return new Date().toISOString().split("T")[0];
+      default:
+        return;
+    }
+  },
 };

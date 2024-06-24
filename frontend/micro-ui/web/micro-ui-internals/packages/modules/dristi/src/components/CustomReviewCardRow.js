@@ -45,9 +45,12 @@ const CustomReviewCardRow = ({
   config,
   titleHeading,
   handleClickImage,
+  prevDataError,
+  isPrevScrutiny,
 }) => {
   const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+
   const extractValue = (data, key) => {
     if (!key.includes(".")) {
       return data[key];
@@ -73,9 +76,22 @@ const CustomReviewCardRow = ({
     [handleClickImage, isScrutiny]
   );
   const renderCard = useMemo(() => {
+    let bgclassname = "";
+    let showFlagIcon = isScrutiny ? true : false;
+    if (isPrevScrutiny) {
+      showFlagIcon = prevDataError ? true : false;
+    }
+    if (isScrutiny) {
+      if (typeof prevDataError === "string" && (dataError || prevDataError)) {
+        bgclassname = dataError === prevDataError ? "preverror" : "error";
+      }
+    }
     switch (type) {
       case "title":
         const titleError = dataError?.title?.FSOError;
+        if (isPrevScrutiny && !prevDataError?.title?.FSOError) {
+          showFlagIcon = false;
+        }
         let title = "";
         if (Array.isArray(value)) {
           title = value.map((key) => extractValue(data, key)).join(" ");
@@ -88,7 +104,7 @@ const CustomReviewCardRow = ({
               <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
 
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -112,14 +128,14 @@ const CustomReviewCardRow = ({
       case "text":
         const textValue = extractValue(data, value);
         return (
-          <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`text-main ${bgclassname}`}>
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(textValue) && textValue.map((text) => <div> {text} </div>)}
-                {!Array.isArray(textValue) && textValue}
+                {Array.isArray(textValue) && textValue.map((text) => <div> {text || "NA"} </div>)}
+                {(!Array.isArray(textValue) && textValue) || "NA"}
               </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -145,7 +161,7 @@ const CustomReviewCardRow = ({
           return null;
         }
         return (
-          <div className={`text-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`text-main`}>
             <div className="value info-box">
               <InfoCard
                 variant={"default"}
@@ -172,11 +188,11 @@ const CustomReviewCardRow = ({
 
       case "amount":
         return (
-          <div className={`amount-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`amount-main ${bgclassname}`}>
             <div className="amount">
               <div className="label">{t(label)}</div>
               <div className="value"> {`₹${extractValue(data, value)}`} </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -199,14 +215,14 @@ const CustomReviewCardRow = ({
       case "phonenumber":
         const numbers = extractValue(data, value);
         return (
-          <div className={`phone-number-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`phone-number-main ${bgclassname}`}>
             <div className="phone-number">
               <div className="label">{t(label)}</div>
               <div className="value">
                 {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}`} </div>)}
                 {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : ""}
               </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -349,21 +365,25 @@ const CustomReviewCardRow = ({
         if (Array.isArray(addressDetails)) {
           address = addressDetails.map(({ addressDetails }) => {
             return {
-              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              address: `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                addressDetails?.state || ""
+              } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             };
           });
         } else {
           address = [
             {
-              address: `${addressDetails?.locality}, ${addressDetails?.city}, ${addressDetails?.district}, ${addressDetails?.state} - ${addressDetails?.pincode}`,
+              address: `${addressDetails?.locality || ""}, ${addressDetails?.city || ""}, ${addressDetails?.district || ""}, ${
+                addressDetails?.state || ""
+              } - ${addressDetails?.pincode || ""}`,
               coordinates: addressDetails?.coordinates,
             },
           ];
         }
 
         return (
-          <div className={`address-main ${isScrutiny && dataError && "error"}`}>
+          <div className={`address-main ${bgclassname}`}>
             <div className="address">
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`}>
@@ -377,7 +397,7 @@ const CustomReviewCardRow = ({
                 })}
               </div>
 
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -404,10 +424,10 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text} </div>)}
-                {!Array.isArray(defaulValue) && defaulValue}
+                {Array.isArray(defaulValue) && defaulValue.map((text) => <div> {text || "NA"} </div>)}
+                {(!Array.isArray(defaulValue) && defaulValue) || "NA"}
               </div>
-              {isScrutiny && (
+              {showFlagIcon && (
                 <div
                   className="flag"
                   onClick={(e) => {
@@ -434,9 +454,11 @@ const CustomReviewCardRow = ({
     dataIndex,
     handleImageClick,
     handleOpenPopup,
+    isPrevScrutiny,
     isScrutiny,
     label,
     name,
+    prevDataError,
     t,
     tenantId,
     titleHeading,
