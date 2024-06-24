@@ -3,6 +3,7 @@ import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-compon
 import { useHistory } from "react-router-dom";
 import { judgeInboxConfig } from "./JudgeInboxConfig";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
 const sectionsParentStyle = {
   height: "50%",
   display: "flex",
@@ -13,6 +14,7 @@ const sectionsParentStyle = {
 function JudgeScreen({ path }) {
   const { t } = useTranslation();
   const history = useHistory();
+  const location = useLocation();
 
   return (
     <React.Fragment>
@@ -27,9 +29,13 @@ function JudgeScreen({ path }) {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  const searchParams = new URLSearchParams();
-                  searchParams.set("caseId", props.original.id);
-                  history.push(`${path}/admission?${searchParams.toString()}`);
+                  if (props?.original?.status === "CASE_ADMITTED") {
+                    history.push(`${location.pathname}/orders/orders-home?caseId=${props.original.filingNumber}&filingNumber=${"kjfkdkfjslj"}`);
+                  } else {
+                    const searchParams = new URLSearchParams();
+                    searchParams.set("caseId", props.original.id);
+                    history.push(`${path}/admission?${searchParams.toString()}`);
+                  }
                 },
               },
             }}
