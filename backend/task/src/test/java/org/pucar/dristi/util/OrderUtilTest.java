@@ -58,7 +58,6 @@ public class OrderUtilTest {
     void testFetchOrderDetails_Returns_false() throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         Map<String, Object> orderDetails = new HashMap<>();
-        orderDetails.put("exists", true);
         responseMap.put("order", Collections.singletonList(orderDetails));
 
         OrderExistsResponse orderExistsResponse = new OrderExistsResponse();
