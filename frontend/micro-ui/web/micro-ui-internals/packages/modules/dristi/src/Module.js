@@ -38,6 +38,9 @@ import Login from "./pages/citizen/Login";
 import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
 import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
+import Modal from "./components/Modal";
+import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
+import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -96,6 +99,9 @@ const componentsToRegister = {
   SelectEmptyComponent,
   ScrutinyInfo,
   AdvocateNameDetails,
+  MODAL: Modal,
+  CUSTOMCASEINFODIV: CustomCaseInfoDiv,
+  DOCVIEWERWRAPPER: DocViewerWrapper,
 };
 
 const overrideHooks = () => {

@@ -42,12 +42,12 @@ const copyToClipboard = (text) => {
   navigator.clipboard.writeText(text);
 };
 
-const CustomCaseInfoDiv = ({ t, data, style, ...props }) => {
+const CustomCaseInfoDiv = ({ t, data, column = 3, children, style, ...props }) => {
   // Function to partition the data into rows of three items each
   const partitionData = (data) => {
     const result = [];
-    for (let i = 0; i < data.length; i += 3) {
-      result.push(data.slice(i, i + 3));
+    for (let i = 0; i < data.length; i += column) {
+      result.push(data.slice(i, i + column));
     }
     return result;
   };
@@ -59,10 +59,7 @@ const CustomCaseInfoDiv = ({ t, data, style, ...props }) => {
           {partitionData(data).map((row, rowIndex) => (
             <tr key={rowIndex}>
               {row.map(({ key, value }, cellIndex) => (
-                <td
-                  key={cellIndex}
-                  className={props?.tableDataClassName}
-                >
+                <td key={cellIndex} className={props?.tableDataClassName} style={{ width: `${100 / column}%` }}>
                   <h2 className="case-info-title">{t(key)}</h2>
                   <div className={"case-info-value"}>
                     <span className={props?.tableValueClassName}>{value}</span>{" "}
@@ -79,6 +76,7 @@ const CustomCaseInfoDiv = ({ t, data, style, ...props }) => {
           ))}
         </tbody>
       </table>
+      {children}
     </div>
   );
 };

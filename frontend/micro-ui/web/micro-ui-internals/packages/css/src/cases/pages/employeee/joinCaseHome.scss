@@ -1,0 +1,107 @@
+.enter-validation-code,
+.view-document-vak,
+.general-details-vek,
+.select-user,
+.case-number-input {
+  margin: 24px 24px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  .case-label-field-pair {
+    .text-input {
+      input {
+        margin-bottom: 0px;
+      }
+    }
+    .radio-wrap {
+      margin: 0px;
+      padding-top: 4px;
+      display: flex;
+      gap: 24px;
+    }
+    .employee-select-wrap {
+      margin-bottom: 0px;
+    }
+  }
+  .horizontal-line {
+    border-bottom: 1px #0000001a solid;
+    width: 100%;
+  }
+  h3.sure-text {
+    margin: 0px;
+    font-family: Roboto;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 18.75px;
+    text-align: left;
+    color: #0b0c0c;
+  }
+}
+
+.case-input-label {
+  margin: 0px;
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 18.75px;
+  text-align: left;
+  margin-bottom: 8px;
+}
+
+.popup-module.join-a-case-modal {
+  width: 50%;
+}
+
+.complainants-respondents {
+  display: flex;
+  padding-bottom: 24px;
+}
+
+.general-details-vek,
+.select-user {
+  gap: 24px !important;
+}
+
+.general-details-vek {
+  .primary-advocate-details {
+    .contact-text {
+      margin: 0px;
+      margin-bottom: 8px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      text-align: left;
+      color: #3d3c3c;
+    }
+  }
+}
+
+.view-document-vak {
+  height: 422px;
+  overflow-y: auto;
+  margin-right: 0px;
+  padding-bottom: 12px;
+  padding-right: 16px;
+  .docviewer-wrapper {
+    margin-top: 0px !important;
+    .employeeCard {
+      padding: 0px !important;
+      margin-bottom: 0px !important;
+      box-shadow: none;
+      border: 1px #bbbbbd solid;
+      border-radius: 4px;
+      #pdf-page-info {
+        display: none;
+      }
+    }
+  }
+}
+
+.view-document-vak::-webkit-scrollbar {
+  width: 8px;
+}
+.view-document-vak::-webkit-scrollbar-thumb {
+  background-color: #e5e5e5;
+  border-radius: 8px;
+}
