@@ -63,7 +63,7 @@ public class EvidenceService {
     }
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
         try {
-            // Fetch applications from database according to the given search criteria
+                // Fetch applications from database according to the given search criteria
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
 
             // If no applications are found matching the given criteria, return an empty list
