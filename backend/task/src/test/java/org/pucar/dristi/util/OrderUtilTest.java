@@ -62,8 +62,6 @@ public class OrderUtilTest {
         responseMap.put("order", Collections.singletonList(orderDetails));
 
         OrderExistsResponse orderExistsResponse = new OrderExistsResponse();
-        OrderExists orderExists = new OrderExists();
-        orderExists.setExists(true);
 
         when(restTemplate.postForObject(anyString(), any(OrderExistsRequest.class), eq(Map.class))).thenReturn(responseMap);
         when(mapper.convertValue(responseMap, OrderExistsResponse.class)).thenReturn(orderExistsResponse);
