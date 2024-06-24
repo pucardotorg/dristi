@@ -40,10 +40,12 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .id(UUID.fromString(rs.getString("id")))
                             .tenantId(rs.getString("tenantid"))
                             .orderNumber(rs.getString("ordernumber"))
-                            .hearingNumber(UUID.fromString(rs.getString("hearingnumber")))
+                            .orderNumber(rs.getString("linkedordernumber"))
+                            .hearingNumber(rs.getString("hearingnumber"))
                             .cnrNumber(rs.getString("cnrnumber"))
                             .orderCategory(rs.getString("ordercategory"))
                             .isActive(rs.getBoolean("isactive"))
+                            .orderType(rs.getString("ordertype"))
                             .comments(rs.getString("comments"))
                             .filingNumber(rs.getString("filingnumber"))
                             .status(rs.getString("status"))
@@ -58,13 +60,9 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                 if(pgObject2!=null)
                     order.setAdditionalDetails(objectMapper.readTree(pgObject2.getValue()));
 
-                PGobject pgObject3 = (PGobject) rs.getObject("ordertype");
+                PGobject pgObject3 = (PGobject) rs.getObject("issuedby");
                 if(pgObject3!=null)
-                    order.setOrderType(objectMapper.readValue(pgObject3.getValue(), List.class));
-
-                PGobject pgObject4 = (PGobject) rs.getObject("issuedby");
-                if(pgObject4!=null)
-                    order.setIssuedBy(objectMapper.readTree(pgObject4.getValue()));
+                    order.setIssuedBy(objectMapper.readTree(pgObject3.getValue()));
 
                 orderMap.put(uuid, order);
             }

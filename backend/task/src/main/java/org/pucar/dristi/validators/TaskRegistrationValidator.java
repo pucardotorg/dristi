@@ -5,7 +5,6 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.service.TaskService;
-import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
@@ -35,9 +34,6 @@ public class TaskRegistrationValidator {
     private Configuration config;
 
     @Autowired
-    private CaseUtil caseUtil;
-
-    @Autowired
     private OrderUtil orderUtil;
 
 
@@ -60,12 +56,8 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(taskRequest.getTask().getCreatedDate())) {
             throw new CustomException(CREATE_TASK_ERR, "CreatedDate mandatory for creating task");
         }
-        // To be uncommented later       
-//        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
-//            throw new CustomException(CREATE_TASK_ERR, "Invalid order ID");
-//        }
-        if (task.getValidate() && !caseUtil.fetchCaseDetails(taskRequest.getRequestInfo(),task.getCnrNumber(),task.getFilingNumber())) {
-            throw new CustomException(CREATE_TASK_ERR, "Invalid case details");
+        if (!orderUtil.fetchOrderDetails(taskRequest.getRequestInfo(),task.getOrderId())) {
+            throw new CustomException(CREATE_TASK_ERR, "Invalid order ID");
         }
     }
 
@@ -76,7 +68,7 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(requestInfo.getUserInfo())) {
             throw new CustomException(UPDATE_TASK_ERR, "user info is mandatory for creating task");
         }
-        List<Task> existingApplications = repository.getApplications(task.getId().toString(), task.getTenantId(), task.getStatus(),task.getOrderId(),task.getCnrNumber());
+        List<Task> existingApplications = repository.getApplications(task.getId().toString(), task.getTenantId(), task.getStatus(),task.getOrderId(),task.getCnrNumber(),task.getTaskNumber());
         return !existingApplications.isEmpty();
     }
 

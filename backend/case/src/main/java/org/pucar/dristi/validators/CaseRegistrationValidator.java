@@ -90,7 +90,7 @@ public class CaseRegistrationValidator {
         }
 
         List<CaseCriteria> existingApplications = repository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build()));
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build()));
         if (existingApplications.isEmpty())
             return false;
         Map<String, Map<String, JSONArray>> mdmsData = mdmsUtil.fetchMdmsData(requestInfo, courtCase.getTenantId(), config.getCaseBusinessServiceName(), createMasterDetails());

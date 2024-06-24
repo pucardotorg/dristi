@@ -3,6 +3,7 @@ import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,13 +11,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -27,6 +26,8 @@ class CaseRegistrationEnrichmentTest {
 
     @Mock
     private IdgenUtil idgenUtil;
+    @Mock
+    private CaseUtil caseUtil;
 
     @Mock
     private Configuration config;
@@ -157,6 +158,86 @@ class CaseRegistrationEnrichmentTest {
         caseRequest.setCases(null);
 
         assertThrows(Exception.class, () -> caseRegistrationEnrichment.enrichCaseApplicationUponUpdate(caseRequest));
+    }
+
+    @Test
+    void enrichAccessCode_generatesAccessCode() {
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(new CourtCase());
+        caseRegistrationEnrichment.enrichAccessCode(caseRequest);
+
+        assertNotNull(caseRequest.getCases().getAccessCode());
+    }
+
+    @Test
+    void enrichAccessCode_generatesUniqueAccessCodes() {
+        CaseRequest caseRequest1 = new CaseRequest();
+        CaseRequest caseRequest2 = new CaseRequest();
+        caseRequest1.setCases(new CourtCase());
+        caseRequest2.setCases(new CourtCase());
+
+        caseRegistrationEnrichment.enrichAccessCode(caseRequest1);
+        caseRegistrationEnrichment.enrichAccessCode(caseRequest2);
+
+        assertNotEquals(caseRequest1.getCases().getAccessCode(), caseRequest2.getCases().getAccessCode());
+    }
+
+    @Test
+    void listToString_returnsEmptyStringForEmptyList() {
+        List<String> emptyList = new ArrayList<>();
+        String result = caseRegistrationEnrichment.listToString(emptyList);
+        assertEquals("", result);
+    }
+
+    @Test
+    void listToString_returnsSingleElementForSingleItemList() {
+        List<String> singleItemList = Collections.singletonList("item1");
+        String result = caseRegistrationEnrichment.listToString(singleItemList);
+        assertEquals("item1", result);
+    }
+
+    @Test
+    void listToString_returnsCommaSeparatedStringForMultipleItemList() {
+        List<String> multipleItemList = Arrays.asList("item1", "item2", "item3");
+        String result = caseRegistrationEnrichment.listToString(multipleItemList);
+        assertEquals("item1,item2,item3", result);
+    }
+
+    @Test
+    void listToString_handlesNullList() {
+        List<String> nullList = null;
+        assertThrows(NullPointerException.class, () -> caseRegistrationEnrichment.listToString(nullList));
+    }
+
+    @Test
+    void enrichCaseNumberAndCNRNumber_generatesCaseNumberAndCNRNumber() {
+        CaseRequest caseRequest = new CaseRequest();
+        CourtCase courtCase = new CourtCase();
+        courtCase.setFilingNumber("2022-12345");
+        caseRequest.setCases(courtCase);
+        when(idgenUtil.getIdList(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList("12345"));
+        when(caseUtil.getCNRNumber(anyString(), anyString(), anyString(), anyString())).thenReturn("KLJL01-12345-2022");
+        caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest);
+
+        assertNotNull(caseRequest.getCases().getCaseNumber());
+        assertNotNull(caseRequest.getCases().getCourtCaseNumber());
+        assertNotNull(caseRequest.getCases().getCnrNumber());
+    }
+
+    @Test
+    void enrichCaseNumberAndCNRNumber_handlesException() {
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(null);
+
+        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest));
+    }
+
+    @Test
+    void enrichAccessCode_handlesException() {
+        CaseRequest caseRequest = new CaseRequest();
+        caseRequest.setCases(null);
+
+        assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichAccessCode(caseRequest));
     }
 }
 
