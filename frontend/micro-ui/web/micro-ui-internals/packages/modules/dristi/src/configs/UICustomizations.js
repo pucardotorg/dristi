@@ -481,41 +481,55 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Document":
-          console.log('document', row)
-          return (
-            <OwnerColumn name={row?.name.familyName} t={t} />
-          )
+          console.log("document", row);
+          return <OwnerColumn name={row?.name.familyName} t={t} />;
           break;
 
         default:
           break;
       }
+    },
+  },
+  patternValidation: (key) => {
+    switch (key) {
+      case "contact":
+        return /^[6-9]\d{9}$/;
+      case "email":
+        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      case "userName":
+        return /^[^{0-9}^\$\"<>?\\\\~!@#$%^()+={}\[\]*,/_:;“”‘’]{1,100}$/i;
+      default:
+        return;
     }
-  }
+  },
+  maxDateValidation: (key) => {
+    switch (key) {
+      case "date":
+        return new Date().toISOString().split("T")[0];
+      default:
+        return;
+    }
+  },
 };
 
 const CommentComponent = ({ key, comment }) => {
-  console.log('comment', comment)
+  console.log("comment", comment);
   return (
     <div className="comment-body" key={key}>
       <div className="name-logo">
         <div className="comment-avatar">
-          <span>
-            {comment?.author[0]}
-          </span>
+          <span>{comment?.author[0]}</span>
         </div>
       </div>
       <div className="comment-details">
         <h3 className="comment-header">
-          {comment?.author} <span className="times-stamp">{comment?.timestamp}  </span>
+          {comment?.author} <span className="times-stamp">{comment?.timestamp} </span>
         </h3>
-        <p className="comment-text">
-          {comment?.text}
-        </p>
+        <p className="comment-text">{comment?.text}</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const OwnerColumn = ({ name, t }) => {
   const [show, setShow] = useState(false);
@@ -529,10 +543,12 @@ const OwnerColumn = ({ name, t }) => {
     );
   };
   const Heading = (props) => {
-    return <div className="evidence-title">
-      <h1 className="heading-m">{props.label}</h1>
-      <h3 className="status">{props.status}</h3>
-    </div>
+    return (
+      <div className="evidence-title">
+        <h1 className="heading-m">{props.label}</h1>
+        <h3 className="status">{props.status}</h3>
+      </div>
+    );
   };
 
   const documentSubmission = {
@@ -541,68 +557,66 @@ const OwnerColumn = ({ name, t }) => {
       applicationType: "Document Submission",
       applicationSentOn: "28 Mar '24, 09:15am",
       sender: "Sukeerth Reddy",
-      additionalDetails: "This document could not be submitted during e-filing as it had to be retrieved from the complainant's mother's home located in Chitoor."
+      additionalDetails:
+        "This document could not be submitted during e-filing as it had to be retrieved from the complainant's mother's home located in Chitoor.",
     },
     applicationContent: {
       tenantId: "pg",
       fileStoreId: "a17c4b20-c0bd-4d58-aa3f-69f8261a0a49",
-      fileName: "test.pdf"
+      fileName: "test.pdf",
     },
     comments: [
       {
         author: "Sukeerth R.",
         timestamp: "28 Mar '24, 09:45am",
         text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
-        "replies": 4
+        replies: 4,
       },
       {
         author: "Venkat K.",
         timestamp: "28 Mar '24, 09:45am",
         text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
         attachments: ["Affidavit"],
-        replies: 2
+        replies: 2,
       },
       {
         author: "Sukeerth R.",
         timestamp: "28 Mar '24, 09:45am",
         text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
-        "replies": 4
+        replies: 4,
       },
       {
         author: "Venkat K.",
         timestamp: "28 Mar '24, 09:45am",
         text: "This is the document that was agreed with the accused so that payment comes through without any intervention",
         attachments: ["Affidavit"],
-        replies: 2
-      }
-    ]
-  }
-
+        replies: 2,
+      },
+    ],
+  };
 
   return (
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => setShow(true)}>
         <FactCheckIcon />
       </div>
-      {
-        show && <Modal
+      {show && (
+        <Modal
           headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
           actionSaveLabel={t("Mark as Evidence")}
-          actionSaveOnSubmit={() => { setShow(false) }}
+          actionSaveOnSubmit={() => {
+            setShow(false);
+          }}
           formId="modal-action"
           headerBarMain={<Heading label={t("Document Submission")} status={documentSubmission.status} />}
           className="evidence-modal"
         >
           <div className="evidence-modal-main">
-
-
             <div className="application-details">
               <div className="application-info">
                 <div className="info-row">
                   <div className="info-key">
-                    <h3>
-                      Application Type
-                    </h3>
+                    <h3>Application Type</h3>
                   </div>
                   <div className="info-value">
                     <h3>{documentSubmission.details.applicationType}</h3>
@@ -610,9 +624,7 @@ const OwnerColumn = ({ name, t }) => {
                 </div>
                 <div className="info-row">
                   <div className="info-key">
-                    <h3>
-                      Application Sent On
-                    </h3>
+                    <h3>Application Sent On</h3>
                   </div>
                   <div className="info-value">
                     <h3>{documentSubmission.details.applicationSentOn}</h3>
@@ -620,9 +632,7 @@ const OwnerColumn = ({ name, t }) => {
                 </div>
                 <div className="info-row">
                   <div className="info-key">
-                    <h3>
-                      Sender
-                    </h3>
+                    <h3>Sender</h3>
                   </div>
                   <div className="info-value">
                     <h3>{documentSubmission.details.sender}</h3>
@@ -630,9 +640,7 @@ const OwnerColumn = ({ name, t }) => {
                 </div>
                 <div className="info-row">
                   <div className="info-key">
-                    <h3>
-                      Additional Details
-                    </h3>
+                    <h3>Additional Details</h3>
                   </div>
                   <div className="info-value">
                     <h3>{documentSubmission.details.additionalDetails}</h3>
@@ -651,20 +659,25 @@ const OwnerColumn = ({ name, t }) => {
                   documentName={documentSubmission.applicationContent.fileName}
                 />
               </div>
-
             </div>
             <div className="application-comment">
               <div className="comment-section">
                 <h1 className="comment-xyzoo">Comments</h1>
                 <div className="comment-main">
-                  {
-                    documentSubmission.comments.map((comment, index) => <CommentComponent key={index} comment={comment} />)
-                  }
+                  {documentSubmission.comments.map((comment, index) => (
+                    <CommentComponent key={index} comment={comment} />
+                  ))}
                 </div>
               </div>
               <div className="comment-send">
                 <div className="comment-input-wrapper">
-                  <TextInput placeholder={"Type here..."} value={comment} onChange={(e) => { setComment(e.target.value) }} />
+                  <TextInput
+                    placeholder={"Type here..."}
+                    value={comment}
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                    }}
+                  />
                   <div className="send-comment-btn">
                     <RightArrow />
                   </div>
@@ -673,9 +686,7 @@ const OwnerColumn = ({ name, t }) => {
             </div>
           </div>
         </Modal>
-      }
+      )}
     </React.Fragment>
-  )
-}
-
-
+  );
+};

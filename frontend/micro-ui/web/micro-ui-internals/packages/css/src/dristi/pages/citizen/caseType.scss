@@ -8,7 +8,7 @@
 .popup-module.evidence-modal,
 .popup-module.case-types {
   width: 536px;
-  max-height: 560px;
+  max-height: fit-content;
   border-radius: 4px;
   .header-wrap {
     width: 100%;
@@ -33,7 +33,7 @@
   }
   .popup-module-main {
     padding: 0px !important;
-    max-height: 510px;
+    max-height: fit-content;
     overflow-y: auto !important;
     .case-types-main-div {
       overflow-y: auto;

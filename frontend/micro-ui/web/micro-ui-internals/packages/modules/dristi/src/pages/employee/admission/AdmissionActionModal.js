@@ -52,6 +52,8 @@ function AdmissionActionModal({
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
+  const [label, setLabel] = useState(false);
+
   const closeToast = () => {
     setShowErrorToast(false);
   };
@@ -76,9 +78,15 @@ function AdmissionActionModal({
   );
   const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
 
-  const onSubmit = (props) => {
+  const onSubmit = (props, wordLimit) => {
+    const words = props?.commentForLitigant?.trim()?.split(/\s+/);
     if (!props?.commentForLitigant) {
       setShowErrorToast(true);
+      setLabel("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS");
+    }
+    if (words?.length >= wordLimit) {
+      setShowErrorToast(true);
+      setLabel(`ES_WORD_COUNT_LIMIT ${wordLimit}`);
     } else {
       handleSendCaseBack(props);
     }
@@ -140,14 +148,14 @@ function AdmissionActionModal({
             // onFormValueChange={onFormValueChange}
             headingStyle={{ textAlign: "center" }}
             cardStyle={{ minWidth: "100%", padding: 20, display: "flex", flexDirection: "column", alignItems: "center" }}
-            onSubmit={(props) => onSubmit(props)}
+            onSubmit={(props) => onSubmit(props, stepItems[0]?.wordCount)}
             submitInForm
             // className={"registration-select-name"}
             secondaryActionLabel={t("CORE_LOGOUT_CANCEL")}
             buttonStyle={{ alignSelf: "center", minWidth: "50%" }}
             actionClassName="e-filing-action-bar"
           ></FormComposerV2>
-          {showErrorToast && <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />}
+          {showErrorToast && <Toast error={true} label={t(label)} isDleteBtn={true} onClose={closeToast} />}
         </Modal>
       )}
       {modalInfo?.page == 0 && modalInfo?.type === "admitCase" && (
