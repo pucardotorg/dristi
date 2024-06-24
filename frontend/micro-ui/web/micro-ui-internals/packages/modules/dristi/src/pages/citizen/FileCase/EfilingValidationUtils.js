@@ -83,6 +83,9 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
       (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
     ) {
       setValue("delayApplicationType", {
+        code: "NO",
+        name: "NO",
+        showForm: false,
         isEnabled: false,
       });
       toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
@@ -287,6 +290,52 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
   }
 };
 
+export const checkDuplicateMobileEmailValidation = ({ formData, setValue, selected, setError, clearErrors, formdata, index, caseDetails }) => {
+  if (selected === "respondentDetails" || selected === "witnessDetails") {
+    const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
+    const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
+    if (respondentMobileNUmbers && respondentMobileNUmbers && respondentMobileNUmbers === complainantMobileNumber) {
+      setError("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
+    } else if (
+      formdata &&
+      formdata?.length > 1 &&
+      formData?.phonenumbers?.textfieldValue &&
+      formData?.phonenumbers?.textfieldValue?.length === 10 &&
+      formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
+    ) {
+      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+    } else {
+      clearErrors("phonenumbers");
+    }
+
+    if (
+      formdata &&
+      formdata?.length > 1 &&
+      formData?.emails?.textfieldValue &&
+      formdata?.some((data) => data?.data?.emails?.emailId?.some((number) => number === formData?.emails?.textfieldValue))
+    ) {
+      setError("emails", { emailId: "DUPLICATE_EMAILS" });
+    } else {
+      clearErrors("emails");
+    }
+  }
+  if (selected === "complaintDetails") {
+    if (
+      formdata &&
+      formdata?.length > 1 &&
+      formData?.complainantVerification?.mobileNumber &&
+      formData?.complainantVerification?.mobileNumber?.length === 10 &&
+      formdata?.some(
+        (data, idx) => idx !== index && data?.data?.complainantVerification?.mobileNumber === formData?.complainantVerification?.mobileNumber
+      )
+    ) {
+      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+    } else {
+      clearErrors("complainantVerification");
+    }
+  }
+};
+
 export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
   if (selected === "chequeDetails") {
     if (formData?.chequeSignatoryName || formData?.bankName || formData?.name) {
@@ -374,16 +423,6 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
 export const respondentValidation = ({ t, formData, selected, caseDetails, setShowErrorToast, toast }) => {
   if (selected === "respondentDetails") {
     const formDataCopy = structuredClone(formData);
-    const respondentMobileNUmbers = formData?.phonenumbers?.mobileNumber;
-    const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
-    if (respondentMobileNUmbers && respondentMobileNUmbers) {
-      for (let i = 0; i < respondentMobileNUmbers.length; i++) {
-        if (respondentMobileNUmbers[i] === complainantMobileNumber) {
-          toast.error(t("RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM"));
-          return true;
-        }
-      }
-    }
     if ("inquiryAffidavitFileUpload" in formDataCopy) {
       if (
         formData?.addressDetails?.some(
@@ -672,7 +711,7 @@ export const updateCaseDetails = async ({
   pageConfig,
   setFormDataValue,
   action = "SAVE_DRAFT",
-  setErrorCaseDetails,
+  setErrorCaseDetails = () => {},
 }) => {
   const data = {};
   setIsDisabled(true);

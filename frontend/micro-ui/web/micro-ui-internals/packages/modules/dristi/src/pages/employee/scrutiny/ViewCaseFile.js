@@ -21,7 +21,7 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import { DRISTIService } from "../../../services";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
-import { CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 
 function ViewCaseFile({ t }) {
   const history = useHistory();
@@ -74,14 +74,72 @@ function ViewCaseFile({ t }) {
     return { total, inputErrors, sectionErrors };
   };
 
+  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
+    {
+      criteria: [
+        {
+          caseId: caseId,
+        },
+      ],
+      tenantId,
+    },
+    {},
+    "dristi",
+    caseId,
+    Boolean(caseId)
+  );
+  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
+
+  const defaultScrutinyErrors = useMemo(() => {
+    return caseDetails?.additionalDetails?.scrutiny || {};
+  }, [caseDetails]);
+
+  const isPrevScrutiny = useMemo(() => {
+    return Object.keys(defaultScrutinyErrors).length > 0;
+  }, [defaultScrutinyErrors]);
+
+  function mergeErrors(formdata, defaultScrutinyErrors) {
+    // Helper function to handle the comparison and merging of objects
+    function compareAndReplace(formDataNode, defaultNode) {
+      // Iterate over each key in the formdata node
+      for (let key in formDataNode) {
+        // Check if the key exists in both formdata and defaultScrutinyErrors
+        if (defaultNode?.hasOwnProperty(key)) {
+          // If the value is an object, recursively compare and replace
+          if (typeof formDataNode[key] === "object" && formDataNode[key] !== null) {
+            compareAndReplace(formDataNode[key], defaultNode[key]);
+          } else {
+            // If the value is a string (for FSOError and scrutinyMessage)
+            if (key === "FSOError" || key === "scrutinyMessage") {
+              if (formDataNode[key] === defaultNode[key]) {
+                formDataNode[key] = "";
+              } else {
+                formDataNode[key] = formDataNode[key];
+              }
+            }
+          }
+        }
+      }
+    }
+    // Clone the formdata object to avoid modifying the original one
+    const result = JSON.parse(JSON.stringify(formdata));
+    // Start the comparison and replacement
+    compareAndReplace(result.data, defaultScrutinyErrors.data);
+    return result;
+  }
+
+  const newScrutinyData = useMemo(() => {
+    return mergeErrors(formdata, defaultScrutinyErrors);
+  }, [formdata, defaultScrutinyErrors]);
+
   const scrutinyErrors = useMemo(() => {
     const errorCount = {};
-    for (const key in formdata?.data) {
-      if (typeof formdata.data[key] === "object" && formdata.data[key] !== null) {
+    for (const key in newScrutinyData?.data) {
+      if (typeof newScrutinyData.data[key] === "object" && newScrutinyData.data[key] !== null) {
         if (!errorCount[key]) {
           errorCount[key] = { total: 0, sectionErrors: 0, inputErrors: 0 };
         }
-        const temp = countSectionErrors(formdata.data[key]);
+        const temp = countSectionErrors(newScrutinyData.data[key]);
         errorCount[key] = {
           total: errorCount[key].total + temp.total,
           sectionErrors: errorCount[key].sectionErrors + temp.sectionErrors,
@@ -90,7 +148,7 @@ function ViewCaseFile({ t }) {
       }
     }
     return errorCount;
-  }, [formdata]);
+  }, [newScrutinyData]);
 
   const totalErrors = useMemo(() => {
     let total = 0;
@@ -111,24 +169,7 @@ function ViewCaseFile({ t }) {
   }, [scrutinyErrors]);
   const isDisabled = useMemo(() => totalErrors?.total > 0);
 
-  const { data: caseFetchResponse, refetch: refetchCaseData, isLoading } = useSearchCaseService(
-    {
-      criteria: [
-        {
-          caseId: caseId,
-        },
-      ],
-      tenantId,
-    },
-    {},
-    "dristi",
-    caseId,
-    Boolean(caseId)
-  );
-  const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
-  const defaultScrutinyErrors = useMemo(() => caseDetails?.additionalDetails?.scrutiny || {}, [caseDetails]);
   const state = useMemo(() => caseDetails?.status, [caseDetails]);
-
   const formConfig = useMemo(() => {
     if (!caseDetails) return null;
     return [
@@ -138,6 +179,7 @@ function ViewCaseFile({ t }) {
           body: form.body.map((section) => {
             return {
               ...section,
+              isPrevScrutiny,
               populators: {
                 ...section.populators,
                 inputs: section.populators.inputs?.map((input) => {
@@ -145,6 +187,8 @@ function ViewCaseFile({ t }) {
                   return {
                     ...input,
                     data: caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                    prevErrors: defaultScrutinyErrors?.data?.[section.key]?.[input.key] || {},
+                    vaiubhav: "Vaibhav",
                   };
                 }),
               },
@@ -153,7 +197,7 @@ function ViewCaseFile({ t }) {
         };
       }),
     ];
-  }, [reviewCaseFileFormConfig, caseDetails]);
+  }, [reviewCaseFileFormConfig, caseDetails, defaultScrutinyErrors]);
   const primaryButtonLabel = useMemo(() => {
     if (isScrutiny) {
       return "CS_REGISTER_CASE";
@@ -165,10 +209,12 @@ function ViewCaseFile({ t }) {
       return "CS_SEND_BACK";
     }
   }, [isScrutiny]);
-  const updateCaseDetails = async (action, data = {}) => {
+  
+  const updateCaseDetails = async (action) => {
+    const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : formdata;
     const newcasedetails = {
       ...caseDetails,
-      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: data },
+      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj, prevScrutiny: scrutinyObj },
       caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
     };
 
@@ -215,12 +261,12 @@ function ViewCaseFile({ t }) {
     history.push("/digit-ui/employee/dristi/cases");
   };
   const handleRegisterCase = () => {
-    updateCaseDetails("VALIDATE").then((res) => {
+    updateCaseDetails(CaseWorkflowAction.VALIDATE).then((res) => {
       setActionModal("caseRegisterSuccess");
     });
   };
   const handleSendCaseBack = () => {
-    updateCaseDetails("SEND_BACK", formdata).then((res) => {
+    updateCaseDetails(CaseWorkflowAction.SEND_BACK).then((res) => {
       setActionModal("caseSendBackSuccess");
     });
   };
@@ -332,7 +378,7 @@ function ViewCaseFile({ t }) {
                 config={formConfig}
                 onSubmit={handlePrimaryButtonClick}
                 onSecondayActionClick={handleSecondaryButtonClick}
-                defaultValues={defaultScrutinyErrors?.data}
+                defaultValues={structuredClone(defaultScrutinyErrors?.data)}
                 onFormValueChange={onFormValueChange}
                 cardStyle={{ minWidth: "100%" }}
                 isDisabled={isDisabled}
@@ -447,19 +493,19 @@ function ViewCaseFile({ t }) {
             />
           )}
 
-          {actionModal === "caseSendBackSuccess" && (
+          {/* {actionModal === "caseSendBackSuccess" && (
             <SuccessModal
               header={"Vaibhav"}
               t={t}
               actionCancelLabel={"CS_COMMON_CLOSE"}
-              actionSaveLabel={"CS_NEXT_CASE"}
+              actionSaveLabel={"NEXT_CASE"}
               bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
               onCancel={handleCloseSucessModal}
               onSubmit={handleNextCase}
               type={"caseSendBackSuccess"}
               data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
             />
-          )}
+          )} */}
 
           {actionModal === "caseRegisterSuccess" && (
             <SuccessModal
@@ -545,8 +591,8 @@ function ViewCaseFile({ t }) {
           <SuccessModal
             header={"Vaibhav"}
             t={t}
-            actionCancelLabel={"CS_COMMON_CLOSE"}
-            actionSaveLabel={"CS_NEXT_CASE"}
+            actionCancelLabel={"BACK_TO_HOME"}
+            actionSaveLabel={"NEXT_CASE"}
             bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
             onCancel={handleCloseSucessModal}
             onSubmit={handleNextCase}

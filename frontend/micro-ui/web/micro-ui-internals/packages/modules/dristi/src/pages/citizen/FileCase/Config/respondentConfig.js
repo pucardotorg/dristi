@@ -1,5 +1,3 @@
-import { Label } from "@egovernments/digit-ui-react-components";
-
 const respondentFromconfig = [
   {
     head: "CS_RESPONDENT_TYPE",

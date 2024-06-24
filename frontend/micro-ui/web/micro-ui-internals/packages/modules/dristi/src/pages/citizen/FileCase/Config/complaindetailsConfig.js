@@ -1,11 +1,31 @@
 const complainantDetailsFormConfig = [
   {
+    dependentKey: { complainantVerification: ["isUserVerified"] },
+    body: [
+      {
+        type: "component",
+        component: "SelectCustomNote",
+        key: "personalDetailsNote",
+        withoutLabel: true,
+        populators: {
+          inputs: [
+            {
+              infoHeader: "CS_PLEASE_COMMON_NOTE",
+              infoText: "CS_PLEASE_CONTACT_NYAY_MITRA_TEXT",
+              infoTooltipMessage: "CS_NOTE_TOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+              type: "InfoComponent",
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
     head: "SELECT_COMPLAINANT_TYPE",
     body: [
       {
         type: "radio",
         key: "complainantType",
-        // label: "SELECT_COMPLAINANT_TYPE",
         withoutLabel: true,
         isMandatory: true,
         name: "complainantType",
@@ -29,7 +49,7 @@ const complainantDetailsFormConfig = [
             },
             {
               code: "REPRESENTATIVE",
-              name: "Representative of an Entity",
+              name: "Entity",
               showCompanyDetails: true,
               isIndividual: false,
               commonFields: true,
@@ -66,6 +86,9 @@ const complainantDetailsFormConfig = [
           inputs: [
             {
               label: "COMPLAINANT_ID",
+              updateLabelOn: "complainantType.showCompanyDetails",
+              updateLabel: { key: "label", value: "CS_ENTITY_ID" },
+              defaultLabel: { key: "label", value: "COMPLAINANT_ID" },
               name: "complainantId",
               verificationOn: "complainantVerification.isUserVerified",
             },
@@ -80,6 +103,9 @@ const complainantDetailsFormConfig = [
   {
     dependentKey: { complainantType: ["commonFields"] },
     head: "CS_COMMON_COMPLAINANT_DETAIL",
+    updateLabelOn: "complainantType.showCompanyDetails",
+    updateLabel: { key: "head", value: "CS_COMMON_ENTITY_DETAIL" },
+    defaultLabel: { key: "head", value: "CS_COMMON_COMPLAINANT_DETAIL" },
     body: [
       {
         type: "text",

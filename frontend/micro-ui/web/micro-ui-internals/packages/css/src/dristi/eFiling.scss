@@ -941,6 +941,9 @@
               &.error {
                 background-color: #fce8e8;
               }
+              &.preverror {
+                background-color: #ecf3fd;
+              }
             }
 
             .address {
@@ -954,6 +957,10 @@
 
               &.error {
                 background-color: #fce8e8;
+              }
+
+              &.preverror {
+                background-color: #bbbbbd;
               }
             }
 
