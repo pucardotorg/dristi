@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 import net.minidev.json.JSONArray;
-import org.apache.kafka.common.protocol.types.Field;
-import org.checkerframework.checker.units.qual.C;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.User;
@@ -26,9 +24,7 @@ import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -285,7 +281,7 @@ public class CaseRegistrationValidatorTest {
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
         lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
 
         Boolean result = validator.validateApplicationExistence(caseRequest);
         assertTrue(result);
@@ -390,7 +386,7 @@ public class CaseRegistrationValidatorTest {
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
         lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
 
         assertThrows(Exception.class, () -> validator.validateApplicationExistence(caseRequest));
     }
@@ -479,7 +475,7 @@ public class CaseRegistrationValidatorTest {
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
         lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
