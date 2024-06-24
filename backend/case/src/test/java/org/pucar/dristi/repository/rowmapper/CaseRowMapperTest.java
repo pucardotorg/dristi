@@ -41,6 +41,8 @@ class CaseRowMapperTest {
         when(rs.getString("casedescription")).thenReturn("description");
         when(rs.getString("filingnumber")).thenReturn("filing123");
         when(rs.getString("caseNumber")).thenReturn("case123");
+        when(rs.getString("cnrnumber")).thenReturn("cnr123");
+        when(rs.getString("courtcaseNumber")).thenReturn("court123");
         when(rs.getString("accesscode")).thenReturn("access1");
         when(rs.getString("courtid")).thenReturn("court1");
         when(rs.getString("benchid")).thenReturn("bench1");
