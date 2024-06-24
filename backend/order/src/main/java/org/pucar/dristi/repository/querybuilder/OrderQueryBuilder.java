@@ -14,7 +14,7 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_QUERY = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, " +
-            "orders.filingnumber as filingnumber, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber," +
+            "orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber," +
             "orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory," +
             "orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby," +
             "orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime ";
