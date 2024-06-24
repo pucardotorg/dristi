@@ -1,7 +1,7 @@
 {
   "BusinessServices": [
     {
-      "tenantId": "pg",
+      "tenantId": "kl",
       "businessService": "order",
       "business": "order-services",
       "businessServiceSla": 30,
