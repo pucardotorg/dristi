@@ -92,8 +92,8 @@ public class CaseService {
 
         try {
             // Validate whether the application that is being requested for update indeed exists
-//            if (!validator.validateApplicationExistence(caseRequest))//TODO TESTING
-//                throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
+            if (!validator.validateApplicationExistence(caseRequest))
+                throw new CustomException(VALIDATION_ERR, "Case Application does not exist");
 
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(caseRequest);
@@ -133,8 +133,8 @@ public class CaseService {
     }
 
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-//            if (!validator.validateLitigantJoinCase(joinCaseRequest)) //TODO TESTING
-//                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+            if (!validator.validateLitigantJoinCase(joinCaseRequest))
+                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
 
             if(!joinCaseRequest.getLitigant().getCaseId().equalsIgnoreCase(caseObj.getId().toString()))
                 throw new CustomException(VALIDATION_ERR, "Invalid caseId");
@@ -146,8 +146,8 @@ public class CaseService {
     }
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
-//            if (!validator.validateRepresentativeJoinCase(joinCaseRequest))//TODO TESTING
-//                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+            if (!validator.validateRepresentativeJoinCase(joinCaseRequest))
+                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
             if (!joinCaseRequest.getRepresentative().getCaseId().equalsIgnoreCase(caseObj.getId().toString()))
                 throw new CustomException(VALIDATION_ERR, "Invalid caseId");
 
