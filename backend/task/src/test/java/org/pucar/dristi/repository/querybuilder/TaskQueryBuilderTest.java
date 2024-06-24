@@ -86,12 +86,12 @@ public class TaskQueryBuilderTest {
         String id = "1";
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber) {
+            public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(id, null, null, null, null));
+        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(id, null, null, null, null,null));
     }
 
     @Test

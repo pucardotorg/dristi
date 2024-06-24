@@ -45,13 +45,13 @@ public class TaskRepository {
     @Autowired
     private AmountRowMapper statuteSectionRowMapper;
 
-    public List<Task> getApplications(String id, String tenantId, String status, UUID orderId, String cnrNumber) {
+    public List<Task> getApplications(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
         try {
             List<Task> taskList = new ArrayList<>();
             List<Object> preparedStmtAm = new ArrayList<>();
             List<Object> preparedStmtDc = new ArrayList<>();
             String casesQuery = "";
-            casesQuery = queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber);
+            casesQuery = queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber);
             log.info("Final case query :: {}", casesQuery);
             List<Task> list = jdbcTemplate.query(casesQuery, rowMapper);
             log.info("DB task list :: {}", list);
