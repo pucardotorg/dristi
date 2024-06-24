@@ -93,11 +93,11 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
         <Banner
           whichSvg={"tick"}
           successful={true}
-          message={submitModalInfo?.header}
+          message={t(submitModalInfo?.header)}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%" }}
         ></Banner>
-        {submitInfoData?.subHeader && <CardLabel className={"e-filing-card-label"}>{submitInfoData?.subHeader}</CardLabel>}
+        {submitInfoData?.subHeader && <CardLabel className={"e-filing-card-label"}>{t(submitInfoData?.subHeader)}</CardLabel>}
         {submitInfoData?.showTable && (
           <CustomCaseInfoDiv
             t={t}
