@@ -83,6 +83,9 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
       (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
     ) {
       setValue("delayApplicationType", {
+        code: "NO",
+        name: "NO",
+        showForm: false,
         isEnabled: false,
       });
       toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
