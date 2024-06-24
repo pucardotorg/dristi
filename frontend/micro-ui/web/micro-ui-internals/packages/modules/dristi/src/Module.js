@@ -38,25 +38,33 @@ import Login from "./pages/citizen/Login";
 import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/AdvocateClerkAdditionalDetail";
 import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
+  const history = useHistory();
   const moduleCode = "DRISTI";
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   if (isLoading) {
     return <Loader />;
   }
   Digit.SessionStorage.set("DRISTI_TENANTS", tenants);
 
-  if (userType === "citizen") {
+  if (userType === "citizen" && userInfo?.type !== "EMPLOYEE") {
     return (
       <ToastProvider>
         <CitizenApp path={path} stateCode={stateCode} userType={userType} tenants={tenants} tenantId={tenantID} />
       </ToastProvider>
     );
+  }
+  if (path?.includes(`/${window?.contextPath}/citizen`)) {
+    history.push(`/${window?.contextPath}/employee`);
+  } else {
+    history.push(`/${window?.contextPath}/citizen`);
   }
   return (
     <ToastProvider>
