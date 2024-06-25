@@ -21,6 +21,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 
 @ExtendWith(MockitoExtension.class)
@@ -233,6 +234,17 @@ class ApplicationRepositoryTest {
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new RuntimeException("Database connection failed"));
+
+        assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
+    }
+
+    @Test
+    void testCheckApplicationExists_Throws_CustomException() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " ));
 
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
     }
