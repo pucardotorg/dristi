@@ -82,7 +82,7 @@ public class CaseServiceTest {
     @Test
     public void testVerifyJoinCaseRequest_CaseDoesNotExist() {
         // Mock the CaseRepository to return an empty list
-        when(caseRepository.getApplications(anyList())).thenReturn(Collections.singletonList(new CaseCriteria()));
+        when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(new CaseCriteria()));
         JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
@@ -121,7 +121,7 @@ public class CaseServiceTest {
         courtCase.setLitigants(Collections.singletonList(litigant));
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        when(caseRepository.getApplications(anyList())).thenReturn(Collections.singletonList(caseCriteria));
+        when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
 
         JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setRequestInfo(requestInfo);
@@ -149,7 +149,7 @@ public class CaseServiceTest {
         courtCase.setRepresentatives(Collections.singletonList(representative));
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        when(caseRepository.getApplications(anyList())).thenReturn(Collections.singletonList(caseCriteria));
+        when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
 
         JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setRequestInfo(requestInfo);
@@ -177,7 +177,7 @@ public class CaseServiceTest {
         courtCase.setStatus(CASE_ADMIT_STATUS);
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
-        when(caseRepository.getApplications(anyList())).thenReturn(Collections.singletonList(caseCriteria));
+        when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
         JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setRequestInfo(requestInfo);
         joinCaseRequest.setCaseFilingNumber("12345");

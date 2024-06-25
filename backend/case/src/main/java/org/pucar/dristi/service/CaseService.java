@@ -156,7 +156,7 @@ public class CaseService {
     public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
         try {
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
-            List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()));
+            List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), joinCaseRequest.getRequestInfo());
             List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
             if (courtCaseList.isEmpty()) {
                 throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
