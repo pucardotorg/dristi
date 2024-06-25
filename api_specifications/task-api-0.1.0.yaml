@@ -97,6 +97,12 @@ paths:
           required: true
           schema:
             type: string
+        - name: taskNumber
+          in: query
+          description: the taskNumber whose task(s) are being searched
+          required: false
+          schema:
+            type: string
         - name: status
           in: query
           description: the status of the task(s) being searched

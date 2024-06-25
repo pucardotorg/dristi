@@ -47,6 +47,7 @@ public class TaskRepositoryTest {
     private String status;
     private UUID orderId;
     private String cnrNumber;
+    private String taskNumber;
 
     @BeforeEach
     void setUp() {
@@ -55,6 +56,7 @@ public class TaskRepositoryTest {
         status = "test-status";
         orderId = UUID.randomUUID();
         cnrNumber = "test-cnrNumber";
+        taskNumber = "test-taskNumber";
     }
 
 //    @Test
@@ -101,29 +103,29 @@ public class TaskRepositoryTest {
     @Test
     void testGetApplicationsNoResults() {
         String taskQuery = "task-query";
-        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber)).thenReturn(taskQuery);
+        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber)).thenReturn(taskQuery);
         when(jdbcTemplate.query(taskQuery, rowMapper)).thenReturn(Collections.emptyList());
 
-        List<Task> result = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber);
+        List<Task> result = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber,taskNumber);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
-        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber);
+        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber);
         verify(jdbcTemplate).query(taskQuery, rowMapper);
     }
 
     @Test
     void testGetApplicationsException() {
         String taskQuery = "task-query";
-        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber)).thenReturn(taskQuery);
+        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber)).thenReturn(taskQuery);
         when(jdbcTemplate.query(taskQuery, rowMapper)).thenThrow(new RuntimeException("DB Error"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber));
+        CustomException exception = assertThrows(CustomException.class, () -> taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber,taskNumber));
         assertEquals("Error while searching task", exception.getCode());
         assertEquals("Exception while fetching task application list: DB Error", exception.getMessage());
 
-        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber);
+        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber);
         verify(jdbcTemplate).query(taskQuery, rowMapper);
     }
 

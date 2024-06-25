@@ -220,7 +220,8 @@ class CaseRegistrationEnrichmentTest {
         caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest);
 
         assertNotNull(caseRequest.getCases().getCaseNumber());
-        assertNotNull(caseRequest.getCases().getCourCaseNumber());
+        assertNotNull(caseRequest.getCases().getCourtCaseNumber());
+        assertNotNull(caseRequest.getCases().getCnrNumber());
     }
 
     @Test

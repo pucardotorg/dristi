@@ -219,7 +219,8 @@ public class CaseRegistrationEnrichment {
         try {
             List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
             caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-            caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
+            caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            caseRequest.getCases().setCnrNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
         } catch (Exception e) {
             log.error("Error enriching case number and cnr number: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
