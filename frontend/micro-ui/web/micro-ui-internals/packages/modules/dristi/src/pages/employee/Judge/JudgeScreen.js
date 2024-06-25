@@ -18,8 +18,8 @@ function JudgeScreen({ path }) {
 
   return (
     <React.Fragment>
-      <div className="registration-requests">
-        <div className="header-class">
+      <div className="home-screen-wrapper" style={{ minHeight: "calc(100vh - 90px)", width: "100%", padding: "30px" }}>
+        <div className="header-class" style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           <div className="header">{t("CS_YOUR_CASE")}</div>
         </div>
         <div className="inbox-search-wrapper">

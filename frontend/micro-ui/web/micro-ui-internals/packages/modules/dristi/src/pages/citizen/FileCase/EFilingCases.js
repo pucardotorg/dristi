@@ -37,6 +37,7 @@ import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 import ErrorsAccordion from "../../../components/ErrorsAccordion";
 import ReactTooltip from "react-tooltip";
+import FlagBox from "../../../components/FlagBox";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -286,6 +287,9 @@ function EFilingCases({ path }) {
   );
   const scrutinyObj = useMemo(() => {
     return caseDetails?.additionalDetails?.scrutiny?.data || {};
+  }, [caseDetails]);
+  const judgeObj = useMemo(() => {
+    return caseDetails?.additionalDetails?.judge || {};
   }, [caseDetails]);
 
   const countSectionErrors = (section) => {
@@ -1389,13 +1393,17 @@ function EFilingCases({ path }) {
         )}
         {isCaseReAssigned && (
           <div className="side-stepper-error-count">
-            <ErrorsAccordion
-              t={t}
-              totalErrorCount={totalErrors.total}
-              pages={errorPages}
-              handlePageChange={handlePageChange}
-              showConfirmModal={confirmModalConfig ? true : false}
-            />
+            {judgeObj ? (
+              <FlagBox t={t} judgeObj={judgeObj} />
+            ) : (
+              <ErrorsAccordion
+                t={t}
+                totalErrorCount={totalErrors.total}
+                pages={errorPages}
+                handlePageChange={handlePageChange}
+                showConfirmModal={confirmModalConfig ? true : false}
+              />
+            )}
             <div className="total-error-note">
               <div className="header">
                 <InfoIcon />
