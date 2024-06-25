@@ -1,8 +1,9 @@
 import { Button, CloseSvg } from "@egovernments/digit-ui-components";
-import React from "react";
+import React, { useState } from "react";
 import Modal from "../../../dristi/src/components/Modal";
 
-function OrderSignatureModal({ t }) {
+function OrderSignatureModal({ t, order, handleIssueOrder }) {
+  const [isSigned, setIsSigned] = useState(false);
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -16,32 +17,47 @@ function OrderSignatureModal({ t }) {
   };
   return (
     <Modal
-      headerBarMain={<Heading label={`${t("ADD_SIGNATURE")} (${1})`} />}
+      headerBarMain={<Heading label={t("ADD_SIGNATURE")} />}
       headerBarEnd={<CloseBtn onClick={() => handleCloseSignaturePopup()} />}
       actionCancelLabel={t("BACK")}
       actionCancelOnSubmit={() => handleCloseSignaturePopup()}
-      actionSaveLabel={false ? t("ISSUE_ORDERS") : t("NEXT")}
-      actionSaveOnSubmit={() => {}}
+      actionSaveLabel={t("ISSUE_ORDER")}
+      isDisabled={!isSigned}
+      actionSaveOnSubmit={() => {
+        handleIssueOrder();
+      }}
       className={"add-signature-modal"}
     >
       <div className="add-signature-main-div">
         <div className="note-div">
           <div className="icon-div">
             {/* <SmallInfoIcon></SmallInfoIcon> */}
-            <span>PLEASE_NOTE</span>
+            <span>{t("PLEASE_NOTE")}</span>
           </div>
-          <h2>YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE</h2> <span style={{ fontWeight: "bold" }}>{"order type here"}</span>
+          <h2>{t("YOU_ARE_ADDING_YOUR_SIGNATURE_TO_THE")}</h2> <span style={{ fontWeight: "bold" }}>{order?.orderType}</span>
         </div>
-        {true ? (
+        {!isSigned ? (
           <div className="not-signed">
-            <h1>YOUR_SIGNATURE</h1>
-            <div className="signature-button-div">
-              <Button label={t("E_SIGN")} style={{ alignItems: "center" }} onButtonClick={() => {}} />
-              <div>
-                <span> {/* <UploadIcon></UploadIcon> */}</span>
-                <h1>{t("UPLOAD_DIGITAL_SIGNATURE_CERTIFICATE")}</h1>
-              </div>
-            </div>
+            <h1>{t("YOUR_SIGNATURE")}</h1>
+            <Button
+              // icon={<FileUploadIcon />}
+              label={t("CS_UPLOAD_ESIGNATURE")}
+              onClick={() => {
+                // setOpenUploadSignatureModal(true);
+                setIsSigned(true);
+              }}
+              className={"upload-signature"}
+              labelClassName={"upload-signature-label"}
+            ></Button>
+            <Button
+              label={t("CS_ESIGN_AADHAR")}
+              onClick={() => {
+                // setOpenAadharModal(true);
+                setIsSigned(true);
+              }}
+              className={"aadhar-sign-in"}
+              labelClassName={"aadhar-sign-in"}
+            ></Button>
             <div>
               <h2>{t("WANT_TO_DOWNLOAD")}</h2>
               <span>

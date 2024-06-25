@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-components";
 
-function OrderDeleteModal({ setDeleteOrderIndex, deleteOrderIndex, handleDeleteOrder }) {
+function OrderDeleteModal({ setDeleteOrderIndex, deleteOrderIndex, handleDeleteOrder, t }) {
   const deleteWarningText = useMemo(() => {
     return (
       <div className="delete-warning-text">

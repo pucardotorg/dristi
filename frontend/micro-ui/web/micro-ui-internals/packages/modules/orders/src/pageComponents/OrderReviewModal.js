@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import { CloseSvg } from "@egovernments/digit-ui-components";
-function OrderReviewModal({ setShowReviewModal, t, orderList, setShowsignatureModal }) {
-  const [selectedOrder, setSelectedOrder] = useState(0);
+function OrderReviewModal({ setShowReviewModal, t, order, setShowsignatureModal, handleSaveDraft }) {
   const Heading = (props) => {
     return <h1 className="heading-m">{props.label}</h1>;
   };
@@ -19,7 +18,7 @@ function OrderReviewModal({ setShowReviewModal, t, orderList, setShowsignatureMo
       headerBarMain={<Heading label={t("REVIEW_ORDERS_HEADING")} />}
       headerBarEnd={<CloseBtn onClick={() => setShowReviewModal(false)} />}
       actionCancelLabel={t("SAVE_DRAFT")}
-      actionCancelOnSubmit={() => {}}
+      actionCancelOnSubmit={handleSaveDraft}
       actionSaveLabel={t("ADD_SIGNATURE")}
       actionSaveOnSubmit={() => {
         setShowsignatureModal(true);
@@ -29,17 +28,8 @@ function OrderReviewModal({ setShowReviewModal, t, orderList, setShowsignatureMo
     >
       <div className="review-order-body-main">
         <div className="review-order-modal-list-div">
-          <div>
-            {orderList?.map((order, index) => {
-              return (
-                <div
-                  style={{ cursor: "pointer", ...(selectedOrder === index ? { background: "#E8E8E8" } : {}) }}
-                  onClick={() => setSelectedOrder(index)}
-                >
-                  <h1> {order.orderType}</h1>
-                </div>
-              );
-            })}
+          <div style={{ cursor: "pointer", background: "#E8E8E8" }}>
+            <h1> {order?.orderType}</h1>
           </div>
         </div>
         <div className="review-order-modal-document-div">/// document here</div>

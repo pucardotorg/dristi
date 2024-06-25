@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
+import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import CustomSubmitModal from "../../../dristi/src/pages/citizen/FileCase/admission/CustomSubmitModal";
 
-function OrderSucessModal({ orderList, t }) {
+function OrderSucessModal({ order, t }) {
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -10,28 +10,20 @@ function OrderSucessModal({ orderList, t }) {
     const day = String(currentDate.getDate()).padStart(2, "0");
     return `${month}/${day}/${year}`;
   };
-  const dateinfo = [
-    {
-      key: "ORDER_ISSUE_DATE",
-      value: getFormattedDate(),
-    },
-  ];
-  const orderinfo = useMemo(
-    () =>
-      orderList?.map((order, index) => {
-        return {
-          key: `${t("ORDER_ID")} ${index + 1}: ${t(order.orderType)}`,
-          value: order.id,
-          showCopy: true,
-        };
-      }) || [],
-    [orderList]
-  );
-
-  const mockSubmitModalInfo = {
-    header: `${t("CS_ORDER_SUCCESSFULLY_ISSUED")} ${orderList?.length || 0} ${t("CS_ORDERS")}`,
+  const orderModalInfo = {
+    header: t("CS_ORDER_SUCCESSFULLY_ISSUED"),
     subHeader: "CS_ORDER_CREATED_SUBTEXT",
-    caseInfo: [...dateinfo, ...orderinfo],
+    caseInfo: [
+      {
+        key: "ORDER_ISSUE_DATE",
+        value: getFormattedDate(),
+      },
+      {
+        key: `${t("ORDER_ID")}:${t(order.orderType)}`,
+        value: order.id,
+        showCopy: true,
+      },
+    ],
     isArrow: false,
     showCopytext: true,
   };
@@ -44,7 +36,7 @@ function OrderSucessModal({ orderList, t }) {
       actionSaveOnSubmit={() => {}}
       className={"orders-success-modal"}
     >
-      <CustomSubmitModal t={t} submitModalInfo={mockSubmitModalInfo} />
+      <CustomSubmitModal t={t} submitModalInfo={orderModalInfo} />
     </Modal>
   );
 }

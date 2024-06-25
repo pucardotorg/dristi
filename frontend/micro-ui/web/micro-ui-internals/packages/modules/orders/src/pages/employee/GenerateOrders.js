@@ -33,7 +33,6 @@ const GenerateOrders = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const urlParams = new URLSearchParams(window.location.search);
-  const caseId = urlParams.get("caseId");
   const filingNumber = urlParams.get("filingNumber");
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const [selectedOrder, setSelectedOrder] = useState(0);
@@ -74,7 +73,7 @@ const GenerateOrders = () => {
   );
 
   const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
-  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading } = useSearchOrdersService(
+  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     { tenantId },
     { tenantId, filingNumber, applicationNumber: "", cnrNumber },
     filingNumber,
@@ -106,7 +105,9 @@ const GenerateOrders = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const handleUpdateOrder = ({ action, oldOrderData, newformdata, orderType }) => {
+  const handleUpdateOrder = ({ action, oldOrderData, orderType }) => {
+    const newAdditionalData =
+      action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData.additionalDetails, formdata } : { ...oldOrderData.additionalDetails };
     const updatedreqBody = {
       order: {
         ...oldOrderData,
@@ -120,13 +121,16 @@ const GenerateOrders = () => {
           documents: [{}],
         },
         documents: [],
-        additionalDetails: { ...oldOrderData.additionalDetails, formdata: newformdata },
+        additionalDetails: newAdditionalData,
       },
     };
     ordersService
       .updateOrder(updatedreqBody, { tenantId })
       .then(() => {
         refetchOrdersData();
+        if (action === CaseWorkflowAction.ESIGN) {
+          setShowSuccessModal(true);
+        }
       })
       .catch(() => {
         refetchOrdersData();
@@ -171,7 +175,14 @@ const GenerateOrders = () => {
     handleUpdateOrder({
       action: CaseWorkflowAction.SAVE_DRAFT,
       oldOrderData: currentOrder,
-      newformdata: formdata,
+      orderType: orderType?.code,
+    });
+  };
+
+  const handleIssueOrder = () => {
+    handleUpdateOrder({
+      action: CaseWorkflowAction.ESIGN,
+      oldOrderData: currentOrder,
       orderType: orderType?.code,
     });
   };
@@ -180,17 +191,16 @@ const GenerateOrders = () => {
     handleUpdateOrder({
       action: CaseWorkflowAction.ABANDON,
       oldOrderData: orderList[deleteOrderIndex],
-      newformdata: {},
       orderType: orderList[deleteOrderIndex].orderType,
     });
-    refetchOrdersData();
     selectedOrder((prev) => {
       prev == deleteOrderIndex && deleteOrderIndex ? prev - 1 : prev;
     });
     setDeleteOrderIndex(null);
   };
 
-  const handleReviewOrder = (data, index) => {
+  const handleReviewOrder = () => {
+    handleSaveDraft();
     setShowReviewModal(true);
   };
 
@@ -204,9 +214,7 @@ const GenerateOrders = () => {
     history.back(); // go to view case screen when clicking on close button.
   };
 
-  const ifAllSignaturesCompleted = true; // update useMemo logic here while integrating.
-
-  if (isOrdersLoading || isCaseDetailsLoading) {
+  if (isOrdersLoading || isOrdersFetching || isCaseDetailsLoading) {
     return <Loader />;
   }
 
@@ -244,27 +252,35 @@ const GenerateOrders = () => {
         </div>
       </div>
       <div style={{ minWidth: "70%" }}>
-        <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>
-        <FormComposerV2
-          key={selectedOrder}
-          label={t("REVIEW_ORDERS")}
-          config={modifiedFormConfig}
-          defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
-          onFormValueChange={onFormValueChange}
-          onSubmit={(data) => handleReviewOrder(data, selectedOrder)}
-          onSecondayActionClick={handleSaveDraft}
-          secondaryLabel={t("SAVE_AS_DRAFT")}
-          showSecondaryLabel={true}
-        />
+        {orderList?.length > 0 && <Header className="main-card-header">{`${t("ORDER")} ${selectedOrder + 1}`}</Header>}
+        {orderList?.length > 0 && (
+          <FormComposerV2
+            key={selectedOrder}
+            label={t("REVIEW_ORDER")}
+            config={modifiedFormConfig}
+            defaultValues={structuredClone(currentOrder?.additionalDetails?.formdata) || {}}
+            onFormValueChange={onFormValueChange}
+            onSubmit={handleReviewOrder}
+            onSecondayActionClick={handleSaveDraft}
+            secondaryLabel={t("SAVE_AS_DRAFT")}
+            showSecondaryLabel={true}
+          />
+        )}
       </div>
       {deleteOrderIndex !== null && (
-        <OrderDeleteModal deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
+        <OrderDeleteModal t={t} deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
       )}
       {showReviewModal && (
-        <OrderReviewModal t={t} orderList={orderList} setShowReviewModal={setShowReviewModal} setShowsignatureModal={setShowsignatureModal} />
+        <OrderReviewModal
+          t={t}
+          order={currentOrder}
+          setShowReviewModal={setShowReviewModal}
+          setShowsignatureModal={setShowsignatureModal}
+          handleSaveDraft={handleSaveDraft}
+        />
       )}
-      {showsignatureModal && <OrderSignatureModal t={t} />}
-      {showSuccessModal && <OrderSucessModal t={t} orderList={orderList} />}
+      {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
+      {showSuccessModal && <OrderSucessModal t={t} order={currentOrder} />}
     </div>
   );
 };
