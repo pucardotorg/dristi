@@ -441,29 +441,64 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
   }
 };
 
-export const respondentValidation = ({ t, formData, selected, caseDetails, setShowErrorToast, toast }) => {
+export const respondentValidation = ({
+  setErrorMsg,
+  t,
+  formData,
+  selected,
+  caseDetails,
+  setShowErrorToast,
+  toast,
+  setFormErrors,
+  clearFormDataErrors,
+}) => {
   if (selected === "respondentDetails") {
     const formDataCopy = structuredClone(formData);
     if ("inquiryAffidavitFileUpload" in formDataCopy) {
       if (
         formData?.addressDetails?.some(
           (address) =>
-            (address?.addressDetails?.pincode !== caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+            (address?.addressDetails?.pincode !==
+              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
               caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
             (address?.addressDetails?.pincode !==
               caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
-              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
-                "REPRESENTATIVE")
+              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "REPRESENTATIVE")
         ) &&
         !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
       ) {
         setShowErrorToast(true);
         return true;
-      } else {
-        return false;
       }
     }
-  } else {
+  }
+
+  const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
+  const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
+  if (
+    formData &&
+    formData?.phonenumbers?.textfieldValue &&
+    formData?.phonenumbers?.textfieldValue?.length === 10 &&
+    respondentMobileNUmbers &&
+    respondentMobileNUmbers &&
+    respondentMobileNUmbers === complainantMobileNumber
+  ) {
+    toast.error(t("RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM"));
+    setFormErrors("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
+    return true;
+  }
+  // else if (
+  //   formData &&
+  //   formData?.phonenumbers?.textfieldValue &&
+  //   formData?.phonenumbers?.textfieldValue?.length === 10 &&
+  //   formData?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue)
+  // ) {
+  //   toast.error("DUPLICATE_MOBILE_NUMBER");
+  //   // setFormErrors("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+  //   return true;
+  // }
+  else {
+    clearFormDataErrors("phonenumbers");
     return false;
   }
 };
@@ -947,7 +982,11 @@ export const updateCaseDetails = async ({
             inquiryAffidavitFileUpload: [],
             companyDetailsUpload: [],
           };
-          if (data?.data?.inquiryAffidavitFileUpload?.document && Array.isArray(data?.data?.inquiryAffidavitFileUpload?.document) && data?.data?.inquiryAffidavitFileUpload?.document > 0) {
+          if (
+            data?.data?.inquiryAffidavitFileUpload?.document &&
+            Array.isArray(data?.data?.inquiryAffidavitFileUpload?.document) &&
+            data?.data?.inquiryAffidavitFileUpload?.document.length > 0
+          ) {
             documentData.inquiryAffidavitFileUpload = await Promise.all(
               data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                 if (document) {
@@ -993,10 +1032,17 @@ export const updateCaseDetails = async ({
           };
         })
     );
+    const newFormDataCopy = structuredClone(newFormData);
+    for (let i = 0; i < newFormDataCopy.length; i++) {
+      const obj = newFormDataCopy[i];
+      if (obj?.data?.phonenumbers) {
+        obj.data.phonenumbers.textfieldValue = "";
+      }
+    }
     data.additionalDetails = {
       ...caseDetails.additionalDetails,
       respondentDetails: {
-        formdata: newFormData,
+        formdata: newFormDataCopy,
         isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
       },
     };
