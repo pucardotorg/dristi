@@ -66,7 +66,7 @@ public class OrderRegistrationService {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
+            List<Order> orderList = orderRepository.getOrders(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))

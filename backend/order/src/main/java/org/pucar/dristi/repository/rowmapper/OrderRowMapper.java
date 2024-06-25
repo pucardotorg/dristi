@@ -84,7 +84,10 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
             try {
                 DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
                 localDate = LocalDate.parse(str, pattern);
-            } catch (DateTimeParseException e) {}
+            } catch (DateTimeParseException e) {
+                   log.error("Date parsing failed for input: {}", str, e);
+                  throw new CustomException("DATE_PARSING_FAILED", "Failed to parse date: " + str);
+            }
 
         return localDate;
     }

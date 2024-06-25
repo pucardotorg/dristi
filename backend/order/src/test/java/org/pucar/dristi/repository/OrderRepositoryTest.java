@@ -57,7 +57,6 @@ public class OrderRepositoryTest {
         String id = "id";
         String status = "status";
         String orderNumber = "ORDER-123";
-        String orderType = "Bail";
 
         List<Order> mockOrderList = new ArrayList<>();
         Order mockOrder = new Order();
@@ -79,7 +78,7 @@ public class OrderRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
                 .thenReturn(Collections.singletonMap(mockOrder.getId(), new ArrayList<>()));
 
-        List<Order> result = orderRepository.getApplications(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
+        List<Order> result = orderRepository.getOrders(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -98,7 +97,7 @@ public class OrderRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
                 .thenReturn(Collections.emptyList());
 
-        List<Order> result = orderRepository.getApplications( "order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status");
+        List<Order> result = orderRepository.getOrders( "order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status");
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -118,7 +117,7 @@ public class OrderRepositoryTest {
                 .thenThrow(new CustomException("TEST_EXCEPTION", "Test exception"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                orderRepository.getApplications("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status"));
+                orderRepository.getOrders("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status"));
 
         assertEquals("TEST_EXCEPTION", exception.getCode());
         assertEquals("Test exception", exception.getMessage());
@@ -134,7 +133,7 @@ public class OrderRepositoryTest {
                 .thenThrow(new RuntimeException("Test runtime exception"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                orderRepository.getApplications("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status"));
+                orderRepository.getOrders("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status"));
 
         assertEquals(ORDER_SEARCH_EXCEPTION, exception.getCode());
         assertTrue(exception.getMessage().contains("Error while fetching order list: Test runtime exception"));
