@@ -441,8 +441,8 @@ class ApplicationQueryBuilderTest {
     void testCheckApplicationsExistQueryException() {
         try {
             applicationQueryBuilder.checkApplicationExistQuery(null, null, null);
-        } catch (CustomException e) {
-            assertEquals(APPLICATION_EXIST_EXCEPTION, e.getCode());
+        } catch (Exception e) {
+            assertEquals("Error occurred while building the application exist query ", e.getMessage());
         }
     }
 }
