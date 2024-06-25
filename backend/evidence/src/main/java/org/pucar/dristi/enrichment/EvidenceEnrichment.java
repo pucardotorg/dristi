@@ -95,7 +95,7 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().setIsEvidence(true);
         } catch (Exception e) {
             log.error("Error enriching evidence number upon update: {}", e.toString());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during evidence number update process: " + e.toString());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Failed to generate evidence number for " + evidenceRequest.getArtifact().getId() + ": " + e.toString());
         }
     }
         public void enrichIsActive(EvidenceRequest evidenceRequest) {
