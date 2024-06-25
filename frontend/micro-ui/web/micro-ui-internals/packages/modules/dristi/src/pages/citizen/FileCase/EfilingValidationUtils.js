@@ -22,6 +22,12 @@ export const showDemandNoticeModal = ({
             setServiceOfDemandNoticeModal(true);
             setError("dateOfService", { message: " CS_SERVICE_DATE_ERROR_MSG" });
             setValue("dateOfAccrual", "");
+          } else if (
+            formData?.dateOfIssuance &&
+            formData?.dateOfService &&
+            new Date(formData?.dateOfService).getTime() < new Date(formData?.dateOfIssuance).getTime()
+          ) {
+            setError("dateOfService", { message: "CS_SERVICE_DATE_LEGAL_NOTICE_ERROR_MSG" });
           } else {
             clearErrors("dateOfService");
             let formattedDate = "";
@@ -59,6 +65,17 @@ export const showDemandNoticeModal = ({
             setError("dateOfDispatch", { message: "CS_DISPATCH_DATE_ERROR_MSG" });
           } else {
             clearErrors("dateOfDispatch");
+          }
+          break;
+        case "dateOfReply":
+          if (
+            formData?.dateOfService &&
+            formData?.dateOfService &&
+            new Date(formData?.dateOfReply).getTime() < new Date(formData?.dateOfService).getTime()
+          ) {
+            setError("dateOfReply", { message: "CS_REPLY_DATE_ERROR_MSG" });
+          } else {
+            clearErrors("dateOfReply");
           }
           break;
         case "delayApplicationType":
@@ -396,7 +413,7 @@ export const checkOnlyCharInCheque = ({ formData, setValue, selected }) => {
         }
       }
     }
-  } else if (selected == "debtLiabilityDetails") {
+  } else if (selected === "debtLiabilityDetails") {
     if (formData?.totalAmount) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
@@ -431,7 +448,12 @@ export const respondentValidation = ({ t, formData, selected, caseDetails, setSh
       if (
         formData?.addressDetails?.some(
           (address) =>
-            address?.addressDetails?.pincode !== caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode
+            (address?.addressDetails?.pincode !== caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
+            (address?.addressDetails?.pincode !==
+              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
+              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
+                "REPRESENTATIVE")
         ) &&
         !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
       ) {
@@ -546,10 +568,14 @@ export const signatureValidation = ({ formData, selected, setShowErrorToast, set
   if (selected === "addSignature") {
     if (
       !(
-        formData?.advocatesignature &&
-        Object.keys(formData?.advocatesignature)?.length > 0 &&
-        formData?.litigentsignature &&
-        Object.keys(formData?.litigentsignature)?.length > 0
+        Object.keys(formData || {}).length > 0 &&
+        Object.keys(formData).reduce((res, curr) => {
+          if (!res) return res;
+          else {
+            res = Boolean(formData[curr] && Object.keys(formData[curr])?.length > 0);
+            return res;
+          }
+        }, true)
       )
     ) {
       setShowErrorToast(true);
@@ -917,9 +943,12 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          let documentData = [];
-          if (data?.data?.inquiryAffidavitFileUpload?.document) {
-            documentData = await Promise.all(
+          const documentData = {
+            inquiryAffidavitFileUpload: [],
+            companyDetailsUpload: [],
+          };
+          if (data?.data?.inquiryAffidavitFileUpload?.document && Array.isArray(data?.data?.inquiryAffidavitFileUpload?.document) && data?.data?.inquiryAffidavitFileUpload?.document > 0) {
+            documentData.inquiryAffidavitFileUpload = await Promise.all(
               data?.data?.inquiryAffidavitFileUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -934,7 +963,7 @@ export const updateCaseDetails = async ({
             );
           }
           if (data?.data?.companyDetailsUpload?.document) {
-            documentData = await Promise.all(
+            documentData.companyDetailsUpload = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
                   const uploadedData = await onDocumentUpload(document, document.name, tenantId);
@@ -954,11 +983,11 @@ export const updateCaseDetails = async ({
               ...data.data,
               inquiryAffidavitFileUpload: {
                 ...data?.data?.inquiryAffidavitFileUpload,
-                document: documentData,
+                document: documentData.inquiryAffidavitFileUpload,
               },
               companyDetailsUpload: {
                 ...data?.data?.companyDetailsUpload,
-                document: documentData,
+                document: documentData.companyDetailsUpload,
               },
             },
           };

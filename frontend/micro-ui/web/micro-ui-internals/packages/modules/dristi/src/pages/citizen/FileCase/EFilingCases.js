@@ -141,6 +141,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [showReviewCorrectionModal, setShowReviewCorrectionModal] = useState(false);
+  const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
 
@@ -478,6 +479,7 @@ function EFilingCases({ path }) {
   }, [pageConfig?.formconfig]);
 
   if (!getAllKeys.includes(selected) || !formConfig) {
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${getAllKeys[0]}`);
   }
 
@@ -672,7 +674,7 @@ function EFilingCases({ path }) {
           };
         });
       });
-      if (!isCaseReAssigned) {
+      if (!isCaseReAssigned || selected === "addSignature" || selected === "reviewCaseFile") {
         return modifiedFormData;
       }
     }
@@ -1234,10 +1236,12 @@ function EFilingCases({ path }) {
             if (action === CaseWorkflowAction.EDIT_CASE) {
               return history.push(`/${window.contextPath}/citizen/dristi/home`);
             }
+            setPrevSelected(selected);
             history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           });
         })
         .catch(() => {
+          setPrevSelected(selected);
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           setIsDisabled(false);
         });
@@ -1300,7 +1304,7 @@ function EFilingCases({ path }) {
       .catch(() => {
         setIsDisabled(false);
       });
-
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -1321,6 +1325,7 @@ function EFilingCases({ path }) {
       },
       tenantId
     );
+    setPrevSelected(selected);
     history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };
 
@@ -1361,6 +1366,7 @@ function EFilingCases({ path }) {
   const takeUserToRemainingMandatoryFieldsPage = () => {
     const firstPageInTheListWhichHasMandatoryFieldsLeft = checkAndGetMandatoryFieldLeftPages?.[0];
     const selectedPage = firstPageInTheListWhichHasMandatoryFieldsLeft?.selectedPage;
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmMandatoryModal(false);
   };
@@ -1368,10 +1374,12 @@ function EFilingCases({ path }) {
   const takeUserToRemainingOptionalFieldsPage = () => {
     const firstPageInTheListWhichHasOptionalFieldsLeft = checkAndGetOptionalFieldLeftPages?.[0];
     const selectedPage = firstPageInTheListWhichHasOptionalFieldsLeft?.selectedPage;
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
   if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
   }
   return (
@@ -1645,7 +1653,8 @@ function EFilingCases({ path }) {
               headerBarEnd={
                 <CloseBtn
                   onClick={() => {
-                    history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+                    setPrevSelected(selected);
+                    history.push(`?caseId=${caseId}&selected=${prevSelected}`);
                     setShowReviewCorrectionModal(false);
                   }}
                 />
@@ -1653,6 +1662,7 @@ function EFilingCases({ path }) {
               actionSaveLabel={t("REVIEW_CASE")}
               children={<div style={{ margin: "16px 0px" }}>{t("PLEASE_REVIEW_CASE_TEXT")}</div>}
               actionSaveOnSubmit={() => {
+                setPrevSelected(selected);
                 history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
                 setShowReviewCorrectionModal(false);
               }}
