@@ -103,6 +103,11 @@ paths:
           description: Search by status
           schema:
             type: string
+        - name: applicationNumber
+          in: query
+          description: Search by applicationNumber
+          schema:
+            type: string
         - name: limit
           in: query
           description: No of records return

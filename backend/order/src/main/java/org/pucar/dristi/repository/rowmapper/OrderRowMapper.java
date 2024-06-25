@@ -10,6 +10,9 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 @Component
@@ -46,6 +49,7 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .orderCategory(rs.getString("ordercategory"))
                             .isActive(rs.getBoolean("isactive"))
                             .orderType(rs.getString("ordertype"))
+                            .createdDate(stringToLocalDate(rs.getString("filingdate")))
                             .comments(rs.getString("comments"))
                             .filingNumber(rs.getString("filingnumber"))
                             .status(rs.getString("status"))
@@ -72,5 +76,16 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
             throw new CustomException("ROW_MAPPER_EXCEPTION","Error occurred while processing order ResultSet: "+ e.getMessage());
         }
         return new ArrayList<>(orderMap.values());
+    }
+
+    private LocalDate stringToLocalDate(String str){
+        LocalDate localDate = null;
+        if(str!=null)
+            try {
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                localDate = LocalDate.parse(str, pattern);
+            } catch (DateTimeParseException e) {}
+
+        return localDate;
     }
 }

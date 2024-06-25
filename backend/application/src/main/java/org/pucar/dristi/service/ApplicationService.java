@@ -75,10 +75,10 @@ public class ApplicationService {
         }
     }
 
-    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
+    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, String applicationNumber, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
             try {
                 // Fetch applications from database according to the given search params
-                List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+                List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
                 log.info("No. of applications :: {}", applicationList.size());
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))

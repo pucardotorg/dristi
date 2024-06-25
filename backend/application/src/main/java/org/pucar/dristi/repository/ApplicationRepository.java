@@ -40,14 +40,14 @@ public class ApplicationRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset ) {
+    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, String status, String applicationNumber,Integer limit, Integer offset ) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber,limit, offset);
             log.info("Final application search query: {}", applicationQuery);
             List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
             log.info("DB application list :: {}", list);

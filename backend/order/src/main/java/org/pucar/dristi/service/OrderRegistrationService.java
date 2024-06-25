@@ -62,11 +62,11 @@ public class OrderRegistrationService {
         }
     }
 
-    public List<Order> searchOrder(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, RequestInfo requestInfo) {
+    public List<Order> searchOrder(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, String orderType,RequestInfo requestInfo) {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getApplications(applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
+            List<Order> orderList = orderRepository.getApplications(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status, orderType);
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))

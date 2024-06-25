@@ -67,7 +67,7 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public String getOrderSearchQuery(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, String orderType) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
@@ -107,6 +107,16 @@ public class OrderQueryBuilder {
             if (status!=null && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.status =").append("'").append(status).append("'");
+                firstCriteria = false;
+            }
+            if (orderType!=null && !orderType.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.ordertype =").append("'").append(orderType).append("'");
+                firstCriteria = false;
+            }
+            if (orderNumber!=null && !orderNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.ordernumber =").append("'").append(orderNumber).append("'");
                 firstCriteria = false;
             }
             query.append(ORDERBY_CREATEDTIME);

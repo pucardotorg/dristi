@@ -68,7 +68,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testApplicationV1SearchPost_Success() {
         List<Application> expectedApplication = Collections.singletonList(new Application());
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),
+        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(), any(),
                 any(RequestInfoBody.class)))
                 .thenReturn(expectedApplication);
 
@@ -78,7 +78,7 @@ class ApplicationApiControllerTest {
 
         RequestInfoBody requestInfoBody = new RequestInfoBody();
         ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost("a", "b","c",
-                "d",null, null, null, null, requestInfoBody);
+                "d",null, null, null, null, null,requestInfoBody);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ApplicationListResponse actualResponse = response.getBody();
@@ -146,14 +146,14 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1SearchPost_InvalidRequest() {
 
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),
+        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),any(),
                 any(RequestInfoBody.class)))
                 .thenThrow(new IllegalArgumentException("Invalid request"));
 
         RequestInfoBody requestInfoBody = new RequestInfoBody();
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             controller.applicationV1SearchPost("a", "b","c",
-                    "d",null, null, null, null, requestInfoBody);
+                    "d",null, null, null, null,null, requestInfoBody);
         });
 
         assertEquals("Invalid request", exception.getMessage());
@@ -162,7 +162,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testApplicationV1SearchPost_EmptyList() {
         List<Application> emptyList = Collections.emptyList();
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),
+        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),any(),
                 any(RequestInfoBody.class)))
                 .thenReturn(emptyList);
 
@@ -173,7 +173,7 @@ class ApplicationApiControllerTest {
         RequestInfoBody requestInfoBody = new RequestInfoBody();
 
         ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost("a", "b","c",
-                "d",null, null, null, null, requestInfoBody);
+                "d",null, null, null, null,null, requestInfoBody);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ApplicationListResponse actualResponse = response.getBody();

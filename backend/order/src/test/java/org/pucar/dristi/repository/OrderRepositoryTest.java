@@ -56,13 +56,15 @@ public class OrderRepositoryTest {
         String tenantId = "tenant";
         String id = "id";
         String status = "status";
+        String orderNumber = "ORDER-123";
+        String orderType = "Bail";
 
         List<Order> mockOrderList = new ArrayList<>();
         Order mockOrder = new Order();
         mockOrder.setId(UUID.randomUUID());
         mockOrderList.add(mockOrder);
 
-        when(queryBuilder.getOrderSearchQuery( anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(queryBuilder.getOrderSearchQuery( anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString(),anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
                 .thenReturn(mockOrderList);
@@ -77,11 +79,11 @@ public class OrderRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
                 .thenReturn(Collections.singletonMap(mockOrder.getId(), new ArrayList<>()));
 
-        List<Order> result = orderRepository.getApplications(applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
+        List<Order> result = orderRepository.getApplications(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status,orderType);
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(queryBuilder, times(1)).getOrderSearchQuery(applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
+        verify(queryBuilder, times(1)).getOrderSearchQuery(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status,orderType);
         verify(jdbcTemplate, times(1)).query("orderQuery", rowMapper);
         verify(queryBuilder, times(1)).getStatuteSectionSearchQuery(anyList(), anyList());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), eq(statuteSectionRowMapper));
@@ -91,16 +93,16 @@ public class OrderRepositoryTest {
 
     @Test
     public void testGetApplications_emptyResult() {
-        when(queryBuilder.getOrderSearchQuery( anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(queryBuilder.getOrderSearchQuery(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
                 .thenReturn(Collections.emptyList());
 
-        List<Order> result = orderRepository.getApplications( "appNum","cnrNum", "filingNum", "tenant", "id", "status");
+        List<Order> result = orderRepository.getApplications( "order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status","Bail");
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(queryBuilder, times(1)).getOrderSearchQuery( anyString(),anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(queryBuilder, times(1)).getOrderSearchQuery( anyString(),anyString(),anyString(),anyString(), anyString(), anyString(), anyString(), anyString());
         verify(jdbcTemplate, times(1)).query("orderQuery", rowMapper);
         verify(queryBuilder, never()).getStatuteSectionSearchQuery(anyList(), anyList());
         verify(jdbcTemplate, never()).query(anyString(), any(Object[].class), eq(statuteSectionRowMapper));
@@ -110,33 +112,33 @@ public class OrderRepositoryTest {
 
     @Test
     public void testGetApplications_customException() {
-        when(queryBuilder.getOrderSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(queryBuilder.getOrderSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
                 .thenThrow(new CustomException("TEST_EXCEPTION", "Test exception"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                orderRepository.getApplications("appNum","cnrNum", "filingNum", "tenant", "id", "status"));
+                orderRepository.getApplications("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status","Bail"));
 
         assertEquals("TEST_EXCEPTION", exception.getCode());
         assertEquals("Test exception", exception.getMessage());
-        verify(queryBuilder, times(1)).getOrderSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(queryBuilder, times(1)).getOrderSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
         verify(jdbcTemplate, times(1)).query("orderQuery", rowMapper);
     }
 
     @Test
     public void testGetApplications_genericException() {
-        when(queryBuilder.getOrderSearchQuery( anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(queryBuilder.getOrderSearchQuery( anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
                 .thenThrow(new RuntimeException("Test runtime exception"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                orderRepository.getApplications("appNum","cnrNum", "filingNum", "tenant", "id", "status"));
+                orderRepository.getApplications("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status","Bail"));
 
         assertEquals(ORDER_SEARCH_EXCEPTION, exception.getCode());
         assertTrue(exception.getMessage().contains("Error while fetching order list: Test runtime exception"));
-        verify(queryBuilder, times(1)).getOrderSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString());
+        verify(queryBuilder, times(1)).getOrderSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
         verify(jdbcTemplate, times(1)).query("orderQuery", rowMapper);
     }
 }
