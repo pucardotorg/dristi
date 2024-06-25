@@ -152,7 +152,7 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
 
         lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
@@ -189,7 +189,7 @@ class CaseRepositoryTest {
         List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any());
+        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(CaseRowMapper.class));
 
         // Assert result
@@ -235,7 +235,7 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
@@ -282,7 +282,7 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {

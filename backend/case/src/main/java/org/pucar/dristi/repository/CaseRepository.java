@@ -70,7 +70,7 @@ public class CaseRepository {
                 List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String casesQuery = "";
-                casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList);
+                casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList, null);
                 log.info("Final case query :: {}", casesQuery);
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
                 if (list != null) {

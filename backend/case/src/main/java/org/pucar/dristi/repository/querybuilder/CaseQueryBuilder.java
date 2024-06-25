@@ -1,14 +1,13 @@
 package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.CaseCriteria;
-import org.pucar.dristi.web.models.CaseExists;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -91,7 +90,7 @@ public class CaseQueryBuilder {
         }
     }
 
-    public String getCasesSearchQuery(CaseCriteria criteria, List<Object> preparedStmtList) {
+    public String getCasesSearchQuery(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_CASES_TABLE);
@@ -149,15 +148,17 @@ public class CaseQueryBuilder {
 
                 if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?)");
+                    query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
                     preparedStmtList.add(criteria.getLitigantId());
+                    preparedStmtList.add(requestInfo.getUserInfo().getUuid());
                     firstCriteria = false;
                 }
 
                 if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
                     addClauseIfRequired(query, firstCriteria);
-                    query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?)");
+                    query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
                     preparedStmtList.add(criteria.getAdvocateId());
+                    preparedStmtList.add(requestInfo.getUserInfo().getUuid());
                     firstCriteria = false;
                 }
 
