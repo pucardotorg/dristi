@@ -177,17 +177,18 @@ public class CaseRegistrationValidator {
                 if (!advocateUtil.fetchAdvocateDetails(requestInfo, representative.getAdvocateId()))
                     throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
             }
-            else
+            else {
                 throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
-
+            }
             if (representative.getDocuments() != null && !representative.getDocuments().isEmpty()) { //validation for documents for representative
                 representative.getDocuments().forEach(document -> {
                     if(document.getFileStore()!=null){
                         if (!fileStoreUtil.fileStore(representative.getTenantId(), document.getFileStore()))
                             throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
                     }
-                    else
+                    else {
                         throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                    }
                 });
             }
         return true;

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
 import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
@@ -136,9 +137,6 @@ public class CaseService {
             if (!validator.validateLitigantJoinCase(joinCaseRequest))
                 throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
 
-            if(!joinCaseRequest.getLitigant().getCaseId().equalsIgnoreCase(caseObj.getId().toString()))
-                throw new CustomException(VALIDATION_ERR, "Invalid caseId");
-
             log.info("enriching litigants");
             enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
 
@@ -148,8 +146,6 @@ public class CaseService {
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
             if (!validator.validateRepresentativeJoinCase(joinCaseRequest))
                 throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
-            if (!joinCaseRequest.getRepresentative().getCaseId().equalsIgnoreCase(caseObj.getId().toString()))
-                throw new CustomException(VALIDATION_ERR, "Invalid caseId");
 
             log.info("enriching representatives");
             enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
@@ -168,6 +164,10 @@ public class CaseService {
 
             CourtCase courtCase = courtCaseList.get(0);
             UUID caseId = courtCase.getId();
+
+            if (!CASE_ADMIT_STATUS.equals(courtCase.getStatus())) {
+                throw new CustomException(VALIDATION_ERR, "Case must be in CASE_ADMITTED state");
+            }
             String caseAccessCode = courtCase.getAccessCode();
 
             if(!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
@@ -182,28 +182,44 @@ public class CaseService {
 
             CourtCase caseObj = CourtCase.builder()
                     .id(caseId)
-                    .litigants(Collections.singletonList(joinCaseRequest.getLitigant()))
-                    .representatives(Collections.singletonList(joinCaseRequest.getRepresentative())).build();
+                    .build();
 
             if(joinCaseRequest.getLitigant() != null) {
+                // Stream over the litigants to create a list of individualIds
+                List<String> individualIds = courtCase.getLitigants().stream()
+                        .map(Party::getIndividualId)
+                        .toList();
+                if(joinCaseRequest.getLitigant().getIndividualId() != null &&
+                        individualIds.contains(joinCaseRequest.getLitigant().getIndividualId())){
+                    throw new CustomException(VALIDATION_ERR, "Litigant is already a part of the given case");
+                }
+                caseObj.setLitigants(Collections.singletonList(joinCaseRequest.getLitigant()));
                 verifyAndEnrichLitigant(joinCaseRequest, caseObj, auditDetails);
             }
+
             if(joinCaseRequest.getRepresentative() != null) {
+                // Stream over the representatives to create a list of advocateIds
+                List<String> advocateIds = courtCase.getRepresentatives().stream()
+                        .map(AdvocateMapping::getAdvocateId)
+                        .toList();
+                if(joinCaseRequest.getRepresentative().getAdvocateId() != null &&
+                        advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())){
+                    throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
+                }
+                caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
                 verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
             }
 
-            JoinCaseResponse response = JoinCaseResponse.builder()
+            return JoinCaseResponse.builder()
                     .accessCode(caseAccessCode)
                     .caseFilingNumber(filingNumber)
                     .representative(joinCaseRequest.getRepresentative())
                     .litigant(joinCaseRequest.getLitigant()).build();
 
-            return response;
-
         } catch(CustomException e){
             throw e;
         } catch (Exception e) {
-            log.error("Invalid request for joining a case :: {}",e.toString());//todo error message fix and exceptions
+            log.error("Invalid request for joining a case :: {}",e.toString());
             throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
         }
     }
