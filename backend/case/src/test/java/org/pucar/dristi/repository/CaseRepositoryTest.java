@@ -351,5 +351,24 @@ class CaseRepositoryTest {
             caseRepository.checkCaseExists(caseExistsList);
         });
     }
+    @Test
+    void checkCaseExists_returnsCorrectExistenceStatus() {
+        List<CaseExists> caseExistsRequest = new ArrayList<>();
+        CaseExists caseExists1 = CaseExists.builder().caseId("12").courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().caseId(null).courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();
+        caseExistsRequest.add(caseExists1);
+        caseExistsRequest.add(caseExists2);
 
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1);
+
+        List<CaseExists> result = caseRepository.checkCaseExists(caseExistsRequest);
+
+        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+
+        assertEquals(2, result.size());
+        assertEquals(true, result.get(0).getExists());
+        assertEquals(false, result.get(1).getExists());
+    }
 }

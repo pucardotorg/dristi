@@ -23,6 +23,9 @@
 hs_err_pid*
 replay_pid*
 
+.idea/*
+.vscode/*
+
 
 frontend/micro-ui/web/micro-ui-internals/node_modules/*
 frontend/pucar-ui/web/micro-ui-internals/node_modules/*

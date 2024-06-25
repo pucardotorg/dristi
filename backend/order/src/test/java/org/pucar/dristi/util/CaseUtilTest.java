@@ -56,6 +56,29 @@ public class CaseUtilTest {
     }
 
     @Test
+    void testFetchCaseDetailsReturnFalse() throws Exception {
+        Map<String, Object> responseMap = new HashMap<>();
+        Map<String, Object> caseDetails = new HashMap<>();
+        caseDetails.put("exists", true);
+        responseMap.put("criteria", null);
+
+        CaseExistsResponse caseExistsResponse = new CaseExistsResponse();
+        caseExistsResponse.setCriteria(new ArrayList<>());
+
+        when(restTemplate.postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class))).thenReturn(responseMap);
+        when(mapper.convertValue(responseMap, CaseExistsResponse.class)).thenReturn(caseExistsResponse);
+
+        Boolean exists = caseUtil.fetchCaseDetails(requestInfo, cnrNumber, filingNumber);
+
+        assertFalse(exists);
+
+        verify(configs).getCaseHost();
+        verify(configs).getCasePath();
+        verify(restTemplate).postForObject(anyString(), any(CaseExistsRequest.class), eq(Map.class));
+        verify(mapper).convertValue(responseMap, CaseExistsResponse.class);
+    }
+
+    @Test
     void testFetchCaseDetailsSuccess() throws Exception {
         Map<String, Object> responseMap = new HashMap<>();
         Map<String, Object> caseDetails = new HashMap<>();

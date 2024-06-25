@@ -2,7 +2,6 @@ package org.pucar.dristi.enrichment;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.common.contract.models.Document;
 import org.egov.tracer.model.CustomException;
@@ -19,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -167,9 +166,7 @@ public class CaseRegistrationEnrichment {
             statuteSection.setAuditdetails(auditDetails);
         });
         List<StatuteSection> statutesAndSectionsListToUpdate = courtCase.getStatutesAndSections().stream().filter(statuteSection -> statuteSection.getId() != null).toList();
-        statutesAndSectionsListToUpdate.forEach(statuteSection -> {
-            statuteSection.setAuditdetails(auditDetails);
-        });
+        statutesAndSectionsListToUpdate.forEach(statuteSection -> statuteSection.setAuditdetails(auditDetails));
     }
 
     private static void enrichLinkedCaseOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
@@ -226,15 +223,18 @@ public class CaseRegistrationEnrichment {
         try {
             List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
             caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-            caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber()));
+            caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            caseRequest.getCases().setCnrNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
         } catch (Exception e) {
             log.error("Error enriching case number and cnr number: {}", e.getMessage());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
         }
     }
-        public void enrichAccessCode(CaseRequest caseRequest){
+
+    public void enrichAccessCode(CaseRequest caseRequest){
             try {
-                String accessCode = RandomStringUtils.random(8, true, true);
+
+                String accessCode = CaseUtil.generateAccessCode(ACCESSCODE_LENGTH);
                 caseRequest.getCases().setAccessCode(accessCode);
             } catch (Exception e) {
                 log.error("Error enriching access code: {}", e.getMessage());

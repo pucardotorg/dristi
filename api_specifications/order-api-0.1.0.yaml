@@ -88,21 +88,21 @@ paths:
             type: string
         - name: applicationNumber
           in: query
-          description: the aapplicationNumber whose order(s) are being queried
-          required: true
+          description: the applicationNumber whose order(s) are being queried
+          required: false
           schema:
             type: string
             format: uuid
         - name: filingNumber
           in: query
           description: the filingNumber of the case whose order(s) are being queried
-          required: true
+          required: false
           schema:
             type: string
         - name: cnrNumber
           in: query
           description: the cnrNumber of the case whose order(s) are being queried
-          required: true
+          required: false
           schema:
             type: string
         - name: status
@@ -241,15 +241,17 @@ components:
             description: application number the order is based on. Could be null if not based on any application
         hearingNumber:
           type: string
-          format: uuid
-          minLength: 36
-          maxLength: 36
           description: in case the order is part of a hearing. if not, this will be set to null
         orderNumber:
           type: string
           minLength: 24
           maxLength: 256
           description: Order date and Case Name For example it will be Order number 1 for Rajpal et all vs State of Kerala
+        linkedOrderNumber:
+          type: string
+          minLength: 24
+          maxLength: 256
+          description: Linked orderNumber for reissue of orders (for summons and warrants et)
         createdDate:
           type: string
           format: date
@@ -269,13 +271,8 @@ components:
             courtID:
               type: string
         orderType:
-          type: array
-          items:
-            type: integer
-            format: uuid
-            minLength: 36
-            maxLength: 36
-          description: array of Master Data ID since an order can be of multiple order types
+          type: string
+          description: Master Data ID from OrderType master
         orderCategory:
           type: string
           description: Master data ID

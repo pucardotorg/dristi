@@ -51,6 +51,8 @@ public class CaseUtil {
 			log.error("ERROR_WHILE_FETCHING_FROM_CASE :: {}", e.toString());
 		}
 
+		if(caseResponse.getCriteria().isEmpty())
+			return false;
 		return caseResponse.getCriteria().get(0).getExists();
 	}
 }
