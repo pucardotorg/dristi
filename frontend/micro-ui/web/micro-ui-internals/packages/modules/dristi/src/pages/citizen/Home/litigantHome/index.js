@@ -5,7 +5,6 @@ import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { userTypeOptions } from "../../registration/config";
-import useGetAllCasesConfig from "../../../../hooks/dristi/useGetAllCasesConfig";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -110,7 +109,7 @@ function Home() {
                   ? {
                       searchKey: "filingNumber",
                       defaultFields: true,
-                      "advocateId ": advocateId,
+                      advocateId: advocateId,
                     }
                   : {
                       searchKey: "filingNumber",

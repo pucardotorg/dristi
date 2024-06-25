@@ -155,6 +155,10 @@ export const checkIfscValidation = ({ formData, setValue, selected }) => {
                 updatedValue = updatedValue.substring(0, 11);
               }
 
+              if (updatedValue?.length < 5) {
+                updatedValue = value.toUpperCase().replace(/[^A-Z]/g, "");
+              }
+
               if (updatedValue?.length >= 5) {
                 updatedValue = updatedValue.slice(0, 4).replace(/[^A-Z]/g, "") + "0" + updatedValue.slice(5);
               }
@@ -499,7 +503,7 @@ export const advocateDetailsFileValidation = ({ formData, selected, setShowError
   }
 };
 
-export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast }) => {
+export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast, setFormErrors, clearFormDataErrors }) => {
   if (selected === "complaintDetails") {
     const formDataCopy = structuredClone(formData);
     if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
@@ -511,6 +515,14 @@ export const complainantValidation = ({ formData, t, caseDetails, selected, setS
     if (!formData?.complainantId?.complainantId) {
       setShowErrorToast(true);
       return true;
+    }
+
+    if (!formData?.complainantVerification?.mobileNumber || !formData?.complainantVerification?.otpNumber) {
+      setShowErrorToast(true);
+      setFormErrors("complainantVerification", { mobileNumber: "CORE_REQUIRED_FIELD_ERROR" });
+      return true;
+    } else {
+      clearFormDataErrors("complainantVerification");
     }
     const respondentData = caseDetails?.additionalDetails?.respondentDetails;
     const complainantMobileNumber = formData?.complainantVerification?.mobileNumber;
@@ -909,6 +921,21 @@ export const updateCaseDetails = async ({
                     documentType: uploadedData.fileType || document?.documentType,
                     fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
                     documentName: uploadedData.filename || document?.documentName,
+                    fileName: "Affidavit documents",
+                  };
+                }
+              })
+            );
+          }
+          if (data?.data?.companyDetailsUpload?.document) {
+            documentData = await Promise.all(
+              data?.data?.companyDetailsUpload?.document?.map(async (document) => {
+                if (document) {
+                  const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
                     fileName: "Company documents",
                   };
                 }
@@ -921,6 +948,10 @@ export const updateCaseDetails = async ({
               ...data.data,
               inquiryAffidavitFileUpload: {
                 ...data?.data?.inquiryAffidavitFileUpload,
+                document: documentData,
+              },
+              companyDetailsUpload: {
+                ...data?.data?.companyDetailsUpload,
                 document: documentData,
               },
             },

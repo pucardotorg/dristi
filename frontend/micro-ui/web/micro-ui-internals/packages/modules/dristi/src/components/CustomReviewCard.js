@@ -16,6 +16,7 @@ function CustomReviewCard({
   handleClickImage,
   prevDataErrors,
   isPrevScrutiny,
+  setShowImageModal,
 }) {
   if (data?.isAdvocateRepresenting?.code === "NO") {
     return null;
@@ -42,6 +43,7 @@ function CustomReviewCard({
             t={t}
             titleHeading={titleHeading}
             handleClickImage={handleClickImage}
+            setShowImageModal={setShowImageModal}
           />
         );
       })}

@@ -7,13 +7,15 @@ const signatureFormConfig = [
         key: "advocatesignature",
         label: "1. Advocate Signature",
         withoutLabel: true,
+        dependentOn: "advocateDetails",
+        dependentKey: "advocateName",
         populators: {
           inputs: [
             {
               key: "advocateDetails",
               icon: "AdvocateIcon",
               config: { title: "name" },
-              data: [{ name: "Soumya Dhasmana" }],
+              data: [],
             },
           ],
         },
@@ -34,7 +36,7 @@ const signatureFormConfig = [
               key: "complaintDetails",
               icon: "LitigentIcon",
               config: { title: "name" },
-              data: [{ name: "Sheetal Arora" }],
+              data: [],
             },
           ],
         },
@@ -42,6 +44,7 @@ const signatureFormConfig = [
     ],
   },
 ];
+
 const confirmmodalconfig = {
   actionCancelLabel: "CS_COMMON_CANCEL",
   actionSaveLabel: "CS_CONTINUE_EDITING",
