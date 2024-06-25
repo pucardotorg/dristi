@@ -1,9 +1,9 @@
+import { InboxSearchComposer } from "@egovernments/digit-ui-react-components";
 import React from "react";
-import { Button, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
-import { judgeInboxConfig } from "./JudgeInboxConfig";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom";
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import { judgeInboxConfig } from "./JudgeInboxConfig";
 const sectionsParentStyle = {
   height: "50%",
   display: "flex",
@@ -34,7 +34,8 @@ function JudgeScreen({ path }) {
                   } else {
                     const searchParams = new URLSearchParams();
                     searchParams.set("caseId", props.original.id);
-                    history.push(`${path}/admission?${searchParams.toString()}`);
+                    searchParams.set("cnr", props.original.cnrNumber);
+                    history.push(props.original.status === "ADMISSION_HEARING_SCHEDULED" ? `${path}/admitted-case?${searchParams.toString()}` : `${path}/admission?${searchParams.toString()}`);
                   }
                 },
               },
