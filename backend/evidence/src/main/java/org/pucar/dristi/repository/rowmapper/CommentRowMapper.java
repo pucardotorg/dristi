@@ -58,8 +58,8 @@ public class CommentRowMapper implements ResultSetExtractor<List<Comment>> {
                 commentMap.put(id, comment);
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing evidence comment ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence comment ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing evidence comment ResultSet: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence comment ResultSet: " + e.toString());
         }
         return new ArrayList<>(commentMap.values());
     }

@@ -70,7 +70,7 @@
                 throw e;
             } catch (Exception e) {
                 log.error("Error while fetching artifact list");
-                throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.getMessage());
+                throw new CustomException("ARTIFACT_SEARCH_EXCEPTION", "Error while fetching artifact list: " + e.toString());
             }
         }
 

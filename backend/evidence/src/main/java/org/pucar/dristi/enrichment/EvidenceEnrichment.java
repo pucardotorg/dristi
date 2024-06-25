@@ -55,11 +55,11 @@ public class EvidenceEnrichment {
                 }
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while Enriching evidence: {}", e.getMessage());
+            log.error("Custom Exception occurred while Enriching evidence: {}", e.toString());
             throw e;
         } catch (Exception e) {
-            log.error("Error enriching evidence application: {}", e.getMessage());
-            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in evidence enrichment service: " + e.getMessage());
+            log.error("Error enriching evidence application: {}", e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in evidence enrichment service: " + e.toString());
         }
     }
 
@@ -94,8 +94,8 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().setEvidenceNumber(evidenceNumberList.get(0));
             evidenceRequest.getArtifact().setIsEvidence(true);
         } catch (Exception e) {
-            log.error("Error enriching evidence number upon update: {}", e.getMessage());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during evidence number update process: " + e.getMessage());
+            log.error("Error enriching evidence number upon update: {}", e.toString());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during evidence number update process: " + e.toString());
         }
     }
         public void enrichIsActive(EvidenceRequest evidenceRequest) {
@@ -103,8 +103,8 @@ public class EvidenceEnrichment {
                 evidenceRequest.getArtifact().setIsActive(false);
             }
             catch (Exception e) {
-                log.error("Error enriching isActive status upon update: {}", e.getMessage());
-                throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during isActive status update process: " + e.getMessage());
+                log.error("Error enriching isActive status upon update: {}", e.toString());
+                throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during isActive status update process: " + e.toString());
             }
     }
 
@@ -115,8 +115,8 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedTime(System.currentTimeMillis());
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
-            log.error("Error enriching evidence application upon update: {}", e.getMessage());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during  update process: " + e.getMessage());
+            log.error("Error enriching evidence application upon update: {}", e.toString());
+            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during  update process: " + e.toString());
         }
     }
 }

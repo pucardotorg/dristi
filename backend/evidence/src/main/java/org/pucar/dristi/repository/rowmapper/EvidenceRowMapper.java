@@ -77,8 +77,8 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                 artifactMap.put(id, artifact);
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.toString());
         }
         return new ArrayList<>(artifactMap.values());
     }

@@ -130,7 +130,7 @@ public class EvidenceServiceTest {
                 evidenceService.searchEvidence(requestInfo, evidenceSearchCriteria));
 
         assertEquals("EVIDENCE_SEARCH_EXCEPTION", exception.getCode());
-        assertEquals("Database error", exception.getMessage());
+        assertEquals("java.lang.RuntimeException: Database error", exception.getMessage());
         verify(repository, times(1)).getArtifacts(any(EvidenceSearchCriteria.class));
     }
 
@@ -199,7 +199,7 @@ public class EvidenceServiceTest {
                 evidenceService.searchEvidence(requestInfo, evidenceSearchCriteria));
 
         assertEquals("EVIDENCE_SEARCH_EXCEPTION", exception.getCode());
-        assertEquals("Database error", exception.getMessage());
+        assertEquals("java.lang.RuntimeException: Database error", exception.getMessage());
     }
     @Test
     public void testCreateEvidence() {

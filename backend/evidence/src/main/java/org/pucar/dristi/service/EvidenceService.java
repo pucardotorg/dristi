@@ -58,7 +58,7 @@ public class EvidenceService {
             throw e;
         } catch (Exception e){
             log.error("Error occurred while creating evidence");
-            throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.getMessage());
+            throw new CustomException(EVIDENCE_CREATE_EXCEPTION,e.toString());
         }
     }
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
@@ -78,7 +78,7 @@ public class EvidenceService {
         }
         catch (Exception e){
             log.error("Error while fetching to search results");
-            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION",e.getMessage());
+            throw new CustomException("EVIDENCE_SEARCH_EXCEPTION",e.toString());
         }
     }
 
@@ -92,7 +92,7 @@ public class EvidenceService {
                 existingApplication = validator.validateApplicationExistence(evidenceRequest);
             } catch (Exception e) {
                 log.error("Error validating existing application");
-                throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.getMessage());
+                throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.toString());
             }
             existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
 
@@ -115,7 +115,7 @@ public class EvidenceService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while updating evidence");
-            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.getMessage());
+            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.toString());
         }
 
     }
