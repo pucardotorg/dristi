@@ -72,7 +72,7 @@ public class OrderRegistrationService {
             if (CollectionUtils.isEmpty(orderList))
                 return new ArrayList<>();
 
-            orderList.forEach(order -> order.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, tenantId, order.getOrderNumber()))));
+            orderList.forEach(order -> order.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, order.getTenantId(), order.getOrderNumber()))));
 
             return orderList;
 
