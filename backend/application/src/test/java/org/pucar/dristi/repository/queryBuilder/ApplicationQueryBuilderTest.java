@@ -412,7 +412,24 @@ class ApplicationQueryBuilderTest {
     }
 
     @Test
+    void testLimitAndOffsetProvided() {
+        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber, app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby, app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive, app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status  FROM dristi_application app ORDER BY app.createdtime DESC  LIMIT 1 OFFSET 1";
+
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(null, null, null,null,null,null,1,1);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
     void testGetApplicationsSearchQueryException() {
+        try {
+            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null, null);
+        } catch (Exception e) {
+            assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getMessage());
+        }
+    }
+
+    @Test
+    void testGetApplicationsSearchQueryCustomException() {
         try {
             applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null, null);
         } catch (CustomException e) {
