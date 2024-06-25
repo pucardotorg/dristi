@@ -21,7 +21,7 @@ public class EvidenceSearchCriteria {
     private String sourceId;
     private String sourceName;
     private String status;
-    private String artifactNumber ;
+    private String artifactNumber;
 
 
     // Getters and setters
