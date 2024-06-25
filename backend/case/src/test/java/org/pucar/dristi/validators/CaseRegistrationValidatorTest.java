@@ -292,7 +292,7 @@ public class CaseRegistrationValidatorTest {
         caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
                 .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
 
         Boolean result = validator.validateApplicationExistence(caseRequest);
@@ -336,7 +336,7 @@ public class CaseRegistrationValidatorTest {
         caseSearchRequest.setRequestInfo(new RequestInfo());
         caseSearchRequest.setCriteria(caseCriteriaList);
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((Collections.emptyList()));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((Collections.emptyList()));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         User userInfo = new User();
@@ -397,7 +397,7 @@ public class CaseRegistrationValidatorTest {
         caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
                 .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
 
         assertThrows(Exception.class, () -> validator.validateApplicationExistence(caseRequest));
@@ -486,7 +486,7 @@ public class CaseRegistrationValidatorTest {
         caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
                 .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
@@ -506,7 +506,7 @@ public class CaseRegistrationValidatorTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }
@@ -524,7 +524,7 @@ public class CaseRegistrationValidatorTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }
@@ -540,7 +540,7 @@ public class CaseRegistrationValidatorTest {
         Workflow workflow = new Workflow();
         workflow.setAction(DELETE_DRAFT_WORKFLOW_ACTION);
         courtCase.setWorkflow(workflow);
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
@@ -559,7 +559,7 @@ public class CaseRegistrationValidatorTest {
         Workflow workflow = new Workflow();
         workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
         courtCase.setWorkflow(workflow);
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
@@ -575,7 +575,7 @@ public class CaseRegistrationValidatorTest {
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(new ArrayList<>());
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }

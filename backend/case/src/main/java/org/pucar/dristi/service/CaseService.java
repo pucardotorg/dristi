@@ -75,7 +75,7 @@ public class CaseService {
 
         try {
             // Fetch applications from database according to the given search criteria
-            caseRepository.getApplications(caseSearchRequests.getCriteria());
+            caseRepository.getApplications(caseSearchRequests.getCriteria(), caseSearchRequests.getRequestInfo());
 
             // If no applications are found matching the given criteria, return an empty list
             for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()){
