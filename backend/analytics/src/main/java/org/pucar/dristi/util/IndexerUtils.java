@@ -172,7 +172,9 @@ public class IndexerUtils {
 			List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
 			if (cnrNumbers == null || cnrNumbers.isEmpty()) {
 				List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
-				filingNumber = filingNumberList.get(0);
+				if (filingNumberList != null && !filingNumberList.isEmpty()) {
+					filingNumber = filingNumberList.get(0);
+				}
 				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber);
 				cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 			} else {
@@ -184,22 +186,24 @@ public class IndexerUtils {
 			filingNumber = referenceId;
 			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber);
 			cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
-		} else if (entityType.equalsIgnoreCase("evidence")) {
-			Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
-			cnrNumber = JsonPath.read(artifactObject, CNR_NUMBER_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
-			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-		} else if (entityType.equalsIgnoreCase("task")) {
-			Object taskObject = taskUtil.getTask(request, null, null, config.getStateLevelTenantId(), referenceId);
-			cnrNumber = JsonPath.read(taskObject, CNR_NUMBER_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
-			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-		} else if (entityType.equalsIgnoreCase("application")) {
-			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
-			cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
-			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-		} else {
+		}
+//		} else if (entityType.equalsIgnoreCase("evidence")) {
+//			Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
+//			cnrNumber = JsonPath.read(artifactObject, CNR_NUMBER_PATH);
+//			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
+//			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+//		} else if (entityType.equalsIgnoreCase("task")) {
+//			Object taskObject = taskUtil.getTask(request, null, null, config.getStateLevelTenantId(), referenceId);
+//			cnrNumber = JsonPath.read(taskObject, CNR_NUMBER_PATH);
+//			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
+//			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+//		} else if (entityType.equalsIgnoreCase("application")) {
+//			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
+//			cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
+//			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
+//			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+//		}
+	else {
 			log.error("Unexpected entityType: ", entityType);
 		}
 

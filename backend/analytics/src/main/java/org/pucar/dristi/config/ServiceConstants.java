@@ -38,7 +38,7 @@ public class ServiceConstants {
 	public static final String STATE_SLA_PATH = "$.stateSla";
 	public static final String BUSINESS_SERVICE_SLA_PATH = "$.businesssServiceSla";
 
-	public static final String HEARING_PATH = "$.HearingList[0]";
+	public static final String HEARING_PATH = "$.HearingList.*";
 	public static final String CASE_PATH = "$.criteria.*.responseList[0]";
 	public static final String ARTIFACT_PATH = "$.artifacts[0]";
 	public static final String TASK_PATH = "$.list[0]";
