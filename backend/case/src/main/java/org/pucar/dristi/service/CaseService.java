@@ -220,7 +220,7 @@ public class CaseService {
             throw e;
         } catch (Exception e) {
             log.error("Invalid request for joining a case :: {}",e.toString());
-            throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+            throw new CustomException(JOIN_CASE_ERR, "Invalid request for joining a case");
         }
     }
 }

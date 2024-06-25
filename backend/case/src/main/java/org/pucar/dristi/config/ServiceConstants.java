@@ -58,6 +58,7 @@ public class ServiceConstants {
 	public static final String SEARCH_WITNESS_ERR = "WITNESS_NOT_FOUND";
 	public static final String UPDATE_WITNESS_ERR = "UPDATE_WITNESS_ERR";
 	public static final String VALIDATION_ERR = "VALIDATION_EXCEPTION";
+	public static final String JOIN_CASE_ERR = "JOIN_CASE_ERR";
 	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
 	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
 	public static final String INDIVIDUAL_SERVICE_EXCEPTION = "INDIVIDUAL_SERVICE_EXCEPTION";
