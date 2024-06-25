@@ -39,16 +39,4 @@ public class ApplicationCriteria {
     @Valid
     private String status = null;
 
-    @JsonProperty("responseList")
-    @Valid
-    private List<Application> responseList = null;
-
-    public ApplicationCriteria addResponseListItem(Application responseListItem) {
-        if (this.responseList == null) {
-            this.responseList = new ArrayList<>();
-        }
-        this.responseList.add(responseListItem);
-        return this;
-    }
-
 }

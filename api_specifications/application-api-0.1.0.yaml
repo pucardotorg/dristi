@@ -76,7 +76,7 @@ paths:
       description: |
         Gets the list of Application(s)
       requestBody:
-          description: Details for the update application(s) + RequestInfo meta data.
+          description: Details for the search application(s) + RequestInfo meta data.
           content:
             '*/*':
               schema:

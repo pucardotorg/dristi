@@ -49,7 +49,7 @@ public class OrderRepositoryTest {
     }
 
     @Test
-    public void testGetApplications_success() {
+    public void testGetOrders_success() {
         String applicationNumber = "appNum";
         String cnrNumber = "cnrNum";
         String filingNumber = "filingNum";
@@ -91,7 +91,7 @@ public class OrderRepositoryTest {
     }
 
     @Test
-    public void testGetApplications_emptyResult() {
+    public void testGetOrders_emptyResult() {
         when(queryBuilder.getOrderSearchQuery(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
@@ -110,7 +110,7 @@ public class OrderRepositoryTest {
     }
 
     @Test
-    public void testGetApplications_customException() {
+    public void testGetOrders_customException() {
         when(queryBuilder.getOrderSearchQuery(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
@@ -126,7 +126,7 @@ public class OrderRepositoryTest {
     }
 
     @Test
-    public void testGetApplications_genericException() {
+    public void testGetOrders_genericException() {
         when(queryBuilder.getOrderSearchQuery( anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("orderQuery");
         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
