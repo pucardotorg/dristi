@@ -39,6 +39,7 @@ import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/Advocate
 import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomRadioInfoComponent from "./components/CustomRadioInfoComponent";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
@@ -102,6 +103,7 @@ const componentsToRegister = {
   SelectEmptyComponent,
   ScrutinyInfo,
   AdvocateNameDetails,
+  CustomRadioInfoComponent,
 };
 
 const overrideHooks = () => {

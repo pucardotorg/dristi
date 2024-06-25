@@ -1,7 +1,8 @@
 import { Banner, Card, CardLabel, CardText, CloseSvg, Modal, TextArea } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
 import Button from "../../../components/Button";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
+import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
 
 const mockSubmitModalInfo = {
   header: "CS_PAYMENT_SUCCESSFUL",
@@ -24,14 +25,12 @@ const Heading = (props) => {
 };
 
 function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModalInfo = mockSubmitModalInfo, amount = 2000 }) {
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const history = useHistory();
-  const onCancel = () => {
-    setShowPaymentModal(false);
-  };
+  const location = useLocation();
+  const receiptData = location.state.state.receiptData;
   return (
     <div className=" user-registration">
-      <div className="e-filing-payment" style={{ maxHeight: "330px" }}>
+      <div className="e-filing-payment" style={{ minHeight: "330px" }}>
         <Banner
           whichSvg={"tick"}
           successful={true}
@@ -39,8 +38,17 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
-        {submitModalInfo?.subHeader && <CardLabel>{submitModalInfo?.subHeader}</CardLabel>}
-        <div className="button-field" style={{ width: "100%" }}>
+        {receiptData && (
+          <CustomCopyTextDiv
+            t={t}
+            keyStyle={{ margin: "8px 0px" }}
+            valueStyle={{ margin: "8px 0px", fontWeight: 700 }}
+            data={receiptData?.caseInfo}
+            tableDataClassName={"e-filing-table-data-style"}
+            tableValueClassName={"e-filing-table-value-style"}
+          />
+        )}
+        <div className="button-field" style={{ width: "100%", marginTop: 16 }}>
           <Button
             variation={"secondary"}
             className={"secondary-button-selector"}
@@ -53,7 +61,6 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
             label={t("CS_GO_TO_HOME")}
             labelClassName={"tertiary-label-selector"}
             onButtonClick={() => {
-              setShowPaymentModal(true);
               history.push(`/${window?.contextPath}/citizen/dristi/home`);
             }}
           />

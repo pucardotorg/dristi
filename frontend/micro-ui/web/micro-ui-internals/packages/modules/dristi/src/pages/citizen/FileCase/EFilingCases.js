@@ -67,7 +67,7 @@ function isEmptyValue(value) {
 }
 
 const extractValue = (data, key) => {
-  if (!key.includes(".")) {
+  if (!key.includes(".") && data && typeof data === "object") {
     return data[key];
   }
   const keyParts = key.split(".");
@@ -1628,11 +1628,17 @@ function EFilingCases({ path }) {
               headerBarEnd={
                 <CloseBtn
                   onClick={() => {
+                    setFormDataValue.current?.("dateOfService", "");
+                    clearFormDataErrors.current?.("dateOfService");
                     setServiceOfDemandNoticeModal(false);
                   }}
                 />
               }
-              actionCancelOnSubmit={() => setServiceOfDemandNoticeModal(false)}
+              actionCancelOnSubmit={() => {
+                setFormDataValue.current?.("dateOfService", "");
+                clearFormDataErrors.current?.("dateOfService");
+                setServiceOfDemandNoticeModal(false);
+              }}
               actionSaveLabel={t("CS_SAVE_DRAFT")}
               children={<div style={{ padding: "16px 0" }}>{t("CS_SAVE_AS_DRAFT_TEXT")}</div>}
               actionSaveOnSubmit={async () => {

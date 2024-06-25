@@ -128,7 +128,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
     // } catch (err) {
     //   history.push(`/${path}/e-filing-payment-response`, { state: { success: false } });
     // }
-    history.push(`/${path}/e-filing-payment-response`, {
+    history.push(`${path}/e-filing-payment-response`, {
       state: {
         success: true,
         receiptData: {
@@ -136,17 +136,17 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
           caseInfo: [
             {
               key: "Mode of Payment",
-              value: 'Online',
-              copyData: true,
+              value: "Online",
+              copyData: false,
             },
             {
               key: "Amount",
-              value: 'Rs 2000',
+              value: "Rs 2000",
               copyData: false,
             },
             {
               key: "Transaction ID",
-              value: 'KA08293928392',
+              value: "KA08293928392",
               copyData: true,
             },
           ],

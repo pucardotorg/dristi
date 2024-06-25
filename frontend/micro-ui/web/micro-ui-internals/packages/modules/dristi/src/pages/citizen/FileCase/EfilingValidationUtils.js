@@ -147,12 +147,14 @@ export const showToastForComplainant = ({ formData, setValue, selected, setSucce
         showSuccessToast: true,
         successMsg: "CS_AADHAR_VERIFIED_SUCCESS_MSG",
       }));
+      const formDataCopy = structuredClone(formData);
+      const addressDet = formDataCopy?.complainantVerification?.individualDetails?.addressDetails;
+      const addressDetSelect = formDataCopy?.complainantVerification?.individualDetails?.["addressDetails-select"];
+      if (!addressDet && !addressDetSelect) {
+        setValue("addressDetails", addressDet);
+        setValue("addressDetails-select", addressDetSelect);
+      }
     }
-    const formDataCopy = structuredClone(formData);
-    const addressDet = formDataCopy?.complainantVerification?.individualDetails?.addressDetails;
-    const addressDetSelect = formDataCopy?.complainantVerification?.individualDetails?.["addressDetails-select"];
-    setValue("addressDetails", addressDet);
-    setValue("addressDetails-select", addressDetSelect);
   }
 };
 
