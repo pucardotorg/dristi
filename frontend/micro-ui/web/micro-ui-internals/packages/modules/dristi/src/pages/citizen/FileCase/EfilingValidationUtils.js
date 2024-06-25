@@ -619,8 +619,14 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         "document" in formData?.memorandumOfComplaint &&
         !formData?.memorandumOfComplaint?.document.length > 0) ||
       (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
-      (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
+      (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0) ||
+      ("text" in formData?.additionalDetails && !formData?.additionalDetails?.text.length > 0)
     ) {
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      return true;
+    }
+  } else if (selected === "witnessDetails") {
+    if ("text" in formData?.witnessAdditionalDetails && !formData?.witnessAdditionalDetails?.text.length > 0) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       return true;
     }
