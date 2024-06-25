@@ -26,6 +26,7 @@
   .horizontal-line {
     border-bottom: 1px #0000001a solid;
     width: 100%;
+    margin: 0px;
   }
   h3.sure-text {
     margin: 0px;
@@ -50,6 +51,92 @@
 
 .popup-module.join-a-case-modal {
   width: 50%;
+  .popup-module-main {
+    position: relative !important;
+  }
+  .skip-button {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    border: none;
+    background-color: #ffffff;
+    box-shadow: none;
+    h2 {
+      color: #007e7e;
+      margin: 0px;
+      font-family: Roboto;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 18.75px;
+      text-align: center;
+    }
+  }
+  .selector-button-primary-disabled,
+  .selector-button-border,
+  .selector-button-primary {
+    height: 40px;
+  }
+
+  &.case-join-success {
+    .header-wrap {
+      display: none;
+    }
+    button {
+      width: 50%;
+    }
+    .selector-button-primary {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      h2 {
+        width: fit-content !important;
+      }
+      svg {
+        margin: 0px;
+      }
+    }
+    .popup-module-main {
+      .join-a-case-success {
+        padding: 40px;
+        .joining-message {
+          padding: 16px 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+
+          &.join-success {
+            background-color: #00703c;
+            margin-bottom: 16px;
+          }
+          .message-header {
+            margin: 0px;
+            font-family: Roboto;
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 37.5px;
+            text-align: center;
+            color: #ffffff;
+          }
+          svg {
+            fill: #00703c;
+            border-radius: 50%;
+            background-color: white;
+            height: 48px;
+            width: 48px;
+          }
+        }
+        .action-button-success {
+          margin-top: 40px;
+          display: flex;
+          gap: 16px;
+        }
+      }
+      .popup-module-action-bar {
+        display: none;
+      }
+    }
+  }
 }
 
 .complainants-respondents {

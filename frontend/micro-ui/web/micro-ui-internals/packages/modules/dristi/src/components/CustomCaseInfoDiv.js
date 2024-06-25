@@ -53,31 +53,35 @@ const CustomCaseInfoDiv = ({ t, data, column = 3, children, style, ...props }) =
   };
 
   return (
-    <div className="custom-case-info-div">
-      <table>
-        <tbody>
-          {partitionData(data).map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {row.map(({ key, value }, cellIndex) => (
-                <td key={cellIndex} className={props?.tableDataClassName} style={{ width: `${100 / column}%` }}>
-                  <h2 className="case-info-title">{t(key)}</h2>
-                  <div className={"case-info-value"}>
-                    <span className={props?.tableValueClassName}>{value}</span>{" "}
-                    {props?.copyData && (
-                      <button className="case-info-button" onClick={() => copyToClipboard(value)}>
-                        <CopyIcon />
-                        Copy
-                      </button>
-                    )}
-                  </div>
-                </td>
+    <React.Fragment>
+      {data && data.length > 0 && (
+        <div className="custom-case-info-div">
+          <table>
+            <tbody>
+              {partitionData(data).map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map(({ key, value }, cellIndex) => (
+                    <td key={cellIndex} className={props?.tableDataClassName} style={{ width: `${100 / column}%` }}>
+                      <h2 className="case-info-title">{t(key)}</h2>
+                      <div className={"case-info-value"}>
+                        <span className={props?.tableValueClassName}>{value}</span>{" "}
+                        {props?.copyData && (
+                          <button className="case-info-button" onClick={() => copyToClipboard(value)}>
+                            <CopyIcon />
+                            Copy
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {children}
-    </div>
+            </tbody>
+          </table>
+          {children}
+        </div>
+      )}
+    </React.Fragment>
   );
 };
 

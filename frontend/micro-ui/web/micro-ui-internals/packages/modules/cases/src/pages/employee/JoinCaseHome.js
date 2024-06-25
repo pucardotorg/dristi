@@ -2,6 +2,7 @@ import {
   Button,
   CardLabel,
   CardLabelError,
+  CheckSvg,
   CloseSvg,
   Dropdown,
   LabelFieldPair,
@@ -13,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
+import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
 
 const CloseBtn = (props) => {
   return (
@@ -29,11 +31,48 @@ const Heading = (props) => {
   );
 };
 
+const JoinHomeLocalisation = {
+  ENTER_CASE_NUMBER: "ENTER_CASE_NUMBER",
+  INVALID_CASE_FILING_NUMBER: "INVALID_CASE_FILING_NUMBER",
+  INVALID_CASE_INFO_TEXT: "INVALID_CASE_INFO_TEXT",
+  CONFIRM_JOIN_CASE: "CONFIRM_JOIN_CASE",
+  PLEASE_NOTE: "PLEASE_NOTE",
+  SIX_DIGIT_CODE_INFO: "SIX_DIGIT_CODE_INFO",
+  ADVOCATE_OPT: "ADVOCATE_OPT",
+  LITIGANT_OPT: "LITIGANT_OPT",
+  PLEASE_CHOOSE_PARTY: "PLEASE_CHOOSE_PARTY",
+  COMPLAINANT_BRACK: "COMPLAINANT_BRACK",
+  RESPONDENT_BRACK: "RESPONDENT_BRACK",
+  WARNING: "WARNING",
+  FOR_THE_SELECTED: "FOR_THE_SELECTED",
+  ALREADY_AN_ADVOCATE: "ALREADY_AN_ADVOCATE",
+  PLEASE_CHOOSE_PROCEED: "PLEASE_CHOOSE_PROCEED",
+  PRIMARY_ADVOCATE: "PRIMARY_ADVOCATE",
+  SUPPORTING_ADVOCATE: "SUPPORTING_ADVOCATE",
+  REPRESENT_SELF: "REPRESENT_SELF",
+  YES: "YES",
+  NO_HAVE_ADVOCATE: "NO_HAVE_ADVOCATE",
+  ADD_ADVOCATE_LATER: "ADD_ADVOCATE_LATER",
+  ADD_ADVOCATE_ANYTIME: "ADD_ADVOCATE_LATER",
+  SUBMISSION_NECESSARY: "SUBMISSION_NECESSARY",
+  FILL_FORM_VAKALATNAMA: "FILL_FORM_VAKALATNAMA",
+  PARTY_PARTIES: "PARTY_PARTIES",
+  AFFIDAVIT: "AFFIDAVIT",
+  TYPE_AFFIDAVIT_CONTENT: "TYPE_AFFIDAVIT_CONTENT",
+  ENTER_CODE_JOIN_CASE: "ENTER_CODE_JOIN_CASE",
+  JOIN_CASE_SUCCESS: "JOIN_CASE_SUCCESS",
+  BACK_HOME: "BACK_HOME",
+  CONFIRM_ATTENDANCE: "CONFIRM_ATTENDANCE",
+  JOINING_THIS_CASE_AS: "JOINING_THIS_CASE_AS",
+  SKIP_LATER: "SKIP_LATER",
+};
+
 const JoinCaseHome = ({ t }) => {
   const history = useHistory();
   const Modal = window?.Digit?.ComponentRegistryService?.getComponent("MODAL");
   const CustomCaseInfoDiv = window?.Digit?.ComponentRegistryService?.getComponent("CUSTOMCASEINFODIV");
   const DocViewerWrapper = window?.Digit?.ComponentRegistryService?.getComponent("DOCVIEWERWRAPPER");
+  const SelectCustomDragDrop = window?.Digit?.ComponentRegistryService?.getComponent("SelectCustomDragDrop");
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   const [show, setShow] = useState(false);
@@ -51,6 +90,7 @@ const JoinCaseHome = ({ t }) => {
     { title: "Subarna Sadhu", value: "Subarna Sadhu" },
     { title: "Nitish Kumar", value: "Nitish Kumar" },
   ]);
+  const [advocateDetail, setAdvocateDetail] = useState({});
   const [primaryAdvocateDetail, setPrimaryAdvocateDetail] = useState([
     {
       key: "Name",
@@ -70,6 +110,30 @@ const JoinCaseHome = ({ t }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [errors, setErrors] = useState({});
   const [caseInfo, setCaseInfo] = useState([]);
+  const [formData, setFormData] = useState({});
+  const [affidavitText, setAffidavitText] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const documentUploaderConfig = {
+    key: "vakalatnama",
+    populators: {
+      inputs: [
+        {
+          name: "vakalatnama",
+          documentHeader: "Vakalatnama",
+          documentSubText: "",
+          isOptional: "",
+          infoTooltipMessage: "",
+          type: "DragDropComponent",
+          uploadGuidelines: t("UPLOAD_DOC_50"),
+          maxFileSize: 50,
+          maxFileErrorMessage: "CS_FILE_LIMIT_50_MB",
+          fileTypes: ["JPG", "PNG", "PDF"],
+          isMultipleUpload: false,
+        },
+      ],
+    },
+  };
 
   useEffect(() => {
     // console.log('step', step)
@@ -86,15 +150,30 @@ const JoinCaseHome = ({ t }) => {
       } else {
         setIsDisabled(true);
       }
-    } else if (step === 2 && selectedParty) {
-      setIsDisabled(false);
+    } else if (step === 2) {
+      if (userType === "Litigant" && barRegNumber !== "") {
+        setIsDisabled(false);
+      }
     } else if (step === 3 || step === 4) {
       setIsDisabled(false);
     } else if (step === 5) {
       setIsDisabled(true);
-    } else if (step === 5) {
+      setSuccess(true);
     }
-  }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber]);
+
+    if (step !== 5) {
+      setSuccess(false);
+    }
+
+    if (barRegNumber === "") {
+      setAdvocateDetail({});
+      setFormData({});
+      setBarDetails([]);
+    }
+    if (affidavitText) {
+      setIsDisabled(false);
+    }
+  }, [step, userType, selectedParty, representingYourself, roleOfNewAdvocate, caseNumber, barRegNumber, affidavitText]);
 
   const modalItem = [
     // 0
@@ -102,7 +181,7 @@ const JoinCaseHome = ({ t }) => {
       modalMain: (
         <div className="case-number-input">
           <LabelFieldPair className="case-label-field-pair">
-            <CardLabel className="case-input-label">{`${"You are joining this case as?"}`}</CardLabel>
+            <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CASE_NUMBER)}`}</CardLabel>
             <div style={{ width: "100%", maxWidth: "960px" }}>
               <TextInput
                 // t={t}
@@ -123,17 +202,17 @@ const JoinCaseHome = ({ t }) => {
           {errors?.caseNumber && (
             <InfoCard
               variant={"default"}
-              label={t("Invalid Case / Filing Number")}
+              label={t(JoinHomeLocalisation.INVALID_CASE_FILING_NUMBER)}
               additionalElements={{}}
               inline
-              text={t("If you think the entered number is correct, please contact Nyaya Mitra for support")}
+              text={t(JoinHomeLocalisation.INVALID_CASE_INFO_TEXT)}
               textStyle={{}}
               className={`custom-info-card error`}
             />
           )}
           {caseDetails?.caseNumber && (
             <React.Fragment>
-              <h3 className="sure-text">Are you sure you want to join the following case?</h3>
+              <h3 className="sure-text">{t(JoinHomeLocalisation.CONFIRM_JOIN_CASE)}</h3>
               <CustomCaseInfoDiv
                 t={t}
                 data={caseInfo}
@@ -167,12 +246,10 @@ const JoinCaseHome = ({ t }) => {
               />
               <InfoCard
                 variant={"default"}
-                label={t("Please Note")}
+                label={t(JoinHomeLocalisation.PLEASE_NOTE)}
                 additionalElements={{}}
                 inline
-                text={t(
-                  "A six digit code to join the case is either available as a part of your Summons or with parties who have already joined this case"
-                )}
+                text={t(JoinHomeLocalisation.SIX_DIGIT_CODE_INFO)}
                 textStyle={{}}
                 className={`custom-info-card`}
               />
@@ -186,7 +263,7 @@ const JoinCaseHome = ({ t }) => {
       modalMain: (
         <div className="select-user">
           <LabelFieldPair className="case-label-field-pair">
-            <CardLabel className="case-input-label">{`${t("You are joining this case as?")}`}</CardLabel>
+            <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.JOINING_THIS_CASE_AS)}`}</CardLabel>
             <RadioButtons
               selectedOption={userType}
               onSelect={(value) => {
@@ -195,14 +272,14 @@ const JoinCaseHome = ({ t }) => {
                 setRepresentingYourself("");
                 setRoleOfNewAdvocate("");
               }}
-              options={["Advocate", "Litigant"]}
+              options={[t(JoinHomeLocalisation.ADVOCATE_OPT), t(JoinHomeLocalisation.LITIGANT_OPT)]}
             />
           </LabelFieldPair>
           {userType !== "" && (
             <React.Fragment>
               <hr className="horizontal-line" />
               <LabelFieldPair className="case-label-field-pair">
-                <CardLabel className="case-input-label">{`${t("Please choose the Party you are representing?")}`}</CardLabel>
+                <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.PLEASE_CHOOSE_PARTY)}`}</CardLabel>
                 <RadioButtons
                   selectedOption={selectedParty}
                   onSelect={(value) => {
@@ -213,38 +290,37 @@ const JoinCaseHome = ({ t }) => {
                   options={[
                     `${caseDetails?.additionalDetails?.complaintDetails?.formdata
                       ?.map((data) => `${data?.data?.firstName}${data?.data?.middleName && " " + data?.data?.middleName} ${data?.data?.lastName}`)
-                      .join(", ")} (Complainant)`,
+                      .join(", ")}  ${t(JoinHomeLocalisation.COMPLAINANT_BRACK)}`,
                     `${caseDetails?.additionalDetails?.respondentDetails?.formdata
                       ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
-                      .join(", ")} (Respondent)`,
+                      .join(", ")} ${t(JoinHomeLocalisation.RESPONDENT_BRACK)}`,
                   ]}
                 />
               </LabelFieldPair>
             </React.Fragment>
           )}
-          {selectedParty !== "" && barRegNumber !== "" && (
+          {selectedParty !== "" && barRegNumber !== "" && userType === "Advocate" && (
             <React.Fragment>
               <hr className="horizontal-line" />
               <InfoCard
                 variant={"warning"}
-                label={t("Warning")}
+                label={t(JoinHomeLocalisation.WARNING)}
                 additionalElements={{}}
                 inline
-                text={t(
-                  `For the selected ${selectedParty}, There is already an advocate assigned. If you still wish to join the case, please select your role in this case`
-                )}
+                text={t(`${t(JoinHomeLocalisation.FOR_THE_SELECTED)} ${selectedParty}, ${t(JoinHomeLocalisation.ALREADY_AN_ADVOCATE)}`)}
                 textStyle={{}}
                 className={`custom-info-card warning`}
               />
 
               <LabelFieldPair className="case-label-field-pair">
-                <CardLabel className="case-input-label">{`${t("Please choose how you wish to proceed")}`}</CardLabel>
+                <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.PLEASE_CHOOSE_PROCEED)}`}</CardLabel>
                 <RadioButtons
                   selectedOption={roleOfNewAdvocate}
                   onSelect={(value) => {
                     setRoleOfNewAdvocate(value);
+                    setRepresentingYourself("");
                   }}
-                  options={[`I’m taking over as a Primary Advocate`, `I’m a supporting advocate`]}
+                  options={[t(JoinHomeLocalisation.PRIMARY_ADVOCATE), t(JoinHomeLocalisation.SUPPORTING_ADVOCATE)]}
                 />
               </LabelFieldPair>
             </React.Fragment>
@@ -253,13 +329,13 @@ const JoinCaseHome = ({ t }) => {
             <React.Fragment>
               <hr className="horizontal-line" />
               <LabelFieldPair className="case-label-field-pair">
-                <CardLabel className="case-input-label">{`${t("Will you be representing yourself (Party in Person)?")}`}</CardLabel>
+                <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.REPRESENT_SELF)}`}</CardLabel>
                 <RadioButtons
                   selectedOption={representingYourself}
                   onSelect={(value) => {
                     setRepresentingYourself(value);
                   }}
-                  options={[`Yes`, `No, I have an Advocate`]}
+                  options={[t(JoinHomeLocalisation.YES), t(JoinHomeLocalisation.NO_HAVE_ADVOCATE)]}
                 />
               </LabelFieldPair>
             </React.Fragment>
@@ -267,12 +343,10 @@ const JoinCaseHome = ({ t }) => {
           {representingYourself === "Yes" && (
             <InfoCard
               variant={"default"}
-              label={t("Please Note")}
+              label={t(JoinHomeLocalisation.PLEASE_NOTE)}
               additionalElements={{}}
               inline
-              text={t(
-                "You can always add an Advocate at a later point in time during the course of this Case.  Until then you will be considered a Party in Person"
-              )}
+              text={t(JoinHomeLocalisation.ADD_ADVOCATE_LATER)}
               textStyle={{}}
               className={`custom-info-card`}
             />
@@ -304,41 +378,89 @@ const JoinCaseHome = ({ t }) => {
             <React.Fragment>
               <InfoCard
                 variant={"default"}
-                label={t("Info")}
+                label={userType === "Litigant" ? t(JoinHomeLocalisation.PLEASE_NOTE) : t("INFO")}
                 additionalElements={{}}
                 inline
-                text={t("Fill the form fields below to generate your vakalatnama")}
+                text={
+                  userType === "Litigant" && representingYourself !== "Yes"
+                    ? t(JoinHomeLocalisation.ADD_ADVOCATE_ANYTIME)
+                    : userType === "Litigant" && representingYourself === "Yes"
+                    ? t(JoinHomeLocalisation.SUBMISSION_NECESSARY)
+                    : t(JoinHomeLocalisation.FILL_FORM_VAKALATNAMA)
+                }
                 textStyle={{}}
                 className={`custom-info-card`}
               />
-              <LabelFieldPair className="case-label-field-pair">
-                <CardLabel className="case-input-label">{`${"BAR registration"}`}</CardLabel>
-                <div style={{ width: "100%", maxWidth: "960px" }}>
-                  <TextInput
-                    // t={t}
-                    style={{ width: "100%" }}
-                    type={"text"}
-                    name="barRegNumber"
-                    value={barRegNumber}
-                    readOnly={true}
-                    // disable={editScreen}
-                  />
-                  {errors?.caseNumber && <CardLabelError> {errors?.caseNumber?.message} </CardLabelError>}
-                  {}
-                </div>
-              </LabelFieldPair>
-              <CustomCaseInfoDiv t={t} data={barDetails} />
-              <LabelFieldPair className="case-label-field-pair">
-                <CardLabel className="case-input-label">{`${"Party / Parties"}`}</CardLabel>
-                <Dropdown
-                  t={t}
-                  option={parties}
-                  selected={parties.find((value) => value.title === party)}
-                  optionKey={"title"}
-                  select={(e) => setParty(e.title)}
-                  freeze={true}
-                />
-              </LabelFieldPair>
+              {representingYourself !== "Yes" ? (
+                <React.Fragment>
+                  <LabelFieldPair className="case-label-field-pair">
+                    <CardLabel className="case-input-label">{`${"BAR registration"}`}</CardLabel>
+                    <div style={{ width: "100%", maxWidth: "960px" }}>
+                      <TextInput
+                        // t={t}
+                        style={{ width: "100%" }}
+                        type={"text"}
+                        name="barRegNumber"
+                        value={barRegNumber}
+                        onChange={(e) => {
+                          setBarRegNumber(e.target.value);
+                        }}
+                        disable={userType === "Litigant" ? false : true}
+                      />
+                      {errors?.caseNumber && <CardLabelError> {errors?.barRegNumber?.message} </CardLabelError>}
+                      {}
+                    </div>
+                  </LabelFieldPair>
+                  <CustomCaseInfoDiv t={t} data={barDetails} />
+                  {userType === "Advocate" && (
+                    <LabelFieldPair className="case-label-field-pair">
+                      <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.PARTY_PARTIES)}`}</CardLabel>
+                      <Dropdown
+                        t={t}
+                        option={parties}
+                        selected={parties.find((value) => value.title === party)}
+                        optionKey={"title"}
+                        select={(e) => setParty(e.title)}
+                        freeze={true}
+                        disable={true}
+                      />
+                    </LabelFieldPair>
+                  )}
+                  {userType === "Litigant" && advocateDetail?.barRegistrationNumber && (
+                    <SelectCustomDragDrop
+                      t={t}
+                      formData={formData}
+                      config={documentUploaderConfig}
+                      onSelect={(e, p) => {
+                        console.log("e", p);
+                        setFormData({
+                          [documentUploaderConfig.key]: p,
+                        });
+                      }}
+                    />
+                  )}
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <LabelFieldPair className="case-label-field-pair">
+                    <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.AFFIDAVIT)}`}</CardLabel>
+                    <div style={{ width: "100%", maxWidth: "960px" }}>
+                      <textarea
+                        value={affidavitText}
+                        onChange={(e) => {
+                          setAffidavitText(e.target.value);
+                        }}
+                        rows={5}
+                        className="custom-textarea-style"
+                        placeholder={t(JoinHomeLocalisation.TYPE_AFFIDAVIT_CONTENT)}
+                      ></textarea>
+
+                      {errors?.affidavitText && <CardLabelError> {errors?.affidavitText?.message} </CardLabelError>}
+                      {}
+                    </div>
+                  </LabelFieldPair>
+                </React.Fragment>
+              )}
             </React.Fragment>
           )}
         </div>
@@ -365,17 +487,15 @@ const JoinCaseHome = ({ t }) => {
         <div className="enter-validation-code">
           <InfoCard
             variant={"default"}
-            label={t("Please Note")}
+            label={t(JoinHomeLocalisation.PLEASE_NOTE)}
             additionalElements={{}}
             inline
-            text={t(
-              "A six digit code to join the case is either available as a part of your Summons or with parties who have already joined this case"
-            )}
+            text={t(JoinHomeLocalisation.SIX_DIGIT_CODE_INFO)}
             textStyle={{}}
             className={`custom-info-card`}
           />
           <LabelFieldPair className="case-label-field-pair">
-            <CardLabel className="case-input-label">{`${"Enter Code to join the case"}`}</CardLabel>
+            <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CODE_JOIN_CASE)}`}</CardLabel>
             <div style={{ width: "100%", maxWidth: "960px" }}>
               <TextInput
                 // t={t}
@@ -397,6 +517,60 @@ const JoinCaseHome = ({ t }) => {
               {}
             </div>
           </LabelFieldPair>
+        </div>
+      ),
+    },
+    // 5
+    {
+      modalMain: (
+        <div className="join-a-case-success">
+          <div className={`joining-message ${success ? "join-success" : "join-failed"}`}>
+            <h3 className="message-header">{t(JoinHomeLocalisation.JOIN_CASE_SUCCESS)}</h3>
+            <div style={{ width: "48px", height: "48px" }}>
+              <CheckSvg />
+            </div>
+          </div>
+          {success && (
+            <React.Fragment>
+              <CustomCaseInfoDiv
+                t={t}
+                data={caseInfo}
+                column={4}
+                children={
+                  <div className="complainants-respondents">
+                    <div style={{ width: "50%" }}>
+                      <h2 className="case-info-title">{t("Complainants")}</h2>
+                      <div className="case-info-value">
+                        <span>
+                          {caseDetails?.additionalDetails?.complaintDetails?.formdata
+                            ?.map(
+                              (data) => `${data?.data?.firstName}${data?.data?.middleName && " " + data?.data?.middleName} ${data?.data?.lastName}`
+                            )
+                            .join(", ")}
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ width: "50%" }}>
+                      <h2 className="case-info-title">{t("Respondents")}</h2>
+                      <div className="case-info-value">
+                        <span>
+                          {caseDetails?.additionalDetails?.respondentDetails?.formdata
+                            ?.map((data) => `${data?.data?.respondentFirstName} ${data?.data?.respondentLastName}`)
+                            .join(", ")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                }
+              />
+              <div className="action-button-success">
+                <Button className={"selector-button-border"} label={t(JoinHomeLocalisation.BACK_HOME)} onButtonClick={() => setStep(step - 1)} />
+                <Button className={"selector-button-primary"} label={t(JoinHomeLocalisation.CONFIRM_ATTENDANCE)}>
+                  <RightArrow />
+                </Button>
+              </div>
+            </React.Fragment>
+          )}
         </div>
       ),
     },
@@ -424,25 +598,29 @@ const JoinCaseHome = ({ t }) => {
     ]);
     setBarRegNumber(caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber);
     setAdvocateName(caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName);
-    setBarDetails([
-      {
-        key: "CASE_NUMBER",
-        value: caseDetails?.caseNumber,
-      },
-      {
-        key: "Court Complex",
-        value: caseDetails?.courtName,
-      },
-      {
-        key: "Advocate",
-        value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName,
-      },
-    ]);
   }, [caseDetails]);
 
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || ""; // Adjust as per your context path logic
     history.push(`/${contextPath}${path}`);
+  };
+
+  const closeModal = () => {
+    setCaseNumber("");
+    setCaseDetails({});
+    setUserType("");
+    setBarRegNumber("");
+    setAdvocateName("");
+    setBarDetails([]);
+    setSelectedParty("");
+    setSelectedParty("");
+    setRepresentingYourself("");
+    setRoleOfNewAdvocate("");
+    setValidationCode("");
+    setErrors({});
+    setCaseInfo([]);
+    setStep(0);
+    setShow(false);
   };
 
   const onProceed = async () => {
@@ -479,13 +657,76 @@ const JoinCaseHome = ({ t }) => {
         setIsDisabled(true);
       }
     } else if (step === 1) {
-      if ((userType && userType === "Litigant" && selectedParty && representingYourself) || (userType && userType === "Advocate" && selectedParty)) {
+      console.log("first");
+      if (userType && userType === "Litigant" && selectedParty && representingYourself) {
+        setBarRegNumber("");
         setIsDisabled(true);
         setStep(step + 1);
+        setBarDetails([]);
+      } else if (userType && userType === "Advocate" && selectedParty) {
+        setBarRegNumber(caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber);
+        setIsDisabled(false);
+        setStep(step + 1);
+        setBarDetails([
+          {
+            key: "CASE_NUMBER",
+            value: caseDetails?.caseNumber,
+          },
+          {
+            key: "Court Complex",
+            value: caseDetails?.courtName,
+          },
+          {
+            key: "Advocate",
+            value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName,
+          },
+        ]);
       }
     } else if (step === 2) {
       if (roleOfNewAdvocate === "I’m a supporting advocate") {
-        setShow(false);
+        closeModal();
+        return;
+      }
+      if (userType === "Litigant") {
+        if (representingYourself !== "Yes") {
+          // api call
+          if (!advocateDetail.barRegistrationNumber) {
+            setAdvocateDetail({
+              barRegistrationNumber: "kjdkjfdjfj",
+            });
+            setBarDetails([
+              {
+                key: "First Name",
+                value: "Raj",
+              },
+              {
+                key: "Middle Name (optional)",
+                value: "",
+              },
+              {
+                key: "Last Name",
+                value: "Verma",
+              },
+            ]);
+            setFormData({
+              [documentUploaderConfig.key]: {
+                [documentUploaderConfig.key]: [
+                  {
+                    documentName: "IPKPK1730L-2024.pdf",
+                    documentType: "application/pdf",
+                    fileName: "Company documents",
+                    fileStore: "1af14953-3476-49e9-a4ad-2c4002",
+                  },
+                ],
+              },
+            });
+          } else {
+            setIsDisabled(true);
+            setStep(step + 2);
+          }
+        } else {
+          setStep(step + 2);
+        }
       } else {
         setIsDisabled(false);
         setStep(step + 1);
@@ -498,29 +739,41 @@ const JoinCaseHome = ({ t }) => {
     } else if (step === 5) {
       setStep(6);
     }
+    console.log("step", step);
   };
 
   return (
     <div>
       <p>Join a case here</p>
-      <Button label={"Join a Case"} onButtonClick={() => setShow(true)}></Button>
+      <Button label={t("JOIN_A_CASE")} onButtonClick={() => setShow(true)}></Button>
       {show && (
         <Modal
-          headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
-          actionCancelLabel={((step === 0 && caseDetails?.caseNumber) || step !== 0) && t("Back")}
+          headerBarEnd={<CloseBtn onClick={closeModal} />}
+          actionCancelLabel={((step === 0 && caseDetails?.caseNumber) || step !== 0) && t("CS_COMMON_BACK")}
           actionCancelOnSubmit={() => {
-            if (step == 0 && caseDetails?.caseNumber) {
+            if (step === 0 && caseDetails?.caseNumber) {
               setCaseDetails({});
-            } else setStep(step - 1);
+            } else if (step === 4 && userType === "Litigant") setStep(step - 2);
+            else setStep(step - 1);
           }}
-          actionSaveLabel={roleOfNewAdvocate === "I’m a supporting advocate" && step === 2 ? "Got it" : "Proceed"}
+          actionSaveLabel={roleOfNewAdvocate === "I’m a supporting advocate" && step === 2 ? t("GOT_IT_TEXT") : t("PROCEED_TEXT")}
           actionSaveOnSubmit={onProceed}
           formId="modal-action"
-          headerBarMain={<Heading label={"Join a Case"} />}
-          className="join-a-case-modal"
+          headerBarMain={<Heading label={t("JOIN_A_CASE")} />}
+          className={`join-a-case-modal ${success && "case-join-success"}`}
           isDisabled={isDisabled}
         >
           {step >= 0 && modalItem[step]?.modalMain}
+          {step === 2 && userType === "Litigant" && representingYourself !== "Yes" && (
+            <Button
+              className={"skip-button"}
+              label={t(JoinHomeLocalisation.SKIP_LATER)}
+              onButtonClick={() => {
+                setStep(4);
+                setBarRegNumber("");
+              }}
+            />
+          )}
         </Modal>
       )}
     </div>
