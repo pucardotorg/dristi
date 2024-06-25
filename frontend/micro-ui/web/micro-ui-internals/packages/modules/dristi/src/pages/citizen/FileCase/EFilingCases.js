@@ -1132,7 +1132,6 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
-  console.log("form", formdata);
   const onSubmit = async (action) => {
     if (isDisableAllFieldsMode) {
       history.push(homepagePath);
