@@ -74,7 +74,7 @@ public class ApplicationApiController{
             @Parameter(in = ParameterIn.QUERY, description = "offset" ,schema=@Schema()) @Valid @RequestParam(value = "offset", required = false) Integer offset,
             @Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided" , schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy,
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody ApplicationSearchRequest request) {
-                List<Application> applicationList = applicationService.searchApplications(request.getCriteria().getId(), request.getCriteria().getFilingNumber(),request.getCriteria().getCnrNumber(),request.getCriteria().getTenantId(),request.getCriteria().getStatus(),request.getCriteria().getApplicationNumber(),limit, offset, sortBy, request.getRequestInfo());
+                List<Application> applicationList = applicationService.searchApplications(limit, offset, sortBy,request);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
                 ApplicationListResponse applicationListResponse = ApplicationListResponse.builder().applicationList(applicationList).totalCount(applicationList.size()).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(applicationListResponse, HttpStatus.OK);

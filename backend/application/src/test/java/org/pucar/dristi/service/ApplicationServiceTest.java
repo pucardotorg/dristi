@@ -162,27 +162,29 @@ class ApplicationServiceTest {
         mockApplication.setId(UUID.randomUUID());
         applicationList.add(mockApplication);
 
-        when(applicationRepository.getApplications(any(), any(), any(), any(), any(), any(), any(),any()))
+        when(applicationRepository.getApplications(any(), any(), any()))
                 .thenReturn(applicationList);
 
-        List<Application> result = applicationService.searchApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null,null, null, new RequestInfo());
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        List<Application> result = applicationService.searchApplications(2, 2, "cnrNum", applicationSearchRequest);
 
         assertNotNull(result);
-        verify(applicationRepository, times(1)).getApplications("id", "filingNum", "cnrNum", "tenant", "status", null,null, null);
+        verify(applicationRepository, times(1)).getApplications(2, 2, applicationSearchRequest);
     }
 
     @Test
     public void testSearchApplications_NoResults() {
         // Arrange
-        when(applicationRepository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt())).thenReturn(new ArrayList<>());
+        when(applicationRepository.getApplications(anyInt(), anyInt(),any())).thenReturn(new ArrayList<>());
 
         // Act
-        List<Application> result = applicationService.searchApplications("id", "filingNumber", "cnrNumber", "tenantId", "status","appnum", 10, 0, "sortBy", new RequestInfo());
+        List<Application> result = applicationService.searchApplications(2, 2, "cnrNumber",  new ApplicationSearchRequest());
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(applicationRepository, times(1)).getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt());
+        verify(applicationRepository, times(1)).getApplications(anyInt(), anyInt(),any());
     }
 
 
@@ -194,10 +196,10 @@ class ApplicationServiceTest {
         String cnrNumber = "cnrNumber";
         String status = "status";
 
-        when(applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, null,null, null)).thenThrow(new RuntimeException("Database error"));
+        when(applicationRepository.getApplications(null,null, null)).thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, null, null,null, null, new RequestInfo()));
+                applicationService.searchApplications(null,null,null,null));
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
         assertEquals("Database error", exception.getMessage());

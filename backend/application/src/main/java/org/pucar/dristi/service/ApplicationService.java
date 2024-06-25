@@ -76,15 +76,15 @@ public class ApplicationService {
         }
     }
 
-    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, String applicationNumber, Integer limit, Integer offset, String sortBy, RequestInfo requestInfo){
+    public List<Application> searchApplications (Integer limit, Integer offset, String sortBy, ApplicationSearchRequest request){
             try {
                 // Fetch applications from database according to the given search params
-                List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+                List<Application> applicationList = applicationRepository.getApplications(limit, offset,request);
                 log.info("No. of applications :: {}", applicationList.size());
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
-                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, application.getApplicationNumber()))));
+                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getTenantId(), application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
                 log.error("Error while fetching to search results {}", e.getMessage());

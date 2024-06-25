@@ -70,6 +70,45 @@ class ApplicationQueryBuilderTest {
     }
 
     @Test
+    void testGetApplicationSearchQueryWithApplicationNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String applicationNumber = "applicationNumber123";
+        String tenantId = null;
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Expected query part
+        String expectedQueryPart = "app.applicationNumber ='applicationNumber123'";
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber,limit, offset);
+
+        // Verify the expected part of the query is present
+        assertTrue(query.contains(expectedQueryPart));
+    }
+    @Test
+    void testGetApplicationSearchQueryWithEmptyApplicationNumber() {
+        // Prepare inputs
+        String id = null;
+        String filingNumber = null;
+        String cnrNumber = null;
+        String tenantId = null;
+        String applicationNumber = "";
+        String status = null;
+        Integer limit = null;
+        Integer offset = null;
+
+        // Call the method
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber,limit, offset);
+
+        assertFalse(query.contains("app.applicationNumber ="));
+    }
+
+    @Test
     void testGetApplicationSearchQueryWithFilingNumber() {
         // Prepare inputs
         String id = null;

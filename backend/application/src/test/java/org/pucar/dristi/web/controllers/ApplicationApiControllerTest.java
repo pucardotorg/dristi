@@ -68,8 +68,8 @@ class ApplicationApiControllerTest {
     @Test
     public void testApplicationV1SearchPost_Success() {
         List<Application> expectedApplication = Collections.singletonList(new Application());
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(), any(),
-                any(RequestInfo.class)))
+        when(applicationService.searchApplications(any(), any(),any(),
+                any(ApplicationSearchRequest.class)))
                 .thenReturn(expectedApplication);
 
         ResponseInfo expectedResponseInfo = new ResponseInfo();
@@ -147,7 +147,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1SearchPost_InvalidRequest() {
 
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),any(), any(RequestInfo.class))).thenThrow(new IllegalArgumentException("Invalid request"));
+        when(applicationService.searchApplications(any(),any(),any(), any(ApplicationSearchRequest.class))).thenThrow(new IllegalArgumentException("Invalid request"));
 
         ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
         requestInfoBody.setCriteria(new ApplicationCriteria());
@@ -163,8 +163,8 @@ class ApplicationApiControllerTest {
     @Test
     public void testApplicationV1SearchPost_EmptyList() {
         List<Application> emptyList = Collections.emptyList();
-        when(applicationService.searchApplications(any(),any(),any(),any(),any(),any(),any(),any(),any(),
-                any(RequestInfo.class)))
+        when(applicationService.searchApplications(any(),any(),any(),
+                any(ApplicationSearchRequest.class)))
                 .thenReturn(emptyList);
 
         ResponseInfo expectedResponseInfo = new ResponseInfo();
