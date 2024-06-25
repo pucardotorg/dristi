@@ -49,7 +49,7 @@ public class OrderRowMapper implements ResultSetExtractor<List<Order>> {
                             .orderCategory(rs.getString("ordercategory"))
                             .isActive(rs.getBoolean("isactive"))
                             .orderType(rs.getString("ordertype"))
-                            .createdDate(stringToLocalDate(rs.getString("filingdate")))
+                            .createdDate(stringToLocalDate(rs.getString("createddate")))
                             .comments(rs.getString("comments"))
                             .filingNumber(rs.getString("filingnumber"))
                             .status(rs.getString("status"))

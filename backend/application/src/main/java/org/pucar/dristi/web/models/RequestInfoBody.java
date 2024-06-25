@@ -13,6 +13,7 @@ public class RequestInfoBody {
 
     @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
+
     @JsonProperty("tenantId")
     private String tenantId;
 

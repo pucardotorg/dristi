@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
@@ -75,7 +76,7 @@ public class ApplicationService {
         }
     }
 
-    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, String applicationNumber, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
+    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, String applicationNumber, Integer limit, Integer offset, String sortBy, RequestInfo requestInfo){
             try {
                 // Fetch applications from database according to the given search params
                 List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
@@ -83,7 +84,7 @@ public class ApplicationService {
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
-                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfoBody.getRequestInfo(), requestInfoBody.getTenantId(), application.getApplicationNumber()))));
+                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, tenantId, application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
                 log.error("Error while fetching to search results {}", e.getMessage());

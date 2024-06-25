@@ -165,7 +165,7 @@ class ApplicationServiceTest {
         when(applicationRepository.getApplications(any(), any(), any(), any(), any(), any(), any(),any()))
                 .thenReturn(applicationList);
 
-        List<Application> result = applicationService.searchApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null,null, null, new RequestInfoBody());
+        List<Application> result = applicationService.searchApplications("id", "filingNum", "cnrNum", "tenant", "status", null, null,null, null, new RequestInfo());
 
         assertNotNull(result);
         verify(applicationRepository, times(1)).getApplications("id", "filingNum", "cnrNum", "tenant", "status", null,null, null);
@@ -177,7 +177,7 @@ class ApplicationServiceTest {
         when(applicationRepository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt())).thenReturn(new ArrayList<>());
 
         // Act
-        List<Application> result = applicationService.searchApplications("id", "filingNumber", "cnrNumber", "tenantId", "status","appnum", 10, 0, "sortBy", new RequestInfoBody());
+        List<Application> result = applicationService.searchApplications("id", "filingNumber", "cnrNumber", "tenantId", "status","appnum", 10, 0, "sortBy", new RequestInfo());
 
         // Assert
         assertNotNull(result);
@@ -197,7 +197,7 @@ class ApplicationServiceTest {
         when(applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, null,null, null)).thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, null, null,null, null, new RequestInfoBody()));
+                applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, null, null,null, null, new RequestInfo()));
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
         assertEquals("Database error", exception.getMessage());
