@@ -2,7 +2,7 @@ package org.pucar.dristi.validators;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.pucar.dristi.config.ServiceConstants.SUBMIT_CASE_WORKFLOW_ACTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 import net.minidev.json.JSONArray;
 import org.apache.kafka.common.protocol.types.Field;
@@ -57,10 +57,22 @@ public class CaseRegistrationValidatorTest {
 
     @Mock
     private AdvocateUtil advocateUtil;
-
+    private JoinCaseRequest joinCaseRequest;
+    private RequestInfo requestInfo;
+    private Party litigant;
+    private AdvocateMapping representative;
+    private Document document;
     @BeforeEach
     void setUp() {
         // Setup done before each test
+        requestInfo = new RequestInfo();
+        litigant = new Party();
+        representative = new AdvocateMapping();
+        document = new Document();
+        joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setLitigant(litigant);
+        joinCaseRequest.setRepresentative(representative);
+        joinCaseRequest.setRequestInfo(requestInfo);
     }
 
     @Test
@@ -518,6 +530,136 @@ public class CaseRegistrationValidatorTest {
         lenient().when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
+    }
+    @Test
+    public void testValidateLitigantJoinCase_ValidIndividualIdAndDocuments() {
+        litigant.setIndividualId("validId");
+        litigant.setDocuments(Collections.singletonList(document));
+        document.setFileStore("validFileStore");
+        litigant.setTenantId("tenantId");
+
+        when(individualService.searchIndividual(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "validFileStore")).thenReturn(true);
+
+        assertTrue(validator.validateLitigantJoinCase(joinCaseRequest));
+    }
+    @Test
+    public void testValidateLitigantJoinCase_InvalidIndividualId() {
+        litigant.setIndividualId("invalidId");
+
+        when(individualService.searchIndividual(requestInfo, "invalidId")).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INDIVIDUAL_NOT_FOUND, exception.getCode());
+    }
+    @Test
+    public void testValidateLitigantJoinCase_NullIndividualId() {
+
+        lenient().when(individualService.searchIndividual(requestInfo, "ind_id")).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INDIVIDUAL_NOT_FOUND, exception.getCode());
+        assertEquals("Invalid complainant details", exception.getMessage());
+    }
+    @Test
+    public void testValidateLitigantJoinCase_InvalidDocumentFileStore() {
+        litigant.setIndividualId("validId");
+        litigant.setDocuments(Collections.singletonList(document));
+        document.setFileStore("invalidFileStore");
+        litigant.setTenantId("tenantId");
+
+        when(individualService.searchIndividual(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "invalidFileStore")).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateLitigantJoinCase_MissingDocumentFileStore() {
+        litigant.setIndividualId("validId");
+        litigant.setDocuments(Collections.singletonList(document));
+        litigant.setTenantId("tenantId");
+
+        when(individualService.searchIndividual(requestInfo, "validId")).thenReturn(true);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateRepresentativeJoinCase_ValidAdvocateIdAndDocuments() {
+        representative.setAdvocateId("validId");
+        representative.setDocuments(Collections.singletonList(document));
+        document.setFileStore("validFileStore");
+        representative.setTenantId("tenantId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "validFileStore")).thenReturn(true);
+
+        assertTrue(validator.validateRepresentativeJoinCase(joinCaseRequest));
+    }
+
+    @Test
+    public void testValidateRepJoinCase_InvalidAdvocateId() {
+        representative.setAdvocateId("invalidId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "invalidId")).thenReturn(false);
+
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_ADVOCATE_ID, exception.getCode());
+    }
+    @Test
+    public void testValidateLitigantJoinCase_NullAdvocateId() {
+
+        lenient().when(advocateUtil.fetchAdvocateDetails(requestInfo, "ind_id")).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_ADVOCATE_ID, exception.getCode());
+        assertEquals("Invalid advocate details", exception.getMessage());
+    }
+    @Test
+    public void testValidateRepJoinCase_InvalidDocumentFileStore() {
+        representative.setAdvocateId("validId");
+        representative.setDocuments(Collections.singletonList(document));
+        document.setFileStore("invalidFileStore");
+        representative.setTenantId("tenantId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "invalidFileStore")).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateRepJoinCase_MissingDocumentFileStore() {
+        representative.setAdvocateId("validId");
+        representative.setDocuments(Collections.singletonList(document));
+        representative.setTenantId("tenantId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "validId")).thenReturn(true);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
     }
 }
 
