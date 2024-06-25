@@ -17,7 +17,6 @@ import {
   configsVoluntarySubmissionStatus,
 } from "../../configs/ordersCreateConfig";
 import { CustomDeleteIcon } from "../../../../dristi/src/icons/svgIndex";
-import Modal from "../../../../dristi/src/components/Modal";
 import OrderReviewModal from "../../pageComponents/OrderReviewModal";
 import OrderSignatureModal from "../../pageComponents/OrderSignatureModal";
 import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
@@ -26,17 +25,9 @@ import { ordersService } from "../../hooks/services";
 import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
 import { CaseWorkflowAction } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
+import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 
 const fieldStyle = { marginRight: 0 };
-
-const getFormattedDate = () => {
-  const currentDate = new Date();
-  const year = String(currentDate.getFullYear()).slice(-2);
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-  const day = String(currentDate.getDate()).padStart(2, "0");
-
-  return `${month}/${day}/${year}`;
-};
 
 const GenerateOrders = () => {
   const { t } = useTranslation();
@@ -48,7 +39,7 @@ const GenerateOrders = () => {
   const [selectedOrder, setSelectedOrder] = useState(0);
   const [deleteOrderIndex, setDeleteOrderIndex] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [signatureIndex, setSignatureIndex] = useState(null);
+  const [showsignatureModal, setShowsignatureModal] = useState(null);
   const [showSignatureModal, setShowSignatureModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formdata, setFormdata] = useState({});
@@ -78,15 +69,14 @@ const GenerateOrders = () => {
     },
     {},
     "dristi",
-    caseId,
-    caseId
+    filingNumber,
+    filingNumber
   );
 
   const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
-
   const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading } = useSearchOrdersService(
     { tenantId },
-    { tenantId, filingNumber, applicationNumber: "", cnrNumber: "" },
+    { tenantId, filingNumber, applicationNumber: "", cnrNumber },
     filingNumber,
     Boolean(filingNumber)
   );
@@ -118,9 +108,9 @@ const GenerateOrders = () => {
 
   const handleUpdateOrder = ({ action, oldOrderData, newformdata, orderType }) => {
     const updatedreqBody = {
-      hearingNumber: "3244d158-c5cb-4769-801f-a0f94f383679",
       order: {
         ...oldOrderData,
+        createdDate: formatDate(new Date()),
         orderType,
         workflow: {
           action,
@@ -145,11 +135,10 @@ const GenerateOrders = () => {
 
   const handleAddOrder = () => {
     const reqbody = {
-      hearingNumber: "3244d158-c5cb-4769-801f-a0f94f383679",
       order: {
         createdDate: formatDate(new Date()),
         tenantId,
-        cnrNumber: "CNR111",
+        cnrNumber,
         filingNumber: filingNumber,
         statuteSection: {
           tenantId,
@@ -271,49 +260,11 @@ const GenerateOrders = () => {
       {deleteOrderIndex !== null && (
         <OrderDeleteModal deleteOrderIndex={deleteOrderIndex} setDeleteOrderIndex={setDeleteOrderIndex} handleDeleteOrder={handleDeleteOrder} />
       )}
-      {(showReviewModal || true) && (
-        <OrderReviewModal t={t} orderList={orderList} setShowReviewModal={setShowReviewModal} setSignatureIndex={setSignatureIndex} />
+      {showReviewModal && (
+        <OrderReviewModal t={t} orderList={orderList} setShowReviewModal={setShowReviewModal} setShowsignatureModal={setShowsignatureModal} />
       )}
-
-      {signatureIndex !== null && <OrderSignatureModal t={t} />}
-      {showSuccessModal && (
-        <Modal
-          actionCancelLabel={t("DOWNLOAD_ORDER")}
-          actionCancelOnSubmit={() => {}}
-          actionSaveLabel={t("CLOSE")}
-          actionSaveOnSubmit={() => handleCloseSuccessModal()}
-          className={"orders-success-modal"}
-        >
-          <div className="success-modal-main-div">
-            <div className="success-message-div">
-              <h1>{`${t("SUCCCESSFULLY_ISSUED")} ${10} ${t("ORDERS")}`}</h1>
-              {/* <SmallInfoIcon></SmallInfoIcon>  */}
-            </div>
-            <h3>{t("PARTIES_WILL_BE_NOTIFIED")}</h3>
-            <div className="order-id-info-div">
-              <div className="order-issue-date-div">
-                <h2>{t("ORDER_ISSUE_DATE")}</h2>
-                <span>{getFormattedDate()}</span>
-              </div>
-              <div className="order-ids-list-div">
-                {formdata.map((order, index) => {
-                  return (
-                    <div>
-                      <h2>{`${t("ORDER_ID")} ${index + 1} : ${"ORDER-TYPE-HERE"}`}</h2>
-                      <span>
-                        <h2>{"KA01234"}</h2>
-                        <span>
-                          <h2>{t("COPY")}</h2>
-                        </span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </Modal>
-      )}
+      {showsignatureModal && <OrderSignatureModal t={t} />}
+      {showSuccessModal && <OrderSucessModal t={t} orderList={orderList} />}
     </div>
   );
 };
