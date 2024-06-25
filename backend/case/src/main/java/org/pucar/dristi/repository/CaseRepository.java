@@ -2,6 +2,7 @@ package org.pucar.dristi.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.Document;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.CaseQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
@@ -61,7 +62,7 @@ public class CaseRepository {
     @Autowired
     private RepresentingRowMapper representingRowMapper;
 
-    public List<CaseCriteria> getApplications(List<CaseCriteria> searchCriteria) {
+    public List<CaseCriteria> getApplications(List<CaseCriteria> searchCriteria, RequestInfo requestInfo) {
 
         try {
 
@@ -70,7 +71,7 @@ public class CaseRepository {
                 List<Object> preparedStmtList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 String casesQuery = "";
-                casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList, null);
+                casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList, requestInfo);
                 log.info("Final case query :: {}", casesQuery);
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
                 if (list != null) {

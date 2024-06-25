@@ -76,12 +76,12 @@ public class CaseServiceTest {
     void testSearchCases() {
         // Set up mock responses
         List<CaseCriteria> mockCases = new ArrayList<>(); // Assume filled with test data
-        when(caseRepository.getApplications(any())).thenReturn(mockCases);
+        when(caseRepository.getApplications(any(), any())).thenReturn(mockCases);
 
         // Call the method under test
         caseService.searchCases(caseSearchRequest);
 
-        verify(caseRepository, times(1)).getApplications(any());
+        verify(caseRepository, times(1)).getApplications(any(), any());
     }
 
     @Test
@@ -89,24 +89,24 @@ public class CaseServiceTest {
         // Set up mock responses
         List<CourtCase> mockCases = new ArrayList<>(); // Assume filled with test data
 
-        when(caseRepository.getApplications(any())).thenReturn(List.of(CaseCriteria.builder().filingNumber("filNo").courtCaseNumber("123").build()));
+        when(caseRepository.getApplications(any(), any())).thenReturn(List.of(CaseCriteria.builder().filingNumber("filNo").courtCaseNumber("123").build()));
 
         // Call the method under test
         caseService.searchCases(caseSearchRequest);
 
-        verify(caseRepository, times(1)).getApplications(any());
+        verify(caseRepository, times(1)).getApplications(any(), any());
     }
 
     @Test
     void testSearchCases_CustomException() {
-        when(caseRepository.getApplications(any())).thenThrow(CustomException.class);
+        when(caseRepository.getApplications(any(), any())).thenThrow(CustomException.class);
 
         assertThrows(CustomException.class, () -> caseService.searchCases(caseSearchRequest));
     }
 
     @Test
     void testSearchCases_Exception() {
-        when(caseRepository.getApplications(any())).thenThrow(new RuntimeException());
+        when(caseRepository.getApplications(any(), any())).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> caseService.searchCases(caseSearchRequest));
     }
@@ -265,7 +265,7 @@ public class CaseServiceTest {
     @Test
     void testSearchCases_EmptyResult() {
         CaseSearchRequest searchRequest = new CaseSearchRequest(); // Setup search request
-        when(caseRepository.getApplications(any())).thenReturn(Arrays.asList());
+        when(caseRepository.getApplications(any(), any())).thenReturn(Arrays.asList());
 
         caseService.searchCases(searchRequest);
     }

@@ -186,7 +186,7 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
 
         // Invoke the method
-        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria);
+        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria, requestInfo);
 
         // Verify interactions
         verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any());
@@ -239,7 +239,7 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
-            caseRepository.getApplications(searchCriteria);
+            caseRepository.getApplications(searchCriteria, requestInfo);
         });
     }
 
@@ -286,7 +286,7 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {
-            caseRepository.getApplications(searchCriteria);
+            caseRepository.getApplications(searchCriteria, requestInfo);
         });
     }
 
