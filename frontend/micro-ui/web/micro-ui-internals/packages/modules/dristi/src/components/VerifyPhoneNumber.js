@@ -247,12 +247,13 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
-              if (value?.length >= config?.validation?.minLength && !value.match(config?.validation?.pattern)) {
-                setError(config.key, { [config?.name]: config?.error });
+              let updatedValue = value;
+              if (value.length === 1) {
+                updatedValue = value?.replace(/[^6-9]/g, "");
               } else {
-                setError(config.key, { [config?.name]: "" });
+                updatedValue = value?.replace(/[^0-9]/g, "");
               }
-              onSelect(config?.key, { ...formData?.[config.key], [config?.name]: value });
+              onSelect(config?.key, { ...formData?.[config.key], [config?.name]: updatedValue });
             }}
           />
         </div>
