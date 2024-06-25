@@ -137,6 +137,24 @@ class ApplicationServiceTest {
     }
 
     @Test
+    void testUpdateApplication_validation_False() {
+        // Arrange
+        when(applicationRequest.getApplication()).thenReturn(application);
+        when(applicationRequest.getRequestInfo()).thenReturn(requestInfo);
+        when(validator.validateApplicationExistence(any(), any())).thenReturn(false);
+
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            applicationService.updateApplication(applicationRequest);
+        });
+
+        assertEquals("Error occurred while validating existing application", exception.getMessage());
+        verify(validator).validateApplicationExistence(requestInfo, application);
+        verify(enrichmentUtil, never()).enrichApplicationUponUpdate(applicationRequest);
+        verify(producer, never()).push(anyString(), any());
+    }
+
+    @Test
     void testUpdateApplication_generalFailure() {
         // Arrange
         when(applicationRequest.getApplication()).thenReturn(application);
