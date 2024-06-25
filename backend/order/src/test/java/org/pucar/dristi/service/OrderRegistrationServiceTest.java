@@ -90,14 +90,14 @@ public class OrderRegistrationServiceTest {
         mockOrder.setId(UUID.randomUUID());
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getApplications(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(orderRepository.getApplications(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
       //  when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
 
-        List<Order> result = orderRegistrationService.searchOrder("order-no","appNum", "cnrNum", "filingNum", "tenant", "id", "status","Bail", new RequestInfo());
+        List<Order> result = orderRegistrationService.searchOrder("order-no","appNum", "cnrNum", "filingNum", "tenant", "id", "status", new RequestInfo());
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).getApplications("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status","Bail");
+        verify(orderRepository, times(1)).getApplications("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status");
     }
 
     @Test
@@ -143,7 +143,7 @@ public class OrderRegistrationServiceTest {
         mockOrder.setTenantId("pg");
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getApplications(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(orderRepository.getApplications(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
 
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);

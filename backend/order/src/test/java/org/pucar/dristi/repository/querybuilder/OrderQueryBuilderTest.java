@@ -24,14 +24,13 @@ class OrderQueryBuilderTest {
         String applicationNumber = "APP-123";
         String cnrNumber = "CNR-123";
         String orderNumber = "ORDER-123";
-        String orderType = "Bail";
         String filingNumber = "FN-123";
         String tenantId = "tenant-123";
         String id = "ID-123";
         String status = "Active";
 
-        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.linkedordernumber as linkedordernumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.applicationNumber::text LIKE '%\"APP-123\"%' AND orders.cnrNumber = 'CNR-123' AND orders.filingnumber ='FN-123' AND orders.tenantid ='tenant-123' AND orders.id = 'ID-123' AND orders.status ='Active' AND orders.ordertype ='Bail' AND orders.ordernumber ='ORDER-123' ORDER BY orders.createdtime DESC ";
-        String actualQuery = orderQueryBuilder.getOrderSearchQuery(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status,orderType);
+        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.linkedordernumber as linkedordernumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.applicationNumber::text LIKE '%\"APP-123\"%' AND orders.cnrNumber = 'CNR-123' AND orders.filingnumber ='FN-123' AND orders.tenantid ='tenant-123' AND orders.id = 'ID-123' AND orders.status ='Active' AND orders.ordernumber ='ORDER-123' ORDER BY orders.createdtime DESC ";
+        String actualQuery = orderQueryBuilder.getOrderSearchQuery(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -45,10 +44,9 @@ class OrderQueryBuilderTest {
         String id = null;
         String status = "Active";
         String orderNumber = "ORDER-123";
-        String orderType = "Bail";
 
-        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.linkedordernumber as linkedordernumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.filingnumber ='FN-123' AND orders.tenantid ='tenant-123' AND orders.status ='Active' AND orders.ordertype ='Bail' AND orders.ordernumber ='ORDER-123' ORDER BY orders.createdtime DESC ";
-        String actualQuery = orderQueryBuilder.getOrderSearchQuery(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status,orderType);
+        String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.linkedordernumber as linkedordernumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.filingnumber ='FN-123' AND orders.tenantid ='tenant-123' AND orders.status ='Active' AND orders.ordernumber ='ORDER-123' ORDER BY orders.createdtime DESC ";
+        String actualQuery = orderQueryBuilder.getOrderSearchQuery(orderNumber,applicationNumber,cnrNumber, filingNumber, tenantId, id, status);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -83,7 +81,7 @@ class OrderQueryBuilderTest {
     @Test
     void testGetOrderSearchQueryException() {
         try {
-            orderQueryBuilder.getOrderSearchQuery(null, null, null, null, null,null,null,null);
+            orderQueryBuilder.getOrderSearchQuery(null, null, null, null, null,null,null);
         } catch (CustomException e) {
             assertEquals(ORDER_SEARCH_EXCEPTION, e.getCode());
         }

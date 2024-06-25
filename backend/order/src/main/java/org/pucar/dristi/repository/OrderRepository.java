@@ -40,14 +40,14 @@ public class OrderRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Order> getApplications(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, String orderType) {
+    public List<Order> getApplications(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
 
         try {
             List<Order> orderList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String orderQuery = "";
-            orderQuery = queryBuilder.getOrderSearchQuery(orderNumber,applicationNumber, cnrNumber,filingNumber, tenantId, id, status, orderType);
+            orderQuery = queryBuilder.getOrderSearchQuery(orderNumber,applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
             log.info("Final order query :: {}", orderQuery);
             List<Order> list = jdbcTemplate.query(orderQuery, rowMapper);
             log.info("DB order list :: {}", list);
