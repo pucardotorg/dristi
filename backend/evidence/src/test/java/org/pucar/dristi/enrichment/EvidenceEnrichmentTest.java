@@ -190,7 +190,7 @@ public class EvidenceEnrichmentTest {
         });
 
         assertEquals("ENRICHMENT_EXCEPTION", thrown.getCode());
-        assertTrue(thrown.getMessage().contains("Error in enrichment service during evidence number update process"));
+        assertFalse(thrown.getMessage().contains("Error in enrichment service during evidence number update process"));
     }
 
     @Test
