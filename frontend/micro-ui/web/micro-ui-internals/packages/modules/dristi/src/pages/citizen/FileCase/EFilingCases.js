@@ -753,6 +753,19 @@ function EFilingCases({ path }) {
                   </React.Fragment>
                 );
               }
+              if (
+                body?.validation?.pattern &&
+                body?.validation?.pattern?.moduleName &&
+                body?.validation?.pattern?.masterName &&
+                body?.validation?.pattern?.patternType
+              ) {
+                body.validation = {
+                  ...body.validation,
+                  pattern: Digit?.Customizations?.[body?.validation?.pattern?.masterName]?.[body?.validation?.pattern?.moduleName](
+                    body?.validation?.pattern?.patternType
+                  ),
+                };
+              }
 
               if (body.updateLabelOn && body.updateLabel.key && body.defaultLabel.key) {
                 if (extractValue(data, body.updateLabelOn)) {
