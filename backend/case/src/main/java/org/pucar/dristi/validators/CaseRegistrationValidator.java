@@ -132,7 +132,7 @@ public class CaseRegistrationValidator {
                     existingApplications.get(0).getResponseList().stream().anyMatch(existingCase ->
                             existingCase.getLinkedCases().stream().anyMatch(existingLinkedCase ->
                                     (linkedCase.getId() != null && linkedCase.getId().equals(existingLinkedCase.getId())) ||
-                                            (linkedCase.getIsActive() != null && linkedCase.getIsActive() == existingLinkedCase.getIsActive()) ||
+                                            (linkedCase.getIsActive() != null && linkedCase.getIsActive().equals(existingLinkedCase.getIsActive())) ||
                                             (linkedCase.getCaseNumber() != null &&  linkedCase.getCaseNumber().equals(existingLinkedCase.getCaseNumber())) ||
                                             (linkedCase.getReferenceUri() != null && linkedCase.getReferenceUri().equals(existingLinkedCase.getReferenceUri()))
                             )
