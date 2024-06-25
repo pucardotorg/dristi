@@ -247,4 +247,17 @@ class ApplicationServiceTest {
         assertEquals("Database error", thrown.getMessage());
         verify(applicationRepository).checkApplicationExists(applicationExistsRequest.getApplicationExists());
     }
+
+    @Test
+    void testExistsApplication_Throws_Exception() {
+        when(applicationRepository.checkApplicationExists(applicationExistsRequest.getApplicationExists()))
+                .thenThrow(new RuntimeException("Database error"));
+
+        Exception thrown = assertThrows(Exception.class, () -> {
+            applicationService.existsApplication(applicationExistsRequest);
+        });
+
+        assertEquals("Database error", thrown.getMessage());
+        verify(applicationRepository).checkApplicationExists(applicationExistsRequest.getApplicationExists());
+    }
 }
