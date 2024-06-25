@@ -240,7 +240,7 @@ public class CaseRepository {
                     caseCriteria.getResponseList().forEach(courtCase -> {
                         if (courtCase.getRepresentatives() != null) {
                             courtCase.getRepresentatives().forEach(rep -> {
-                                rep.setDocuments(caseRepresentiveDocumentMap.get(rep.getId()));
+                                rep.setDocuments(caseRepresentiveDocumentMap.get(UUID.fromString(rep.getId())));
                             });
                         }
                     });
