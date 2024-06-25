@@ -94,6 +94,7 @@ module.exports = function (app) {
     "/health-hrms",
     "/case/case/v1/_search",
     "/application/*" ,
+    "/order"
   ].forEach((location) => app.use(location, createProxy));
   ["/pb-egov-assets"].forEach((location) => app.use(location, assetsProxy));
   ["/mdms-v2/v2/_create"].forEach((location) => app.use(location, mdmsProxy));
