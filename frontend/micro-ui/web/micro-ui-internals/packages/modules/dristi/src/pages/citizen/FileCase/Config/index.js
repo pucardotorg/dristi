@@ -1,14 +1,3 @@
-import { advocateDetailsConfig } from "./advocateDetailsConfig";
-import { chequeDetailsConfig } from "./chequedetailsConfig";
-import { complaintDetailsConfig, complaintdetailconfig } from "./complaindetailsConfig";
-import { debtliabilityconfig } from "./debtLiabilityConfig";
-import { delayApplicationConfig } from "./delayApplicationConfig";
-import { demandNoticeConfig } from "./demandNoticeConfig";
-import { prayerAndSwornConfig } from "./prayerAndSwornConfig";
-import { respondentconfig } from "./respondentConfig";
-import { reviewcasefileconfig } from "./reviewcasefileconfig";
-import { signatureconfig } from "./signatureconfig";
-import { witnessConfig } from "./witnessConfig";
 
 export const sideMenuConfig = [
   {

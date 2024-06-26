@@ -209,7 +209,7 @@ function ViewCaseFile({ t }) {
       return "CS_SEND_BACK";
     }
   }, [isScrutiny]);
-  
+
   const updateCaseDetails = async (action) => {
     const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : formdata;
     const newcasedetails = {
@@ -285,8 +285,7 @@ function ViewCaseFile({ t }) {
     return <Loader />;
   }
   if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
-    // if state is not under scrutiny, don't allow FSO Officer to access the application Details page
-    // history.push("/digit-ui/employee/dristi/cases");
+    history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
@@ -474,7 +473,7 @@ function ViewCaseFile({ t }) {
               t={t}
               totalErrors={totalErrors?.total || 0}
               handleCloseModal={handleCloseModal}
-              onCancel={handlePotentialConfirm} 
+              onCancel={handlePotentialConfirm}
               onSubmit={handleSendCaseBack}
               heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
