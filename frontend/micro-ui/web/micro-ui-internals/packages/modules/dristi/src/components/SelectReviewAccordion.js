@@ -257,12 +257,14 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           {inputs.map((input, index) => {
             const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
-            const prevSectionError = input?.prevErrors?.scrutinyMessage;
-            if (isPrevScrutiny) {
+            const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
+            let bgclassname = sectionError && isScrutiny ? "error" : "";
+            if (isPrevScrutiny && prevSectionError) {
               showFlagIcon = prevSectionError ? true : false;
+              bgclassname = prevSectionError ? "preverror" : "";
             }
             return (
-              <div className={`content-item ${sectionError && isScrutiny && "error"}`}>
+              <div className={`content-item ${bgclassname}`}>
                 <div className="item-header">
                   <div className="header-left">
                     {input?.icon && <Icon icon={input?.icon} />}

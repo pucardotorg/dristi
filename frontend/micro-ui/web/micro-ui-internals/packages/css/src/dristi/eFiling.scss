@@ -18,7 +18,7 @@
     background-color: white;
     border: 1px solid var(--Grey-200, #bbbbbd);
 
-    > h2 {
+    >h2 {
       font-weight: 700;
       font-size: 24px;
       border-bottom: 1px solid var(--Grey-200, #bbbbbd);
@@ -365,8 +365,7 @@
   }
 }
 
-.witness-details {
-}
+.witness-details {}
 
 .debt-liability {
   .select-wrap {
@@ -846,6 +845,10 @@
             border-left: 2px #bb2c2f solid;
           }
 
+          &.preverror {
+            border-left: 2px #4d83cf solid;
+          }
+
           .scrutiny-error {
             display: flex !important;
             padding: 5px 16px;
@@ -924,6 +927,7 @@
               &.error {
                 background-color: #fce8e8;
               }
+
               &.preverror {
                 background-color: #ecf3fd;
               }
@@ -943,7 +947,7 @@
               }
 
               &.preverror {
-                background-color: #bbbbbd;
+                background-color: #ecf3fd;
               }
             }
 
@@ -1084,6 +1088,7 @@
 
     .total-error-note {
       background-color: #ecf3fd !important;
+
       svg {
         g {
           path {
