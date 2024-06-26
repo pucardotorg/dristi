@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,20 +83,21 @@ public class CaseRegistrationEnrichment {
         }
     }
 
-    private static void enrichRepresentativesOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
-        String courCaseId = courtCase.getId().toString();
+    public static void enrichRepresentativesOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+        String courtCaseId = courtCase.getId().toString();
         if (courtCase.getRepresentatives() == null) {
             return;
         }
         List<AdvocateMapping> representativesListToCreate = courtCase.getRepresentatives().stream().filter(representative -> representative.getId() == null).toList();
         representativesListToCreate.forEach(advocateMapping -> {
             advocateMapping.setId(String.valueOf(UUID.randomUUID()));
+            advocateMapping.setCaseId(courtCaseId);
             advocateMapping.setAuditDetails(auditDetails);
             if (advocateMapping.getDocuments() != null) {
                 advocateMapping.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
             if(advocateMapping.getRepresenting() != null) {
-                enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courCaseId);
+                enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courtCaseId);
             }
         });
         List<AdvocateMapping> representativesListToUpdate = courtCase.getRepresentatives().stream().filter(representative -> representative.getId() != null).toList();
@@ -105,16 +107,16 @@ public class CaseRegistrationEnrichment {
                 advocateMapping.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
             }
             if(advocateMapping.getRepresenting() != null) {
-               enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courCaseId);
+               enrichRepresentingOnCreateAndUpdate(auditDetails, advocateMapping, courtCaseId);
             }
         });
     }
 
-    private static void enrichRepresentingOnCreateAndUpdate(AuditDetails auditDetails, AdvocateMapping advocateMapping, String courCaseId) {
+    private static void enrichRepresentingOnCreateAndUpdate(AuditDetails auditDetails, AdvocateMapping advocateMapping, String courtCaseId) {
         List<Party> representingListToCreate = advocateMapping.getRepresenting().stream().filter(party -> party.getId() == null).toList();
         representingListToCreate.forEach(party -> {
             party.setId((UUID.randomUUID()));
-            party.setCaseId(courCaseId);
+            party.setCaseId(courtCaseId);
             party.setAuditDetails(auditDetails);
             if (party.getDocuments() != null) {
                 party.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
@@ -129,13 +131,15 @@ public class CaseRegistrationEnrichment {
         });
     }
 
-    private static void enrichLitigantsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
+    public static void enrichLitigantsOnCreateAndUpdate(CourtCase courtCase, AuditDetails auditDetails) {
         if(courtCase.getLitigants() == null) {
             return;
         }
+        String courtCaseId = courtCase.getId().toString();
         List<Party> litigantsListToCreate = courtCase.getLitigants().stream().filter(litigant -> litigant.getId() == null).toList();
         litigantsListToCreate.forEach(party -> {
             party.setId((UUID.randomUUID()));
+            party.setCaseId(courtCaseId);
             party.setAuditDetails(auditDetails);
             if (party.getDocuments() != null) {
                 party.getDocuments().forEach(CaseRegistrationEnrichment::enrichDocumentsOnCreate);
@@ -219,9 +223,10 @@ public class CaseRegistrationEnrichment {
         try {
             List<String> courtCaseRegistrationCaseNumberIdList = idgenUtil.getIdList(caseRequest.getRequestInfo(), caseRequest.getCases().getTenantId(), config.getCaseNumberCc(), null, 1);
             caseRequest.getCases().setCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
-            caseRequest.getCases().setCourCaseNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
+            caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
+            caseRequest.getCases().setCnrNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
         } catch (Exception e) {
-            log.error("Error enriching case number and cnr number: {}", e.getMessage());
+            log.error("Error enriching case number and cnr number: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
         }
     }
@@ -232,7 +237,7 @@ public class CaseRegistrationEnrichment {
                 String accessCode = CaseUtil.generateAccessCode(ACCESSCODE_LENGTH);
                 caseRequest.getCases().setAccessCode(accessCode);
             } catch (Exception e) {
-                log.error("Error enriching access code: {}", e.getMessage());
+                log.error("Error enriching access code: {}", e.toString());
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
             }
         }

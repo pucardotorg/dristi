@@ -1,5 +1,6 @@
 package org.pucar.dristi.web.controllers;
 
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -106,6 +107,29 @@ public class CaseApiControllerTest {
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertEquals(caseRequest.getCriteria(), responseEntity.getBody().getCriteria());
     }
+
+    @Test
+    public void verifyV1JoinCaseSuccess() {
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        RequestInfo requestInfo = new RequestInfo();
+        joinCaseRequest.setRequestInfo(requestInfo);
+
+        JoinCaseResponse joinCaseResponse = new JoinCaseResponse();
+        ResponseInfo responseInfo = new ResponseInfo();
+        // Mocking caseService.verifyJoinCaseRequest method to return a JoinCaseResponse object
+        when(caseService.verifyJoinCaseRequest(any(JoinCaseRequest.class))).thenReturn(joinCaseResponse);
+
+        // Mocking responseInfoFactory.createResponseInfoFromRequestInfo method to return a ResponseInfo object
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(RequestInfo.class), any(Boolean.class))).thenReturn(responseInfo);
+
+        // Call the method under test
+        ResponseEntity<JoinCaseResponse> responseEntity = caseApiController.verifyV1JoinCase(joinCaseRequest);
+
+        // Verify the response entity
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(responseInfo, responseEntity.getBody().getResponseInfo());
+    }
+
     @Test
     public void caseV1UpdatePostSuccess() {
         // Mocking request body

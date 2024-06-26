@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.service.TaskService;
-import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
@@ -44,9 +43,6 @@ public class TaskRegistrationValidatorTest {
     private Configuration config;
 
     @Mock
-    private CaseUtil caseUtil;
-
-    @Mock
     private OrderUtil orderUtil;
 
     @InjectMocks
@@ -66,16 +62,6 @@ public class TaskRegistrationValidatorTest {
         taskRequest = new TaskRequest();
         taskRequest.setRequestInfo(requestInfo);
         taskRequest.setTask(task);
-    }
-
-    @Test
-    void testValidateCaseRegistrationSuccess() {
-        task.setTaskType("task-type");
-        task.setValidate(false);
-        task.setCreatedDate(LocalDate.parse("2024-01-01"));
-
-        assertDoesNotThrow(() -> validator.validateCaseRegistration(taskRequest));
-        verify(caseUtil, times(0)).fetchCaseDetails(any(), any(), any());
     }
 
     @Test
@@ -106,24 +92,21 @@ public class TaskRegistrationValidatorTest {
     void testValidateCaseRegistrationInvalidCaseDetails() {
         task.setTaskType("task-type");
         task.setCreatedDate(LocalDate.parse("2024-01-01"));
-        task.setValidate(true);
-
-        when(caseUtil.fetchCaseDetails(any(), any(), any())).thenReturn(false);
 
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
-        assertEquals("Invalid case details", exception.getMessage());
+        assertEquals("Invalid order ID", exception.getMessage());
     }
 
     @Test
     void testValidateApplicationExistenceSuccess() {
         task.setId(UUID.randomUUID());
-        when(repository.getApplications(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList(task));
+        when(repository.getApplications(any(), any(), any(), any(), any(),any())).thenReturn(Collections.singletonList(task));
 
         boolean result = validator.validateApplicationExistence(task, requestInfo);
 
         assertTrue(result);
-        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any());
+        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any(),any());
     }
 
     @Test
@@ -145,11 +128,11 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateApplicationExistenceNoExistingApplications() {
         task.setId(UUID.randomUUID());
-        when(repository.getApplications(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(repository.getApplications(any(), any(), any(), any(), any(),any())).thenReturn(Collections.emptyList());
 
         boolean result = validator.validateApplicationExistence(task, requestInfo);
 
         assertFalse(result);
-        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any());
+        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any(),any());
     }
 }

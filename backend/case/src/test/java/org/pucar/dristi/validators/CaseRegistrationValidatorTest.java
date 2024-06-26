@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.pucar.dristi.config.ServiceConstants.*;
 
 import net.minidev.json.JSONArray;
-import org.apache.kafka.common.protocol.types.Field;
-import org.checkerframework.checker.units.qual.C;
 import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.User;
@@ -26,9 +24,7 @@ import org.pucar.dristi.util.AdvocateUtil;
 import org.pucar.dristi.util.FileStoreUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.print.Doc;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -57,10 +53,22 @@ public class CaseRegistrationValidatorTest {
 
     @Mock
     private AdvocateUtil advocateUtil;
-
+    private JoinCaseRequest joinCaseRequest;
+    private RequestInfo requestInfo;
+    private Party litigant;
+    private AdvocateMapping representative;
+    private Document document;
     @BeforeEach
     void setUp() {
         // Setup done before each test
+        requestInfo = new RequestInfo();
+        litigant = new Party();
+        representative = new AdvocateMapping();
+        document = new Document();
+        joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setLitigant(litigant);
+        joinCaseRequest.setRepresentative(representative);
+        joinCaseRequest.setRequestInfo(requestInfo);
     }
 
     @Test
@@ -284,8 +292,8 @@ public class CaseRegistrationValidatorTest {
         caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
 
         Boolean result = validator.validateApplicationExistence(caseRequest);
         assertTrue(result);
@@ -328,7 +336,7 @@ public class CaseRegistrationValidatorTest {
         caseSearchRequest.setRequestInfo(new RequestInfo());
         caseSearchRequest.setCriteria(caseCriteriaList);
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((Collections.emptyList()));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((Collections.emptyList()));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         User userInfo = new User();
@@ -389,8 +397,8 @@ public class CaseRegistrationValidatorTest {
         caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
 
         assertThrows(Exception.class, () -> validator.validateApplicationExistence(caseRequest));
     }
@@ -478,8 +486,8 @@ public class CaseRegistrationValidatorTest {
         caseService.searchCases(caseSearchRequest);
         lenient().when(configuration.getCaseBusinessServiceName()).thenReturn("case");
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
-                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourCaseNumber()).build())));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn((List.of(CaseCriteria.builder().filingNumber(courtCase.getFilingNumber()).caseId(String.valueOf(courtCase.getId()))
+                .cnrNumber(courtCase.getCnrNumber()).courtCaseNumber(courtCase.getCourtCaseNumber()).build())));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
@@ -498,7 +506,7 @@ public class CaseRegistrationValidatorTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }
@@ -516,7 +524,7 @@ public class CaseRegistrationValidatorTest {
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
 
         assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
     }
@@ -532,7 +540,7 @@ public class CaseRegistrationValidatorTest {
         Workflow workflow = new Workflow();
         workflow.setAction(DELETE_DRAFT_WORKFLOW_ACTION);
         courtCase.setWorkflow(workflow);
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
@@ -551,7 +559,7 @@ public class CaseRegistrationValidatorTest {
         Workflow workflow = new Workflow();
         workflow.setAction(SUBMIT_CASE_WORKFLOW_ACTION);
         courtCase.setWorkflow(workflow);
-        lenient().when(caseRepository.getApplications(any())).thenReturn(List.of(caseCriteria));
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(List.of(caseCriteria));
         CaseRequest caseRequest = new CaseRequest();
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
@@ -567,9 +575,140 @@ public class CaseRegistrationValidatorTest {
         caseRequest.setCases(courtCase);
         caseRequest.setRequestInfo(new RequestInfo());
 
-        lenient().when(caseRepository.getApplications(any())).thenReturn(new ArrayList<>());
+        lenient().when(caseRepository.getApplications(any(), any())).thenReturn(new ArrayList<>());
 
         Exception exception = assertThrows(CustomException.class, () -> validator.validateApplicationExistence(caseRequest));
+    }
+    @Test
+    public void testValidateLitigantJoinCase_ValidIndividualIdAndDocuments() {
+        litigant.setIndividualId("validId");
+        litigant.setDocuments(Collections.singletonList(document));
+        document.setFileStore("validFileStore");
+        litigant.setTenantId("tenantId");
+
+        when(individualService.searchIndividual(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "validFileStore")).thenReturn(true);
+
+        assertTrue(validator.validateLitigantJoinCase(joinCaseRequest));
+    }
+    @Test
+    public void testValidateLitigantJoinCase_InvalidIndividualId() {
+        litigant.setIndividualId("invalidId");
+
+        when(individualService.searchIndividual(requestInfo, "invalidId")).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INDIVIDUAL_NOT_FOUND, exception.getCode());
+        assertEquals("Invalid complainant details", exception.getMessage());
+    }
+    @Test
+    public void testValidateLitigantJoinCase_NullIndividualId() {
+
+        lenient().when(individualService.searchIndividual(requestInfo, "ind_id")).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INDIVIDUAL_NOT_FOUND, exception.getCode());
+        assertEquals("Invalid complainant details", exception.getMessage());
+    }
+    @Test
+    public void testValidateLitigantJoinCase_InvalidDocumentFileStore() {
+        litigant.setIndividualId("validId");
+        litigant.setDocuments(Collections.singletonList(document));
+        document.setFileStore("invalidFileStore");
+        litigant.setTenantId("tenantId");
+
+        when(individualService.searchIndividual(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "invalidFileStore")).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateLitigantJoinCase_MissingDocumentFileStore() {
+        litigant.setIndividualId("validId");
+        litigant.setDocuments(Collections.singletonList(document));
+        litigant.setTenantId("tenantId");
+
+        when(individualService.searchIndividual(requestInfo, "validId")).thenReturn(true);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateLitigantJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateRepresentativeJoinCase_ValidAdvocateIdAndDocuments() {
+        representative.setAdvocateId("validId");
+        representative.setDocuments(Collections.singletonList(document));
+        document.setFileStore("validFileStore");
+        representative.setTenantId("tenantId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "validFileStore")).thenReturn(true);
+
+        assertTrue(validator.validateRepresentativeJoinCase(joinCaseRequest));
+    }
+
+    @Test
+    public void testValidateRepJoinCase_InvalidAdvocateId() {
+        representative.setAdvocateId("invalidId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "invalidId")).thenReturn(false);
+
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_ADVOCATE_ID, exception.getCode());
+    }
+    @Test
+    public void testValidateLitigantJoinCase_NullAdvocateId() {
+
+        lenient().when(advocateUtil.fetchAdvocateDetails(requestInfo, "ind_id")).thenReturn(false);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_ADVOCATE_ID, exception.getCode());
+        assertEquals("Invalid advocate details", exception.getMessage());
+    }
+    @Test
+    public void testValidateRepJoinCase_InvalidDocumentFileStore() {
+        representative.setAdvocateId("validId");
+        representative.setDocuments(Collections.singletonList(document));
+        document.setFileStore("invalidFileStore");
+        representative.setTenantId("tenantId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "validId")).thenReturn(true);
+        when(fileStoreUtil.fileStore("tenantId", "invalidFileStore")).thenReturn(false);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
+    }
+
+    @Test
+    public void testValidateRepJoinCase_MissingDocumentFileStore() {
+        representative.setAdvocateId("validId");
+        representative.setDocuments(Collections.singletonList(document));
+        representative.setTenantId("tenantId");
+
+        when(advocateUtil.fetchAdvocateDetails(requestInfo, "validId")).thenReturn(true);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            validator.validateRepresentativeJoinCase(joinCaseRequest);
+        });
+        assertEquals(INVALID_FILESTORE_ID, exception.getCode());
+        assertEquals("Invalid document details", exception.getMessage());
     }
 }
 

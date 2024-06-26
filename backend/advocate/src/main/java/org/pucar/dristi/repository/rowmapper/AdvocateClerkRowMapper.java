@@ -78,20 +78,20 @@ public class AdvocateClerkRowMapper implements ResultSetExtractor<List<AdvocateC
         List<Document> listDocument = new ArrayList<>();
         try {
             Document document = Document.builder()
-                .id(rs.getString("aid"))
-                .documentType(rs.getString("document_type"))
-                .fileStore(rs.getString("filestore"))
-                .documentUid(rs.getString("document_uid"))
-                .additionalDetails(rs.getObject("additional_details"))
+                    .id(rs.getString("aid"))
+                    .documentType(rs.getString("document_type"))
+                    .fileStore(rs.getString("filestore"))
+                    .documentUid(rs.getString("document_uid"))
+                    .additionalDetails(rs.getObject("additional_details"))
                     .build();
             listDocument.add(document);
 
             advocateClerkApplication.setDocuments(listDocument);
-        } catch(CustomException e){
+        } catch (CustomException e) {
             throw e;
-        }
-        catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("Error occurred while adding document to application :: {}", e.toString());
+            throw new CustomException(ROW_MAPPER_EXCEPTION, "Exception occurred while adding document to application: " + e.getMessage());
         }
     }
 

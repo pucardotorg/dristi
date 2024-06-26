@@ -111,7 +111,7 @@ public class AdvocateClerkRowMapperTest {
         when(rs.getString(anyString())).thenThrow(new RuntimeException("Error"));
 
         // Act and Assert
-        assertDoesNotThrow(() -> {
+        assertThrows(CustomException.class, () -> {
             rowMapper.addDocumentToApplication(rs, advocateClerk);
         });
     }

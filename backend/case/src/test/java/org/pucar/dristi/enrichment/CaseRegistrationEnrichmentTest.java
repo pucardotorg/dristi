@@ -220,7 +220,8 @@ class CaseRegistrationEnrichmentTest {
         caseRegistrationEnrichment.enrichCaseNumberAndCNRNumber(caseRequest);
 
         assertNotNull(caseRequest.getCases().getCaseNumber());
-        assertNotNull(caseRequest.getCases().getCourCaseNumber());
+        assertNotNull(caseRequest.getCases().getCourtCaseNumber());
+        assertNotNull(caseRequest.getCases().getCnrNumber());
     }
 
     @Test
@@ -237,6 +238,73 @@ class CaseRegistrationEnrichmentTest {
         caseRequest.setCases(null);
 
         assertThrows(CustomException.class, () -> caseRegistrationEnrichment.enrichAccessCode(caseRequest));
+    }
+
+    @Test
+    public void testEnrichLitigantsOnCreate() {
+        // Create a new litigant without an ID (to be created)
+        Party newParty = new Party();
+        newParty.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getLitigants().add(newParty);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+        // Assert that the new party has been assigned an ID, case ID, and audit details
+        assertEquals(courtCase.getId().toString(), newParty.getCaseId());
+        assertEquals(auditDetails, newParty.getAuditDetails());
+    }
+    @Test
+    public void testEnrichRepOnCreate() {
+        AdvocateMapping representative = new AdvocateMapping();
+        representative.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getRepresentatives().add(representative);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        assertEquals(courtCase.getId().toString(), representative.getCaseId());
+        assertEquals(auditDetails, representative.getAuditDetails());
+    }
+    @Test
+    public void testNoLitigants() {
+        // No litigants in the court case
+        courtCase.setLitigants(null);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+        // Assert that nothing breaks when there are no litigants
+        assertEquals(null, courtCase.getLitigants());
+    }
+    @Test
+    public void testNoRepresentatives() {
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setRepresentatives(null);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        assertEquals(null, courtCase.getRepresentatives());
+    }
+    @Test
+    public void testEnrichLitigantsOnUpdate() {
+        // Create an existing litigant with an ID (to be updated)
+        Party existingParty = new Party();
+        existingParty.setId(UUID.randomUUID());
+        existingParty.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getLitigants().add(existingParty);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate(courtCase, auditDetails);
+
+        // Assert that the existing party's audit details have been updated
+        assertEquals(auditDetails, existingParty.getAuditDetails());
+    }
+    @Test
+    public void testEnrichRepresentativeOnUpdate() {
+        AdvocateMapping existingRepresentative = new AdvocateMapping();
+        existingRepresentative.setId("rep_id");
+        existingRepresentative.setDocuments(new ArrayList<>());
+        courtCase.setId(UUID.randomUUID());
+        courtCase.getRepresentatives().add(existingRepresentative);
+        AuditDetails auditDetails = new AuditDetails("createdBy", "lastModifiedBy", System.currentTimeMillis(), System.currentTimeMillis());
+        CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate(courtCase, auditDetails);
+        assertEquals(auditDetails, existingRepresentative.getAuditDetails());
     }
 }
 

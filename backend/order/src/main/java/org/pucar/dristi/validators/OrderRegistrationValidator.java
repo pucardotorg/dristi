@@ -36,8 +36,6 @@ public class OrderRegistrationValidator {
 
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getTenantId()))
             throw new CustomException(CREATE_ORDER_ERR, "tenantId is mandatory for creating order");
-        if (ObjectUtils.isEmpty(orderRequest.getOrder().getCnrNumber()))
-            throw new CustomException(CREATE_ORDER_ERR, "CNR Number is mandatory for creating order");
         if (ObjectUtils.isEmpty(orderRequest.getOrder().getStatuteSection()))
             throw new CustomException(CREATE_ORDER_ERR, "statute and section is mandatory for creating order");
 
@@ -53,7 +51,7 @@ public class OrderRegistrationValidator {
     public Order validateApplicationExistence(OrderRequest orderRequest) {
         Order order = orderRequest.getOrder();
         RequestInfo requestInfo = orderRequest.getRequestInfo();
-        List<Order> existingApplications = repository.getApplications("", order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
+        List<Order> existingApplications = repository.getOrders("", "",order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
                 String.valueOf(order.getId()), order.getStatus());
         log.info("Existing application :: {}", existingApplications.size());
         if (existingApplications.isEmpty())

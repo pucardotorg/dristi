@@ -100,20 +100,20 @@ public class TaskServiceTest {
 
     @Test
     void testSearchTaskSuccess() {
-        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString())).thenReturn(Collections.singletonList(task));
+        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString())).thenReturn(Collections.singletonList(task));
         when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(null);
 
-        List<Task> result = taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", requestInfo);
+        List<Task> result = taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", "task-number",requestInfo);
 
         assertEquals(1, result.size());
-        verify(taskRepository, times(1)).getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString());
+        verify(taskRepository, times(1)).getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString());
     }
 
     @Test
     void testSearchTaskThrowsException() {
-        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
+        when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString())).thenThrow(new CustomException(SEARCH_TASK_ERR, "Error"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", requestInfo));
+        CustomException exception = assertThrows(CustomException.class, () -> taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", "task-number",requestInfo));
 
         assertEquals(SEARCH_TASK_ERR, exception.getCode());
         assertEquals("Error", exception.getMessage());
