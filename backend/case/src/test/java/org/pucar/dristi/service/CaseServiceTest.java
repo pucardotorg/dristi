@@ -2,7 +2,10 @@ package org.pucar.dristi.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
+import org.egov.common.contract.request.RequestInfo;
+import org.egov.common.contract.request.User;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,9 +20,7 @@ import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CaseServiceTest {
@@ -41,6 +42,8 @@ public class CaseServiceTest {
     private CaseService caseService;
 
     private CaseRequest caseRequest;
+    private RequestInfo requestInfo;
+    private User userInfo;
 
     private CaseSearchRequest caseSearchRequest;
 
@@ -52,6 +55,10 @@ public class CaseServiceTest {
         caseRequest.setCases(new CourtCase());
         caseSearchRequest = new CaseSearchRequest();
         caseExistsRequest = new CaseExistsRequest();
+        requestInfo = new RequestInfo();
+        userInfo = new User();
+        userInfo.setUuid("user-uuid");
+        requestInfo.setUserInfo(userInfo);
     }
     @Test
     void testCreateCase() {
@@ -73,15 +80,135 @@ public class CaseServiceTest {
     }
 
     @Test
+    public void testVerifyJoinCaseRequest_CaseDoesNotExist() {
+        // Mock the CaseRepository to return an empty list
+        when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(new CaseCriteria()));
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setCaseFilingNumber("12345");
+        joinCaseRequest.setAccessCode("validAccessCode");
+        assertThrows(CustomException.class, () -> {
+            caseService.verifyJoinCaseRequest(joinCaseRequest);
+        });
+
+    }
+
+    @Test
+    public void testVerifyJoinCaseRequest_AccessCodeNotGenerated() {
+        // Setup a sample CourtCase object access code as null
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setCaseFilingNumber("12345");
+        joinCaseRequest.setAccessCode("validAccessCode");
+        AdvocateMapping representative = new AdvocateMapping();
+        representative.setAdvocateId("existingAdv");
+        CourtCase courtCase = new CourtCase();
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setFilingNumber(joinCaseRequest.getCaseFilingNumber());
+        courtCase.setStatus(CASE_ADMIT_STATUS);
+        courtCase.setRepresentatives(Collections.singletonList(representative));
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        lenient().when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+        assertThrows(CustomException.class, () -> {
+            caseService.verifyJoinCaseRequest(joinCaseRequest);
+        });
+    }
+
+    @Test
+    public void testVerifyJoinCaseRequest_LitigantAlreadyExists() {
+        // Setup a Litigant that is already part of the case
+        Party litigant = new Party();
+        litigant.setIndividualId("existingLitigant");
+        CourtCase courtCase = new CourtCase();
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setAccessCode("validAccessCode");
+        courtCase.setStatus(CASE_ADMIT_STATUS);
+        courtCase.setLitigants(Collections.singletonList(litigant));
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setRequestInfo(requestInfo);
+        joinCaseRequest.setCaseFilingNumber("12345");
+        joinCaseRequest.setAccessCode("validAccessCode");
+        joinCaseRequest.setLitigant(litigant);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseService.verifyJoinCaseRequest(joinCaseRequest);
+        });
+
+        assertEquals(VALIDATION_ERR, exception.getCode());
+        assertEquals("Litigant is already a part of the given case", exception.getMessage());
+    }
+
+
+    @Test
+    public void testVerifyJoinCaseRequest_RepresentativesAlreadyExists() {
+        AdvocateMapping representative = new AdvocateMapping();
+        representative.setAdvocateId("existingAdv");
+        CourtCase courtCase = new CourtCase();
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setAccessCode("validAccessCode");
+        courtCase.setStatus(CASE_ADMIT_STATUS);
+        courtCase.setRepresentatives(Collections.singletonList(representative));
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setRequestInfo(requestInfo);
+        joinCaseRequest.setCaseFilingNumber("12345");
+        joinCaseRequest.setAccessCode("validAccessCode");
+        joinCaseRequest.setRepresentative(representative);
+
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            caseService.verifyJoinCaseRequest(joinCaseRequest);
+        });
+
+        assertEquals(VALIDATION_ERR, exception.getCode());
+        assertEquals("Advocate is already a part of the given case", exception.getMessage());
+    }
+
+    @Test
+    public void testVerifyJoinCaseRequest_Success() {
+        Party litigant = new Party();
+        litigant.setIndividualId("newLitigant");
+        AdvocateMapping advocate = new AdvocateMapping();
+        advocate.setAdvocateId("newAdvocate");
+        CourtCase courtCase = new CourtCase();
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setAccessCode("validAccessCode");
+        courtCase.setStatus(CASE_ADMIT_STATUS);
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
+        JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
+        joinCaseRequest.setRequestInfo(requestInfo);
+        joinCaseRequest.setCaseFilingNumber("12345");
+        joinCaseRequest.setAccessCode("validAccessCode");
+        joinCaseRequest.setLitigant(litigant);
+
+        joinCaseRequest.setRepresentative(advocate);
+        when(validator.validateLitigantJoinCase(joinCaseRequest)).thenReturn(true);
+        when(validator.validateRepresentativeJoinCase(joinCaseRequest)).thenReturn(true);
+
+        JoinCaseResponse response = caseService.verifyJoinCaseRequest(joinCaseRequest);
+        assertEquals("validAccessCode", response.getAccessCode());
+        assertEquals("12345", response.getCaseFilingNumber());
+        assertEquals(litigant, response.getLitigant());
+        assertEquals(advocate, response.getRepresentative());
+    }
+
+    @Test
     void testSearchCases() {
         // Set up mock responses
         List<CaseCriteria> mockCases = new ArrayList<>(); // Assume filled with test data
-        when(caseRepository.getApplications(any())).thenReturn(mockCases);
+        when(caseRepository.getApplications(any(), any())).thenReturn(mockCases);
 
         // Call the method under test
         caseService.searchCases(caseSearchRequest);
 
-        verify(caseRepository, times(1)).getApplications(any());
+        verify(caseRepository, times(1)).getApplications(any(), any());
     }
 
     @Test
@@ -89,24 +216,24 @@ public class CaseServiceTest {
         // Set up mock responses
         List<CourtCase> mockCases = new ArrayList<>(); // Assume filled with test data
 
-        when(caseRepository.getApplications(any())).thenReturn(List.of(CaseCriteria.builder().filingNumber("filNo").courtCaseNumber("123").build()));
+        when(caseRepository.getApplications(any(), any())).thenReturn(List.of(CaseCriteria.builder().filingNumber("filNo").courtCaseNumber("123").build()));
 
         // Call the method under test
         caseService.searchCases(caseSearchRequest);
 
-        verify(caseRepository, times(1)).getApplications(any());
+        verify(caseRepository, times(1)).getApplications(any(), any());
     }
 
     @Test
     void testSearchCases_CustomException() {
-        when(caseRepository.getApplications(any())).thenThrow(CustomException.class);
+        when(caseRepository.getApplications(any(), any())).thenThrow(CustomException.class);
 
         assertThrows(CustomException.class, () -> caseService.searchCases(caseSearchRequest));
     }
 
     @Test
     void testSearchCases_Exception() {
-        when(caseRepository.getApplications(any())).thenThrow(new RuntimeException());
+        when(caseRepository.getApplications(any(), any())).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> caseService.searchCases(caseSearchRequest));
     }
@@ -265,7 +392,7 @@ public class CaseServiceTest {
     @Test
     void testSearchCases_EmptyResult() {
         CaseSearchRequest searchRequest = new CaseSearchRequest(); // Setup search request
-        when(caseRepository.getApplications(any())).thenReturn(Arrays.asList());
+        when(caseRepository.getApplications(any(), any())).thenReturn(Arrays.asList());
 
         caseService.searchCases(searchRequest);
     }
