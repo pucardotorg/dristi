@@ -75,34 +75,14 @@ paths:
       summary: search for application(s)
       description: |
         Gets the list of Application(s)
+      requestBody:
+          description: Details for the search application(s) + RequestInfo meta data.
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApplicationSearchRequest'
+          required: true
       parameters:
-        - name: id
-          in: query
-          description: Search by application ID
-          schema:
-            type: string
-        - name: filingNumber
-          in: query
-          description: Search by filingNumber
-          schema:
-            type: string
-            format: uuid
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose task(s) are being queried
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: Search by tenantId 
-          schema:
-            type: string
-            format: uuid
-        - name: status
-          in: query
-          description: Search by status
-          schema:
-            type: string
         - name: limit
           in: query
           description: No of records return

@@ -110,6 +110,11 @@ paths:
           description: the status of the order(s) being searched
           schema:
             type: string
+        - name: orderNumber
+          in: query
+          description: the orderNumber of the order(s) being searched
+          schema:
+            type: string
       responses:
         "200":
           description: ResponseInfo with order list

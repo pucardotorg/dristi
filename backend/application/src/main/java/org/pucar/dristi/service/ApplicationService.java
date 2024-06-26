@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.ApplicationEnrichment;
@@ -75,15 +76,16 @@ public class ApplicationService {
         }
     }
 
-    public List<Application> searchApplications (String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset, String sortBy, RequestInfoBody requestInfoBody){
+    public List<Application> searchApplications (Integer limit, Integer offset, String sortBy, ApplicationSearchRequest request){
             try {
                 // Fetch applications from database according to the given search params
-                List<Application> applicationList = applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
-                log.info("No. of applications :: {}", applicationList.size());
+                log.info("Starting application search with parameters :: {}", request);
+                List<Application> applicationList = applicationRepository.getApplications(limit, offset,request);
+                log.info("Application list fetched with size :: {}", applicationList.size());
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
-                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfoBody.getRequestInfo(), requestInfoBody.getTenantId(), application.getApplicationNumber()))));
+                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getCriteria().getTenantId(), application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
                 log.error("Error while fetching to search results {}", e.getMessage());

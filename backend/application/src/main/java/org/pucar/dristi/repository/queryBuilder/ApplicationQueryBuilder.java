@@ -74,7 +74,7 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset) {
+    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber, Integer limit, Integer offset) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
@@ -103,6 +103,11 @@ public class ApplicationQueryBuilder {
             if (status!=null && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("app.status =").append("'").append(status).append("'");
+                firstCriteria = false;
+            }
+            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("app.applicationNumber =").append("'").append(applicationNumber).append("'");
                 firstCriteria = false;
             }
             query.append(ORDERBY_CREATEDTIME_DESC);
