@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "http://dristi.pucar.org/schemas/judgement.json",
-  "$comment": "definition of the schema for issuing a judgement order. date, type, amount, case number etc. will be available in the task object itself",
+  "$comment": "definition of the schema for issuing a judgement order",
   "$version": "0.1.0",
   "judgementDetails":
   {
@@ -139,6 +139,11 @@
       "type": "string",
       "pattern": "^[a-zA-Z0-9]{1,512}$",
       "description": "string having a max of 512 alphanumeric characters"
+    },
+    "cnrNumber" : {
+      "type": "string",
+      "pattern": "^.{1,20}$",
+      "description": "the case CNR number"
     },
     "year": {
       "type": "integer",
