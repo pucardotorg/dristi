@@ -86,6 +86,9 @@ public class OrderRegistrationValidatorTest {
         order.setCnrNumber("CNR123");
         order.setFilingNumber("Filing123");
         order.setStatus("status");
+        order.setOrderNumber("order");
+        order.setApplicationNumber(Collections.singletonList(""));
+        order.setId(UUID.fromString("3244d158-c5cb-4769-801f-a0f94f383679"));
         order.setStatuteSection(new StatuteSection());
         orderRequest.setOrder(order);
         RequestInfo requestInfo = new RequestInfo();

@@ -104,7 +104,7 @@ public class OrderRepository {
                 if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null) {
                     orderExists.setExists(false);
                 } else {
-                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber());
+                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber());
                     log.info("Final order exist query :: {}", orderExistQuery);
                     Integer count = jdbcTemplate.queryForObject(orderExistQuery, Integer.class);
                     orderExists.setExists(count != null && count > 0);

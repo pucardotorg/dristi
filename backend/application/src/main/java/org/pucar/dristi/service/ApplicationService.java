@@ -85,7 +85,7 @@ public class ApplicationService {
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();
-                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getTenantId(), application.getApplicationNumber()))));
+                applicationList.forEach(application -> application.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(request.getRequestInfo(), request.getCriteria().getTenantId(), application.getApplicationNumber()))));
                 return applicationList;
             } catch (Exception e) {
                 log.error("Error while fetching to search results {}", e.getMessage());

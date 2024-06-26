@@ -36,7 +36,7 @@ public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders";
 
-    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber) {
+    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber, String applicationNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_EXIST_QUERY);
             boolean firstCriteria = true; // To check if it's the first criteria
@@ -56,6 +56,12 @@ public class OrderQueryBuilder {
             if (orderNumber!=null && !orderNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.ordernumber =").append("'").append(orderNumber).append("'");
+                firstCriteria = false;
+            }
+
+            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.applicationNumber::text LIKE '%\"").append(applicationNumber).append("\"%'");
                 firstCriteria = false;
             }
 

@@ -21,9 +21,6 @@ public class ApplicationSearchRequest {
     @Valid
     private RequestInfo requestInfo = null;
 
-    @JsonProperty("tenantId")
-    private String tenantId;
-
     @JsonProperty("criteria")
     @Valid
     private ApplicationCriteria criteria = null;
