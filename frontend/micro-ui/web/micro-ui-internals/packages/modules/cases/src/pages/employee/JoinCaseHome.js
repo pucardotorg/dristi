@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { InfoCard } from "@egovernments/digit-ui-components";
 import { DRISTIService } from "../../../../dristi/src/services";
 import { RightArrow } from "../../../../dristi/src/icons/svgIndex";
+import { CASEService } from "../../hooks/services";
 
 const CloseBtn = (props) => {
   return (
@@ -113,6 +114,17 @@ const JoinCaseHome = ({ t }) => {
   const [formData, setFormData] = useState({});
   const [affidavitText, setAffidavitText] = useState("");
   const [success, setSuccess] = useState(false);
+
+  const [advocateId, setAdvocateId] = useState("");
+  const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
+
+  useEffect(() => {
+    console.log("adovacteVakalatnama", adovacteVakalatnama);
+  }, [adovacteVakalatnama]);
+
+  const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
+  const token = window.localStorage.getItem("token");
+  const isUserLoggedIn = Boolean(token);
 
   const documentUploaderConfig = {
     key: "vakalatnama",
@@ -470,14 +482,16 @@ const JoinCaseHome = ({ t }) => {
     {
       modalMain: (
         <div className="view-document-vak">
-          <DocViewerWrapper
-            key={"kljdf"}
-            fileStoreId={"a17c4b20-c0bd-4d58-aa3f-69f8261a0a49"}
-            tenantId={"pg"}
-            docWidth="100%"
-            docHeight="calc(100% - 84px)"
-            showDownloadOption={false}
-          />
+          {adovacteVakalatnama && adovacteVakalatnama?.fileStore && (
+            <DocViewerWrapper
+              key={adovacteVakalatnama?.fileStore}
+              fileStoreId={adovacteVakalatnama?.fileStore}
+              tenantId={tenantId}
+              docWidth="100%"
+              docHeight="calc(100% - 84px)"
+              showDownloadOption={false}
+            />
+          )}
         </div>
       ),
     },
@@ -664,9 +678,38 @@ const JoinCaseHome = ({ t }) => {
         setStep(step + 1);
         setBarDetails([]);
       } else if (userType && userType === "Advocate" && selectedParty) {
-        setBarRegNumber(caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber);
+        const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+          {
+            Individual: {
+              userUuid: [userInfo?.uuid],
+            },
+          },
+          { tenantId, limit: 1000, offset: 0 },
+          "",
+          userInfo?.uuid && isUserLoggedIn
+        );
+        const individualId = individualData?.Individual?.[0]?.individualId;
+
+        const advocateResponse = await DRISTIService.searchIndividualAdvocate(
+          {
+            criteria: [
+              {
+                individualId: individualId,
+              },
+            ],
+            tenantId,
+          },
+          {}
+        );
+        console.log("advocateResponse", advocateResponse);
+        console.log("advocateResponse", advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
+
+        setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
+        setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
         setIsDisabled(false);
         setStep(step + 1);
+        setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
+        setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
         setBarDetails([
           {
             key: "CASE_NUMBER",
@@ -678,7 +721,7 @@ const JoinCaseHome = ({ t }) => {
           },
           {
             key: "Advocate",
-            value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName,
+            value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
           },
         ]);
       }
@@ -691,35 +734,55 @@ const JoinCaseHome = ({ t }) => {
         if (representingYourself !== "Yes") {
           // api call
           if (!advocateDetail.barRegistrationNumber) {
-            setAdvocateDetail({
-              barRegistrationNumber: "kjdkjfdjfj",
-            });
-            setBarDetails([
+            const advocateResponse = await DRISTIService.searchIndividualAdvocate(
               {
-                key: "First Name",
-                value: "Raj",
-              },
-              {
-                key: "Middle Name (optional)",
-                value: "",
-              },
-              {
-                key: "Last Name",
-                value: "Verma",
-              },
-            ]);
-            setFormData({
-              [documentUploaderConfig.key]: {
-                [documentUploaderConfig.key]: [
+                criteria: [
                   {
-                    documentName: "IPKPK1730L-2024.pdf",
-                    documentType: "application/pdf",
-                    fileName: "Company documents",
-                    fileStore: "1af14953-3476-49e9-a4ad-2c4002",
+                    barRegistrationNumber: barRegNumber,
                   },
                 ],
+                tenantId,
               },
-            });
+              {}
+            );
+            console.log("advocateResponse", advocateResponse?.advocates?.length > 0 ? advocateResponse?.advocates[0] : "No advocates found");
+            if (advocateResponse?.advocates?.length > 0) {
+              const temp = advocateResponse?.advocates[0].responseList[0];
+              setAdvocateDetail({
+                barRegistrationNumber: temp?.barRegistrationNumber,
+              });
+              setBarDetails([
+                {
+                  key: "Name",
+                  value: temp.additionalDetails.username,
+                },
+              ]);
+              if (temp?.documents?.length > 0) {
+                setFormData({
+                  [documentUploaderConfig.key]: {
+                    [documentUploaderConfig.key]: [
+                      {
+                        documentName: temp.documents[0].additionalDetails.fileName,
+                        documentType: temp.documents[0].documentType,
+                        fileName: temp.documents[0].additionalDetails.fileName,
+                        fileStore: temp.documents[0].fileStore,
+                      },
+                    ],
+                  },
+                });
+              }
+              setErrors({
+                ...errors,
+                barRegNumber: undefined,
+              });
+            } else {
+              setErrors({
+                ...errors,
+                barRegNumber: {
+                  message: "Not Found",
+                },
+              });
+            }
           } else {
             setIsDisabled(true);
             setStep(step + 2);
@@ -735,7 +798,26 @@ const JoinCaseHome = ({ t }) => {
       setIsDisabled(true);
       setStep(step + 1);
     } else if (step === 4 && validationCode.length === 6) {
-      setStep(step + 1);
+      if (userType === "Advocate") {
+        const response = await CASEService.joinCaseService(
+          {
+            caseFilingNumber: caseNumber,
+            tenantId: tenantId,
+            accessCode: validationCode,
+            representative: {
+              tenantId: tenantId,
+              advocateId: advocateId,
+              representing: [
+                {
+                  tenantId: tenantId,
+                  individualId: caseDetails?.additionalDetails?.complaintDetails?.formdata[0]?.data?.individualDetails?.individualId,
+                },
+              ],
+            },
+          },
+          {}
+        );
+      }
     } else if (step === 5) {
       setStep(6);
     }
