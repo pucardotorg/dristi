@@ -8,7 +8,8 @@ import jakarta.validation.Valid;
 
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
-@Data
+@Getter
+@Setter
 public class ApplicationCriteria {
 
     @JsonProperty("id")
