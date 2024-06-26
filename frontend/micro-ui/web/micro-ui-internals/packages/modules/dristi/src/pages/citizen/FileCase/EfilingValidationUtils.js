@@ -312,36 +312,136 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
 };
 
 export const checkDuplicateMobileEmailValidation = ({ formData, setValue, selected, setError, clearErrors, formdata, index, caseDetails }) => {
-  if (selected === "respondentDetails" || selected === "witnessDetails") {
-    const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
-    const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
-    if (respondentMobileNUmbers && respondentMobileNUmbers && respondentMobileNUmbers === complainantMobileNumber) {
+  const complainantMobileNumbersArray =
+    caseDetails?.additionalDetails?.complaintDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.complainantVerification?.mobileNumber) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.complainantVerification?.mobileNumber;
+      }) || [];
+  const respondentMobileNumbersArray =
+    caseDetails?.additionalDetails?.respondentDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.phonenumbers?.mobileNumber && data?.data?.phonenumbers?.mobileNumber.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.phonenumbers?.mobileNumber;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  const witnessMobileNumbersArray =
+    caseDetails?.additionalDetails?.witnessDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.phonenumbers?.mobileNumber && data?.data?.phonenumbers?.mobileNumber.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.phonenumbers?.mobileNumber;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  const respondentEmailsArray =
+    caseDetails?.additionalDetails?.respondentDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.emails?.emailId && data?.data?.emails?.emailId.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.emails?.emailId;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  const witnessEmailsArray =
+    caseDetails?.additionalDetails?.witnessDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.emails?.emailId && data?.data?.emails?.emailId.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.emails?.emailId;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  if (selected === "respondentDetails") {
+    const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
+    if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
+    } else if (currentMobileNumber && witnessMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM" });
     } else if (
       formdata &&
-      formdata?.length > 1 &&
+      formdata?.length > 0 &&
       formData?.phonenumbers?.textfieldValue &&
       formData?.phonenumbers?.textfieldValue?.length === 10 &&
       formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
     ) {
-      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_RESPONDENT" });
     } else {
       clearErrors("phonenumbers");
     }
 
-    if (
+    const currentEmail = formData?.emails?.textfieldValue;
+    if (currentEmail && witnessEmailsArray.some((email) => email === currentEmail)) {
+      setError("emails", { emailId: "RESPONDENT_EMAIL_CAN_NOT_BE_SAME_AS_WITNESS_EMAIL" });
+    } else if (
       formdata &&
-      formdata?.length > 1 &&
+      formdata?.length > 0 &&
       formData?.emails?.textfieldValue &&
-      formdata?.some((data) => data?.data?.emails?.emailId?.some((number) => number === formData?.emails?.textfieldValue))
+      formdata?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
     ) {
-      setError("emails", { emailId: "DUPLICATE_EMAILS" });
+      setError("emails", { emailId: "DUPLICATE_EMAIL_ID_FOR_RESPONDENT" });
+    } else {
+      clearErrors("emails");
+    }
+  }
+  if (selected === "witnessDetails") {
+    const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
+    if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
+    } else if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM" });
+    } else if (
+      formdata &&
+      formdata?.length > 0 &&
+      formData?.phonenumbers?.textfieldValue &&
+      formData?.phonenumbers?.textfieldValue?.length === 10 &&
+      formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
+    ) {
+      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_WITNESS" });
+    } else {
+      clearErrors("phonenumbers");
+    }
+
+    const currentEmail = formData?.emails?.textfieldValue;
+    if (currentEmail && respondentEmailsArray.some((email) => email === currentEmail)) {
+      setError("emails", { emailId: "WITNESS_EMAIL_CAN_NOT_BE_SAME_AS_RESPONDENT_EMAIL" });
+    } else if (
+      formdata &&
+      formdata?.length > 0 &&
+      formData?.emails?.textfieldValue &&
+      formdata?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
+    ) {
+      setError("emails", { emailId: "DUPLICATE_EMAIL_ID_FOR_WITNESS" });
     } else {
       clearErrors("emails");
     }
   }
   if (selected === "complaintDetails") {
-    if (
+    const currentMobileNumber = formData?.complainantVerification?.mobileNumber;
+
+    if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM" });
+    } else if (currentMobileNumber && witnessMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM" });
+    } else if (
       formdata &&
       formdata?.length > 1 &&
       formData?.complainantVerification?.mobileNumber &&
@@ -350,7 +450,7 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
         (data, idx) => idx !== index && data?.data?.complainantVerification?.mobileNumber === formData?.complainantVerification?.mobileNumber
       )
     ) {
-      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_COMPLAINANT" });
     } else {
       clearErrors("complainantVerification");
     }
@@ -1537,10 +1637,19 @@ export const updateCaseDetails = async ({
       },
     };
   }
+  const caseTitle =
+    caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName &&
+    caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+    `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${
+      caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName || ""
+    } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+      caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+    }`;
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
     ...data,
+    caseTitle,
     linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
     filingDate: caseDetails.filingDate,
     workflow: {
@@ -1552,6 +1661,7 @@ export const updateCaseDetails = async ({
     {
       cases: {
         ...caseDetails,
+        caseTitle,
         litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
         ...data,
         linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],

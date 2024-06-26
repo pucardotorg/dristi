@@ -15,7 +15,7 @@ function EFilingPaymentResponse() {
         <Banner
           whichSvg={"tick"}
           successful={state?.state?.success ? true : false}
-          message={state?.state?.success ? "CS_PAYMENT_SUCCESSFUL" : "CS_PAYMENT_FAILED"}
+          message={state?.state?.success ? t("CS_PAYMENT_SUCCESSFUL") : t("CS_PAYMENT_FAILED")}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
