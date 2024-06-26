@@ -9,7 +9,7 @@ const complainantDetailsFormConfig = [
         withoutLabel: true,
         isMandatory: true,
         name: "complainantType",
-        noteDependentOn: "complainantVerification.isUserVerified",
+        noteDependentOn: "complainantVerification.individualDetails",
         notes: {
           type: "component",
           component: "SelectCustomNote",
@@ -87,7 +87,7 @@ const complainantDetailsFormConfig = [
               updateLabel: { key: "label", value: "CS_ENTITY_ID" },
               defaultLabel: { key: "label", value: "COMPLAINANT_ID" },
               name: "complainantId",
-              verificationOn: "complainantVerification.isUserVerified",
+              verificationOn: "complainantVerification.individualDetails",
             },
           ],
           customStyle: {
@@ -185,7 +185,7 @@ const complainantDetailsFormConfig = [
         ],
         error: "ERR_HRMS_INVALID_MOB_NO",
         componentInFront: "+91",
-        disableConfigKey: "isUserVerified",
+        disableConfigKey: "individualDetails",
         isMandatory: true,
         validation: {
           required: true,
