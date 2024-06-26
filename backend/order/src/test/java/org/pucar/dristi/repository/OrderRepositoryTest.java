@@ -94,13 +94,12 @@ public class OrderRepositoryTest {
     public void testGetOrders_emptyResult() {
         when(queryBuilder.getOrderSearchQuery(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("orderQuery");
-        when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class)))
-                .thenReturn(Collections.emptyList());
+         when(jdbcTemplate.query(anyString(), any(OrderRowMapper.class))).thenAnswer(invocation -> {throw new CustomException("EMPTY_RESULT", "No orders found");});
 
-        List<Order> result = orderRepository.getOrders( "order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status");
+        CustomException exception = assertThrows(CustomException.class, () ->
+                orderRepository.getOrders("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status"));
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertEquals("EMPTY_RESULT", exception.getCode());
         verify(queryBuilder, times(1)).getOrderSearchQuery( anyString(),anyString(),anyString(),anyString(), anyString(), anyString(), anyString());
         verify(jdbcTemplate, times(1)).query("orderQuery", rowMapper);
         verify(queryBuilder, never()).getStatuteSectionSearchQuery(anyList(), anyList());

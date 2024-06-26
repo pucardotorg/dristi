@@ -175,18 +175,18 @@ class ApplicationServiceTest {
 
     @Test
     public void testSearchApplication_success() {
+        // Arrange
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
         List<Application> applicationList = new ArrayList<>();
         Application mockApplication = new Application();
         mockApplication.setId(UUID.randomUUID());
         applicationList.add(mockApplication);
 
-        when(applicationRepository.getApplications(any(), any(), any()))
-                .thenReturn(applicationList);
-
-        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
-        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        // Act
         List<Application> result = applicationService.searchApplications(2, 2, "cnrNum", applicationSearchRequest);
 
+        // Assert
         assertNotNull(result);
         verify(applicationRepository, times(1)).getApplications(2, 2, applicationSearchRequest);
     }

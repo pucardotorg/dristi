@@ -79,8 +79,9 @@ public class ApplicationService {
     public List<Application> searchApplications (Integer limit, Integer offset, String sortBy, ApplicationSearchRequest request){
             try {
                 // Fetch applications from database according to the given search params
+                log.info("Starting application search with parameters :: {}", request);
                 List<Application> applicationList = applicationRepository.getApplications(limit, offset,request);
-                log.info("No. of applications :: {}", applicationList.size());
+                log.info("Application list fetched with size :: {}", applicationList.size());
                 // If no applications are found, return an empty list
                 if (CollectionUtils.isEmpty(applicationList))
                     return new ArrayList<>();

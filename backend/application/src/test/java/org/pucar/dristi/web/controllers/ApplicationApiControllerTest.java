@@ -2,6 +2,7 @@ package org.pucar.dristi.web.controllers;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.response.ResponseInfo;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,20 +68,21 @@ class ApplicationApiControllerTest {
 
     @Test
     public void testApplicationV1SearchPost_Success() {
+        // Arrange
         List<Application> expectedApplication = Collections.singletonList(new Application());
-        when(applicationService.searchApplications(any(), any(),any(),
-                any(ApplicationSearchRequest.class)))
+        when(applicationService.searchApplications(any(), any(),any(), any(ApplicationSearchRequest.class)))
                 .thenReturn(expectedApplication);
-
         ResponseInfo expectedResponseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true)))
                 .thenReturn(expectedResponseInfo);
-
         ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
         requestInfoBody.setCriteria(new ApplicationCriteria());
         requestInfoBody.setRequestInfo(new RequestInfo());
+
+        // Act
         ResponseEntity<ApplicationListResponse> response = controller.applicationV1SearchPost(1, 1,"c",requestInfoBody);
 
+        // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         ApplicationListResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
@@ -147,17 +149,17 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1SearchPost_InvalidRequest() {
 
-        when(applicationService.searchApplications(any(),any(),any(), any(ApplicationSearchRequest.class))).thenThrow(new IllegalArgumentException("Invalid request"));
+        when(applicationService.searchApplications(any(),any(),any(), any(ApplicationSearchRequest.class))).thenThrow(new CustomException("Invalid request", "The request parameters did not meet the expected format."));
 
         ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
         requestInfoBody.setCriteria(new ApplicationCriteria());
         requestInfoBody.setRequestInfo(new RequestInfo());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(CustomException.class, () -> {
             controller.applicationV1SearchPost(1, 12,null, requestInfoBody);
         });
 
-        assertEquals("Invalid request", exception.getMessage());
+        assertEquals("The request parameters did not meet the expected format.", exception.getMessage());
     }
 
     @Test
