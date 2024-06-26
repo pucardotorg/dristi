@@ -38,6 +38,7 @@ import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 import ErrorsAccordion from "../../../components/ErrorsAccordion";
 import ReactTooltip from "react-tooltip";
 import FlagBox from "../../../components/FlagBox";
+import ScrutinyInfo from "../../../components/ScrutinyInfo";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -350,6 +351,18 @@ function EFilingCases({ path }) {
       .flatMap((val) => val?.pages)
       .filter((val) => val !== undefined);
   }, [scrutinyErrors]);
+
+  const sectionWiseErrors = useMemo(() => {
+    let obj = {};
+    Object.values(scrutinyObj || {}).forEach((item) => {
+      Object.keys(item || {}).forEach((key) => {
+        if (item[key]?.scrutinyMessage?.FSOError) {
+          obj[key] = item[key]?.scrutinyMessage?.FSOError;
+        }
+      });
+    });
+    return obj;
+  }, [scrutinyObj]);
 
   const totalErrors = useMemo(() => {
     let total = 0;
@@ -1410,6 +1423,10 @@ function EFilingCases({ path }) {
     setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
   }
+
+  if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
+    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+  }
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1526,6 +1543,7 @@ function EFilingCases({ path }) {
             </div>
             <p>{t(pageConfig.subtext || "")}</p>
           </div>
+          {sectionWiseErrors?.[selected] && <ScrutinyInfo t={t} config={{ populators: { scrutinyMessage: sectionWiseErrors?.[selected] } }} />}
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
               <div key={`${selected}-${index}`} className="form-wrapper-d">
