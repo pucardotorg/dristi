@@ -743,7 +743,7 @@ function EFilingCases({ path }) {
                   caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
                     (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
                   ) &&
-                  body?.key === "delayApplicationType"
+                  body?.key === "delayCondonationType"
                 ) {
                   body.disable = true;
                 }
@@ -1375,7 +1375,7 @@ function EFilingCases({ path }) {
       return "disable-form";
     }
 
-    if (selected === "delayApplications" && formdata?.[0]?.data?.delayApplicationType?.code) {
+    if (selected === "delayApplications" && formdata?.[0]?.data?.delayCondonationType?.code) {
       return "disable-form";
     }
     return "";
@@ -1427,6 +1427,8 @@ function EFilingCases({ path }) {
   if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
     history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   }
+
+  console.log("form", formdata);
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">

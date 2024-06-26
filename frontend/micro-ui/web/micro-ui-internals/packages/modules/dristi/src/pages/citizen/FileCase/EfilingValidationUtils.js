@@ -99,11 +99,11 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
       !caseDetails?.caseDetails ||
       (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
     ) {
-      setValue("delayApplicationType", {
+      setValue("delayCondonationType", {
         code: "NO",
         name: "NO",
-        showForm: false,
-        isEnabled: false,
+        showForm: true,
+        isEnabled: true,
       });
       toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
       setTimeout(() => {
@@ -115,12 +115,10 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
         (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
       )
     ) {
-      setValue("delayApplicationType", {
+      setValue("delayCondonationType", {
         code: "NO",
         name: "NO",
         showForm: true,
-        isVerified: true,
-        hasBarRegistrationNo: true,
         isEnabled: true,
       });
     } else if (
@@ -128,7 +126,7 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
         (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 >= new Date().getTime()
       )
     ) {
-      setValue("delayApplicationType", {
+      setValue("delayCondonationType", {
         code: "YES",
         name: "YES",
         showForm: false,
@@ -659,7 +657,7 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
 export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
   if (selected === "delayApplications") {
     if (
-      formData?.delayApplicationType?.code === "NO" &&
+      formData?.delayCondonationType?.code === "NO" &&
       (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
     ) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
@@ -711,7 +709,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
         documentType: documentData?.fileType,
       }
     : {};
-  const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
+  const identifierType = documentData ? data?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
   let Individual = {
     Individual: {
       tenantId: tenantId,
@@ -799,92 +797,132 @@ export const updateCaseDetails = async ({
   if (selected === "complaintDetails") {
     let litigants = [];
     const complainantVerification = {};
-    litigants = await Promise.all(
-      formdata
-        .filter((item) => item.isenabled)
-        .map(async (data, index) => {
-          if (data?.data?.complainantVerification?.individualDetails) {
-            return {
-              tenantId,
-              caseId: caseDetails?.id,
-              partyCategory: data?.data?.complainantType?.code,
-              individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
-              partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-            };
-          } else {
-            if (data?.data?.complainantId?.complainantId && isCompleted === true) {
-              if (data?.data?.complainantId?.verificationType !== "AADHAR") {
-                const documentData = await onDocumentUpload(
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
-                  tenantId
-                );
-                !!setFormDataValue &&
-                  setFormDataValue("complainantVerification", {
+    if (isCompleted === true) {
+      litigants = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data, index) => {
+            if (data?.data?.complainantVerification?.individualDetails) {
+              return {
+                tenantId,
+                caseId: caseDetails?.id,
+                partyCategory: data?.data?.complainantType?.code,
+                individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+                partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+              };
+            } else {
+              if (data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.isUserVerified) {
+                if (data?.data?.complainantId?.verificationType !== "AADHAR") {
+                  const documentData = await onDocumentUpload(
+                    data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                    data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+                    tenantId
+                  );
+                  !!setFormDataValue &&
+                    setFormDataValue("complainantVerification", {
+                      individualDetails: {
+                        document: [documentData],
+                      },
+                    });
+                  const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
+
+                  const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
+                  const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
+                  const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
+                  const street = Individual?.Individual?.address[0]?.street || "";
+                  const city = Individual?.Individual?.address[0]?.city || "";
+                  const pincode = Individual?.Individual?.address[0]?.pincode || "";
+                  const latitude = Individual?.Individual?.address[0]?.latitude || "";
+                  const longitude = Individual?.Individual?.address[0]?.longitude || "";
+                  const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+
+                  const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
+
+                  complainantVerification[index] = {
                     individualDetails: {
                       document: [documentData],
-                    },
-                  });
-                const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
-
-                const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
-                const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
-                const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
-                const street = Individual?.Individual?.address[0]?.street || "";
-                const city = Individual?.Individual?.address[0]?.city || "";
-                const pincode = Individual?.Individual?.address[0]?.pincode || "";
-                const latitude = Individual?.Individual?.address[0]?.latitude || "";
-                const longitude = Individual?.Individual?.address[0]?.longitude || "";
-                const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-
-                const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
-
-                complainantVerification[index] = {
-                  individualDetails: {
-                    document: [documentData],
-                    individualId: Individual?.Individual?.individualId,
-                    "addressDetails-select": {
-                      pincode: pincode,
-                      district: addressLine2,
-                      city: city,
-                      state: addressLine1,
-                      locality: address,
-                    },
-                    addressDetails: {
-                      pincode: pincode,
-                      district: addressLine2,
-                      city: city,
-                      state: addressLine1,
-                      coordinates: {
-                        longitude: latitude,
-                        latitude: longitude,
+                      individualId: Individual?.Individual?.individualId,
+                      "addressDetails-select": {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        locality: address,
                       },
-                      locality: address,
+                      addressDetails: {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        coordinates: {
+                          longitude: latitude,
+                          latitude: longitude,
+                        },
+                        locality: address,
+                      },
                     },
-                  },
-                };
-                return {
-                  tenantId,
-                  caseId: caseDetails?.id,
-                  partyCategory: data?.data?.complainantType?.code,
-                  individualId: Individual?.Individual?.individualId,
-                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                };
-              } else {
-                const Individual = await createIndividualUser({ data: data?.data, tenantId });
-                return {
-                  tenantId,
-                  caseId: caseDetails?.id,
-                  partyCategory: data?.data?.complainantType?.code,
-                  individualId: Individual?.Individual?.individualId,
-                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                };
+                    userDetails: null,
+                  };
+                  return {
+                    tenantId,
+                    caseId: caseDetails?.id,
+                    partyCategory: data?.data?.complainantType?.code,
+                    individualId: Individual?.Individual?.individualId,
+                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                  };
+                } else {
+                  const Individual = await createIndividualUser({ data: data?.data, tenantId });
+
+                  const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
+                  const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
+                  const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
+                  const street = Individual?.Individual?.address[0]?.street || "";
+                  const city = Individual?.Individual?.address[0]?.city || "";
+                  const pincode = Individual?.Individual?.address[0]?.pincode || "";
+                  const latitude = Individual?.Individual?.address[0]?.latitude || "";
+                  const longitude = Individual?.Individual?.address[0]?.longitude || "";
+                  const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+
+                  const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
+                  complainantVerification[index] = {
+                    individualDetails: {
+                      document: null,
+                      individualId: Individual?.Individual?.individualId,
+                      "addressDetails-select": {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        locality: address,
+                      },
+                      addressDetails: {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        coordinates: {
+                          longitude: latitude,
+                          latitude: longitude,
+                        },
+                        locality: address,
+                      },
+                    },
+                    userDetails: null,
+                  };
+                  return {
+                    tenantId,
+                    caseId: caseDetails?.id,
+                    partyCategory: data?.data?.complainantType?.code,
+                    individualId: Individual?.Individual?.individualId,
+                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                  };
+                }
               }
+              return {};
             }
-            return {};
-          }
-        })
-    );
+          })
+      );
+    }
 
     const newFormData = await Promise.all(
       formdata
@@ -895,16 +933,16 @@ export const updateCaseDetails = async ({
             complainantId: { complainantId: { complainantId: {} } },
           };
           const individualDetails = {};
-          if (data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file) {
+          if (data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file) {
             const uploadedData = await onDocumentUpload(
-              data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-              data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+              data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+              data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
               tenantId
             );
             idProof.complainantId.complainantId.complainantId = {
               ID_Proof: [
                 [
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+                  data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
                   {
                     file: {
                       documentType: uploadedData.fileType || uploadedData?.documentType,
@@ -941,16 +979,12 @@ export const updateCaseDetails = async ({
                 ...data?.data?.companyDetailsUpload,
                 document: documentData,
               },
-              individualDetails: {
-                ...data?.data?.complainantVerification?.individualDetails,
-                individualDetails,
-              },
               complainantVerification: {
                 ...data?.data?.complainantVerification,
                 ...complainantVerification[index],
-                isUserVerified: !!data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.mobileNumber,
+                isUserVerified: Boolean(data?.data?.complainantVerification?.mobileNumber && data?.data?.complainantVerification?.otpNumber),
               },
-              ...(data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file && idProof),
+              ...(data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file && idProof),
             },
           };
         })
@@ -1003,7 +1037,11 @@ export const updateCaseDetails = async ({
               })
             );
           }
-          if (data?.data?.companyDetailsUpload?.document) {
+          if (
+            data?.data?.companyDetailsUpload?.document &&
+            Array.isArray(data?.data?.companyDetailsUpload?.document) &&
+            data?.data?.companyDetailsUpload?.document.length > 0
+          ) {
             documentData.companyDetailsUpload = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
