@@ -101,30 +101,30 @@ public class CaseRegistrationValidator {
             courtCase.getLitigants().forEach(litigant -> {
                 if(litigant.getIndividualId()!=null){
                     if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId()))
-                        throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                        throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
                 }
                 else
-                    throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                    throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
             });
         }
         if (courtCase.getDocuments() != null && !courtCase.getDocuments().isEmpty()) {
             courtCase.getDocuments().forEach(document -> {
                 if(document.getFileStore()!=null){
                     if (!fileStoreUtil.fileStore(courtCase.getTenantId(), document.getFileStore()))
-                        throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
                 }
                 else
-                    throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                    throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
             });
         }
         if (courtCase.getRepresentatives() != null && !courtCase.getRepresentatives().isEmpty()) {
             courtCase.getRepresentatives().forEach(rep -> {
                 if(rep.getAdvocateId()!=null){
                     if (!advocateUtil.fetchAdvocateDetails(requestInfo, rep.getAdvocateId()))
-                        throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                        throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
                 }
                 else
-                    throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                    throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
             });
         }
         if (courtCase.getLinkedCases() != null && !courtCase.getLinkedCases().isEmpty()) {
@@ -151,19 +151,19 @@ public class CaseRegistrationValidator {
 
             if (litigant.getIndividualId() != null) { //validation for IndividualId for litigant
                 if (!individualService.searchIndividual(requestInfo, litigant.getIndividualId())) {
-                    throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                    throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
                 }
             } else {
-                throw new CustomException(INDIVIDUAL_NOT_FOUND, "Invalid complainant details");
+                throw new CustomException(INDIVIDUAL_NOT_FOUND, INVALID_COMPLAINANT_DETAILS);
             }
 
             if (litigant.getDocuments() != null && !litigant.getDocuments().isEmpty()) {//validation for documents for litigant
                 litigant.getDocuments().forEach(document -> {
                     if (document.getFileStore() != null) {
                         if (!fileStoreUtil.fileStore(litigant.getTenantId(), document.getFileStore()))
-                            throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                            throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
                     } else
-                        throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
                 });
             }
         return true;
@@ -175,19 +175,19 @@ public class CaseRegistrationValidator {
 
             if(representative.getAdvocateId() != null){ //validation for advocateId for representative
                 if (!advocateUtil.fetchAdvocateDetails(requestInfo, representative.getAdvocateId()))
-                    throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                    throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
             }
             else {
-                throw new CustomException(INVALID_ADVOCATE_ID, "Invalid advocate details");
+                throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
             }
             if (representative.getDocuments() != null && !representative.getDocuments().isEmpty()) { //validation for documents for representative
                 representative.getDocuments().forEach(document -> {
                     if(document.getFileStore()!=null){
                         if (!fileStoreUtil.fileStore(representative.getTenantId(), document.getFileStore()))
-                            throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                            throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
                     }
                     else {
-                        throw new CustomException(INVALID_FILESTORE_ID, "Invalid document details");
+                        throw new CustomException(INVALID_FILESTORE_ID, INVALID_DOCUMENT_DETAILS);
                     }
                 });
             }

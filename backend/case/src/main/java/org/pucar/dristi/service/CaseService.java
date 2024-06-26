@@ -135,7 +135,7 @@ public class CaseService {
 
     private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
             if (!validator.validateLitigantJoinCase(joinCaseRequest))
-                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
             log.info("enriching litigants");
             enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
@@ -145,7 +145,7 @@ public class CaseService {
 
     private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
             if (!validator.validateRepresentativeJoinCase(joinCaseRequest))
-                throw new CustomException(VALIDATION_ERR, "Invalid request for joining a case");
+                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
 
             log.info("enriching representatives");
             enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
@@ -223,7 +223,7 @@ public class CaseService {
             throw e;
         } catch (Exception e) {
             log.error("Invalid request for joining a case :: {}",e.toString());
-            throw new CustomException(JOIN_CASE_ERR, "Invalid request for joining a case");
+            throw new CustomException(JOIN_CASE_ERR, JOIN_CASE_INVALID_REQUEST);
         }
     }
 }
