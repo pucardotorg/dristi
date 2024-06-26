@@ -70,11 +70,11 @@ public class TaskService {
         }
     }
 
-    public List<Task> searchTask(String id, String tenantId, String status, UUID orderId, String cnrNumber, RequestInfo requestInfo) {
+    public List<Task> searchTask(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber,RequestInfo requestInfo) {
 
         try {
             // Fetch applications from database according to the given search criteria
-            List<Task> tasks = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber);
+            List<Task> tasks = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber, taskNumber);
 
             // If no applications are found matching the given criteria, return an empty list
             tasks.forEach(task -> task.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, tenantId, task.getTaskNumber()))));

@@ -155,4 +155,11 @@ public class Configuration {
 	@Value("${egov.demand.create.endpoint}")
 	private String demandCreateEndPoint;
 
+	//Join a Case
+	@Value("${egov.litigant.join.case.kafka.topic}")
+	private String litigantJoinCaseTopic;
+
+	@Value("${egov.representative.join.case.kafka.topic}")
+	private String representativeJoinCaseTopic;
+
 }

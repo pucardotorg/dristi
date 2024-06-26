@@ -16,7 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.repository.ServiceRequestRepository;
+import org.pucar.dristi.web.models.CaseCriteria;
 import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CaseSearchRequest;
 import org.pucar.dristi.web.models.CourtCase;
 
 import java.util.ArrayList;
@@ -216,4 +218,63 @@ public class WorkflowServiceTest {
             workflowService.getCurrentWorkflow(requestInfo, tenantId, businessId);
         });
     }
+
+    @Test
+    void getWorkflowFromProcessInstance_returnsWorkflowWhenProcessInstanceIsNotNull() {
+        ProcessInstance processInstance = new ProcessInstance();
+        State state = new State();
+        state.setState("APPROVE");
+        processInstance.setState(state);
+        processInstance.setComment("Test Comment");
+
+        Workflow result = workflowService.getWorkflowFromProcessInstance(processInstance);
+
+        assertNotNull(result);
+        assertEquals("APPROVE", result.getAction());
+        assertEquals("Test Comment", result.getComments());
+    }
+
+    @Test
+    void getWorkflowFromProcessInstance_returnsNullWhenProcessInstanceIsNull() {
+        ProcessInstance processInstance = null;
+
+        Workflow result = workflowService.getWorkflowFromProcessInstance(processInstance);
+
+        assertNull(result);
+    }
+
+    @Test
+    void getProcessInstanceForCasePayment_returnsProcessInstanceRequest() {
+        CaseSearchRequest updateRequest = new CaseSearchRequest();
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setFilingNumber("filingNumber");
+        updateRequest.setCriteria(Collections.singletonList(caseCriteria));
+        updateRequest.setRequestInfo(new RequestInfo());
+        String tenantId = "tenantId";
+
+        when(config.getCaseBusinessServiceName()).thenReturn("caseBusinessServiceName");
+        when(config.getCaseBusinessName()).thenReturn("caseBusinessName");
+
+        ProcessInstanceRequest result = workflowService.getProcessInstanceForCasePayment(updateRequest, tenantId);
+
+        assertNotNull(result);
+        assertEquals("MAKE_PAYMENT", result.getProcessInstances().get(0).getAction());
+        assertEquals("caseBusinessServiceName", result.getProcessInstances().get(0).getBusinessService());
+        assertEquals("caseBusinessName", result.getProcessInstances().get(0).getModuleName());
+        assertEquals("filingNumber", result.getProcessInstances().get(0).getBusinessId());
+        assertEquals("Payment for Case processed", result.getProcessInstances().get(0).getComment());
+        assertEquals(tenantId, result.getProcessInstances().get(0).getTenantId());
+    }
+
+    @Test
+    void getProcessInstanceForCasePayment_throwsExceptionWhenCaseCriteriaIsNull() {
+        CaseSearchRequest updateRequest = new CaseSearchRequest();
+        updateRequest.setCriteria(null);
+        updateRequest.setRequestInfo(new RequestInfo());
+        String tenantId = "tenantId";
+
+        assertThrows(Exception.class, () -> workflowService.getProcessInstanceForCasePayment(updateRequest, tenantId));
+    }
+
+
 }
