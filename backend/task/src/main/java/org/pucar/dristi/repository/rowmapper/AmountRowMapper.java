@@ -38,7 +38,7 @@ public class AmountRowMapper implements ResultSetExtractor<Map<UUID, Amount>> {
                 if (pgObject != null)
                     amount.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
 
-                amountMap.put(uuid,amount);
+                amountMap.put(uuid, amount);
             }
         } catch(CustomException e){
             throw e;
