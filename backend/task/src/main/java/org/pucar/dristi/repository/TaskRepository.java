@@ -38,12 +38,7 @@ public class TaskRepository {
 
     @Autowired
     private DocumentRowMapper documentRowMapper;
-
-    @Autowired
-    private DocumentRowMapper caseDocumentRowMapper;
-
-    @Autowired
-    private AmountRowMapper statuteSectionRowMapper;
+    
 
     public List<Task> getApplications(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
         try {
