@@ -71,7 +71,7 @@
 			"response": []
 		},
 		{
-			"name": "SIGN A DEPOSITION",
+			"name": "judge or witness sign a deposition",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -103,7 +103,7 @@
 			"response": []
 		},
 		{
-			"name": "ABANDON A DEPOSITION",
+			"name": "judge or witness abandon a deposition",
 			"request": {
 				"method": "POST",
 				"header": [
