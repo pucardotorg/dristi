@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -187,7 +188,7 @@ public class CaseService {
                     .id(caseId)
                     .build();
 
-            if(joinCaseRequest.getLitigant() != null) {
+            if(joinCaseRequest.getLitigant() != null) { //for litigant to join a case
                 // Stream over the litigants to create a list of individualIds
                 List<String> individualIds = courtCase.getLitigants().stream()
                         .map(Party::getIndividualId)
@@ -200,14 +201,30 @@ public class CaseService {
                 verifyAndEnrichLitigant(joinCaseRequest, caseObj, auditDetails);
             }
 
-            if(joinCaseRequest.getRepresentative() != null) {
+            if(joinCaseRequest.getRepresentative() != null) {//for representative to join a case
                 // Stream over the representatives to create a list of advocateIds
                 List<String> advocateIds = courtCase.getRepresentatives().stream()
                         .map(AdvocateMapping::getAdvocateId)
                         .toList();
                 if(joinCaseRequest.getRepresentative().getAdvocateId() != null &&
                         advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())){
-                    throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
+
+                    Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
+                            .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
+                            .findFirst();
+                    AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
+
+                    List<String> individualIds = existingRepresentative.getRepresenting().stream()
+                            .map(Party::getIndividualId)
+                            .toList();
+
+                    if(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId() != null &&
+                        individualIds.contains(joinCaseRequest.getRepresentative().getRepresenting().get(0).getIndividualId())){
+                        throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
+                    } else{
+                        joinCaseRequest.getRepresentative().setId(existingRepresentative.getId());
+                    }
+
                 }
                 caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
                 verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
