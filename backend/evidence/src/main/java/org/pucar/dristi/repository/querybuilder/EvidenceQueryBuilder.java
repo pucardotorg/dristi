@@ -34,7 +34,7 @@ public class EvidenceQueryBuilder {
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY art.createdTime DESC ";
 
-    public String getArtifactSearchQuery(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName) {
+    public String getArtifactSearchQuery(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
@@ -81,7 +81,11 @@ public class EvidenceQueryBuilder {
                 query.append("art.sourceName = '").append(sourceName).append("'");
                 firstCriteria = false;
             }
-
+            if (artifactNumber != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("art.artifactNumber = '").append(artifactNumber).append("'");
+                firstCriteria = false;
+            }
             query.append(ORDERBY_CREATEDTIME);
             return query.toString();
         } catch (Exception e) {
