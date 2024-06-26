@@ -1,29 +1,28 @@
 import {
   BackButton,
   CheckSvg,
-  CloseButton,
   CloseSvg,
   EditIcon,
   FormComposerV2,
   Header,
   Loader,
   TextInput,
-  Toast,
+  Toast
 } from "@egovernments/digit-ui-react-components";
 import React, { useMemo, useState } from "react";
-import { useLocation, Redirect, useHistory } from "react-router-dom";
-import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
-import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
-import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
-import SendCaseBackModal from "../../../components/SendCaseBackModal";
-import SuccessModal from "../../../components/SuccessModal";
-import { formatDate } from "../../citizen/FileCase/CaseType";
-import { DRISTIService } from "../../../services";
+import { Redirect, useHistory, useLocation } from "react-router-dom";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
-import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import SendCaseBackModal from "../../../components/SendCaseBackModal";
+import SuccessModal from "../../../components/SuccessModal";
+import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { CustomArrowDownIcon, FlagIcon } from "../../../icons/svgIndex";
+import { DRISTIService } from "../../../services";
+import { formatDate } from "../../citizen/FileCase/CaseType";
+import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 
-function ViewCaseFile({ t }) {
+function ViewCaseFile({ t, showHeader = true }) {
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
   const isScrutiny = roles.some((role) => role.code === "CASE_REVIEWER");
@@ -209,7 +208,7 @@ function ViewCaseFile({ t }) {
       return "CS_SEND_BACK";
     }
   }, [isScrutiny]);
-  
+
   const updateCaseDetails = async (action) => {
     const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : formdata;
     const newcasedetails = {
@@ -349,30 +348,34 @@ function ViewCaseFile({ t }) {
           </div>
           <div className="file-case-form-section">
             <div className="employee-card-wrapper">
-              <div className="back-button-home">
-                <BackButton />
-              </div>
-              <div className="header-content">
-                <div className="header-details">
-                  <div className="header-title-icon">
-                    <Header>
-                      {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
-                    </Header>
-                    <div
-                      className="case-edit-icon"
-                      onClick={() => {
-                        setShowEditCaseNameModal(true);
-                      }}
-                    >
-                      <EditIcon />
-                    </div>
+              {showHeader &&
+                <div>
+                  <div className="back-button-home">
+                    <BackButton />
                   </div>
-                  <div className="header-icon" onClick={() => {}}>
-                    <CustomArrowDownIcon />
+                  <div className="header-content">
+                    <div className="header-details">
+                      <div className="header-title-icon">
+                        <Header>
+                          {t("Review Case")}: {newCaseName !== "" ? newCaseName : caseDetails?.caseTitle}
+                        </Header>
+                        <div
+                          className="case-edit-icon"
+                          onClick={() => {
+                            setShowEditCaseNameModal(true);
+                          }}
+                        >
+                          <EditIcon />
+                        </div>
+                      </div>
+                      <div className="header-icon" onClick={() => { }}>
+                        <CustomArrowDownIcon />
+                      </div>
+                    </div>
+                    <CustomCaseInfoDiv data={caseInfo} t={t} />
                   </div>
                 </div>
-                <CustomCaseInfoDiv data={caseInfo} t={t} />
-              </div>
+              }
               <FormComposerV2
                 label={primaryButtonLabel}
                 config={formConfig}

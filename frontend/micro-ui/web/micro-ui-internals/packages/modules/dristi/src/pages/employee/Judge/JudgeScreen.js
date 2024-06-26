@@ -29,14 +29,16 @@ function JudgeScreen({ path }) {
             additionalConfig={{
               resultsTable: {
                 onClickRow: (props) => {
-                  if (props?.original?.status === "CASE_ADMITTED") {
-                    history.push(`${location.pathname}/orders/orders-home?caseId=${props.original.filingNumber}&filingNumber=${"kjfkdkfjslj"}`);
-                  } else {
+                  // if (props?.original?.status === "CASE_ADMITTED") {
+                  //   history.push(`${location.pathname}/orders/orders-home?caseId=${props.original.filingNumber}&filingNumber=${"kjfkdkfjslj"}`);
+                  // } else {
                     const searchParams = new URLSearchParams();
+                    console.log(props.original);
                     searchParams.set("caseId", props.original.id);
                     searchParams.set("cnr", props.original.cnrNumber);
-                    history.push(props.original.status === "ADMISSION_HEARING_SCHEDULED" ? `${path}/admitted-case?${searchParams.toString()}` : `${path}/admission?${searchParams.toString()}`);
-                  }
+                    searchParams.set("title", props.original.caseTitle);
+                    history.push(props.original.status === "CASE_ADMITTED" ? `${path}/admitted-case?${searchParams.toString()}` : `${path}/admission?${searchParams.toString()}`);
+                  // }
                 },
               },
             }}
