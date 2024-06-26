@@ -96,4 +96,10 @@ public class ServiceConstants {
 	public static final String STATE = "KL";
 	public static final String DISTRICT = "JL";
 	public static final String ESTABLISHMENT_CODE = "01";
+
+	//error logs constants
+	public static final String JOIN_CASE_INVALID_REQUEST = "Invalid request for joining a case";
+	public static final String INVALID_COMPLAINANT_DETAILS = "Invalid complainant details";
+	public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
+	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
 }

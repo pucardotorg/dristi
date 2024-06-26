@@ -226,7 +226,7 @@ public class CaseRegistrationEnrichment {
             caseRequest.getCases().setCourtCaseNumber(courtCaseRegistrationCaseNumberIdList.get(0));
             caseRequest.getCases().setCnrNumber(caseUtil.getCNRNumber(caseRequest.getCases().getFilingNumber(), STATE, DISTRICT, ESTABLISHMENT_CODE));
         } catch (Exception e) {
-            log.error("Error enriching case number and cnr number: {}", e.getMessage());
+            log.error("Error enriching case number and cnr number: {}", e.toString());
             throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching case number and cnr number: " + e.getMessage());
         }
     }
@@ -237,7 +237,7 @@ public class CaseRegistrationEnrichment {
                 String accessCode = CaseUtil.generateAccessCode(ACCESSCODE_LENGTH);
                 caseRequest.getCases().setAccessCode(accessCode);
             } catch (Exception e) {
-                log.error("Error enriching access code: {}", e.getMessage());
+                log.error("Error enriching access code: {}", e.toString());
                 throw new CustomException(ENRICHMENT_EXCEPTION, "Error in case enrichment service while enriching access code: " + e.getMessage());
             }
         }
