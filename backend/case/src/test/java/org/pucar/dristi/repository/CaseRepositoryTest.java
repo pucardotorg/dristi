@@ -152,7 +152,7 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
 
         lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
@@ -186,10 +186,10 @@ class CaseRepositoryTest {
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(RepresentingDocumentRowMapper.class))).thenReturn(caseRepresentingDocumentMap);
 
         // Invoke the method
-        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria);
+        List<CaseCriteria> resultCourtCaseList = caseRepository.getApplications(searchCriteria, requestInfo);
 
         // Verify interactions
-        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any());
+        verify(queryBuilder, times(1)).getCasesSearchQuery(any(), any(), any());
         verify(jdbcTemplate, times(1)).query(anyString(), any(Object[].class), any(CaseRowMapper.class));
 
         // Assert result
@@ -235,11 +235,11 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new RuntimeException());
 
         assertThrows(Exception.class, () -> {
-            caseRepository.getApplications(searchCriteria);
+            caseRepository.getApplications(searchCriteria, requestInfo);
         });
     }
 
@@ -282,11 +282,11 @@ class CaseRepositoryTest {
 
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
-        lenient().when(queryBuilder.getCasesSearchQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenThrow(new CustomException());
 
         assertThrows(CustomException.class, () -> {
-            caseRepository.getApplications(searchCriteria);
+            caseRepository.getApplications(searchCriteria, requestInfo);
         });
     }
 
@@ -351,5 +351,24 @@ class CaseRepositoryTest {
             caseRepository.checkCaseExists(caseExistsList);
         });
     }
+    @Test
+    void checkCaseExists_returnsCorrectExistenceStatus() {
+        List<CaseExists> caseExistsRequest = new ArrayList<>();
+        CaseExists caseExists1 = CaseExists.builder().caseId("12").courtCaseNumber("courtCaseNumber1").cnrNumber("cnrNumber1").filingNumber("filingNumber").build();
+        CaseExists caseExists2 = CaseExists.builder().caseId(null).courtCaseNumber(null).cnrNumber(null).filingNumber(null).build();
+        caseExistsRequest.add(caseExists1);
+        caseExistsRequest.add(caseExists2);
 
+        when(queryBuilder.checkCaseExistQuery(anyString(), anyString(), anyString(), anyString())).thenReturn("SELECT COUNT(*) FROM cases WHERE ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(Class.class))).thenReturn(1);
+
+        List<CaseExists> result = caseRepository.checkCaseExists(caseExistsRequest);
+
+        verify(queryBuilder, times(1)).checkCaseExistQuery(anyString(), anyString(), anyString(), anyString());
+        verify(jdbcTemplate, times(1)).queryForObject(anyString(), any(Class.class));
+
+        assertEquals(2, result.size());
+        assertEquals(true, result.get(0).getExists());
+        assertEquals(false, result.get(1).getExists());
+    }
 }

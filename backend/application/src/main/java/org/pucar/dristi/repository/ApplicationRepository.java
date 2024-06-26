@@ -9,6 +9,7 @@ import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationExists;
+import org.pucar.dristi.web.models.ApplicationSearchRequest;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -40,14 +41,14 @@ public class ApplicationRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Application> getApplications(String id, String filingNumber, String cnrNumber, String tenantId, String status, Integer limit, Integer offset ) {
+    public List<Application> getApplications(Integer limit, Integer offset , ApplicationSearchRequest applicationSearchRequest) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria().getId(), applicationSearchRequest.getCriteria().getFilingNumber(), applicationSearchRequest.getCriteria().getCnrNumber(), applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(), applicationSearchRequest.getCriteria().getApplicationNumber(),limit, offset);
             log.info("Final application search query: {}", applicationQuery);
             List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
             log.info("DB application list :: {}", list);

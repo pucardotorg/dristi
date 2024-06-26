@@ -64,9 +64,9 @@ class StatuteSectionRowMapperTest {
 
     @Test
     void testStringToList() {
-        String input = "Item1|Item2|Item3";
+        String input = "Item1,Item2,Item3";
         List<String> result = rowMapper.stringToList(input);
-        assertEquals(1, result.size());
+        assertEquals(3, result.size());
     }
 
     @Test

@@ -28,6 +28,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.hearingNumber
               - inJsonPath: $.orderNumber
                 outJsonPath: $.Data.orderDetails.orderNumber
+              - inJsonPath: $.linkedOrderNumber
+                outJsonPath: $.Data.orderDetails.linkedOrderNumber
               - inJsonPath: $.cnrNumber
                 outJsonPath: $.Data.orderDetails.cnrNumber
               - inJsonPath: $.orderCategory
@@ -93,6 +95,8 @@ ServiceMaps:
                 outJsonPath: $.Data.orderDetails.orderNumber
               - inJsonPath: $.cnrNumber
                 outJsonPath: $.Data.orderDetails.cnrNumber
+              - inJsonPath: $.linkedOrderNumber
+                outJsonPath: $.Data.orderDetails.linkedOrderNumber
               - inJsonPath: $.orderType
                 outJsonPath: $.Data.orderDetails.orderType
               - inJsonPath: $.orderCategory

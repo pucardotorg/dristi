@@ -4,6 +4,7 @@ CREATE TABLE dristi_orders (
                               hearingNumber varchar(64) NULL,
                               applicationNumber jsonb NULL,
                               orderNumber varchar(64) NULL,
+                              linkedOrderNumber varchar(64) NULL,
                               filingNumber varchar(64) NULL,
                               cnrNumber varchar(64) NULL,
                               orderType varchar(64) NULL,

@@ -47,6 +47,9 @@ public class OrderUtil {
             log.error("ERROR_WHILE_FETCHING_FROM_ORDER:: {}", e.toString());
         }
 
+        if(orderExistsResponse.getOrder() == null|| orderExistsResponse.getOrder().isEmpty())
+            return false;
+
         return orderExistsResponse.getOrder().get(0).getExists();
     }
 }
