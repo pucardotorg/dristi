@@ -567,6 +567,7 @@ export const respondentValidation = ({
         ) &&
         !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
       ) {
+        setFormErrors("inquiryAffidavitFileUpload", { type: "required", msg: "" });
         setShowErrorToast(true);
         return true;
       }
@@ -603,24 +604,20 @@ export const respondentValidation = ({
   }
 };
 
-export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast }) => {
+export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "demandNoticeDetails") {
-    const formDataCopy = structuredClone(formData);
-    if ("SelectCustomDragDrop" in formDataCopy) {
-      if (
-        ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
-      ) {
+    for (const key of ["legalDemandNoticeFileUpload", "proofOfDispatchFileUpload"]) {
+      if (!(key in formData) || formData[key].document?.length === 0) {
+        setFormErrors(key, { type: "required" });
         setShowErrorToast(true);
         return true;
-      } else if (
-        formData?.proofOfService?.code === "YES" &&
-        ["proofOfAcknowledgmentFileUpload"].some((data) => !Object.keys(formData?.SelectCustomDragDrop?.[data] || {}).length)
-      ) {
-        setShowErrorToast(true);
-        return true;
-      } else {
-        return false;
       }
+    }
+
+    if (formData?.proofOfService?.code === "YES" && formData?.["proofOfAcknowledgmentFileUpload"]?.document.length === 0) {
+      setFormErrors("proofOfAcknowledgmentFileUpload", { type: "required" });
+      setShowErrorToast(true);
+      return true;
     }
   } else {
     return false;
@@ -644,12 +641,13 @@ export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToa
   }
 };
 
-export const advocateDetailsFileValidation = ({ formData, selected, setShowErrorToast }) => {
+export const advocateDetailsFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "advocateDetails") {
     if (
       formData?.isAdvocateRepresenting?.code === "YES" &&
       ["vakalatnamaFileUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)
     ) {
+      setFormErrors("vakalatnamaFileUpload", { type: "required" });
       setShowErrorToast(true);
       return true;
     } else {
@@ -768,8 +766,9 @@ export const delayApplicationValidation = ({ t, formData, selected, setShowError
   }
 };
 
-export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
+export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
   if (selected === "prayerSwornStatement") {
+    let hasError = false;
     if (
       !Object.keys(formData?.memorandumOfComplaint)?.length > 0 ||
       !Object.keys(formData?.prayerForRelief)?.length > 0 ||
@@ -778,14 +777,26 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         !formData?.memorandumOfComplaint?.text.length > 0) ||
       (!("text" in formData?.memorandumOfComplaint) &&
         "document" in formData?.memorandumOfComplaint &&
-        !formData?.memorandumOfComplaint?.document.length > 0) ||
-      (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
-      (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0) ||
-      ("text" in formData?.additionalDetails && !formData?.additionalDetails?.text.length > 0)
+        !formData?.memorandumOfComplaint?.document.length > 0)
     ) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
-      return true;
+      setFormErrors("memorandumOfComplaint", { type: "required" });
+      hasError = true;
     }
+    if (
+      (!("document" in formData?.prayerForRelief) && "text" in formData?.prayerForRelief && !formData?.prayerForRelief?.text.length > 0) ||
+      (!("text" in formData?.prayerForRelief) && "document" in formData?.prayerForRelief && !formData?.prayerForRelief?.document.length > 0)
+    ) {
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      setFormErrors("prayerForRelief", { type: "required" });
+      hasError = true;
+    }
+    if ("text" in formData?.additionalDetails && !formData?.additionalDetails?.text.length > 0) {
+      setFormErrors("additionalDetails", { type: "required" });
+      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
+      hasError = true;
+    }
+    return hasError;
   } else if (selected === "witnessDetails") {
     if ("text" in formData?.witnessAdditionalDetails && !formData?.witnessAdditionalDetails?.text.length > 0) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
@@ -1271,11 +1282,11 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "debtLiabilityDetails") {
-    const debtDocumentData = { debtLiabilityFileUpload: {} };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
+          const debtDocumentData = { debtLiabilityFileUpload: {} };
           if (data?.data?.debtLiabilityFileUpload?.document) {
             debtDocumentData.debtLiabilityFileUpload.document = await Promise.all(
               data?.data?.debtLiabilityFileUpload?.document?.map(async (document) => {
@@ -1322,38 +1333,38 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const documentData = {};
-          if (
-            data?.data?.SelectCustomDragDrop &&
-            typeof data?.data?.SelectCustomDragDrop === "object" &&
-            Object.keys(data?.data?.SelectCustomDragDrop).length > 0
-          ) {
-            documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).reduce(async (res, curr) => {
-              const result = await res;
-              result[curr] = await Promise.all(
-                data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name, tenantId);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.[curr],
-                    };
-                  }
-                })
-              );
-              return result;
-            }, Promise.resolve({}));
-          }
+          const demandNoticeDocumentData = {
+            legalDemandNoticeFileUpload: {},
+            proofOfDispatchFileUpload: {},
+            proofOfAcknowledgmentFileUpload: {},
+          };
+
+          const fileUploadKeys = Object.keys(demandNoticeDocumentData).filter((key) => data?.data?.[key]?.document);
+
+          await Promise.all(
+            fileUploadKeys.map(async (key) => {
+              if (data?.data?.[key]?.document) {
+                demandNoticeDocumentData[key].document = await Promise.all(
+                  data?.data?.[key]?.document?.map(async (document) => {
+                    if (document) {
+                      const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                      return {
+                        documentType: uploadedData.fileType || document?.documentType,
+                        fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                        documentName: uploadedData.filename || document?.documentName,
+                        fileName: pageConfig?.selectDocumentName?.[key],
+                      };
+                    }
+                  })
+                );
+              }
+            })
+          ).catch(console.debug);
           return {
             ...data,
             data: {
               ...data.data,
-              SelectCustomDragDrop: {
-                ...data?.data?.SelectCustomDragDrop,
-                ...documentData.SelectCustomDragDrop,
-              },
+              ...demandNoticeDocumentData,
             },
           };
         })
@@ -1366,6 +1377,7 @@ export const updateCaseDetails = async ({
       },
     };
   }
+
   if (selected === "delayApplications") {
     const newFormData = await Promise.all(
       formdata
@@ -1410,7 +1422,7 @@ export const updateCaseDetails = async ({
       formdata
         .filter((item) => item.isenabled)
         .map(async (data) => {
-          const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {} };
+          const documentData = { SelectUploadDocWithName: [], prayerForRelief: {}, memorandumOfComplaint: {}, swornStatement: {} };
           if (data?.data?.SelectUploadDocWithName) {
             documentData.SelectUploadDocWithName = await Promise.all(
               data?.data?.SelectUploadDocWithName?.map(async (docWithNameData) => {
@@ -1463,28 +1475,20 @@ export const updateCaseDetails = async ({
               })
             );
           }
-          if (
-            data?.data?.SelectCustomDragDrop &&
-            typeof data?.data?.SelectCustomDragDrop === "object" &&
-            Object.keys(data?.data?.SelectCustomDragDrop).length > 0
-          ) {
-            documentData.SelectCustomDragDrop = await Object.keys(data?.data?.SelectCustomDragDrop).reduce(async (res, curr) => {
-              const result = await res;
-              result[curr] = await Promise.all(
-                data?.data?.SelectCustomDragDrop?.[curr]?.map(async (document) => {
-                  if (document) {
-                    const uploadedData = await onDocumentUpload(document, document.name, tenantId);
-                    return {
-                      documentType: uploadedData.fileType || document?.documentType,
-                      fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
-                      documentName: uploadedData.filename || document?.documentName,
-                      fileName: pageConfig?.selectDocumentName?.[curr],
-                    };
-                  }
-                })
-              );
-              return result;
-            }, Promise.resolve({}));
+          if (data?.data?.swornStatement?.document) {
+            documentData.swornStatement.document = await Promise.all(
+              data?.data?.swornStatement?.document?.map(async (document) => {
+                if (document) {
+                  const uploadedData = await onDocumentUpload(document, document.name, tenantId);
+                  return {
+                    documentType: uploadedData.fileType || document?.documentType,
+                    fileStore: uploadedData.file?.files?.[0]?.fileStoreId || document?.fileStore,
+                    documentName: uploadedData.filename || document?.documentName,
+                    fileName: pageConfig?.selectDocumentName?.["swornStatement"],
+                  };
+                }
+              })
+            );
           }
           if (data?.data?.memorandumOfComplaint?.document && data?.data?.memorandumOfComplaint?.document.length > 0) {
             documentData.memorandumOfComplaint.document = await Promise.all(
@@ -1532,10 +1536,6 @@ export const updateCaseDetails = async ({
             data: {
               ...data.data,
               ...documentData,
-              SelectCustomDragDrop: {
-                ...data?.data?.SelectCustomDragDrop,
-                ...documentData.SelectCustomDragDrop,
-              },
               infoBoxData,
             },
           };

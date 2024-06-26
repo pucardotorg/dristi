@@ -2,11 +2,18 @@ import { ActionBar, Button, CloseSvg, FormComposerV2, Header, Loader, SubmitBar,
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import ReactTooltip from "react-tooltip";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import Accordion from "../../../components/Accordion";
+import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
+import ErrorsAccordion from "../../../components/ErrorsAccordion";
+import FlagBox from "../../../components/FlagBox";
 import Modal from "../../../components/Modal";
+import ScrutinyInfo from "../../../components/ScrutinyInfo";
+import SelectCustomNote from "../../../components/SelectCustomNote";
 import { useToast } from "../../../components/Toast/useToast";
+import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
@@ -15,10 +22,13 @@ import { formatDate } from "./CaseType";
 import { sideMenuConfig } from "./Config";
 import EditFieldsModal from "./EditFieldsModal";
 import {
+  advocateDetailsFileValidation,
+  checkDuplicateMobileEmailValidation,
   checkIfscValidation,
   checkNameValidation,
   checkOnlyCharInCheque,
   chequeDateValidation,
+  chequeDetailFileValidation,
   complainantValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
@@ -29,17 +39,8 @@ import {
   signatureValidation,
   updateCaseDetails,
   validateDateForDelayApplication,
-  chequeDetailFileValidation,
-  advocateDetailsFileValidation,
-  checkDuplicateMobileEmailValidation,
 } from "./EfilingValidationUtils";
-import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
-import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
-import ErrorsAccordion from "../../../components/ErrorsAccordion";
-import ReactTooltip from "react-tooltip";
-import FlagBox from "../../../components/FlagBox";
-import ScrutinyInfo from "../../../components/ScrutinyInfo";
-import SelectCustomNote from "../../../components/SelectCustomNote";
+
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -1226,14 +1227,24 @@ function EFilingCases({ path }) {
     ) {
       return;
     }
-    if (formdata.filter((data) => data.isenabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
-      return;
-    }
-    if (formdata.filter((data) => data.isenabled).some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+    ) {
       return;
     }
     if (
-      formdata.filter((data) => data.isenabled).some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast }))
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
     ) {
       return;
     }
@@ -1265,7 +1276,9 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast }))
+        .some((data) =>
+          prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors: setFormErrors.current })
+        )
     ) {
       return;
     }
