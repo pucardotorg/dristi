@@ -601,6 +601,7 @@ public class CaseRegistrationValidatorTest {
             validator.validateLitigantJoinCase(joinCaseRequest);
         });
         assertEquals(INDIVIDUAL_NOT_FOUND, exception.getCode());
+        assertEquals("Invalid complainant details", exception.getMessage());
     }
     @Test
     public void testValidateLitigantJoinCase_NullIndividualId() {

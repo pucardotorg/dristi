@@ -157,6 +157,9 @@ public class CaseService {
         try {
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), joinCaseRequest.getRequestInfo());
+            if (existingApplications.isEmpty()) {
+                throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
+            }
             List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
             if (courtCaseList.isEmpty()) {
                 throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
@@ -165,8 +168,8 @@ public class CaseService {
             CourtCase courtCase = courtCaseList.get(0);
             UUID caseId = courtCase.getId();
 
-            if (!CASE_ADMIT_STATUS.equals(courtCase.getStatus())) {
-                throw new CustomException(VALIDATION_ERR, "Case must be in CASE_ADMITTED state");
+            if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
+                throw new CustomException(VALIDATION_ERR, "Access code not generated");
             }
             String caseAccessCode = courtCase.getAccessCode();
 

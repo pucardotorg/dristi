@@ -93,20 +93,24 @@ public class CaseServiceTest {
     }
 
     @Test
-    public void testVerifyJoinCaseRequest_CaseNotAdmitted() {
-
-        // Setup a sample CourtCase object
-        CourtCase courtCase = new CourtCase();
-        courtCase.setId(UUID.randomUUID());
-        courtCase.setAccessCode("validAccessCode");
-        courtCase.setStatus("CASE_NOT_ADMITTED");
+    public void testVerifyJoinCaseRequest_AccessCodeNotGenerated() {
+        // Setup a sample CourtCase object access code as null
         JoinCaseRequest joinCaseRequest = new JoinCaseRequest();
         joinCaseRequest.setCaseFilingNumber("12345");
         joinCaseRequest.setAccessCode("validAccessCode");
+        AdvocateMapping representative = new AdvocateMapping();
+        representative.setAdvocateId("existingAdv");
+        CourtCase courtCase = new CourtCase();
+        courtCase.setId(UUID.randomUUID());
+        courtCase.setFilingNumber(joinCaseRequest.getCaseFilingNumber());
+        courtCase.setStatus(CASE_ADMIT_STATUS);
+        courtCase.setRepresentatives(Collections.singletonList(representative));
+        CaseCriteria caseCriteria = new CaseCriteria();
+        caseCriteria.setResponseList(Collections.singletonList(courtCase));
+        lenient().when(caseRepository.getApplications(anyList(), any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
         assertThrows(CustomException.class, () -> {
             caseService.verifyJoinCaseRequest(joinCaseRequest);
         });
-
     }
 
     @Test

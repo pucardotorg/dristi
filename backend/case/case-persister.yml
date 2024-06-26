@@ -346,7 +346,6 @@ serviceMaps:
             - jsonPath: $.auditDetails.lastModifiedTime
 
 
-
     - version: 1.0
       description: Persists new representative for a case in dristi_case_representatives table
       fromTopic: representative-join-case
