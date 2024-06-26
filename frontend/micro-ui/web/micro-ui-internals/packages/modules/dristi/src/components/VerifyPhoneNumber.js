@@ -299,7 +299,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           />
         )}
       </div>
-      {errors?.[config?.key]?.[config.name] && (
+      {errors?.[config?.key]?.[config.name] && !formData?.complainantVerification?.isUserVerified && (
         <CardLabelError className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}>
           {t(errors?.[config?.key]?.[config.name] ? errors?.[config?.key]?.[config.name] || "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
         </CardLabelError>
