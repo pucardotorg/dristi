@@ -126,7 +126,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
   };
 
   const handleDeleteFile = (input, index) => {
-    onSelect(config.key, { ...formData[config.key], [input?.name]: undefined });
+    onSelect(config.key, { ...formData[config.key], [input?.name]: undefined }, { shouldValidate: true });
   };
 
   return (
@@ -159,12 +159,16 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                           ...prev,
                           isAadharVerified: true,
                         }));
-                        onSelect(config.key, {
-                          ...formData[config.key],
-                          [config.key]: generateAadhaar(),
-                          verificationType: "AADHAR",
-                          isFirstRender: true,
-                        });
+                        onSelect(
+                          config.key,
+                          {
+                            ...formData[config.key],
+                            [config.key]: generateAadhaar(),
+                            verificationType: "AADHAR",
+                            isFirstRender: true,
+                          },
+                          { shouldValidate: true }
+                        );
                       }}
                     />
                     <Button
@@ -215,7 +219,11 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                 isDisabled={isDisabled}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
-                  onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } });
+                  onSelect(
+                    config.key,
+                    { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } },
+                    { shouldValidate: true }
+                  );
                   setState((prev) => ({
                     ...prev,
                     showModal: false,

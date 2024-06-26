@@ -153,28 +153,33 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
             onSelect(
               `${key}`,
-              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
+              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key],
+              { shouldValidate: true }
             );
           });
-          onSelect(config?.key, {
-            ...formData?.[config.key],
-            individualDetails: {
-              individualId: individualData?.Individual?.[0]?.individualId,
-              document: identifierIdDetails?.fileStoreId
-                ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
-                : null,
-              "addressDetails-select": data["addressDetails-select"],
-              addressDetails: data["addressDetails-select"],
+          onSelect(
+            config?.key,
+            {
+              ...formData?.[config.key],
+              individualDetails: {
+                individualId: individualData?.Individual?.[0]?.individualId,
+                document: identifierIdDetails?.fileStoreId
+                  ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                  : null,
+                "addressDetails-select": data["addressDetails-select"],
+                addressDetails: data["addressDetails-select"],
+              },
+              [config?.disableConfigKey]: true,
             },
-            [config?.disableConfigKey]: true,
-          });
+            { shouldValidate: true }
+          );
         } else {
-          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info }, { shouldValidate: true });
         }
       })
       .catch(() => {
         setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info }, { shouldValidate: true });
       });
   };
 
