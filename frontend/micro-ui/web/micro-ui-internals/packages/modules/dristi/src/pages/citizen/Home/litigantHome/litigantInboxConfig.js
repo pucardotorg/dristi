@@ -58,6 +58,7 @@ export const litigantInboxConfig = {
           {
             label: "Stage",
             jsonPath: "status",
+            additionalCustomization: true,
           },
           {
             label: "Case ID",

@@ -1,34 +1,31 @@
 const complainantDetailsFormConfig = [
   {
-    dependentKey: { complainantVerification: ["isUserVerified"] },
     body: [
       {
+        head: "SELECT_COMPLAINANT_TYPE",
         type: "component",
-        component: "SelectCustomNote",
-        key: "personalDetailsNote",
-        withoutLabel: true,
-        populators: {
-          inputs: [
-            {
-              infoHeader: "CS_PLEASE_COMMON_NOTE",
-              infoText: "CS_PLEASE_CONTACT_NYAY_MITRA_TEXT",
-              infoTooltipMessage: "CS_NOTE_TOOLTIP_RESPONDENT_PERSONAL_DETAILS",
-              type: "InfoComponent",
-            },
-          ],
-        },
-      },
-    ],
-  },
-  {
-    head: "SELECT_COMPLAINANT_TYPE",
-    body: [
-      {
-        type: "radio",
+        component: "CustomRadioInfoComponent",
         key: "complainantType",
         withoutLabel: true,
         isMandatory: true,
         name: "complainantType",
+        noteDependentOn: "complainantVerification.isUserVerified",
+        notes: {
+          type: "component",
+          component: "SelectCustomNote",
+          key: "personalDetailsNote",
+          withoutLabel: true,
+          populators: {
+            inputs: [
+              {
+                infoHeader: "CS_PLEASE_COMMON_NOTE",
+                infoText: "CS_PLEASE_CONTACT_NYAY_MITRA_TEXT",
+                infoTooltipMessage: "CS_NOTE_TOOLTIP_RESPONDENT_PERSONAL_DETAILS",
+                type: "InfoComponent",
+              },
+            ],
+          },
+        },
         populators: {
           label: "SELECT_COMPLAINANT_TYPE",
           type: "radioButton",
@@ -253,7 +250,7 @@ const complainantDetailsFormConfig = [
             {
               label: "CS_LOCATION",
               type: "LocationSearch",
-              name: ["pincode", "state", "district", "city", "coordinates", "locality", "uuid"],
+              name: ["pincode", "state", "district", "city", "coordinates", "locality"],
               key: "locationSearch",
             },
             {

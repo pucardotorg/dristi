@@ -133,8 +133,12 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(textValue) && textValue.map((text) => <div> {text || t("CS_NOT_AVAILABLE")} </div>)}
-                {(!Array.isArray(textValue) && textValue) || t("CS_NOT_AVAILABLE")}
+                {Array.isArray(textValue)
+                  ? textValue.length > 0
+                    ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
+                    : t("CS_NOT_AVAILABLE")
+                  : textValue || t("CS_NOT_AVAILABLE")}
+
               </div>
               {showFlagIcon && (
                 <div
@@ -220,8 +224,13 @@ const CustomReviewCardRow = ({
             <div className="phone-number">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}` || t("CS_NOT_AVAILABLE")} </div>)}
-                {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : t("CS_NOT_AVAILABLE")}
+                {Array.isArray(numbers)
+                  ? numbers.length > 0
+                    ? numbers.map((number, index) => <div key={index}>{`+91-${number}`}</div>)
+                    : t("CS_NOT_AVAILABLE")
+                  : numbers
+                  ? `+91-${numbers}`
+                  : t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div

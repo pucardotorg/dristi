@@ -1,16 +1,21 @@
 import { useIndividualView } from "./useIndividualView";
 import utils from "../utils";
+
+import { ordersService } from "./services";
+import useSearchOrdersService from "./orders/useSearchOrdersService";
+
 const orders = {
-  useIndividualView
+  useIndividualView,
+  useSearchOrdersService,
 };
 
 const Hooks = {
-  orders
+  orders,
 };
 
 const Utils = {
   browser: {
-    orders: () => { },
+    orders: () => {},
   },
   orders: {
     ...utils,
@@ -20,4 +25,5 @@ const Utils = {
 export const CustomisedHooks = {
   Hooks,
   Utils,
+  ordersService,
 };

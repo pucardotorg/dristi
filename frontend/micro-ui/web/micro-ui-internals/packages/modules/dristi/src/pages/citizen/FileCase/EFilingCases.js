@@ -37,6 +37,7 @@ import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 import ErrorsAccordion from "../../../components/ErrorsAccordion";
 import ReactTooltip from "react-tooltip";
+import FlagBox from "../../../components/FlagBox";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -66,7 +67,7 @@ function isEmptyValue(value) {
 }
 
 const extractValue = (data, key) => {
-  if (!key.includes(".")) {
+  if (!key.includes(".") && data && typeof data === "object") {
     return data[key];
   }
   const keyParts = key.split(".");
@@ -118,6 +119,8 @@ function EFilingCases({ path }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+
   const setFormErrors = useRef(null);
   const resetFormData = useRef(null);
   const setFormDataValue = useRef(null);
@@ -140,6 +143,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [showReviewCorrectionModal, setShowReviewCorrectionModal] = useState(false);
+  const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
 
@@ -286,6 +290,9 @@ function EFilingCases({ path }) {
   );
   const scrutinyObj = useMemo(() => {
     return caseDetails?.additionalDetails?.scrutiny?.data || {};
+  }, [caseDetails]);
+  const judgeObj = useMemo(() => {
+    return caseDetails?.additionalDetails?.judge || {};
   }, [caseDetails]);
 
   const countSectionErrors = (section) => {
@@ -474,6 +481,7 @@ function EFilingCases({ path }) {
   }, [pageConfig?.formconfig]);
 
   if (!getAllKeys.includes(selected) || !formConfig) {
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${getAllKeys[0]}`);
   }
 
@@ -668,7 +676,7 @@ function EFilingCases({ path }) {
           };
         });
       });
-      if (!isCaseReAssigned) {
+      if (!isCaseReAssigned || selected === "addSignature" || selected === "reviewCaseFile") {
         return modifiedFormData;
       }
     }
@@ -744,6 +752,19 @@ function EFilingCases({ path }) {
                     </ReactTooltip>
                   </React.Fragment>
                 );
+              }
+              if (
+                body?.validation?.pattern &&
+                body?.validation?.pattern?.moduleName &&
+                body?.validation?.pattern?.masterName &&
+                body?.validation?.pattern?.patternType
+              ) {
+                body.validation = {
+                  ...body.validation,
+                  pattern: Digit?.Customizations?.[body?.validation?.pattern?.masterName]?.[body?.validation?.pattern?.moduleName](
+                    body?.validation?.pattern?.patternType
+                  ),
+                };
               }
 
               if (body.updateLabelOn && body.updateLabel.key && body.defaultLabel.key) {
@@ -970,7 +991,6 @@ function EFilingCases({ path }) {
   //   setConfirmDeleteModal(true);
   //   setFormdata(newArray);
   // };
-  console.log(modifiedFormConfig);
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
       setValue("advocateBarRegNumberWithName", [
@@ -1017,9 +1037,11 @@ function EFilingCases({ path }) {
     setFormDataValue.current = setValue;
     clearFormDataErrors.current = clearErrors;
 
-    // if (formState?.submitCount && !Object.keys(formState?.errors).length && formState?.isSubmitSuccessful) {
-    //   setIsDisabled(true);
-    // }
+    if (Object.keys(formState?.errors).length) {
+      setIsSubmitDisabled(true);
+    } else {
+      setIsSubmitDisabled(false);
+    }
   };
 
   const handleAccordionClick = (index) => {
@@ -1132,7 +1154,6 @@ function EFilingCases({ path }) {
     };
     return obj;
   };
-  console.log("form", formdata);
   const onSubmit = async (action) => {
     if (isDisableAllFieldsMode) {
       history.push(homepagePath);
@@ -1143,7 +1164,19 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => respondentValidation({ t, formData: data?.data, caseDetails, selected, setShowErrorToast, toast }))
+        .some((data) =>
+          respondentValidation({
+            setErrorMsg,
+            t,
+            formData: data?.data,
+            caseDetails,
+            selected,
+            setShowErrorToast,
+            toast,
+            setFormErrors: setFormErrors.current,
+            clearFormDataErrors: clearFormDataErrors.current,
+          })
+        )
     ) {
       return;
     }
@@ -1231,10 +1264,12 @@ function EFilingCases({ path }) {
             if (action === CaseWorkflowAction.EDIT_CASE) {
               return history.push(`/${window.contextPath}/citizen/dristi/home`);
             }
+            setPrevSelected(selected);
             history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           });
         })
         .catch(() => {
+          setPrevSelected(selected);
           history.push(`?caseId=${caseId}&selected=${nextSelected}`);
           setIsDisabled(false);
         });
@@ -1297,7 +1332,7 @@ function EFilingCases({ path }) {
       .catch(() => {
         setIsDisabled(false);
       });
-
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${key}`);
   };
 
@@ -1318,6 +1353,7 @@ function EFilingCases({ path }) {
       },
       tenantId
     );
+    setPrevSelected(selected);
     history.push(`${path}/e-filing-payment?caseId=${caseId}`);
   };
 
@@ -1358,6 +1394,7 @@ function EFilingCases({ path }) {
   const takeUserToRemainingMandatoryFieldsPage = () => {
     const firstPageInTheListWhichHasMandatoryFieldsLeft = checkAndGetMandatoryFieldLeftPages?.[0];
     const selectedPage = firstPageInTheListWhichHasMandatoryFieldsLeft?.selectedPage;
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmMandatoryModal(false);
   };
@@ -1365,10 +1402,12 @@ function EFilingCases({ path }) {
   const takeUserToRemainingOptionalFieldsPage = () => {
     const firstPageInTheListWhichHasOptionalFieldsLeft = checkAndGetOptionalFieldLeftPages?.[0];
     const selectedPage = firstPageInTheListWhichHasOptionalFieldsLeft?.selectedPage;
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
   if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
+    setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
   }
   return (
@@ -1390,13 +1429,17 @@ function EFilingCases({ path }) {
         )}
         {isCaseReAssigned && (
           <div className="side-stepper-error-count">
-            <ErrorsAccordion
-              t={t}
-              totalErrorCount={totalErrors.total}
-              pages={errorPages}
-              handlePageChange={handlePageChange}
-              showConfirmModal={confirmModalConfig ? true : false}
-            />
+            {judgeObj ? (
+              <FlagBox t={t} judgeObj={judgeObj} />
+            ) : (
+              <ErrorsAccordion
+                t={t}
+                totalErrorCount={totalErrors.total}
+                pages={errorPages}
+                handlePageChange={handlePageChange}
+                showConfirmModal={confirmModalConfig ? true : false}
+              />
+            )}
             <div className="total-error-note">
               <div className="header">
                 <InfoIcon />
@@ -1511,6 +1554,7 @@ function EFilingCases({ path }) {
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
                     onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
                   }}
+                  isDisabled={isSubmitDisabled}
                   cardStyle={{ minWidth: "100%" }}
                   cardClassName={`e-filing-card-form-style ${pageConfig.className}`}
                   secondaryLabel={t("CS_SAVE_DRAFT")}
@@ -1584,11 +1628,17 @@ function EFilingCases({ path }) {
               headerBarEnd={
                 <CloseBtn
                   onClick={() => {
+                    setFormDataValue.current?.("dateOfService", "");
+                    clearFormDataErrors.current?.("dateOfService");
                     setServiceOfDemandNoticeModal(false);
                   }}
                 />
               }
-              actionCancelOnSubmit={() => setServiceOfDemandNoticeModal(false)}
+              actionCancelOnSubmit={() => {
+                setFormDataValue.current?.("dateOfService", "");
+                clearFormDataErrors.current?.("dateOfService");
+                setServiceOfDemandNoticeModal(false);
+              }}
               actionSaveLabel={t("CS_SAVE_DRAFT")}
               children={<div style={{ padding: "16px 0" }}>{t("CS_SAVE_AS_DRAFT_TEXT")}</div>}
               actionSaveOnSubmit={async () => {
@@ -1638,7 +1688,8 @@ function EFilingCases({ path }) {
               headerBarEnd={
                 <CloseBtn
                   onClick={() => {
-                    history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
+                    setPrevSelected(selected);
+                    history.push(`?caseId=${caseId}&selected=${prevSelected}`);
                     setShowReviewCorrectionModal(false);
                   }}
                 />
@@ -1646,6 +1697,7 @@ function EFilingCases({ path }) {
               actionSaveLabel={t("REVIEW_CASE")}
               children={<div style={{ margin: "16px 0px" }}>{t("PLEASE_REVIEW_CASE_TEXT")}</div>}
               actionSaveOnSubmit={() => {
+                setPrevSelected(selected);
                 history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
                 setShowReviewCorrectionModal(false);
               }}

@@ -39,6 +39,7 @@ import AdvocateClerkAdditionalDetail from "./pages/citizen/registration/Advocate
 import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomRadioInfoComponent from "./components/CustomRadioInfoComponent";
 import Modal from "./components/Modal";
 import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
 import DocViewerWrapper from "./pages/employee/docViewerWrapper";
@@ -105,6 +106,7 @@ const componentsToRegister = {
   SelectEmptyComponent,
   ScrutinyInfo,
   AdvocateNameDetails,
+  CustomRadioInfoComponent,
   MODAL: Modal,
   CUSTOMCASEINFODIV: CustomCaseInfoDiv,
   DOCVIEWERWRAPPER: DocViewerWrapper,

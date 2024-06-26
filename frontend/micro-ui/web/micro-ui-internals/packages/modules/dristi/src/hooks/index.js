@@ -47,7 +47,6 @@ const Hooks = {
 const Utils = {
   dristi: {},
 };
-
 export const CustomizedHooks = {
   Hooks,
   DRISTIService,

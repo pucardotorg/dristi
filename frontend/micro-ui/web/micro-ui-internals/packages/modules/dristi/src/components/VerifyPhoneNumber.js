@@ -153,28 +153,33 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           ["addressDetails-select", "complainantId", "firstName", "lastName", "middleName"].forEach((key) => {
             onSelect(
               `${key}`,
-              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key]
+              typeof formData?.[key] === "object" && typeof key?.[key] === "object" ? { ...formData?.[key], ...data[key] } : data[key],
+              { shouldValidate: true }
             );
           });
-          onSelect(config?.key, {
-            ...formData?.[config.key],
-            individualDetails: {
-              individualId: individualData?.Individual?.[0]?.individualId,
-              document: identifierIdDetails?.fileStoreId
-                ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
-                : null,
-              "addressDetails-select": data["addressDetails-select"],
-              addressDetails: data["addressDetails-select"],
+          onSelect(
+            config?.key,
+            {
+              ...formData?.[config.key],
+              individualDetails: {
+                individualId: individualData?.Individual?.[0]?.individualId,
+                document: identifierIdDetails?.fileStoreId
+                  ? [{ fileName: `${idType} Card`, fileStore: identifierIdDetails?.fileStoreId, documentName: identifierIdDetails?.filename }]
+                  : null,
+                "addressDetails-select": data["addressDetails-select"],
+                addressDetails: data["addressDetails-select"],
+              },
+              [config?.disableConfigKey]: true,
             },
-            [config?.disableConfigKey]: true,
-          });
+            { shouldValidate: true }
+          );
         } else {
-          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info }, { shouldValidate: true });
         }
       })
       .catch(() => {
         setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info });
+        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info }, { shouldValidate: true });
       });
   };
 
@@ -247,12 +252,13 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
-              if (value?.length >= config?.validation?.minLength && !value.match(config?.validation?.pattern)) {
-                setError(config.key, { [config?.name]: config?.error });
+              let updatedValue = value;
+              if (value.length === 1) {
+                updatedValue = value?.replace(/[^6-9]/g, "");
               } else {
-                setError(config.key, { [config?.name]: "" });
+                updatedValue = value?.replace(/[^0-9]/g, "");
               }
-              onSelect(config?.key, { ...formData?.[config.key], [config?.name]: value });
+              onSelect(config?.key, { ...formData?.[config.key], [config?.name]: updatedValue });
             }}
           />
         </div>

@@ -444,6 +444,8 @@ export const UICustomizations = {
       switch (key) {
         case "Case Type":
           return <span>NIA S138</span>;
+        case "Stage":
+          return t(row?.status);
         default:
           return t("ES_COMMON_NA");
       }
@@ -475,6 +477,14 @@ export const UICustomizations = {
           tenantId: window?.Digit.ULBService.getStateId(),
         },
       };
+    },
+    additionalCustomizations: (row, key, column, value, t, searchResult) => {
+      switch (key) {
+        case "Case Type":
+          return <span>NIA S138</span>;
+        default:
+          return t("ES_COMMON_NA");
+      }
     },
   },
   SearchIndividualConfig: {
