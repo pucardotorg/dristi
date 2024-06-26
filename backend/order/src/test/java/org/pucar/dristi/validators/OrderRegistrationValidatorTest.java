@@ -86,6 +86,9 @@ public class OrderRegistrationValidatorTest {
         order.setCnrNumber("CNR123");
         order.setFilingNumber("Filing123");
         order.setStatus("status");
+        order.setOrderNumber("order");
+        order.setApplicationNumber(Collections.singletonList(""));
+        order.setId(UUID.fromString("3244d158-c5cb-4769-801f-a0f94f383679"));
         order.setStatuteSection(new StatuteSection());
         orderRequest.setOrder(order);
         RequestInfo requestInfo = new RequestInfo();
@@ -94,7 +97,7 @@ public class OrderRegistrationValidatorTest {
         // Mock repository response
         List<Order> existingApplications = new ArrayList<>();
         existingApplications.add(order);
-        when(repository.getApplications(anyString(),anyString(), anyString(), anyString(), anyString(), anyString())).thenReturn(existingApplications);
+        when(repository.getOrders(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString())).thenReturn(existingApplications);
 
         // Mock MDMS data
         Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();

@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository;
 
 import org.egov.common.contract.models.Document;
+import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,9 +13,7 @@ import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationExists;
-import org.pucar.dristi.web.models.StatuteSection;
+import org.pucar.dristi.web.models.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
@@ -22,6 +21,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_EXIST_EXCEPTION;
 import static org.pucar.dristi.config.ServiceConstants.APPLICATION_SEARCH_ERR;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,7 +70,19 @@ class ApplicationRepositoryTest {
 
     @Test
     void testGetApplications_Success() {
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
+        applicationCriteria.setApplicationNumber("");
+        applicationCriteria.setId("");
+        applicationCriteria.setStatus("");
+        applicationCriteria.setCnrNumber("");
+        applicationCriteria.setFilingNumber("");
+        applicationCriteria.setTenantId("");
+        applicationSearchRequest.setCriteria(applicationCriteria);
+
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt()))
                 .thenReturn("some SQL query");
         when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
 
@@ -84,7 +96,7 @@ class ApplicationRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
                 .thenReturn(documentMap);
 
-        List<Application> result = applicationRepository.getApplications("1", "123", "CNR123", "tenant1", "status1", 10, 0);
+        List<Application> result = applicationRepository.getApplications(0, 0, applicationSearchRequest );
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -95,11 +107,21 @@ class ApplicationRepositoryTest {
 
     @Test
     void testGetApplications_EmptyResult() {
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
+        applicationCriteria.setApplicationNumber("");
+        applicationCriteria.setId("");
+        applicationCriteria.setStatus("");
+        applicationCriteria.setCnrNumber("");
+        applicationCriteria.setFilingNumber("");
+        applicationCriteria.setTenantId("");
+        applicationSearchRequest.setCriteria(applicationCriteria);
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt()))
                 .thenReturn("some SQL query");
         when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
-        List<Application> result = applicationRepository.getApplications("1", "123", "CNR123", "tenant1", "status1", 10, 0);
+        List<Application> result = applicationRepository.getApplications(0, 0,applicationSearchRequest);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -107,11 +129,22 @@ class ApplicationRepositoryTest {
 
     @Test
     void testGetApplications_Exception() {
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyInt(), anyInt()))
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
+        applicationCriteria.setApplicationNumber("");
+        applicationCriteria.setId("");
+        applicationCriteria.setStatus("");
+        applicationCriteria.setCnrNumber("");
+        applicationCriteria.setFilingNumber("");
+        applicationCriteria.setTenantId("");
+        applicationSearchRequest.setCriteria(applicationCriteria);
+
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString(), anyInt(), anyInt()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationRepository.getApplications("1", "123", "CNR123", "tenant1",null,  10, 0)
+                applicationRepository.getApplications(1, 2, applicationSearchRequest)
         );
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
@@ -125,16 +158,20 @@ class ApplicationRepositoryTest {
         String id = "testId";
         String filingNumber = "testFilingNumber";
         String cnrNumber = "testCnrNumber";
+        String applicationNumber = "applicationNumber";
         String tenantId = "testTenantId";
         String status = "status";
         Integer limit = 10;
         Integer offset = 0;
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        applicationSearchRequest.setCriteria(new ApplicationCriteria());
 
         doThrow(new RuntimeException("Database error")).when(jdbcTemplate).query(anyString(), any(ApplicationRowMapper.class));
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationRepository.getApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset);
+            applicationRepository.getApplications(limit, offset,applicationSearchRequest);
         });
 
         // Assert
@@ -197,6 +234,17 @@ class ApplicationRepositoryTest {
 
         when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new RuntimeException("Database connection failed"));
+
+        assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
+    }
+
+    @Test
+    void testCheckApplicationExists_Throws_CustomException() {
+        List<ApplicationExists> applicationExistsList = new ArrayList<>();
+        applicationExistsList.add(new ApplicationExists("123", "456", "789", null));
+
+        when(queryBuilder.checkApplicationExistQuery(any(), any(), any())).thenReturn("SELECT COUNT(*) FROM applications WHERE filing_number = '123' AND cnr_number = '456' AND application_number = '789'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " ));
 
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
     }

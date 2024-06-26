@@ -78,6 +78,16 @@ public class CaseApiController {
         return new ResponseEntity<>(caseResponse, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/case/v1/_verify", method = RequestMethod.POST)
+    public ResponseEntity<JoinCaseResponse> verifyV1JoinCase (
+            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody JoinCaseRequest body){
+
+        JoinCaseResponse joinCaseResponse = caseService.verifyJoinCaseRequest(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        joinCaseResponse.setResponseInfo(responseInfo);
+        return new ResponseEntity<>(joinCaseResponse, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/case/v1/_update", method = RequestMethod.POST)
     public ResponseEntity<CaseResponse> caseV1UpdatePost (
             @Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body){

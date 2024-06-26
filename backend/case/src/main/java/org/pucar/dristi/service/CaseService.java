@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
@@ -13,9 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichLitigantsOnCreateAndUpdate;
+import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepresentativesOnCreateAndUpdate;
 
 
 @Service
@@ -124,6 +130,100 @@ public class CaseService {
         } catch (Exception e) {
             log.error("Error while fetching to exist case :: {}",e.toString());
             throw new CustomException(CASE_EXIST_ERR, e.getMessage());
+        }
+    }
+
+    private void verifyAndEnrichLitigant(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
+            if (!validator.validateLitigantJoinCase(joinCaseRequest))
+                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+
+            log.info("enriching litigants");
+            enrichLitigantsOnCreateAndUpdate(caseObj, auditDetails);
+
+            producer.push(config.getLitigantJoinCaseTopic(), joinCaseRequest.getLitigant());
+    }
+
+    private void verifyAndEnrichRepresentative(JoinCaseRequest joinCaseRequest, CourtCase caseObj, AuditDetails auditDetails) {
+            if (!validator.validateRepresentativeJoinCase(joinCaseRequest))
+                throw new CustomException(VALIDATION_ERR, JOIN_CASE_INVALID_REQUEST);
+
+            log.info("enriching representatives");
+            enrichRepresentativesOnCreateAndUpdate(caseObj, auditDetails);
+
+            producer.push(config.getRepresentativeJoinCaseTopic(), joinCaseRequest.getRepresentative());
+    }
+
+    public JoinCaseResponse verifyJoinCaseRequest(JoinCaseRequest joinCaseRequest) {
+        try {
+            String filingNumber = joinCaseRequest.getCaseFilingNumber();
+            List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), joinCaseRequest.getRequestInfo());
+            if (existingApplications.isEmpty()) {
+                throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
+            }
+            List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
+            if (courtCaseList.isEmpty()) {
+                throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
+            }
+
+            CourtCase courtCase = courtCaseList.get(0);
+            UUID caseId = courtCase.getId();
+
+            if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
+                throw new CustomException(VALIDATION_ERR, "Access code not generated");
+            }
+            String caseAccessCode = courtCase.getAccessCode();
+
+            if(!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
+                throw new CustomException(VALIDATION_ERR, "Invalid access code");
+            }
+
+            AuditDetails auditDetails = AuditDetails.builder()
+                    .createdBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
+                    .createdTime(System.currentTimeMillis())
+                    .lastModifiedBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
+                    .lastModifiedTime(System.currentTimeMillis()).build();
+
+            CourtCase caseObj = CourtCase.builder()
+                    .id(caseId)
+                    .build();
+
+            if(joinCaseRequest.getLitigant() != null) {
+                // Stream over the litigants to create a list of individualIds
+                List<String> individualIds = courtCase.getLitigants().stream()
+                        .map(Party::getIndividualId)
+                        .toList();
+                if(joinCaseRequest.getLitigant().getIndividualId() != null &&
+                        individualIds.contains(joinCaseRequest.getLitigant().getIndividualId())){
+                    throw new CustomException(VALIDATION_ERR, "Litigant is already a part of the given case");
+                }
+                caseObj.setLitigants(Collections.singletonList(joinCaseRequest.getLitigant()));
+                verifyAndEnrichLitigant(joinCaseRequest, caseObj, auditDetails);
+            }
+
+            if(joinCaseRequest.getRepresentative() != null) {
+                // Stream over the representatives to create a list of advocateIds
+                List<String> advocateIds = courtCase.getRepresentatives().stream()
+                        .map(AdvocateMapping::getAdvocateId)
+                        .toList();
+                if(joinCaseRequest.getRepresentative().getAdvocateId() != null &&
+                        advocateIds.contains(joinCaseRequest.getRepresentative().getAdvocateId())){
+                    throw new CustomException(VALIDATION_ERR, "Advocate is already a part of the given case");
+                }
+                caseObj.setRepresentatives(Collections.singletonList(joinCaseRequest.getRepresentative()));
+                verifyAndEnrichRepresentative(joinCaseRequest, caseObj, auditDetails);
+            }
+
+            return JoinCaseResponse.builder()
+                    .accessCode(caseAccessCode)
+                    .caseFilingNumber(filingNumber)
+                    .representative(joinCaseRequest.getRepresentative())
+                    .litigant(joinCaseRequest.getLitigant()).build();
+
+        } catch(CustomException e){
+            throw e;
+        } catch (Exception e) {
+            log.error("Invalid request for joining a case :: {}",e.toString());
+            throw new CustomException(JOIN_CASE_ERR, JOIN_CASE_INVALID_REQUEST);
         }
     }
 }

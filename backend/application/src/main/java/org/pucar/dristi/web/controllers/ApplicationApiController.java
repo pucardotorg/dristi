@@ -70,19 +70,12 @@ public class ApplicationApiController{
 
     @RequestMapping(value="/application/v1/search", method = RequestMethod.POST)
     public ResponseEntity<ApplicationListResponse> applicationV1SearchPost(
-            @Parameter(in = ParameterIn.QUERY, description = "Search by application ID" ,schema=@Schema()) @Valid
-            @RequestParam(value = "id", required = false) String id,@Parameter(in = ParameterIn.QUERY, description = "Search by filingNumber" ,schema=@Schema())
-            @Valid @RequestParam(value = "filingNumber", required = false) String filingNumber,@Parameter(in =
-            ParameterIn.QUERY, description = "the cnrNumber of the case whose task(s) are being queried" ,schema=@Schema()) @Valid
-            @RequestParam(value = "cnrNumber", required = false) String cnrNumber,@Parameter(in = ParameterIn.QUERY, description = "Search by tenantId" ,schema=@Schema())
-            @Valid @RequestParam(value = "tenantId", required = false) String tenantId,@Parameter(in = ParameterIn.QUERY, description = "No of records return" ,schema=@Schema()) @Valid
-            @RequestParam(value = "limit", required = false) Integer limit,@Parameter(in = ParameterIn.QUERY, description = "offset" ,schema=@Schema())
-            @Valid @RequestParam(value = "offset", required = false) Integer offset,@Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided" ,
-            schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy,
-            @Parameter(in = ParameterIn.QUERY, schema=@Schema()) @Valid @RequestParam(value = "status", required = false) String status,
-            @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody RequestInfoBody requestInfoBody) {
-                List<Application> applicationList = applicationService.searchApplications(id, filingNumber, cnrNumber, tenantId, status, limit, offset, sortBy, requestInfoBody);
-                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoBody.getRequestInfo(), true);
+            @Parameter(in = ParameterIn.QUERY, description = "No of records return" ,schema=@Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit,
+            @Parameter(in = ParameterIn.QUERY, description = "offset" ,schema=@Schema()) @Valid @RequestParam(value = "offset", required = false) Integer offset,
+            @Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided" , schema=@Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy,
+            @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody ApplicationSearchRequest request) {
+                List<Application> applicationList = applicationService.searchApplications(limit, offset, sortBy,request);
+                ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
                 ApplicationListResponse applicationListResponse = ApplicationListResponse.builder().applicationList(applicationList).totalCount(applicationList.size()).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(applicationListResponse, HttpStatus.OK);
         }

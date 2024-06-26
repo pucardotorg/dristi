@@ -58,6 +58,7 @@ public class ServiceConstants {
 	public static final String SEARCH_WITNESS_ERR = "WITNESS_NOT_FOUND";
 	public static final String UPDATE_WITNESS_ERR = "UPDATE_WITNESS_ERR";
 	public static final String VALIDATION_ERR = "VALIDATION_EXCEPTION";
+	public static final String JOIN_CASE_ERR = "JOIN_CASE_ERR";
 	public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
 	public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
 	public static final String INDIVIDUAL_SERVICE_EXCEPTION = "INDIVIDUAL_SERVICE_EXCEPTION";
@@ -95,4 +96,10 @@ public class ServiceConstants {
 	public static final String STATE = "KL";
 	public static final String DISTRICT = "JL";
 	public static final String ESTABLISHMENT_CODE = "01";
+
+	//error logs constants
+	public static final String JOIN_CASE_INVALID_REQUEST = "Invalid request for joining a case";
+	public static final String INVALID_COMPLAINANT_DETAILS = "Invalid complainant details";
+	public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
+	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
 }
