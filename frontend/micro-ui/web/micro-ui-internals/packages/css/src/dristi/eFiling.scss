@@ -365,6 +365,9 @@
   }
 }
 
+.witness-details {
+}
+
 .debt-liability {
   .select-wrap {
     max-width: 100%;
@@ -805,6 +808,11 @@
       }
     }
   }
+  .action-bar-wrap.e-filing-action-bar {
+    header {
+      margin-bottom: 0px !important;
+    }
+  }
 }
 
 .advocate-detail {
@@ -861,6 +869,10 @@
 
           &.error {
             border-left: 2px #bb2c2f solid;
+          }
+
+          &.preverror {
+            border-left: 2px #4d83cf solid;
           }
 
           .scrutiny-error {
@@ -941,6 +953,7 @@
               &.error {
                 background-color: #fce8e8;
               }
+
               &.preverror {
                 background-color: #ecf3fd;
               }
@@ -960,7 +973,7 @@
               }
 
               &.preverror {
-                background-color: #bbbbbd;
+                background-color: #ecf3fd;
               }
             }
 
@@ -1101,6 +1114,7 @@
 
     .total-error-note {
       background-color: #ecf3fd !important;
+
       svg {
         g {
           path {

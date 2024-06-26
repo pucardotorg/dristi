@@ -292,7 +292,7 @@ function EFilingCases({ path }) {
     return caseDetails?.additionalDetails?.scrutiny?.data || {};
   }, [caseDetails]);
   const judgeObj = useMemo(() => {
-    return caseDetails?.additionalDetails?.judge || {};
+    return caseDetails?.additionalDetails?.judge || null;
   }, [caseDetails]);
 
   const countSectionErrors = (section) => {
