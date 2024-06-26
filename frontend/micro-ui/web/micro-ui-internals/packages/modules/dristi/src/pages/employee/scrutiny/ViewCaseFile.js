@@ -450,7 +450,7 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBack"
             />
           )}
@@ -474,9 +474,9 @@ function ViewCaseFile({ t }) {
               t={t}
               totalErrors={totalErrors?.total || 0}
               handleCloseModal={handleCloseModal}
-              onCancel={handlePotentialConfirm}
+              onCancel={handlePotentialConfirm} 
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
             />
           )}
@@ -488,7 +488,7 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
             />
           )}
@@ -544,7 +544,7 @@ function ViewCaseFile({ t }) {
             totalErrors={totalErrors?.total || 0}
             onCancel={handleCloseModal}
             onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
+            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
             type="sendCaseBack"
           />
         )}
@@ -570,7 +570,7 @@ function ViewCaseFile({ t }) {
             handleCloseModal={handleCloseModal}
             onCancel={handlePotentialConfirm}
             onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
+            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
             type="sendCaseBackPotential"
           />
         )}
@@ -582,7 +582,7 @@ function ViewCaseFile({ t }) {
             totalErrors={totalErrors?.total || 0}
             onCancel={handleCloseModal}
             onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
+            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
             type="sendCaseBackPotential"
           />
         )}

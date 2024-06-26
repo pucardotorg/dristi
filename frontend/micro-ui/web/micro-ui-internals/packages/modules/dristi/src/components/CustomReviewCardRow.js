@@ -85,6 +85,8 @@ const CustomReviewCardRow = ({
     if (isScrutiny) {
       if (typeof prevDataError === "string" && (dataError || prevDataError)) {
         bgclassname = dataError === prevDataError ? "preverror" : "error";
+      } else {
+        bgclassname = dataError ? "error" : "";
       }
     }
     switch (type) {
@@ -138,7 +140,6 @@ const CustomReviewCardRow = ({
                     ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
                     : t("CS_NOT_AVAILABLE")
                   : textValue || t("CS_NOT_AVAILABLE")}
-
               </div>
               {showFlagIcon && (
                 <div
@@ -261,6 +262,14 @@ const CustomReviewCardRow = ({
             }
           });
         }
+        bgclassname =
+          isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
+        const hasPrevError = value.some((key) => {
+          return prevDataError?.[key] && prevDataError?.[key]?.FSOError;
+        });
+        if (isPrevScrutiny) {
+          showFlagIcon = hasPrevError;
+        }
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
         files.forEach((file) => {
@@ -272,7 +281,7 @@ const CustomReviewCardRow = ({
           return null;
         }
         return (
-          <div className={`image-main ${isScrutiny && FSOErrors.length > 0 && "error"}`}>
+          <div className={`image-main ${bgclassname}`}>
             <div className={`image ${!isScrutiny ? "column" : ""}`}>
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
@@ -372,15 +381,17 @@ const CustomReviewCardRow = ({
                     )
                   : null}
               </div>
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
-                }}
-                key={dataIndex}
-              >
-                {isScrutiny && (FSOErrors?.length > 0 ? <EditPencilIcon /> : <FlagIcon />)}
-              </div>
+              {showFlagIcon && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                  }}
+                  key={dataIndex}
+                >
+                  {isScrutiny && (FSOErrors?.length > 0 ? <EditPencilIcon /> : <FlagIcon />)}
+                </div>
+              )}
             </div>
             {FSOErrors?.length > 0 &&
               FSOErrors.map((error, ind) => {
