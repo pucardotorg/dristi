@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "http://dristi.pucar.org/schemas/judgement.json",
+  "$comment": "definition of the schema for issuing a judgement order. date, type, amount, case number etc. will be available in the task object itself",
+  "$version": "0.1.0",
+  "judgementDetails":
+  {
+    "judgementId": {
+      "type" : "string",
+      "description": "alphanumeric string representing the judgement ID"
+    },
+    "issueDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of judgement/sentence"
+    }
+  },
+  "respondentDetails":
+  {
+    "name" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "fatherName" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "occupation" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "address": {
+      "type": "string",
+      "pattern": "^.{1,400}$",
+      "description": "string having a max of 400 characters and matches any character (including newline characters)"
+    },
+    "phone" : {
+      "type": "string",
+      "pattern": "^\\+?[0-9\\-() ]+$"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "age" : {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 120,
+      "description": "age in years and will accept decimals so age can be 10.5 meaning 10 years 6 months"
+    },
+    "advocateName" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    }
+  },
+  "dates":
+  {
+    "occurrenceDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of cheque return memo"
+    },
+    "complaintDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of filing of complaint before the court"
+    },
+    "apprehensionDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of first appearance of the accused/respondent"
+    },
+    "bailDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of grant of bail"
+    },
+    "trailCommencementDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of first hearing"
+    },
+    "trailClosureDate": {
+      "type" : "string",
+      "format": "date",
+      "description": "date of last hearing before judgement hearing"
+    }
+  },
+  "complainantDetails":
+  {
+    "name" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "fatherName" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "age" : {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 120,
+      "description": "age in years and will accept decimals so age can be 10.5 meaning 10 years 6 months"
+    },
+    "address": {
+      "type": "string",
+      "pattern": "^.{1,400}$",
+      "description": "string having a max of 400 characters and matches any character (including newline characters)"
+    },
+    "advocateName" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    }
+  },
+  "caseDetails":
+  {
+    "offence" : {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,512}$",
+      "description": "Statute and section of the case. string having a max of 512 alphanumeric characters"
+    },
+    "finding": {
+      "type": "string",
+      "enum": ["Dismissed", "Allowed", "Partly allowed", "Convicted", "Partly convicted"]
+    },
+    "sentence": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,4096}$",
+      "description": "string having a max of 4096 alphanumeric characters"
+    },
+    "title": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,512}$",
+      "description": "string having a max of 512 alphanumeric characters"
+    },
+    "year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 9999,
+      "description": "year the case was logged"
+    },
+    "judgeName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z]{1,100}$",
+      "description": "string having a max of 100 alphabets. no numbers"
+    },
+    "courtName": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9]{1,124}$",
+      "description": "string having a max of 124 alphanumeric characters"
+    }
+  }
+}
