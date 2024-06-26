@@ -21,6 +21,8 @@ public class EvidenceSearchCriteria {
     private String sourceId;
     private String sourceName;
     private String status;
+    private String artifactNumber;
+
 
     // Getters and setters
 
@@ -85,5 +87,13 @@ public class EvidenceSearchCriteria {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getArtifactNumber() {
+        return artifactNumber;
+    }
+
+    public void setArtifactNumber(String artifactNumber) {
+        this.artifactNumber = artifactNumber;
     }
 }
