@@ -28,6 +28,8 @@ public class EvidenceQueryBuilderTest {
         String order = "testOrder";
         String sourceId = "testSourceId";
         String sourceName = "testSourceName";
+        String isEvidence="testIsEvidence";
+        String sourceType="testSourceType";
         String artifactNumber="artifactNumber";
         // Mocking the EvidenceQueryBuilder
         EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
@@ -36,8 +38,8 @@ public class EvidenceQueryBuilderTest {
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
                 "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-                "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+                "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+                "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art WHERE art.id = '1' AND art.caseId = 'testCaseId' AND art.application = 'testApplication' " +
@@ -61,6 +63,8 @@ public class EvidenceQueryBuilderTest {
         String order = null;
         String sourceId = null;
         String sourceName = null;
+        String isEvidence="testIsEvidence";
+        String sourceType="testSourceType";
         String artifactNumber=null;
 
         // Mocking the EvidenceQueryBuilder
@@ -70,8 +74,8 @@ public class EvidenceQueryBuilderTest {
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
                 "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
                 "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-                "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-                "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+                "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+                "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";

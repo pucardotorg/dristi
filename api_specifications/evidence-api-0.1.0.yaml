@@ -163,6 +163,10 @@ components:
           type: boolean
           description: Field to indicate soft delete of records. True if record is active, false if not.
           default: true
+        isEvidence:
+          type: boolean
+          description: Field to indicate soft delete of records. True if record is evidence, false if not.
+          default: false
         status:
           type: string
           description: >-

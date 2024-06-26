@@ -79,6 +79,10 @@ public class Artifact {
 
 	private String artifactType = null;
 
+	@JsonProperty("sourceType")
+
+	private String sourceType = null;
+
 	@JsonProperty("sourceID")
 
 	private String sourceID = null;
@@ -98,6 +102,10 @@ public class Artifact {
 	@JsonProperty("isActive")
 
 	private Boolean isActive = true;
+
+	@JsonProperty("isEvidence")
+
+	private Boolean isEvidence = false;
 
 	@JsonProperty("status")
 

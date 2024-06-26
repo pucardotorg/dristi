@@ -51,11 +51,13 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                             .order(rs.getString("orders"))
                             .mediaType(rs.getString("mediaType"))
                             .artifactType(rs.getString("artifactType"))
+                            .sourceType(rs.getString("sourceType"))
                             .sourceID(rs.getString("sourceID"))
                             .sourceName(rs.getString("sourceName"))
                             .applicableTo(Collections.singletonList(rs.getString("applicableTo")))
                             .createdDate(rs.getInt("createdDate"))
                             .isActive(rs.getBoolean("isActive"))
+                            .isEvidence(rs.getBoolean("isEvidence"))
                             .status(rs.getString("status"))
                             .description(rs.getString("description"))
                             .auditdetails(auditDetails)
@@ -75,8 +77,8 @@ public class EvidenceRowMapper implements ResultSetExtractor<List<Artifact>> {
                 artifactMap.put(id, artifact);
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing evidence artifact ResultSet: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence artifact ResultSet: " + e.toString());
         }
         return new ArrayList<>(artifactMap.values());
     }

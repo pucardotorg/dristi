@@ -17,8 +17,8 @@ public class EvidenceQueryBuilder {
     private static final String BASE_ARTIFACT_QUERY = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
             "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
             "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-            "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-            "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+            "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+            "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
             "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
             "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime ";
 
@@ -90,7 +90,7 @@ public class EvidenceQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building artifact search query", e);
-            throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.getMessage());
+            throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
 
@@ -109,7 +109,7 @@ public class EvidenceQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.getMessage());
+            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.toString());
         }
     }
 
@@ -135,7 +135,7 @@ public class EvidenceQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building comment search query", e);
-            throw new CustomException(COMMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the comment search query: " + e.getMessage());
+            throw new CustomException(COMMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the comment search query: " + e.toString());
         }
     }
 
