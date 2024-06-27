@@ -106,6 +106,7 @@ const JoinCaseHome = ({ t }) => {
       value: "keshav@gmail.com",
     },
   ]);
+
   const [party, setParty] = useState("Subarna Sadhu");
   const [validationCode, setValidationCode] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
@@ -117,10 +118,7 @@ const JoinCaseHome = ({ t }) => {
 
   const [advocateId, setAdvocateId] = useState("");
   const [adovacteVakalatnama, setAdovacteVakalatnama] = useState({});
-
-  useEffect(() => {
-    console.log("adovacteVakalatnama", adovacteVakalatnama);
-  }, [adovacteVakalatnama]);
+  const [individualId, setIndividualId] = useState("");
 
   const userInfo = JSON.parse(window.localStorage.getItem("user-info"));
   const token = window.localStorage.getItem("token");
@@ -590,8 +588,9 @@ const JoinCaseHome = ({ t }) => {
     },
   ];
 
+  useEffect(() => {console.log('individualId', individualId)}, [individualId])
+
   useEffect(() => {
-    // console.log('caseDetails', caseDetails)
     setCaseInfo([
       {
         key: "CASE_CATEGORY",
@@ -670,6 +669,18 @@ const JoinCaseHome = ({ t }) => {
         setStep(step + 1);
         setIsDisabled(true);
       }
+      const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+        {
+          Individual: {
+            userUuid: [userInfo?.uuid],
+          },
+        },
+        { tenantId, limit: 1000, offset: 0 },
+        "",
+        userInfo?.uuid && isUserLoggedIn
+      );
+      // console.log('individualId:', individualData?.Individual?.[0]?.individualId)
+      setIndividualId(individualData?.Individual?.[0]?.individualId);
     } else if (step === 1) {
       console.log("first");
       if (userType && userType === "Litigant" && selectedParty && representingYourself) {
@@ -678,52 +689,81 @@ const JoinCaseHome = ({ t }) => {
         setStep(step + 1);
         setBarDetails([]);
       } else if (userType && userType === "Advocate" && selectedParty) {
-        const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
-          {
-            Individual: {
-              userUuid: [userInfo?.uuid],
+        if(roleOfNewAdvocate !== "I’m a supporting advocate") {
+          
+  
+          const advocateResponse = await DRISTIService.searchIndividualAdvocate(
+            {
+              criteria: [
+                {
+                  individualId: individualId,
+                },
+              ],
+              tenantId,
             },
-          },
-          { tenantId, limit: 1000, offset: 0 },
-          "",
-          userInfo?.uuid && isUserLoggedIn
-        );
-        const individualId = individualData?.Individual?.[0]?.individualId;
+            {}
+          );
+  
+          setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
+          setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
+          setIsDisabled(false);
+          setStep(step + 1);
+          setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
+          setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
+          setBarDetails([
+            {
+              key: "CASE_NUMBER",
+              value: caseDetails?.caseNumber,
+            },
+            {
+              key: "Court Complex",
+              value: caseDetails?.courtName,
+            },
+            {
+              key: "Advocate",
+              value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
+            },
+          ]);
+        } else {
+          const advocateResponse = await DRISTIService.searchIndividualAdvocate(
+            {
+              criteria: [
+                {
+                  barRegistrationNumber: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber,
+                },
+              ],
+              tenantId,
+            },
+            {}
+          );
 
-        const advocateResponse = await DRISTIService.searchIndividualAdvocate(
-          {
-            criteria: [
-              {
-                individualId: individualId,
+          const individualData = await window?.Digit.DRISTIService.searchIndividualUser(
+            {
+              Individual: {
+                individualId: advocateResponse?.advocates[0]?.responseList[0]?.individualId,
               },
-            ],
-            tenantId,
-          },
-          {}
-        );
-        console.log("advocateResponse", advocateResponse);
-        console.log("advocateResponse", advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
-
-        setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
-        setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
-        setIsDisabled(false);
-        setStep(step + 1);
-        setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
-        setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
-        setBarDetails([
-          {
-            key: "CASE_NUMBER",
-            value: caseDetails?.caseNumber,
-          },
-          {
-            key: "Court Complex",
-            value: caseDetails?.courtName,
-          },
-          {
-            key: "Advocate",
-            value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
-          },
-        ]);
+            },
+            { tenantId, limit: 1000, offset: 0 },
+            "",
+            userInfo?.uuid && isUserLoggedIn
+          );
+          console.log('individualData', individualData)
+          setPrimaryAdvocateDetail([
+            {
+              key: "Name",
+              value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName,
+            },
+            {
+              key: "Bar Council Id",
+              value: caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber,
+            },
+            {
+              key: "Email",
+              value: individualData.Individual[0]?.email || "Email Not Available",
+            },
+          ])
+          setStep(step + 1);
+        }
       }
     } else if (step === 2) {
       if (roleOfNewAdvocate === "I’m a supporting advocate") {
@@ -810,13 +850,31 @@ const JoinCaseHome = ({ t }) => {
               representing: [
                 {
                   tenantId: tenantId,
-                  individualId: caseDetails?.additionalDetails?.complaintDetails?.formdata[0]?.data?.individualDetails?.individualId,
+                  individualId: selectedParty.includes("Complainant") ? caseDetails?.additionalDetails?.complaintDetails?.formdata[0]?.data?.individualDetails?.individualId :  caseDetails?.additionalDetails?.respondentDetails?.formdata[0]?.data?.individualDetails?.individualId,
                 },
               ],
             },
           },
           {}
         );
+        console.log('Join case (advocate):', response)
+      } else {
+        console.log('hojojoij')
+        const response = await CASEService.joinCaseService(
+          {
+            caseFilingNumber: caseNumber,
+            tenantId: tenantId,
+            accessCode: validationCode,
+            litigant: {
+              tenantId: tenantId,
+              individualId: representingYourself === "Yes" ? individualId : "",
+              affidavitText,
+              partyCategory: "INDIVIDUAL",
+            },
+          },
+          {}
+        );
+        console.log('Join case (litigant):', response)
       }
     } else if (step === 5) {
       setStep(6);
