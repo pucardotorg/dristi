@@ -267,6 +267,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             }}
           />
         </div>
+        {console.log("config?.isVerifiedOtpDisabledKey", config?.isVerifiedOtpDisabledKey, errors?.[config?.key]?.[config?.isVerifiedOtpDisabledKey])}
         {isUserVerified || formData?.[config.key]?.isUserVerified ? (
           <div
             style={{
@@ -287,7 +288,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             labelClassName={"secondary-label-selector"}
             isDisabled={
               !formData?.[config.key]?.[config.name] ||
-              errors?.[config?.key]?.[config.name] ||
+              errors?.[config?.key]?.[config?.isVerifiedOtpDisabledKey] ||
               formData?.[config.key]?.[config.name]?.length < config?.validation?.minLength ||
               formData?.[config.key]?.[config.name]?.length > config?.validation?.maxLength
             }
