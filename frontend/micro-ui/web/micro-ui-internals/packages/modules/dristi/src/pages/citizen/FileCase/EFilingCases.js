@@ -38,6 +38,7 @@ import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 import ErrorsAccordion from "../../../components/ErrorsAccordion";
 import ReactTooltip from "react-tooltip";
 import FlagBox from "../../../components/FlagBox";
+import ScrutinyInfo from "../../../components/ScrutinyInfo";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -350,6 +351,18 @@ function EFilingCases({ path }) {
       .flatMap((val) => val?.pages)
       .filter((val) => val !== undefined);
   }, [scrutinyErrors]);
+
+  const sectionWiseErrors = useMemo(() => {
+    let obj = {};
+    Object.values(scrutinyObj || {}).forEach((item) => {
+      Object.keys(item || {}).forEach((key) => {
+        if (item[key]?.scrutinyMessage?.FSOError) {
+          obj[key] = item[key]?.scrutinyMessage?.FSOError;
+        }
+      });
+    });
+    return obj;
+  }, [scrutinyObj]);
 
   const totalErrors = useMemo(() => {
     let total = 0;
@@ -730,7 +743,7 @@ function EFilingCases({ path }) {
                   caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
                     (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
                   ) &&
-                  body?.key === "delayApplicationType"
+                  body?.key === "delayCondonationType"
                 ) {
                   body.disable = true;
                 }
@@ -1362,7 +1375,7 @@ function EFilingCases({ path }) {
       return "disable-form";
     }
 
-    if (selected === "delayApplications" && formdata?.[0]?.data?.delayApplicationType?.code) {
+    if (selected === "delayApplications" && formdata?.[0]?.data?.delayCondonationType?.code) {
       return "disable-form";
     }
     return "";
@@ -1410,6 +1423,12 @@ function EFilingCases({ path }) {
     setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
   }
+
+  if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
+    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+  }
+
+  console.log("form", formdata);
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1526,6 +1545,7 @@ function EFilingCases({ path }) {
             </div>
             <p>{t(pageConfig.subtext || "")}</p>
           </div>
+          {sectionWiseErrors?.[selected] && <ScrutinyInfo t={t} config={{ populators: { scrutinyMessage: sectionWiseErrors?.[selected] } }} />}
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
               <div key={`${selected}-${index}`} className="form-wrapper-d">

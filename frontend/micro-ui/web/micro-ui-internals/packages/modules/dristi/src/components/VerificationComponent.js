@@ -134,18 +134,15 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
       {inputs?.map((input, index) => {
         let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || "";
         let fileErrors =
-          currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"] &&
-          [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
+          currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"] &&
+          [currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file) =>
             fileValidator(file, idProofVerificationConfig?.[0].body[0]?.populators?.inputs?.[1])
           );
-        const isUserVerified =
-          (input?.verificationOn && extractValue(formData, input?.verificationOn)) ||
-          isAadharVerified ||
-          (formData?.[config.key]?.[config.key] && formData?.[config.key]?.["verificationType"]);
+        const isUserVerified = isAadharVerified || formData?.[config.key]?.[config.key];
         return (
           <React.Fragment key={index}>
             <CardLabel className="card-label-smaller">{t(input.label)}</CardLabel>
-            {!currentValue?.[input.name]?.["ID_Proof"] ? (
+            {!currentValue?.["ID_Proof"] ? (
               <React.Fragment>
                 {!isUserVerified && (
                   <div className="button-field">
@@ -197,7 +194,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                 />
               </React.Fragment>
             ) : (
-              [currentValue?.[input.name]?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file, index) => (
+              [currentValue?.["ID_Proof"]?.[0]?.[1]?.["file"]].map((file, index) => (
                 <RenderFileCard
                   key={`${input?.name}${index}`}
                   index={index}
@@ -219,11 +216,7 @@ function VerificationComponent({ t, config, onSelect, formData = {}, errors, set
                 isDisabled={isDisabled}
                 actionSaveLabel={t("ADD")}
                 actionSaveOnSubmit={() => {
-                  onSelect(
-                    config.key,
-                    { ...formData[config.key], [input.name]: { verificationType, [input.name]: modalData } },
-                    { shouldValidate: true }
-                  );
+                  onSelect(config.key, { ...formData[config.key], [input.name]: { verificationType, ...modalData } }, { shouldValidate: true });
                   setState((prev) => ({
                     ...prev,
                     showModal: false,

@@ -99,11 +99,11 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
       !caseDetails?.caseDetails ||
       (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
     ) {
-      setValue("delayApplicationType", {
+      setValue("delayCondonationType", {
         code: "NO",
         name: "NO",
-        showForm: false,
-        isEnabled: false,
+        showForm: true,
+        isEnabled: true,
       });
       toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
       setTimeout(() => {
@@ -115,12 +115,10 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
         (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
       )
     ) {
-      setValue("delayApplicationType", {
+      setValue("delayCondonationType", {
         code: "NO",
         name: "NO",
         showForm: true,
-        isVerified: true,
-        hasBarRegistrationNo: true,
         isEnabled: true,
       });
     } else if (
@@ -128,7 +126,7 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
         (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 >= new Date().getTime()
       )
     ) {
-      setValue("delayApplicationType", {
+      setValue("delayCondonationType", {
         code: "YES",
         name: "YES",
         showForm: false,
@@ -314,36 +312,136 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
 };
 
 export const checkDuplicateMobileEmailValidation = ({ formData, setValue, selected, setError, clearErrors, formdata, index, caseDetails }) => {
-  if (selected === "respondentDetails" || selected === "witnessDetails") {
-    const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
-    const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
-    if (respondentMobileNUmbers && respondentMobileNUmbers && respondentMobileNUmbers === complainantMobileNumber) {
+  const complainantMobileNumbersArray =
+    caseDetails?.additionalDetails?.complaintDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.complainantVerification?.mobileNumber) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.complainantVerification?.mobileNumber;
+      }) || [];
+  const respondentMobileNumbersArray =
+    caseDetails?.additionalDetails?.respondentDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.phonenumbers?.mobileNumber && data?.data?.phonenumbers?.mobileNumber.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.phonenumbers?.mobileNumber;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  const witnessMobileNumbersArray =
+    caseDetails?.additionalDetails?.witnessDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.phonenumbers?.mobileNumber && data?.data?.phonenumbers?.mobileNumber.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.phonenumbers?.mobileNumber;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  const respondentEmailsArray =
+    caseDetails?.additionalDetails?.respondentDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.emails?.emailId && data?.data?.emails?.emailId.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.emails?.emailId;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  const witnessEmailsArray =
+    caseDetails?.additionalDetails?.witnessDetails?.formdata
+      .filter((data) => {
+        if (data?.data?.emails?.emailId && data?.data?.emails?.emailId.length !== 0) {
+          return true;
+        } else return false;
+      })
+      .map((data) => {
+        return data?.data?.emails?.emailId;
+      })
+      .reduce((acc, curr) => acc.concat(curr), []) || [];
+
+  if (selected === "respondentDetails") {
+    const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
+    if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
+    } else if (currentMobileNumber && witnessMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("phonenumbers", { mobileNumber: "RESPONDENT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM" });
     } else if (
       formdata &&
-      formdata?.length > 1 &&
+      formdata?.length > 0 &&
       formData?.phonenumbers?.textfieldValue &&
       formData?.phonenumbers?.textfieldValue?.length === 10 &&
       formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
     ) {
-      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_RESPONDENT" });
     } else {
       clearErrors("phonenumbers");
     }
 
-    if (
+    const currentEmail = formData?.emails?.textfieldValue;
+    if (currentEmail && witnessEmailsArray.some((email) => email === currentEmail)) {
+      setError("emails", { emailId: "RESPONDENT_EMAIL_CAN_NOT_BE_SAME_AS_WITNESS_EMAIL" });
+    } else if (
       formdata &&
-      formdata?.length > 1 &&
+      formdata?.length > 0 &&
       formData?.emails?.textfieldValue &&
-      formdata?.some((data) => data?.data?.emails?.emailId?.some((number) => number === formData?.emails?.textfieldValue))
+      formdata?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
     ) {
-      setError("emails", { emailId: "DUPLICATE_EMAILS" });
+      setError("emails", { emailId: "DUPLICATE_EMAIL_ID_FOR_RESPONDENT" });
+    } else {
+      clearErrors("emails");
+    }
+  }
+  if (selected === "witnessDetails") {
+    const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
+    if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
+    } else if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM" });
+    } else if (
+      formdata &&
+      formdata?.length > 0 &&
+      formData?.phonenumbers?.textfieldValue &&
+      formData?.phonenumbers?.textfieldValue?.length === 10 &&
+      formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
+    ) {
+      setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_WITNESS" });
+    } else {
+      clearErrors("phonenumbers");
+    }
+
+    const currentEmail = formData?.emails?.textfieldValue;
+    if (currentEmail && respondentEmailsArray.some((email) => email === currentEmail)) {
+      setError("emails", { emailId: "WITNESS_EMAIL_CAN_NOT_BE_SAME_AS_RESPONDENT_EMAIL" });
+    } else if (
+      formdata &&
+      formdata?.length > 0 &&
+      formData?.emails?.textfieldValue &&
+      formdata?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
+    ) {
+      setError("emails", { emailId: "DUPLICATE_EMAIL_ID_FOR_WITNESS" });
     } else {
       clearErrors("emails");
     }
   }
   if (selected === "complaintDetails") {
-    if (
+    const currentMobileNumber = formData?.complainantVerification?.mobileNumber;
+
+    if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM" });
+    } else if (currentMobileNumber && witnessMobileNumbersArray.some((number) => number === currentMobileNumber)) {
+      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM" });
+    } else if (
       formdata &&
       formdata?.length > 1 &&
       formData?.complainantVerification?.mobileNumber &&
@@ -352,7 +450,7 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
         (data, idx) => idx !== index && data?.data?.complainantVerification?.mobileNumber === formData?.complainantVerification?.mobileNumber
       )
     ) {
-      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER" });
+      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_COMPLAINANT" });
     } else {
       clearErrors("complainantVerification");
     }
@@ -659,7 +757,7 @@ export const chequeDateValidation = ({ selected, formData, setError, clearErrors
 export const delayApplicationValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast }) => {
   if (selected === "delayApplications") {
     if (
-      formData?.delayApplicationType?.code === "NO" &&
+      formData?.delayCondonationType?.code === "NO" &&
       (!formData?.condonationFileUpload || (formData?.condonationFileUpload && !formData?.condonationFileUpload?.document.length > 0))
     ) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
@@ -711,7 +809,7 @@ export const createIndividualUser = async ({ data, documentData, tenantId }) => 
         documentType: documentData?.fileType,
       }
     : {};
-  const identifierType = documentData ? data?.complainantId?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
+  const identifierType = documentData ? data?.complainantId?.complainantId?.selectIdTypeType?.code : "AADHAR";
   let Individual = {
     Individual: {
       tenantId: tenantId,
@@ -799,92 +897,132 @@ export const updateCaseDetails = async ({
   if (selected === "complaintDetails") {
     let litigants = [];
     const complainantVerification = {};
-    litigants = await Promise.all(
-      formdata
-        .filter((item) => item.isenabled)
-        .map(async (data, index) => {
-          if (data?.data?.complainantVerification?.individualDetails) {
-            return {
-              tenantId,
-              caseId: caseDetails?.id,
-              partyCategory: data?.data?.complainantType?.code,
-              individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
-              partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-            };
-          } else {
-            if (data?.data?.complainantId?.complainantId && isCompleted === true) {
-              if (data?.data?.complainantId?.verificationType !== "AADHAR") {
-                const documentData = await onDocumentUpload(
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
-                  tenantId
-                );
-                !!setFormDataValue &&
-                  setFormDataValue("complainantVerification", {
+    if (isCompleted === true) {
+      litigants = await Promise.all(
+        formdata
+          .filter((item) => item.isenabled)
+          .map(async (data, index) => {
+            if (data?.data?.complainantVerification?.individualDetails) {
+              return {
+                tenantId,
+                caseId: caseDetails?.id,
+                partyCategory: data?.data?.complainantType?.code,
+                individualId: data?.data?.complainantVerification?.individualDetails?.individualId,
+                partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+              };
+            } else {
+              if (data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.isUserVerified) {
+                if (data?.data?.complainantId?.verificationType !== "AADHAR") {
+                  const documentData = await onDocumentUpload(
+                    data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+                    data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+                    tenantId
+                  );
+                  !!setFormDataValue &&
+                    setFormDataValue("complainantVerification", {
+                      individualDetails: {
+                        document: [documentData],
+                      },
+                    });
+                  const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
+
+                  const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
+                  const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
+                  const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
+                  const street = Individual?.Individual?.address[0]?.street || "";
+                  const city = Individual?.Individual?.address[0]?.city || "";
+                  const pincode = Individual?.Individual?.address[0]?.pincode || "";
+                  const latitude = Individual?.Individual?.address[0]?.latitude || "";
+                  const longitude = Individual?.Individual?.address[0]?.longitude || "";
+                  const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+
+                  const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
+
+                  complainantVerification[index] = {
                     individualDetails: {
                       document: [documentData],
-                    },
-                  });
-                const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
-
-                const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
-                const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
-                const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
-                const street = Individual?.Individual?.address[0]?.street || "";
-                const city = Individual?.Individual?.address[0]?.city || "";
-                const pincode = Individual?.Individual?.address[0]?.pincode || "";
-                const latitude = Individual?.Individual?.address[0]?.latitude || "";
-                const longitude = Individual?.Individual?.address[0]?.longitude || "";
-                const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
-
-                const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
-
-                complainantVerification[index] = {
-                  individualDetails: {
-                    document: [documentData],
-                    individualId: Individual?.Individual?.individualId,
-                    "addressDetails-select": {
-                      pincode: pincode,
-                      district: addressLine2,
-                      city: city,
-                      state: addressLine1,
-                      locality: address,
-                    },
-                    addressDetails: {
-                      pincode: pincode,
-                      district: addressLine2,
-                      city: city,
-                      state: addressLine1,
-                      coordinates: {
-                        longitude: latitude,
-                        latitude: longitude,
+                      individualId: Individual?.Individual?.individualId,
+                      "addressDetails-select": {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        locality: address,
                       },
-                      locality: address,
+                      addressDetails: {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        coordinates: {
+                          longitude: latitude,
+                          latitude: longitude,
+                        },
+                        locality: address,
+                      },
                     },
-                  },
-                };
-                return {
-                  tenantId,
-                  caseId: caseDetails?.id,
-                  partyCategory: data?.data?.complainantType?.code,
-                  individualId: Individual?.Individual?.individualId,
-                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                };
-              } else {
-                const Individual = await createIndividualUser({ data: data?.data, tenantId });
-                return {
-                  tenantId,
-                  caseId: caseDetails?.id,
-                  partyCategory: data?.data?.complainantType?.code,
-                  individualId: Individual?.Individual?.individualId,
-                  partyType: index === 0 ? "complainant.primary" : "complainant.additional",
-                };
+                    userDetails: null,
+                  };
+                  return {
+                    tenantId,
+                    caseId: caseDetails?.id,
+                    partyCategory: data?.data?.complainantType?.code,
+                    individualId: Individual?.Individual?.individualId,
+                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                  };
+                } else {
+                  const Individual = await createIndividualUser({ data: data?.data, tenantId });
+
+                  const addressLine1 = Individual?.Individual?.address[0]?.addressLine1 || "Telangana";
+                  const addressLine2 = Individual?.Individual?.address[0]?.addressLine2 || "Rangareddy";
+                  const buildingName = Individual?.Individual?.address[0]?.buildingName || "";
+                  const street = Individual?.Individual?.address[0]?.street || "";
+                  const city = Individual?.Individual?.address[0]?.city || "";
+                  const pincode = Individual?.Individual?.address[0]?.pincode || "";
+                  const latitude = Individual?.Individual?.address[0]?.latitude || "";
+                  const longitude = Individual?.Individual?.address[0]?.longitude || "";
+                  const doorNo = Individual?.Individual?.address[0]?.doorNo || "";
+
+                  const address = `${doorNo ? doorNo + "," : ""} ${buildingName ? buildingName + "," : ""} ${street}`.trim();
+                  complainantVerification[index] = {
+                    individualDetails: {
+                      document: null,
+                      individualId: Individual?.Individual?.individualId,
+                      "addressDetails-select": {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        locality: address,
+                      },
+                      addressDetails: {
+                        pincode: pincode,
+                        district: addressLine2,
+                        city: city,
+                        state: addressLine1,
+                        coordinates: {
+                          longitude: latitude,
+                          latitude: longitude,
+                        },
+                        locality: address,
+                      },
+                    },
+                    userDetails: null,
+                  };
+                  return {
+                    tenantId,
+                    caseId: caseDetails?.id,
+                    partyCategory: data?.data?.complainantType?.code,
+                    individualId: Individual?.Individual?.individualId,
+                    partyType: index === 0 ? "complainant.primary" : "complainant.additional",
+                  };
+                }
               }
+              return {};
             }
-            return {};
-          }
-        })
-    );
+          })
+      );
+    }
 
     const newFormData = await Promise.all(
       formdata
@@ -895,16 +1033,16 @@ export const updateCaseDetails = async ({
             complainantId: { complainantId: { complainantId: {} } },
           };
           const individualDetails = {};
-          if (data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file) {
+          if (data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file) {
             const uploadedData = await onDocumentUpload(
-              data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
-              data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+              data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file,
+              data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
               tenantId
             );
             idProof.complainantId.complainantId.complainantId = {
               ID_Proof: [
                 [
-                  data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
+                  data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[0],
                   {
                     file: {
                       documentType: uploadedData.fileType || uploadedData?.documentType,
@@ -941,16 +1079,12 @@ export const updateCaseDetails = async ({
                 ...data?.data?.companyDetailsUpload,
                 document: documentData,
               },
-              individualDetails: {
-                ...data?.data?.complainantVerification?.individualDetails,
-                individualDetails,
-              },
               complainantVerification: {
                 ...data?.data?.complainantVerification,
                 ...complainantVerification[index],
-                isUserVerified: !!data?.data?.complainantId?.complainantId && data?.data?.complainantVerification?.mobileNumber,
+                isUserVerified: Boolean(data?.data?.complainantVerification?.mobileNumber && data?.data?.complainantVerification?.otpNumber),
               },
-              ...(data?.data?.complainantId?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file && idProof),
+              ...(data?.data?.complainantId?.complainantId?.ID_Proof?.[0]?.[1]?.file && idProof),
             },
           };
         })
@@ -1003,7 +1137,11 @@ export const updateCaseDetails = async ({
               })
             );
           }
-          if (data?.data?.companyDetailsUpload?.document) {
+          if (
+            data?.data?.companyDetailsUpload?.document &&
+            Array.isArray(data?.data?.companyDetailsUpload?.document) &&
+            data?.data?.companyDetailsUpload?.document.length > 0
+          ) {
             documentData.companyDetailsUpload = await Promise.all(
               data?.data?.companyDetailsUpload?.document?.map(async (document) => {
                 if (document) {
@@ -1499,10 +1637,19 @@ export const updateCaseDetails = async ({
       },
     };
   }
+  const caseTitle =
+    caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName &&
+    caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+    `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${
+      caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName || ""
+    } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+      caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+    }`;
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
     ...data,
+    caseTitle,
     linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],
     filingDate: caseDetails.filingDate,
     workflow: {
@@ -1514,6 +1661,7 @@ export const updateCaseDetails = async ({
     {
       cases: {
         ...caseDetails,
+        caseTitle,
         litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
         ...data,
         linkedCases: caseDetails?.linkedCases ? caseDetails?.linkedCases : [],

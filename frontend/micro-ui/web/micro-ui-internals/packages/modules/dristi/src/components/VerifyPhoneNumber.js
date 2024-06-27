@@ -169,7 +169,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                 "addressDetails-select": data["addressDetails-select"],
                 addressDetails: data["addressDetails-select"],
               },
-              [config?.disableConfigKey]: true,
+              isUserVerified: true,
             },
             { shouldValidate: true }
           );
@@ -248,7 +248,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             minlength={config?.validation?.minLength}
             maxlength={config?.validation?.maxLength}
             title={config?.validation?.title}
-            disable={isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] || config.disable}
+            disable={isUserVerified || formData?.[config.key]?.isUserVerified || config.disable}
             isMandatory={errors[config?.name]}
             onChange={(e) => {
               const { value } = e.target;
@@ -262,7 +262,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             }}
           />
         </div>
-        {isUserVerified || formData?.[config.key]?.[config?.disableConfigKey] ? (
+        {isUserVerified || formData?.[config.key]?.isUserVerified ? (
           <div
             style={{
               display: "flex",
@@ -299,7 +299,7 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
           />
         )}
       </div>
-      {errors?.[config?.key]?.[config.name] && (
+      {errors?.[config?.key]?.[config.name] && !formData?.complainantVerification?.isUserVerified && (
         <CardLabelError className={errors?.[config?.key]?.[config.name] ? "error-text" : "default-text"}>
           {t(errors?.[config?.key]?.[config.name] ? errors?.[config?.key]?.[config.name] || "VERIFY_PHONE_ERROR_TEXT" : "VERIFY_PHONE_DEFAULT_TEXT")}
         </CardLabelError>

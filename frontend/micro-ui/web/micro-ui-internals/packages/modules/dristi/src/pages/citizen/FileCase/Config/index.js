@@ -1,15 +1,3 @@
-import { advocateDetailsConfig } from "./advocateDetailsConfig";
-import { chequeDetailsConfig } from "./chequedetailsConfig";
-import { complaintDetailsConfig, complaintdetailconfig } from "./complaindetailsConfig";
-import { debtliabilityconfig } from "./debtLiabilityConfig";
-import { delayApplicationConfig } from "./delayApplicationConfig";
-import { demandNoticeConfig } from "./demandNoticeConfig";
-import { prayerAndSwornConfig } from "./prayerAndSwornConfig";
-import { respondentconfig } from "./respondentConfig";
-import { reviewcasefileconfig } from "./reviewcasefileconfig";
-import { signatureconfig } from "./signatureconfig";
-import { witnessConfig } from "./witnessConfig";
-
 export const sideMenuConfig = [
   {
     isOpen: false,
@@ -225,13 +213,13 @@ export const sideMenuConfig = [
             ],
           },
         ],
-        mandatoryFields: ["delayApplicationType"],
+        mandatoryFields: ["delayCondonationType"],
         initialMandatoryFieldCount: 1,
         dependentMandatoryFields: [
-          { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayApplicationType", dependentOnKey: "showForm" },
+          { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayCondonationType", dependentOnKey: "showForm" },
           {
             field: "condonationFileUpload.document",
-            dependentOn: "delayApplicationType",
+            dependentOn: "delayCondonationType",
             dependentOnKey: "showForm",
           },
         ],
