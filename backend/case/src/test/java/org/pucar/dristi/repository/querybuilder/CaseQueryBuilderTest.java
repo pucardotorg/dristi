@@ -660,7 +660,7 @@ class CaseQueryBuilderTest {
 
         String query = queryBuilder.getTotalCountQuery(baseQuery);
 
-        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_cases cases WHERE cases.id = '111')";
+        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_cases cases WHERE cases.id = '111') total_result";
 
         assertEquals(expectedQuery, query);
     }
@@ -669,7 +669,7 @@ class CaseQueryBuilderTest {
     void addPagination_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
         String query = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
         Double pageSize = 10.0;
-        Double pageNumber = 1.0;
+        Double pageNumber = 0.0;
 
         String paginatedQuery = queryBuilder.addPagination(query, pageSize, pageNumber);
 
