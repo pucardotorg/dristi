@@ -95,7 +95,7 @@ public class WorkflowUtilTest {
     public void testUpdateWorkflowStatus() {
         // Arrange
         State state = new State();
-        state.setApplicationStatus("UpdatedStatus");
+        state.setState("UpdatedStatus");
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setState(state);
         BusinessServiceResponse businessServiceResponse = new BusinessServiceResponse();
