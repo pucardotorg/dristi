@@ -26,6 +26,8 @@ public class CaseQueryBuilder {
             " doc.documentuid as documentuid, doc.additionaldetails as docadditionaldetails, doc.case_id as case_id, doc.linked_case_id as linked_case_id, doc.litigant_id as litigant_id, doc.representative_id as representative_id, doc.representing_id as representing_id ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_case_document doc";
 
+    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery})";
+
 
     private static final String BASE_LINKED_CASE_QUERY = " SELECT lics.id as id, lics.casenumbers as casenumbers, lics.case_id as case_id," +
             "lics.relationshiptype as relationshiptype," +
@@ -373,5 +375,12 @@ public class CaseQueryBuilder {
             log.error("Error while building representing document search query :: {}",e.toString());
             throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the query: " + e.getMessage());
         }
+    }
+
+    public String getTotalCountQuery(String baseQuery) {
+        return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
+    }
+    public String addPagination(String query, Double pageSize, Double pageNumber) {
+        return query + " LIMIT " + pageSize + " OFFSET " + (pageNumber - 1) * pageSize;
     }
 }

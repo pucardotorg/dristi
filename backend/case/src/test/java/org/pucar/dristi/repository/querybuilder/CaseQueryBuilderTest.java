@@ -653,4 +653,28 @@ class CaseQueryBuilderTest {
         assertThrows(CustomException.class, () -> queryBuilder.getRepresentingDocumentSearchQuery(ids, preparedStmtList));
     }
 
+
+    @Test
+    void getTotalCountQuery_ShouldReturnCorrectQuery_WhenBaseQueryIsNotNull() {
+        String baseQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
+
+        String query = queryBuilder.getTotalCountQuery(baseQuery);
+
+        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_cases cases WHERE cases.id = '111')";
+
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    void addPagination_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
+        String query = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
+        Double pageSize = 10.0;
+        Double pageNumber = 1.0;
+
+        String paginatedQuery = queryBuilder.addPagination(query, pageSize, pageNumber);
+
+        String expectedQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111' LIMIT 10.0 OFFSET 0.0";
+
+        assertEquals(expectedQuery, paginatedQuery);
+    }
 }
