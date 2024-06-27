@@ -111,6 +111,9 @@ public class HearingService {
             hearing.setTranscript(hearingRequest.getHearing().getTranscript());
             hearing.setNotes(hearingRequest.getHearing().getNotes());
             hearing.setAttendees(hearingRequest.getHearing().getAttendees());
+            hearing.setDocuments(hearingRequest.getHearing().getDocuments());
+            hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
+            hearing.setVcLink(hearingRequest.getHearing().getVcLink());
             hearingRequest.setHearing(hearing);
             workflowService.updateWorkflowStatus(hearingRequest);
 
@@ -134,12 +137,7 @@ public class HearingService {
     public HearingExists isHearingExist(HearingExistsRequest body) {
         HearingExists order = body.getOrder();
         List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(),order.getApplicationNumber(), order.getHearingId(),order.getFilingNumber(),body.getRequestInfo().getUserInfo().getTenantId(),null,null,1,0,null);
-        if (!hearingList.isEmpty()){
-            order.setExists(true);
-        }
-        else {
-            order.setExists(false);
-        }
+        order.setExists(!hearingList.isEmpty());
         return order;
     }
 }
