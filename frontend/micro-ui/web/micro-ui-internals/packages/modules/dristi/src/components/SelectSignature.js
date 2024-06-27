@@ -6,7 +6,7 @@ function SelectSignature({ t, config, onSelect, formData = {}, errors }) {
     () =>
       config?.populators?.inputs || [
         {
-          key: "complaintDetails",
+          key: "complainantDetails",
           label: "CS_COMPLAINT_DETAILS",
           icon: "LitigentIcon",
           config: [{ type: "title", value: "name" }],

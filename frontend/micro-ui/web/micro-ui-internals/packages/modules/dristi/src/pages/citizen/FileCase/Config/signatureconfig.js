@@ -33,7 +33,7 @@ const signatureFormConfig = [
         populators: {
           inputs: [
             {
-              key: "complaintDetails",
+              key: "complainantDetails",
               icon: "LitigentIcon",
               config: { title: "name" },
               data: [],

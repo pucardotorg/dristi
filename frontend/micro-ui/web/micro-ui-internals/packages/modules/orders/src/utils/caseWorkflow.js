@@ -1,5 +1,6 @@
 export const CaseWorkflowState = {
   ABATED: "ABATED",
+  DRAFT_IN_PROGRESS: "DRAFT_IN_PROGRESS",
 };
 
 export const CaseWorkflowAction = {
