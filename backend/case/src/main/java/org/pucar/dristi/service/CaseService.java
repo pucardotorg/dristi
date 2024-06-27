@@ -212,8 +212,11 @@ public class CaseService {
                     Optional<AdvocateMapping> existingRepresentativeOptional = courtCase.getRepresentatives().stream()
                             .filter(advocateMapping -> joinCaseRequest.getRepresentative().getAdvocateId().equals(advocateMapping.getAdvocateId()))
                             .findFirst();
-                    AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
 
+                    if(existingRepresentativeOptional.isEmpty())
+                        throw new CustomException(INVALID_ADVOCATE_ID, INVALID_ADVOCATE_DETAILS);
+
+                    AdvocateMapping existingRepresentative = existingRepresentativeOptional.get();
                     List<String> individualIds = existingRepresentative.getRepresenting().stream()
                             .map(Party::getIndividualId)
                             .toList();
