@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -380,7 +381,10 @@ public class CaseQueryBuilder {
     public String getTotalCountQuery(String baseQuery) {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
-    public String addPagination(String query, Double pageSize, Double offset) {
-        return query + " LIMIT " + pageSize + " OFFSET " + offset;
+    public String addPaginationQuery(String query, List<Object> preparedStatementList, Pagination pagination) {
+        preparedStatementList.add(pagination.getLimit());
+        preparedStatementList.add(pagination.getOffSet());
+        return query + " LIMIT ? OFFSET ?";
+
     }
 }
