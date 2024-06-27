@@ -1038,7 +1038,7 @@ function EFilingCases({ path }) {
   //   setConfirmDeleteModal(true);
   //   setFormdata(newArray);
   // };
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index, currentDisplayIndex) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
       setValue("advocateBarRegNumberWithName", [
         {
@@ -1064,7 +1064,18 @@ function EFilingCases({ path }) {
         setReceiptDemandNoticeModal,
         setServiceOfDemandNoticeModal,
       });
-      checkDuplicateMobileEmailValidation({ formData, setValue, selected, formdata, index, reset, setError, clearErrors, caseDetails });
+      checkDuplicateMobileEmailValidation({
+        formData,
+        setValue,
+        selected,
+        formdata,
+        index,
+        reset,
+        setError,
+        clearErrors,
+        caseDetails,
+        currentDisplayIndex,
+      });
       validateDateForDelayApplication({ setValue, caseDetails, selected, toast, t, history, caseId });
       showToastForComplainant({ formData, setValue, selected, setSuccessToast });
       setFormdata(
@@ -1642,7 +1653,18 @@ function EFilingCases({ path }) {
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-                    onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
+                    onFormValueChange(
+                      setValue,
+                      formData,
+                      formState,
+                      reset,
+                      setError,
+                      clearErrors,
+                      trigger,
+                      getValues,
+                      index,
+                      formdata[index].displayindex
+                    );
                   }}
                   isDisabled={isSubmitDisabled}
                   cardStyle={{ minWidth: "100%" }}
