@@ -47,13 +47,7 @@ public class OrderRegistrationService {
 
             enrichmentUtil.enrichOrderRegistration(body);
 
-            if (body.getOrder().getOrderType().equalsIgnoreCase(JUDGEMENT)) {
-                body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
-                        config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
-            } else {
-                body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
-
-            }
+            workflowEnrichment(body);
 
             producer.push(config.getSaveOrderKafkaTopic(), body);
 
@@ -101,12 +95,7 @@ public class OrderRegistrationService {
             // Enrich application upon update
             enrichmentUtil.enrichOrderRegistrationUponUpdate(body);
 
-            if (body.getOrder().getOrderType().equalsIgnoreCase(JUDGEMENT)) {
-                body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
-                        config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
-            } else {
-                body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
-            }
+            workflowEnrichment(body);
 
             producer.push(config.getUpdateOrderKafkaTopic(), body);
 
@@ -133,6 +122,15 @@ public class OrderRegistrationService {
         catch (Exception e){
             log.error("Error while fetching to search order results :: {}",e.toString());
             throw new CustomException(ORDER_EXISTS_EXCEPTION,e.getMessage());
+        }
+    }
+
+    private void workflowEnrichment(OrderRequest body){
+        if (body.getOrder().getOrderType().equalsIgnoreCase(JUDGEMENT)) {
+            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
+                    config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
+        } else {
+            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
         }
     }
 }
