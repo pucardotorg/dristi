@@ -55,6 +55,7 @@ public class OrderRegistrationServiceTest {
     public void testCreateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
+        order.setOrderType("Judgement");
         orderRequest.setOrder(order);
 
         doNothing().when(validator).validateOrderRegistration(any(OrderRequest.class));
@@ -111,6 +112,7 @@ public class OrderRegistrationServiceTest {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
         order.setWorkflow(new Workflow());
+        order.setOrderType("Judgement");
         orderRequest.setOrder(order);
 
         Order existingOrder = new Order();
