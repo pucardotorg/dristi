@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.pucar.dristi.config.ServiceConstants.ILLEGAL_ARGUMENT_EXCEPTION_CODE;
-import static org.pucar.dristi.config.ServiceConstants.MDMS_DATA_NOT_FOUND;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Slf4j
 @Component
@@ -32,6 +31,9 @@ public class EvidenceValidator {
 
             if(ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId())){
                 throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and caseId are mandatory for creating advocate");
+            }
+            if (evidenceRequest.getRequestInfo().getUserInfo() == null) {
+                throw new CustomException(ENRICHMENT_EXCEPTION, "User info not found!!!");
             }
     }
 

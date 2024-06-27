@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.Pagination;
 import org.slf4j.Logger;
 
 import java.time.LocalDate;
@@ -653,4 +655,33 @@ class CaseQueryBuilderTest {
         assertThrows(CustomException.class, () -> queryBuilder.getRepresentingDocumentSearchQuery(ids, preparedStmtList));
     }
 
+
+    @Test
+    void getTotalCountQuery_ShouldReturnCorrectQuery_WhenBaseQueryIsNotNull() {
+        String baseQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
+
+        String query = queryBuilder.getTotalCountQuery(baseQuery);
+
+        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_cases cases WHERE cases.id = '111') total_result";
+
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    void addPagination_Query_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
+        String query = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
+        Pagination pagination = new Pagination();
+        pagination.setLimit(2d);
+        pagination.setOffSet(0d);
+        List<Object> prepareList = new ArrayList<>();
+
+        String paginatedQuery = queryBuilder.addPaginationQuery(query,prepareList, pagination);
+
+        String expectedQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111' LIMIT ? OFFSET ?";
+
+        assertEquals(expectedQuery, paginatedQuery);
+        assertEquals(2, prepareList.size());
+        assertEquals(2d, prepareList.get(0));
+        assertEquals(0d, prepareList.get(1));
+    }
 }

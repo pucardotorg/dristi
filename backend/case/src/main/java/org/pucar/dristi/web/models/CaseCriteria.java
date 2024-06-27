@@ -79,6 +79,14 @@ public class CaseCriteria {
     @Valid
     private List<CourtCase> responseList = null;
 
+
+    @JsonProperty("pagination")
+
+    @Valid
+    private Pagination pagination = null;
+
+
+
     public CaseCriteria addResponseListItem(CourtCase responseListItem) {
         if (this.responseList == null) {
             this.responseList = new ArrayList<>();

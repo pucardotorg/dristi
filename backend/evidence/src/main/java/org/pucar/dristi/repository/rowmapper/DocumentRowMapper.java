@@ -38,8 +38,8 @@ public class DocumentRowMapper implements ResultSetExtractor<Document> {
                 }
             }
         } catch (Exception e) {
-            log.error("Error occurred while processing evidence document ResultSet: {}", e.getMessage());
-            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence document ResultSet: " + e.getMessage());
+            log.error("Error occurred while processing evidence document ResultSet: {}", e.toString());
+            throw new CustomException("ROW_MAPPER_EXCEPTION", "Error occurred while processing evidence document ResultSet: " + e.toString());
         }
         return document;
     }
