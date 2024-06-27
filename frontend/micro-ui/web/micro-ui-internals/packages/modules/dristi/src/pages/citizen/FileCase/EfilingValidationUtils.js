@@ -99,12 +99,7 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
       !caseDetails?.caseDetails ||
       (caseDetails?.caseDetails && !caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.[0]?.data?.dateOfAccrual)
     ) {
-      setValue("delayCondonationType", {
-        code: "NO",
-        name: "NO",
-        showForm: true,
-        isEnabled: true,
-      });
+      setValue("delayCondonationType", null);
       toast.error(t("SELECT_ACCRUAL_DATE_BEFORE_DELAY_APP"));
       setTimeout(() => {
         history.push(`?caseId=${caseId}&selected=demandNoticeDetails`);
