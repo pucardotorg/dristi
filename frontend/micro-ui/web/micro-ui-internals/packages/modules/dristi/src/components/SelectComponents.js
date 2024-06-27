@@ -165,7 +165,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                     locationStyle={{ maxWidth: "100%" }}
                     position={formData?.[config.key]?.coordinates || {}}
                     setCoordinateData={setCoordinateData}
-                    disable={input?.isDisabled}
+                    disable={input?.isDisabled || config?.disable}
                     index={config?.uuid}
                     onChange={(pincode, location, coordinates = {}) => {
                       setValue(
@@ -219,7 +219,7 @@ const SelectComponents = ({ t, config, onSelect, formData = {}, errors, formStat
                       onChange={(e) => {
                         setValue(e.target.value, input.name);
                       }}
-                      disable={input.isDisabled}
+                      disable={input.isDisabled || config?.disable}
                     />
                   </React.Fragment>
                 )}
