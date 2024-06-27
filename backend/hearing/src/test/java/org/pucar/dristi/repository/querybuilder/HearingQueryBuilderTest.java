@@ -76,8 +76,8 @@ class HearingQueryBuilderTest {
         assertTrue(query.contains("AND hearingid = ?"));
         assertTrue(query.contains("AND filingNumber @> ?::jsonb"));
         assertTrue(query.contains("AND tenantId = ?"));
-        assertTrue(query.contains("AND createdTime >= ?"));
-        assertTrue(query.contains("AND createdTime <= ?"));
+        assertTrue(query.contains("AND startTime >= ?"));
+        assertTrue(query.contains("AND startTime <= ?"));
         assertTrue(query.contains("ORDER BY startTime DESC"));
         assertEquals(9, preparedStmtList.size());
     }
