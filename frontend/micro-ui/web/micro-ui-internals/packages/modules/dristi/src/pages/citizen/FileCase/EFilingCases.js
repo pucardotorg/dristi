@@ -39,6 +39,7 @@ import ErrorsAccordion from "../../../components/ErrorsAccordion";
 import ReactTooltip from "react-tooltip";
 import FlagBox from "../../../components/FlagBox";
 import ScrutinyInfo from "../../../components/ScrutinyInfo";
+import { isEqual } from "lodash";
 import SelectCustomNote from "../../../components/SelectCustomNote";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
@@ -1050,7 +1051,7 @@ function EFilingCases({ path }) {
     checkIfscValidation({ formData, setValue, selected });
     checkNameValidation({ formData, setValue, selected, formdata, index, reset });
     checkOnlyCharInCheque({ formData, setValue, selected });
-    if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+    if (!isEqual(formData, formdata[index].data)) {
       chequeDateValidation({ formData, setError, clearErrors, selected });
       showDemandNoticeModal({
         setValue,
@@ -1337,7 +1338,7 @@ function EFilingCases({ path }) {
         setIsDisabled(false);
       })
       .finally(() => {
-        toast.success("Successfully Saved Draft");
+        toast.success(t("CS_SUCCESSFULLY_SAVED_DRAFT"));
       });
   };
 

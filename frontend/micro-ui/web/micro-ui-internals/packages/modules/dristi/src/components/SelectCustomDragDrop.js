@@ -125,7 +125,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             children={<DragDropJSX t={t} currentValue={currentValue} />}
             key={input?.name}
             onTypeError={() => {
-              toast.error("Invalid File type");
+              toast.error(t("CS_INVALID_FILE_TYPE"));
             }}
           />
           <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
