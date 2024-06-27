@@ -1,10 +1,7 @@
-import React, { useMemo, useState } from "react";
-import CustomErrorTooltip from "./CustomErrorTooltip";
-import { FileUploader } from "react-drag-drop-files";
-import { UploadIcon } from "@egovernments/digit-ui-react-components";
-import RenderFileCard from "./RenderFileCard";
+import { CardLabelError } from "@egovernments/digit-ui-react-components";
+import React, { useMemo } from "react";
 
-function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
+function SelectCustomTextArea({ t, config, formData = {}, onSelect, errors }) {
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
@@ -19,14 +16,18 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
 
   function setValue(value, input) {
     if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...input.reduce((res, curr) => {
-          res[curr] = value[curr];
-          return res;
-        }, {}),
-      });
-    } else onSelect(config.key, { ...formData[config.key], [input]: value });
+      onSelect(
+        config.key,
+        {
+          ...formData[config.key],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        },
+        { shouldValidate: true }
+      );
+    } else onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
   }
 
   const handleChange = (event, input) => {
@@ -59,10 +60,11 @@ function SelectCustomTextArea({ t, config, formData = {}, onSelect }) {
           }}
           rows={5}
           maxLength={400}
-          className="custom-textarea-style"
+          className={`custom-textarea-style${errors[config.key] ? " alert-error-border" : ""}`}
           placeholder={t(input?.placeholder)}
           disabled={config.disable}
         ></textarea>
+        {errors[config.key] && <CardLabelError>{t(errors[config.key].msg || "CORE_REQUIRED_FIELD_ERROR")}</CardLabelError>}
       </div>
     );
   });

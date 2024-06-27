@@ -6,10 +6,10 @@ import CustomErrorTooltip from "./CustomErrorTooltip";
 import RenderFileCard from "./RenderFileCard";
 import { useToast } from "./Toast/useToast";
 
-const DragDropJSX = ({ t, currentValue }) => {
+const DragDropJSX = ({ t, currentValue, error }) => {
   return (
     <React.Fragment>
-      <div className="drag-drop-container-desktop">
+      <div className={`drag-drop-container-desktop${error ? " alert-error-border" : ""}`}>
         <UploadIcon />
         <p className="drag-drop-text">
           {t("WBH_DRAG_DROP")} <text className="browse-text">{t("WBH_BULK_BROWSE_FILES")}</text>
@@ -26,6 +26,7 @@ const DragDropJSX = ({ t, currentValue }) => {
           <h3>Upload</h3>
         </div>
       </div>
+      {error && <span className="alert-error">{t(error.msg || "CORE_REQUIRED_FIELD_ERROR")}</span>}
     </React.Fragment>
   );
 };
@@ -53,15 +54,19 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
 
   function setValue(value, input) {
     if (Array.isArray(input)) {
-      onSelect(config.key, {
-        ...formData[config.key],
-        ...input.reduce((res, curr) => {
-          res[curr] = value[curr];
-          return res;
-        }, {}),
-      });
+      onSelect(
+        config.key,
+        {
+          ...formData[config.key],
+          ...input.reduce((res, curr) => {
+            res[curr] = value[curr];
+            return res;
+          }, {}),
+        },
+        { shouldValidate: true }
+      );
     } else {
-      onSelect(config.key, { ...formData[config.key], [input]: value });
+      onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
     }
   }
 
@@ -122,7 +127,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             }}
             name="file"
             types={input?.fileTypes}
-            children={<DragDropJSX t={t} currentValue={currentValue} />}
+            children={<DragDropJSX t={t} currentValue={currentValue} error={errors[config.key]} />}
             key={input?.name}
             onTypeError={() => {
               toast.error(t("CS_INVALID_FILE_TYPE"));
