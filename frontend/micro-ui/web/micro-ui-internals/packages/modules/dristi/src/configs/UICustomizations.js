@@ -289,6 +289,10 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -297,6 +301,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -305,6 +313,13 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId: window?.Digit.ULBService.getStateId(),
+          config: {
+            ...requestCriteria?.config,
+            select: (data) => {
+              console.log(data);
+              return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+            },
+          },
         },
       };
     },
@@ -338,11 +353,16 @@ export const UICustomizations = {
   paymentInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -350,7 +370,11 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -358,7 +382,14 @@ export const UICustomizations = {
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            console.log(data);
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
@@ -420,6 +451,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           tenantId,
           ...additionalDetails,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
@@ -429,6 +464,10 @@ export const UICustomizations = {
           [additionalDetails.searchKey]: "",
           ...additionalDetails,
           tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -437,6 +476,13 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            console.log(data);
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
@@ -453,12 +499,17 @@ export const UICustomizations = {
   },
   judgeInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
+      const tenantId = window?.Digit.ULBService.getStateId();
       // We need to change tenantId "processSearchCriteria" here
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -466,7 +517,11 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -474,7 +529,14 @@ export const UICustomizations = {
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            console.log(data);
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
