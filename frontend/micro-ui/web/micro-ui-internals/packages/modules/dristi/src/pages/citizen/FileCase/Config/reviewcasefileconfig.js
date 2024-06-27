@@ -11,8 +11,8 @@ export const reviewCaseFileFormConfig = [
         populators: {
           inputs: [
             {
-              key: "complaintDetails",
-              name: "complaintDetails",
+              key: "complainantDetails",
+              name: "complainantDetails",
               label: "CS_COMPLAINT_DETAILS",
               icon: "ComplainantDetailsIcon",
               config: [

@@ -137,7 +137,7 @@ export const validateDateForDelayApplication = ({ selected, setValue, caseDetail
 };
 
 export const showToastForComplainant = ({ formData, setValue, selected, setSuccessToast }) => {
-  if (selected === "complaintDetails") {
+  if (selected === "complainantDetails") {
     if (formData?.complainantId?.complainantId && formData?.complainantId?.verificationType && formData?.complainantId?.isFirstRender) {
       setValue("complainantId", { ...formData?.complainantId, isFirstRender: false });
       setSuccessToast((prev) => ({
@@ -277,7 +277,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
       }
     }
   }
-  if (selected === "complaintDetails" || selected === "witnessDetails") {
+  if (selected === "complainantDetails" || selected === "witnessDetails") {
     if (formData?.firstName || formData?.middleName || formData?.lastName) {
       const formDataCopy = structuredClone(formData);
       for (const key in formDataCopy) {
@@ -313,7 +313,7 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
 
 export const checkDuplicateMobileEmailValidation = ({ formData, setValue, selected, setError, clearErrors, formdata, index, caseDetails }) => {
   const complainantMobileNumbersArray =
-    caseDetails?.additionalDetails?.complaintDetails?.formdata
+    caseDetails?.additionalDetails?.complainantDetails?.formdata
       .filter((data) => {
         if (data?.data?.complainantVerification?.mobileNumber) {
           return true;
@@ -434,7 +434,7 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
       clearErrors("emails");
     }
   }
-  if (selected === "complaintDetails") {
+  if (selected === "complainantDetails") {
     const currentMobileNumber = formData?.complainantVerification?.mobileNumber;
 
     if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
@@ -559,11 +559,11 @@ export const respondentValidation = ({
         formData?.addressDetails?.some(
           (address) =>
             (address?.addressDetails?.pincode !==
-              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
-              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
+              caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+              caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
             (address?.addressDetails?.pincode !==
-              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
-              caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "REPRESENTATIVE")
+              caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
+              caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code === "REPRESENTATIVE")
         ) &&
         !Object.keys(formData?.inquiryAffidavitFileUpload?.document || {}).length
       ) {
@@ -574,7 +574,7 @@ export const respondentValidation = ({
   }
 
   const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
-  const complainantMobileNumber = caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
+  const complainantMobileNumber = caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.complainantVerification?.mobileNumber;
   if (
     formData &&
     formData?.phonenumbers?.textfieldValue &&
@@ -661,7 +661,7 @@ export const advocateDetailsFileValidation = ({ formData, selected, setShowError
 };
 
 export const complainantValidation = ({ formData, t, caseDetails, selected, setShowErrorToast, toast, setFormErrors, clearFormDataErrors }) => {
-  if (selected === "complaintDetails") {
+  if (selected === "complainantDetails") {
     const formDataCopy = structuredClone(formData);
     if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
       if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
@@ -894,7 +894,7 @@ export const updateCaseDetails = async ({
 }) => {
   const data = {};
   setIsDisabled(true);
-  if (selected === "complaintDetails") {
+  if (selected === "complainantDetails") {
     let litigants = [];
     const complainantVerification = {};
     if (isCompleted === true) {
@@ -1103,7 +1103,7 @@ export const updateCaseDetails = async ({
     data.representatives = [...representatives];
     data.additionalDetails = {
       ...caseDetails.additionalDetails,
-      complaintDetails: {
+      complainantDetails: {
         formdata: newFormData,
         isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
       },
@@ -1638,10 +1638,10 @@ export const updateCaseDetails = async ({
     };
   }
   const caseTitle =
-    caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName &&
+    caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
     caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
-    `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${
-      caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName || ""
+    `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+      caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
     } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
       caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
     }`;
