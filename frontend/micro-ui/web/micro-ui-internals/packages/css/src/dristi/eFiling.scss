@@ -936,6 +936,11 @@
               &.preverror {
                 background-color: #ecf3fd;
               }
+
+              &.preverrorside{
+                background-color: #ecf3fd;
+                border-left: 2px #4d83cf solid;
+              }
             }
 
             .address {
@@ -953,6 +958,11 @@
 
               &.preverror {
                 background-color: #ecf3fd;
+              }
+
+              &.preverrorside{
+                background-color: #ecf3fd;
+                border-left: 2px #4d83cf solid;
               }
             }
 
