@@ -7,10 +7,7 @@ import org.pucar.dristi.repository.queryBuilder.ApplicationQueryBuilder;
 import org.pucar.dristi.repository.rowMapper.ApplicationRowMapper;
 import org.pucar.dristi.repository.rowMapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowMapper.StatuteSectionRowMapper;
-import org.pucar.dristi.web.models.Application;
-import org.pucar.dristi.web.models.ApplicationExists;
-import org.pucar.dristi.web.models.ApplicationSearchRequest;
-import org.pucar.dristi.web.models.StatuteSection;
+import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -48,8 +45,19 @@ public class ApplicationRepository {
             List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
-            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria().getId(), applicationSearchRequest.getCriteria().getFilingNumber(), applicationSearchRequest.getCriteria().getCnrNumber(), applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(), applicationSearchRequest.getCriteria().getApplicationNumber(),limit, offset);
+
+            String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria().getId(), applicationSearchRequest.getCriteria().getFilingNumber(), applicationSearchRequest.getCriteria().getCnrNumber(),
+                    applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(),
+                    applicationSearchRequest.getCriteria().getApplicationNumber());
             log.info("Final application search query: {}", applicationQuery);
+
+            if(applicationSearchRequest.getPagination() !=  null) {
+                Integer totalRecords = getTotalCountApplication(applicationQuery);
+                log.info("Total count without pagination :: {}", totalRecords);
+                applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
+                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination());
+            }
+
             List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
@@ -96,6 +104,12 @@ public class ApplicationRepository {
             log.error("Error while fetching application list {}", e.getMessage());
             throw new CustomException(APPLICATION_SEARCH_ERR,"Error while fetching application list: "+e.getMessage());
         }
+    }
+
+    public Integer getTotalCountApplication(String baseQuery) {
+        String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
+        log.info("Final count query :: {}", countQuery);
+        return jdbcTemplate.queryForObject(countQuery, Integer.class);
     }
 
     public List<ApplicationExists> checkApplicationExists(List<ApplicationExists> applicationExistsList) {

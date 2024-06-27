@@ -76,7 +76,13 @@ public class ApplicationApiController{
             @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody ApplicationSearchRequest request) {
                 List<Application> applicationList = applicationService.searchApplications(limit, offset, sortBy,request);
                 ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
-                ApplicationListResponse applicationListResponse = ApplicationListResponse.builder().applicationList(applicationList).totalCount(applicationList.size()).responseInfo(responseInfo).build();
+                int totalCount;
+                        if(request.getPagination() != null){
+                            totalCount = request.getPagination().getTotalCount().intValue();
+                        }else{
+                            totalCount = applicationList.size();
+                        }
+                ApplicationListResponse applicationListResponse = ApplicationListResponse.builder().applicationList(applicationList).totalCount(totalCount).responseInfo(responseInfo).build();
                 return new ResponseEntity<>(applicationListResponse, HttpStatus.OK);
         }
 
