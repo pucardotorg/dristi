@@ -206,7 +206,7 @@ const JoinCaseHome = ({ t }) => {
                 }}
                 pattern={"^[a-zA-Z]+(?:[a-zA-Z-.`' ]*[a-zA-Z])?$"}
 
-                // disable={editScreen}
+              // disable={editScreen}
               />
             </div>
           </LabelFieldPair>
@@ -396,8 +396,8 @@ const JoinCaseHome = ({ t }) => {
                   userType === "Litigant" && representingYourself !== "Yes"
                     ? t(JoinHomeLocalisation.ADD_ADVOCATE_ANYTIME)
                     : userType === "Litigant" && representingYourself === "Yes"
-                    ? t(JoinHomeLocalisation.SUBMISSION_NECESSARY)
-                    : t(JoinHomeLocalisation.FILL_FORM_VAKALATNAMA)
+                      ? t(JoinHomeLocalisation.SUBMISSION_NECESSARY)
+                      : t(JoinHomeLocalisation.FILL_FORM_VAKALATNAMA)
                 }
                 textStyle={{}}
                 className={`custom-info-card`}
@@ -419,7 +419,7 @@ const JoinCaseHome = ({ t }) => {
                         disable={userType === "Litigant" ? false : true}
                       />
                       {errors?.barRegNumber && <CardLabelError> {errors?.barRegNumber?.message} </CardLabelError>}
-                      {}
+                      { }
                     </div>
                   </LabelFieldPair>
                   <CustomCaseInfoDiv t={t} data={barDetails} />
@@ -467,7 +467,7 @@ const JoinCaseHome = ({ t }) => {
                       ></textarea>
 
                       {errors?.affidavitText && <CardLabelError> {errors?.affidavitText?.message} </CardLabelError>}
-                      {}
+                      { }
                     </div>
                   </LabelFieldPair>
                 </React.Fragment>
@@ -524,10 +524,10 @@ const JoinCaseHome = ({ t }) => {
                     return;
                   }
                 }}
-                // disable={editScreen}
+              // disable={editScreen}
               />
               {errors?.caseNumber && <CardLabelError> {errors?.validationCode?.message} </CardLabelError>}
-              {}
+              { }
             </div>
           </LabelFieldPair>
         </div>
@@ -894,8 +894,13 @@ const JoinCaseHome = ({ t }) => {
 
   return (
     <div>
-      <p>Join a case here</p>
-      <Button label={t("JOIN_A_CASE")} onButtonClick={() => setShow(true)}></Button>
+      <Button
+        variation={"secondary"}
+        className={"secondary-button-selector"}
+        label={t("JOIN_A_CASE")}
+        labelClassName={"secondary-label-selector"}
+        onButtonClick={() => setShow(true)}
+      />
       {show && (
         <Modal
           headerBarEnd={<CloseBtn onClick={closeModal} />}
