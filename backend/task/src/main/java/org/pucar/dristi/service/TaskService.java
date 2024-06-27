@@ -57,7 +57,7 @@ public class TaskService {
 
             enrichmentUtil.enrichTaskRegistration(body);
 
-            workflowEnrichment(body);
+            workflowUpdate(body);
 
             producer.push(config.getTaskCreateTopic(), body);
 
@@ -98,7 +98,7 @@ public class TaskService {
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(body);
 
-            workflowEnrichment(body);
+            workflowUpdate(body);
 
             producer.push(config.getTaskCreateTopic(), body);
 
@@ -124,7 +124,7 @@ public class TaskService {
         }
     }
 
-    private void workflowEnrichment(TaskRequest body){
+    private void workflowUpdate(TaskRequest body){
         if (body.getTask().getTaskType().equalsIgnoreCase(BAIL)) {
             body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
                     config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName()));

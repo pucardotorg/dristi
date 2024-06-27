@@ -47,7 +47,7 @@ public class OrderRegistrationService {
 
             enrichmentUtil.enrichOrderRegistration(body);
 
-            workflowEnrichment(body);
+            workflowUpdate(body);
 
             producer.push(config.getSaveOrderKafkaTopic(), body);
 
@@ -95,7 +95,7 @@ public class OrderRegistrationService {
             // Enrich application upon update
             enrichmentUtil.enrichOrderRegistrationUponUpdate(body);
 
-            workflowEnrichment(body);
+            workflowUpdate(body);
 
             producer.push(config.getUpdateOrderKafkaTopic(), body);
 
@@ -125,7 +125,7 @@ public class OrderRegistrationService {
         }
     }
 
-    private void workflowEnrichment(OrderRequest body){
+    private void workflowUpdate(OrderRequest body){
         if (body.getOrder().getOrderType().equalsIgnoreCase(JUDGEMENT)) {
             body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
                     config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
