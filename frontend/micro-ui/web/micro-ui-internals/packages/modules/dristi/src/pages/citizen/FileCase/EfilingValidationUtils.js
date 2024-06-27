@@ -23,9 +23,9 @@ export const showDemandNoticeModal = ({
             setError("dateOfService", { message: " CS_SERVICE_DATE_ERROR_MSG" });
             setValue("dateOfAccrual", "");
           } else if (
-            formData?.dateOfIssuance &&
+            formData?.dateOfDispatch &&
             formData?.dateOfService &&
-            new Date(formData?.dateOfService).getTime() < new Date(formData?.dateOfIssuance).getTime()
+            new Date(formData?.dateOfService).getTime() < new Date(formData?.dateOfDispatch).getTime()
           ) {
             setError("dateOfService", { message: "CS_SERVICE_DATE_LEGAL_NOTICE_ERROR_MSG" });
           } else {
@@ -306,7 +306,17 @@ export const checkNameValidation = ({ formData, setValue, selected, reset, index
   }
 };
 
-export const checkDuplicateMobileEmailValidation = ({ formData, setValue, selected, setError, clearErrors, formdata, index, caseDetails }) => {
+export const checkDuplicateMobileEmailValidation = ({
+  formData,
+  setValue,
+  selected,
+  setError,
+  clearErrors,
+  formdata,
+  index,
+  caseDetails,
+  currentDisplayIndex,
+}) => {
   const complainantMobileNumbersArray =
     caseDetails?.additionalDetails?.complainantDetails?.formdata
       .filter((data) => {
@@ -376,7 +386,9 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
       formdata?.length > 0 &&
       formData?.phonenumbers?.textfieldValue &&
       formData?.phonenumbers?.textfieldValue?.length === 10 &&
-      formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
+      formdata
+        .filter((data) => data.isenabled === true)
+        ?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
     ) {
       setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_RESPONDENT" });
     } else {
@@ -390,7 +402,9 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
       formdata &&
       formdata?.length > 0 &&
       formData?.emails?.textfieldValue &&
-      formdata?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
+      formdata
+        .filter((data) => data.isenabled === true)
+        ?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
     ) {
       setError("emails", { emailId: "DUPLICATE_EMAIL_ID_FOR_RESPONDENT" });
     } else {
@@ -398,6 +412,7 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
     }
   }
   if (selected === "witnessDetails") {
+    console.log("formdatares", formdata, formData);
     const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
     if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
@@ -408,7 +423,9 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
       formdata?.length > 0 &&
       formData?.phonenumbers?.textfieldValue &&
       formData?.phonenumbers?.textfieldValue?.length === 10 &&
-      formdata?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
+      formdata
+        .filter((data) => data.isenabled === true)
+        ?.some((data) => data?.data?.phonenumbers?.mobileNumber?.some((number) => number === formData?.phonenumbers?.textfieldValue))
     ) {
       setError("phonenumbers", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_WITNESS" });
     } else {
@@ -422,7 +439,9 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
       formdata &&
       formdata?.length > 0 &&
       formData?.emails?.textfieldValue &&
-      formdata?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
+      formdata
+        .filter((data) => data.isenabled === true)
+        ?.some((data) => data?.data?.emails?.emailId?.some((email) => email === formData?.emails?.textfieldValue))
     ) {
       setError("emails", { emailId: "DUPLICATE_EMAIL_ID_FOR_WITNESS" });
     } else {
@@ -431,21 +450,29 @@ export const checkDuplicateMobileEmailValidation = ({ formData, setValue, select
   }
   if (selected === "complainantDetails") {
     const currentMobileNumber = formData?.complainantVerification?.mobileNumber;
+    console.log(
+      "check",
+      index,
+      currentDisplayIndex,
+      formdata.filter((data) => data.isenabled === true).filter((data) => !data?.complainantVerification?.userDetails === true)
+    );
+    console.log("formdata123", formdata, formData, formData?.complainantVerification?.mobileNumber);
 
     if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
-      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM" });
+      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM", isDuplicateNumber: true });
     } else if (currentMobileNumber && witnessMobileNumbersArray.some((number) => number === currentMobileNumber)) {
-      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM" });
+      setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_WITNESS_MOB_NUM", isDuplicateNumber: true });
     } else if (
       formdata &&
       formdata?.length > 1 &&
       formData?.complainantVerification?.mobileNumber &&
       formData?.complainantVerification?.mobileNumber?.length === 10 &&
-      formdata?.some(
-        (data, idx) => idx !== index && data?.data?.complainantVerification?.mobileNumber === formData?.complainantVerification?.mobileNumber
-      )
+      formdata
+        .filter((data) => data.isenabled === true)
+        .filter((data) => data?.displayindex !== currentDisplayIndex)
+        ?.some((data, idx) => idx !== index && data?.data?.complainantVerification?.mobileNumber === formData?.complainantVerification?.mobileNumber)
     ) {
-      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_COMPLAINANT" });
+      setError("complainantVerification", { mobileNumber: "DUPLICATE_MOBILE_NUMBER_FOR_COMPLAINANT", isDuplicateNumber: true });
     } else {
       clearErrors("complainantVerification");
     }
@@ -669,7 +696,7 @@ export const complainantValidation = ({ formData, t, caseDetails, selected, setS
 
     if (!formData?.complainantVerification?.mobileNumber || !formData?.complainantVerification?.otpNumber) {
       setShowErrorToast(true);
-      setFormErrors("complainantVerification", { mobileNumber: "CORE_REQUIRED_FIELD_ERROR" });
+      setFormErrors("complainantVerification", { mobileNumber: "PLEASE_VERIFY_YOUR_PHONE_NUMBER" });
       return true;
     } else {
       clearFormDataErrors("complainantVerification");

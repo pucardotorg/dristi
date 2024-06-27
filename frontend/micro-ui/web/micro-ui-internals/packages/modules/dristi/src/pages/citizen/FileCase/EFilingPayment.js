@@ -101,7 +101,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
 
   const onSubmitCase = async () => {
     // if (!Object.keys(bill || {}).length) {
-    //   toast.error("CS_BILL_NOT_AVAILABLE");
+    //   toast.error(t("CS_BILL_NOT_AVAILABLE"));
     //   history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
     //   return;
     // }
