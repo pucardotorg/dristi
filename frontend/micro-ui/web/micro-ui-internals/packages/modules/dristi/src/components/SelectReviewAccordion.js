@@ -259,7 +259,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
             const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
             let bgclassname = sectionError && isScrutiny ? "error" : "";
-            if (isPrevScrutiny && prevSectionError) {
+            if (isPrevScrutiny) {
               showFlagIcon = prevSectionError ? true : false;
               bgclassname = prevSectionError ? "preverror" : "";
             }
