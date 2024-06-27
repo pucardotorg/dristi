@@ -47,7 +47,7 @@ public class OrderRegistrationService {
 
             enrichmentUtil.enrichOrderRegistration(body);
 
-            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
+            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
 
             producer.push(config.getSaveOrderKafkaTopic(), body);
 
@@ -99,7 +99,7 @@ public class OrderRegistrationService {
             // Enrich application upon update
             enrichmentUtil.enrichOrderRegistrationUponUpdate(body);
 
-            workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
+            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
 
             producer.push(config.getUpdateOrderKafkaTopic(), body);
 
