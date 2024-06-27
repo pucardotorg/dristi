@@ -69,7 +69,7 @@
               "action": "REJECT",
               "nextState": "PENDINGREVIEW",
               "roles": [
-                "APPLICATION_REJECTOR"
+                "APPLICATION_APPROVER"
               ]
             },
             {
@@ -94,15 +94,15 @@
               "action": "RESPOND",
               "nextState": "RESPONSESUBMITTED",
               "roles": [
-                "System"
+                "SYSTEM_ADMIN"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON",
+                "SYSTEM_ADMIN"
               ]
             }
           ]
@@ -120,14 +120,14 @@
               "action": "APPROVE",
               "nextState": "CLOSED",
               "roles": [
-                "Judge"
+                "APPLICATION_APPROVER"
               ]
             },
             {
               "action": "REJECT",
               "nextState": "REJECTED",
               "roles": [
-                "Judge"
+                "APPLICATION_APPROVER"
               ]
             },
             {
