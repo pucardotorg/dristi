@@ -82,7 +82,6 @@ export const TabSearchconfig = {
                 label: "IndividualID",
                 jsonPath: "individualId",
               },
-
               {
                 label: "Name",
                 jsonPath: "name.givenName",
@@ -106,7 +105,7 @@ export const TabSearchconfig = {
       sections: {
         search: {
           uiConfig: {
-
+            columns: [],
           },
           show: true,
         },
@@ -269,22 +268,30 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "IndividualID",
-                jsonPath: "individualId",
+                label: "Order Type",
+                jsonPath: "orderType",
               },
 
               {
-                label: "Name",
-                jsonPath: "name.givenName",
+                label: "Order Id",
+                jsonPath: "id",
               },
               {
-                label: "Address",
-                jsonPath: "address.locality.code",
+                label: "Stage",
+                jsonPath: "",
+              },
+              {
+                label: "Parties",
+                jsonPath: "",
+              },
+              {
+                label: "Status",
+                jsonPath: "status",
               },
             ],
 
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "list",
           },
           show: true,
         },
@@ -303,9 +310,12 @@ export const TabSearchconfig = {
           Individual: {
             tenantId: Digit.ULBService.getCurrentTenantId(),
           },
+          criteria: {
+            tenantId: Digit.ULBService.getCurrentTenantId(),
+          },
         },
         masterName: "commonUiConfig",
-        moduleName: "SearchIndividualConfig",
+        moduleName: "SubmissionConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.Individual",
@@ -358,27 +368,35 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "IndividualID",
-                jsonPath: "individualId",
+                label: "Submission Name",
+                jsonPath: "applicationType",
               },
 
               {
-                label: "Name",
-                jsonPath: "name.givenName",
-              },
-              {
-                label: "Address",
-                jsonPath: "address.locality.code",
-              },
-              {
-                label: "Document",
+                label: "Submission Id",
                 jsonPath: "id",
-                additionalCustomization: true,
-              }
+              },
+              {
+                label: "Stage",
+                jsonPath: ""
+              },
+              {
+                label: "Status",
+                jsonPath: "status"
+              },
+              {
+                label: "Owner",
+                jsonPath: ""
+              },
+              // {
+              //   label: "Document",
+              //   jsonPath: "doc",
+              //   additionalCustomization: true
+              // }
             ],
 
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "applicationList",
           },
           show: true,
         },
@@ -477,7 +495,7 @@ export const TabSearchconfig = {
       label: "Parties",
       type: "search",
       apiDetails: {
-        serviceName: "/individual/v1/_search",
+        serviceName: "/case/case/v1/_search",
         requestParam: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
         },
@@ -488,7 +506,7 @@ export const TabSearchconfig = {
           },
         },
         masterName: "commonUiConfig",
-        moduleName: "SearchIndividualConfig",
+        moduleName: "PartiesConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.Individual",
@@ -541,22 +559,22 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "IndividualID",
-                jsonPath: "individualId",
-              },
-
-              {
-                label: "Name",
-                jsonPath: "name.givenName",
+                label: "Party Name",
+                jsonPath: "name",
               },
               {
-                label: "Address",
-                jsonPath: "address.locality.code",
+                label: "Type",
+                jsonPath: "partyType",
+              },
+              {
+                label: "Date Added",
+                jsonPath: "auditDetails.createdTime",
+                additionalCustomization: true
               },
             ],
 
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "criteria.responseList.parties",
           },
           show: true,
         },

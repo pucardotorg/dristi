@@ -1,8 +1,8 @@
 import { ArrowDirection, CloseSvg, TextInput } from "@egovernments/digit-ui-react-components";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FactCheckIcon, RightArrow } from "../icons/svgIndex";
 import Modal from "../components/Modal";
+import { FactCheckIcon, RightArrow } from "../icons/svgIndex";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
 const businessServiceMap = {
@@ -483,8 +483,68 @@ export const UICustomizations = {
         case "Document":
           console.log("document", row);
           return <OwnerColumn name={row?.name.familyName} t={t} />;
+        default:
           break;
-
+      }
+    },
+  },
+  PartiesConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      console.log(requestCriteria, additionalDetails);
+      return {
+        ...requestCriteria,
+        config: {
+          select: (data) => {
+            console.log(data.criteria);
+            const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ?
+              data.criteria[0].responseList[0].litigants
+              :
+              [];
+            const finalLitigantsData = litigants.map((litigant) => {
+              return {
+                ...litigant,
+                name: litigant.additionalDetails?.firstName + " " + litigant.additionalDetails?.lastName,
+              }
+            })
+            const reps = data.criteria[0].responseList[0].representatives?.length > 0 ?
+              data.criteria[0].responseList[0].representatives
+              :
+              [];
+            const finalRepresentativesData = reps.map((rep) => {
+              return {
+                ...rep,
+                name: rep.additionalDetails?.firstName + " " + rep.additionalDetails?.lastName,
+                partyType: `Advocate (for ${rep.representing.additionalDetails?.firstName + " " + rep.representing.additionalDetails?.lastName})`
+              }
+            })
+            return {
+              ...data,
+              criteria: {
+                ...data.criteria[0],
+                responseList: {
+                  ...data.criteria[0].responseList[0],
+                  parties: [
+                    ...finalLitigantsData,
+                    ...finalRepresentativesData
+                  ]
+                }
+              }
+            }
+          },
+        },
+      }
+    },
+    additionalCustomizations: (row, key, column, value, t) => {
+      switch (key) {
+        case "Document":
+          console.log("document", row);
+          return <OwnerColumn name={row?.name.familyName} t={t} />;
+        case "Date Added": const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
         default:
           break;
       }

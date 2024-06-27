@@ -15,13 +15,41 @@ const defaultSearchValues = {
 const AdmittedCases = () => {
   const { t } = useTranslation();
   const searchParams = new URLSearchParams(location.search);
-  const caseId = searchParams.get("caseId");
+  const filingNumber = searchParams.get("filingNumber");
   const cnr = searchParams.get("cnr");
   const title = searchParams.get("title");
   console.log(TabSearchconfig?.TabSearchconfig);
   const configList = useMemo(() => {
-    return TabSearchconfig?.TabSearchconfig.map((tabConfig) => { return { ...tabConfig, apiDetails: { ...tabConfig.apiDetails, requestParam: { ...tabConfig.apiDetails?.requestParam, filingNumber: caseId, cnrNumber: cnr } } } })
-  }, [caseId])
+    return TabSearchconfig?.TabSearchconfig.map((tabConfig) => {
+      return tabConfig.label === 'Parties' ?
+        {
+          ...tabConfig,
+          apiDetails: {
+            ...tabConfig.apiDetails,
+            requestBody: {
+              ...tabConfig.apiDetails.requestBody,
+              criteria: [
+                {
+                  filingNumber: filingNumber,
+                },
+              ]
+            },
+          }
+        } :
+        {
+          ...tabConfig,
+          apiDetails: {
+            ...tabConfig.apiDetails,
+            requestParam: {
+              ...tabConfig.apiDetails?.requestParam,
+              filingNumber: filingNumber,
+              cnrNumber: cnr,
+              applicationNumber: ""
+            }
+          }
+        }
+    })
+  }, [filingNumber])
   console.log(configList);
   const newTabSearchConfig = {
     ...TabSearchconfig,
@@ -29,7 +57,7 @@ const AdmittedCases = () => {
   }
   console.log(newTabSearchConfig);
 
-  console.log(caseId);
+  console.log(filingNumber);
   const [defaultValues, setDefaultValues] = useState(defaultSearchValues); // State to hold default values for search fields
   const [config, setConfig] = useState(newTabSearchConfig?.TabSearchconfig?.[0]); // initially setting first index config as default from jsonarray
   const [tabData, setTabData] = useState(

@@ -34,6 +34,7 @@ function JudgeScreen({ path }) {
                   // } else {
                     const searchParams = new URLSearchParams();
                     console.log(props.original);
+                    searchParams.set("filingNumber", props.original.filingNumber);
                     searchParams.set("caseId", props.original.id);
                     searchParams.set("cnr", props.original.cnrNumber);
                     searchParams.set("title", props.original.caseTitle);

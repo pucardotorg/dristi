@@ -93,6 +93,7 @@ module.exports = function (app) {
     "/evidence",
     "/project-factory/v1/data/_autoGenerateBoundaryCode",
     "/application",
+    "/case",
     "/order",
     "/hearing",
   ].forEach((location) => app.use(location, createProxy));
