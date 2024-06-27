@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "15e668b3-11b9-47ec-a315-42495aaa433f",
+		"_postman_id": "39d6b2cb-4b4e-44df-aa00-6fd724b378ec",
 		"name": "Pucar",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "31752715"
+		"_exporter_id": "24809145"
 	},
 	"item": [
 		{
@@ -35,12 +35,13 @@
 							"raw": "{\n     \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"55468efb-78ab-4c29-a6c1-ff833631c042\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a32\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"advocate\":\n        {\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"15434133\",\n            \"barRegistrationNumber\":\"234\",\n            \"advocateType\":\"CRIMINAL\",\n            \"organisationID\":\"a8aa6be8-2aa5-4a2a-b3f7-4c5e9f0b9354\",\n            \"individualId\":\"IND-2024-05-30-000493\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"REGISTER\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADV registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n    \n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/advocate/v1/_create",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/advocate/v1/_create",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"advocate",
@@ -52,7 +53,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Advocate",
+					"name": "Update Advocate Approve",
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {
 							"accept": true
@@ -77,12 +78,56 @@
 							"raw": "{\n     \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"55468efb-78ab-4c29-a6c1-ff833631c042\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a32\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"advocate\":\n        {\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"15434133\",\n            \"barRegistrationNumber\":\"234\",\n            \"advocateType\":\"CRIMINAL\",\n            \"organisationID\":\"a8aa6be8-2aa5-4a2a-b3f7-4c5e9f0b9354\",\n            \"individualId\":\"IND-2024-05-30-000493\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"APPROVE\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADV registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n    \n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/advocate/v1/_update",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/advocate/v1/_update",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
+							"path": [
+								"advocate",
+								"advocate",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Advocate Reject",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "324dabed-d775-4c7f-bc0d-1241804585bc"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "354fe642-5eaa-4bf6-9caa-cf44349966ee"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n     \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"55468efb-78ab-4c29-a6c1-ff833631c042\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a32\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"advocate\":\n        {\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"15434133\",\n            \"barRegistrationNumber\":\"234\",\n            \"advocateType\":\"CRIMINAL\",\n            \"organisationID\":\"a8aa6be8-2aa5-4a2a-b3f7-4c5e9f0b9354\",\n            \"individualId\":\"IND-2024-05-30-000493\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"REJECT\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADV registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n    \n}"
+						},
+						"url": {
+							"raw": "https://dristi-dev.pucar.org/advocate/advocate/v1/_update",
+							"protocol": "https",
+							"host": [
+								"dristi-dev",
+								"pucar",
+								"org"
+							],
 							"path": [
 								"advocate",
 								"advocate",
@@ -119,12 +164,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/advocate/v1/_search",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/advocate/v1/_search",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"advocate",
@@ -161,12 +207,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/advocate/v1/status/_search?status=INWORKFLOW&tenantId=pg",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/advocate/v1/status/_search?status=INWORKFLOW&tenantId=pg",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"advocate",
@@ -214,12 +261,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/advocate/v1/applicationnumber/_search?applicationNumber=Any&tenantId=pg",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/advocate/v1/applicationnumber/_search?applicationNumber=Any&tenantId=pg",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"advocate",
@@ -267,12 +315,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"CLERK-APP-2024-05-06-000118\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/clerk/v1/_search",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/_search",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"clerk",
@@ -309,12 +358,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/clerk/v1/status/_search?status=INWORKFLOW&tenantId=pg",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/status/_search?status=INWORKFLOW&tenantId=pg",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"clerk",
@@ -362,12 +412,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"ADV-APP-2024-06-03-000806\"\n        },\n        {\n            \"id\":\"43c3bcbd-b612-4a98-b403-4a183b32b52b\"\n        },\n        {\n            \"barRegistrationNumber\": \"2345\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/clerk/v1/applicationnumber/_search?applicationNumber=Any&tenantId=pg",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/applicationnumber/_search?applicationNumber=Any&tenantId=pg",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"clerk",
@@ -410,12 +461,13 @@
 							"raw": "{\n   \"RequestInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\n        \"userInfo\": {\n            \"id\": 181,\n            \"userName\": \"TestEggMUSTAKIMNK\",\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"name\": \"mustak\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"System user\",\n                    \"code\": \"SYSTEM\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": \"Kaikoo\"\n        },\n        \"authToken\": \"bc71214a-f092-4f08-a22f-56b875452702\"\n    },\n  \"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"advocate\",\n      \"business\": \"advocate-services\",\n      \"businessServiceSla\": 30,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": true,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"REGISTER\",\n              \"nextState\": \"VERIFICATIONREQUESTED\",\n              \"roles\": [\n                \"CITIZEN\",\n                \"EMPLOYEE\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"VERIFICATIONREQUESTED\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"APPROVE\",\n              \"nextState\": \"REGISTERED\",\n              \"roles\": [\n                \"ADVOCATE_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n                \"ADVOCATE_APPROVER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REGISTERED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REJECTED\",\n          \"applicationStatus\": \"INACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        }\n      ]\n    }\n  ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_create",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/egov-workflow-v2/egov-wf/businessservice/_create",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8088",
 							"path": [
 								"egov-workflow-v2",
 								"egov-wf",
@@ -447,12 +499,13 @@
 							"raw": "{\n   \"RequestInfo\": {\n        \"apiId\": null,\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\n        \"userInfo\": {\n            \"id\": 181,\n            \"userName\": \"TestEggMUSTAKIMNK\",\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"name\": \"mustak\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"roles\": [\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"System user\",\n                    \"code\": \"SYSTEM\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": \"Kaikoo\"\n        },\n        \"authToken\": \"bc71214a-f092-4f08-a22f-56b875452702\"\n    },\n  \"BusinessServices\": [\n    {\n      \"tenantId\": \"pg\",\n      \"businessService\": \"advocateclerk\",\n      \"business\": \"advocateclerk-services\",\n      \"businessServiceSla\": 30,\n      \"states\": [\n        {\n          \"sla\": null,\n          \"state\": null,\n          \"applicationStatus\": null,\n          \"docUploadRequired\": true,\n          \"isStartState\": true,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"REGISTER\",\n              \"nextState\": \"VERIFICATIONREQUESTED\",\n              \"roles\": [\n                \"CITIZEN\",\n                \"EMPLOYEE\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": null,\n          \"state\": \"VERIFICATIONREQUESTED\",\n          \"applicationStatus\": \"INWORKFLOW\",\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": false,\n          \"isStateUpdatable\": true,\n          \"actions\": [\n            {\n              \"action\": \"APPROVE\",\n              \"nextState\": \"REGISTERED\",\n              \"roles\": [\n                \"ADVOCATECLERK_APPROVER\"\n              ]\n            },\n            {\n              \"action\": \"REJECT\",\n              \"nextState\": \"REJECTED\",\n              \"roles\": [\n                \"ADVOCATECLERK_APPROVER\"\n              ]\n            }\n          ]\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REGISTERED\",\n          \"applicationStatus\": \"ACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        },\n        {\n          \"sla\": 5,\n          \"state\": \"REJECTED\",\n          \"applicationStatus\": \"INACTIVE\",\n          \"isStateUpdatable\": false,\n          \"docUploadRequired\": false,\n          \"isStartState\": false,\n          \"isTerminateState\": true\n        }\n      ]\n    }\n  ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_create",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/egov-workflow-v2/egov-wf/businessservice/_create",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8088",
 							"path": [
 								"egov-workflow-v2",
 								"egov-wf",
@@ -484,12 +537,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\":   {\n            \"id\": 207,\n            \"userName\": \"rajatUser2\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"75c1c2c4-d647-4d0c-b0c8-ca4743a37d01\",\n            \"createdDate\": \"06-05-2024 18:40:35\",\n            \"lastModifiedDate\": \"06-05-2024 18:40:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 18:40:35\"\n        },\n        \"authToken\": \"495839a7-fc7c-4645-93b6-ef7a8c7b50ef\"\n    },\n    \"clerk\":{\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"1543413bfg3\",\n            \"stateRegnNumber\":\"234sfdgsfg\",\n            \"individualId\":\"IND-2024-05-06-000070\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"REGISTER\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADVClerk registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/clerk/v1/_create",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/_create",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"clerk",
@@ -501,7 +555,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Clerk",
+					"name": "Update Clerk Approve",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -521,12 +575,51 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\":   {\n            \"id\": 207,\n            \"userName\": \"rajatUser2\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"75c1c2c4-d647-4d0c-b0c8-ca4743a37d01\",\n            \"createdDate\": \"06-05-2024 18:40:35\",\n            \"lastModifiedDate\": \"06-05-2024 18:40:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 18:40:35\"\n        },\n        \"authToken\": \"495839a7-fc7c-4645-93b6-ef7a8c7b50ef\"\n    },\n    \"clerk\":{\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"1543413bfg3\",\n            \"stateRegnNumber\":\"234sfdgsfg\",\n            \"individualId\":\"IND-2024-05-06-000070\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"APPROVE\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADVClerk registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/clerk/v1/_update",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/_update",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
+							"path": [
+								"advocate",
+								"clerk",
+								"v1",
+								"_update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Clerk Reject",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"uuid": "e91103bc-a56a-4982-93e9-45eb5dbbbd80"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"uuid": "efd27be4-7a01-4693-b1f0-942dd791d3bc"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"null\",\n        \"ver\": \"null\",\n        \"ts\": null,\n        \"action\": \"POST\",\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"8c11c5ca-03bd-11e7-93ae-92361f002671\",\n        \"userInfo\":   {\n            \"id\": 207,\n            \"userName\": \"rajatUser2\",\n            \"salutation\": null,\n            \"name\": \"Rajat\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"9996301590\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": null,\n            \"altContactNumber\": null,\n            \"pan\": null,\n            \"aadhaarNumber\": null,\n            \"permanentAddress\": null,\n            \"permanentCity\": null,\n            \"permanentPinCode\": null,\n            \"correspondenceAddress\": null,\n            \"correspondenceCity\": null,\n            \"correspondencePinCode\": null,\n            \"active\": true,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": null,\n            \"relationship\": null,\n            \"signature\": null,\n            \"bloodGroup\": null,\n            \"photo\": null,\n            \"identificationMark\": null,\n            \"createdBy\": null,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": null,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ADVOCATE_APPROVER\",\n                    \"name\": \"ADVOCATE_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"EMPLOYEE\",\n                    \"name\": \"Employee\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"CITIZEN\",\n                    \"name\": \"Citizen\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"SUPERUSER\",\n                    \"name\": \"Super User\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"75c1c2c4-d647-4d0c-b0c8-ca4743a37d01\",\n            \"createdDate\": \"06-05-2024 18:40:35\",\n            \"lastModifiedDate\": \"06-05-2024 18:40:35\",\n            \"dob\": null,\n            \"pwdExpiryDate\": \"04-08-2024 18:40:35\"\n        },\n        \"authToken\": \"495839a7-fc7c-4645-93b6-ef7a8c7b50ef\"\n    },\n    \"clerk\":{\n            \"tenantId\":\"pg\",\n            \"applicationNumber\":\"1543413bfg3\",\n            \"stateRegnNumber\":\"234sfdgsfg\",\n            \"individualId\":\"IND-2024-05-06-000070\",\n            \"additionalDetails\":{\"name\":\"Ram babu\"},\n            \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {\"name\":\"Ram babu\"}\n                    }\n                ],\n            \"workflow\": {\n                \"action\": \"REJECT\",\n                \"assignes\": [],\n                \"comments\": \"Applying for ADVClerk registration\",\n                \"documents\": [\n                    {\n                        \"documentType\": \"PDF\",\n                        \"fileStoreId\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                        \"documentUid\": \"\",\n                        \"additionalDetails\": {}\n                    }\n                ]\n            }\n        }\n}"
+						},
+						"url": {
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/_update",
+							"protocol": "https",
+							"host": [
+								"dristi-dev",
+								"pucar",
+								"org"
+							],
 							"path": [
 								"advocate",
 								"clerk",
@@ -563,12 +656,13 @@
 							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"asset-services\",\n        \"ver\": null,\n        \"ts\": null,\n        \"action\": null,\n        \"did\": null,\n        \"key\": null,\n        \"msgId\": \"search with from and to values\",\n        \"authToken\": \"{{token}}\",\n        \"userInfo\": {\n            \"id\": 24226,\n            \"uuid\": \"11b0e02b-0145-4de2-bc42-c97b96264807\",\n            \"userName\": \"amr001\",\n            \"name\": \"leela\",\n            \"mobileNumber\": \"9814424443\",\n            \"emailId\": \"leela@llgmail.com\",\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"CSC Collection Operator\",\n                    \"code\": \"CSC_COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Routing Officer\",\n                    \"code\": \"GRO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter employee\",\n                    \"code\": \"NOC_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Counter Employee\",\n                    \"code\": \"TL_CEMP\",\n                    \"tenantId\": \"pb.jalandhar\"\n                },\n                {\n                    \"name\": \"TL Field Inspector\",\n                    \"code\": \"TL_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Creator\",\n                    \"code\": \"TL_CREATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Customer Support Representative\",\n                    \"code\": \"CSR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC counter Approver\",\n                    \"code\": \"NOC_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL Approver\",\n                    \"code\": \"TL_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb\"\n                },\n                {\n                    \"name\": \"BPA Services Approver\",\n                    \"code\": \"BPA_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Field Employee\",\n                    \"code\": \"FEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Counter Employee\",\n                    \"code\": \"CEMP\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Field Inpector\",\n                    \"code\": \"NOC_FIELD_INSPECTOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NOC Department Approver\",\n                    \"code\": \"NOC_DEPT_APPROVER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Grievance Officer\",\n                    \"code\": \"GO\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Anonymous User\",\n                    \"code\": \"ANONYMOUS\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"Collection Operator\",\n                    \"code\": \"COLL_OPERATOR\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"NoC Doc Verifier\",\n                    \"code\": \"NOC_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                },\n                {\n                    \"name\": \"TL doc verifier\",\n                    \"code\": \"TL_DOC_VERIFIER\",\n                    \"tenantId\": \"pb.amritsar\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pb.amritsar\"\n        }\n    },\n    \"criteria\": [\n        {\n            \n            \"applicationNumber\": \"CLERK-APP-2024-05-06-000118\"\n        }\n       \n    ]\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8080/advocate/clerk/v1/_search",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/advocate/clerk/v1/_search",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8080",
 							"path": [
 								"advocate",
 								"clerk",
@@ -595,12 +689,13 @@
 							"raw": "{\n    \"requestInfo\": {\n        \"authToken\": \"242e079f-e419-4d75-a1ed-86d1a0b7f9d9\"\n    },\n    \"user\": {\n        \"userName\": \"ApproverUser3\",\n        \"name\": \"Rajat\",\n        \"mobileNumber\": \"9996301590\",\n        \"gender\": \"Male\",\n        \"type\": \"EMPLOYEE\",\n        \"active\": true,\n        \"password\": \"Beehyv@123\",\n        \"roles\": [\n            {\n                \"code\": \"EMPLOYEE\",\n                \"name\": \"EMPLOYEE\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"CITIZEN\",\n                \"name\": \"CITIZEN\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"ADVOCATE_CLERK_APPROVER\",\n                \"name\": \"ADVOCATE_CLERK_APPROVER\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"ADVOCATE_APPROVER\",\n                \"name\": \"ADVOCATE_APPROVER\",\n                \"tenantId\": \"pg\"\n            },\n            {\n                \"code\": \"SUPERUSER\",\n                \"name\": \"Super User\",\n                \"tenantId\": \"pg\"\n            }\n        ],\n        \"tenantId\": \"pg\"\n    }\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8086/user/users/_createnovalidate",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/user/users/_createnovalidate",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8086",
 							"path": [
 								"user",
 								"users",
@@ -632,12 +727,13 @@
 							"raw": "{\n\"RequestInfo\": {\n    \"apiId\": \"Rainmaker\",\n    \"action\": \"\",\n    \"did\": 1,\n    \"key\": \"\",\n    \"msgId\": \"20170310130900|en_IN\",\n    \"requesterId\": \"\",\n    \"ts\": 1513579888683,\n    \"ver\": \".01\",\n    \"authToken\": \"2b4ed963-f05b-43a6-ba91-bc3976181880\",\n    \"userInfo\": {\n      \"id\": 73,\n      \"userName\": null,\n      \"name\": null,\n      \"type\": \"EMPLOYEE\",\n      \"mobileNumber\": null,\n      \"emailId\": null,\n      \"roles\": [\n        {\n          \"id\": 2,\n          \"name\": \"Customer Support Representative\",\n          \"code\": null,\n          \"tenantId\": null\n        }\n      ],\n      \"tenantId\": null,\n      \"uuid\": \"uuid\"\n    }\n  }\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_search?tenantId=pg&businessServices=hearing",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/egov-workflow-v2/egov-wf/businessservice/_search?tenantId=pg&businessServices=hearing",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8088",
 							"path": [
 								"egov-workflow-v2",
 								"egov-wf",
@@ -793,12 +889,13 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:8088/egov-workflow-v2/egov-wf/businessservice/_update",
-									"protocol": "http",
+									"raw": "https://dristi-dev.pucar.org/egov-workflow-v2/egov-wf/businessservice/_update",
+									"protocol": "https",
 									"host": [
-										"localhost"
+										"dristi-dev",
+										"pucar",
+										"org"
 									],
-									"port": "8088",
 									"path": [
 										"egov-workflow-v2",
 										"egov-wf",
@@ -853,12 +950,13 @@
 							"raw": "{\r\n    \"RequestInfo\": {\r\n        \"apiId\": null,\r\n        \"ver\": null,\r\n        \"ts\": null,\r\n        \"action\": \"POST\",\r\n        \"did\": null,\r\n        \"key\": null,\r\n        \"msgId\": \"5bfa85e7-dfa1-47c8-98b2-747bf552be86\",\r\n        \"userInfo\": {\r\n            \"id\": 181,\r\n            \"userName\": \"TestEggMUSTAKIMNK\",\r\n            \"uuid\": \"4f6cf5fa-bcb2-4a3a-9dff-9740c04e3a92\",\r\n            \"locale\": \"string\",\r\n            \"type\": \"EMPLOYEE\",\r\n            \"name\": \"mustak\",\r\n            \"mobileNumber\": \"1234567890\",\r\n            \"alternatemobilenumber\": null,\r\n            \"emailId\": \"xyz@egovernments.org\",\r\n            \"roles\": [\r\n                {\r\n                    \"name\": \"Employee\",\r\n                    \"code\": \"EMPLOYEE\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"System user\",\r\n                    \"code\": \"SYSTEM\",\r\n                    \"tenantId\": \"pg\"\r\n                },\r\n                {\r\n                    \"name\": \"Super User\",\r\n                    \"code\": \"SUPERUSER\",\r\n                    \"tenantId\": \"pg\"\r\n                }\r\n            ],\r\n            \"active\": true,\r\n            \"tenantId\": \"pg\",\r\n            \"permanentCity\": \"Kaikoo\"\r\n        },\r\n        \"authToken\": \"{{Token1}}\"\r\n    },\r\n    \"MdmsCriteria\": {\r\n        \"tenantId\": \"pg\",\r\n        \"moduleDetails\": [\r\n            {\r\n                \"moduleName\": \"ACCESSCONTROL-ROLES\",\r\n                \"masterDetails\": [\r\n                    {\r\n                        \"name\": \"roles\"\r\n                    }\r\n                ]\r\n            }\r\n        ]\r\n    }\r\n}"
 						},
 						"url": {
-							"raw": "http://localhost:8085/egov-mdms-service/v1/_search",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/egov-mdms-service/v1/_search",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8085",
 							"path": [
 								"egov-mdms-service",
 								"v1",
@@ -880,12 +978,13 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:8082/filestore/v1/files/id?fileStoreId=45f327ed-f71b-4061-a491-d94c69730029&tenantId=pg",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/filestore/v1/files/id?fileStoreId=45f327ed-f71b-4061-a491-d94c69730029&tenantId=pg",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8082",
 							"path": [
 								"filestore",
 								"v1",
@@ -942,12 +1041,13 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:8082/filestore/v1/files",
-							"protocol": "http",
+							"raw": "https://dristi-dev.pucar.org/filestore/v1/files",
+							"protocol": "https",
 							"host": [
-								"localhost"
+								"dristi-dev",
+								"pucar",
+								"org"
 							],
-							"port": "8082",
 							"path": [
 								"filestore",
 								"v1",
