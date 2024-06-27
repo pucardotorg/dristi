@@ -74,6 +74,11 @@ public class CaseRepository {
                 String casesQuery = "";
                 casesQuery = queryBuilder.getCasesSearchQuery(caseCriteria, preparedStmtList, requestInfo);
                 log.info("Final case query :: {}", casesQuery);
+                if(caseCriteria.getPagination() !=  null) {
+                    Integer totalRecords = getTotalCount(casesQuery, preparedStmtList);
+                    caseCriteria.getPagination().setTotalCount(Double.valueOf(totalRecords));
+                    casesQuery = queryBuilder.addPaginationQuery(casesQuery,preparedStmtList, caseCriteria.getPagination());
+                }
                 List<CourtCase> list = jdbcTemplate.query(casesQuery, preparedStmtList.toArray(), rowMapper);
                 if (list != null) {
                     caseCriteria.setResponseList(list);
@@ -368,5 +373,11 @@ public class CaseRepository {
             log.error("Error while checking case exist :: {}", e.toString());
             throw new CustomException(SEARCH_CASE_ERR, "Custom exception while checking case exist : " + e.getMessage());
         }
+    }
+
+    public Integer getTotalCount(String baseQuery, List<Object> preparedStmtList) {
+        String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
+        log.info("Final count query :: {}", countQuery);
+        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
     }
 }
