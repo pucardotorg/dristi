@@ -57,21 +57,7 @@ public class TaskService {
 
             enrichmentUtil.enrichTaskRegistration(body);
 
-            if (body.getTask().getTaskType().equalsIgnoreCase(BAIL)) {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName()));
-            }
-            if (body.getTask().getTaskType().equalsIgnoreCase(SUMMON)) {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskSummonBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskSummonBusinessName()));
-            }
-            if (body.getTask().getTaskType().equalsIgnoreCase(WARRANT)) {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskWarrantBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskWarrantBusinessName()));
-            } else {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName()));
-            }
+            workflowEnrichment(body);
 
             producer.push(config.getTaskCreateTopic(), body);
 
@@ -112,21 +98,7 @@ public class TaskService {
             // Enrich application upon update
             enrichmentUtil.enrichCaseApplicationUponUpdate(body);
 
-            if (body.getTask().getTaskType().equalsIgnoreCase(BAIL)) {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName()));
-            }
-            if (body.getTask().getTaskType().equalsIgnoreCase(SUMMON)) {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskSummonBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskSummonBusinessName()));
-            }
-            if (body.getTask().getTaskType().equalsIgnoreCase(WARRANT)) {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskWarrantBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskWarrantBusinessName()));
-            } else {
-                body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                        config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName()));
-            }
+            workflowEnrichment(body);
 
             producer.push(config.getTaskCreateTopic(), body);
 
@@ -149,6 +121,24 @@ public class TaskService {
         } catch (Exception e) {
             log.error("Error while fetching to exist task :: {}", e.toString());
             throw new CustomException(EXIST_TASK_ERR, e.getMessage());
+        }
+    }
+
+    private void workflowEnrichment(TaskRequest body){
+        if (body.getTask().getTaskType().equalsIgnoreCase(BAIL)) {
+            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                    config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName()));
+        }
+        if (body.getTask().getTaskType().equalsIgnoreCase(SUMMON)) {
+            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                    config.getTaskSummonBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskSummonBusinessName()));
+        }
+        if (body.getTask().getTaskType().equalsIgnoreCase(WARRANT)) {
+            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                    config.getTaskWarrantBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskWarrantBusinessName()));
+        } else {
+            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                    config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName()));
         }
     }
 }
