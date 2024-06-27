@@ -174,12 +174,20 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             { shouldValidate: true }
           );
         } else {
-          onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info }, { shouldValidate: true });
+          onSelect(
+            config?.key,
+            { ...formData?.[config.key], individualDetails: null, userDetails: info, isUserVerified: true },
+            { shouldValidate: true }
+          );
         }
       })
       .catch(() => {
         setUser({ info, ...tokens });
-        onSelect(config?.key, { ...formData?.[config.key], individualDetails: null, userDetails: info }, { shouldValidate: true });
+        onSelect(
+          config?.key,
+          { ...formData?.[config.key], individualDetails: null, userDetails: info, isUserVerified: true },
+          { shouldValidate: true }
+        );
       });
   };
 
@@ -366,7 +374,6 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
                     }}
                     disable={input.isDisabled}
                     defaultValue={undefined}
-                    clas
                     {...input.validation}
                   />
                 )}

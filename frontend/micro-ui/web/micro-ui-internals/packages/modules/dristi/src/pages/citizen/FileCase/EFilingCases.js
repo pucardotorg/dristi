@@ -880,10 +880,14 @@ function EFilingCases({ path }) {
                           return {
                             ...input,
                           };
-                        } else {
+                        } else if (body?.key === "inquiryAffidavitFileUpload") {
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
+                          };
+                        } else {
+                          return {
+                            ...input,
                           };
                         }
                       }
