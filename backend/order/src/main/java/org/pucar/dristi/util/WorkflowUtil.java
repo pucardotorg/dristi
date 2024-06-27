@@ -76,7 +76,7 @@ public class WorkflowUtil {
 
         State state = callWorkFlow(workflowRequest);
 
-        return state.getApplicationStatus();
+        return state.getState();
     }
 
     /**
@@ -172,30 +172,5 @@ public class WorkflowUtil {
         Object optional = repository.fetchResult(url, workflowReq);
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
-    }
-
-    public String getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
-        try {
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            StringBuilder url = getProcessSearchURLWithParams(tenantId, businessId);
-            Object res = repository.fetchResult(url, requestInfoWrapper);
-            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
-            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
-                return response.getProcessInstances().get(0).getState().getState();
-            return null;
-        } catch (Exception e) {
-            log.error("Error getting current workflow :: {}", e.toString());
-            throw new CustomException(GET_WORKFLOW_EXCEPTION, e.getMessage());
-        }
-    }
-
-    private StringBuilder getProcessSearchURLWithParams(String tenantId, String businessServiceId) {
-        StringBuilder url = new StringBuilder(configs.getWfHost());
-        url.append(configs.getWfProcessInstanceSearchPath());
-        url.append(TENANTID);
-        url.append(tenantId);
-        url.append(BUSINESS_SERVICES_ID);
-        url.append(businessServiceId);
-        return url;
     }
 }

@@ -95,7 +95,7 @@ public class WorkflowUtilTest {
     public void testUpdateWorkflowStatus() {
         // Arrange
         State state = new State();
-        state.setApplicationStatus("UpdatedStatus");
+        state.setState("UpdatedStatus");
         ProcessInstance processInstance = new ProcessInstance();
         processInstance.setState(state);
         BusinessServiceResponse businessServiceResponse = new BusinessServiceResponse();
@@ -134,20 +134,5 @@ public class WorkflowUtilTest {
         assertNotNull(workflowMap);
         assertTrue(workflowMap.containsKey("businessId"));
         assertEquals("action", workflowMap.get("businessId").getAction());
-    }
-
-    @Test
-    public void testGetCurrentWorkflow_Exception() {
-        // Arrange
-        ProcessInstanceResponse response = new ProcessInstanceResponse();
-        lenient().when(mapper.convertValue(any(), eq(ProcessInstanceResponse.class))).thenReturn(response);
-        lenient().when(repository.fetchResult(any(), any(RequestInfoWrapper.class))).thenThrow(new RuntimeException("Error"));
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            workflowUtil.getCurrentWorkflow(requestInfo, tenantId, "businessId");
-        });
-
-        assertEquals("GET_WORKFLOW_EXCEPTION", exception.getCode());
     }
 }
