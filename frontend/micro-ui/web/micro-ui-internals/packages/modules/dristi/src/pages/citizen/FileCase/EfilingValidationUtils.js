@@ -586,6 +586,14 @@ export const respondentValidation = ({
         return true;
       }
     }
+
+    if (["companyDetailsUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)) {
+      setFormErrors("companyDetailsUpload", { type: "required" });
+      setShowErrorToast(true);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   const respondentMobileNUmbers = formData?.phonenumbers?.textfieldValue;
@@ -638,17 +646,14 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
   }
 };
 
-export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast }) => {
+export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "chequeDetails") {
-    if (
-      ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"].some(
-        (data) => !Object.keys(formData?.[data]?.document || {}).length
-      )
-    ) {
-      setShowErrorToast(true);
-      return true;
-    } else {
-      return false;
+    for (const key of ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"]) {
+      if (!(key in formData) || formData[key].document?.length === 0) {
+        setFormErrors(key, { type: "required" });
+        setShowErrorToast(true);
+        return true;
+      }
     }
   } else {
     return false;
@@ -780,7 +785,7 @@ export const delayApplicationValidation = ({ t, formData, selected, setShowError
   }
 };
 
-export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors }) => {
+export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors, clearFormDataErrors }) => {
   if (selected === "prayerSwornStatement") {
     let hasError = false;
     if (
@@ -810,7 +815,20 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       hasError = true;
     }
-    return hasError;
+    if ("SelectUploadDocWithName" in formData && Array.isArray(formData?.SelectUploadDocWithName)) {
+      let index = 0;
+      for (const key of formData?.SelectUploadDocWithName) {
+        if (!key?.document || key.document?.length === 0) {
+          setFormErrors("SelectUploadDocWithName", { message: "ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS", documentIndex: index });
+          setShowErrorToast(true);
+          hasError = true;
+        } else {
+          clearFormDataErrors("SelectUploadDocWithName");
+        }
+        index = index++;
+      }
+      return hasError;
+    }
   } else if (selected === "witnessDetails") {
     if ("text" in formData?.witnessAdditionalDetails && !formData?.witnessAdditionalDetails?.text.length > 0) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));

@@ -1294,7 +1294,16 @@ function EFilingCases({ path }) {
       formdata
         .filter((data) => data.isenabled)
         .some((data) =>
-          prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors: setFormErrors.current })
+          prayerAndSwornValidation({
+            t,
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setErrorMsg,
+            toast,
+            setFormErrors: setFormErrors.current,
+            clearFormDataErrors: clearFormDataErrors.current,
+          })
         )
     ) {
       return;
