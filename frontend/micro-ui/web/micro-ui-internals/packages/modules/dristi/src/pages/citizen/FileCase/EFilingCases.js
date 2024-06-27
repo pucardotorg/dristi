@@ -40,7 +40,7 @@ import {
   updateCaseDetails,
   validateDateForDelayApplication,
 } from "./EfilingValidationUtils";
-
+import { isEqual } from "lodash";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -1051,7 +1051,7 @@ function EFilingCases({ path }) {
     checkIfscValidation({ formData, setValue, selected });
     checkNameValidation({ formData, setValue, selected, formdata, index, reset });
     checkOnlyCharInCheque({ formData, setValue, selected });
-    if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+    if (!isEqual(formData, formdata[index].data)) {
       chequeDateValidation({ formData, setError, clearErrors, selected });
       showDemandNoticeModal({
         setValue,
@@ -1350,7 +1350,7 @@ function EFilingCases({ path }) {
         setIsDisabled(false);
       })
       .finally(() => {
-        toast.success("Successfully Saved Draft");
+        toast.success(t("CS_SUCCESSFULLY_SAVED_DRAFT"));
       });
   };
 
