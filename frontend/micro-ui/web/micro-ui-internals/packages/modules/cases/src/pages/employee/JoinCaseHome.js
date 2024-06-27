@@ -175,10 +175,11 @@ const JoinCaseHome = ({ t }) => {
       setSuccess(false);
     }
 
-    if (barRegNumber === "") {
+    if (barRegNumber === "" && step === 2) {
       setAdvocateDetail({});
       setFormData({});
       setBarDetails([]);
+      setIsDisabled(true);
     }
     if (affidavitText) {
       setIsDisabled(false);
@@ -192,7 +193,7 @@ const JoinCaseHome = ({ t }) => {
         <div className="case-number-input">
           <LabelFieldPair className="case-label-field-pair">
             <CardLabel className="case-input-label">{`${t(JoinHomeLocalisation.ENTER_CASE_NUMBER)}`}</CardLabel>
-            <div style={{ width: "100%", maxWidth: "960px" }}>
+            <div style={{ width: "100%" }}>
               <TextInput
                 // t={t}
                 style={{ width: "100%" }}
@@ -417,7 +418,7 @@ const JoinCaseHome = ({ t }) => {
                         }}
                         disable={userType === "Litigant" ? false : true}
                       />
-                      {errors?.caseNumber && <CardLabelError> {errors?.barRegNumber?.message} </CardLabelError>}
+                      {errors?.barRegNumber && <CardLabelError> {errors?.barRegNumber?.message} </CardLabelError>}
                       {}
                     </div>
                   </LabelFieldPair>
@@ -588,8 +589,6 @@ const JoinCaseHome = ({ t }) => {
     },
   ];
 
-  useEffect(() => {console.log('individualId', individualId)}, [individualId])
-
   useEffect(() => {
     setCaseInfo([
       {
@@ -609,8 +608,6 @@ const JoinCaseHome = ({ t }) => {
         value: caseDetails?.stage,
       },
     ]);
-    setBarRegNumber(caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.barRegistrationNumber);
-    setAdvocateName(caseDetails?.additionalDetails?.advocateDetails?.formdata[0]?.data?.advocateName);
   }, [caseDetails]);
 
   const handleNavigate = (path) => {
@@ -688,10 +685,12 @@ const JoinCaseHome = ({ t }) => {
         setIsDisabled(true);
         setStep(step + 1);
         setBarDetails([]);
+        setErrors({
+          ...errors,
+          barRegNumber: undefined,
+        });
       } else if (userType && userType === "Advocate" && selectedParty) {
-        if(roleOfNewAdvocate !== "I’m a supporting advocate") {
-          
-  
+        if (roleOfNewAdvocate !== "I’m a supporting advocate") {
           const advocateResponse = await DRISTIService.searchIndividualAdvocate(
             {
               criteria: [
@@ -703,27 +702,38 @@ const JoinCaseHome = ({ t }) => {
             },
             {}
           );
-  
-          setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
-          setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
-          setIsDisabled(false);
+
+          if (advocateResponse?.advocates[0]?.responseList?.length > 0) {
+            setBarRegNumber(advocateResponse?.advocates[0]?.responseList[0]?.barRegistrationNumber);
+            setAdvocateId(advocateResponse?.advocates[0]?.responseList[0]?.id);
+            setIsDisabled(false);
+            setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
+            setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
+            setBarDetails([
+              {
+                key: "CASE_NUMBER",
+                value: caseDetails?.caseNumber,
+              },
+              {
+                key: "Court Complex",
+                value: caseDetails?.courtName,
+              },
+              {
+                key: "Advocate",
+                value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
+              },
+            ]);
+            setErrors({
+              ...errors,
+              barRegNumber: undefined,
+            });
+          } else {
+            setErrors({
+              ...errors,
+              barRegNumber: "You don't have permission to join case as advocate. Please contact Nyaya Mitra for support",
+            });
+          }
           setStep(step + 1);
-          setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
-          setAdovacteVakalatnama(advocateResponse?.advocates[0]?.responseList[0]?.documents[0]);
-          setBarDetails([
-            {
-              key: "CASE_NUMBER",
-              value: caseDetails?.caseNumber,
-            },
-            {
-              key: "Court Complex",
-              value: caseDetails?.courtName,
-            },
-            {
-              key: "Advocate",
-              value: advocateResponse?.advocates[0]?.responseList[0]?.additionalDetails?.username,
-            },
-          ]);
         } else {
           const advocateResponse = await DRISTIService.searchIndividualAdvocate(
             {
@@ -747,7 +757,7 @@ const JoinCaseHome = ({ t }) => {
             "",
             userInfo?.uuid && isUserLoggedIn
           );
-          console.log('individualData', individualData)
+          console.log("individualData", individualData);
           setPrimaryAdvocateDetail([
             {
               key: "Name",
@@ -761,7 +771,7 @@ const JoinCaseHome = ({ t }) => {
               key: "Email",
               value: individualData.Individual[0]?.email || "Email Not Available",
             },
-          ])
+          ]);
           setStep(step + 1);
         }
       }
@@ -772,8 +782,7 @@ const JoinCaseHome = ({ t }) => {
       }
       if (userType === "Litigant") {
         if (representingYourself !== "Yes") {
-          // api call
-          if (!advocateDetail.barRegistrationNumber) {
+          if (!advocateDetail?.barRegistrationNumber) {
             const advocateResponse = await DRISTIService.searchIndividualAdvocate(
               {
                 criteria: [
@@ -785,8 +794,7 @@ const JoinCaseHome = ({ t }) => {
               },
               {}
             );
-            console.log("advocateResponse", advocateResponse?.advocates?.length > 0 ? advocateResponse?.advocates[0] : "No advocates found");
-            if (advocateResponse?.advocates?.length > 0) {
+            if (advocateResponse?.advocates[0]?.responseList.length > 0) {
               const temp = advocateResponse?.advocates[0].responseList[0];
               setAdvocateDetail({
                 barRegistrationNumber: temp?.barRegistrationNumber,
@@ -794,7 +802,7 @@ const JoinCaseHome = ({ t }) => {
               setBarDetails([
                 {
                   key: "Name",
-                  value: temp.additionalDetails.username,
+                  value: temp?.additionalDetails?.username,
                 },
               ]);
               if (temp?.documents?.length > 0) {
@@ -819,7 +827,7 @@ const JoinCaseHome = ({ t }) => {
               setErrors({
                 ...errors,
                 barRegNumber: {
-                  message: "Not Found",
+                  message: "Entered Bar Registration not found, Please enter correct one.",
                 },
               });
             }
@@ -850,16 +858,18 @@ const JoinCaseHome = ({ t }) => {
               representing: [
                 {
                   tenantId: tenantId,
-                  individualId: selectedParty.includes("Complainant") ? caseDetails?.additionalDetails?.complaintDetails?.formdata[0]?.data?.individualDetails?.individualId :  caseDetails?.additionalDetails?.respondentDetails?.formdata[0]?.data?.individualDetails?.individualId,
+                  individualId: selectedParty.includes("Complainant")
+                    ? caseDetails?.additionalDetails?.complaintDetails?.formdata[0]?.data?.individualDetails?.individualId
+                    : caseDetails?.additionalDetails?.respondentDetails?.formdata[0]?.data?.individualDetails?.individualId,
                 },
               ],
             },
           },
           {}
         );
-        console.log('Join case (advocate):', response)
+        console.log("Join case (advocate):", response);
       } else {
-        console.log('hojojoij')
+        console.log("hojojoij");
         const response = await CASEService.joinCaseService(
           {
             caseFilingNumber: caseNumber,
@@ -874,7 +884,7 @@ const JoinCaseHome = ({ t }) => {
           },
           {}
         );
-        console.log('Join case (litigant):', response)
+        console.log("Join case (litigant):", response);
       }
     } else if (step === 5) {
       setStep(6);

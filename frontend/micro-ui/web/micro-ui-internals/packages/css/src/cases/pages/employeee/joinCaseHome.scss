@@ -9,6 +9,8 @@
   gap: 20px;
   .case-label-field-pair {
     .text-input {
+      width: 100%;
+      max-width: 100%;
       input {
         margin-bottom: 0px;
       }
@@ -19,8 +21,9 @@
       display: flex;
       gap: 24px;
     }
-    .employee-select-wrap {
+    .select-wrap {
       margin-bottom: 0px;
+      max-width: 100%;
     }
   }
   .horizontal-line {
