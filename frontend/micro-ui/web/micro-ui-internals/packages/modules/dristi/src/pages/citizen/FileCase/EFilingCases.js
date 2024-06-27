@@ -88,7 +88,7 @@ const Heading = (props) => {
 };
 
 const selectedArray = [
-  "complaintDetails",
+  "complainantDetails",
   "respondentDetails",
   "chequeDetails",
   "debtLiabilityDetails",
@@ -395,7 +395,7 @@ function EFilingCases({ path }) {
   useEffect(() => {
     if (Object.keys(caseDetails).length !== 0) {
       const fieldsRemainingCopy = structuredClone(fieldsRemaining);
-      const additionalDetailsArray = ["complaintDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
+      const additionalDetailsArray = ["complainantDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
       const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
       for (const key of additionalDetailsArray) {
         if (caseDetails?.additionalDetails?.[key]) {
@@ -835,11 +835,11 @@ function EFilingCases({ path }) {
                           data?.addressDetails?.some(
                             (address) =>
                               ((address?.addressDetails?.pincode !==
-                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
-                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
+                                caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+                                caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
                                 (address?.addressDetails?.pincode !==
-                                  caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
-                                  caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
+                                  caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
+                                  caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
                                     "REPRESENTATIVE")) &&
                               body?.key === "inquiryAffidavitFileUpload"
                           )
@@ -1357,7 +1357,7 @@ function EFilingCases({ path }) {
       {
         cases: {
           ...caseDetails,
-          caseTitle: `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+          caseTitle: `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,

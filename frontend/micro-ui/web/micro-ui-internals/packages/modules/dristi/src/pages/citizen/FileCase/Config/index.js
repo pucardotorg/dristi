@@ -6,7 +6,7 @@ export const sideMenuConfig = [
     key: "litigentDetails",
     children: [
       {
-        key: "complaintDetails",
+        key: "complainantDetails",
         label: "CS_COMPLAINT_DETAILS",
         checked: false,
         isCompleted: false,
@@ -16,7 +16,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "complainantDetailsConfig",
               },
             ],
           },
