@@ -96,72 +96,76 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
     let fileErrors = currentValue.map((file) => fileValidator(file, input));
     const showFileUploader = currentValue.length ? input?.isMultipleUpload : true;
     return (
-      <div className="drag-drop-visible-main">
-        <div className="drag-drop-heading-main">
-          <div className="drag-drop-heading">
-            <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
-              {t(input?.documentHeader)}
-            </h1>
-            {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
-            <CustomErrorTooltip message={t("")} showTooltip={Boolean(input?.infoTooltipMessage)} />
-          </div>
-          {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
-        </div>
+      <React.Fragment>
+        {!input?.hideDocument && (
+          <div className="drag-drop-visible-main">
+            <div className="drag-drop-heading-main">
+              <div className="drag-drop-heading">
+                <h1 className="card-label custom-document-header" style={input?.documentHeaderStyle}>
+                  {t(input?.documentHeader)}
+                </h1>
+                {input?.isOptional && <span style={{ color: "#77787B" }}>&nbsp;{`${t(input?.isOptional)}`}</span>}
+                <CustomErrorTooltip message={t("")} showTooltip={Boolean(input?.infoTooltipMessage)} />
+              </div>
+              {input.documentSubText && <p className="custom-document-sub-header">{t(input.documentSubText)}</p>}
+            </div>
 
-        {currentValue.map((file, index) => (
-          <RenderFileCard
-            key={`${input?.name}${index}`}
-            index={index}
-            fileData={file}
-            handleChange={handleChange}
-            handleDeleteFile={handleDeleteFile}
-            t={t}
-            uploadErrorInfo={fileErrors[index]}
-            input={input}
-            disableUploadDelete={config?.disable}
-          />
-        ))}
+            {currentValue.map((file, index) => (
+              <RenderFileCard
+                key={`${input?.name}${index}`}
+                index={index}
+                fileData={file}
+                handleChange={handleChange}
+                handleDeleteFile={handleDeleteFile}
+                t={t}
+                uploadErrorInfo={fileErrors[index]}
+                input={input}
+                disableUploadDelete={config?.disable}
+              />
+            ))}
 
-        <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
-          <FileUploader
-            handleChange={(data) => {
-              handleChange(data, input);
-            }}
-            name="file"
-            types={input?.fileTypes}
-            children={<DragDropJSX t={t} currentValue={currentValue} error={errors[config.key]} />}
-            key={input?.name}
-            onTypeError={() => {
-              toast.error(t("CS_INVALID_FILE_TYPE"));
-            }}
-          />
-          <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
-        </div>
-        {input.downloadTemplateText && input.downloadTemplateLink && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
-            {input?.downloadTemplateText && t(input?.downloadTemplateText)}
-            {input?.downloadTemplateLink && (
-              <a
-                href={input?.downloadTemplateLink}
-                target="_blank"
-                rel="noreferrer"
-                style={{
-                  display: "flex",
-                  color: "#9E400A",
-                  textDecoration: "none",
-                  width: 250,
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+            <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
+              <FileUploader
+                handleChange={(data) => {
+                  handleChange(data, input);
                 }}
-              >
-                {t("CS__DOWNLOAD_TEMPLATE")}
-              </a>
+                name="file"
+                types={input?.fileTypes}
+                children={<DragDropJSX t={t} currentValue={currentValue} error={errors[config.key]} />}
+                key={input?.name}
+                onTypeError={() => {
+                  toast.error(t("CS_INVALID_FILE_TYPE"));
+                }}
+              />
+              <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
+            </div>
+            {input.downloadTemplateText && input.downloadTemplateLink && (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-start", gap: "20px" }}>
+                {input?.downloadTemplateText && t(input?.downloadTemplateText)}
+                {input?.downloadTemplateLink && (
+                  <a
+                    href={input?.downloadTemplateLink}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      display: "flex",
+                      color: "#9E400A",
+                      textDecoration: "none",
+                      width: 250,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {t("CS__DOWNLOAD_TEMPLATE")}
+                  </a>
+                )}
+              </div>
             )}
+            {/* {errors?.[config.key] && <CardLabelError>{t(errors[config.key]?.message || "CORE_COMMON_INVALID")}</CardLabelError>} */}
           </div>
         )}
-        {/* {errors?.[config.key] && <CardLabelError>{t(errors[config.key]?.message || "CORE_COMMON_INVALID")}</CardLabelError>} */}
-      </div>
+      </React.Fragment>
     );
   });
 }

@@ -879,11 +879,13 @@ function EFilingCases({ path }) {
                           delete input.isOptional;
                           return {
                             ...input,
+                            hideDocument: false,
                           };
                         } else if (body?.key === "inquiryAffidavitFileUpload") {
                           return {
                             ...input,
                             isOptional: "CS_IS_OPTIONAL",
+                            hideDocument: true,
                           };
                         } else {
                           return {
