@@ -412,7 +412,6 @@ export const checkDuplicateMobileEmailValidation = ({
     }
   }
   if (selected === "witnessDetails") {
-    console.log("formdatares", formdata, formData);
     const currentMobileNumber = formData?.phonenumbers?.textfieldValue;
     if (currentMobileNumber && complainantMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("phonenumbers", { mobileNumber: "WITNESS_MOB_NUM_CAN_NOT_BE_SAME_AS_COMPLAINANT_MOB_NUM" });
@@ -450,13 +449,6 @@ export const checkDuplicateMobileEmailValidation = ({
   }
   if (selected === "complainantDetails") {
     const currentMobileNumber = formData?.complainantVerification?.mobileNumber;
-    console.log(
-      "check",
-      index,
-      currentDisplayIndex,
-      formdata.filter((data) => data.isenabled === true).filter((data) => !data?.complainantVerification?.userDetails === true)
-    );
-    console.log("formdata123", formdata, formData, formData?.complainantVerification?.mobileNumber);
 
     if (currentMobileNumber && respondentMobileNumbersArray.some((number) => number === currentMobileNumber)) {
       setError("complainantVerification", { mobileNumber: "COMPLAINANT_MOB_NUM_CAN_NOT_BE_SAME_AS_RESPONDENT_MOB_NUM", isDuplicateNumber: true });

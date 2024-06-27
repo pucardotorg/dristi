@@ -263,7 +263,7 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
                   getFormState={(fileData) => getFileStoreData(fileData, input)}
                   showHintBelow={input?.showHintBelow ? true : false}
                   setuploadedstate={formData?.[config.key]?.[input.name] || []}
-                  allowedMaxSizeInMB={"5"}
+                  allowedMaxSizeInMB={input?.maxFileSize}
                   maxFilesAllowed={input.maxFilesAllowed || "1"}
                   extraStyleName={{ padding: "0.5rem" }}
                   customClass={input?.customClass}

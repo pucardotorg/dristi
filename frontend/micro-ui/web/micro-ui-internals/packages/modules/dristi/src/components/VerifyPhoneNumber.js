@@ -267,7 +267,6 @@ function VerifyPhoneNumber({ t, config, onSelect, formData = {}, errors, setErro
             }}
           />
         </div>
-        {console.log("config?.isVerifiedOtpDisabledKey", config?.isVerifiedOtpDisabledKey, errors?.[config?.key]?.[config?.isVerifiedOtpDisabledKey])}
         {isUserVerified || formData?.[config.key]?.isUserVerified ? (
           <div
             style={{
