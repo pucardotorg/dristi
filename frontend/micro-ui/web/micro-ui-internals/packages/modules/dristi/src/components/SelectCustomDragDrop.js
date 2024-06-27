@@ -86,7 +86,6 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
     currentValue.splice(index, 1);
     setValue(currentValue, input?.name);
   };
-
   return inputs.map((input) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     let fileErrors = currentValue.map((file) => fileValidator(file, input));
@@ -112,6 +111,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             t={t}
             uploadErrorInfo={fileErrors[index]}
             input={input}
+            disableUploadDelete={config?.disable}
           />
         ))}
 

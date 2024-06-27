@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "../../../dristi/src/components/Modal";
 import CustomSubmitModal from "../../../dristi/src/pages/citizen/FileCase/admission/CustomSubmitModal";
 
-function OrderSucessModal({ order, t }) {
+function OrderSucessModal({ order, t, setShowSuccessModal }) {
   const getFormattedDate = () => {
     const currentDate = new Date();
     const year = String(currentDate.getFullYear()).slice(-2);
@@ -31,9 +31,13 @@ function OrderSucessModal({ order, t }) {
   return (
     <Modal
       actionCancelLabel={t("DOWNLOAD_ORDER")}
-      actionCancelOnSubmit={() => {}}
+      actionCancelOnSubmit={() => {
+        setShowSuccessModal(false);
+      }}
       actionSaveLabel={t("CLOSE")}
-      actionSaveOnSubmit={() => {}}
+      actionSaveOnSubmit={() => {
+        setShowSuccessModal(false);
+      }}
       className={"orders-success-modal"}
     >
       <CustomSubmitModal t={t} submitModalInfo={orderModalInfo} />

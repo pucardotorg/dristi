@@ -920,8 +920,10 @@ function EFilingCases({ path }) {
             updatedBody = config.body
               .map((formComponent) => {
                 let key = formComponent.key || formComponent.populators?.name;
-                if (formComponent.type === "component" && formComponent.component === "SelectCustomDragDrop") {
-                  key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                if (formComponent.type === "component") {
+                  if (["SelectCustomDragDrop", "SelectBulkInputs"].includes(formComponent.component)) {
+                    key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                  }
                 }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
@@ -944,7 +946,7 @@ function EFilingCases({ path }) {
                     </React.Fragment>
                   );
                 }
-                modifiedFormComponent.disable = true;
+                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
                 if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
                   modifiedFormComponent.disable = false;
                   modifiedFormComponent.withoutLabel = true;
@@ -1428,7 +1430,6 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${nextSelected}`);
   }
 
-  console.log("form", formdata);
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
