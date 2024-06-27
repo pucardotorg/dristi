@@ -76,7 +76,7 @@ public class WorkflowUtil {
 
         State state = callWorkFlow(workflowRequest);
 
-        return state.getApplicationStatus();
+        return state.getState();
     }
 
     /**

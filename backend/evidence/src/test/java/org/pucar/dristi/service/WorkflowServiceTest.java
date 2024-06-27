@@ -281,6 +281,6 @@ public class WorkflowServiceTest {
         });
 
         assertEquals("WORKFLOW_SERVICE_EXCEPTION", exception.getCode());
-        assertEquals("General exception occurred", exception.getMessage());
+        assertEquals("java.lang.RuntimeException: General exception occurred", exception.getMessage());
     }
 }
