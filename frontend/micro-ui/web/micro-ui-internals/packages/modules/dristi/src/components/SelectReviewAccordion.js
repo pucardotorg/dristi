@@ -259,6 +259,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
             const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
             let bgclassname = sectionError && isScrutiny ? "error" : "";
+            bgclassname = sectionError && isCaseReAssigned ? "preverror" : bgclassname;
             if (isPrevScrutiny) {
               showFlagIcon = prevSectionError ? true : false;
               bgclassname = prevSectionError ? "preverror" : "";
@@ -332,6 +333,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         configKey={config.key}
                         titleHeading={titleHeading}
                         isPrevScrutiny={isPrevScrutiny}
+                        isCaseReAssigned={isCaseReAssigned}
                       />
                     );
                   })}

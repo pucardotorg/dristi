@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import CustomErrorTooltip from "./CustomErrorTooltip";
 
-function SelectCustomNote({ t, config, onClick }) {
+function SelectCustomNote({ t, config, onClick = () => {} }) {
   const inputs = useMemo(
     () =>
       config?.populators?.inputs || [
