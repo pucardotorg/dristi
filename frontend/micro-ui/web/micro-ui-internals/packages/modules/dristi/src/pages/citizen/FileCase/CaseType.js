@@ -195,7 +195,7 @@ function CaseType({ t }) {
                         },
                       }
                     : {
-                        complaintDetails: {
+                      complainantDetails: {
                           formdata: [
                             {
                               isenabled: true,
