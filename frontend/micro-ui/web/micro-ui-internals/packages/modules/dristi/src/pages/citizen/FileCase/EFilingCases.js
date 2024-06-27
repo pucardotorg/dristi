@@ -40,6 +40,7 @@ import ReactTooltip from "react-tooltip";
 import FlagBox from "../../../components/FlagBox";
 import ScrutinyInfo from "../../../components/ScrutinyInfo";
 import { isEqual } from "lodash";
+import SelectCustomNote from "../../../components/SelectCustomNote";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -410,7 +411,11 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining(fieldsRemainingCopy);
+      if (isDraftInProgress) {
+        setFieldsRemaining(fieldsRemainingCopy);
+      } else {
+        setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
+      }
     }
   }, [caseDetails]);
 
@@ -446,9 +451,34 @@ function EFilingCases({ path }) {
     return () => clearTimeout(timer);
   }, [showErrorToast, showSuccessToast]);
 
+  useEffect(() => {
+    if (isCaseReAssigned && errorCaseDetails === null) {
+      updateCaseDetails({
+        isCompleted: true,
+        caseDetails,
+        formdata,
+        pageConfig,
+        selected,
+        setIsDisabled,
+        tenantId,
+        setFormDataValue: setFormDataValue.current,
+        setErrorCaseDetails,
+      })
+        .then(() => {
+          setIsDisabled(false);
+        })
+        .catch(() => {
+          setIsDisabled(false);
+        });
+    }
+  }, [isCaseReAssigned, errorCaseDetails]);
+
   const getDefaultValues = useCallback(
     (index) => {
       if (isCaseReAssigned && errorCaseDetails) {
+        if (selected === "reviewCaseFile") {
+          return scrutinyObj;
+        }
         return (
           errorCaseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
           errorCaseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
@@ -462,7 +492,7 @@ function EFilingCases({ path }) {
         formdata[index]?.data
       );
     },
-    [caseDetails?.additionalDetails, caseDetails?.caseDetails, errorCaseDetails, formdata, isCaseReAssigned, selected]
+    [caseDetails?.additionalDetails, caseDetails?.caseDetails, errorCaseDetails, formdata, isCaseReAssigned, selected, scrutinyObj]
   );
 
   const accordion = useMemo(() => {
@@ -837,7 +867,8 @@ function EFilingCases({ path }) {
                             (address) =>
                               ((address?.addressDetails?.pincode !==
                                 caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
-                                caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
+                                caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
+                                  "INDIVIDUAL") ||
                                 (address?.addressDetails?.pincode !==
                                   caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
                                   caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
@@ -1294,7 +1325,7 @@ function EFilingCases({ path }) {
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+    updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId, setErrorCaseDetails })
       .then(() => {
         refetchCaseData().then(() => {
           const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -1332,7 +1363,16 @@ function EFilingCases({ path }) {
     }
     setIsOpen(false);
 
-    updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+    updateCaseDetails({
+      isCompleted: "PAGE_CHANGE",
+      caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
+      formdata,
+      pageConfig,
+      selected,
+      setIsDisabled,
+      tenantId,
+      setErrorCaseDetails,
+    })
       .then(() => {
         if (!isCaseReAssigned) {
           refetchCaseData().then(() => {
@@ -1547,6 +1587,22 @@ function EFilingCases({ path }) {
             </div>
             <p>{t(pageConfig.subtext || "")}</p>
           </div>
+          {isCaseReAssigned && selected === "reviewCaseFile" && (
+            <SelectCustomNote
+              t={t}
+              config={{
+                populators: {
+                  inputs: [
+                    {
+                      infoHeader: "Note",
+                      infoText: `${t("CS_YOU_MADE")} ${totalErrors?.total} ${"CS_REVIEW_CAREFULLY"}`,
+                      type: "InfoComponent",
+                    },
+                  ],
+                },
+              }}
+            />
+          )}
           {sectionWiseErrors?.[selected] && <ScrutinyInfo t={t} config={{ populators: { scrutinyMessage: sectionWiseErrors?.[selected] } }} />}
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
