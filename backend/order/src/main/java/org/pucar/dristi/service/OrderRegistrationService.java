@@ -63,7 +63,6 @@ public class OrderRegistrationService {
     }
 
     public List<Order> searchOrder(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status,RequestInfo requestInfo) {
-
         try {
             // Fetch applications from database according to the given search criteria
             List<Order> orderList = orderRepository.getOrders(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
@@ -72,7 +71,7 @@ public class OrderRegistrationService {
             if (CollectionUtils.isEmpty(orderList))
                 return new ArrayList<>();
 
-            orderList.forEach(order -> order.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, order.getTenantId(), order.getOrderNumber()))));
+            orderList.forEach(order -> order.setStatus(workflowUtil.getCurrentWorkflow(requestInfo, order.getTenantId(), order.getOrderNumber())));
 
             return orderList;
 

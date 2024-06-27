@@ -150,30 +150,4 @@ public class WorkflowUtilTest {
 
         assertEquals("GET_WORKFLOW_EXCEPTION", exception.getCode());
     }
-
-    @Test
-    public void testGetWorkflowFromProcessInstance() {
-        // Arrange
-        ProcessInstance processInstance = new ProcessInstance();
-        State state = new State();
-        state.setState("action");
-        processInstance.setState(state);
-        processInstance.setComment("comment");
-
-        // Act
-        Workflow workflow = workflowUtil.getWorkflowFromProcessInstance(processInstance);
-
-        // Assert
-        assertNotNull(workflow);
-        assertEquals("action", workflow.getAction());
-        assertEquals("comment", workflow.getComments());
-    }
-
-    @Test
-    public void testGetWorkflowFromProcessInstance_Null() {
-        // Act
-        Workflow workflow = workflowUtil.getWorkflowFromProcessInstance(null);
-        // Assert
-        assertNull(workflow);
-    }
 }

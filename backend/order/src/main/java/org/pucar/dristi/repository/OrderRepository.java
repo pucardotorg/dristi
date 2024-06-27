@@ -101,7 +101,7 @@ public class OrderRepository {
     public List<OrderExists> checkOrderExists(List<OrderExists> orderExistsRequest) {
         try {
             for (OrderExists orderExists : orderExistsRequest) {
-                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null) {
+                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null && orderExists.getApplicationNumber() == null){
                     orderExists.setExists(false);
                 } else {
                     String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber());
