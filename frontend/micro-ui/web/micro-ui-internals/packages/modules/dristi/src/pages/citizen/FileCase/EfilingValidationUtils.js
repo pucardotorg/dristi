@@ -644,6 +644,11 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
       setShowErrorToast(true);
       return true;
     }
+    if (formData?.proofOfReply?.code === "YES" && formData?.["proofOfReplyFileUpload"]?.document.length === 0) {
+      setFormErrors("proofOfReplyFileUpload", { type: "required" });
+      setShowErrorToast(true);
+      return true;
+    }
   } else {
     return false;
   }
@@ -831,11 +836,6 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
         index = index++;
       }
       return hasError;
-    }
-  } else if (selected === "witnessDetails") {
-    if ("text" in formData?.witnessAdditionalDetails && !formData?.witnessAdditionalDetails?.text.length > 0) {
-      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
-      return true;
     }
   } else {
     return false;
@@ -1372,6 +1372,7 @@ export const updateCaseDetails = async ({
             legalDemandNoticeFileUpload: {},
             proofOfDispatchFileUpload: {},
             proofOfAcknowledgmentFileUpload: {},
+            proofOfReplyFileUpload: {},
           };
 
           const fileUploadKeys = Object.keys(demandNoticeDocumentData).filter((key) => data?.data?.[key]?.document);
