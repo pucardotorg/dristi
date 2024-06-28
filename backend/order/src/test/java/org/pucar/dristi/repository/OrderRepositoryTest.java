@@ -9,6 +9,7 @@ import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
 import org.pucar.dristi.repository.rowmapper.OrderRowMapper;
 import org.pucar.dristi.repository.rowmapper.StatuteSectionRowMapper;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderCriteria;
 import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -54,7 +55,25 @@ public class OrderRepositoryTest {
         order.setId(UUID.randomUUID());
         orders.add(order);
 
-        when(queryBuilder.getOrderSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), anyList()))
+        // Arrange
+        String orderNumber = "ORDER123";
+        String applicationNumber = "APP123";
+        String cnrNumber = "CNR123";
+        String filingNumber = "FILING123";
+        String tenantId = "tenant1";
+        String id = "1";
+        String status = "active";
+        OrderCriteria orderCriteria = new OrderCriteria();
+        orderCriteria.setOrderNumber(orderNumber);
+        orderCriteria.setId(id);
+        orderCriteria.setStatus(status);
+        orderCriteria.setFilingNumber(filingNumber);
+        orderCriteria.setCnrNumber(cnrNumber);
+        orderCriteria.setTenantId(tenantId);
+        orderCriteria.setApplicationNumber(applicationNumber);
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        when(queryBuilder.getOrderSearchQuery(any(),any()))
                 .thenReturn(orderQuery);
         when(jdbcTemplate.query(eq(orderQuery), any(Object[].class), eq(rowMapper))).thenReturn(orders);
 
@@ -70,7 +89,7 @@ public class OrderRepositoryTest {
         when(jdbcTemplate.query(eq(documentQuery), any(Object[].class), eq(documentRowMapper))).thenReturn(documentMap);
 
         // Execute the method
-        List<Order> result = orderRepository.getOrders("orderNumber", "applicationNumber", "cnrNumber", "filingNumber", "tenantId", "id", "status");
+        List<Order> result = orderRepository.getOrders(orderCriteria);
 
         // Verify interactions and assertions
         verify(jdbcTemplate).query(eq(orderQuery), any(Object[].class), eq(rowMapper));

@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.querybuilder;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pucar.dristi.web.models.OrderCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,10 +53,18 @@ class OrderQueryBuilderTest {
         String tenantId = "tenant1";
         String id = "1";
         String status = "active";
+        OrderCriteria orderCriteria = new OrderCriteria();
+        orderCriteria.setOrderNumber(orderNumber);
+        orderCriteria.setId(id);
+        orderCriteria.setStatus(status);
+        orderCriteria.setFilingNumber(filingNumber);
+        orderCriteria.setCnrNumber(cnrNumber);
+        orderCriteria.setTenantId(tenantId);
+        orderCriteria.setApplicationNumber(applicationNumber);
         List<Object> preparedStmtList = new ArrayList<>();
 
         // Act
-        String query = queryBuilder.getOrderSearchQuery(orderNumber, applicationNumber, cnrNumber, filingNumber, tenantId, id, status, preparedStmtList);
+        String query = queryBuilder.getOrderSearchQuery(orderCriteria, preparedStmtList);
 
         // Assert
         String expectedQuery = " SELECT orders.id as id, orders.tenantid as tenantid, orders.hearingnumber as hearingnumber, orders.filingnumber as filingnumber, orders.comments as comments, orders.cnrnumber as cnrnumber, orders.linkedordernumber as linkedordernumber, orders.ordernumber as ordernumber, orders.applicationnumber as applicationnumber,orders.createddate as createddate, orders.ordertype as ordertype, orders.issuedby as issuedby, orders.ordercategory as ordercategory,orders.status as status, orders.isactive as isactive, orders.additionaldetails as additionaldetails, orders.createdby as createdby,orders.lastmodifiedby as lastmodifiedby, orders.createdtime as createdtime, orders.lastmodifiedtime as lastmodifiedtime  FROM dristi_orders orders WHERE orders.applicationNumber::text LIKE ? AND orders.cnrNumber = ? AND orders.filingNumber = ? AND orders.tenantId = ? AND orders.id = ? AND orders.status = ? AND orders.orderNumber = ? ORDER BY orders.createdtime DESC ";

@@ -2,6 +2,8 @@ package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderCriteria;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -85,8 +87,16 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getOrderSearchQuery(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status, List<Object> preparedStmtList) {
+    public String getOrderSearchQuery(OrderCriteria criteria, List<Object> preparedStmtList) {
         try {
+            String orderNumber = criteria.getOrderNumber();
+            String applicationNumber = criteria.getApplicationNumber();
+            String cnrNumber = criteria.getCnrNumber();
+            String filingNumber = criteria.getFilingNumber();
+            String tenantId = criteria.getTenantId();
+            String id = criteria.getId();
+            String status = criteria.getStatus();
+
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria

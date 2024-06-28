@@ -97,14 +97,16 @@ public class OrderRegistrationServiceTest {
         order.setId(UUID.fromString("3244d158-c5cb-4769-801f-a0f94f383679"));
         order.setStatuteSection(new StatuteSection());
         mockOrderList.add(order);
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        orderSearchRequest.setCriteria(new OrderCriteria());
 
-        when(orderRepository.getOrders(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(orderRepository.getOrders(any()))
                 .thenReturn(mockOrderList);
 
-        List<Order> result = orderRegistrationService.searchOrder("order-no","appNum", "cnrNum", "filingNum", "tenant", "id", "status", new RequestInfo());
+        List<Order> result = orderRegistrationService.searchOrder(orderSearchRequest);
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).getOrders("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status");
+        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria());
     }
 
     @Test
@@ -119,7 +121,7 @@ public class OrderRegistrationServiceTest {
         existingOrder.setId(UUID.randomUUID());
 
         when(validator.validateApplicationExistence(any(OrderRequest.class)))
-                .thenReturn(existingOrder);
+                .thenReturn(true);
         doNothing().when(enrichmentUtil).enrichOrderRegistrationUponUpdate(any(OrderRequest.class));
         doNothing().when(producer).push(anyString(), any(OrderRequest.class));
 
@@ -150,7 +152,7 @@ public class OrderRegistrationServiceTest {
         mockOrder.setTenantId("pg");
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getOrders(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(orderRepository.getOrders(any()))
                 .thenReturn(mockOrderList);
 
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);

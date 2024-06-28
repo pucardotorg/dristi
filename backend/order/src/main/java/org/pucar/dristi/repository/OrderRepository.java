@@ -6,6 +6,7 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.OrderQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderCriteria;
 import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class OrderRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Order> getOrders(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public List<Order> getOrders(OrderCriteria criteria) {
 
         try {
             List<Order> orderList = new ArrayList<>();
@@ -48,7 +49,7 @@ public class OrderRepository {
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String orderQuery = "";
-            orderQuery = queryBuilder.getOrderSearchQuery(orderNumber,applicationNumber, cnrNumber,filingNumber, tenantId, id, status, preparedStmtList);
+            orderQuery = queryBuilder.getOrderSearchQuery(criteria, preparedStmtList);
             log.info("Final order query :: {}", orderQuery);
             List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB order list :: {}", list);

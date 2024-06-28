@@ -72,6 +72,13 @@ paths:
     post:
       tags:
         - Order
+      requestBody:
+        description: Details for the search order(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/OrderSearchRequest'
+        required: true
       summary: search for orders
       description: |
         search order(s) based on different parameters
@@ -157,6 +164,13 @@ paths:
 
 components:
   schemas:
+    OrderSearchRequest:
+      type: object
+      properties:
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
+        criteria:
+          $ref: '#/components/schemas/OrderCriteria'
     OrderRequest:
       type: object
       properties:
@@ -171,7 +185,24 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
         order:
           $ref: '#/components/schemas/Order'
-
+    OrderCriteria:
+      type: object
+      description: can send in any one of the values. If multiple parameters are passed, then it will be a logical AND search
+      properties:
+        filingNumber:
+          type: string
+        cnrNumber:
+          type: string
+        tenantId:
+          type: string
+        id:
+          type: string
+        orderNumber:
+          type: string
+        applicationNumber:
+          type: string
+        status:
+          type: string
     OrderListResponse:
       type: object
       properties:

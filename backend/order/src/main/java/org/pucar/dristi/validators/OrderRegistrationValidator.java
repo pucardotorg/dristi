@@ -8,7 +8,9 @@ import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.OrderRequest;
+import org.pucar.dristi.web.models.OrderResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -43,14 +45,21 @@ public class OrderRegistrationValidator {
             throw new CustomException("INVALID_CASE_DETAILS", "Invalid Case");
     }
 
-    public Order validateApplicationExistence(OrderRequest orderRequest) {
+    public Boolean validateApplicationExistence(OrderRequest orderRequest) {
         Order order = orderRequest.getOrder();
-        List<Order> existingApplications = repository.getOrders("", "",order.getCnrNumber(), order.getFilingNumber(), order.getTenantId(),
-                String.valueOf(order.getId()), order.getStatus());
-        log.info("Existing application :: {}", existingApplications.size());
-        if (existingApplications.isEmpty())
-            throw new CustomException(VALIDATION_EXCEPTION, "Order does not exist");
 
-        return existingApplications.get(0);
+        OrderExists orderExists = new OrderExists();
+        orderExists.setFilingNumber(order.getFilingNumber());
+        orderExists.setCnrNumber(order.getCnrNumber());
+        orderExists.setOrderId(order.getId());
+        List<OrderExists> criteriaList = new ArrayList<>();
+        criteriaList.add(orderExists);
+
+        List<OrderExists> orderExistsList = repository.checkOrderExists(criteriaList);
+
+        if (orderExistsList.isEmpty())
+            return false;
+
+        return orderExistsList.get(0).getExists();
     }
 }

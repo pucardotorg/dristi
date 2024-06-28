@@ -11,6 +11,7 @@ import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.OrderRequest;
 import org.pucar.dristi.web.models.StatuteSection;
 
@@ -91,7 +92,15 @@ public class OrderRegistrationValidatorTest {
         // Mock repository response
         List<Order> existingApplications = new ArrayList<>();
         existingApplications.add(order);
-        when(repository.getOrders(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString())).thenReturn(existingApplications);
+
+        OrderExists orderExists = new OrderExists();
+        orderExists.setFilingNumber(order.getFilingNumber());
+        orderExists.setCnrNumber(order.getCnrNumber());
+        orderExists.setOrderId(order.getId());
+        List<OrderExists> criteriaList = new ArrayList<>();
+        criteriaList.add(orderExists);
+
+        when(repository.checkOrderExists(any())).thenReturn(criteriaList);
 
         // Perform validation
         assertDoesNotThrow(() -> validator.validateApplicationExistence(orderRequest));
