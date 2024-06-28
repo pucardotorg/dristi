@@ -16,7 +16,7 @@ const DRISTICard = () => {
     return res;
   }, true);
 
-  if (isScrutiny) {
+  if (isScrutiny && !isNyayMitra && !isJudge) {
     history.push("/digit-ui/employee/dristi/cases");
   }
 
