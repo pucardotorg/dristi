@@ -587,7 +587,10 @@ export const respondentValidation = ({
       }
     }
 
-    if (["companyDetailsUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)) {
+    if (
+      formData?.respondentType?.code === "REPRESENTATIVE" &&
+      ["companyDetailsUpload"].some((data) => !Object.keys(formData?.[data]?.document || {}).length)
+    ) {
       setFormErrors("companyDetailsUpload", { type: "required" });
       setShowErrorToast(true);
       return true;
