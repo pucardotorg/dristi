@@ -2,7 +2,7 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "task",
+      "businessService": "task-warrant",
       "business": "task-warrant-services",
       "businessServiceSla": 30,
       "states": [
