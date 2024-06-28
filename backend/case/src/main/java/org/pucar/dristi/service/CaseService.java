@@ -14,6 +14,7 @@ import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
 import org.pucar.dristi.util.BillingUtil;
+import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -44,6 +46,9 @@ public class CaseService {
     private Producer producer;
 
     private BillingUtil billingUtil;
+
+
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
 
 
     @Autowired
@@ -70,7 +75,10 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(body);
 
+            body.setCases(encryptionDecryptionUtil.encryptObject(body.getCases(), "CourtCase", CourtCase.class));
+
             producer.push(config.getCaseCreateTopic(), body);
+
             return body.getCases();
         } catch (CustomException e) {
             throw e;
@@ -87,10 +95,17 @@ public class CaseService {
             caseRepository.getCases(caseSearchRequests.getCriteria(), caseSearchRequests.getRequestInfo());
 
             // If no applications are found matching the given criteria, return an empty list
-            for (CaseCriteria searchCriteria : caseSearchRequests.getCriteria()) {
-                searchCriteria.getResponseList().forEach(cases -> cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getFilingNumber()))));
-            }
-        } catch (CustomException e) {
+
+            caseSearchRequests.getCriteria().forEach(caseCriteria -> {
+                List<CourtCase> decryptedCourtCases = new ArrayList<>();
+                caseCriteria.getResponseList().forEach(cases -> {
+                    cases.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(caseSearchRequests.getRequestInfo(), cases.getTenantId(), cases.getCaseNumber())));
+                    decryptedCourtCases.add(encryptionDecryptionUtil.decryptObject(cases,"CaseDecryptSelf",CourtCase.class,caseSearchRequests.getRequestInfo()));
+                });
+                caseCriteria.setResponseList(decryptedCourtCases);
+            });
+
+        } catch(CustomException e){
             throw e;
         } catch (Exception e) {
             log.error("Error while fetching to search results :: {}", e.toString());
@@ -110,14 +125,14 @@ public class CaseService {
 
             workflowService.updateWorkflowStatus(caseRequest);
 
-            if (CREATE_DEMAND_STATUS.equals(caseRequest.getCases().getStatus())) {
-                billingUtil.createDemand(caseRequest);
-            }
+
             if (CASE_ADMIT_STATUS.equals(caseRequest.getCases().getStatus())) {
                 enrichmentUtil.enrichAccessCode(caseRequest);
                 enrichmentUtil.enrichCaseNumberAndCNRNumber(caseRequest);
                 enrichmentUtil.enrichRegistrationDate(caseRequest);
             }
+
+            caseRequest.setCases(encryptionDecryptionUtil.encryptObject(caseRequest.getCases(), "CourtCase", CourtCase.class));
 
             producer.push(config.getCaseUpdateTopic(), caseRequest);
 
