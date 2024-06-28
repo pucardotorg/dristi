@@ -452,26 +452,10 @@ function EFilingCases({ path }) {
   }, [showErrorToast, showSuccessToast]);
 
   useEffect(() => {
-    if (isCaseReAssigned && errorCaseDetails === null) {
-      updateCaseDetails({
-        isCompleted: true,
-        caseDetails,
-        formdata,
-        pageConfig,
-        selected,
-        setIsDisabled,
-        tenantId,
-        setFormDataValue: setFormDataValue.current,
-        setErrorCaseDetails,
-      })
-        .then(() => {
-          setIsDisabled(false);
-        })
-        .catch(() => {
-          setIsDisabled(false);
-        });
+    if (!errorCaseDetails && isCaseReAssigned) {
+      setErrorCaseDetails(caseDetails);
     }
-  }, [isCaseReAssigned, errorCaseDetails]);
+  }, [caseDetails, errorCaseDetails]);
 
   const getDefaultValues = useCallback(
     (index) => {
@@ -879,11 +863,17 @@ function EFilingCases({ path }) {
                           delete input.isOptional;
                           return {
                             ...input,
+                            hideDocument: false,
+                          };
+                        } else if (body?.key === "inquiryAffidavitFileUpload") {
+                          return {
+                            ...input,
+                            isOptional: "CS_IS_OPTIONAL",
+                            hideDocument: true,
                           };
                         } else {
                           return {
                             ...input,
-                            isOptional: "CS_IS_OPTIONAL",
                           };
                         }
                       }
@@ -979,7 +969,7 @@ function EFilingCases({ path }) {
                   );
                 }
                 modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
-                if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
+                if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index] && key in scrutiny?.[selected]?.form?.[index]) {
                   modifiedFormComponent.disable = false;
                   modifiedFormComponent.withoutLabel = true;
                   return [
@@ -1288,7 +1278,16 @@ function EFilingCases({ path }) {
       formdata
         .filter((data) => data.isenabled)
         .some((data) =>
-          prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast, setFormErrors: setFormErrors.current })
+          prayerAndSwornValidation({
+            t,
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setErrorMsg,
+            toast,
+            setFormErrors: setFormErrors.current,
+            clearFormDataErrors: clearFormDataErrors.current,
+          })
         )
     ) {
       return;
@@ -1633,7 +1632,7 @@ function EFilingCases({ path }) {
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && isDraftInProgress && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {

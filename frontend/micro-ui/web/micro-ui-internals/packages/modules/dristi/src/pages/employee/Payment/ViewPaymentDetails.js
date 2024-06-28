@@ -22,11 +22,11 @@ const paymentOption = [
     i18nKey: "Cheque",
   },
   {
-    code: "DEMAND_DRAFT",
+    code: "DD",
     i18nKey: "Demand Draft",
   },
   {
-    code: "STAMPS",
+    code: "POSTAL_ORDER",
     i18nKey: "Stamps",
   },
 ];
@@ -115,6 +115,9 @@ const ViewPaymentDetails = ({ location, match }) => {
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
           payerName: payer,
           totalAmountPaid: 2000,
+          ...(additionDetails && { transactionNumber: additionDetails }),
+          instrumentNumber: additionDetails,
+          instrumentDate: new Date().getTime(),
         },
       });
       history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox/response`, {
@@ -214,7 +217,7 @@ const ViewPaymentDetails = ({ location, match }) => {
                 config={paymentOptionConfig}
               ></CustomDropdown>
             </LabelFieldPair>
-            {(modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DEMAND_DRAFT") && (
+            {(modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DD") && (
               <LabelFieldPair style={{ alignItems: "flex-start", fontSize: "16px", fontWeight: 400 }}>
                 <CardLabel>{t(modeOfPayment?.code === "CHEQUE" ? t("Cheque number") : t("Demand Draft number"))}</CardLabel>
                 <TextInput
@@ -245,7 +248,11 @@ const ViewPaymentDetails = ({ location, match }) => {
             disabled={
               !payer ||
               Object.keys(!modeOfPayment ? {} : modeOfPayment).length === 0 ||
-              ((modeOfPayment?.code === "CHEQUE" || modeOfPayment?.code === "DEMAND_DRAFT") && additionDetails)
+              (["CHEQUE", "DD"].includes(modeOfPayment?.code)
+                ? modeOfPayment?.code === "CHEQUE"
+                  ? additionDetails.length !== 6
+                  : !additionDetails
+                : false)
             }
             onSubmit={() => {
               onSubmitCase();
