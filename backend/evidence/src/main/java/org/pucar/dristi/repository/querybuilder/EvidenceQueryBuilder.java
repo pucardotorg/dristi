@@ -38,54 +38,56 @@ public class EvidenceQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
+            boolean isFirstCriteria = true; // Use a local variable to track first criteria
 
             if (id != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.id = '").append(id).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
 
             if (caseId != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.caseId = '").append(caseId).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
 
             if (application != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.application = '").append(application).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
 
             if (hearing != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.hearing = '").append(hearing).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
 
             if (order != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.orders = '").append(order).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
 
             if (sourceId != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.sourceId = '").append(sourceId).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
 
             if (sourceName != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.sourceName = '").append(sourceName).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
+
             if (artifactNumber != null) {
-                addClauseIfRequired(query, firstCriteria);
+                addClauseIfRequired(query, isFirstCriteria);
                 query.append("art.artifactNumber = '").append(artifactNumber).append("'");
-                firstCriteria = false;
+                isFirstCriteria = false;
             }
+
             query.append(ORDERBY_CREATEDTIME);
             return query.toString();
         } catch (Exception e) {
@@ -93,6 +95,7 @@ public class EvidenceQueryBuilder {
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
+
 
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {

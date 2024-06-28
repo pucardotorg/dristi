@@ -28,8 +28,6 @@ public class EvidenceQueryBuilderTest {
         String order = "testOrder";
         String sourceId = "testSourceId";
         String sourceName = "testSourceName";
-        String isEvidence="testIsEvidence";
-        String sourceType="testSourceType";
         String artifactNumber="artifactNumber";
         // Mocking the EvidenceQueryBuilder
         EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
@@ -63,8 +61,6 @@ public class EvidenceQueryBuilderTest {
         String order = null;
         String sourceId = null;
         String sourceName = null;
-        String isEvidence="testIsEvidence";
-        String sourceType="testSourceType";
         String artifactNumber=null;
 
         // Mocking the EvidenceQueryBuilder
