@@ -62,6 +62,7 @@ public class TaskServiceTest {
         task.setTenantId("tenant-id");
         task.setCnrNumber("cnr-number");
         task.setTaskNumber("task-number");
+        task.setTaskType("doc");
 
         requestInfo = RequestInfo.builder().build();
 
@@ -101,7 +102,6 @@ public class TaskServiceTest {
     @Test
     void testSearchTaskSuccess() {
         when(taskRepository.getApplications(anyString(), anyString(), anyString(), any(UUID.class), anyString(),anyString())).thenReturn(Collections.singletonList(task));
-        when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(null);
 
         List<Task> result = taskService.searchTask("id", "tenant-id", "status", UUID.randomUUID(), "cnr-number", "task-number",requestInfo);
 

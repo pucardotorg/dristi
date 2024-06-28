@@ -11,10 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.service.OrderRegistrationService;
 import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.Order;
-import org.pucar.dristi.web.models.OrderListResponse;
-import org.pucar.dristi.web.models.OrderRequest;
-import org.pucar.dristi.web.models.OrderResponse;
+import org.pucar.dristi.web.models.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -85,7 +82,7 @@ public class OrderApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Perform POST request
-        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfo());
+        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfoWrapper(new RequestInfo()));
 
         // Verify response status and content
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -166,7 +163,7 @@ public class OrderApiControllerTest {
 
         // Perform POST request
         try {
-             controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfo());
+             controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfoWrapper(new RequestInfo()));
         }
         catch (Exception e){
             assertInstanceOf(IllegalArgumentException.class, e);
@@ -186,7 +183,7 @@ public class OrderApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Perform POST request
-        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfo());
+        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfoWrapper(new RequestInfo()));
 
         // Verify OK status and empty list
         assertEquals(HttpStatus.OK, response.getStatusCode());
