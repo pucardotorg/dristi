@@ -144,13 +144,17 @@ public class CaseServiceTest {
 
     @Test
     public void testVerifyJoinCaseRequest_RepresentativesAlreadyExists() {
+        Party litigant = new Party();
+        litigant.setIndividualId("existingLitigant");
         AdvocateMapping representative = new AdvocateMapping();
         representative.setAdvocateId("existingAdv");
+        representative.setRepresenting(Collections.singletonList(litigant));
         CourtCase courtCase = new CourtCase();
         courtCase.setId(UUID.randomUUID());
         courtCase.setAccessCode("validAccessCode");
         courtCase.setStatus(CASE_ADMIT_STATUS);
         courtCase.setRepresentatives(Collections.singletonList(representative));
+
         CaseCriteria caseCriteria = new CaseCriteria();
         caseCriteria.setResponseList(Collections.singletonList(courtCase));
         when(caseRepository.getApplications(anyList(),any(RequestInfo.class))).thenReturn(Collections.singletonList(caseCriteria));
