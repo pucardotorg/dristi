@@ -127,14 +127,19 @@ public class EvidenceEnrichmentTest {
 
     @Test
     void testEnrichEvidenceRegistrationUponUpdate() {
+        // Arrange
         AuditDetails auditDetails = AuditDetails.builder().lastModifiedTime(0L).lastModifiedBy("oldUuid").build();
         evidenceRequest.getArtifact().setAuditdetails(auditDetails);
 
+        // Act
         evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-        assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedTime() > 0;
-        assert evidenceRequest.getArtifact().getAuditdetails().getLastModifiedBy().equals(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
+        // Assert
+        assertNotNull(evidenceRequest.getArtifact().getAuditdetails());
+        assertTrue(evidenceRequest.getArtifact().getAuditdetails().getLastModifiedTime() > 0);
+        assertEquals(evidenceRequest.getRequestInfo().getUserInfo().getUuid(), evidenceRequest.getArtifact().getAuditdetails().getLastModifiedBy());
     }
+
     @Test
     public void testEnrichEvidenceNumber() {
         // Arrange
@@ -151,7 +156,6 @@ public class EvidenceEnrichmentTest {
         evidenceRequest.setArtifact(artifact);
         evidenceRequest.setRequestInfo(requestInfo);
 
-        String idName = "C-[SEQ_DOC_COURT]"; // This should match your getIdgenByArtifactTypeAndSourceType logic
         List<String> evidenceNumberList = Collections.singletonList("EV12345");
         when(idgenUtil.getIdList(any(RequestInfo.class), anyString(), anyString(), isNull(), eq(1)))
                 .thenReturn(evidenceNumberList);
@@ -163,6 +167,8 @@ public class EvidenceEnrichmentTest {
         assertEquals("EV12345", artifact.getEvidenceNumber());
         assertTrue(artifact.getIsEvidence());
         verify(idgenUtil).getIdList(any(RequestInfo.class), anyString(), anyString(), isNull(), eq(1));
+        assertNotNull(artifact.getEvidenceNumber());
+        assertEquals("EV12345", evidenceNumberList.get(0)); // Check list consistency
     }
 
     @Test
@@ -208,6 +214,8 @@ public class EvidenceEnrichmentTest {
 
         // Assert
         assertFalse(artifact.getIsActive());
+        assertNotNull(artifact);
+        assertNull(artifact.getEvidenceNumber()); // Check that unrelated fields are unchanged
     }
 
     @Test
@@ -230,5 +238,8 @@ public class EvidenceEnrichmentTest {
 
         assertEquals("ENRICHMENT_EXCEPTION", thrown.getCode());
         assertTrue(thrown.getMessage().contains("Error in enrichment service during isActive status update process"));
+        assertNotNull(thrown.getMessage());
+        assertTrue(thrown.getCause() == null || "Update error".equals(thrown.getCause().getMessage())); // Handle potential null
     }
+
 }

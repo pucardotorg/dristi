@@ -13,14 +13,17 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
-import static org.pucar.dristi.config.ServiceConstants.ARTIFACT_ID_NAME;
-import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
+
 @Component
 @Slf4j
 public class EvidenceEnrichment {
-    @Autowired
-    private IdgenUtil idgenUtil;
+    private final IdgenUtil idgenUtil;
 
+    @Autowired
+    public EvidenceEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
 
     public void enrichEvidenceRegistration(EvidenceRequest evidenceRequest) {
         try {
@@ -64,17 +67,17 @@ public class EvidenceEnrichment {
     }
 
     String getIdgenByArtifactTypeAndSourceType(String artifactType, String sourceType) {
-        if (("DOCUMENTARY".equals(artifactType) || "AFFIDAVIT".equals(artifactType)) && "COMPLAINANT".equals(sourceType)) {
+        if (("DOCUMENTARY".equals(artifactType) || AFFIDAVIT.equals(artifactType)) && COMPLAINANT.equals(sourceType)) {
             return "document.evidence_complainant";
-        } else if (("DOCUMENTARY".equals(artifactType) || "AFFIDAVIT".equals(artifactType)) && "ACCUSED".equals(sourceType)) {
+        } else if ((DOCUMENTARY.equals(artifactType) || AFFIDAVIT.equals(artifactType)) && ACCUSED.equals(sourceType)) {
             return "document.evidence_accused";
-        } else if (("DOCUMENTARY".equals(artifactType) || "AFFIDAVIT".equals(artifactType)) && "COURT".equals(sourceType)) {
+        } else if ((DOCUMENTARY.equals(artifactType) || AFFIDAVIT.equals(artifactType)) && COURT.equals(sourceType)) {
             return "document.evidence_court";
-        } else if ("DEPOSITION".equals(artifactType) && "COMPLAINANT".equals(sourceType)) {
+        } else if (DEPOSITION.equals(artifactType) && COMPLAINANT.equals(sourceType)) {
             return "document.witness_complainant";
-        } else if ("DEPOSITION".equals(artifactType) && "ACCUSED".equals(sourceType)) {
+        } else if (DEPOSITION.equals(artifactType) && ACCUSED.equals(sourceType)) {
             return "document.witness_accused";
-        } else if ("DEPOSITION".equals(artifactType) && "COURT".equals(sourceType)) {
+        } else if (DEPOSITION.equals(artifactType) && COURT.equals(sourceType)) {
             return "document.witness_court";
         } else {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type or source type provided");
@@ -95,7 +98,7 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().setIsEvidence(true);
         } catch (Exception e) {
             log.error("Error enriching evidence number upon update: {}", e.toString());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Failed to generate evidence number for " + evidenceRequest.getArtifact().getId() + ": " + e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Failed to generate evidence number for " + evidenceRequest.getArtifact().getId() + ": " + e.toString());
         }
     }
         public void enrichIsActive(EvidenceRequest evidenceRequest) {
@@ -104,7 +107,7 @@ public class EvidenceEnrichment {
             }
             catch (Exception e) {
                 log.error("Error enriching isActive status upon update: {}", e.toString());
-                throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during isActive status update process: " + e.toString());
+                throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service during isActive status update process: " + e.toString());
             }
     }
 
@@ -116,7 +119,7 @@ public class EvidenceEnrichment {
             evidenceRequest.getArtifact().getAuditdetails().setLastModifiedBy(evidenceRequest.getRequestInfo().getUserInfo().getUuid());
         } catch (Exception e) {
             log.error("Error enriching evidence application upon update: {}", e.toString());
-            throw new CustomException("ENRICHMENT_EXCEPTION", "Error in enrichment service during  update process: " + e.toString());
+            throw new CustomException(ENRICHMENT_EXCEPTION, "Error in enrichment service during  update process: " + e.toString());
         }
     }
 }
