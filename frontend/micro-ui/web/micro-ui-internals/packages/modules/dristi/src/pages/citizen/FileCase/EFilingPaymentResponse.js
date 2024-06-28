@@ -39,7 +39,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
-        {submitInfoData?.subHeader && <CardLabel className={"e-filing-card-label"}>{t(submitInfoData?.subHeader)}</CardLabel>}
+        {submitModalInfo?.subHeader && <CardLabel className={"e-filing-card-label"}>{t(submitModalInfo?.subHeader)}</CardLabel>}
         {receiptData && (
           <CustomCopyTextDiv
             t={t}
