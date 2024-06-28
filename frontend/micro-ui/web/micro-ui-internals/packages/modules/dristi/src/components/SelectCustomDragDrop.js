@@ -93,7 +93,9 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
   const handleDeleteFile = (input, index) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1);
-    clearErrors(config.key);
+    if (clearErrors) {
+      clearErrors(config.key);
+    }
     setValue(currentValue, input?.name);
   };
   return inputs.map((input) => {

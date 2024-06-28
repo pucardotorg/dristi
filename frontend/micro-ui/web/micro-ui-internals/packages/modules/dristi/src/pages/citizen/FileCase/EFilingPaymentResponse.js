@@ -35,7 +35,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
         <Banner
           whichSvg={"tick"}
           successful={true}
-          message={submitModalInfo?.header}
+          message={t(submitModalInfo?.header)}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
