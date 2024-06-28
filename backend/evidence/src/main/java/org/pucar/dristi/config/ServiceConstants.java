@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
-
+	private ServiceConstants() {
+	}
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -50,7 +51,15 @@ public class ServiceConstants {
 	public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
 	public static final String COMMENT_SEARCH_QUERY_EXCEPTION = "COMMENT_SEARCH_QUERY_EXCEPTION";
 	public static final String MDMS_DATA_NOT_FOUND = "MDMS_DATA_NOT_FOUND";
-	public static final String ACTIVE_STATUS = "ACTIVE";
+	public static final String PUBLISHED_STATE = "PUBLISHED";
+	public static final String ABATED_STATE = "ABATED";
+	public static final String ARTIFACT_ID_NAME = "artifact.artifact_number";
+	public static final String AFFIDAVIT = "AFFIDAVIT";
+	public static final String COMPLAINANT = "COMPLAINANT";
+	public static final String DOCUMENTARY = "DOCUMENTARY";
+	public static final String DEPOSITION = "DEPOSITION";
+	public static final String ACCUSED = "ACCUSED";
+	public static final String COURT = "COURT";
 
 
 }

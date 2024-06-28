@@ -4,6 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -17,8 +18,8 @@ public class EvidenceQueryBuilder {
     private static final String BASE_ARTIFACT_QUERY = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
             "art.evidenceNumber as evidenceNumber, art.externalRefNumber as externalRefNumber, art.caseId as caseId, " +
             "art.application as application, art.hearing as hearing, art.orders as orders, art.mediaType as mediaType, " +
-            "art.artifactType as artifactType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
-            "art.createdDate as createdDate, art.isActive as isActive, art.status as status, art.description as description, " +
+            "art.artifactType as artifactType, art.sourceType as sourceType, art.sourceID as sourceID, art.sourceName as sourceName, art.applicableTo as applicableTo, " +
+            "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
             "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
             "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime ";
 
@@ -34,62 +35,40 @@ public class EvidenceQueryBuilder {
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY art.createdTime DESC ";
 
-    public String getArtifactSearchQuery(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName) {
+    public String getArtifactSearchQuery(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
+            List<Object> preparedStmtList = new ArrayList<>();
+            boolean firstCriteria = true;
 
-            if (id != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.id = '").append(id).append("'");
-                firstCriteria = false;
-            }
-
-            if (caseId != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.caseId = '").append(caseId).append("'");
-                firstCriteria = false;
-            }
-
-            if (application != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.application = '").append(application).append("'");
-                firstCriteria = false;
-            }
-
-            if (hearing != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.hearing = '").append(hearing).append("'");
-                firstCriteria = false;
-            }
-
-            if (order != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.orders = '").append(order).append("'");
-                firstCriteria = false;
-            }
-
-            if (sourceId != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.sourceId = '").append(sourceId).append("'");
-                firstCriteria = false;
-            }
-
-            if (sourceName != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.sourceName = '").append(sourceName).append("'");
-                firstCriteria = false;
-            }
+            firstCriteria = addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
+            firstCriteria = addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
+            firstCriteria = addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria = addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
+            firstCriteria = addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
+            firstCriteria = addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
+            firstCriteria = addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
+            firstCriteria = addArtifactCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber = ?");
 
             query.append(ORDERBY_CREATEDTIME);
+
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building artifact search query", e);
-            throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.getMessage());
+            throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
 
+    private boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean isFirstCriteria, String condition) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, isFirstCriteria);
+            query.append(condition);
+            preparedStmtList.add(criteria);
+            return false; // Reset isFirstCriteria after adding this criterion
+        }
+        return isFirstCriteria;
+    }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
@@ -105,7 +84,7 @@ public class EvidenceQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building document search query");
-            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.getMessage());
+            throw new CustomException("DOCUMENT_SEARCH_QUERY_EXCEPTION", "Error occurred while building the query: " + e.toString());
         }
     }
 
@@ -131,7 +110,7 @@ public class EvidenceQueryBuilder {
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building comment search query", e);
-            throw new CustomException(COMMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the comment search query: " + e.getMessage());
+            throw new CustomException(COMMENT_SEARCH_QUERY_EXCEPTION, "Error occurred while building the comment search query: " + e.toString());
         }
     }
 

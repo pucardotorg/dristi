@@ -92,6 +92,32 @@ paths:
               schema:
                 $ref: >-
                   https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
+  /case/v1/_verify:
+    post:
+      tags:
+        - Case
+      summary: verify the litigants or representatives who want to join a existing case
+      requestBody:
+        description: Details for litigants and representatives to be added to the case + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/JoinCaseRequest'
+        required: true
+      responses:
+        '200':
+          description: ResponseInfo with enriched litigants and representatives
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/JoinCaseResponse'
+        '400':
+          description: Failed to verify the given litigants and representatives to be added to the case
+          content:
+            '*/*':
+              schema:
+                $ref: >-
+                  https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/ErrorRes
   /case/v1/_exists:
     post:
       tags:
@@ -106,7 +132,7 @@ paths:
         required: true
       responses:
         '200':
-          description: ReponseInfo with cases matching the search criteria. Empty array is returned in case no cases match the search criteria. 
+          description: ReponseInfo with cases matching the search criteria. Empty array is returned in case no cases match the search criteria.
           content:
             '*/*':
               schema:
@@ -227,7 +253,7 @@ components:
           maxLength: 36
         tenantId:
           type: string
-          description: This is tenantId where the system is implemented. 
+          description: This is tenantId where the system is implemented.
           minLength: 2
           maxLength: 64
         resolutionMechanism:
@@ -296,7 +322,7 @@ components:
           maxLength: 64
         linkedCases:
           type: array
-          description: Case numbers of related cases - child cases, appealed case etc. 
+          description: Case numbers of related cases - child cases, appealed case etc.
           items:
             $ref: '#/components/schemas/LinkedCase'
         filingDate:
@@ -440,7 +466,7 @@ components:
         auditdetails:
           $ref: >-
             https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/AuditDetails
-    
+
     AdvocateMapping:
       type: object
       required: [tenantId]
@@ -585,7 +611,7 @@ components:
           type: string
         witnessIdentifier:
           type: string
-          description: A field to store a formatted or court assigned number to a witness in a case. Optional field. 
+          description: A field to store a formatted or court assigned number to a witness in a case. Optional field.
         individualId:
           type: string
           description: The individual identifier of the citizen who's a witness in the case
@@ -596,7 +622,7 @@ components:
           maxLength: 5000
         isActive:
           type: boolean
-          description: Field to soft delete. False indicates the record is not active. True indicates it is active. Search implementation should ensure inactive fields are not returned. 
+          description: Field to soft delete. False indicates the record is not active. True indicates it is active. Search implementation should ensure inactive fields are not returned.
           default: true
         auditDetails:
           $ref: >-
@@ -672,6 +698,40 @@ components:
           items:
             $ref: '#/components/schemas/CaseExists'
 
+    JoinCaseRequest:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        accessCode:
+          type: string
+        caseFilingNumber:
+          type: string
+        representative:
+          type: object
+          $ref: '#/components/schemas/AdvocateMapping'
+        litigant:
+          type: object
+          $ref: '#/components/schemas/Party'
+
+    JoinCaseResponse:
+      type: object
+      properties:
+        RequestInfo:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/RequestInfo
+        accessCode:
+          type: string
+        caseFilingNumber:
+          type: string
+        representative:
+          type: object
+          $ref: '#/components/schemas/AdvocateMapping'
+        litigant:
+          type: object
+          $ref: '#/components/schemas/Party'
+
     CaseCriteria:
       type: object
       properties:
@@ -696,7 +756,7 @@ components:
         advocateId:
           type: string
         status:
-          type: string          
+          type: string
         filingFromDate:
           type: string
           format: date
@@ -715,6 +775,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CourtCase'
+        pagination:
+          $ref: >-
+            https://raw.githubusercontent.com/egovernments/DIGIT-OSS/master/core-services/docs/common-contract_v1-1.yml#/components/schemas/Pagination    
     
     CaseExists:
       type: object

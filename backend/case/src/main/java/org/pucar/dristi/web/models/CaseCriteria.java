@@ -52,6 +52,7 @@ public class CaseCriteria {
     @JsonProperty("registrationToDate")
     @Valid
     private LocalDate registrationToDate = null;
+    //todo judgeid, stage, substage
 
     @JsonProperty("judgeId")
     private String judgeId = null;
@@ -77,6 +78,14 @@ public class CaseCriteria {
     @JsonProperty("responseList")
     @Valid
     private List<CourtCase> responseList = null;
+
+
+    @JsonProperty("pagination")
+
+    @Valid
+    private Pagination pagination = null;
+
+
 
     public CaseCriteria addResponseListItem(CourtCase responseListItem) {
         if (this.responseList == null) {

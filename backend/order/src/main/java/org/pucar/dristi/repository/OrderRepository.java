@@ -40,14 +40,14 @@ public class OrderRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Order> getApplications(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public List<Order> getOrders(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
 
         try {
             List<Order> orderList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String orderQuery = "";
-            orderQuery = queryBuilder.getOrderSearchQuery(applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
+            orderQuery = queryBuilder.getOrderSearchQuery(orderNumber,applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
             log.info("Final order query :: {}", orderQuery);
             List<Order> list = jdbcTemplate.query(orderQuery, rowMapper);
             log.info("DB order list :: {}", list);
@@ -101,10 +101,10 @@ public class OrderRepository {
     public List<OrderExists> checkOrderExists(List<OrderExists> orderExistsRequest) {
         try {
             for (OrderExists orderExists : orderExistsRequest) {
-                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null) {
+                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null && orderExists.getApplicationNumber() == null && orderExists.getOrderId()==null){
                     orderExists.setExists(false);
                 } else {
-                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber());
+                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber(), orderExists.getOrderId());
                     log.info("Final order exist query :: {}", orderExistQuery);
                     Integer count = jdbcTemplate.queryForObject(orderExistQuery, Integer.class);
                     orderExists.setExists(count != null && count > 0);

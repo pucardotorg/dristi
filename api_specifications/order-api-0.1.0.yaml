@@ -110,6 +110,11 @@ paths:
           description: the status of the order(s) being searched
           schema:
             type: string
+        - name: orderNumber
+          in: query
+          description: the orderNumber of the order(s) being searched
+          schema:
+            type: string
       responses:
         "200":
           description: ResponseInfo with order list
@@ -202,6 +207,11 @@ components:
       type: object
       description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
         filingNumber:
           type: string
         cnrNumber:

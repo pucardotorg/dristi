@@ -5,6 +5,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -36,7 +37,7 @@ public class OrderQueryBuilder {
 
     private static final String BASE_ORDER_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_orders orders";
 
-    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber) {
+    public String checkOrderExistQuery(String orderNumber, String cnrNumber, String filingNumber, String applicationNumber , UUID orderId) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_EXIST_QUERY);
             boolean firstCriteria = true; // To check if it's the first criteria
@@ -59,6 +60,18 @@ public class OrderQueryBuilder {
                 firstCriteria = false;
             }
 
+            if (orderId!=null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.id =").append("'").append(orderId).append("'");
+                firstCriteria = false;
+            }
+
+            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.applicationNumber::text LIKE '%\"").append(applicationNumber).append("\"%'");
+                firstCriteria = false;
+            }
+
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building order exist query :: {}",e.toString());
@@ -67,7 +80,7 @@ public class OrderQueryBuilder {
     }
 
 
-    public String getOrderSearchQuery(String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public String getOrderSearchQuery(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
         try {
             StringBuilder query = new StringBuilder(BASE_ORDER_QUERY);
             query.append(FROM_ORDERS_TABLE);
@@ -107,6 +120,11 @@ public class OrderQueryBuilder {
             if (status!=null && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("orders.status =").append("'").append(status).append("'");
+                firstCriteria = false;
+            }
+            if (orderNumber!=null && !orderNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("orders.ordernumber =").append("'").append(orderNumber).append("'");
                 firstCriteria = false;
             }
             query.append(ORDERBY_CREATEDTIME);

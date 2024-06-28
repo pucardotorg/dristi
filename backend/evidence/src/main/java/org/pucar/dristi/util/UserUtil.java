@@ -18,20 +18,15 @@ import java.util.*;
 
 @Component
 public class UserUtil {
+	private final ObjectMapper mapper;
+	private final ServiceRequestRepository serviceRequestRepository;
+	private final Configuration configs;
 
 	@Autowired
-	private ObjectMapper mapper;
-
-	@Autowired
-	private ServiceRequestRepository serviceRequestRepository;
-
-	@Autowired
-	private Configuration configs;
-
-	@Autowired
-	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
+	public UserUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository, Configuration configs) {
 		this.mapper = mapper;
 		this.serviceRequestRepository = serviceRequestRepository;
+		this.configs = configs;
 	}
 
 	/**
@@ -61,7 +56,7 @@ public class UserUtil {
 
 	/**
 	 * Parses date formats to long for all users in responseMap
-	 * 
+	 *
 	 * @param responseMap LinkedHashMap got from user api response
 	 */
 
@@ -83,7 +78,7 @@ public class UserUtil {
 
 	/**
 	 * Converts date to long
-	 * 
+	 *
 	 * @param date   date to be parsed
 	 * @param format Format of the date
 	 * @return Long value of date
@@ -102,7 +97,7 @@ public class UserUtil {
 	/**
 	 * enriches the userInfo with statelevel tenantId and other fields The function
 	 * creates user with username as mobile number.
-	 * 
+	 *
 	 * @param mobileNumber
 	 * @param tenantId
 	 * @param userInfo
@@ -118,7 +113,7 @@ public class UserUtil {
 
 	/**
 	 * Returns role object for citizen
-	 * 
+	 *
 	 * @param tenantId
 	 * @return
 	 */

@@ -163,6 +163,10 @@ components:
           type: boolean
           description: Field to indicate soft delete of records. True if record is active, false if not.
           default: true
+        isEvidence:
+          type: boolean
+          description: Field to indicate soft delete of records. True if record is evidence, false if not.
+          default: false
         status:
           type: string
           description: >-
@@ -236,8 +240,8 @@ components:
       properties:
         RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
-        artifacts:
-          type: array
+        artifact:
+          type: object
           items:
             $ref: '#/components/schemas/Artifact'
     EvidenceResponse:
@@ -245,8 +249,8 @@ components:
       properties:
         ResponseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ResponseInfo'
-        artifacts:
-          type: array
+        artifact:
+          type: object
           items:
             $ref: '#/components/schemas/Artifact'
         pagination:
@@ -292,4 +296,5 @@ components:
           type: string
         status:
           type: string
-        
+        artifactNumber:
+          type: string

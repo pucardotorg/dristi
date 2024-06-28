@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.web.models.CaseCriteria;
+import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.Pagination;
 import org.slf4j.Logger;
 
 import java.time.LocalDate;
@@ -177,7 +179,7 @@ class CaseQueryBuilderTest {
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.id = ? AND cases.cnrNumber = ? AND cases.filingnumber = ? AND cases.courtcasenumber = ? ORDER BY cases.createdtime DESC ";
+        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.id = ? AND cases.cnrNumber = ? AND LOWER(cases.filingnumber) LIKE LOWER(?) AND cases.courtcasenumber = ? ORDER BY cases.createdtime DESC ";
         String actualQuery = queryBuilder.getCasesSearchQuery(criteria, preparedStmtList, null);
 
         assertEquals(expectedQuery, actualQuery);
@@ -227,7 +229,7 @@ class CaseQueryBuilderTest {
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.cnrNumber = ? AND cases.filingnumber = ? AND cases.courtcasenumber = ? ORDER BY cases.createdtime DESC ";
+        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.cnrNumber = ? AND LOWER(cases.filingnumber) LIKE LOWER(?) AND cases.courtcasenumber = ? ORDER BY cases.createdtime DESC ";
         String actualQuery = queryBuilder.getCasesSearchQuery(criteria, preparedStmtList, null);
 
         assertEquals(expectedQuery, actualQuery);
@@ -261,12 +263,12 @@ class CaseQueryBuilderTest {
 
         List<Object> preparedStmtList = new ArrayList<>();
 
-        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE cases.filingnumber = ? AND cases.courtcasenumber = ? ORDER BY cases.createdtime DESC ";
+        String expectedQuery = " SELECT cases.id as id, cases.tenantid as tenantid, cases.casenumber as casenumber, cases.resolutionmechanism as resolutionmechanism, cases.casetitle as casetitle, cases.casedescription as casedescription, cases.filingnumber as filingnumber, cases.casenumber as casenumber, cases.accesscode as accesscode, cases.courtcasenumber as courtcasenumber, cases.cnrNumber as cnrNumber,  cases.courtid as courtid, cases.benchid as benchid, cases.judgeid as judgeid, cases.stage as stage, cases.substage as substage, cases.filingdate as filingdate, cases.registrationdate as registrationdate, cases.natureofpleading as natureofpleading, cases.status as status, cases.remarks as remarks, cases.isactive as isactive, cases.casedetails as casedetails, cases.additionaldetails as additionaldetails, cases.casecategory as casecategory, cases.createdby as createdby, cases.lastmodifiedby as lastmodifiedby, cases.createdtime as createdtime, cases.lastmodifiedtime as lastmodifiedtime  FROM dristi_cases cases WHERE LOWER(cases.filingnumber) LIKE LOWER(?) AND cases.courtcasenumber = ? ORDER BY cases.createdtime DESC ";
         String actualQuery = queryBuilder.getCasesSearchQuery(criteria, preparedStmtList, null);
 
         assertEquals(expectedQuery, actualQuery);
         assertEquals(2, preparedStmtList.size());
-        assertEquals("9876", preparedStmtList.get(0));
+        assertEquals("%9876%", preparedStmtList.get(0));
     }
 
     @Test()
@@ -653,4 +655,33 @@ class CaseQueryBuilderTest {
         assertThrows(CustomException.class, () -> queryBuilder.getRepresentingDocumentSearchQuery(ids, preparedStmtList));
     }
 
+
+    @Test
+    void getTotalCountQuery_ShouldReturnCorrectQuery_WhenBaseQueryIsNotNull() {
+        String baseQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
+
+        String query = queryBuilder.getTotalCountQuery(baseQuery);
+
+        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_cases cases WHERE cases.id = '111') total_result";
+
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    void addPagination_Query_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
+        String query = "SELECT * FROM dristi_cases cases WHERE cases.id = '111'";
+        Pagination pagination = new Pagination();
+        pagination.setLimit(2d);
+        pagination.setOffSet(0d);
+        List<Object> prepareList = new ArrayList<>();
+
+        String paginatedQuery = queryBuilder.addPaginationQuery(query,prepareList, pagination);
+
+        String expectedQuery = "SELECT * FROM dristi_cases cases WHERE cases.id = '111' LIMIT ? OFFSET ?";
+
+        assertEquals(expectedQuery, paginatedQuery);
+        assertEquals(2, prepareList.size());
+        assertEquals(2d, prepareList.get(0));
+        assertEquals(0d, prepareList.get(1));
+    }
 }

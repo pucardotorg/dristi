@@ -85,14 +85,15 @@ public class OrderApiController {
                                                                @Parameter(in = ParameterIn.QUERY, description = "id of the order being searched", schema = @Schema()) @Valid @RequestParam(value = "id", required = false) String id,
                                                                @Parameter(in = ParameterIn.QUERY, description = "tenantId whose order(s) are being searched", schema = @Schema()) @Valid @RequestParam(value = "tenantId", required = false) String tenantId,
                                                                @Parameter(in = ParameterIn.QUERY, description = "the status of the order(s) being searched", schema = @Schema()) @Valid @RequestParam(value = "status", required = false) String status,
-                                                               @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody RequestInfo requestInfo) {
+                                                               @Parameter(in = ParameterIn.QUERY, description = "the orderNumber of the order(s) being searched", schema = @Schema()) @Valid @RequestParam(value = "orderNumber", required = false) String orderNumber,
+                                                               @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper) {
         try {
-            List<Order> orders = orderService.searchOrder(applicationNumber, cnrNumber, filingNumber, tenantId, id, status, requestInfo);
-            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, true, HttpStatus.OK.getReasonPhrase());
+            List<Order> orders = orderService.searchOrder(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status, requestInfoWrapper.getRequestInfo());
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true, HttpStatus.OK.getReasonPhrase());
             OrderListResponse orderListResponse = OrderListResponse.builder().list(orders).totalCount(orders.size()).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderListResponse, HttpStatus.OK);
         } catch (Exception e) {
-            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfo, false, e.getMessage());
+            ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), false, e.getMessage());
             OrderListResponse orderListResponse = OrderListResponse.builder().list(null).responseInfo(responseInfo).build();
             return new ResponseEntity<>(orderListResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }

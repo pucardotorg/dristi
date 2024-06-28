@@ -55,6 +55,7 @@ public class OrderRegistrationServiceTest {
     public void testCreateOrder_success() {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
+        order.setOrderType("other");
         orderRequest.setOrder(order);
 
         doNothing().when(validator).validateOrderRegistration(any(OrderRequest.class));
@@ -86,18 +87,24 @@ public class OrderRegistrationServiceTest {
     @Test
     public void testSearchOrder_success() {
         List<Order> mockOrderList = new ArrayList<>();
-        Order mockOrder = new Order();
-        mockOrder.setId(UUID.randomUUID());
-        mockOrderList.add(mockOrder);
+        Order order = new Order();
+        order.setTenantId("tenantId");
+        order.setCnrNumber("CNR123");
+        order.setFilingNumber("Filing123");
+        order.setStatus("status");
+        order.setOrderNumber("order");
+        order.setApplicationNumber(Collections.singletonList(""));
+        order.setId(UUID.fromString("3244d158-c5cb-4769-801f-a0f94f383679"));
+        order.setStatuteSection(new StatuteSection());
+        mockOrderList.add(order);
 
-        when(orderRepository.getApplications(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(orderRepository.getOrders(anyString(), anyString(),anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
-      //  when(workflowUtil.getWorkflowFromProcessInstance(any())).thenReturn(new Workflow());
 
-        List<Order> result = orderRegistrationService.searchOrder("appNum", "cnrNum", "filingNum", "tenant", "id", "status", new RequestInfo());
+        List<Order> result = orderRegistrationService.searchOrder("order-no","appNum", "cnrNum", "filingNum", "tenant", "id", "status", new RequestInfo());
 
         assertNotNull(result);
-        verify(orderRepository, times(1)).getApplications("appNum","cnrNum", "filingNum", "tenant", "id", "status");
+        verify(orderRepository, times(1)).getOrders("order-no","appNum","cnrNum", "filingNum", "tenant", "id", "status");
     }
 
     @Test
@@ -105,6 +112,7 @@ public class OrderRegistrationServiceTest {
         OrderRequest orderRequest = new OrderRequest();
         Order order = new Order();
         order.setWorkflow(new Workflow());
+        order.setOrderType("other");
         orderRequest.setOrder(order);
 
         Order existingOrder = new Order();
@@ -113,7 +121,6 @@ public class OrderRegistrationServiceTest {
         when(validator.validateApplicationExistence(any(OrderRequest.class)))
                 .thenReturn(existingOrder);
         doNothing().when(enrichmentUtil).enrichOrderRegistrationUponUpdate(any(OrderRequest.class));
-        //doNothing().when(workflowUtil).updateWorkflowStatus(any(RequestInfo.class),anyString(),anyString(),anyString(),any(),anyString());
         doNothing().when(producer).push(anyString(), any(OrderRequest.class));
 
         Order result = orderRegistrationService.updateOrder(orderRequest);
@@ -143,7 +150,7 @@ public class OrderRegistrationServiceTest {
         mockOrder.setTenantId("pg");
         mockOrderList.add(mockOrder);
 
-        when(orderRepository.getApplications(any(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(orderRepository.getOrders(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(mockOrderList);
 
         List<OrderExists> result = orderRegistrationService.existsOrder(orderExistsRequest);

@@ -21,13 +21,6 @@
               "roles": [
                 "ORDER_CREATOR"
               ]
-            },
-            {
-              "action": "SUBMIT_ORDER",
-              "nextState": "DRAFTED",
-              "roles": [
-                "ORDER_CREATOR"
-              ]
             }
           ]
         },
@@ -48,26 +41,8 @@
               ]
             },
             {
-              "action": "SUBMIT_ORDER",
-              "nextState": "DRAFTED",
-              "roles": [
-                "ORDER_CREATOR"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": null,
-          "state": "DRAFTED",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": true,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "APPROVE",
-              "nextState": "PENDINGESIGN",
+              "action": "E-SIGN",
+              "nextState": "PUBLISHED",
               "roles": [
                 "ORDER_APPROVER"
               ]
@@ -83,82 +58,7 @@
         },
         {
           "sla": 5,
-          "state": "PENDINGESIGN",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "E-SIGN",
-              "nextState": "PENDINGSTAMPING",
-              "roles": [
-                "ORDER_ESIGN"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "PENDINGSTAMPING",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "STAMP",
-              "nextState": "PUBLISHED",
-              "roles": [
-                "ORDER_STAMP"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
           "state": "PUBLISHED",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "CLOSE",
-              "nextState": "COMPLETED",
-              "roles": [
-                "ORDER_CLOSER"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "WORKFLOW_ABANDON"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 5,
-          "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
