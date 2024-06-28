@@ -1,6 +1,5 @@
 package org.pucar.dristi.validators;
 
-import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,11 +52,6 @@ public class OrderRegistrationValidatorTest {
         RequestInfo requestInfo = new RequestInfo();
         orderRequest.setRequestInfo(requestInfo);
 
-        // Mock dependencies
-        Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
-        mdmsData.put("Order", new HashMap<>());
-        // Mocking MDMS data
-        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("Order"), anyList())).thenReturn(mdmsData);
 
         // Perform validation
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateOrderRegistration(orderRequest));
@@ -98,11 +92,6 @@ public class OrderRegistrationValidatorTest {
         List<Order> existingApplications = new ArrayList<>();
         existingApplications.add(order);
         when(repository.getOrders(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString())).thenReturn(existingApplications);
-
-        // Mock MDMS data
-        Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
-        mdmsData.put("Order", new HashMap<>());
-        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("Order"), anyList())).thenReturn(mdmsData);
 
         // Perform validation
         assertDoesNotThrow(() -> validator.validateApplicationExistence(orderRequest));

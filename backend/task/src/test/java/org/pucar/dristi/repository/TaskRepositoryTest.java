@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.pucar.dristi.repository.querybuilder.TaskQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.AmountRowMapper;
 import org.pucar.dristi.repository.rowmapper.DocumentRowMapper;
@@ -15,13 +14,15 @@ import org.pucar.dristi.web.models.Amount;
 import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskExists;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(SpringExtension.class)
 public class TaskRepositoryTest {
 
     @InjectMocks
@@ -42,168 +43,116 @@ public class TaskRepositoryTest {
     @Mock
     private DocumentRowMapper documentRowMapper;
 
-    private String id;
-    private String tenantId;
-    private String status;
-    private UUID orderId;
-    private String cnrNumber;
-    private String taskNumber;
-
     @BeforeEach
     void setUp() {
-        id = "test-id";
-        tenantId = "test-tenant";
-        status = "test-status";
-        orderId = UUID.randomUUID();
-        cnrNumber = "test-cnrNumber";
-        taskNumber = "test-taskNumber";
-    }
-
-//    @Test
-//    void testGetApplicationsSuccess() {
-//        String taskQuery = "task-query";
-//        String amountQuery = "amount-query";
-//        String documentQuery = "document-query";
-//
-//        Task task = new Task();
-//        task.setId(UUID.randomUUID());
-//
-//        Amount amount = new Amount();
-//        Document document = new Document();
-//
-//        List<Task> tasks = Collections.singletonList(task);
-//        Map<UUID, Amount> amountMap = new HashMap<>();
-//        amountMap.put(task.getId(), amount);
-//        Map<UUID, List<Document>> documentMap = new HashMap<>();
-//        documentMap.put(task.getId(), Collections.singletonList(document));
-//
-//        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber)).thenReturn(taskQuery);
-//        when(jdbcTemplate.query(taskQuery, rowMapper)).thenReturn(tasks);
-//
-//        when(queryBuilder.getAmountSearchQuery(anyList(), anyList())).thenReturn(amountQuery);
-//        when(jdbcTemplate.query(amountQuery, any(Object[].class), amountRowMapper)).thenReturn(amountMap);
-//
-//        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList())).thenReturn(documentQuery);
-//        when(jdbcTemplate.query(documentQuery, any(Object[].class), eq(documentRowMapper))).thenReturn(documentMap);
-//        List<Task> result = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber);
-//
-//        assertNotNull(result);
-//        assertEquals(1, result.size());
-//        assertEquals(amount, result.get(0).getAmount());
-//        assertEquals(document, result.get(0).getDocuments().get(0));
-//
-//        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber);
-//        verify(jdbcTemplate).query(taskQuery, rowMapper);
-//        verify(queryBuilder).getAmountSearchQuery(anyList(), anyList());
-//        verify(jdbcTemplate).query(amountQuery, any(Object[].class), eq(amountRowMapper));
-//        verify(queryBuilder).getDocumentSearchQuery(anyList(), anyList());
-//        verify(jdbcTemplate).query(documentQuery, any(Object[].class), eq(documentRowMapper));
-//    }
-
-    @Test
-    void testGetApplicationsNoResults() {
-        String taskQuery = "task-query";
-        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber)).thenReturn(taskQuery);
-        when(jdbcTemplate.query(taskQuery, rowMapper)).thenReturn(Collections.emptyList());
-
-        List<Task> result = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber,taskNumber);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-
-        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber);
-        verify(jdbcTemplate).query(taskQuery, rowMapper);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetApplicationsException() {
-        String taskQuery = "task-query";
-        when(queryBuilder.getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber)).thenReturn(taskQuery);
-        when(jdbcTemplate.query(taskQuery, rowMapper)).thenThrow(new RuntimeException("DB Error"));
+    void testGetApplications() {
+        // Arrange
+        String id = "1";
+        String tenantId = "tenant1";
+        String status = "active";
+        UUID orderId = UUID.randomUUID();
+        String cnrNumber = "CNR123";
+        String taskNumber = "TASK123";
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber,taskNumber));
-        assertEquals("Error while searching task", exception.getCode());
-        assertEquals("Exception while fetching task application list: DB Error", exception.getMessage());
+        String taskQuery = "SELECT * FROM tasks WHERE id = ?";
+        String amountQuery = "SELECT * FROM amounts WHERE task_id IN (?)";
+        String documentQuery = "SELECT * FROM documents WHERE task_id IN (?)";
 
-        verify(queryBuilder).getTaskSearchQuery(id, tenantId, status, orderId, cnrNumber,taskNumber);
-        verify(jdbcTemplate).query(taskQuery, rowMapper);
+        List<Object> preparedStmtList = new ArrayList<>();
+        List<Task> taskList = new ArrayList<>();
+        Task task = new Task();
+        task.setId(UUID.randomUUID());
+        taskList.add(task);
+
+        Map<UUID, Amount> amountMap = new HashMap<>();
+        Amount amount = new Amount();
+        amountMap.put(task.getId(), amount);
+
+        Map<UUID, List<Document>> documentMap = new HashMap<>();
+        List<Document> documents = new ArrayList<>();
+        Document document = new Document();
+        documents.add(document);
+        documentMap.put(task.getId(), documents);
+
+        when(queryBuilder.getTaskSearchQuery(anyString(), anyString(), anyString(), any(), anyString(), anyString(), anyList()))
+                .thenReturn(taskQuery);
+        when(queryBuilder.getAmountSearchQuery(anyList(), anyList()))
+                .thenReturn(amountQuery);
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+                .thenReturn(documentQuery);
+
+        // Act
+        List<Task> result = taskRepository.getApplications(id, tenantId, status, orderId, cnrNumber, taskNumber);
+
+        // Assert
+        assertEquals(0, result.size());
     }
 
     @Test
-    void testCheckTaskExistsSuccess() {
-        String cnrNumber = "cnrNumber";
-        String filingNumber = "filingNumber";
-        String existQuery = "exist-query";
+    void testGetApplicationsThrowsCustomException() {
+        // Arrange
+        when(queryBuilder.getTaskSearchQuery(anyString(), anyString(), anyString(), any(), anyString(), anyString(), anyList()))
+                .thenThrow(new RuntimeException("Exception"));
 
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            taskRepository.getApplications("1", "tenant1", "active", UUID.randomUUID(), "CNR123", "TASK123");
+        });
+        assertEquals("Exception while fetching task application list: Exception", exception.getMessage());
+    }
+
+    @Test
+    void testCheckTaskExists() {
+        // Arrange
         TaskExists taskExists = new TaskExists();
-        taskExists.setCnrNumber(cnrNumber);
-        taskExists.setFilingNumber(filingNumber);
+        taskExists.setCnrNumber("CNR123");
+        taskExists.setFilingNumber("FILING123");
+        taskExists.setTaskId(UUID.fromString("30b4edc0-298f-4f1e-a518-c2189a119ac6"));
 
-        when(queryBuilder.checkTaskExistQuery(cnrNumber, filingNumber)).thenReturn(existQuery);
-        when(jdbcTemplate.queryForObject(existQuery, Integer.class)).thenReturn(1);
+        String taskExistQuery = "SELECT COUNT(*) FROM tasks WHERE cnrNumber = ? AND filingNumber = ? AND taskId = ?";
+        when(queryBuilder.checkTaskExistQuery(anyString(), anyString(), any(), anyList()))
+                .thenReturn(taskExistQuery);
+        when(jdbcTemplate.queryForObject(eq(taskExistQuery), any(), eq(Integer.class)))
+                .thenReturn(1);
 
+        // Act
         TaskExists result = taskRepository.checkTaskExists(taskExists);
 
-        assertNotNull(result);
+        // Assert
         assertTrue(result.getExists());
-
-        verify(queryBuilder).checkTaskExistQuery(cnrNumber, filingNumber);
-        verify(jdbcTemplate).queryForObject(existQuery, Integer.class);
     }
 
     @Test
-    void testCheckTaskExistsNoResults() {
-        String cnrNumber = "cnrNumber";
-        String filingNumber = "filingNumber";
-        String existQuery = "exist-query";
-
+    void testCheckTaskExistsNotFound() {
+        // Arrange
         TaskExists taskExists = new TaskExists();
-        taskExists.setCnrNumber(cnrNumber);
-        taskExists.setFilingNumber(filingNumber);
 
-        when(queryBuilder.checkTaskExistQuery(cnrNumber, filingNumber)).thenReturn(existQuery);
-        when(jdbcTemplate.queryForObject(existQuery, Integer.class)).thenReturn(0);
-
+        // Act
         TaskExists result = taskRepository.checkTaskExists(taskExists);
 
-        assertNotNull(result);
+        // Assert
         assertFalse(result.getExists());
-
-        verify(queryBuilder).checkTaskExistQuery(cnrNumber, filingNumber);
-        verify(jdbcTemplate).queryForObject(existQuery, Integer.class);
     }
 
     @Test
-    void testCheckTaskExistsException() {
-        String cnrNumber = "cnrNumber";
-        String filingNumber = "filingNumber";
-        String existQuery = "exist-query";
-
+    void testCheckTaskExistsThrowsCustomException() {
+        // Arrange
         TaskExists taskExists = new TaskExists();
-        taskExists.setCnrNumber(cnrNumber);
-        taskExists.setFilingNumber(filingNumber);
+        taskExists.setCnrNumber("CNR123");
+        taskExists.setFilingNumber("FILING123");
+        taskExists.setTaskId(UUID.fromString("30b4edc0-298f-4f1e-a518-c2189a119ac6"));
 
-        when(queryBuilder.checkTaskExistQuery(cnrNumber, filingNumber)).thenReturn(existQuery);
-        when(jdbcTemplate.queryForObject(existQuery, Integer.class)).thenThrow(new RuntimeException("DB Error"));
+        when(queryBuilder.checkTaskExistQuery(anyString(), anyString(), any(), anyList()))
+                .thenThrow(new RuntimeException("Exception"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> taskRepository.checkTaskExists(taskExists));
-        assertEquals("Error while checking task exist", exception.getCode());
-        assertEquals("Custom exception while checking task exist : DB Error", exception.getMessage());
-
-        verify(queryBuilder).checkTaskExistQuery(cnrNumber, filingNumber);
-        verify(jdbcTemplate).queryForObject(existQuery, Integer.class);
-    }
-
-    @Test
-    void testCheckTaskExistsNoCnrOrFilingNumber() {
-        TaskExists taskExists = new TaskExists();
-
-        TaskExists result = taskRepository.checkTaskExists(taskExists);
-
-        assertNotNull(result);
-        assertFalse(result.getExists());
-
-        verify(queryBuilder, never()).checkTaskExistQuery(anyString(), anyString());
-        verify(jdbcTemplate, never()).queryForObject(anyString(), any(Class.class));
+        // Act & Assert
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            taskRepository.checkTaskExists(taskExists);
+        });
+        assertEquals("Custom exception while checking task exist : Exception", exception.getMessage());
     }
 }

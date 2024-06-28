@@ -31,20 +31,31 @@ public class TaskQueryBuilder {
 
     private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_task task";
 
-    public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
+    public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
             boolean firstCriteria = true; // To check if it's the first criteria
 
+            if (taskId != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.id = ?");
+                preparedStmtList.add(taskId.toString());
+                firstCriteria = false;
+            }
+
             if (cnrNumber != null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = ").append("'").append(cnrNumber).append("'");
+                query.append("task.cnrNumber = ?");
+                preparedStmtList.add(cnrNumber);
+
                 firstCriteria = false;
             }
 
             if (filingNumber != null  && !filingNumber.isEmpty() ) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.filingnumber = ").append("'").append(filingNumber).append("'");
+                query.append("task.filingNumber = ?");
+                preparedStmtList.add(filingNumber);
+
                 firstCriteria = false;
             }
 
@@ -55,7 +66,7 @@ public class TaskQueryBuilder {
         }
     }
 
-    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
+    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_task_TABLE);
@@ -63,36 +74,44 @@ public class TaskQueryBuilder {
 
             if (id != null  && !id.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.id = ").append("'").append(id).append("'");
+                query.append("task.id = ?");
+                preparedStmtList.add(id);
                 firstCriteria = false;
             }
 
             if (tenantId != null  && !tenantId.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.tenantid = ").append("'").append(tenantId).append("'");
+                query.append("task.tenantId = ?");
+                preparedStmtList.add(tenantId);
+
                 firstCriteria = false;
             }
 
             if (status != null  && !status.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.status = ").append("'").append(status).append("'");
+                query.append("task.status = ?");
+                preparedStmtList.add(status);
                 firstCriteria = false;
             }
 
             if (orderId != null) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.orderid = ").append("'").append(orderId).append("'");
+                query.append("task.orderId = ?");
+                preparedStmtList.add(orderId.toString());
                 firstCriteria = false;
             }
 
             if (cnrNumber != null  && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = ").append("'").append(cnrNumber).append("'");
+                query.append("task.cnrNumber = ?");
+                preparedStmtList.add(cnrNumber);
                 firstCriteria = false;
             }
             if (taskNumber != null  && !taskNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.tasknumber = ").append("'").append(taskNumber).append("'");
+                query.append("task.taskNumber = ?");
+                preparedStmtList.add(taskNumber);
+
                 firstCriteria = false;
             }
 
