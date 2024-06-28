@@ -7,13 +7,16 @@ import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.service.TaskService;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
+import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskExists;
 import org.pucar.dristi.web.models.TaskRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.CREATE_TASK_ERR;
@@ -68,8 +71,13 @@ public class TaskRegistrationValidator {
         if (ObjectUtils.isEmpty(requestInfo.getUserInfo())) {
             throw new CustomException(UPDATE_TASK_ERR, "user info is mandatory for creating task");
         }
-        List<Task> existingApplications = repository.getApplications(task.getId().toString(), task.getTenantId(), task.getStatus(),task.getOrderId(),task.getCnrNumber(),task.getTaskNumber());
-        return !existingApplications.isEmpty();
+
+        TaskExists taskExists = new TaskExists();
+        taskExists.setFilingNumber(task.getFilingNumber());
+        taskExists.setCnrNumber(task.getCnrNumber());
+        taskExists.setTaskId(task.getId());
+
+        return repository.checkTaskExists(taskExists).getExists();
     }
 
 }

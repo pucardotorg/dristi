@@ -15,10 +15,10 @@ import org.pucar.dristi.service.TaskService;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskExists;
 import org.pucar.dristi.web.models.TaskRequest;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,12 +101,14 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateApplicationExistenceSuccess() {
         task.setId(UUID.randomUUID());
-        when(repository.getApplications(any(), any(), any(), any(), any(),any())).thenReturn(Collections.singletonList(task));
+        TaskExists taskExists = new TaskExists();
+        taskExists.setExists(true);
+        when(repository.checkTaskExists(any())).thenReturn(taskExists);
 
         boolean result = validator.validateApplicationExistence(task, requestInfo);
 
         assertTrue(result);
-        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any(),any());
+        verify(repository, times(1)).checkTaskExists(any());
     }
 
     @Test
@@ -128,11 +130,13 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateApplicationExistenceNoExistingApplications() {
         task.setId(UUID.randomUUID());
-        when(repository.getApplications(any(), any(), any(), any(), any(),any())).thenReturn(Collections.emptyList());
+        TaskExists taskExists = new TaskExists();
+        taskExists.setExists(false);
+        when(repository.checkTaskExists(any())).thenReturn(taskExists);
 
         boolean result = validator.validateApplicationExistence(task, requestInfo);
 
         assertFalse(result);
-        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any(),any());
+        verify(repository, times(1)).checkTaskExists(any());
     }
 }
