@@ -82,12 +82,16 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
         Pagination pagination = new Pagination();
+        pagination.setOffSet(0d);
+        pagination.setLimit(10d);
         applicationSearchRequest.setPagination(pagination);
 
         when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("some SQL query");
+        when(queryBuilder.addPaginationQuery(anyString(), any()))
+                .thenReturn("some SQL query");
         when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
-
+        when(applicationRepository.getTotalCountApplication(anyString())).thenReturn(1);
         when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
                 .thenReturn("statute section SQL query");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
@@ -97,7 +101,6 @@ class ApplicationRepositoryTest {
                 .thenReturn("document SQL query");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
                 .thenReturn(documentMap);
-
         List<Application> result = applicationRepository.getApplications(applicationSearchRequest );
 
         assertNotNull(result);
