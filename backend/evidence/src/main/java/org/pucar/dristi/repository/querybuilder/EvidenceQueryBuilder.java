@@ -70,18 +70,6 @@ public class EvidenceQueryBuilder {
         return isFirstCriteria;
     }
 
-    private boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String condition, List<Object> preparedStmtList) {
-        if (criteria != null && !criteria.isEmpty()) {
-            addClauseIfRequired(query, firstCriteria);
-            query.append(condition);
-            preparedStmtList.add(criteria);
-            return false;
-        }
-        return firstCriteria;
-    }
-
-
-
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
