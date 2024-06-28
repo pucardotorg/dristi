@@ -40,7 +40,7 @@ import {
   updateCaseDetails,
   validateDateForDelayApplication,
 } from "./EfilingValidationUtils";
-import { isEqual } from "lodash";
+import _, { isEqual, isMatch } from "lodash";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -1384,9 +1384,12 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-
+    const isDrafted = isMatch(
+      JSON.parse(JSON.stringify(caseDetails?.additionalDetails?.[selected].formdata || caseDetails?.caseDetails?.[nextSelected]?.formdata)),
+      JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
+    );
     updateCaseDetails({
-      isCompleted: "PAGE_CHANGE",
+      isCompleted: isDrafted,
       caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
       formdata,
       pageConfig,

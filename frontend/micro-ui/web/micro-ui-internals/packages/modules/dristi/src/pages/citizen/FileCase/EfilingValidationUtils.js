@@ -1623,6 +1623,7 @@ export const updateCaseDetails = async ({
               ...vakalatnamaDocumentData,
               advocateBarRegNumberWithName: data?.data?.advocateBarRegNumberWithName?.map((item) => {
                 return {
+                  ...item,
                   barRegistrationNumber: item?.barRegistrationNumber,
                   advocateName: item?.advocateName,
                   advocateId: item?.advocateId,
@@ -1630,6 +1631,7 @@ export const updateCaseDetails = async ({
                 };
               }),
               advocateName: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateName,
+              advocateId: data?.data?.advocateBarRegNumberWithName?.[0]?.advocateId,
               barRegistrationNumber: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumber,
               barRegistrationNumberOriginal: data?.data?.advocateBarRegNumberWithName?.[0]?.barRegistrationNumberOriginal,
             },

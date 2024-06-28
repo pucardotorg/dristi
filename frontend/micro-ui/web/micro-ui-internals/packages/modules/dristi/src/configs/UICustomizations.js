@@ -316,7 +316,6 @@ export const UICustomizations = {
           config: {
             ...requestCriteria?.config,
             select: (data) => {
-              console.log(data);
               return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
             },
           },
@@ -387,7 +386,6 @@ export const UICustomizations = {
         config: {
           ...requestCriteria?.config,
           select: (data) => {
-            console.log(data);
             return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
           },
         },
@@ -480,7 +478,6 @@ export const UICustomizations = {
         config: {
           ...requestCriteria?.config,
           select: (data) => {
-            console.log(data);
             return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
           },
         },
@@ -534,7 +531,6 @@ export const UICustomizations = {
         config: {
           ...requestCriteria?.config,
           select: (data) => {
-            console.log(data);
             return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
           },
         },
@@ -553,7 +549,6 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Document":
-          console.log("document", row);
           return <OwnerColumn name={row?.name.familyName} t={t} />;
           break;
 
@@ -585,7 +580,6 @@ export const UICustomizations = {
 };
 
 const CommentComponent = ({ key, comment }) => {
-  console.log("comment", comment);
   return (
     <div className="comment-body" key={key}>
       <div className="name-logo">
