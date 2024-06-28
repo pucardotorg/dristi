@@ -1785,7 +1785,7 @@ function EFilingCases({ path }) {
           {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && !isDisableAllFieldsMode && (
             <Modal
               headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
-              headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
+              headerBarEnd={<CloseBtn onClick={() => setShowConfirmOptionalModal(false)} />}
               actionCancelLabel={t("SKIP_AND_CONTINUE")}
               actionCancelOnSubmit={() => setShowConfirmOptionalModal(false)}
               actionSaveLabel={t("FILL_NOW")}
