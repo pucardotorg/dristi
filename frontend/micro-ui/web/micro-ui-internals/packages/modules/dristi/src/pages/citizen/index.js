@@ -119,7 +119,7 @@ const App = ({ stateCode, tenantId }) => {
     <div className={"pt-citizen"}>
       <Switch>
         <React.Fragment>
-          {!hideBack && !(location.pathname.includes("/login") || individualId) && (
+          {!hideBack && !(location.pathname.includes("/login") || location.pathname.includes("/registration/user-name") || individualId) && (
             <div className="back-button-home">
               <BackButton />
             </div>
@@ -145,9 +145,9 @@ const App = ({ stateCode, tenantId }) => {
           <div
             className={
               location.pathname.includes("/response") ||
-                location.pathname.includes("/login") ||
-                location.pathname.includes("/registration") ||
-                location.pathname.endsWith("/home")
+              location.pathname.includes("/login") ||
+              location.pathname.includes("/registration") ||
+              location.pathname.endsWith("/home")
                 ? `user-registration`
                 : ""
             }
