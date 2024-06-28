@@ -4,6 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,55 +39,20 @@ public class EvidenceQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
-            boolean firstCriteria = true; // To check if it's the first criteria
+            List<Object> preparedStmtList = new ArrayList<>();
+            boolean firstCriteria = true;
 
-            if (id != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.id = '").append(id).append("'");
-                firstCriteria = false;
-            }
+            firstCriteria = addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
+            firstCriteria = addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
+            firstCriteria = addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria = addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
+            firstCriteria = addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
+            firstCriteria = addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
+            firstCriteria = addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
+            firstCriteria = addArtifactCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber = ?");
 
-            if (caseId != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.caseId = '").append(caseId).append("'");
-                firstCriteria = false;
-            }
-
-            if (application != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.application = '").append(application).append("'");
-                firstCriteria = false;
-            }
-
-            if (hearing != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.hearing = '").append(hearing).append("'");
-                firstCriteria = false;
-            }
-
-            if (order != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.orders = '").append(order).append("'");
-                firstCriteria = false;
-            }
-
-            if (sourceId != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.sourceId = '").append(sourceId).append("'");
-                firstCriteria = false;
-            }
-
-            if (sourceName != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.sourceName = '").append(sourceName).append("'");
-                firstCriteria = false;
-            }
-            if (artifactNumber != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("art.artifactNumber = '").append(artifactNumber).append("'");
-                firstCriteria = false;
-            }
             query.append(ORDERBY_CREATEDTIME);
+
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building artifact search query", e);
@@ -94,6 +60,15 @@ public class EvidenceQueryBuilder {
         }
     }
 
+    private boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean isFirstCriteria, String condition) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, isFirstCriteria);
+            query.append(condition);
+            preparedStmtList.add(criteria);
+            return false; // Reset isFirstCriteria after adding this criterion
+        }
+        return isFirstCriteria;
+    }
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {

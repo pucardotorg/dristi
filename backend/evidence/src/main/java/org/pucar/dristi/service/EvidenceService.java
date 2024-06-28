@@ -24,18 +24,23 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 @Service
 public class EvidenceService {
+    private final EvidenceValidator validator;
+    private final EvidenceEnrichment evidenceEnrichment;
+    private final WorkflowService workflowService;
+    private final EvidenceRepository repository;
+    private final Producer producer;
+    private final Configuration config;
     @Autowired
-    private EvidenceValidator validator;
-    @Autowired
-    private EvidenceEnrichment evidenceEnrichment;
-    @Autowired
-    private WorkflowService workflowService;
-    @Autowired
-    private EvidenceRepository repository;
-    @Autowired
-    private Producer producer;
-    @Autowired
-    private Configuration config;
+    public EvidenceService(EvidenceValidator validator, EvidenceEnrichment evidenceEnrichment,
+                           WorkflowService workflowService, EvidenceRepository repository,
+                           Producer producer, Configuration config) {
+        this.validator = validator;
+        this.evidenceEnrichment = evidenceEnrichment;
+        this.workflowService = workflowService;
+        this.repository = repository;
+        this.producer = producer;
+        this.config = config;
+    }
     public Artifact createEvidence(EvidenceRequest body) {
         try {
 
@@ -83,40 +88,52 @@ public class EvidenceService {
     }
 
     public Artifact updateEvidence(EvidenceRequest evidenceRequest) {
-
         try {
+            Artifact existingApplication = validateExistingApplication(evidenceRequest);
 
-            // Validate whether the application that is being requested for update indeed exists
-            Artifact existingApplication;
-            try {
-                existingApplication = validator.validateApplicationExistence(evidenceRequest);
-            } catch (Exception e) {
-                log.error("Error validating existing application");
-                throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.toString());
-            }
+            // Update workflow
             existingApplication.setWorkflow(evidenceRequest.getArtifact().getWorkflow());
 
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
+            // Update workflow status
             workflowService.updateWorkflowStatus(evidenceRequest);
-            if (PUBLISHED_STATE.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
-                evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
-            }
-            if (ABATED_STATE.equalsIgnoreCase(evidenceRequest.getArtifact().getStatus())) {
-                evidenceEnrichment.enrichIsActive(evidenceRequest);
-            }
+
+            // Enrich based on artifact status
+            enrichBasedOnStatus(evidenceRequest);
+
+            // Push to Kafka
             producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
 
             return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
-            log.error("Custom Exception occurred while updating evidence");
+            log.error("Custom Exception occurred while updating evidence", e);
             throw e;
         } catch (Exception e) {
-            log.error("Error occurred while updating evidence");
+            log.error("Error occurred while updating evidence", e);
             throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error occurred while updating evidence: " + e.toString());
         }
-
     }
+
+    private Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
+        try {
+            return validator.validateApplicationExistence(evidenceRequest);
+        } catch (Exception e) {
+            log.error("Error validating existing application", e);
+            throw new CustomException("EVIDENCE_UPDATE_EXCEPTION", "Error validating existing application: " + e.toString());
+        }
+    }
+
+    private void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
+        String status = evidenceRequest.getArtifact().getStatus();
+
+        if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
+            evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+        } else if (ABATED_STATE.equalsIgnoreCase(status)) {
+            evidenceEnrichment.enrichIsActive(evidenceRequest);
+        }
+    }
+
 }
