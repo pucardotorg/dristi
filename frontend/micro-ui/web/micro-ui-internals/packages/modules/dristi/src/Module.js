@@ -40,12 +40,15 @@ import CitizenResponse from "./pages/citizen/registration/Response";
 import Inbox from "./pages/employee/Inbox";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import CustomRadioInfoComponent from "./components/CustomRadioInfoComponent";
+import Modal from "./components/Modal";
+import CustomCaseInfoDiv from "./components/CustomCaseInfoDiv";
+import DocViewerWrapper from "./pages/employee/docViewerWrapper";
 const Digit = window?.Digit || {};
 
 export const DRISTIModule = ({ stateCode, userType, tenants }) => {
   const { path } = useRouteMatch();
   const history = useHistory();
-  const moduleCode = "DRISTI";
+  const moduleCode = ["DRISTI", "CASE"];
   const tenantID = tenants?.[0]?.code?.split(".")?.[0];
   const language = Digit.StoreData.getCurrentLanguage();
   const { isLoading } = Digit.Services.useStore({ stateCode, moduleCode, language });
@@ -104,6 +107,9 @@ const componentsToRegister = {
   ScrutinyInfo,
   AdvocateNameDetails,
   CustomRadioInfoComponent,
+  MODAL: Modal,
+  CUSTOMCASEINFODIV: CustomCaseInfoDiv,
+  DOCVIEWERWRAPPER: DocViewerWrapper,
 };
 
 const overrideHooks = () => {
