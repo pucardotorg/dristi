@@ -3,6 +3,7 @@ package org.pucar.dristi.service;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.jetbrains.annotations.NotNull;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
@@ -158,25 +159,9 @@ public class CaseService {
         try {
             String filingNumber = joinCaseRequest.getCaseFilingNumber();
             List<CaseCriteria> existingApplications = caseRepository.getApplications(Collections.singletonList(CaseCriteria.builder().filingNumber(filingNumber).build()), joinCaseRequest.getRequestInfo());
-            if (existingApplications.isEmpty()) {
-                throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
-            }
-            List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
-            if (courtCaseList.isEmpty()) {
-                throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
-            }
-
-            CourtCase courtCase = courtCaseList.get(0);
+            CourtCase courtCase = validateAccessCodeAndReturnCourtCase(joinCaseRequest, existingApplications);
             UUID caseId = courtCase.getId();
 
-            if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
-                throw new CustomException(VALIDATION_ERR, "Access code not generated");
-            }
-            String caseAccessCode = courtCase.getAccessCode();
-
-            if(!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
-                throw new CustomException(VALIDATION_ERR, "Invalid access code");
-            }
 
             AuditDetails auditDetails = AuditDetails.builder()
                     .createdBy(joinCaseRequest.getRequestInfo().getUserInfo().getUuid())
@@ -234,7 +219,7 @@ public class CaseService {
             }
 
             return JoinCaseResponse.builder()
-                    .accessCode(caseAccessCode)
+                    .accessCode(joinCaseRequest.getAccessCode())
                     .caseFilingNumber(filingNumber)
                     .representative(joinCaseRequest.getRepresentative())
                     .litigant(joinCaseRequest.getLitigant()).build();
@@ -245,5 +230,27 @@ public class CaseService {
             log.error("Invalid request for joining a case :: {}",e.toString());
             throw new CustomException(JOIN_CASE_ERR, JOIN_CASE_INVALID_REQUEST);
         }
+    }
+
+    private static @NotNull CourtCase validateAccessCodeAndReturnCourtCase(JoinCaseRequest joinCaseRequest, List<CaseCriteria> existingApplications) {
+        if (existingApplications.isEmpty()) {
+            throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
+        }
+        List<CourtCase> courtCaseList = existingApplications.get(0).getResponseList();
+        if (courtCaseList.isEmpty()) {
+            throw new CustomException(CASE_EXIST_ERR, "Case does not exist");
+        }
+
+        CourtCase courtCase = courtCaseList.get(0);
+
+        if (courtCase.getAccessCode() == null || courtCase.getAccessCode().isEmpty()) {
+            throw new CustomException(VALIDATION_ERR, "Access code not generated");
+        }
+        String caseAccessCode = courtCase.getAccessCode();
+
+        if(!joinCaseRequest.getAccessCode().equalsIgnoreCase(caseAccessCode)) {
+            throw new CustomException(VALIDATION_ERR, "Invalid access code");
+        }
+        return courtCase;
     }
 }
