@@ -96,7 +96,7 @@ class ApplicationRepositoryTest {
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
                 .thenReturn(documentMap);
 
-        List<Application> result = applicationRepository.getApplications(0, 0, applicationSearchRequest );
+        List<Application> result = applicationRepository.getApplications(applicationSearchRequest );
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -121,7 +121,7 @@ class ApplicationRepositoryTest {
                 .thenReturn("some SQL query");
         when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
-        List<Application> result = applicationRepository.getApplications(0, 0,applicationSearchRequest);
+        List<Application> result = applicationRepository.getApplications(applicationSearchRequest);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -144,7 +144,7 @@ class ApplicationRepositoryTest {
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationRepository.getApplications(1, 2, applicationSearchRequest)
+                applicationRepository.getApplications(applicationSearchRequest)
         );
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
@@ -171,7 +171,7 @@ class ApplicationRepositoryTest {
 
         // Act & Assert
         CustomException exception = assertThrows(CustomException.class, () -> {
-            applicationRepository.getApplications(limit, offset,applicationSearchRequest);
+            applicationRepository.getApplications(applicationSearchRequest);
         });
 
         // Assert
@@ -247,5 +247,21 @@ class ApplicationRepositoryTest {
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new CustomException(APPLICATION_EXIST_EXCEPTION, "Error occurred while building the application exist query : " ));
 
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
+    }
+    @Test
+    public void testGetTotalCountApplication() {
+        String baseQuery = "SELECT * FROM applications";
+        String countQuery = "SELECT COUNT(*) FROM applications";
+
+        when(queryBuilder.getTotalCountQuery(baseQuery)).thenReturn(countQuery);
+        when(jdbcTemplate.queryForObject(countQuery, Integer.class)).thenReturn(42);
+
+        Integer result = applicationRepository.getTotalCountApplication(baseQuery);
+
+        assertNotNull(result);
+        assertEquals(42, result);
+
+        verify(queryBuilder, times(1)).getTotalCountQuery(baseQuery);
+        verify(jdbcTemplate, times(1)).queryForObject(countQuery, Integer.class);
     }
 }

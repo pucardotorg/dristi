@@ -38,7 +38,7 @@ public class ApplicationRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Application> getApplications(Integer limit, Integer offset , ApplicationSearchRequest applicationSearchRequest) {
+    public List<Application> getApplications(ApplicationSearchRequest applicationSearchRequest) {
 
         try {
             List<Application> applicationList = new ArrayList<>();
