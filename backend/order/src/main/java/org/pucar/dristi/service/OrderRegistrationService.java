@@ -126,11 +126,14 @@ public class OrderRegistrationService {
     }
 
     private void workflowUpdate(OrderRequest body){
-        if (body.getOrder().getOrderType().equalsIgnoreCase(JUDGEMENT)) {
-            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
-                    config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
+        String orderType = body.getOrder().getOrderType();
+        String status ;
+        if (orderType.equalsIgnoreCase(JUDGEMENT)) {
+            status = workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
+                    config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
         } else {
-            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
+            status = workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
         }
+        body.getOrder().setStatus(status);
     }
 }

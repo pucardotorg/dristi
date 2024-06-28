@@ -125,20 +125,22 @@ public class TaskService {
     }
 
     private void workflowUpdate(TaskRequest body){
-        if (body.getTask().getTaskType().equalsIgnoreCase(BAIL)) {
-            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                    config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName()));
-        }
-        if (body.getTask().getTaskType().equalsIgnoreCase(SUMMON)) {
-            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                    config.getTaskSummonBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskSummonBusinessName()));
-        }
-        if (body.getTask().getTaskType().equalsIgnoreCase(WARRANT)) {
-            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                    config.getTaskWarrantBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskWarrantBusinessName()));
-        } else {
-            body.getTask().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                    config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName()));
-        }
+        String taskType = body.getTask().getTaskType().toUpperCase();
+        String status = switch (taskType) {
+            case BAIL ->
+                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                            config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName());
+            case SUMMON ->
+                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                            config.getTaskSummonBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskSummonBusinessName());
+            case WARRANT ->
+                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                            config.getTaskWarrantBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskWarrantBusinessName());
+            default ->
+                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
+                            config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
+        };
+
+        body.getTask().setStatus(status);
     }
 }

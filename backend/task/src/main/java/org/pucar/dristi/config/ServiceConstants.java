@@ -57,9 +57,9 @@ public class ServiceConstants {
     public static final String ROW_MAPPER_EXCEPTION = "Error in row mapper";
     public static final String EXIST_TASK_ERR = "Error while checking task exist";
     public static final String SEARCH_TASK_ERR = "Error while searching task";
-    public static final String BAIL = "bail";
-    public static final String SUMMON = "summon";
-    public static final String WARRANT = "warrant";
+    public static final String BAIL = "BAIL";
+    public static final String SUMMON = "SUMMON";
+    public static final String WARRANT = "WARRANT";
 
 
 }

@@ -62,7 +62,7 @@ public class TaskServiceTest {
         task.setTenantId("tenant-id");
         task.setCnrNumber("cnr-number");
         task.setTaskNumber("task-number");
-        task.setTaskType("bail");
+        task.setTaskType("doc");
 
         requestInfo = RequestInfo.builder().build();
 
