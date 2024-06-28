@@ -271,7 +271,6 @@ export const TabSearchconfig = {
                 label: "Order Type",
                 jsonPath: "orderType",
               },
-
               {
                 label: "Order Id",
                 jsonPath: "id",
@@ -315,7 +314,7 @@ export const TabSearchconfig = {
           },
         },
         masterName: "commonUiConfig",
-        moduleName: "SubmissionConfig",
+        moduleName: "SearchIndividualConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
         filterFormJsonPath: "requestBody.Individual",
@@ -370,8 +369,8 @@ export const TabSearchconfig = {
               {
                 label: "Submission Name",
                 jsonPath: "applicationType",
+                additionalCustomization: true
               },
-
               {
                 label: "Submission Id",
                 jsonPath: "id",
@@ -382,17 +381,17 @@ export const TabSearchconfig = {
               },
               {
                 label: "Status",
-                jsonPath: "status"
+                jsonPath: "workflow.action"
               },
               {
                 label: "Owner",
                 jsonPath: ""
               },
-              // {
-              //   label: "Document",
-              //   jsonPath: "doc",
-              //   additionalCustomization: true
-              // }
+              {
+                label: "Document",
+                jsonPath: "documents",
+                additionalCustomization: true
+              }
             ],
 
             enableColumnSort: true,
