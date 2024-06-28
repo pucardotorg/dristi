@@ -90,7 +90,7 @@ const CustomReviewCardRow = ({
         bgclassname = dataError ? "error" : "";
       }
     }
-    bgclassname = dataError && isCaseReAssigned ? "preverror" : bgclassname;
+    bgclassname = dataError && isCaseReAssigned ? "preverrorside" : bgclassname;
     switch (type) {
       case "title":
         const titleError = dataError?.title?.FSOError;
@@ -105,7 +105,7 @@ const CustomReviewCardRow = ({
           title = extractValue(data, value);
         }
         bgclassname = isScrutiny && prevTitleError ? (titleError === prevTitleError ? "preverror" : "error") : "";
-        bgclassname = titleError && isCaseReAssigned ? "preverror" : bgclassname;
+        bgclassname = titleError && isCaseReAssigned ? "preverrorside" : bgclassname;
         return (
           <div className={`title-main ${bgclassname}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
@@ -269,7 +269,7 @@ const CustomReviewCardRow = ({
         }
         bgclassname =
           isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
-        bgclassname = FSOErrors?.length > 0 && isCaseReAssigned ? "preverror" : bgclassname;
+        bgclassname = FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : bgclassname;
         const hasPrevError = value.some((key) => {
           return prevDataError?.[key] && prevDataError?.[key]?.FSOError;
         });

@@ -198,6 +198,7 @@ function ViewCaseFile({ t }) {
       }),
     ];
   }, [reviewCaseFileFormConfig, caseDetails, defaultScrutinyErrors]);
+
   const primaryButtonLabel = useMemo(() => {
     if (isScrutiny) {
       return "CS_REGISTER_CASE";
@@ -211,10 +212,10 @@ function ViewCaseFile({ t }) {
   }, [isScrutiny]);
 
   const updateCaseDetails = async (action) => {
-    const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : formdata;
+    const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : CaseWorkflowAction.SEND_BACK && isPrevScrutiny ? newScrutinyData : formdata;
     const newcasedetails = {
       ...caseDetails,
-      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj, prevScrutiny: scrutinyObj },
+      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj },
       caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
     };
 
