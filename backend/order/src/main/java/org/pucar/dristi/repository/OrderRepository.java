@@ -101,10 +101,10 @@ public class OrderRepository {
     public List<OrderExists> checkOrderExists(List<OrderExists> orderExistsRequest) {
         try {
             for (OrderExists orderExists : orderExistsRequest) {
-                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null) {
+                if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null && orderExists.getApplicationNumber() == null && orderExists.getOrderId()==null){
                     orderExists.setExists(false);
                 } else {
-                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber());
+                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber(), orderExists.getOrderId());
                     log.info("Final order exist query :: {}", orderExistQuery);
                     Integer count = jdbcTemplate.queryForObject(orderExistQuery, Integer.class);
                     orderExists.setExists(count != null && count > 0);

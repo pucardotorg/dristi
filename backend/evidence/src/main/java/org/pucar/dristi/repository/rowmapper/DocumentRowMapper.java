@@ -22,7 +22,6 @@ public class DocumentRowMapper implements ResultSetExtractor<Document> {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             while (rs.next()) {
-                String id = rs.getString("artifactId");
                 if (document == null) {
                     document = Document.builder()
                             .id(rs.getString("id"))
@@ -31,7 +30,6 @@ public class DocumentRowMapper implements ResultSetExtractor<Document> {
                             .documentType(rs.getString("documentType"))
                             .build();
                 }
-
                 PGobject additionalDetailsObject = (PGobject) rs.getObject("additionalDetails");
                 if (additionalDetailsObject != null) {
                     document.setAdditionalDetails(objectMapper.readTree(additionalDetailsObject.getValue()));

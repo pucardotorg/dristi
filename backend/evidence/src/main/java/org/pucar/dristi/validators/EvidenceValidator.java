@@ -22,12 +22,15 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 @Component
 public class EvidenceValidator {
+    private final EvidenceRepository repository;
+    private final MdmsUtil mdmsUtil;
+
     @Autowired
-    private EvidenceRepository repository;
-    @Autowired
-    private MdmsUtil mdmsUtil;
+    public EvidenceValidator(EvidenceRepository repository, MdmsUtil mdmsUtil) {
+        this.repository = repository;
+        this.mdmsUtil = mdmsUtil;
+    }
     public void     validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
-        RequestInfo requestInfo = evidenceRequest.getRequestInfo();
 
             if(ObjectUtils.isEmpty(evidenceRequest.getArtifact().getTenantId()) || ObjectUtils.isEmpty(evidenceRequest.getArtifact().getCaseId())){
                 throw new CustomException(ILLEGAL_ARGUMENT_EXCEPTION_CODE,"tenantId and caseId are mandatory for creating advocate");
@@ -38,7 +41,6 @@ public class EvidenceValidator {
     }
 
     public Artifact validateApplicationExistence(EvidenceRequest evidenceRequest) {
-        RequestInfo requestInfo = evidenceRequest.getRequestInfo();
 
         // Create EvidenceSearchCriteria object and set the parameters from evidenceRequest
         EvidenceSearchCriteria evidenceSearchCriteria = new EvidenceSearchCriteria();

@@ -207,6 +207,11 @@ components:
       type: object
       description: can send in any one of the values and Exists value will be populated with true or false. If multiple paramters are passed, then it will be a logical AND search
       properties:
+        orderId:
+          type: string
+          format: uuid
+          minLength: 36
+          maxLength: 36
         filingNumber:
           type: string
         cnrNumber:

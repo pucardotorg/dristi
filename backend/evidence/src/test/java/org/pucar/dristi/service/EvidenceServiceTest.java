@@ -137,7 +137,6 @@ public class EvidenceServiceTest {
     @Test
     void testSearchEvidenceSuccessNoResults() {
         String id = "testId";
-        String tenantId = "testTenantId";
         String caseId = "testCaseId";
         String application = "testApplication";
         String hearing = "testHearing";
@@ -172,7 +171,6 @@ public class EvidenceServiceTest {
     @Test
     void testSearchEvidenceHandleException() {
         String id = "testId";
-        String tenantId = "testTenantId";
         String caseId = "testCaseId";
         String application = "testApplication";
         String hearing = "testHearing";

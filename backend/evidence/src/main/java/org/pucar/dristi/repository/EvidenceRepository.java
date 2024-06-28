@@ -21,30 +21,44 @@
     @Repository
     public class EvidenceRepository {
 
-        @Autowired
-        private EvidenceQueryBuilder queryBuilder;
+        private final EvidenceQueryBuilder queryBuilder;
+        private final JdbcTemplate jdbcTemplate;
+        private final EvidenceRowMapper evidenceRowMapper;
+        private final DocumentRowMapper documentRowMapper;
+        private final CommentRowMapper commentRowMapper;
 
         @Autowired
-        private JdbcTemplate jdbcTemplate;
-
-        @Autowired
-        private EvidenceRowMapper evidenceRowMapper;
-
-        @Autowired
-        private DocumentRowMapper documentRowMapper;
-
-        @Autowired
-        private CommentRowMapper commentRowMapper;
+        public EvidenceRepository(
+                EvidenceQueryBuilder queryBuilder,
+                JdbcTemplate jdbcTemplate,
+                EvidenceRowMapper evidenceRowMapper,
+                DocumentRowMapper documentRowMapper,
+                CommentRowMapper commentRowMapper
+        ) {
+            this.queryBuilder = queryBuilder;
+            this.jdbcTemplate = jdbcTemplate;
+            this.evidenceRowMapper = evidenceRowMapper;
+            this.documentRowMapper = documentRowMapper;
+            this.commentRowMapper = commentRowMapper;
+        }
 
         public List<Artifact> getArtifacts(EvidenceSearchCriteria evidenceSearchCriteria) {
             try {
-                List<Artifact> artifactList = new ArrayList<>();
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 List<Object> preparedStmtListCom = new ArrayList<>();
-
-                String artifactQuery = queryBuilder.getArtifactSearchQuery(evidenceSearchCriteria.getId(), evidenceSearchCriteria.getCaseId(), evidenceSearchCriteria.getApplicationId(), evidenceSearchCriteria.getHearing(), evidenceSearchCriteria.getOrder(), evidenceSearchCriteria.getSourceId(), evidenceSearchCriteria.getSourceName(),evidenceSearchCriteria.getArtifactNumber());
+                String artifactQuery = queryBuilder.getArtifactSearchQuery(
+                        evidenceSearchCriteria.getId(),
+                        evidenceSearchCriteria.getCaseId(),
+                        evidenceSearchCriteria.getApplicationId(),
+                        evidenceSearchCriteria.getHearing(),
+                        evidenceSearchCriteria.getOrder(),
+                        evidenceSearchCriteria.getSourceId(),
+                        evidenceSearchCriteria.getSourceName(),
+                        evidenceSearchCriteria.getArtifactNumber()
+                );
                 log.info("Final artifact query: {}", artifactQuery);
-                artifactList = jdbcTemplate.query(artifactQuery, evidenceRowMapper);
+
+                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
 
                 List<String> artifactIds = new ArrayList<>();

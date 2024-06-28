@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -47,7 +48,7 @@ public class OrderRegistrationService {
 
             enrichmentUtil.enrichOrderRegistration(body);
 
-            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
+            workflowUpdate(body);
 
             producer.push(config.getSaveOrderKafkaTopic(), body);
 
@@ -63,7 +64,6 @@ public class OrderRegistrationService {
     }
 
     public List<Order> searchOrder(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status,RequestInfo requestInfo) {
-
         try {
             // Fetch applications from database according to the given search criteria
             List<Order> orderList = orderRepository.getOrders(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
@@ -71,9 +71,6 @@ public class OrderRegistrationService {
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
                 return new ArrayList<>();
-
-            orderList.forEach(order -> order.setWorkflow(workflowUtil.getWorkflowFromProcessInstance(workflowUtil.getCurrentWorkflow(requestInfo, order.getTenantId(), order.getOrderNumber()))));
-
             return orderList;
 
         } catch (Exception e) {
@@ -99,7 +96,7 @@ public class OrderRegistrationService {
             // Enrich application upon update
             enrichmentUtil.enrichOrderRegistrationUponUpdate(body);
 
-            body.getOrder().setStatus(workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName()));
+            workflowUpdate(body);
 
             producer.push(config.getUpdateOrderKafkaTopic(), body);
 
@@ -127,5 +124,25 @@ public class OrderRegistrationService {
             log.error("Error while fetching to search order results :: {}",e.toString());
             throw new CustomException(ORDER_EXISTS_EXCEPTION,e.getMessage());
         }
+    }
+
+    private void workflowUpdate(OrderRequest orderRequest){
+        Order order = orderRequest.getOrder();
+        RequestInfo requestInfo = orderRequest.getRequestInfo();
+
+        String orderType = order.getOrderType();
+        String tenantId = order.getTenantId();
+        String orderNumber = order.getOrderNumber();
+        Workflow workflow = order.getWorkflow();
+
+        String status ;
+        if (orderType.equalsIgnoreCase(JUDGEMENT)) {
+            status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
+                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderBusinessName());
+        } else {
+            status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
+                    workflow, config.getOrderBusinessName());
+        }
+        order.setStatus(status);
     }
 }

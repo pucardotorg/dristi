@@ -4,7 +4,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceConstants {
-
+	private ServiceConstants() {
+	}
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
 
@@ -53,6 +54,12 @@ public class ServiceConstants {
 	public static final String PUBLISHED_STATE = "PUBLISHED";
 	public static final String ABATED_STATE = "ABATED";
 	public static final String ARTIFACT_ID_NAME = "artifact.artifact_number";
+	public static final String AFFIDAVIT = "AFFIDAVIT";
+	public static final String COMPLAINANT = "COMPLAINANT";
+	public static final String DOCUMENTARY = "DOCUMENTARY";
+	public static final String DEPOSITION = "DEPOSITION";
+	public static final String ACCUSED = "ACCUSED";
+	public static final String COURT = "COURT";
 
 
 }
