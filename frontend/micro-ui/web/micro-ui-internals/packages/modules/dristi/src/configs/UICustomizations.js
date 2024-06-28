@@ -333,7 +333,7 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
         case "Stage":
-          return <span>{t("CS_UNDER_SCRUTINY")}</span>;
+          return <span>{t("UNDER_SCRUTINY")}</span>;
         case "Case Type":
           return <span>NIA S138</span>;
         case "Days Since Filing":

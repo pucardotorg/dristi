@@ -837,11 +837,6 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
       }
       return hasError;
     }
-  } else if (selected === "witnessDetails") {
-    if ("text" in formData?.witnessAdditionalDetails && !formData?.witnessAdditionalDetails?.text.length > 0) {
-      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
-      return true;
-    }
   } else {
     return false;
   }
