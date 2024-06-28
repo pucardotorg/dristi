@@ -212,6 +212,7 @@ const ViewPaymentDetails = ({ location, match }) => {
                 defaulValue={paymentOption[0]}
                 onChange={(e) => {
                   setModeOfPayment(e);
+                  setAdditionalDetails("");
                 }}
                 value={modeOfPayment}
                 config={paymentOptionConfig}
@@ -231,7 +232,7 @@ const ViewPaymentDetails = ({ location, match }) => {
                     const { value } = e.target;
 
                     let updatedValue = value?.replace(/\D/g, "");
-                    if (updatedValue?.length > 6 && modeOfPayment?.code === "CHEQUE") {
+                    if (updatedValue?.length > 6) {
                       updatedValue = updatedValue?.substring(0, 6);
                     }
 
@@ -248,11 +249,7 @@ const ViewPaymentDetails = ({ location, match }) => {
             disabled={
               !payer ||
               Object.keys(!modeOfPayment ? {} : modeOfPayment).length === 0 ||
-              (["CHEQUE", "DD"].includes(modeOfPayment?.code)
-                ? modeOfPayment?.code === "CHEQUE"
-                  ? additionDetails.length !== 6
-                  : !additionDetails
-                : false)
+              (["CHEQUE", "DD"].includes(modeOfPayment?.code) ? additionDetails.length !== 6 : false)
             }
             onSubmit={() => {
               onSubmitCase();

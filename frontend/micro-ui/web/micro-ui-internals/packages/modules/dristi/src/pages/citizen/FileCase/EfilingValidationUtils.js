@@ -1221,6 +1221,9 @@ export const updateCaseDetails = async ({
       if (obj?.data?.phonenumbers) {
         obj.data.phonenumbers.textfieldValue = "";
       }
+      if (obj?.data?.emails) {
+        obj.data.emails.textfieldValue = "";
+      }
     }
     data.additionalDetails = {
       ...caseDetails.additionalDetails,
@@ -1352,10 +1355,20 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "witnessDetails") {
+    const newFormDataCopy = structuredClone(formdata.filter((item) => item.isenabled));
+    for (let i = 0; i < newFormDataCopy.length; i++) {
+      const obj = newFormDataCopy[i];
+      if (obj?.data?.phonenumbers) {
+        obj.data.phonenumbers.textfieldValue = "";
+      }
+      if (obj?.data?.emails) {
+        obj.data.emails.textfieldValue = "";
+      }
+    }
     data.additionalDetails = {
       ...caseDetails.additionalDetails,
       witnessDetails: {
-        formdata: formdata.filter((item) => item.isenabled),
+        formdata: newFormDataCopy,
         isCompleted: isCompleted === "PAGE_CHANGE" ? caseDetails.additionalDetails?.[selected]?.isCompleted : isCompleted,
       },
     };
