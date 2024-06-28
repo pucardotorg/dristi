@@ -2,8 +2,8 @@
   "BusinessServices": [
     {
       "tenantId": "kl",
-      "businessService": "order",
-      "business": "order-services",
+      "businessService": "order-judgement",
+      "business": "order-judgement-services",
       "businessServiceSla": 30,
       "states": [
         {
