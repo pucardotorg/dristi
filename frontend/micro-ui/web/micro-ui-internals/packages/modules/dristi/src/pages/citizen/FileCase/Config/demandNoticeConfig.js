@@ -181,14 +181,13 @@ const demandNoticeFormConfig = [
     ],
   },
   {
-    dependentKey: {
-      proofOfService: ["showProofOfAcknowledgment"],
-    },
     body: [
       {
         type: "component",
         component: "SelectCustomDragDrop",
         key: "proofOfAcknowledgmentFileUpload",
+        isDocDependentOn: "proofOfService",
+        isDocDependentKey: "showProofOfAcknowledgment",
         populators: {
           inputs: [
             {
@@ -272,14 +271,13 @@ const demandNoticeFormConfig = [
     ],
   },
   {
-    dependentKey: {
-      proofOfReply: ["showProofOfReply"],
-    },
     body: [
       {
         type: "component",
         component: "SelectCustomDragDrop",
         key: "proofOfReplyFileUpload",
+        isDocDependentOn: "proofOfReply",
+        isDocDependentKey: "showProofOfReply",
         populators: {
           inputs: [
             {
