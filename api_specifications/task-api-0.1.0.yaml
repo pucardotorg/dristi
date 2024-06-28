@@ -87,14 +87,14 @@ paths:
         - name: orderId
           in: query
           description: the order ID whose task(s) are being queried
-          required: true
+          required: false
           schema:
             type: string
             format: uuid
         - name: cnrNumber
           in: query
           description: the cnrNumber of the case whose task(s) are being queried
-          required: true
+          required: false
           schema:
             type: string
         - name: taskNumber
