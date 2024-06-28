@@ -158,7 +158,16 @@ export const sideMenuConfig = [
         checked: false,
         isCompleted: false,
         isDisabled: false,
-        pageConfig: demandNoticeConfig,
+        pageConfig: [
+          {
+            moduleName: "commonUiConfig",
+            masterDetails: [
+              {
+                name: "demandNoticeConfig",
+              },
+            ],
+          },
+        ],
         mandatoryFields: [
           "modeOfDispatchType",
           "dateOfIssuance",
