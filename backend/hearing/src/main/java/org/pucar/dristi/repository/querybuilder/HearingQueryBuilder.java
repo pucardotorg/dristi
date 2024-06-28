@@ -59,12 +59,12 @@ public class HearingQueryBuilder {
             }
 
             if (fromDate != null) {
-                query.append(" AND createdTime >= ?");
+                query.append(" AND startTime >= ?");
                 preparedStmtList.add(fromDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
             }
 
             if (toDate != null) {
-                query.append(" AND createdTime <= ?");
+                query.append(" AND startTime <= ?");
                 preparedStmtList.add(toDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000);
             }
 

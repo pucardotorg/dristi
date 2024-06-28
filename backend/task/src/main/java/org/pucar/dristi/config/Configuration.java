@@ -103,6 +103,24 @@ public class Configuration {
     @Value("${egov.workflow.task.business.service.name}")
     private String taskBusinessServiceName;
 
+    @Value("${egov.workflow.task.bail.business.name}")
+    private String taskBailBusinessName;
+
+    @Value("${egov.workflow.task.bail.business.service.name}")
+    private String taskBailBusinessServiceName;
+
+    @Value("${egov.workflow.task.summon.business.name}")
+    private String taskSummonBusinessName;
+
+    @Value("${egov.workflow.task.summon.business.service.name}")
+    private String taskSummonBusinessServiceName;
+
+    @Value("${egov.workflow.task.warrant.business.name}")
+    private String taskWarrantBusinessName;
+
+    @Value("${egov.workflow.task.warrant.business.service.name}")
+    private String taskWarrantBusinessServiceName;
+
     @Value("${egov.idgen.taskNumber}")
     private String taskNumber;
 

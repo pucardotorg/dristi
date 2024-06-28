@@ -104,7 +104,7 @@ public class CaseQueryBuilder {
 
                 firstCriteria = addCriteria(criteria.getCnrNumber(), query, firstCriteria, "cases.cnrNumber = ?", preparedStmtList);
 
-                firstCriteria = addCriteria(criteria.getFilingNumber(), query, firstCriteria, "cases.filingnumber = ?", preparedStmtList);
+                firstCriteria = addCriteria(criteria.getFilingNumber() == null? null : "%" + criteria.getFilingNumber() + "%", query, firstCriteria, "LOWER(cases.filingnumber) LIKE LOWER(?)", preparedStmtList);
 
                 firstCriteria = addCriteria(criteria.getCourtCaseNumber(), query, firstCriteria, "cases.courtcasenumber = ?", preparedStmtList);
 
