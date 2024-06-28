@@ -5,6 +5,7 @@
 .popup-module.verify-mobile-modal,
 .popup-module.verification-complainant-modal,
 .popup-module.edit-case-name-modal,
+.popup-module.join-a-case-modal,
 .popup-module.evidence-modal,
 .popup-module.case-types {
   width: 536px;
@@ -137,18 +138,22 @@
     }
     .popup-module-action-bar {
       margin: 16px;
-      .selector-button-border {
-        background-color: white;
-        border: 1px #007e7e solid;
-        h2 {
-          color: #007e7e;
-          font-family: Roboto;
-          font-size: 16px;
-          font-weight: 700;
-          line-height: 18.75px;
-          text-align: center;
-        }
+    }
+    .selector-button-border {
+      background-color: white;
+      border: 1px #007e7e solid;
+      box-shadow: none;
+      h2 {
+        color: #007e7e;
+        font-family: Roboto;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 18.75px;
+        text-align: center;
       }
+    }
+    .selector-button-primary {
+      box-shadow: none;
     }
   }
 }

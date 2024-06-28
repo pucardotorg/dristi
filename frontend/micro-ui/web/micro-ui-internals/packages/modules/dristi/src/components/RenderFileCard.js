@@ -24,7 +24,7 @@ function RenderFileCard({
       });
       setFile(draftFile);
     }
-  }, []);
+  }, [fileData]);
   return (
     <div className={`uploaded-file-div-main upload-${!!uploadErrorInfo ? "error" : "successful"}`}>
       <div className={`uploaded-file-div-sub ${!!uploadErrorInfo ? "error" : ""}`}>
