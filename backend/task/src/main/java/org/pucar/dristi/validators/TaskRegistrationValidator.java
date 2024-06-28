@@ -22,25 +22,20 @@ import static org.pucar.dristi.config.ServiceConstants.UPDATE_TASK_ERR;
 @Component
 public class TaskRegistrationValidator {
 
-    @Autowired
-    private TaskRepository repository;
-
-    private TaskService taskService;
-
-    @Autowired
-    private MdmsUtil mdmsUtil;
+    private final TaskRepository repository;
+    private final MdmsUtil mdmsUtil;
+    private final Configuration config;
+    private final OrderUtil orderUtil;
 
     @Autowired
-    private Configuration config;
-
-    @Autowired
-    private OrderUtil orderUtil;
-
-
-    @Autowired
-    public void setCaseService(@Lazy TaskService taskService) {
-        this.taskService = taskService;
+    public TaskRegistrationValidator(TaskRepository repository, MdmsUtil mdmsUtil, Configuration config, OrderUtil orderUtil) {
+        this.repository = repository;
+        this.mdmsUtil = mdmsUtil;
+        this.config = config;
+        this.orderUtil = orderUtil;
     }
+
+
 
     public void validateCaseRegistration(TaskRequest taskRequest) throws CustomException {
         Task task = taskRequest.getTask();

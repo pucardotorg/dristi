@@ -17,13 +17,11 @@ public class DocumentRowMapperTest {
 
     private DocumentRowMapper documentRowMapper;
     private ResultSet resultSet;
-    private ObjectMapper objectMapper;
 
     @BeforeEach
     public void setup() {
         documentRowMapper = new DocumentRowMapper();
         resultSet = mock(ResultSet.class);
-        objectMapper = new ObjectMapper();
     }
 
     @Test

@@ -18,8 +18,7 @@ public class TaskQueryBuilder {
             " task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber," +
             " task.taskdetails as taskdetails, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
             " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime";
-    private static final String FROM_task_TABLE = " FROM dristi_task task";
-    private static final String ORDERBY_CREATEDTIME = " ORDER BY task.createdtime DESC ";
+    private static final String FROM_TASK_TABLE = " FROM dristi_task task";    private static final String ORDERBY_CREATEDTIME = " ORDER BY task.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             " doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.task_id as task_id";
@@ -34,76 +33,61 @@ public class TaskQueryBuilder {
     public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
-            boolean firstCriteria = true; // To check if it's the first criteria
+            boolean firstCriteria = true;
 
             if (cnrNumber != null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = ").append("'").append(cnrNumber).append("'");
+                query.append("task.cnrnumber = '").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
 
-            if (filingNumber != null  && !filingNumber.isEmpty() ) {
+            if (filingNumber != null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.filingnumber = ").append("'").append(filingNumber).append("'");
-                firstCriteria = false;
+                query.append("task.filingnumber = '").append(filingNumber).append("'");
             }
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building task search query :: {}",e.toString());
-            throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the case search query: " + e.getMessage());
+            log.error("Error while building task search query", e);
+            throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Error occurred while building the task search query: " + e.getMessage());
         }
     }
+
 
     public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
-            query.append(FROM_task_TABLE);
+            query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            if (id != null  && !id.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.id = ").append("'").append(id).append("'");
-                firstCriteria = false;
-            }
-
-            if (tenantId != null  && !tenantId.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.tenantid = ").append("'").append(tenantId).append("'");
-                firstCriteria = false;
-            }
-
-            if (status != null  && !status.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.status = ").append("'").append(status).append("'");
-                firstCriteria = false;
-            }
-
-            if (orderId != null) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.orderid = ").append("'").append(orderId).append("'");
-                firstCriteria = false;
-            }
-
-            if (cnrNumber != null  && !cnrNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = ").append("'").append(cnrNumber).append("'");
-                firstCriteria = false;
-            }
-            if (taskNumber != null  && !taskNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("task.tasknumber = ").append("'").append(taskNumber).append("'");
-                firstCriteria = false;
-            }
+            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", id);
+            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", tenantId);
+            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", status);
+            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", orderId != null ? orderId.toString() : null);
+            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", cnrNumber);
+            firstCriteria = addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", taskNumber);
 
             query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building task search query :: {}",e.toString());
+            log.error("Error while building task search query :: {}", e.toString());
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
         }
     }
+
+    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean isFirstCriteria, String condition, String parameter) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, isFirstCriteria);
+            query.append(condition);
+            query.append("'");
+            query.append(parameter);
+            query.append("'");
+            return false;
+        }
+        return isFirstCriteria;
+    }
+
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
