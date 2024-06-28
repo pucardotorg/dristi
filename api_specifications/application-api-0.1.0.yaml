@@ -143,14 +143,14 @@ components:
     ApplicationSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/ApplicationCriteria'
     ApplicationRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         application:
           $ref: '#/components/schemas/Application'
@@ -179,7 +179,7 @@ components:
     ApplicationExistsRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         applicationList:
           type: array

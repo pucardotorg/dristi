@@ -79,49 +79,6 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderSearchRequest'
         required: true
-      summary: search for orders
-      description: |
-        search order(s) based on different parameters
-      parameters:
-        - name: id
-          in: query
-          description: id of the order being searched
-          schema:
-            type: string
-        - name: tenantId
-          in: query
-          description: tenantId whose order(s) are being searched
-          schema:
-            type: string
-        - name: applicationNumber
-          in: query
-          description: the applicationNumber whose order(s) are being queried
-          required: false
-          schema:
-            type: string
-            format: uuid
-        - name: filingNumber
-          in: query
-          description: the filingNumber of the case whose order(s) are being queried
-          required: false
-          schema:
-            type: string
-        - name: cnrNumber
-          in: query
-          description: the cnrNumber of the case whose order(s) are being queried
-          required: false
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: the status of the order(s) being searched
-          schema:
-            type: string
-        - name: orderNumber
-          in: query
-          description: the orderNumber of the order(s) being searched
-          schema:
-            type: string
       responses:
         "200":
           description: ResponseInfo with order list
@@ -167,7 +124,7 @@ components:
     OrderSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/OrderCriteria'
