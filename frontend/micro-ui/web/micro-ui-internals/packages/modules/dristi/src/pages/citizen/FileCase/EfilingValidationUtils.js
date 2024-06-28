@@ -658,8 +658,7 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
 export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "chequeDetails") {
     for (const key of ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"]) {
-      if (!(key in formData) || formData[key]?.document?.length === 0 || !formData[key] 
-        || Object.keys(formData[key] || {}).length === 0) {
+      if (!(key in formData) || formData[key]?.document?.length === 0 || !formData[key] || Object.keys(formData[key] || {}).length === 0) {
         setFormErrors(key, { type: "required" });
         setShowErrorToast(true);
         return true;
@@ -819,11 +818,6 @@ export const prayerAndSwornValidation = ({ t, formData, selected, setShowErrorTo
     ) {
       toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       setFormErrors("prayerForRelief", { type: "required" });
-      hasError = true;
-    }
-    if ("text" in formData?.additionalDetails && !formData?.additionalDetails?.text.length > 0) {
-      setFormErrors("additionalDetails", { type: "required" });
-      toast.error(t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS"));
       hasError = true;
     }
     if ("SelectUploadDocWithName" in formData && Array.isArray(formData?.SelectUploadDocWithName)) {
