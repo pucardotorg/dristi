@@ -15,6 +15,7 @@ export const showDemandNoticeModal = ({
   setReceiptDemandNoticeModal,
 }) => {
   if (selected === "demandNoticeDetails") {
+    const totalCheques = caseDetails?.caseDetails?.["chequeDetails"]?.formdata && caseDetails?.caseDetails?.["chequeDetails"]?.formdata.length;
     for (const key in formData) {
       switch (key) {
         case "dateOfService":
@@ -48,7 +49,7 @@ export const showDemandNoticeModal = ({
             setError("dateOfIssuance", { message: "CS_DATE_ERROR_MSG" });
           } else if (
             new Date(formData?.dateOfIssuance).getTime() <
-            new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[index]?.data?.depositDate).getTime()
+            new Date(caseDetails?.caseDetails?.["chequeDetails"]?.formdata?.[totalCheques - 1]?.data?.depositDate).getTime()
           ) {
             setError("dateOfIssuance", { message: "CS_DATE_ISSUANCE_MSG_CHEQUE" });
           } else clearErrors("dateOfIssuance");
