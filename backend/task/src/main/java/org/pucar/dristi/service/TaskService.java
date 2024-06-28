@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -124,23 +125,30 @@ public class TaskService {
         }
     }
 
-    private void workflowUpdate(TaskRequest body){
-        String taskType = body.getTask().getTaskType().toUpperCase();
+    private void workflowUpdate(TaskRequest taskRequest){
+        Task task = taskRequest.getTask();
+        RequestInfo requestInfo = taskRequest.getRequestInfo();
+
+        String taskType = task.getTaskType().toUpperCase();
+        String tenantId = task.getTenantId();
+        String taskNumber = task.getTaskNumber();
+        Workflow workflow = task.getWorkflow();
+
         String status = switch (taskType) {
             case BAIL ->
-                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                            config.getTaskBailBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBailBusinessName());
+                    workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                            config.getTaskBailBusinessServiceName(), workflow, config.getTaskBailBusinessName());
             case SUMMON ->
-                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                            config.getTaskSummonBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskSummonBusinessName());
+                    workflowUtil.updateWorkflowStatus(requestInfo,tenantId, taskNumber,
+                            config.getTaskSummonBusinessServiceName(), workflow, config.getTaskSummonBusinessName());
             case WARRANT ->
-                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                            config.getTaskWarrantBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskWarrantBusinessName());
+                    workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                            config.getTaskWarrantBusinessServiceName(), workflow, config.getTaskWarrantBusinessName());
             default ->
-                    workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getTask().getTenantId(), body.getTask().getTaskNumber(),
-                            config.getTaskBusinessServiceName(), body.getTask().getWorkflow(), config.getTaskBusinessName());
+                    workflowUtil.updateWorkflowStatus(requestInfo, tenantId, taskNumber,
+                            config.getTaskBusinessServiceName(), workflow, config.getTaskBusinessName());
         };
 
-        body.getTask().setStatus(status);
+        task.setStatus(status);
     }
 }

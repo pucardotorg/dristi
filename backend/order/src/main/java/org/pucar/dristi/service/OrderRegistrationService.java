@@ -1,6 +1,7 @@
 package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
@@ -125,15 +126,23 @@ public class OrderRegistrationService {
         }
     }
 
-    private void workflowUpdate(OrderRequest body){
-        String orderType = body.getOrder().getOrderType();
+    private void workflowUpdate(OrderRequest orderRequest){
+        Order order = orderRequest.getOrder();
+        RequestInfo requestInfo = orderRequest.getRequestInfo();
+
+        String orderType = order.getOrderType();
+        String tenantId = order.getTenantId();
+        String orderNumber = order.getOrderNumber();
+        Workflow workflow = order.getWorkflow();
+
         String status ;
         if (orderType.equalsIgnoreCase(JUDGEMENT)) {
-            status = workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(),
-                    config.getOrderJudgementBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
+            status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber,
+                    config.getOrderJudgementBusinessServiceName(), workflow, config.getOrderBusinessName());
         } else {
-            status = workflowUtil.updateWorkflowStatus(body.getRequestInfo(), body.getOrder().getTenantId(), body.getOrder().getOrderNumber(), config.getOrderBusinessServiceName(), body.getOrder().getWorkflow(), config.getOrderBusinessName());
+            status = workflowUtil.updateWorkflowStatus(requestInfo, tenantId, orderNumber, config.getOrderBusinessServiceName(),
+                    workflow, config.getOrderBusinessName());
         }
-        body.getOrder().setStatus(status);
+        order.setStatus(status);
     }
 }
