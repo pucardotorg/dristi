@@ -82,7 +82,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt()))
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("some SQL query");
         when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
 
@@ -117,7 +117,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),anyInt(), anyInt()))
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("some SQL query");
         when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
@@ -140,7 +140,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString(), anyInt(), anyInt()))
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
