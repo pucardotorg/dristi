@@ -31,7 +31,7 @@ const DragDropJSX = ({ t, currentValue, error }) => {
   );
 };
 
-function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
+function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setError, clearErrors }) {
   const toast = useToast();
   const inputs = useMemo(
     () =>
@@ -52,7 +52,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
     [config?.populators?.inputs]
   );
 
-  function setValue(value, input) {
+  function setValue(value, input, isFileSizeLimitExceeded) {
     if (Array.isArray(input)) {
       onSelect(
         config.key,
@@ -63,10 +63,10 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
             return res;
           }, {}),
         },
-        { shouldValidate: true }
+        { shouldValidate: isFileSizeLimitExceeded ? false : true }
       );
     } else {
-      onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: true });
+      onSelect(config.key, { ...formData[config.key], [input]: value }, { shouldValidate: isFileSizeLimitExceeded ? false : true });
     }
   }
 
@@ -83,12 +83,17 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors }) {
   const handleChange = (file, input, index = Infinity) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1, file);
-    setValue(currentValue, input?.name);
+    const maxFileSize = input?.maxFileSize * 1024 * 1024;
+    if (file.size > maxFileSize) {
+      setError(config.key, { message: t(input?.maxFileErrorMessage) });
+    }
+    setValue(currentValue, input?.name, file.size > maxFileSize);
   };
 
   const handleDeleteFile = (input, index) => {
     let currentValue = (formData && formData[config.key] && formData[config.key][input.name]) || [];
     currentValue.splice(index, 1);
+    clearErrors(config.key);
     setValue(currentValue, input?.name);
   };
   return inputs.map((input) => {
