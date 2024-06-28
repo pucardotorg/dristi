@@ -4,6 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -38,62 +39,45 @@ public class EvidenceQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
-            boolean isFirstCriteria = true; // Use a local variable to track first criteria
+            List<Object> preparedStmtList = new ArrayList<>();
+            boolean firstCriteria = true;
 
-            if (id != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.id = '").append(id).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (caseId != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.caseId = '").append(caseId).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (application != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.application = '").append(application).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (hearing != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.hearing = '").append(hearing).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (order != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.orders = '").append(order).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (sourceId != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.sourceId = '").append(sourceId).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (sourceName != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.sourceName = '").append(sourceName).append("'");
-                isFirstCriteria = false;
-            }
-
-            if (artifactNumber != null) {
-                addClauseIfRequired(query, isFirstCriteria);
-                query.append("art.artifactNumber = '").append(artifactNumber).append("'");
-                isFirstCriteria = false;
-            }
+            firstCriteria = addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
+            firstCriteria = addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
+            firstCriteria = addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria = addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
+            firstCriteria = addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
+            firstCriteria = addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
+            firstCriteria = addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
+            firstCriteria = addArtifactCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber = ?");
 
             query.append(ORDERBY_CREATEDTIME);
+
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building artifact search query", e);
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
+    }
+
+    private boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean isFirstCriteria, String condition) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, isFirstCriteria);
+            query.append(condition);
+            preparedStmtList.add(criteria);
+            return false; // Reset isFirstCriteria after adding this criterion
+        }
+        return isFirstCriteria;
+    }
+
+    private boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String condition, List<Object> preparedStmtList) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(condition);
+            preparedStmtList.add(criteria);
+            return false;
+        }
+        return firstCriteria;
     }
 
 

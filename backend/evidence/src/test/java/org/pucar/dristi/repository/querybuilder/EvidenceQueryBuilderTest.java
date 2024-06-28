@@ -21,14 +21,15 @@ public class EvidenceQueryBuilderTest {
     @Test
     void testGetArtifactSearchQuery_WithAllFields() {
         // Mocking the required dependencies
-        List<String> ids = Arrays.asList("1", "2", "3");
+        String id = "1";
         String caseId = "testCaseId";
         String application = "testApplication";
         String hearing = "testHearing";
         String order = "testOrder";
         String sourceId = "testSourceId";
         String sourceName = "testSourceName";
-        String artifactNumber="artifactNumber";
+        String artifactNumber = "artifactNumber";
+
         // Mocking the EvidenceQueryBuilder
         EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
 
@@ -40,13 +41,13 @@ public class EvidenceQueryBuilderTest {
                 "art.createdDate as createdDate, art.isActive as isActive, art.isEvidence as isEvidence, art.status as status, art.description as description, " +
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
-                " FROM dristi_evidence_artifact art WHERE art.id = '1' AND art.caseId = 'testCaseId' AND art.application = 'testApplication' " +
-                "AND art.hearing = 'testHearing' AND art.orders = 'testOrder' AND art.sourceId = 'testSourceId' " +
-                "AND art.sourceName = 'testSourceName' " +
-                "AND art.artifactNumber = 'artifactNumber' ORDER BY art.createdTime DESC ";
+                " FROM dristi_evidence_artifact art WHERE art.id = ? AND art.caseId = ? AND art.application = ? " +
+                "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
+                "AND art.sourceName = ? " +
+                "AND art.artifactNumber = ? ORDER BY art.createdTime DESC ";
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(ids.get(0), caseId, application, hearing, order, sourceId, sourceName,artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(id, caseId, application, hearing, order, sourceId, sourceName, artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
