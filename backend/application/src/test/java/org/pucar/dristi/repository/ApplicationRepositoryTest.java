@@ -81,6 +81,8 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
+        Pagination pagination = new Pagination();
+        applicationSearchRequest.setPagination(pagination);
 
         when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("some SQL query");
@@ -100,6 +102,7 @@ class ApplicationRepositoryTest {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertTrue(applicationList.size()< pagination.getLimit());
         assertEquals(applicationList.size(), result.size());
         assertEquals(documentList, result.get(0).getDocuments());
         assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
