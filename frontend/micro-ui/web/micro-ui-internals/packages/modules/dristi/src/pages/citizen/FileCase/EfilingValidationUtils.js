@@ -657,7 +657,8 @@ export const demandNoticeFileValidation = ({ formData, selected, setShowErrorToa
 export const chequeDetailFileValidation = ({ formData, selected, setShowErrorToast, setFormErrors }) => {
   if (selected === "chequeDetails") {
     for (const key of ["bouncedChequeFileUpload", "depositChequeFileUpload", "returnMemoFileUpload"]) {
-      if (!(key in formData) || formData[key].document?.length === 0) {
+      if (!(key in formData) || formData[key]?.document?.length === 0 || !formData[key] 
+        || Object.keys(formData[key] || {}).length === 0) {
         setFormErrors(key, { type: "required" });
         setShowErrorToast(true);
         return true;
@@ -690,6 +691,7 @@ export const complainantValidation = ({ formData, t, caseDetails, selected, setS
     const formDataCopy = structuredClone(formData);
     if (formData?.complainantType?.code === "REPRESENTATIVE" && "companyDetailsUpload" in formDataCopy) {
       if (!Object.keys(formData?.companyDetailsUpload?.document || {}).length) {
+        setFormErrors("companyDetailsUpload", { type: "required" });
         setShowErrorToast(true);
         return true;
       }
