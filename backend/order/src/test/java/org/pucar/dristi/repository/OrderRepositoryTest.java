@@ -1,6 +1,7 @@
 package org.pucar.dristi.repository;
 
 import org.egov.common.contract.models.Document;
+import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -16,7 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class OrderRepositoryTest {
@@ -114,5 +115,54 @@ public class OrderRepositoryTest {
 
         // Verify interactions and assertions
         assertNotNull(result);
+    }
+
+    @Test
+    public void testCheckOrderExists_AllFieldsNull() {
+        // Test case where all fields in OrderExists are null
+        List<OrderExists> orderExistsList = new ArrayList<>();
+        orderExistsList.add(new OrderExists());
+
+        List<OrderExists> result = orderRepository.checkOrderExists(orderExistsList);
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertFalse(result.get(0).getExists());
+    }
+
+    @Test
+    public void testCheckOrderExists_AllFieldsNotNull() {
+        // Test case where all fields in OrderExists are not null
+        List<OrderExists> orderExistsList = new ArrayList<>();
+        OrderExists orderExists = new OrderExists();
+        orderExists.setOrderId(UUID.fromString("7733e843-483a-4b94-9ae4-a92c79a3023"));
+        orderExists.setOrderNumber("test-ord");
+        orderExists.setFilingNumber("test-ord");
+        orderExists.setOrderNumber("test-ord");
+        orderExists.setCnrNumber("test-ord");
+        orderExists.setApplicationNumber("test-ord");
+        orderExistsList.add(orderExists);
+
+        // Mock behavior for queryBuilder and jdbcTemplate
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(), any(), any(), any())).thenReturn("SELECT COUNT(*) FROM orders WHERE ...");
+        when(jdbcTemplate.queryForObject(anyString(), any(Object[].class), eq(Integer.class))).thenReturn(1);
+
+        List<OrderExists> result = orderRepository.checkOrderExists(orderExistsList);
+
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).getExists());
+    }
+
+    @Test
+    public void testCheckOrderExists_CustomException() {
+        // Test case for CustomException being thrown
+        List<OrderExists> orderExistsList = new ArrayList<>();
+        orderExistsList.add(new OrderExists());
+
+        // Mock behavior to throw CustomException
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(), any(), any(), any())).thenThrow(new CustomException());
+
+        orderRepository.checkOrderExists(orderExistsList);
     }
 }
