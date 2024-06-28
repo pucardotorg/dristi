@@ -7,7 +7,7 @@ import Modal from "./Modal";
 import MultiUploadWrapper from "./MultiUploadWrapper";
 import RenderFileCard from "./RenderFileCard";
 
-const textAreaJSX = (value, t, input, handleChange, error) => {
+const textAreaJSX = (value, t, input, handleChange, error, disabled) => {
   return (
     <div className="custom-text-area-main-div" style={input?.style}>
       <div className="custom-text-area-header-div">
@@ -27,6 +27,7 @@ const textAreaJSX = (value, t, input, handleChange, error) => {
       </div>
 
       <textarea
+        disabled={disabled}
         value={value}
         onChange={(data) => {
           handleChange(data, input);
@@ -179,11 +180,19 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
     if (input.type === "TextAreaComponent" && showTextArea) {
       return (
         <div className="text-area-and-upload">
-          {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange, errors[config.key])}
+          {textAreaJSX(formData?.[config.key]?.text || "", t, input, handleTextChange, errors[config.key], config?.disable)}
           {!isFileAdded && (
             <div className="text-upload-file-main">
               <p>{t("CS_WANT_TO_UPLOAD")}</p>
-              <span onClick={openModal} style={{ textDecoration: "underline", color: "#007E7E" }}>
+              <span
+                onClick={() => {
+                  if (config?.disable) {
+                    return;
+                  }
+                  openModal();
+                }}
+                style={{ textDecoration: "underline", color: "#007E7E" }}
+              >
                 {t("WBH_BULK_BROWSE_FILES")}
               </span>
             </div>
@@ -220,12 +229,14 @@ function SelectUploadFiles({ t, config, formData = {}, onSelect, errors }) {
                   t={t}
                   uploadErrorInfo={fileErrors[index]}
                   input={input}
+                  disableUploadDelete={config?.disable}
                 />
               ))}
               {showFileUploader && (
                 <div className={`file-uploader-div-main show-file-uploader select-UploadFiles`}>
                   <div className="file-uploader">
                     <FileUploader
+                      disabled={config?.disable}
                       handleChange={(data) => {
                         handleChange(data, input);
                       }}

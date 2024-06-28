@@ -552,14 +552,25 @@ function EFilingCases({ path }) {
                   ...body,
                   populators: {
                     inputs: body?.populators?.inputs?.map((input) => {
+                      let dataobj =
+                        input?.key === "advocateDetails"
+                          ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
+                            ? caseDetails?.additionalDetails?.[input?.key]?.formdata
+                            : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                          : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {};
+                      if (isCaseReAssigned) {
+                        dataobj =
+                          input?.key === "advocateDetails"
+                            ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
+                              ? errorCaseDetails?.additionalDetails?.[input?.key]?.formdata
+                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
+                            : errorCaseDetails?.additionalDetails?.[input?.key]?.formdata ||
+                              errorCaseDetails?.caseDetails?.[input?.key]?.formdata ||
+                              {};
+                      }
                       return {
                         ...input,
-                        data:
-                          input?.key === "advocateDetails"
-                            ? caseDetails?.additionalDetails?.[input?.key]?.formdata?.[0]?.data?.advocateName
-                              ? caseDetails?.additionalDetails?.[input?.key]?.formdata
-                              : [{ data: { advocateName: "", barRegistrationNumber: "", vakalatnamaFileUpload: {} } }]
-                            : caseDetails?.additionalDetails?.[input?.key]?.formdata || caseDetails?.caseDetails?.[input?.key]?.formdata || {},
+                        data: dataobj,
                       };
                     }),
                   },
@@ -943,7 +954,7 @@ function EFilingCases({ path }) {
               .map((formComponent) => {
                 let key = formComponent.key || formComponent.populators?.name;
                 if (formComponent.type === "component") {
-                  if (["SelectCustomDragDrop", "SelectBulkInputs"].includes(formComponent.component)) {
+                  if (["SelectCustomDragDrop", "SelectBulkInputs", "SelectCustomTextArea", "SelectUploadFiles"].includes(formComponent.component)) {
                     key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
                   }
                 }
@@ -969,21 +980,31 @@ function EFilingCases({ path }) {
                   );
                 }
                 modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
-                if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index] && key in scrutiny?.[selected]?.form?.[index]) {
-                  modifiedFormComponent.disable = false;
-                  modifiedFormComponent.withoutLabel = true;
-                  return [
-                    {
-                      type: "component",
-                      component: "ScrutinyInfo",
-                      key: `${key}Scrutiny`,
-                      label: modifiedFormComponent.label,
-                      populators: {
-                        scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+                if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
+                  if (formComponent.component == "SelectUploadFiles") {
+                    if (formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name in scrutiny?.[selected]?.form?.[index]) {
+                      key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                    }
+                    if (formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name in scrutiny?.[selected]?.form?.[index]) {
+                      key = formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name;
+                    }
+                  }
+                  if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
+                    modifiedFormComponent.disable = false;
+                    modifiedFormComponent.withoutLabel = true;
+                    return [
+                      {
+                        type: "component",
+                        component: "ScrutinyInfo",
+                        key: `${key}Scrutiny`,
+                        label: modifiedFormComponent.label,
+                        populators: {
+                          scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
+                        },
                       },
-                    },
-                    modifiedFormComponent,
-                  ];
+                      modifiedFormComponent,
+                    ];
+                  }
                 }
                 return modifiedFormComponent;
               })
