@@ -16,6 +16,7 @@ const customNoteConfig = {
       {
         infoHeader: "CS_COMMON_NOTE",
         infoText: "ES_BANNER_LABEL",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
       },
     ],
   },
