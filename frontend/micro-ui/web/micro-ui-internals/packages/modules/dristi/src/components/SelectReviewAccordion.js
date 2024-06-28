@@ -260,6 +260,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
             let bgclassname = sectionError && isScrutiny ? "error" : "";
             bgclassname = sectionError && isCaseReAssigned ? "preverror" : bgclassname;
+            const sectionErrorClassname = sectionError === prevSectionError ? "prevsection" : "section";
             if (isPrevScrutiny) {
               showFlagIcon = prevSectionError ? true : false;
               bgclassname = prevSectionError ? "preverror" : "";
@@ -294,8 +295,12 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   )}
                 </div>
                 {sectionError && isScrutiny && (
-                  <div className="scrutiny-error section">
-                    <FlagIcon isError={true} />
+                  <div className={`scrutiny-error ${sectionErrorClassname}`}>
+                    {prevSectionError === sectionError ? (
+                      <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                    ) : (
+                      <FlagIcon isError={true} />
+                    )}
                     {sectionError}
                   </div>
                 )}
