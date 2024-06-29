@@ -21,6 +21,7 @@ import ViewPendingTask from "./ViewPendingTask";
 import HearingPopup from "./HearingPopUp";
 import InsideHearing from "./InsideHearing";
 import ViewCase from "./ViewCase";
+import HelloPage from "./HelloPage"
 const bredCrumbStyle={ maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
@@ -65,6 +66,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/view-witness-deposition`} component={() => <ViewWitnessDeposition></ViewWitnessDeposition>} />
         <PrivateRoute path={`${path}/view-pending-task`} component={() => <ViewPendingTask></ViewPendingTask>} />
         <PrivateRoute path={`${path}/submission`} component={() => <Submission></Submission>} />
+        <PrivateRoute path={`${path}/say-hello`} component={() => <HelloPage></HelloPage>} />
       </AppContainer>
     </Switch>
   );
