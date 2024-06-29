@@ -150,7 +150,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "CS_NAME_SIGNATORY",
-                  value: "chequeSignatoryName",
+                  value: "signatory",
                 },
                 {
                   type: "text",
