@@ -49,7 +49,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
           isMultipleUpload: true,
         },
       ],
-    [config?.populators?.inputs]
+    [config?.populators?.inputs, t]
   );
 
   function setValue(value, input, isFileSizeLimitExceeded) {

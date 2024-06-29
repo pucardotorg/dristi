@@ -764,6 +764,11 @@ function EFilingCases({ path }) {
                   return field === body?.key;
                 });
               }
+              if (body?.isDocDependentOn && body?.isDocDependentKey && !data?.[body?.isDocDependentOn]?.[body?.isDocDependentKey]) {
+                body.withoutLabelFieldPair = true;
+              } else {
+                body.withoutLabelFieldPair = false;
+              }
               if (selected === "delayApplications") {
                 if (
                   caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
@@ -1405,15 +1410,18 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-    const isDrafted = isMatch(
-      JSON.parse(
-        JSON.stringify(
-          caseDetails?.additionalDetails?.[selected]?.formdata ||
-            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }]
-        )
-      ),
-      JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
-    );
+    const isDrafted =
+      caseDetails?.additionalDetails?.[selected]?.isCompleted || caseDetails?.caseDetails?.[nextSelected]?.isCompleted
+        ? isMatch(
+            JSON.parse(
+              JSON.stringify(
+                caseDetails?.additionalDetails?.[selected]?.formdata ||
+                  caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }]
+              )
+            ),
+            JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
+          )
+        : false;
     updateCaseDetails({
       isCompleted: isDrafted,
       caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
