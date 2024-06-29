@@ -211,6 +211,11 @@ export const UICustomizations = {
             moduleSearchCriteria: {
               ...moduleSearchCriteria,
             },
+            processSearchCriteria: {
+              ...requestCriteria?.body?.inbox?.processSearchCriteria,
+              tenantId: window?.Digit.ULBService.getStateId(),
+            },
+            tenantId: window?.Digit.ULBService.getStateId(),
           },
         },
       };
