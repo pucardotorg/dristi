@@ -1385,7 +1385,12 @@ function EFilingCases({ path }) {
     }
     setIsOpen(false);
     const isDrafted = isMatch(
-      JSON.parse(JSON.stringify(caseDetails?.additionalDetails?.[selected].formdata || caseDetails?.caseDetails?.[nextSelected]?.formdata)),
+      JSON.parse(
+        JSON.stringify(
+          caseDetails?.additionalDetails?.[selected]?.formdata ||
+            caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }]
+        )
+      ),
       JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
     );
     updateCaseDetails({
