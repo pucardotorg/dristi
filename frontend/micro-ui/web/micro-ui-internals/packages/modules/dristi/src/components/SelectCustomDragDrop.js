@@ -137,6 +137,7 @@ function SelectCustomDragDrop({ t, config, formData = {}, onSelect, errors, setE
 
             <div className={`file-uploader-div-main ${showFileUploader ? "show-file-uploader" : ""}`}>
               <FileUploader
+                disabled={config?.disable}
                 handleChange={(data) => {
                   handleChange(data, input);
                 }}

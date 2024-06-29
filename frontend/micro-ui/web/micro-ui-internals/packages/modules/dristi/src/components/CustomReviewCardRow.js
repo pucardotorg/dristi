@@ -104,7 +104,7 @@ const CustomReviewCardRow = ({
         } else {
           title = extractValue(data, value);
         }
-        bgclassname = isScrutiny && prevTitleError ? (titleError === prevTitleError ? "preverror" : "error") : "";
+        bgclassname = isScrutiny && titleError ? (titleError === prevTitleError ? "preverror" : "error") : "";
         bgclassname = titleError && isCaseReAssigned ? "preverrorside" : bgclassname;
         return (
           <div className={`title-main ${bgclassname}`}>
@@ -122,7 +122,7 @@ const CustomReviewCardRow = ({
                       name,
                       dataIndex,
                       Array.isArray(value) ? type : value,
-                      Array.isArray(value) ? [...value, type] : [type]
+                      Array.isArray(value) ? [...value, type] : [value, type]
                     );
                   }}
                   key={dataIndex}
