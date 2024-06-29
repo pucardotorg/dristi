@@ -959,9 +959,23 @@ function EFilingCases({ path }) {
               .map((formComponent) => {
                 let key = formComponent.key || formComponent.populators?.name;
                 if (formComponent.type === "component") {
-                  if (["SelectCustomDragDrop", "SelectBulkInputs", "SelectCustomTextArea", "SelectUploadFiles"].includes(formComponent.component)) {
+                  if (
+                    ["SelectCustomDragDrop", "SelectBulkInputs", "SelectCustomTextArea", "SelectUploadFiles", "SelectUserTypeComponent"].includes(
+                      formComponent.component
+                    )
+                  ) {
                     key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
                   }
+                  if (formComponent.component === "VerifyPhoneNumber") {
+                    key = formComponent.key + "." + formComponent.name;
+                  }
+                }
+                if (selected === "demandNoticeDetails" && formComponent.component === "SelectUserTypeComponent") {
+                  key =
+                    formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name + "." + formComponent.populators?.inputs?.[0]?.optionsKey;
+                }
+                if (selected === "debtLiabilityDetails" && ["dropdown", "radio"].includes(formComponent.type)) {
+                  key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
@@ -984,6 +998,7 @@ function EFilingCases({ path }) {
                     </React.Fragment>
                   );
                 }
+
                 modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
                 if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
                   if (formComponent.component == "SelectUploadFiles") {

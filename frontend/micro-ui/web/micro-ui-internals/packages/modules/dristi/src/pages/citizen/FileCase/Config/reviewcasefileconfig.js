@@ -125,7 +125,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "title",
                   label: "CS_CHEQUE_NO",
-                  value: "chequeNumber",
+                  value: ["chequeNumber"],
                 },
                 {
                   type: "amount",
@@ -150,7 +150,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "text",
                   label: "CS_NAME_SIGNATORY",
-                  value: "signatory",
+                  value: "chequeSignatoryName",
                 },
                 {
                   type: "text",
@@ -371,7 +371,7 @@ export const reviewCaseFileFormConfig = [
               config: [
                 {
                   type: "title",
-                  value: "advocateName",
+                  value: ["advocateName"],
                 },
                 {
                   type: "text",
