@@ -20,7 +20,7 @@ const extractValue = (data, key) => {
 
 const CustomRadioInfoComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   function setValue(value, name) {
-    onSelect(config.key, { ...value });
+    onSelect(config.key, { ...value }, { shouldValidate: true });
   }
 
   return (
