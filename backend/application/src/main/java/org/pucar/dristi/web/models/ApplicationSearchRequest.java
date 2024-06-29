@@ -25,4 +25,8 @@ public class ApplicationSearchRequest {
     @Valid
     private ApplicationCriteria criteria = null;
 
+    @JsonProperty("pagination")
+    @Valid
+    private Pagination pagination = null;
+
 }
