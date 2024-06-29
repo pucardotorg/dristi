@@ -116,7 +116,14 @@ const CustomReviewCardRow = ({
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                    handleOpenPopup(
+                      e,
+                      configKey,
+                      name,
+                      dataIndex,
+                      Array.isArray(value) ? type : value,
+                      Array.isArray(value) ? [...value, type] : [type]
+                    );
                   }}
                   key={dataIndex}
                 >
