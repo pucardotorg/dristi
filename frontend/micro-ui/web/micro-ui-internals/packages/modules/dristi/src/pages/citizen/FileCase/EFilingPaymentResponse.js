@@ -3,6 +3,19 @@ import React, { useMemo, useState } from "react";
 import Button from "../../../components/Button";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+
+const customNoteConfig = {
+  populators: {
+    inputs: [
+      {
+        infoHeader: "CS_COMMON_NOTE",
+        infoText: "PAYMENT_FAILED_NOTE_MSG",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
+      },
+    ],
+  },
+};
 
 const mockSubmitModalInfo = {
   header: "CS_PAYMENT_SUCCESSFUL",
@@ -31,7 +44,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
   const receiptData = location.state.state.receiptData;
   return (
     <div className=" user-registration">
-      <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%"  }}>
+      <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%" }}>
         <Banner
           whichSvg={"tick"}
           successful={true}
@@ -40,7 +53,7 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
         {submitModalInfo?.subHeader && <CardLabel className={"e-filing-card-label"}>{t(submitModalInfo?.subHeader)}</CardLabel>}
-        {receiptData && (
+        {receiptData ? (
           <CustomCopyTextDiv
             t={t}
             keyStyle={{ margin: "8px 0px" }}
@@ -49,6 +62,8 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
             tableDataClassName={"e-filing-table-data-style"}
             tableValueClassName={"e-filing-table-value-style"}
           />
+        ) : (
+          <SelectCustomNote t={t} config={customNoteConfig} />
         )}
         <div className="button-field" style={{ width: "100%", marginTop: 16 }}>
           <Button

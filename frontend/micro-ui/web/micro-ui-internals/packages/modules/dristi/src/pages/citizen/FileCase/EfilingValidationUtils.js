@@ -726,15 +726,26 @@ export const complainantValidation = ({ formData, t, caseDetails, selected, setS
   }
 };
 
-export const signatureValidation = ({ formData, selected, setShowErrorToast, setErrorMsg }) => {
+export const signatureValidation = ({ formData, selected, setShowErrorToast, setErrorMsg, caseDetails }) => {
   if (selected === "addSignature") {
+    let index = 0;
     if (
       !(
         Object.keys(formData || {}).length > 0 &&
         Object.keys(formData).reduce((res, curr) => {
           if (!res) return res;
           else {
-            res = Boolean(formData[curr] && Object.keys(formData[curr])?.length > 0);
+            res = Boolean(
+              caseDetails?.[curr]?.reduce((result, current) => {
+                if (!result) return result;
+                result = Boolean(formData?.[curr]?.[`${current?.name} ${index}`]);
+                ++index;
+                return result;
+              }, true) &&
+                formData[curr] &&
+                Object.keys(formData[curr])?.length > 0
+            );
+            index = 0;
             return res;
           }
         }, true)

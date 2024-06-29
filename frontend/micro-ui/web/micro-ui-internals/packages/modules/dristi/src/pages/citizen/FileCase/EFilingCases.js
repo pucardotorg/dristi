@@ -1336,7 +1336,19 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => signatureValidation({ formData: data?.data, selected, setShowErrorToast, setErrorMsg }))
+        .some((data) =>
+          signatureValidation({
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setErrorMsg,
+            caseDetails: modifiedFormConfig?.[0].reduce((res, curr) => {
+              if (curr?.body && Array.isArray(curr.body) && curr.body?.length === 0) return res;
+              else res[curr?.body?.[0]?.key] = curr?.body?.[0]?.populators?.inputs?.[0]?.data;
+              return res;
+            }, {}),
+          })
+        )
     ) {
       return;
     }
@@ -1426,17 +1438,18 @@ function EFilingCases({ path }) {
     }
     setIsOpen(false);
     const isDrafted =
-      caseDetails?.additionalDetails?.[selected]?.isCompleted || caseDetails?.caseDetails?.[nextSelected]?.isCompleted
+      caseDetails?.additionalDetails?.[selected]?.isCompleted || caseDetails?.caseDetails?.[selected]?.isCompleted
         ? isMatch(
             JSON.parse(
               JSON.stringify(
                 caseDetails?.additionalDetails?.[selected]?.formdata ||
-                  caseDetails?.caseDetails?.[nextSelected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }]
+                  caseDetails?.caseDetails?.[selected]?.formdata || [{ isenabled: true, data: {}, displayindex: 0 }]
               )
             ),
             JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
           )
         : false;
+    debugger;
     updateCaseDetails({
       isCompleted: isDrafted,
       caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,

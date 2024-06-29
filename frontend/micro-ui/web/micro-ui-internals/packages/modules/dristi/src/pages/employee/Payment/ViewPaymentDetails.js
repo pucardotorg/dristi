@@ -90,6 +90,8 @@ const ViewPaymentDetails = ({ location, match }) => {
       enabled: Boolean(tenantId && caseDetails?.filingNumber),
     }
   );
+
+  const payerName = useMemo(() => caseDetails?.additionalDetails?.payerName, [caseDetails?.additionalDetails?.payerName]);
   const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
 
   const onSubmitCase = async () => {
@@ -113,7 +115,7 @@ const ViewPaymentDetails = ({ location, match }) => {
           paymentMode: modeOfPayment.code,
           paidBy: "PAY_BY_OWNER",
           mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
-          payerName: payer,
+          payerName: payer || payerName,
           totalAmountPaid: 2000,
           ...(additionDetails && { transactionNumber: additionDetails }),
           instrumentNumber: additionDetails,
@@ -191,7 +193,8 @@ const ViewPaymentDetails = ({ location, match }) => {
                 type={"text"}
                 isMandatory={false}
                 name="name"
-                value={payer}
+                disable={true}
+                value={payerName}
                 onChange={(e) => {
                   const { value } = e.target;
                   let updatedValue = value
@@ -247,7 +250,6 @@ const ViewPaymentDetails = ({ location, match }) => {
           <SubmitBar
             label={t("CS_GENERATE_RECEIPT")}
             disabled={
-              !payer ||
               Object.keys(!modeOfPayment ? {} : modeOfPayment).length === 0 ||
               (["CHEQUE", "DD"].includes(modeOfPayment?.code) ? additionDetails.length !== 6 : false)
             }
