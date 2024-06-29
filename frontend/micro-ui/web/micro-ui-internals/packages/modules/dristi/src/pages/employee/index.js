@@ -12,6 +12,7 @@ import Breadcrumb from "../../components/BreadCrumb";
 import PaymentInbox from "./Payment/PaymentInbox";
 import ViewPaymentDetails from "./Payment/ViewPaymentDetails";
 import EFilingPaymentResponse from "./Payment/EFilingPaymentResponse";
+import TemporaryButton from "../../../../hearings/src/components/TemporaryButton";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -83,6 +84,7 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <PrivateRoute exact path={`${path}/cases`} component={Home} />
           <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
           <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
+          <PrivateRoute exact path={`${path}/testing-something`} component={(props) => <TemporaryButton />} />
         </div>
         {toastMessage && (
           <Toast
