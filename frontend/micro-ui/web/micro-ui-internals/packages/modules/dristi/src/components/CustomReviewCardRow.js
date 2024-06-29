@@ -48,6 +48,7 @@ const CustomReviewCardRow = ({
   prevDataError,
   isPrevScrutiny,
   setShowImageModal,
+  isCaseReAssigned,
 }) => {
   const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -89,10 +90,12 @@ const CustomReviewCardRow = ({
         bgclassname = dataError ? "error" : "";
       }
     }
+    bgclassname = dataError && isCaseReAssigned ? "preverrorside" : bgclassname;
     switch (type) {
       case "title":
         const titleError = dataError?.title?.FSOError;
-        if (isPrevScrutiny && !prevDataError?.title?.FSOError) {
+        const prevTitleError = prevDataError?.title?.FSOError;
+        if (isPrevScrutiny && !prevTitleError) {
           showFlagIcon = false;
         }
         let title = "";
@@ -101,8 +104,10 @@ const CustomReviewCardRow = ({
         } else {
           title = extractValue(data, value);
         }
+        bgclassname = isScrutiny && prevTitleError ? (titleError === prevTitleError ? "preverror" : "error") : "";
+        bgclassname = titleError && isCaseReAssigned ? "preverrorside" : bgclassname;
         return (
-          <div className={`title-main ${isScrutiny && titleError && "error"}`}>
+          <div className={`title-main ${bgclassname}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
               <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("CS_NOT_AVAILABLE")}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
@@ -111,7 +116,14 @@ const CustomReviewCardRow = ({
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                    handleOpenPopup(
+                      e,
+                      configKey,
+                      name,
+                      dataIndex,
+                      Array.isArray(value) ? type : value,
+                      Array.isArray(value) ? [...value, type] : [type]
+                    );
                   }}
                   key={dataIndex}
                 >
@@ -264,6 +276,7 @@ const CustomReviewCardRow = ({
         }
         bgclassname =
           isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
+        bgclassname = FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : bgclassname;
         const hasPrevError = value.some((key) => {
           return prevDataError?.[key] && prevDataError?.[key]?.FSOError;
         });

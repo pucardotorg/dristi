@@ -5,6 +5,7 @@ import { litigantInboxConfig } from "./litigantInboxConfig";
 import { useTranslation } from "react-i18next";
 import { useRouteMatch } from "react-router-dom/cjs/react-router-dom.min";
 import { userTypeOptions } from "../../registration/config";
+import JoinCaseHome from "../../../../../../cases/src/pages/employee/JoinCaseHome";
 
 const sectionsParentStyle = {
   height: "50%",
@@ -82,13 +83,7 @@ function Home() {
         <div className="header-class">
           <div className="header">{t("CS_YOUR_CASE")}</div>
           <div className="button-field" style={{ width: "50%" }}>
-            <Button
-              variation={"secondary"}
-              className={"secondary-button-selector"}
-              label={t("JOIN_A_CASE")}
-              labelClassName={"secondary-label-selector"}
-              onButtonClick={() => {}}
-            />
+            <JoinCaseHome t={t} />
             <Button
               className={"tertiary-button-selector"}
               label={t("FILE_A_CASE")}

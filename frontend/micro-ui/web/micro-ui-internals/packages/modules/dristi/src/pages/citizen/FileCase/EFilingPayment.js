@@ -101,7 +101,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
 
   const onSubmitCase = async () => {
     // if (!Object.keys(bill || {}).length) {
-    //   toast.error("CS_BILL_NOT_AVAILABLE");
+    //   toast.error(t("CS_BILL_NOT_AVAILABLE"));
     //   history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
     //   return;
     // }
@@ -184,14 +184,26 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
           <Button
             variation={"secondary"}
             className={"secondary-button-selector"}
+            label={t("CS_GO_TO_HOME")}
+            labelClassName={"secondary-label-selector"}
+            style={{minWidth: "30%"}}
+            onButtonClick={() => {
+              history.push(`/${window?.contextPath}/citizen/dristi/home`);
+            }}
+          />
+          <Button
+            variation={"secondary"}
+            className={"secondary-button-selector"}
             label={t("CS_PRINT_CASE_FILE")}
             labelClassName={"secondary-label-selector"}
+            style={{minWidth: "30%"}}
             onButtonClick={() => {}}
           />
           <Button
             className={"tertiary-button-selector"}
             label={t("CS_MAKE_PAYMENT")}
             labelClassName={"tertiary-label-selector"}
+            style={{minWidth: "30%"}}
             onButtonClick={() => {
               setShowPaymentModal(true);
             }}
@@ -234,7 +246,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
               <div>
                 <InfoCard
                   variant={"default"}
-                  label={"CS_COMMON_NOTE"}
+                  label={t("CS_COMMON_NOTE")}
                   style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
                   additionalElements={[
                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

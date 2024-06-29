@@ -8,6 +8,19 @@ import Modal from "../../../components/Modal";
 import { FileDownloadIcon } from "../../../icons/svgIndex";
 import { DRISTIService } from "../../../services";
 import { userTypeOptions } from "../registration/config";
+import SelectCustomNote from "../../../components/SelectCustomNote";
+
+const customNoteConfig = {
+  populators: {
+    inputs: [
+      {
+        infoHeader: "CS_COMMON_NOTE",
+        infoText: "ES_BANNER_LABEL",
+        infoTooltipMessage: "CS_NOTE_TOOLTIP_CASE_TYPE",
+      },
+    ],
+  },
+};
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, "0");
@@ -195,7 +208,7 @@ function CaseType({ t }) {
                         },
                       }
                     : {
-                        complaintDetails: {
+                        complainantDetails: {
                           formdata: [
                             {
                               isenabled: true,
@@ -355,15 +368,9 @@ function CaseType({ t }) {
             style={{ width: "100%" }}
           />
         ))}
+        {page === 0 && <SelectCustomNote t={t} config={customNoteConfig}></SelectCustomNote>}
       </div>
-      {page === 0 && (
-        <CitizenInfoLabel
-          style={{ maxWidth: "100%", padding: "8px", borderRadius: "4px" }}
-          info={t("ES_COMMON_NOTE")}
-          text={t("ES_BANNER_LABEL")}
-          className="doc-banner"
-        ></CitizenInfoLabel>
-      )}
+
       {page === 1 && <Submitbar />}
     </Modal>
   );

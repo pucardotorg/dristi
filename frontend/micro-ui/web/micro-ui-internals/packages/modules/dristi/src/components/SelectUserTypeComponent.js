@@ -56,8 +56,8 @@ const SelectUserTypeComponent = ({ t, config, onSelect, formData = {}, errors, f
         onSelect(config.key, { ...formData[config.key], [name]: value });
         return;
       }
-      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields });
-    } else onSelect(config.key, { ...formData[config.key], [name]: value });
+      onSelect(config.key, { ...formData[config.key], [name]: value, ...input.clearFields }, { shouldValidate: true });
+    } else onSelect(config.key, { ...formData[config.key], [name]: value }, { shouldValidate: true });
 
     // if (
     //   value &&

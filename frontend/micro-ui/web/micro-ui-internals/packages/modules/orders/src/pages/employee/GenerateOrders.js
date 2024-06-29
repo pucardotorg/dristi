@@ -23,7 +23,7 @@ import OrderDeleteModal from "../../pageComponents/OrderDeleteModal";
 import useSearchOrdersService from "../../hooks/orders/useSearchOrdersService";
 import { ordersService } from "../../hooks/services";
 import useSearchCaseService from "../../../../dristi/src/hooks/dristi/useSearchCaseService";
-import { CaseWorkflowAction } from "../../utils/caseWorkflow";
+import { CaseWorkflowAction, CaseWorkflowState } from "../../utils/caseWorkflow";
 import { Loader } from "@egovernments/digit-ui-components";
 import OrderSucessModal from "../../pageComponents/OrderSucessModal";
 
@@ -80,7 +80,7 @@ const GenerateOrders = () => {
     Boolean(filingNumber)
   );
 
-  const orderList = useMemo(() => ordersData?.list, [ordersData]);
+  const orderList = useMemo(() => ordersData?.list?.filter((item) => item.status === CaseWorkflowState.DRAFT_IN_PROGRESS), [ordersData]);
   const orderType = useMemo(() => formdata?.orderType || {}, [formdata]);
   const currentOrder = useMemo(() => orderList?.[selectedOrder], [orderList, selectedOrder]);
 
@@ -107,7 +107,7 @@ const GenerateOrders = () => {
 
   const handleUpdateOrder = ({ action, oldOrderData, orderType }) => {
     const newAdditionalData =
-      action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData.additionalDetails, formdata } : { ...oldOrderData.additionalDetails };
+      action === CaseWorkflowAction.SAVE_DRAFT ? { ...oldOrderData?.additionalDetails, formdata } : { ...oldOrderData?.additionalDetails };
     const updatedreqBody = {
       order: {
         ...oldOrderData,
@@ -280,7 +280,7 @@ const GenerateOrders = () => {
         />
       )}
       {showsignatureModal && <OrderSignatureModal t={t} order={currentOrder} handleIssueOrder={handleIssueOrder} />}
-      {showSuccessModal && <OrderSucessModal t={t} order={currentOrder} />}
+      {showSuccessModal && <OrderSucessModal t={t} order={currentOrder} setShowSuccessModal={setShowSuccessModal} />}
     </div>
   );
 };

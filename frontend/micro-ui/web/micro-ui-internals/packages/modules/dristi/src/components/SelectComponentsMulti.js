@@ -155,10 +155,12 @@ const SelectComponentsMulti = ({ t, config, onSelect, formData, errors }) => {
               }}
               errors={{}}
               mapIndex={data.id}
+              disable={config?.disable}
             ></LocationComponent>
           </div>
         ))}
       <Button
+        isDisabled={config?.disable}
         className={"add-location-btn"}
         label={"Add Location"}
         style={{ alignItems: "center", margin: "10px 0px" }}
