@@ -8,6 +8,7 @@ import useGetHearings from "./dristi/useGetHearings";
 import { DRISTIService } from "../services";
 import useInboxCustomHook from "./dristi/useInboxCustomHook";
 import useSearchCaseService from "./dristi/useSearchCaseService";
+import useUpdateHearingsService from "../../../hearings/src/hooks/services/useUpdateHearingsService";
 
 export const Urls = {
   Authenticate: "/user/oauth/token",
@@ -24,6 +25,7 @@ export const Urls = {
     evidenceCreate: "/evidence/artifacts/v1/_create",
     evidenceUpdate: "/evidence/artifacts/v1/_update",
     searchHearings: "/hearing/v1/search",
+    updateHearnings: "/hearing/v1/update",
     demandCreate: "/billing-service/demand/_create",
   },
   FileFetchById: "/filestore/v1/files/id",
@@ -38,6 +40,7 @@ const dristi = {
   useInboxCustomHook,
   useSearchCaseService,
   useGetHearings,
+  useUpdateHearingsService,
 };
 
 const Hooks = {
