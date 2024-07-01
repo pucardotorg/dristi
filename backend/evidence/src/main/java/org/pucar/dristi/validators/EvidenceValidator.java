@@ -23,12 +23,10 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Component
 public class EvidenceValidator {
     private final EvidenceRepository repository;
-    private final MdmsUtil mdmsUtil;
 
     @Autowired
-    public EvidenceValidator(EvidenceRepository repository, MdmsUtil mdmsUtil) {
+    public EvidenceValidator(EvidenceRepository repository) {
         this.repository = repository;
-        this.mdmsUtil = mdmsUtil;
     }
     public void     validateEvidenceRegistration(EvidenceRequest evidenceRequest) throws CustomException {
 

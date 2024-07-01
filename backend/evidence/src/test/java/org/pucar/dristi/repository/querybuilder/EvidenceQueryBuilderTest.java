@@ -30,8 +30,6 @@ public class EvidenceQueryBuilderTest {
         String sourceName = "testSourceName";
         String artifactNumber = "artifactNumber";
 
-        // Mocking the EvidenceQueryBuilder
-        EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
 
         // Expected query
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
@@ -45,9 +43,10 @@ public class EvidenceQueryBuilderTest {
                 "AND art.hearing = ? AND art.orders = ? AND art.sourceId = ? " +
                 "AND art.sourceName = ? " +
                 "AND art.artifactNumber = ? ORDER BY art.createdTime DESC ";
+        List<Object> preparedStmtList=new ArrayList<>();
 
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(id, caseId, application, hearing, order, sourceId, sourceName, artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,id, caseId, application, hearing, order, sourceId, sourceName, artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -64,8 +63,6 @@ public class EvidenceQueryBuilderTest {
         String sourceName = null;
         String artifactNumber=null;
 
-        // Mocking the EvidenceQueryBuilder
-        EvidenceQueryBuilder queryBuilder = new EvidenceQueryBuilder();
 
         // Expected query
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
@@ -76,9 +73,9 @@ public class EvidenceQueryBuilderTest {
                 "art.artifactDetails as artifactDetails, art.additionalDetails as additionalDetails, art.createdBy as createdBy, " +
                 "art.lastModifiedBy as lastModifiedBy, art.createdTime as createdTime, art.lastModifiedTime as lastModifiedTime " +
                 " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
-
+        List<Object> preparedStmtList=new ArrayList<>();
         // Calling the method under test
-        String query = queryBuilder.getArtifactSearchQuery(id, caseId, application, hearing, order, sourceId, sourceName,artifactNumber);
+        String query = queryBuilder.getArtifactSearchQuery(preparedStmtList,id, caseId, application, hearing, order, sourceId, sourceName,artifactNumber);
 
         // Assertions
         assertEquals(expectedQuery, query);
@@ -88,7 +85,7 @@ public class EvidenceQueryBuilderTest {
     @Test
     void testGetArtifactSearchQueryWithNullValues() {
         // Mock the EvidenceQueryBuilder
-        EvidenceQueryBuilder queryBuilder = Mockito.mock(EvidenceQueryBuilder.class);
+        EvidenceQueryBuilder mockQueryBuilder = Mockito.mock(EvidenceQueryBuilder.class);
 
         // Expected query when all values are null
         String expectedQuery = " SELECT art.id as id, art.tenantId as tenantId, art.artifactNumber as artifactNumber, " +
@@ -101,11 +98,11 @@ public class EvidenceQueryBuilderTest {
                 " FROM dristi_evidence_artifact art ORDER BY art.createdTime DESC ";
 
         // Stubbing the method call to return the expected query
-        Mockito.when(queryBuilder.getArtifactSearchQuery(null, null, null, null, null, null, null,null))
+        Mockito.when(mockQueryBuilder.getArtifactSearchQuery(null,null, null, null, null, null, null, null,null))
                 .thenReturn(expectedQuery);
 
         // Calling the method under test
-        String actualQuery = queryBuilder.getArtifactSearchQuery(null, null, null, null, null, null, null,null);
+        String actualQuery = mockQueryBuilder.getArtifactSearchQuery(null,null, null, null, null, null, null, null,null);
 
         // Assertions
         assertEquals(expectedQuery, actualQuery);
