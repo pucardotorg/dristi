@@ -65,7 +65,7 @@ public class TaskQueryBuilder {
             firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", status);
             firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", orderId != null ? orderId.toString() : null);
             firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", cnrNumber);
-            firstCriteria = addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", taskNumber);
+            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", taskNumber);
 
             query.append(ORDERBY_CREATEDTIME);
 
@@ -75,6 +75,7 @@ public class TaskQueryBuilder {
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
         }
     }
+
 
     private boolean addTaskCriteria(String criteria, StringBuilder query, boolean isFirstCriteria, String condition, String parameter) {
         if (criteria != null && !criteria.isEmpty()) {
