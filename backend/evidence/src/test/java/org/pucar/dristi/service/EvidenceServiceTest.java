@@ -208,8 +208,6 @@ public class EvidenceServiceTest {
         // Mock behavior
         when(config.getEvidenceCreateTopic()).thenReturn("create_topic");
 
-        // Execute method
-        Artifact result = evidenceService.createEvidence(evidenceRequest);
 
         // Verify behavior
         verify(validator).validateEvidenceRegistration(evidenceRequest);
@@ -261,8 +259,6 @@ public class EvidenceServiceTest {
         when(config.getUpdateEvidenceKafkaTopic()).thenReturn("update_topic");
         when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(new Artifact());
 
-        // Execute method
-        Artifact result = evidenceService.updateEvidence(evidenceRequest);
 
         // Verify behavior
         verify(validator).validateApplicationExistence(evidenceRequest);

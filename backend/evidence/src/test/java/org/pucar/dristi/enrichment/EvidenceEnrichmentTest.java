@@ -56,8 +56,6 @@ public class EvidenceEnrichmentTest {
 
     @Test
     void testEnrichEvidenceRegistration() {
-        // Mock evidenceRequest and its dependencies
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
         userInfo.setTenantId("tenantId");
@@ -152,7 +150,6 @@ public class EvidenceEnrichmentTest {
         userInfo.setTenantId("tenantId");
         requestInfo.setUserInfo(userInfo);
 
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         evidenceRequest.setArtifact(artifact);
         evidenceRequest.setRequestInfo(requestInfo);
 
@@ -183,7 +180,6 @@ public class EvidenceEnrichmentTest {
         userInfo.setTenantId("tenantId");
         requestInfo.setUserInfo(userInfo);
 
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         evidenceRequest.setArtifact(artifact);
         evidenceRequest.setRequestInfo(requestInfo);
 
@@ -206,7 +202,6 @@ public class EvidenceEnrichmentTest {
         artifact.setSourceType("COURT");
         artifact.setArtifactType("DOCUMENTARY");
 
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         evidenceRequest.setArtifact(artifact);
 
         // Act
@@ -228,7 +223,6 @@ public class EvidenceEnrichmentTest {
         Artifact artifactSpy = spy(artifact);
         doThrow(new RuntimeException("Update error")).when(artifactSpy).setIsActive(false);
 
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         evidenceRequest.setArtifact(artifactSpy);
 
         // Act & Assert
