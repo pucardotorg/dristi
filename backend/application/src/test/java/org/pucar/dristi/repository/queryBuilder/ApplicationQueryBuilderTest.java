@@ -36,19 +36,20 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = null;
         String tenantId = "test-tenant";
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
                 " app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber," +
                 " app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive," +
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
-                " FROM dristi_application app WHERE app.id ='test-id' AND app.tenantId ='test-tenant' ORDER BY app.createdtime DESC ";
+                " FROM dristi_application app WHERE app.id = ? AND app.tenantId = ? ORDER BY app.createdtime DESC ";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(2, preparedStmtList.size());
+        assertEquals("test-id", preparedStmtList.get(0));
     }
 
     @Test
@@ -59,8 +60,7 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = null;
         String tenantId = null;
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber," +
                 " app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby," +
@@ -69,9 +69,10 @@ class ApplicationQueryBuilderTest {
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app ORDER BY app.createdtime DESC ";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertEquals(expectedQuery, actualQuery);
+        assertEquals(0, preparedStmtList.size());
     }
 
     @Test
@@ -83,17 +84,18 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = "applicationNumber123";
         String tenantId = null;
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Expected query part
-        String expectedQueryPart = "app.applicationNumber ='applicationNumber123'";
+        String expectedQueryPart = "app.applicationNumber = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
+        assertEquals(1, preparedStmtList.size());
+        assertEquals("applicationNumber123", preparedStmtList.get(0));
     }
 
     @Test
@@ -105,13 +107,13 @@ class ApplicationQueryBuilderTest {
         String tenantId = null;
         String applicationNumber = "";
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.applicationNumber ="));
+        assertEquals(0, preparedStmtList.size());
     }
 
     @Test
@@ -123,17 +125,18 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = null;
         String tenantId = null;
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Expected query part
-        String expectedQueryPart = "app.filingNumber ='filingNumber123'";
+        String expectedQueryPart = "app.filingNumber = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
+        assertEquals(1, preparedStmtList.size());
+        assertEquals("filingNumber123", preparedStmtList.get(0));
     }
 
     @Test
@@ -145,13 +148,13 @@ class ApplicationQueryBuilderTest {
         String tenantId = null;
         String applicationNumber = null;
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.filingNumber ="));
+        assertEquals(0, preparedStmtList.size());
     }
 
 
@@ -163,18 +166,19 @@ class ApplicationQueryBuilderTest {
         String cnrNumber = "CNR123456";
         String tenantId = null;
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
         String applicationNumber = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Expected query part
-        String expectedQueryPart = "app.cnrNumber ='CNR123456'";
+        String expectedQueryPart = "app.cnrNumber = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
+        assertEquals(1, preparedStmtList.size());
+        assertEquals("CNR123456", preparedStmtList.get(0));
     }
 
     @Test
@@ -186,15 +190,15 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = null;
         String tenantId = null;
         String status = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.cnrNumber ="));
         assertFalse(query.contains("app.status ="));
         assertFalse(query.contains("app.filingNumber ="));
+        assertEquals(0, preparedStmtList.size());
     }
 
     @Test
@@ -206,13 +210,13 @@ class ApplicationQueryBuilderTest {
         String tenantId = null;
         String status = null;
         String applicationNumber = null;
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.cnrNumber ="));
+        assertEquals(0, preparedStmtList.size());
     }
 
     @Test
@@ -223,19 +227,20 @@ class ApplicationQueryBuilderTest {
         String cnrNumber = null;
         String tenantId = null;
         String status = "status123";
-        Integer limit = null;
-        Integer offset = null;
         String applicationNumber = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
 
         // Expected query part
-        String expectedQueryPart = "app.status ='status123'";
+        String expectedQueryPart = "app.status = ?";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
+        assertEquals(1, preparedStmtList.size());
+        assertEquals("status123", preparedStmtList.get(0));
     }
 
     @Test
@@ -247,13 +252,13 @@ class ApplicationQueryBuilderTest {
         String applicationNumber = null;
         String tenantId = null;
         String status = "";
-        Integer limit = null;
-        Integer offset = null;
+        List<Object> preparedStmtList = new ArrayList<>();
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, preparedStmtList);
 
         assertFalse(query.contains("app.status ="));
+        assertEquals(0, preparedStmtList.size());
     }
 
 
@@ -416,7 +421,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationsSearchQueryException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null);
+            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null);
         } catch (Exception e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getMessage());
         }
@@ -425,7 +430,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationsSearchQueryCustomException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null);
+            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null);
         } catch (CustomException e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getCode());
         }
@@ -457,11 +462,14 @@ class ApplicationQueryBuilderTest {
         Pagination pagination = new Pagination();
         pagination.setLimit(2d);
         pagination.setOffSet(0d);
+        List<Object> preparedStmtList = new ArrayList<>();
+        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination, preparedStmtList);
 
-        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination);
-
-        String expectedQuery = "SELECT * FROM dristi_application app WHERE app.id = '111' LIMIT 2 OFFSET 0";
+        String expectedQuery = "SELECT * FROM dristi_application app WHERE app.id = '111' LIMIT ? OFFSET ?";
 
         assertEquals(expectedQuery, paginatedQuery);
+        assertEquals(2, preparedStmtList.size());
+        assertEquals(2d, preparedStmtList.get(0));
+        assertEquals(0d, preparedStmtList.get(1));
     }
 }
