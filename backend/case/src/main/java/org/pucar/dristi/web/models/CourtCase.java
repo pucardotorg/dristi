@@ -99,6 +99,10 @@ public class CourtCase {
 	@JsonFormat(pattern = "dd-MM-yyyy")
 	private LocalDate registrationDate = null;
 
+	@JsonProperty("judgementDate")
+	@JsonFormat(pattern = "dd-MM-yyyy")
+	private LocalDate judgementDate = null;
+
 	@JsonProperty("caseDetails")
 	private Object caseDetails = null;
 
