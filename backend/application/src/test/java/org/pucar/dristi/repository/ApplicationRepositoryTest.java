@@ -68,54 +68,40 @@ class ApplicationRepositoryTest {
         documentMap.put(application.getId(), documentList);
     }
 
-//    @Test
-//    void testGetApplications_Success() {
-//        List<Object> preparedStmtList = new ArrayList<>();
-//
-//        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
-//        applicationSearchRequest.setRequestInfo(new RequestInfo());
-//        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
-//        applicationCriteria.setApplicationNumber("");
-//        applicationCriteria.setId("");
-//        applicationCriteria.setStatus("");
-//        applicationCriteria.setCnrNumber("");
-//        applicationCriteria.setFilingNumber("");
-//        applicationCriteria.setTenantId("");
-//        applicationSearchRequest.setCriteria(applicationCriteria);
-//        Pagination pagination = new Pagination();
-//        pagination.setOffSet(0d);
-//        pagination.setLimit(10d);
-//        applicationSearchRequest.setPagination(pagination);
-//        String countQuery = "SELECT COUNT(*) FROM applications";
-//        String baseQuery = "SELECT * FROM applications";
-//
-//        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
-//                .thenReturn("some SQL query");
-//        when(queryBuilder.addPaginationQuery(anyString(), any(), any()))
-//                .thenReturn("some SQL query");
-//        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
-//        lenient().when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class))).thenReturn(1);
-//        lenient().when(queryBuilder.getTotalCountQuery(baseQuery)).thenReturn("some SQL query");
-//
-//        lenient().when(applicationRepository.getTotalCountApplication(anyString(), eq(preparedStmtList))).thenReturn(1);
-//        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
-//                .thenReturn("statute section SQL query");
-//        when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
-//                .thenReturn(statuteSectionsMap);
-//
-//        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
-//                .thenReturn("document SQL query");
-//        when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
-//                .thenReturn(documentMap);
-//        List<Application> result = applicationRepository.getApplications(applicationSearchRequest );
-//
-//        assertNotNull(result);
-//        assertFalse(result.isEmpty());
-//        assertTrue(applicationList.size() <= pagination.getLimit());
-//        assertEquals(applicationList.size(), result.size());
-//        assertEquals(documentList, result.get(0).getDocuments());
-//        assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
-//    }
+    @Test
+    void testGetApplications_Success() {
+        List<Object> preparedStmtList = new ArrayList<>();
+
+        ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
+        applicationSearchRequest.setRequestInfo(new RequestInfo());
+        ApplicationCriteria applicationCriteria = new ApplicationCriteria();
+        applicationCriteria.setApplicationNumber("");
+        applicationCriteria.setId("");
+        applicationCriteria.setStatus("");
+        applicationCriteria.setCnrNumber("");
+        applicationCriteria.setFilingNumber("");
+        applicationCriteria.setTenantId("");
+        applicationSearchRequest.setCriteria(applicationCriteria);
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
+                .thenReturn("some SQL query");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(ApplicationRowMapper.class))).thenReturn(applicationList);
+        when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
+                .thenReturn("statute section SQL query");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
+                .thenReturn(statuteSectionsMap);
+
+        when(queryBuilder.getDocumentSearchQuery(anyList(), anyList()))
+                .thenReturn("document SQL query");
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(DocumentRowMapper.class)))
+                .thenReturn(documentMap);
+        List<Application> result = applicationRepository.getApplications(applicationSearchRequest );
+
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(applicationList.size(), result.size());
+        assertEquals(documentList, result.get(0).getDocuments());
+        assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
+    }
 
     @Test
     void testGetApplications_EmptyResult() {
