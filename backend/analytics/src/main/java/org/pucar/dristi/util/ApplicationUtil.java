@@ -40,6 +40,7 @@ public class ApplicationUtil {
 		JSONArray applications = null;
 		try{
 			applications = util.constructArray(response, APPLICATION_PATH);
+			log.info("Inside Application util getApplication :: applications: " + applications.toString());
 		} catch (Exception e){
 			log.error("Error while building from case response", e);
 		}

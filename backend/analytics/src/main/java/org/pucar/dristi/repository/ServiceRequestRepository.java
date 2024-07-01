@@ -36,6 +36,7 @@ public class ServiceRequestRepository {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		String response = null;
 		try {
+			Thread.sleep(2000);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);

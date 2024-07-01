@@ -148,10 +148,8 @@ public class IndexerUtils {
 		String assignedTo = new JSONArray(assignedToList).toString();
 		String assignedRole = new JSONArray(assignedRoleList).toString();
 		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
-		log.info("Inside indexer utils build payload:: jsonItem: " + jsonItem);
 		log.info("Inside indexer utils build payload:: entityType: " + entityType + ", referenceId: " + referenceId);
 		Map<String, String> details = processEntity(entityType, referenceId);
-		log.info("Inside indexer utils build payload:: details: " + details);
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
 
@@ -171,7 +169,6 @@ public class IndexerUtils {
 
 		if (entityType.equalsIgnoreCase("hearing")) {
 			Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
-			log.info("Inside indexer utils processEntity:: hearingObject: " + hearingObject.toString());
 			List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
 			if (cnrNumbers == null || cnrNumbers.isEmpty()) {
 				List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
@@ -200,12 +197,12 @@ public class IndexerUtils {
 			cnrNumber = JsonPath.read(caseObject.toString(),CNR_NUMBER_PATH);
 		} else if (entityType.equalsIgnoreCase("task")) {
 			Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
-			cnrNumber = JsonPath.read(taskObject, CNR_NUMBER_PATH);
+			cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
 			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
 			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
 		} else if (entityType.equalsIgnoreCase("application")) {
 			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
-			String caseId = JsonPath.read(applicationObject, CASE_ID_PATH);
+			String caseId = JsonPath.read(applicationObject.toString(), CASE_ID_PATH);
 			cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
 			filingNumber = JsonPath.read(applicationObject.toString(),FILING_NUMBER_PATH);
 			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber,caseId);

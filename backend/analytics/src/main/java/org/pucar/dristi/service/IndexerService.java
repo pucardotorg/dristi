@@ -33,11 +33,9 @@ public class IndexerService {
 		StringBuilder bulkRequest = new StringBuilder();
 		try {
 			kafkaJsonArray = util.constructArray(kafkaJson, PROCESS_INSTANCE_PATH);
-			log.info("Inside indexer service:: kafkaJsonArray: " + kafkaJsonArray.toString());
 			for (int i = 0; i < kafkaJsonArray.length(); i++) {
 				if (null != kafkaJsonArray.get(i)) {
 					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
-					log.info("Inside indexer service:: stringifiedObject: " + stringifiedObject);
 					String payload = indexerUtils.buildPayload(stringifiedObject);
 					log.info("Inside indexer service:: payload: " + payload);
 					bulkRequest.append(payload);
