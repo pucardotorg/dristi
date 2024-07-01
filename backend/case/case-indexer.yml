@@ -42,6 +42,8 @@ ServiceMaps:
                 outJsonPath: $.Data.caseDetails.filingDate
               - inJsonPath: $.registrationDate
                 outJsonPath: $.Data.caseDetails.registrationDate
+              - inJsonPath: $.judgementDate
+                outJsonPath: $.Data.caseDetails.judgementDate
               - inJsonPath: $.caseCategory
                 outJsonPath: $.Data.caseDetails.caseCategory
               - inJsonPath: $.natureOfPleading
@@ -143,6 +145,8 @@ ServiceMaps:
                 outJsonPath: $.Data.caseDetails.filingDate
               - inJsonPath: $.registrationDate
                 outJsonPath: $.Data.caseDetails.registrationDate
+              - inJsonPath: $.judgementDate
+                outJsonPath: $.Data.caseDetails.judgementDate
               - inJsonPath: $.caseCategory
                 outJsonPath: $.Data.caseDetails.caseCategory
               - inJsonPath: $.natureOfPleading
