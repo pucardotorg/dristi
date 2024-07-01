@@ -197,6 +197,7 @@ function ViewCaseFile({ t, showHeader = true }) {
       }),
     ];
   }, [reviewCaseFileFormConfig, caseDetails, defaultScrutinyErrors]);
+
   const primaryButtonLabel = useMemo(() => {
     if (isScrutiny) {
       return "CS_REGISTER_CASE";
@@ -210,10 +211,10 @@ function ViewCaseFile({ t, showHeader = true }) {
   }, [isScrutiny]);
 
   const updateCaseDetails = async (action) => {
-    const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : formdata;
+    const scrutinyObj = action === CaseWorkflowAction.VALIDATE ? {} : CaseWorkflowAction.SEND_BACK && isPrevScrutiny ? newScrutinyData : formdata;
     const newcasedetails = {
       ...caseDetails,
-      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj, prevScrutiny: scrutinyObj },
+      additionalDetails: { ...caseDetails.additionalDetails, scrutiny: scrutinyObj },
       caseTitle: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
     };
 
@@ -284,8 +285,7 @@ function ViewCaseFile({ t, showHeader = true }) {
     return <Loader />;
   }
   if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
-    // if state is not under scrutiny, don't allow FSO Officer to access the application Details page
-    // history.push("/digit-ui/employee/dristi/cases");
+    history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
@@ -453,7 +453,7 @@ function ViewCaseFile({ t, showHeader = true }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBack"
             />
           )}
@@ -479,7 +479,7 @@ function ViewCaseFile({ t, showHeader = true }) {
               handleCloseModal={handleCloseModal}
               onCancel={handlePotentialConfirm}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
             />
           )}
@@ -491,7 +491,7 @@ function ViewCaseFile({ t, showHeader = true }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleSendCaseBack}
-              heading={"CS_SEND_CASE_BACK"}
+              heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
               type="sendCaseBackPotential"
             />
           )}
@@ -547,7 +547,7 @@ function ViewCaseFile({ t, showHeader = true }) {
             totalErrors={totalErrors?.total || 0}
             onCancel={handleCloseModal}
             onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
+            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
             type="sendCaseBack"
           />
         )}
@@ -573,7 +573,7 @@ function ViewCaseFile({ t, showHeader = true }) {
             handleCloseModal={handleCloseModal}
             onCancel={handlePotentialConfirm}
             onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
+            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
             type="sendCaseBackPotential"
           />
         )}
@@ -585,7 +585,7 @@ function ViewCaseFile({ t, showHeader = true }) {
             totalErrors={totalErrors?.total || 0}
             onCancel={handleCloseModal}
             onSubmit={handleSendCaseBack}
-            heading={"CS_SEND_CASE_BACK"}
+            heading={"CS_SEND_CASE_BACK_FOR_CORRECTION"}
             type="sendCaseBackPotential"
           />
         )}

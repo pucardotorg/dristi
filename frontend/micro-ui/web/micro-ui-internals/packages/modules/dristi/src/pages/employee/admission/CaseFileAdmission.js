@@ -47,7 +47,7 @@ function CaseFileAdmission({ t, path }) {
   );
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || null, [hearingResponse]);
   const caseDetails = useMemo(() => caseFetchResponse?.criteria?.[0]?.responseList?.[0] || null, [caseFetchResponse]);
-  const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complaintDetails?.formdata || null, [caseDetails]);
+  const complainantFormData = useMemo(() => caseDetails?.additionalDetails?.complainantDetails?.formdata || null, [caseDetails]);
   const respondentFormData = useMemo(() => caseDetails?.additionalDetails?.respondentDetails?.formdata || null, [caseDetails]);
 
   const formConfig = useMemo(() => {

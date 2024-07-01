@@ -28,6 +28,8 @@ function Accordion({
       case 3: {
         return "05m";
       }
+      default:
+        return;
     }
   }, [parentIndex]);
 

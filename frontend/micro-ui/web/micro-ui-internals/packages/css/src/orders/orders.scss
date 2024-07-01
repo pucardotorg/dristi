@@ -1,0 +1,47 @@
+.review-order-modal {
+  &.popup-module {
+    width: 80vw;
+    .popup-module-main {
+      .review-order-body-main {
+        height: 70vh;
+        display: flex;
+        gap: 5%;
+        margin-bottom: 20px;
+        .review-order-modal-list-div {
+          cursor: pointer;
+          width: 25%;
+        }
+        .review-order-modal-document-div {
+          width: 72%;
+          background-color: grey !important ;
+        }
+      }
+    }
+  }
+}
+
+.add-signature-modal {
+  &.popup-module {
+    width: 40vw;
+    .popup-module-main {
+      .add-signature-main-div {
+        height: 30vh;
+        display: flex;
+        margin-bottom: 10px;
+        .note-div {
+          display: flex;
+          .icon-div {
+          }
+        }
+      }
+    }
+  }
+}
+
+.orders-success-modal {
+  &.popup-module {
+    width: 40vw;
+    .popup-module-main {
+    }
+  }
+}

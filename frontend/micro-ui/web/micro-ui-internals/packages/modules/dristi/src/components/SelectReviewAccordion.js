@@ -257,12 +257,16 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
           {inputs.map((input, index) => {
             const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
-            const prevSectionError = input?.prevErrors?.scrutinyMessage;
+            const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
+            let bgclassname = sectionError && isScrutiny ? "error" : "";
+            bgclassname = sectionError && isCaseReAssigned ? "preverror" : bgclassname;
+            const sectionErrorClassname = sectionError === prevSectionError ? "prevsection" : "section";
             if (isPrevScrutiny) {
               showFlagIcon = prevSectionError ? true : false;
+              bgclassname = prevSectionError ? "preverror" : "";
             }
             return (
-              <div className={`content-item ${sectionError && isScrutiny && "error"}`}>
+              <div className={`content-item ${bgclassname}`}>
                 <div className="item-header">
                   <div className="header-left">
                     {input?.icon && <Icon icon={input?.icon} />}
@@ -291,8 +295,12 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                   )}
                 </div>
                 {sectionError && isScrutiny && (
-                  <div className="scrutiny-error section">
-                    <FlagIcon isError={true} />
+                  <div className={`scrutiny-error ${sectionErrorClassname}`}>
+                    {prevSectionError === sectionError ? (
+                      <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                    ) : (
+                      <FlagIcon isError={true} />
+                    )}
                     {sectionError}
                   </div>
                 )}
@@ -330,6 +338,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                         configKey={config.key}
                         titleHeading={titleHeading}
                         isPrevScrutiny={isPrevScrutiny}
+                        isCaseReAssigned={isCaseReAssigned}
                       />
                     );
                   })}

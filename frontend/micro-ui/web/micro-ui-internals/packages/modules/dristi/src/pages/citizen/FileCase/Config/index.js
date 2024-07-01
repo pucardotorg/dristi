@@ -1,14 +1,4 @@
-import { advocateDetailsConfig } from "./advocateDetailsConfig";
-import { chequeDetailsConfig } from "./chequedetailsConfig";
-import { complaintDetailsConfig, complaintdetailconfig } from "./complaindetailsConfig";
-import { debtliabilityconfig } from "./debtLiabilityConfig";
-import { delayApplicationConfig } from "./delayApplicationConfig";
 import { demandNoticeConfig } from "./demandNoticeConfig";
-import { prayerAndSwornConfig } from "./prayerAndSwornConfig";
-import { respondentconfig } from "./respondentConfig";
-import { reviewcasefileconfig } from "./reviewcasefileconfig";
-import { signatureconfig } from "./signatureconfig";
-import { witnessConfig } from "./witnessConfig";
 
 export const sideMenuConfig = [
   {
@@ -18,7 +8,7 @@ export const sideMenuConfig = [
     key: "litigentDetails",
     children: [
       {
-        key: "complaintDetails",
+        key: "complainantDetails",
         label: "CS_COMPLAINT_DETAILS",
         checked: false,
         isCompleted: false,
@@ -28,7 +18,7 @@ export const sideMenuConfig = [
             moduleName: "commonUiConfig",
             masterDetails: [
               {
-                name: "complaintDetailsConfig",
+                name: "complainantDetailsConfig",
               },
             ],
           },
@@ -179,11 +169,11 @@ export const sideMenuConfig = [
           },
         ],
         mandatoryFields: [
-          "SelectUserTypeComponent",
+          "modeOfDispatchType",
           "dateOfIssuance",
           "dateOfDispatch",
-          "SelectCustomDragDrop.legalDemandNoticeFileUpload",
-          "SelectCustomDragDrop.proofOfDispatchFileUpload",
+          "legalDemandNoticeFileUpload.document",
+          "proofOfDispatchFileUpload.document",
           "proofOfService",
           "proofOfReply",
           "dateOfAccrual",
@@ -193,7 +183,7 @@ export const sideMenuConfig = [
         dependentMandatoryFields: [
           { field: "dateOfService", dependentOn: "proofOfService", dependentOnKey: "showProofOfAcknowledgment" },
           {
-            field: "SelectCustomDragDrop.proofOfAcknowledgmentFileUpload",
+            field: "proofOfAcknowledgmentFileUpload.document",
             dependentOn: "proofOfService",
             dependentOnKey: "showProofOfAcknowledgment",
           },
@@ -202,7 +192,7 @@ export const sideMenuConfig = [
         dependentOptionalFields: [
           { field: "dateOfReply", dependentOn: "proofOfReply", dependentOnKey: "showProofOfReply" },
           {
-            field: "SelectCustomDragDrop.proofOfReplyFileUpload",
+            field: "proofOfReplyFileUpload.document",
             dependentOn: "proofOfReply",
             dependentOnKey: "showProofOfReply",
           },
@@ -225,13 +215,13 @@ export const sideMenuConfig = [
             ],
           },
         ],
-        mandatoryFields: ["delayApplicationType"],
+        mandatoryFields: ["delayCondonationType"],
         initialMandatoryFieldCount: 1,
         dependentMandatoryFields: [
-          { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayApplicationType", dependentOnKey: "showForm" },
+          { field: "delayApplicationReason.reasonForDelay", dependentOn: "delayCondonationType", dependentOnKey: "showForm" },
           {
             field: "condonationFileUpload.document",
-            dependentOn: "delayApplicationType",
+            dependentOn: "delayCondonationType",
             dependentOnKey: "showForm",
           },
         ],
@@ -311,7 +301,7 @@ export const sideMenuConfig = [
         dependentMandatoryFields: [],
         optionalFields: [
           "caseSettlementCondition",
-          "SelectCustomDragDrop.swornStatement",
+          "swornStatement.document",
           "additionalDetails.text",
           "additionalActsSections.text",
           "SelectUploadDocWithName.docName",

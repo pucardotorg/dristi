@@ -5,6 +5,7 @@ import { InfoCard } from "@egovernments/digit-ui-components";
 import { Link, useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
+import { useToast } from "../../../components/Toast/useToast";
 
 const mockSubmitModalInfo = {
   header: "CS_HEADER_FOR_E_FILING_PAYMENT",
@@ -46,6 +47,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
   };
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { caseId } = window?.Digit.Hooks.useQueryParams();
+  const toast = useToast();
 
   const { data: caseData, isLoading } = useSearchCaseService(
     {
@@ -76,6 +78,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
         {
           key: "CS_CASE_NUMBER",
           value: caseDetails?.filingNumber,
+          copyData: true,
         },
       ],
       isArrow: false,
@@ -84,7 +87,78 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
     };
   }, [caseDetails?.filingNumber]);
 
-  if (isLoading) {
+  const { data: paymentDetails, isLoading: isFetchBillLoading } = Digit.Hooks.useFetchBillsForBuissnessService(
+    {
+      tenantId: tenantId,
+      consumerCode: caseDetails?.filingNumber,
+      businessService: "case",
+    },
+    {
+      enabled: Boolean(tenantId && caseDetails?.filingNumber),
+    }
+  );
+  const bill = paymentDetails?.Bill ? paymentDetails?.Bill[0] : {};
+
+  const onSubmitCase = async () => {
+    // if (!Object.keys(bill || {}).length) {
+    //   toast.error(t("CS_BILL_NOT_AVAILABLE"));
+    //   history.push(`/${window?.contextPath}/employee/dristi/pending-payment-inbox`);
+    //   return;
+    // }
+    // try {
+    //  const receiptData =  await window?.Digit.PaymentService.createReciept(tenantId, {
+    //     Payment: {
+    //       paymentDetails: [
+    //         {
+    //           businessService: "case",
+    //           billId: bill.id,
+    //           totalDue: bill?.totalAmount,
+    //           totalAmountPaid: bill?.totalAmount || 2000,
+    //         },
+    //       ],
+    //       tenantId,
+    //       paymentMode: "ONLINE",
+    //       paidBy: 'PAY_BY_OWNER',
+    //       mobileNumber: caseDetails?.additionalDetails?.payerMobileNo || "",
+    //       payerName: caseDetails?.additionalDetails?.payerName || "",
+    //       totalAmountPaid: 2000,
+    //     },
+    //   });
+    //   history.push(`/${path}/e-filing-payment-response`, { state: { success: true, receiptData } });
+    // } catch (err) {
+    //   history.push(`/${path}/e-filing-payment-response`, { state: { success: false } });
+    // }
+    history.push(`${path}/e-filing-payment-response`, {
+      state: {
+        success: true,
+        receiptData: {
+          ...mockSubmitModalInfo,
+          caseInfo: [
+            {
+              key: "Mode of Payment",
+              value: "Online",
+              copyData: false,
+            },
+            {
+              key: "Amount",
+              value: "Rs 2000",
+              copyData: false,
+            },
+            {
+              key: "Transaction ID",
+              value: "KA08293928392",
+              copyData: true,
+            },
+          ],
+          isArrow: false,
+          showTable: true,
+          showCopytext: true,
+        },
+      },
+    });
+  };
+
+  if (isLoading || isFetchBillLoading) {
     return <Loader />;
   }
   return (
@@ -103,7 +177,6 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
             t={t}
             data={submitInfoData?.caseInfo}
             tableDataClassName={"e-filing-table-data-style"}
-            copyData={true}
             tableValueClassName={"e-filing-table-value-style"}
           />
         )}
@@ -111,14 +184,26 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
           <Button
             variation={"secondary"}
             className={"secondary-button-selector"}
+            label={t("CS_GO_TO_HOME")}
+            labelClassName={"secondary-label-selector"}
+            style={{minWidth: "30%"}}
+            onButtonClick={() => {
+              history.push(`/${window?.contextPath}/citizen/dristi/home`);
+            }}
+          />
+          <Button
+            variation={"secondary"}
+            className={"secondary-button-selector"}
             label={t("CS_PRINT_CASE_FILE")}
             labelClassName={"secondary-label-selector"}
+            style={{minWidth: "30%"}}
             onButtonClick={() => {}}
           />
           <Button
             className={"tertiary-button-selector"}
             label={t("CS_MAKE_PAYMENT")}
             labelClassName={"tertiary-label-selector"}
+            style={{minWidth: "30%"}}
             onButtonClick={() => {
               setShowPaymentModal(true);
             }}
@@ -129,7 +214,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
             headerBarEnd={<CloseBtn onClick={onCancel} />}
             actionSaveLabel={t("CS_PAY_ONLINE")}
             formId="modal-action"
-            actionSaveOnSubmit={() => history.push(`${path}/e-filing-payment-response`)}
+            actionSaveOnSubmit={() => onSubmitCase()}
             headerBarMain={<Heading label={t("CS_PAY_TO_FILE_CASE")} />}
           >
             <div className="payment-due-wrapper" style={{ display: "flex", flexDirection: "column" }}>
@@ -161,7 +246,7 @@ function EFilingPayment({ t, setShowModal, header, subHeader, submitModalInfo = 
               <div>
                 <InfoCard
                   variant={"default"}
-                  label={"CS_COMMON_NOTE"}
+                  label={t("CS_COMMON_NOTE")}
                   style={{ margin: "16px 0 0 0", backgroundColor: "#ECF3FD" }}
                   additionalElements={[
                     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>

@@ -59,11 +59,11 @@ export const judgeInboxConfig = {
         columns: [
           {
             label: "Case Name",
-            jsonPath: "",
+            jsonPath: "caseTitle",
           },
           {
             label: "Stage",
-            jsonPath: "",
+            jsonPath: "status",
           },
           {
             label: "Case ID",
@@ -71,7 +71,8 @@ export const judgeInboxConfig = {
           },
           {
             label: "Case Type",
-            jsonPath: "",
+            jsonPath: "caseType",
+            additionalCustomization: true,
           },
           {
             label: "Days Since Filing",

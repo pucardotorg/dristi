@@ -48,6 +48,7 @@ const CustomReviewCardRow = ({
   prevDataError,
   isPrevScrutiny,
   setShowImageModal,
+  isCaseReAssigned,
 }) => {
   const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -85,12 +86,16 @@ const CustomReviewCardRow = ({
     if (isScrutiny) {
       if (typeof prevDataError === "string" && (dataError || prevDataError)) {
         bgclassname = dataError === prevDataError ? "preverror" : "error";
+      } else {
+        bgclassname = dataError ? "error" : "";
       }
     }
+    bgclassname = dataError && isCaseReAssigned ? "preverrorside" : bgclassname;
     switch (type) {
       case "title":
         const titleError = dataError?.title?.FSOError;
-        if (isPrevScrutiny && !prevDataError?.title?.FSOError) {
+        const prevTitleError = prevDataError?.title?.FSOError;
+        if (isPrevScrutiny && !prevTitleError) {
           showFlagIcon = false;
         }
         let title = "";
@@ -99,8 +104,10 @@ const CustomReviewCardRow = ({
         } else {
           title = extractValue(data, value);
         }
+        bgclassname = isScrutiny && titleError ? (titleError === prevTitleError ? "preverror" : "error") : "";
+        bgclassname = titleError && isCaseReAssigned ? "preverrorside" : bgclassname;
         return (
-          <div className={`title-main ${isScrutiny && titleError && "error"}`}>
+          <div className={`title-main ${bgclassname}`}>
             <div className={`title ${isScrutiny && (dataError ? "column" : "")}`}>
               <div>{`${titleIndex}. ${titleHeading ? t("CS_CHEQUE_NO") + " " : ""}${title || t("CS_NOT_AVAILABLE")}`}</div>
               {badgeType && <div>{extractValue(data, badgeType)}</div>}
@@ -109,7 +116,14 @@ const CustomReviewCardRow = ({
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                    handleOpenPopup(
+                      e,
+                      configKey,
+                      name,
+                      dataIndex,
+                      Array.isArray(value) ? type : value,
+                      Array.isArray(value) ? [...value, type] : [value, type]
+                    );
                   }}
                   key={dataIndex}
                 >
@@ -120,7 +134,12 @@ const CustomReviewCardRow = ({
             </div>
             {titleError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverrorside" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
+
                 {titleError}
               </div>
             )}
@@ -133,8 +152,11 @@ const CustomReviewCardRow = ({
             <div className="text">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(textValue) && textValue.map((text) => <div> {text || t("CS_NOT_AVAILABLE")} </div>)}
-                {(!Array.isArray(textValue) && textValue) || t("CS_NOT_AVAILABLE")}
+                {Array.isArray(textValue)
+                  ? textValue.length > 0
+                    ? textValue.map((text, index) => <div key={index}>{text || t("CS_NOT_AVAILABLE")}</div>)
+                    : t("CS_NOT_AVAILABLE")
+                  : textValue || t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -150,7 +172,11 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverrorside" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -207,7 +233,11 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverrorside" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -220,8 +250,13 @@ const CustomReviewCardRow = ({
             <div className="phone-number">
               <div className="label">{t(label)}</div>
               <div className="value">
-                {Array.isArray(numbers) && numbers.map((number) => <div> {`+91-${number}` || t("CS_NOT_AVAILABLE")} </div>)}
-                {!Array.isArray(numbers) && numbers ? `+91-${numbers}` : t("CS_NOT_AVAILABLE")}
+                {Array.isArray(numbers)
+                  ? numbers.length > 0
+                    ? numbers.map((number, index) => <div key={index}>{`+91-${number}`}</div>)
+                    : t("CS_NOT_AVAILABLE")
+                  : numbers
+                  ? `+91-${numbers}`
+                  : t("CS_NOT_AVAILABLE")}
               </div>
               {showFlagIcon && (
                 <div
@@ -237,7 +272,11 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverrorside" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -252,6 +291,15 @@ const CustomReviewCardRow = ({
             }
           });
         }
+        bgclassname =
+          isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
+        bgclassname = FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : bgclassname;
+        const hasPrevError = value.some((key) => {
+          return prevDataError?.[key] && prevDataError?.[key]?.FSOError;
+        });
+        if (isPrevScrutiny) {
+          showFlagIcon = hasPrevError;
+        }
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
         files.forEach((file) => {
@@ -263,7 +311,7 @@ const CustomReviewCardRow = ({
           return null;
         }
         return (
-          <div className={`image-main ${isScrutiny && FSOErrors.length > 0 && "error"}`}>
+          <div className={`image-main ${bgclassname}`}>
             <div className={`image ${!isScrutiny ? "column" : ""}`}>
               <div className="label">{t(label)}</div>
               <div className={`value ${!isScrutiny ? "column" : ""}`} style={{ overflowX: "scroll", width: "100%" }}>
@@ -363,21 +411,28 @@ const CustomReviewCardRow = ({
                     )
                   : null}
               </div>
-              <div
-                className="flag"
-                onClick={(e) => {
-                  handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
-                }}
-                key={dataIndex}
-              >
-                {isScrutiny && (FSOErrors?.length > 0 ? <EditPencilIcon /> : <FlagIcon />)}
-              </div>
+              {showFlagIcon && (
+                <div
+                  className="flag"
+                  onClick={(e) => {
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                  }}
+                  key={dataIndex}
+                >
+                  {isScrutiny && (FSOErrors?.length > 0 ? <EditPencilIcon /> : <FlagIcon />)}
+                </div>
+              )}
             </div>
             {FSOErrors?.length > 0 &&
+              isScrutiny &&
               FSOErrors.map((error, ind) => {
                 return (
                   <div className="scrutiny-error input" key={ind}>
-                    <FlagIcon isError={true} />
+                    {bgclassname === "preverrorside" ? (
+                      <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                    ) : (
+                      <FlagIcon isError={true} />
+                    )}
                     {`${error.fileName || ""}:${error.FSOError}`}
                   </div>
                 );
@@ -436,7 +491,11 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                <FlagIcon isError={true} />
+                {bgclassname === "preverrorside" ? (
+                  <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+                ) : (
+                  <FlagIcon isError={true} />
+                )}
                 {dataError}
               </div>
             )}
@@ -465,7 +524,11 @@ const CustomReviewCardRow = ({
               )}
             </div>
             <div className="scrutiny-error input">
-              <FlagIcon isError={true} />
+              {bgclassname === "preverrorside" ? (
+                <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
+              ) : (
+                <FlagIcon isError={true} />
+              )}
               {dataError}
             </div>
           </div>

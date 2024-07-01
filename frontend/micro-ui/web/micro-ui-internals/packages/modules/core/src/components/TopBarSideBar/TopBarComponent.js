@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 // import BackButton from "./BackButton";
 import { Dropdown, Hamburger, NotificationBell } from "@egovernments/digit-ui-react-components";
 
@@ -26,6 +26,7 @@ const TopBarComponent = ({
   TextToImg,
 }) => {
   const { pathname } = useLocation();
+  const history = useHistory();
 
   // const showHaburgerorBackButton = () => {
   //   if (pathname === "/digit-ui/citizen" || pathname === "/digit-ui/citizen/" || pathname === "/digit-ui/citizen/select-language") {
@@ -40,7 +41,13 @@ const TopBarComponent = ({
         <div className="hambuger-back-wrapper">
           {isMobile && <Hamburger handleClick={toggleSidebar} />}
 
-          <div style={{ display: "flex", gap: "16px" }}>
+          <div
+            style={{ display: "flex", gap: "16px", cursor: "pointer" }}
+            onClick={() => {
+              const pathUnwind = pathname.split("/").slice(0, 5).join("/");
+              history.push(pathUnwind);
+            }}
+          >
             <img
               className="city"
               id="topbar-logo"
