@@ -9,9 +9,9 @@ import MarkAttendance from './MarkAttendance';
 
 const fieldStyle = { marginRight: 0 };
 
-const InsideHearingMainPage = () => {
+const InsideHearingMainPage = ({hearingId}) => {
   const history = useHistory();
-
+  const [hearing, setHearing] = useState({});
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
     history.push(`/${contextPath}${path}`);
@@ -93,7 +93,7 @@ const InsideHearingMainPage = () => {
               style={{ width: "100%" }}
             />
           </div>
-          { isOpen && <MarkAttendance  closeModal={handleModal} /> }
+          { isOpen && <MarkAttendance  handleModal={handleModal} /> }
     </div>
       </ActionBar>
     </div>
