@@ -33,32 +33,32 @@ import static org.pucar.dristi.enrichment.CaseRegistrationEnrichment.enrichRepre
 @Slf4j
 public class CaseService {
 
-    private CaseRegistrationValidator validator;
+    private final CaseRegistrationValidator validator;
+    private final CaseRegistrationEnrichment enrichmentUtil;
+    private final CaseRepository caseRepository;
+    private final WorkflowService workflowService;
+    private final Configuration config;
+    private final Producer producer;
+    private final BillingUtil billingUtil;
+    private final EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     @Autowired
-    private CaseRegistrationEnrichment enrichmentUtil;
-
-    @Autowired
-    private CaseRepository caseRepository;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private BillingUtil billingUtil;
-
-    @Autowired
-    private EncryptionDecryptionUtil encryptionDecryptionUtil;
-
-    @Autowired
-    public void setValidator(@Lazy CaseRegistrationValidator validator) {
+    public CaseService(@Lazy CaseRegistrationValidator validator,
+                       CaseRegistrationEnrichment enrichmentUtil,
+                       CaseRepository caseRepository,
+                       WorkflowService workflowService,
+                       Configuration config,
+                       Producer producer,
+                       BillingUtil billingUtil,
+                       EncryptionDecryptionUtil encryptionDecryptionUtil) {
         this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.caseRepository = caseRepository;
+        this.workflowService = workflowService;
+        this.config = config;
+        this.producer = producer;
+        this.billingUtil = billingUtil;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
     }
 
     public CourtCase createCase(CaseRequest body) {

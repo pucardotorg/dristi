@@ -1,17 +1,12 @@
 package org.pucar.dristi.config;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.annotation.PostConstruct;
 import org.egov.encryption.config.EncryptionConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 
 @Configuration
@@ -19,6 +14,7 @@ public class CaseEncryptionConfiguration extends EncryptionConfiguration {
 
     @Bean
     @Primary
+    @Override
     public ObjectMapper objectMapper() {
 
         ObjectMapper objectMapper = new ObjectMapper();

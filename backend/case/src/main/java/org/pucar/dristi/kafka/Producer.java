@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 // NOTE: If tracer is disabled change CustomKafkaTemplate to KafkaTemplate in autowiring
 
-@Service("KafkaProducer")
+@Service("kafkaProducer")
 @Slf4j
 public class Producer {
 
