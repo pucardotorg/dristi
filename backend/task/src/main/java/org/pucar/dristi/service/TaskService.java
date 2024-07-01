@@ -30,21 +30,26 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 public class TaskService {
 
     private TaskRegistrationValidator validator;
+    private final TaskRegistrationEnrichment enrichmentUtil;
+    private final TaskRepository taskRepository;
+    private final WorkflowUtil workflowUtil;
+    private final Configuration config;
+    private final Producer producer;
 
     @Autowired
-    private TaskRegistrationEnrichment enrichmentUtil;
-
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
-    private WorkflowUtil workflowUtil;
-
-    @Autowired
-    private Configuration config;
-
-    @Autowired
-    private Producer producer;
+    public TaskService(TaskRegistrationValidator validator,
+                       TaskRegistrationEnrichment enrichmentUtil,
+                       TaskRepository taskRepository,
+                       WorkflowUtil workflowUtil,
+                       Configuration config,
+                       Producer producer) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.taskRepository = taskRepository;
+        this.workflowUtil = workflowUtil;
+        this.config = config;
+        this.producer = producer;
+    }
 
     @Autowired
     public void setValidator(@Lazy TaskRegistrationValidator validator) {

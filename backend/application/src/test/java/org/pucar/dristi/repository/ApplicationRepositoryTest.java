@@ -159,16 +159,8 @@ class ApplicationRepositoryTest {
         assertTrue(actualMessage.contains(expectedMessage));
     }
     @Test
-    public void testGetApplications_ThrowsCustomException() {
+    void testGetApplications_ThrowsCustomException() {
         // Arrange
-        String id = "testId";
-        String filingNumber = "testFilingNumber";
-        String cnrNumber = "testCnrNumber";
-        String applicationNumber = "applicationNumber";
-        String tenantId = "testTenantId";
-        String status = "status";
-        Integer limit = 10;
-        Integer offset = 0;
         ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
         applicationSearchRequest.setRequestInfo(new RequestInfo());
         applicationSearchRequest.setCriteria(new ApplicationCriteria());
@@ -255,7 +247,7 @@ class ApplicationRepositoryTest {
         assertThrows(CustomException.class, () -> applicationRepository.checkApplicationExists(applicationExistsList));
     }
     @Test
-    public void testGetTotalCountApplication() {
+    void testGetTotalCountApplication() {
         String baseQuery = "SELECT * FROM applications";
         String countQuery = "SELECT COUNT(*) FROM applications";
 

@@ -24,20 +24,24 @@ import static org.pucar.dristi.config.ServiceConstants.SEARCH_TASK_ERR;
 @Repository
 public class TaskRepository {
 
-    @Autowired
-    private TaskQueryBuilder queryBuilder;
+    private final TaskQueryBuilder queryBuilder;
+    private final JdbcTemplate jdbcTemplate;
+    private final TaskRowMapper rowMapper;
+    private final AmountRowMapper amountRowMapper;
+    private final DocumentRowMapper documentRowMapper;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private TaskRowMapper rowMapper;
-
-    @Autowired
-    private AmountRowMapper amountRowMapper;
-
-    @Autowired
-    private DocumentRowMapper documentRowMapper;
+    public TaskRepository(TaskQueryBuilder queryBuilder,
+                          JdbcTemplate jdbcTemplate,
+                          TaskRowMapper rowMapper,
+                          AmountRowMapper amountRowMapper,
+                          DocumentRowMapper documentRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.amountRowMapper = amountRowMapper;
+        this.documentRowMapper = documentRowMapper;
+    }
     
 
     public List<Task> getApplications(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {

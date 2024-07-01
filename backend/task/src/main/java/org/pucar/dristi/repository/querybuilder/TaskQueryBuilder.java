@@ -18,7 +18,7 @@ public class TaskQueryBuilder {
             " task.filingnumber as filingnumber, task.tasknumber as tasknumber, task.datecloseby as datecloseby, task.dateclosed as dateclosed, task.taskdescription as taskdescription, task.cnrnumber as cnrnumber," +
             " task.taskdetails as taskdetails, task.tasktype as tasktype, task.assignedto as assignedto, task.status as status, task.isactive as isactive,task.additionaldetails as additionaldetails, task.createdby as createdby," +
             " task.lastmodifiedby as lastmodifiedby, task.createdtime as createdtime, task.lastmodifiedtime as lastmodifiedtime";
-    private static final String FROM_task_TABLE = " FROM dristi_task task";
+    private static final String FROM_TASK_TABLE = " FROM dristi_task task";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY task.createdtime DESC ";
 
     private static final String DOCUMENT_SELECT_QUERY_CASE = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
@@ -34,7 +34,7 @@ public class TaskQueryBuilder {
     public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
-            boolean firstCriteria = true; // To check if it's the first criteria
+            boolean firstCriteria = true;
 
             if (taskId != null) {
                 addClauseIfRequired(query, firstCriteria);
@@ -47,11 +47,10 @@ public class TaskQueryBuilder {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("task.cnrNumber = ?");
                 preparedStmtList.add(cnrNumber);
-
                 firstCriteria = false;
             }
 
-            if (filingNumber != null  && !filingNumber.isEmpty() ) {
+            if (filingNumber != null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
                 query.append("task.filingNumber = ?");
                 preparedStmtList.add(filingNumber);
@@ -61,15 +60,16 @@ public class TaskQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building task search query :: {}",e.toString());
-            throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the case search query: " + e.getMessage());
+            log.error("Error while building task search query", e);
+            throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Error occurred while building the task search query: " + e.getMessage());
         }
     }
+
 
     public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
-            query.append(FROM_task_TABLE);
+            query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
             if (id != null  && !id.isEmpty()) {
@@ -119,10 +119,24 @@ public class TaskQueryBuilder {
 
             return query.toString();
         } catch (Exception e) {
-            log.error("Error while building task search query :: {}",e.toString());
+            log.error("Error while building task search query :: {}", e.toString());
             throw new CustomException(TASK_SEARCH_QUERY_EXCEPTION, "Exception occurred while building the task search query: " + e.getMessage());
         }
     }
+
+
+    private boolean addTaskCriteria(String criteria, StringBuilder query, boolean isFirstCriteria, String condition, String parameter) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, isFirstCriteria);
+            query.append(condition);
+            query.append("'");
+            query.append(parameter);
+            query.append("'");
+            return false;
+        }
+        return isFirstCriteria;
+    }
+
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
