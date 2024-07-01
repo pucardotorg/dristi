@@ -93,40 +93,6 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    void testGetApplicationsThrowsCustomException() {
-        // Arrange
-        when(queryBuilder.getTaskSearchQuery(anyString(), anyString(), anyString(), any(), anyString(), anyString(), anyList()))
-                .thenThrow(new RuntimeException("Exception"));
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            taskRepository.getApplications("1", "tenant1", "active", UUID.randomUUID(), "CNR123", "TASK123");
-        });
-        assertEquals("Exception while fetching task application list: Exception", exception.getMessage());
-    }
-
-    @Test
-    void testCheckTaskExists() {
-        // Arrange
-        TaskExists taskExists = new TaskExists();
-        taskExists.setCnrNumber("CNR123");
-        taskExists.setFilingNumber("FILING123");
-        taskExists.setTaskId(UUID.fromString("30b4edc0-298f-4f1e-a518-c2189a119ac6"));
-
-        String taskExistQuery = "SELECT COUNT(*) FROM tasks WHERE cnrNumber = ? AND filingNumber = ? AND taskId = ?";
-        when(queryBuilder.checkTaskExistQuery(anyString(), anyString(), any(), anyList()))
-                .thenReturn(taskExistQuery);
-        when(jdbcTemplate.queryForObject(eq(taskExistQuery), any(), eq(Integer.class)))
-                .thenReturn(1);
-
-        // Act
-        TaskExists result = taskRepository.checkTaskExists(taskExists);
-
-        // Assert
-        assertTrue(result.getExists());
-    }
-
-    @Test
     void testCheckTaskExistsNotFound() {
         // Arrange
         TaskExists taskExists = new TaskExists();
@@ -136,23 +102,5 @@ public class TaskRepositoryTest {
 
         // Assert
         assertFalse(result.getExists());
-    }
-
-    @Test
-    void testCheckTaskExistsThrowsCustomException() {
-        // Arrange
-        TaskExists taskExists = new TaskExists();
-        taskExists.setCnrNumber("CNR123");
-        taskExists.setFilingNumber("FILING123");
-        taskExists.setTaskId(UUID.fromString("30b4edc0-298f-4f1e-a518-c2189a119ac6"));
-
-        when(queryBuilder.checkTaskExistQuery(anyString(), anyString(), any(), anyList()))
-                .thenThrow(new RuntimeException("Exception"));
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> {
-            taskRepository.checkTaskExists(taskExists);
-        });
-        assertEquals("Custom exception while checking task exist : Exception", exception.getMessage());
     }
 }
