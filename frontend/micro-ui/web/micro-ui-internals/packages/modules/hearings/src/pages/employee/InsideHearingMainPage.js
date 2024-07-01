@@ -1,20 +1,27 @@
-import React from "react";
+import React, { useState } from 'react';
 import { useTranslation } from "react-i18next";
 import { useHistory, Link } from "react-router-dom";
 import { Header, ActionBar, SVG, SubmitBar, Card } from "@egovernments/digit-ui-react-components";
 import { Button, TextArea } from "@egovernments/digit-ui-components";
 import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
+import MarkAttendance from './MarkAttendance';
 
 const fieldStyle = { marginRight: 0 };
 
-const InsideHearingMainPage = () => {
+const InsideHearingMainPage = ({hearingId}) => {
   const history = useHistory();
-
+  const [hearing, setHearing] = useState({});
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || "";
     history.push(`/${contextPath}${path}`);
   };
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
 
   return (
     <div style={{ display: "flex" }}>
@@ -60,7 +67,8 @@ const InsideHearingMainPage = () => {
             <Button
               label={"Mark Attendance"}
               variation={"teritiary"}
-              onClick={() => handleNavigate("/employee/hearings/mark-attendance")}
+              onClick ={handleModal}
+              // onClick={() => handleNavigate("/employee/hearings/mark-attendance")}
               style={{ width: "100%" }}
             />
           </div>
@@ -85,7 +93,8 @@ const InsideHearingMainPage = () => {
               style={{ width: "100%" }}
             />
           </div>
-        </div>
+          { isOpen && <MarkAttendance  handleModal={handleModal} /> }
+    </div>
       </ActionBar>
     </div>
   );
