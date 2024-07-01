@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.queryBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.Pagination;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class ApplicationQueryBuilder {
                     " app.createdby as createdby," +
                     " app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime," +
                     " app.status as status ";
+
+    private  static  final String TOTAL_COUNT_QUERY = "SELECT COUNT(*) FROM ({baseQuery}) total_result";
+
     private static final String DOCUMENT_SELECT_QUERY_APP = "SELECT doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore," +
             "doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.application_id as application_id";
 
@@ -74,7 +78,7 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber, Integer limit, Integer offset) {
+    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
@@ -111,12 +115,6 @@ public class ApplicationQueryBuilder {
                 firstCriteria = false;
             }
             query.append(ORDERBY_CREATEDTIME_DESC);
-
-            if (limit != null && offset != null) {  //pagination
-                query.append(" LIMIT ").append(limit);
-                query.append(" OFFSET ").append(offset);
-            }
-
             return query.toString();
         }
         catch (Exception e) {
@@ -133,6 +131,15 @@ public class ApplicationQueryBuilder {
         }
     }
 
+    public String getTotalCountQuery(String baseQuery) {
+        return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
+    }
+    public String addPaginationQuery(String query, Pagination pagination) {
+        String paginationQuery = query + " LIMIT " + (pagination.getLimit().intValue()) +
+                " OFFSET " + pagination.getOffSet().intValue();
+        log.info("pagination search query : {}", paginationQuery);
+        return paginationQuery;
+    }
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_APP);

@@ -21,6 +21,7 @@ import org.pucar.dristi.service.WorkflowService;
 import org.pucar.dristi.web.models.Application;
 import org.pucar.dristi.web.models.ApplicationRequest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +45,32 @@ public class WorkflowServiceTest {
 
     @Mock
     private ObjectMapper mapper;
+
+    @Test
+    void updateWorkflowStatus_Success() {
+        // Mock AdvocateRequest
+        ApplicationRequest applicationRequest = new ApplicationRequest();
+        applicationRequest.setRequestInfo(new RequestInfo());
+        Application application = new Application();
+        application.setApplicationNumber("APP001");
+        application.setTenantId("tenant1");
+        application.setWorkflow(Workflow.builder().action("APPROVE").build());
+        applicationRequest.setApplication(application);
+
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(new State());
+        ProcessInstanceResponse workflowRequest = new ProcessInstanceResponse(new ResponseInfo(), Collections.singletonList(processInstance));
+
+        // Mock repository.fetchResult
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenReturn(workflowRequest);
+        when(mapper.convertValue(any(), eq(ProcessInstanceResponse.class))).thenReturn(workflowRequest);
+
+        // Execute the method
+        assertDoesNotThrow(() -> workflowService.updateWorkflowStatus(applicationRequest));
+    }
 
     @Test
     void updateWorkflowStatus_Exceptions() {
@@ -70,6 +97,30 @@ public class WorkflowServiceTest {
 
         // Execute the method
         assertThrows(CustomException.class, () -> workflowService.updateWorkflowStatus(applicationRequest));
+    }
+
+    @Test
+    void updateWorkflowStatus_Exception() {
+        ApplicationRequest applicationRequest = new ApplicationRequest();
+        applicationRequest.setRequestInfo(new RequestInfo());
+        Application application = new Application();
+        application.setApplicationNumber("APP001");
+        application.setTenantId("tenant1");
+        application.setWorkflow(Workflow.builder().action("APPROVE").build());
+        applicationRequest.setApplication(application);
+
+        when(config.getWfHost()).thenReturn("http://localhost:8080");
+        when(config.getWfTransitionPath()).thenReturn("/workflow/transition");
+
+        ProcessInstance processInstance = new ProcessInstance();
+        processInstance.setState(new State());
+
+        // Mock repository.fetchResult
+        when(repository.fetchResult(any(StringBuilder.class), any())).thenThrow(new RuntimeException());
+
+        // Execute the method
+        assertThrows(Exception.class, () -> {workflowService.updateWorkflowStatus(applicationRequest);
+        });
     }
 
     @Test

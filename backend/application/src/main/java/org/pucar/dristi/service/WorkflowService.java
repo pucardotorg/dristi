@@ -42,9 +42,9 @@ public class WorkflowService {
                 ProcessInstance processInstance = getProcessInstance(application, applicationRequest.getRequestInfo());
                 ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(applicationRequest.getRequestInfo(), Collections.singletonList(processInstance));
                 log.info("ProcessInstance Request :: {}", workflowRequest);
-                String applicationStatus=callWorkFlow(workflowRequest).getApplicationStatus();
-                log.info("Application Status :: {}", applicationStatus);
-                application.setStatus(applicationStatus);
+                String state=callWorkFlow(workflowRequest).getState();
+                log.info("Application Status :: {}", state);
+                application.setStatus(state);
             } catch (CustomException e){
                 throw e;
             } catch (Exception e) {
