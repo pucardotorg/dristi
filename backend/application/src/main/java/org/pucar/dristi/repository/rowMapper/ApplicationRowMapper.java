@@ -61,7 +61,11 @@ public class ApplicationRowMapper implements ResultSetExtractor<List<Application
                             .auditDetails(auditdetails)
                             .build();
                 }
-                    applicationMap.put(uuid, application);
+                PGobject pgObject = (PGobject) rs.getObject("additionalDetails");
+                if(pgObject!=null) {
+                    application.setAdditionalDetails(objectMapper.readTree(pgObject.getValue()));
+                }
+                applicationMap.put(uuid, application);
             }
         }
         catch (Exception e){

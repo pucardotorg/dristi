@@ -31,17 +31,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("")
 public class ArtifactsApiController {
 
-	private final ObjectMapper objectMapper;
+	private  EvidenceService evidenceService;
+	private  ResponseInfoFactory responseInfoFactory;
 
-	private final HttpServletRequest request;
 	@Autowired
-	private EvidenceService evidenceService;
-	@Autowired
-	private ResponseInfoFactory responseInfoFactory;
-	@Autowired
-	public ArtifactsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-		this.objectMapper = objectMapper;
-		this.request = request;
+	public ArtifactsApiController(EvidenceService evidenceService, ResponseInfoFactory responseInfoFactory) {
+		this.evidenceService = evidenceService;
+		this.responseInfoFactory = responseInfoFactory;
 	}
 
 	@RequestMapping(value = "/artifacts/v1/_create", method = RequestMethod.POST)
