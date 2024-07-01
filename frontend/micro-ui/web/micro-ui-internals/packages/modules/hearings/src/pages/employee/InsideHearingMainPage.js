@@ -1,17 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useQuery, useQueryClient } from "react-query";
 import { Header, ActionBar, SVG, SubmitBar, Card } from "@egovernments/digit-ui-react-components";
 import { Button, TextArea } from "@egovernments/digit-ui-components";
 import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
 import debounce from "lodash/debounce";
-import useGetHearings from "../../../../dristi/src/hooks/dristi/useGetHearings";
-import useUpdateHearingsService from "../../hooks/services/useUpdateHearingsService";
 
 const fieldStyle = { marginRight: 0 };
 
-const InsideHearingMainPage = ({ hearingId }) => {
+const InsideHearingMainPage = () => {
   const history = useHistory();
   const [activeTab, setActiveTab] = useState("Transcript/Summary");
   const [immediateText, setImmediateText] = useState("");
@@ -24,6 +21,12 @@ const InsideHearingMainPage = ({ hearingId }) => {
   const [selectedWitness, setSelectedWitness] = useState({});
   const textAreaRef = useRef(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+
+  if (!hearingId) {
+    const contextPath = window?.contextPath || "";
+    history.push(`/${contextPath}/employee/hearings/home`);
+  }
 
   useEffect(() => {
     const userDetails = JSON.parse(localStorage.getItem("user-info"));
@@ -34,7 +37,7 @@ const InsideHearingMainPage = ({ hearingId }) => {
     return userRoles.some((role) => role.name === userRole);
   };
 
-  const { data: latestText } = useGetHearings(
+  const { data: latestText } = Digit.Hooks.hearings.useGetHearings(
     { hearing: { tenantId } },
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
@@ -42,7 +45,7 @@ const InsideHearingMainPage = ({ hearingId }) => {
     3000
   );
 
-  const { data: hearingResponse, refetch } = useUpdateHearingsService(
+  const { data: hearingResponse, refetch } = Digit.Hooks.hearings.useUpdateHearingsService(
     { hearing: { tenantId, hearing } },
     { applicationNumber: "", cnrNumber: "" },
     "dristi",
@@ -52,18 +55,21 @@ const InsideHearingMainPage = ({ hearingId }) => {
   useEffect(() => {
     if (latestText) {
       const hearingData = latestText?.HearingList[0];
-      setHearing(hearingData);
-      const additionalDetails = hearingData?.additionalDetails || {};
-      const processedAdditionalDetails = {
-        ...additionalDetails,
-        witnesss: additionalDetails.witnesss || [],
-      };
-      setAdditionalDetails(processedAdditionalDetails);
-      setOptions(processedAdditionalDetails.witnesss.map((witness) => ({ label: witness.name, value: witness.name })));
-      setImmediateText(hearingData?.transcript[0]);
-      setDelayedText(hearingData?.transcript[0]);
-      setSelectedWitness(processedAdditionalDetails.witnesss[0] || {});
-      setWitnessDepositionText(processedAdditionalDetails.witnesss[0]?.deposition || "");
+      // hearing data with particular id will always give array of one object
+      if (hearingData) {
+        setHearing(hearingData);
+        const additionalDetails = hearingData?.additionalDetails || {};
+        const processedAdditionalDetails = {
+          ...additionalDetails,
+          witnesss: additionalDetails.witnesss || [],
+        };
+        setAdditionalDetails(processedAdditionalDetails);
+        setOptions(processedAdditionalDetails.witnesss.map((witness) => ({ label: witness.name, value: witness.name })));
+        setImmediateText(hearingData?.transcript[0]);
+        setDelayedText(hearingData?.transcript[0]);
+        setSelectedWitness(processedAdditionalDetails.witnesss[0] || {});
+        setWitnessDepositionText(processedAdditionalDetails.witnesss[0]?.deposition || "");
+      }
     }
   }, [latestText]);
 
@@ -75,6 +81,11 @@ const InsideHearingMainPage = ({ hearingId }) => {
   const updateText = debounce(async (newText) => {
     try {
       setHearing((prevHearing) => {
+        if (Object.keys(prevHearing).length === 0) {
+          console.warn("Hearing object is empty");
+          return prevHearing;
+        }
+
         const updatedHearing = { ...prevHearing };
         if (activeTab === "Witness Deposition") {
           const witnessIndex = updatedHearing.additionalDetails.witnesss.findIndex((w) => w.name === selectedWitness);
@@ -93,7 +104,7 @@ const InsideHearingMainPage = ({ hearingId }) => {
     } catch (error) {
       console.error("Error updating hearings service:", error);
     }
-  }, 5000);
+  }, 3000);
 
   const handleChange = (e) => {
     const newText = e.target.value;

@@ -5,7 +5,6 @@ import { VideoIcon } from "./CustomSVGs";
 import { useHistory } from "react-router-dom";
 
 const EvidenceHearingHeader = ({ setActiveTab, activeTab }) => {
-  // const [activeTab, setActiveTab] = useState("Transcript/Summary");
   const [showMenu, setShowMenu] = useState(false);
   const history = useHistory();
 

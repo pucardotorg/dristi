@@ -1,15 +1,14 @@
-import { useQuery } from "react-query";
-import { DRISTIService } from "../../services";
+import { useQuery, useQueryClient } from "react-query";
+import { hearingService } from "../services";
 
-function useGetHearings(data, params, keys, enabled, refetchInterval = 0) {
+function useUpdateHearingsService(data, params, keys, enabled) {
   const { isLoading, data: hearingResponse, isFetching, refetch, error } = useQuery(
     `GET_HEARING_${keys}`,
-    () => DRISTIService.searchHearings(data, params),
+    () => hearingService.updateHearing(data, params),
     {
       cacheTime: 0,
       enabled: Boolean(enabled),
       retry: false, // Disable automatic retries to prevent flooding the API with requests
-      refetchInterval,
     }
   );
 
@@ -26,4 +25,4 @@ function useGetHearings(data, params, keys, enabled, refetchInterval = 0) {
   };
 }
 
-export default useGetHearings;
+export default useUpdateHearingsService;
