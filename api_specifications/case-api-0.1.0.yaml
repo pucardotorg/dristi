@@ -332,6 +332,10 @@ components:
             Date of case filing in epoch time. This is the date when the case
             entered the judicial system.
           example: 1709542147
+        judgementDate:
+            type: string
+            format: date
+            description: date of judgement (will mostly also mean closure of case). this will be same as judgement hearing date
         registrationDate:
           type: string
           description: Date when case was admitted by the judge in epoch time. Can also be derived from a WF state change
