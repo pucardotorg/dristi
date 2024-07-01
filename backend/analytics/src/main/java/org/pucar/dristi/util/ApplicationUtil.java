@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,9 +26,17 @@ public class ApplicationUtil {
 
 
 	public Object getApplication(JSONObject request, String tenantId, String applicationNumber) {
-		StringBuilder url = getSearchURLWithParams(applicationNumber);
+		StringBuilder url = getSearchURLWithParams();
+		log.info("Inside Application util getApplication :: url: " + url);
+
 		request.put("tenantId", tenantId);
+		JSONObject criteria = new JSONObject();
+		criteria.put("applicationNumber",applicationNumber);
+		criteria.put("tenantId",tenantId);
+		request.put("criteria",criteria);
+		log.info("Inside Application util getApplication :: request: " + request);
 		String response = repository.fetchResult(url, request);
+		log.info("Inside Application util getApplication :: response: " + response);
 		JSONArray applications = null;
 		try{
 			applications = util.constructArray(response, APPLICATION_PATH);
@@ -40,11 +47,9 @@ public class ApplicationUtil {
 		return applications.get(0);
 	}
 
-	private StringBuilder getSearchURLWithParams(String applicationNumber) {
+	private StringBuilder getSearchURLWithParams() {
 		StringBuilder url = new StringBuilder(config.getApplicationHost());
 		url.append(config.getApplicationSearchPath());
-		url.append(APPLICATION_NUMBER);
-		url.append(applicationNumber);
 		return url;
 	}
 }

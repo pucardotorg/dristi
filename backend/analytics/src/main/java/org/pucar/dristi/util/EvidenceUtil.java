@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,6 +26,8 @@ public class EvidenceUtil {
 
 	public Object getEvidence(JSONObject request, String tenantId, String artifactNumber) {
 		StringBuilder url = getSearchURLWithParams();
+		log.info("Inside Evidence util getEvidence :: url: " + url);
+
 		request.put("tenantId", tenantId);
 
 		JSONObject criteria = new JSONObject();
@@ -36,9 +37,13 @@ public class EvidenceUtil {
 		request.put("criteria", criteria);
 
 		String response = repository.fetchResult(url, request);
+		log.info("Inside Evidence util getEvidence :: response: " + response);
+
 		JSONArray artifacts = null;
 		try{
 			artifacts = util.constructArray(response, ARTIFACT_PATH);
+			log.info("Inside Evidence util getEvidence:: artifacts: " + artifacts.toString());
+
 		} catch (Exception e){
 			log.error("Error while building from case response", e);
 		}

@@ -2,7 +2,6 @@ package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IndexerUtils;
 import org.pucar.dristi.util.Util;
@@ -29,14 +28,19 @@ public class IndexerService {
 	private Util util;
 
 	public void esIndexer(String topic, String kafkaJson) {
-		JSONArray kafkaJsonArray = null;
+		log.info("Inside indexer service:: Topic: "+topic + ", kafkaJson: " + kafkaJson);
+		JSONArray kafkaJsonArray;
 		StringBuilder bulkRequest = new StringBuilder();
 		try {
 			kafkaJsonArray = util.constructArray(kafkaJson, PROCESS_INSTANCE_PATH);
+			log.info("Inside indexer service:: kafkaJsonArray: " + kafkaJsonArray.toString());
 			for (int i = 0; i < kafkaJsonArray.length(); i++) {
 				if (null != kafkaJsonArray.get(i)) {
 					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
-					bulkRequest.append(indexerUtils.buildPayload(stringifiedObject));
+					log.info("Inside indexer service:: stringifiedObject: " + stringifiedObject);
+					String payload = indexerUtils.buildPayload(stringifiedObject);
+					log.info("Inside indexer service:: payload: " + payload);
+					bulkRequest.append(payload);
 				}
 			}
 		} catch (Exception e) {

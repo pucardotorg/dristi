@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,12 +23,17 @@ public class TaskUtil {
 	private Util util;
 
 
-	public Object getTask(JSONObject request, String orderId, String cnrNumber, String tenantId, String taskNumber) {
-		StringBuilder url = getSearchURLWithParams(orderId, cnrNumber, tenantId, taskNumber);
+	public Object getTask(JSONObject request, String tenantId, String taskNumber) {
+		StringBuilder url = getSearchURLWithParams(tenantId, taskNumber);
+		log.info("Inside Task util getTask :: url: " + url);
 		String response = repository.fetchResult(url, request);
+		log.info("Inside Task util getTask :: response: " + response);
+
 		JSONArray tasks = null;
 		try{
-			tasks = util.constructArray(response, ARTIFACT_PATH);
+			tasks = util.constructArray(response, TASK_PATH);
+			log.info("Inside Task util getTask:: tasks: " + tasks.toString());
+
 		} catch (Exception e){
 			log.error("Error while building from case response", e);
 		}
@@ -37,13 +41,9 @@ public class TaskUtil {
 		return tasks.get(0);
 	}
 
-	private StringBuilder getSearchURLWithParams(String orderId, String cnrNumber, String tenantId, String taskNumber) {
+	private StringBuilder getSearchURLWithParams(String tenantId, String taskNumber) {
 		StringBuilder url = new StringBuilder(config.getTaskHost());
 		url.append(config.getTaskSearchPath());
-		url.append(ORDER_ID);
-		url.append(orderId);
-		url.append(CNR_NUMBER);
-		url.append(cnrNumber);
 		url.append(TENANT_ID);
 		url.append(tenantId);
 		url.append(TASK_NUMBER);

@@ -40,11 +40,12 @@ public class ServiceConstants {
 
 	public static final String HEARING_PATH = "$.HearingList.*";
 	public static final String CASE_PATH = "$.criteria.*.responseList[0]";
-	public static final String ARTIFACT_PATH = "$.artifacts[0]";
-	public static final String TASK_PATH = "$.list[0]";
-	public static final String APPLICATION_PATH = "$.applicationList[0]";
+	public static final String ARTIFACT_PATH = "$.artifacts.*";
+	public static final String TASK_PATH = "$.list.*";
+	public static final String APPLICATION_PATH = "$.applicationList.*";
 	public static final String CNR_NUMBERS_PATH = "$.cnrNumbers";
 	public static final String CNR_NUMBER_PATH = "$.cnrNumber";
+	public static final String CASE_ID_PATH = "$.caseId";
 	public static final String FILING_NUMBER_PATH = "$.filingNumber";
 	public static final String ERRORS_PATH = "$.errors";
 

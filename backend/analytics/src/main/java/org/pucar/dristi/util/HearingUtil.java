@@ -26,10 +26,13 @@ public class HearingUtil {
 
 	public Object getHearing(JSONObject request, String applicationNumber, String cnrNumber, String hearingId, String tenantId) {
 		StringBuilder url = getSearchURLWithParams(applicationNumber, cnrNumber, hearingId, tenantId);
+		log.info("Inside hearing util getHearing :: url: " + url);
 		String response = repository.fetchResult(url, request);
+		log.info("Inside hearing util getHearing:: response: " + response);
 		JSONArray hearings = null;
 		try {
 			hearings = util.constructArray(response, HEARING_PATH);
+			log.info("Inside hearing util getHearing :: hearings: " + hearings.toString());
 		} catch (Exception e) {
 			log.error("Error while building from hearing response", e);
 		}

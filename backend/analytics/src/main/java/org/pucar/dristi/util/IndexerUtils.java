@@ -1,6 +1,5 @@
 package org.pucar.dristi.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +59,7 @@ public class IndexerUtils {
 	public static JSONObject createRequestInfo() {
 		JSONObject userInfo = new JSONObject();
 		userInfo.put("id", 73);
+		userInfo.put("tenantId","pg");
 
 		JSONObject requestInfo = new JSONObject();
 		requestInfo.put("apiId", "org.egov.pt");
@@ -108,7 +108,7 @@ public class IndexerUtils {
 				}
 			}
 		};
-		scheduler.scheduleAtFixedRate(esPoller, 0, Long.valueOf(config.getPollInterval()), TimeUnit.SECONDS);
+		scheduler.scheduleAtFixedRate(esPoller, 0, Long.parseLong(config.getPollInterval()), TimeUnit.SECONDS);
 	}
 
 	public String buildString(Object object) {
@@ -131,7 +131,7 @@ public class IndexerUtils {
 		return "Basic " + new String(base64CredentialsBytes);
 	}
 
-	public String buildPayload(String jsonItem) throws JsonProcessingException {
+	public String buildPayload(String jsonItem) {
 		String id = JsonPath.read(jsonItem, ID_PATH);
 		String entityType = JsonPath.read(jsonItem, BUSINESS_SERVICE_PATH);
 		String referenceId = JsonPath.read(jsonItem, BUSINESS_ID_PATH);
@@ -148,8 +148,10 @@ public class IndexerUtils {
 		String assignedTo = new JSONArray(assignedToList).toString();
 		String assignedRole = new JSONArray(assignedRoleList).toString();
 		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
-
+		log.info("Inside indexer utils build payload:: jsonItem: " + jsonItem);
+		log.info("Inside indexer utils build payload:: entityType: " + entityType + ", referenceId: " + referenceId);
 		Map<String, String> details = processEntity(entityType, referenceId);
+		log.info("Inside indexer utils build payload:: details: " + details);
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
 
@@ -169,11 +171,15 @@ public class IndexerUtils {
 
 		if (entityType.equalsIgnoreCase("hearing")) {
 			Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
+			log.info("Inside indexer utils processEntity:: hearingObject: " + hearingObject.toString());
 			List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
 			if (cnrNumbers == null || cnrNumbers.isEmpty()) {
 				List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
 				if (filingNumberList != null && !filingNumberList.isEmpty()) {
 					filingNumber = filingNumberList.get(0);
+				}
+				else {
+					log.info("Inside indexer util processEntity:: Both cnr and filing numbers are not present");
 				}
 				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber);
 				cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
@@ -186,25 +192,28 @@ public class IndexerUtils {
 			filingNumber = referenceId;
 			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber);
 			cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
+		} else if (entityType.equalsIgnoreCase("evidence")) {
+			Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
+			String caseId = JsonPath.read(artifactObject.toString(), CASE_ID_PATH);
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, null, caseId);
+			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+			cnrNumber = JsonPath.read(caseObject.toString(),CNR_NUMBER_PATH);
+		} else if (entityType.equalsIgnoreCase("task")) {
+			Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
+			cnrNumber = JsonPath.read(taskObject, CNR_NUMBER_PATH);
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
+			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+		} else if (entityType.equalsIgnoreCase("application")) {
+			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
+			String caseId = JsonPath.read(applicationObject, CASE_ID_PATH);
+			cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
+			filingNumber = JsonPath.read(applicationObject.toString(),FILING_NUMBER_PATH);
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber,caseId);
+			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+			cnrNumber = JsonPath.read(caseObject.toString(),CNR_NUMBER_PATH);
 		}
-//		} else if (entityType.equalsIgnoreCase("evidence")) {
-//			Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
-//			cnrNumber = JsonPath.read(artifactObject, CNR_NUMBER_PATH);
-//			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
-//			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-//		} else if (entityType.equalsIgnoreCase("task")) {
-//			Object taskObject = taskUtil.getTask(request, null, null, config.getStateLevelTenantId(), referenceId);
-//			cnrNumber = JsonPath.read(taskObject, CNR_NUMBER_PATH);
-//			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
-//			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-//		} else if (entityType.equalsIgnoreCase("application")) {
-//			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
-//			cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
-//			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
-//			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-//		}
 	else {
-			log.error("Unexpected entityType: ", entityType);
+            log.error("Unexpected entityType: {}", entityType);
 		}
 
 		caseDetails.put("cnrNumber", cnrNumber);
