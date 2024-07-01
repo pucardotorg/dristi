@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.Pagination;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +46,7 @@ class ApplicationQueryBuilderTest {
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app WHERE app.id ='test-id' AND app.tenantId ='test-tenant' ORDER BY app.createdtime DESC ";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -67,7 +69,7 @@ class ApplicationQueryBuilderTest {
                 " app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status " +
                 " FROM dristi_application app ORDER BY app.createdtime DESC ";
 
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertEquals(expectedQuery, actualQuery);
     }
@@ -88,7 +90,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.applicationNumber ='applicationNumber123'";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -107,7 +109,7 @@ class ApplicationQueryBuilderTest {
         Integer offset = null;
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertFalse(query.contains("app.applicationNumber ="));
     }
@@ -128,7 +130,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.filingNumber ='filingNumber123'";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -147,7 +149,7 @@ class ApplicationQueryBuilderTest {
         Integer offset = null;
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertFalse(query.contains("app.filingNumber ="));
     }
@@ -169,7 +171,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.cnrNumber ='CNR123456'";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -188,7 +190,7 @@ class ApplicationQueryBuilderTest {
         Integer offset = null;
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertFalse(query.contains("app.cnrNumber ="));
         assertFalse(query.contains("app.status ="));
@@ -208,7 +210,7 @@ class ApplicationQueryBuilderTest {
         Integer offset = null;
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertFalse(query.contains("app.cnrNumber ="));
     }
@@ -230,7 +232,7 @@ class ApplicationQueryBuilderTest {
         String expectedQueryPart = "app.status ='status123'";
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         // Verify the expected part of the query is present
         assertTrue(query.contains(expectedQueryPart));
@@ -249,7 +251,7 @@ class ApplicationQueryBuilderTest {
         Integer offset = null;
 
         // Call the method
-        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber, limit, offset);
+        String query = applicationQueryBuilder.getApplicationSearchQuery(id, filingNumber, cnrNumber, tenantId, status, applicationNumber);
 
         assertFalse(query.contains("app.status ="));
     }
@@ -412,17 +414,9 @@ class ApplicationQueryBuilderTest {
     }
 
     @Test
-    void testLimitAndOffsetProvided() {
-        String expectedQuery = " SELECT app.id as id, app.tenantid as tenantid, app.caseid as caseid, app.filingnumber as filingnumber, app.cnrnumber as cnrnumber, app.referenceid as referenceid, app.createddate as createddate, app.applicationcreatedby as applicationcreatedby, app.onbehalfof as onbehalfof, app.applicationtype as applicationtype, app.applicationnumber as applicationnumber, app.issuedby as issuedby, app.status as status, app.comment as comment, app.isactive as isactive, app.additionaldetails as additionaldetails, app.createdby as createdby, app.lastmodifiedby as lastmodifiedby, app.createdtime as createdtime, app.lastmodifiedtime as lastmodifiedtime, app.status as status  FROM dristi_application app ORDER BY app.createdtime DESC  LIMIT 1 OFFSET 1";
-
-        String actualQuery = applicationQueryBuilder.getApplicationSearchQuery(null, null, null,null,null,null,1,1);
-        assertEquals(expectedQuery, actualQuery);
-    }
-
-    @Test
     void testGetApplicationsSearchQueryException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null, null);
+            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null);
         } catch (Exception e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getMessage());
         }
@@ -431,7 +425,7 @@ class ApplicationQueryBuilderTest {
     @Test
     void testGetApplicationsSearchQueryCustomException() {
         try {
-            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null, null, null);
+            applicationQueryBuilder.getApplicationSearchQuery(null, null, null, null, null, null);
         } catch (CustomException e) {
             assertEquals(APPLICATION_SEARCH_QUERY_EXCEPTION, e.getCode());
         }
@@ -444,5 +438,30 @@ class ApplicationQueryBuilderTest {
         } catch (Exception e) {
             assertEquals("Error occurred while building the application exist query ", e.getMessage());
         }
+    }
+
+    @Test
+    void getTotalCountQuery_ShouldReturnCorrectQuery_WhenBaseQueryIsNotNull() {
+        String baseQuery = "SELECT * FROM dristi_application app WHERE app.id = '111'";
+
+        String query = applicationQueryBuilder.getTotalCountQuery(baseQuery);
+
+        String expectedQuery = "SELECT COUNT(*) FROM (SELECT * FROM dristi_application app WHERE app.id = '111') total_result";
+
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    void addPagination_Query_ShouldReturnCorrectQuery_WhenPageSizeAndPageNumberAreNotNull() {
+        String query = "SELECT * FROM dristi_application app WHERE app.id = '111'";
+        Pagination pagination = new Pagination();
+        pagination.setLimit(2d);
+        pagination.setOffSet(0d);
+
+        String paginatedQuery = applicationQueryBuilder.addPaginationQuery(query, pagination);
+
+        String expectedQuery = "SELECT * FROM dristi_application app WHERE app.id = '111' LIMIT 2 OFFSET 0";
+
+        assertEquals(expectedQuery, paginatedQuery);
     }
 }

@@ -2,10 +2,8 @@ package org.pucar.dristi.validator;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.repository.ApplicationRepository;
 import org.pucar.dristi.util.CaseUtil;
-import org.pucar.dristi.util.IdgenUtil;
 import org.pucar.dristi.web.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,11 +16,14 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 public class ApplicationValidator {
-    @Autowired
-    private CaseUtil caseUtil;
+    private final ApplicationRepository repository;
+    private final CaseUtil caseUtil;
 
     @Autowired
-    private ApplicationRepository repository;
+    public ApplicationValidator(ApplicationRepository repository, CaseUtil caseUtil) {
+        this.repository = repository;
+        this.caseUtil = caseUtil;
+    }
 
     public void validateApplication(ApplicationRequest applicationRequest) throws CustomException {
         RequestInfo requestInfo = applicationRequest.getRequestInfo();
