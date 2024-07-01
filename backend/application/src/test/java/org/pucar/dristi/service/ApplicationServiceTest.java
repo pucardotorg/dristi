@@ -208,12 +208,6 @@ class ApplicationServiceTest {
 
     @Test
     void testSearchApplicationHandleException() {
-        String id = "testId";
-        String tenantId = "testTenantId";
-        String filingNumber = "filingNumber";
-        String cnrNumber = "cnrNumber";
-        String status = "status";
-
         when(applicationRepository.getApplications(null)).thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
