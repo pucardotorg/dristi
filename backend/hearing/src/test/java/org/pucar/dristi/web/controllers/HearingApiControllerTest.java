@@ -104,7 +104,7 @@ public class HearingApiControllerTest {
     }
 
     @Test
-    public void testHearingV1UpdateTranscriptPost_Success() {
+    void testHearingV1UpdateTranscriptPost_Success() {
         HearingRequest hearingRequest = new HearingRequest();  // Set up the request
         Hearing hearing = new Hearing();  // Set up the response
         ResponseInfo responseInfo = new ResponseInfo();

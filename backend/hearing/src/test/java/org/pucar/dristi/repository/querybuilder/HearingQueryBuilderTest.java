@@ -196,7 +196,7 @@ class HearingQueryBuilderTest {
         // Act & Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> hearingQueryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails));
 
-        assertEquals("Error converting transcript list to JSON", exception.getMessage());
+        assertEquals("Error parsing transcript list to JSON : Error", exception.getMessage());
         verify(mapper, times(1)).writeValueAsString(transcriptList);
         assertTrue(preparedStmtList.isEmpty());
     }
