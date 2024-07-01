@@ -32,8 +32,6 @@ public class TaskUtil {
 		JSONArray tasks = null;
 		try{
 			tasks = util.constructArray(response, TASK_PATH);
-			log.info("Inside Task util getTask:: tasks: " + tasks.toString());
-
 		} catch (Exception e){
 			log.error("Error while building from case response", e);
 		}

@@ -78,8 +78,6 @@ public class CaseUtil {
 		JSONArray cases = null;
 		try{
 			cases = util.constructArray(response, CASE_PATH);
-			log.info("Inside Case util getCase with caseId :: cases: " + cases.toString());
-
 		} catch (Exception e){
 			log.error("Error while building from case response", e);
 		}

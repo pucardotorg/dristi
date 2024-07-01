@@ -42,8 +42,6 @@ public class EvidenceUtil {
 		JSONArray artifacts = null;
 		try{
 			artifacts = util.constructArray(response, ARTIFACT_PATH);
-			log.info("Inside Evidence util getEvidence:: artifacts: " + artifacts.toString());
-
 		} catch (Exception e){
 			log.error("Error while building from case response", e);
 		}

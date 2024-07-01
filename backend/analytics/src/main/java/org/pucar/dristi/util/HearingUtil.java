@@ -32,7 +32,6 @@ public class HearingUtil {
 		JSONArray hearings = null;
 		try {
 			hearings = util.constructArray(response, HEARING_PATH);
-			log.info("Inside hearing util getHearing :: hearings: " + hearings.toString());
 		} catch (Exception e) {
 			log.error("Error while building from hearing response", e);
 		}
