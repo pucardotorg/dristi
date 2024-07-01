@@ -69,9 +69,9 @@ const CustomReviewCardRow = ({
     return value;
   };
   const handleImageClick = useCallback(
-    (configKey, name, dataIndex, fieldName, data, inputlist) => {
+    (configKey, name, dataIndex, fieldName, data, inputlist, dataError) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError);
       }
       return null;
     },
@@ -134,7 +134,7 @@ const CustomReviewCardRow = ({
             </div>
             {titleError && isScrutiny && (
               <div className="scrutiny-error input">
-                {bgclassname === "preverrorside" ? (
+                {bgclassname === "preverror" ? (
                   <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
                 ) : (
                   <FlagIcon isError={true} />
@@ -172,7 +172,7 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                {bgclassname === "preverrorside" ? (
+                {bgclassname === "preverror" ? (
                   <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
                 ) : (
                   <FlagIcon isError={true} />
@@ -233,7 +233,7 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                {bgclassname === "preverrorside" ? (
+                {bgclassname === "preverror" ? (
                   <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
                 ) : (
                   <FlagIcon isError={true} />
@@ -272,7 +272,7 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                {bgclassname === "preverrorside" ? (
+                {bgclassname === "preverror" ? (
                   <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
                 ) : (
                   <FlagIcon isError={true} />
@@ -294,11 +294,8 @@ const CustomReviewCardRow = ({
         bgclassname =
           isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
         bgclassname = FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : bgclassname;
-        const hasPrevError = value.some((key) => {
-          return prevDataError?.[key] && prevDataError?.[key]?.FSOError;
-        });
         if (isPrevScrutiny) {
-          showFlagIcon = hasPrevError;
+          showFlagIcon = prevDataError?.[type]?.FSOError;
         }
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
@@ -324,7 +321,7 @@ const CustomReviewCardRow = ({
                               <div
                                 style={{ cursor: "pointer" }}
                                 onClick={() => {
-                                  handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
+                                  handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
                                   if (!isScrutiny)
                                     setShowImageModal({
                                       openModal: true,
@@ -357,7 +354,7 @@ const CustomReviewCardRow = ({
                                 <div
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
+                                    handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
                                     if (!isScrutiny)
                                       setShowImageModal({
                                         openModal: true,
@@ -393,7 +390,7 @@ const CustomReviewCardRow = ({
                         <div
                           style={{ cursor: "pointer" }}
                           onClick={() => {
-                            handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]]);
+                            handleImageClick(configKey, name, dataIndex, value[fileIndex], data, [value[fileIndex]], dataError);
                           }}
                         >
                           <DocViewerWrapper
@@ -428,7 +425,7 @@ const CustomReviewCardRow = ({
               FSOErrors.map((error, ind) => {
                 return (
                   <div className="scrutiny-error input" key={ind}>
-                    {bgclassname === "preverrorside" ? (
+                    {bgclassname === "preverror" ? (
                       <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
                     ) : (
                       <FlagIcon isError={true} />
@@ -491,7 +488,7 @@ const CustomReviewCardRow = ({
             </div>
             {dataError && isScrutiny && (
               <div className="scrutiny-error input">
-                {bgclassname === "preverrorside" ? (
+                {bgclassname === "preverror" ? (
                   <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
                 ) : (
                   <FlagIcon isError={true} />
@@ -524,7 +521,7 @@ const CustomReviewCardRow = ({
               )}
             </div>
             <div className="scrutiny-error input">
-              {bgclassname === "preverrorside" ? (
+              {bgclassname === "preverror" ? (
                 <span style={{ color: "#4d83cf", fontWeight: 300 }}>{t("CS_PREVIOUS_ERROR")}</span>
               ) : (
                 <FlagIcon isError={true} />

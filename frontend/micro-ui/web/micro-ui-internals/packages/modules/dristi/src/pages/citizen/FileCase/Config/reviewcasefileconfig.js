@@ -380,7 +380,7 @@ export const reviewCaseFileFormConfig = [
                 },
                 {
                   type: "image",
-                  label: "CS_ID_PROOF",
+                  label: "CS_VAKALAT_NAMA",
                   value: ["vakalatnamaFileUpload.document"],
                 },
               ],

@@ -1697,13 +1697,14 @@ export const updateCaseDetails = async ({
     };
   }
   const caseTitle =
-    caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
-    caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
-    `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
-      caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
-    } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
-      caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
-    }`;
+    caseDetails?.caseTitle ||
+    (caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName &&
+      caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName &&
+      `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${
+        caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName || ""
+      } VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${
+        caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName || ""
+      }`);
   setErrorCaseDetails({
     ...caseDetails,
     litigants: !caseDetails?.litigants ? [] : caseDetails?.litigants,
