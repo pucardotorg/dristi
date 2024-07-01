@@ -10,7 +10,6 @@ import { formatDate } from "../../citizen/FileCase/CaseType";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import { selectParticipantConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
 import { admitCaseSubmitConfig, scheduleCaseSubmitConfig, sendBackCase } from "../../citizen/FileCase/Config/admissionActionConfig";
-import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -37,7 +36,7 @@ function CaseFileAdmission({ t, path }) {
     caseId,
     Boolean(caseId)
   );
-  const { data: hearingResponse } = useGetHearings(
+  const { data: hearingResponse } = Digit.Hooks.hearings.useGetHearings(
     {
       hearing: { tenantId },
     },
