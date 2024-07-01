@@ -17,6 +17,7 @@ import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.enrichment.CaseRegistrationEnrichment;
 import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.repository.CaseRepository;
+import org.pucar.dristi.util.EncryptionDecryptionUtil;
 import org.pucar.dristi.validators.CaseRegistrationValidator;
 import org.pucar.dristi.web.models.*;
 
@@ -37,6 +38,8 @@ public class CaseServiceTest {
     private Configuration config;
     @Mock
     private Producer producer;
+    @Mock
+    private EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     @InjectMocks
     private CaseService caseService;
@@ -48,6 +51,8 @@ public class CaseServiceTest {
     private CaseSearchRequest caseSearchRequest;
 
     private CaseExistsRequest caseExistsRequest;
+
+
 
     @BeforeEach
     void setup() {
@@ -66,6 +71,7 @@ public class CaseServiceTest {
         doNothing().when(validator).validateCaseRegistration(any());
         doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any());
         doNothing().when(workflowService).updateWorkflowStatus(any());
+        when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(caseRequest.getCases());
         doNothing().when(producer).push(any(), any()); // Stubbing to accept any arguments
 
         // Call the method under test
@@ -273,6 +279,8 @@ public class CaseServiceTest {
         when(validator.validateApplicationExistence(any(CaseRequest.class))).thenReturn(true);
         doNothing().when(enrichmentUtil).enrichCaseApplicationUponUpdate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
+        when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(courtCase);
+
         doNothing().when(producer).push(anyString(), any(CaseRequest.class));
         when(config.getCaseUpdateTopic()).thenReturn("case-update-topic");
 
@@ -384,7 +392,7 @@ public class CaseServiceTest {
         doNothing().when(validator).validateCaseRegistration(any(CaseRequest.class));
         doNothing().when(enrichmentUtil).enrichCaseRegistrationOnCreate(any(CaseRequest.class));
         doNothing().when(workflowService).updateWorkflowStatus(any(CaseRequest.class));
-
+        when(encryptionDecryptionUtil.encryptObject(any(),any(),any())).thenReturn(cases);
 
         CourtCase result = caseService.createCase(caseRequest);
 
