@@ -48,17 +48,17 @@ public class ApplicationRepository {
 
             String applicationQuery = queryBuilder.getApplicationSearchQuery(applicationSearchRequest.getCriteria().getId(), applicationSearchRequest.getCriteria().getFilingNumber(), applicationSearchRequest.getCriteria().getCnrNumber(),
                     applicationSearchRequest.getCriteria().getTenantId(), applicationSearchRequest.getCriteria().getStatus(),
-                    applicationSearchRequest.getCriteria().getApplicationNumber());
+                    applicationSearchRequest.getCriteria().getApplicationNumber(), preparedStmtList);
             log.info("Final application search query: {}", applicationQuery);
 
             if(applicationSearchRequest.getPagination() !=  null) {
-                Integer totalRecords = getTotalCountApplication(applicationQuery);
+                Integer totalRecords = getTotalCountApplication(applicationQuery, preparedStmtList);
                 log.info("Total count without pagination :: {}", totalRecords);
                 applicationSearchRequest.getPagination().setTotalCount(Double.valueOf(totalRecords));
-                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination());
+                applicationQuery = queryBuilder.addPaginationQuery(applicationQuery, applicationSearchRequest.getPagination(), preparedStmtList);
             }
 
-            List<Application> list = jdbcTemplate.query(applicationQuery, rowMapper);
+            List<Application> list = jdbcTemplate.query(applicationQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB application list :: {}", list);
             if (list != null) {
                 applicationList.addAll(list);
@@ -106,10 +106,10 @@ public class ApplicationRepository {
         }
     }
 
-    public Integer getTotalCountApplication(String baseQuery) {
+    public Integer getTotalCountApplication(String baseQuery, List<Object> preparedStmtList) {
         String countQuery = queryBuilder.getTotalCountQuery(baseQuery);
         log.info("Final count query :: {}", countQuery);
-        return jdbcTemplate.queryForObject(countQuery, Integer.class);
+        return jdbcTemplate.queryForObject(countQuery, preparedStmtList.toArray(), Integer.class);
     }
 
     public List<ApplicationExists> checkApplicationExists(List<ApplicationExists> applicationExistsList) {

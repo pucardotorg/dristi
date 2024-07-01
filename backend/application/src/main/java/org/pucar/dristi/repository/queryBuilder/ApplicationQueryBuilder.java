@@ -78,42 +78,19 @@ public class ApplicationQueryBuilder {
         }
     }
 
-    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber) {
+    public String getApplicationSearchQuery(String id, String filingNumber, String cnrNumber, String tenantId, String status,String applicationNumber,List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_APP_QUERY);
             query.append(FROM_APP_TABLE);
 
             boolean firstCriteria = true; // To check if it's the first criteria
-            if(id != null && !id.isEmpty()){
-                addClauseIfRequired(query, firstCriteria);
-                query.append("app.id =").append("'").append(id).append("'");
-                firstCriteria = false; // Update firstCriteria flag
-            }
-            if(filingNumber != null && !filingNumber.isEmpty()){
-                addClauseIfRequired(query, firstCriteria);
-                query.append("app.filingNumber =").append("'").append(filingNumber).append("'");
-                firstCriteria = false; // Update firstCriteria flag
-             }
-            if(cnrNumber != null && !cnrNumber.isEmpty()){
-                addClauseIfRequired(query, firstCriteria);
-                query.append("app.cnrNumber =").append("'").append(cnrNumber).append("'");
-                firstCriteria = false;
-            }
-            if(tenantId != null && !tenantId.isEmpty()){
-                addClauseIfRequired(query, firstCriteria);
-                query.append("app.tenantId =").append("'").append(tenantId).append("'");
-                firstCriteria = false;
-            }
-            if (status!=null && !status.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("app.status =").append("'").append(status).append("'");
-                firstCriteria = false;
-            }
-            if (applicationNumber!=null && !applicationNumber.isEmpty()) {
-                addClauseIfRequired(query, firstCriteria);
-                query.append("app.applicationNumber =").append("'").append(applicationNumber).append("'");
-                firstCriteria = false;
-            }
+            firstCriteria = addCriteria(id, query, firstCriteria, "app.id = ?", preparedStmtList);
+            firstCriteria = addCriteria(filingNumber, query, firstCriteria, "app.filingNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(cnrNumber, query, firstCriteria, "app.cnrNumber = ?", preparedStmtList);
+            firstCriteria = addCriteria(tenantId, query, firstCriteria, "app.tenantId = ?", preparedStmtList);
+            firstCriteria = addCriteria(status, query, firstCriteria, "app.status = ?", preparedStmtList);
+            addCriteria(applicationNumber, query, firstCriteria, "app.applicationNumber = ?", preparedStmtList);
+
             query.append(ORDERBY_CREATEDTIME_DESC);
             return query.toString();
         }
@@ -121,6 +98,16 @@ public class ApplicationQueryBuilder {
             log.error("Error while building application search query {}", e.getMessage());
             throw new CustomException(APPLICATION_SEARCH_QUERY_EXCEPTION,"Error occurred while building the application search query: "+ e.getMessage());
         }
+    }
+
+    private boolean addCriteria(String criteria, StringBuilder query, boolean firstCriteria, String str, List<Object> preparedStmtList) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
+            query.append(str);
+            preparedStmtList.add(criteria);
+            firstCriteria = false;
+        }
+        return firstCriteria;
     }
 
     private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
@@ -134,12 +121,13 @@ public class ApplicationQueryBuilder {
     public String getTotalCountQuery(String baseQuery) {
         return TOTAL_COUNT_QUERY.replace("{baseQuery}", baseQuery);
     }
-    public String addPaginationQuery(String query, Pagination pagination) {
-        String paginationQuery = query + " LIMIT " + (pagination.getLimit().intValue()) +
-                " OFFSET " + pagination.getOffSet().intValue();
-        log.info("pagination search query : {}", paginationQuery);
-        return paginationQuery;
+
+    public String addPaginationQuery(String query, Pagination pagination, List<Object> preparedStatementList) {
+        preparedStatementList.add(pagination.getLimit());
+        preparedStatementList.add(pagination.getOffSet());
+        return query + " LIMIT ? OFFSET ?";
     }
+
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY_APP);
