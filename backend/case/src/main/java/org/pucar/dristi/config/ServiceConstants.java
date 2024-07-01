@@ -111,4 +111,7 @@ public class ServiceConstants {
 
 	public static final String EMPLOYEE = "EMPLOYEE";
 
+	public static final String ENCRYPTION_SERVICE_ERROR = "Error occurred while calling Encryption Service";
+
+	public static final String PURPOSE = "purpose";
 }

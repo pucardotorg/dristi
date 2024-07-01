@@ -33,26 +33,24 @@ import java.util.UUID;
 @Slf4j
 public class CaseService {
 
-    private CaseRegistrationValidator validator;
-
-    private CaseRegistrationEnrichment enrichmentUtil;
-
-    private CaseRepository caseRepository;
-
-    private WorkflowService workflowService;
-
-    private Configuration config;
-
-    private Producer producer;
-
-    private BillingUtil billingUtil;
-
-
+    private final CaseRegistrationValidator validator;
+    private final CaseRegistrationEnrichment enrichmentUtil;
+    private final CaseRepository caseRepository;
+    private final WorkflowService workflowService;
+    private final Configuration config;
+    private final Producer producer;
+    private final BillingUtil billingUtil;
     private final EncryptionDecryptionUtil encryptionDecryptionUtil;
 
-
     @Autowired
-    public CaseService(CaseRegistrationValidator validator, CaseRegistrationEnrichment enrichmentUtil, CaseRepository caseRepository, WorkflowService workflowService, Configuration config, Producer producer, BillingUtil billingUtil) {
+    public CaseService(@Lazy CaseRegistrationValidator validator,
+                       CaseRegistrationEnrichment enrichmentUtil,
+                       CaseRepository caseRepository,
+                       WorkflowService workflowService,
+                       Configuration config,
+                       Producer producer,
+                       BillingUtil billingUtil,
+                       EncryptionDecryptionUtil encryptionDecryptionUtil) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.caseRepository = caseRepository;
@@ -60,11 +58,7 @@ public class CaseService {
         this.config = config;
         this.producer = producer;
         this.billingUtil = billingUtil;
-    }
-
-    @Autowired
-    public void setValidator(@Lazy CaseRegistrationValidator validator) {
-        this.validator = validator;
+        this.encryptionDecryptionUtil = encryptionDecryptionUtil;
     }
 
     public CourtCase createCase(CaseRequest body) {

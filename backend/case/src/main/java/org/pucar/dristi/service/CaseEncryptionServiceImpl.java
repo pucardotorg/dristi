@@ -22,26 +22,27 @@ import org.springframework.stereotype.Service;
 public class CaseEncryptionServiceImpl extends EncryptionServiceImpl {
     private static final Logger log = LoggerFactory.getLogger(CaseEncryptionServiceImpl.class);
 
-    @Autowired
-    private CaseEncryptionServiceRestConnection encryptionServiceRestConnection;
+    private final CaseEncryptionServiceRestConnection encryptionServiceRestConnection;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    public CaseEncryptionServiceImpl() {
+    public CaseEncryptionServiceImpl(CaseEncryptionServiceRestConnection encryptionServiceRestConnection, ObjectMapper objectMapper) {
+        super();
+        this.encryptionServiceRestConnection = encryptionServiceRestConnection;
+        this.objectMapper = objectMapper;
     }
 
-
+    @Override
     public <E, P> P encryptJson(Object plaintextJson, String model, String tenantId, Class<E> valueType) throws IOException {
         return CaseConvertClass.convertTo(this.encryptJson(plaintextJson, model, tenantId), valueType);
     }
 
-
+    @Override
     public <E, P> P decryptJson(RequestInfo requestInfo, Object ciphertextJson, String model, String purpose, Class<E> valueType) throws IOException {
         return CaseConvertClass.convertTo(this.decryptJson(requestInfo, ciphertextJson, model, purpose), valueType);
     }
 
-
+    @Override
     public List<String> encryptValue(List<Object> plaintext, String tenantId, String type) throws IOException {
         Object encryptionResponse = this.encryptionServiceRestConnection.callEncrypt(tenantId, type, plaintext);
         return (List)CaseConvertClass.convertTo(this.objectMapper.valueToTree(encryptionResponse), List.class);

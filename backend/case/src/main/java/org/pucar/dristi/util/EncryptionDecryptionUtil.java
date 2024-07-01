@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
 import org.egov.common.contract.request.User;
-//import org.egov.encryption.EncryptionService;
 import org.egov.encryption.EncryptionService;
 import org.egov.encryption.audit.AuditService;
 import org.egov.tracer.model.CustomException;
-import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.config.ServiceConstants;
 import org.pucar.dristi.web.models.CourtCase;
 import org.pucar.dristi.web.models.Party;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +21,28 @@ import org.springframework.web.client.ResourceAccessException;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class EncryptionDecryptionUtil {
-    @Qualifier("CaseEncryptionService")
-    private EncryptionService encryptionService;
+//    @Qualifier("caseEncryptionServiceImpl")
+    private final EncryptionService encryptionService;
+    private final AuditService auditService;
+    private final ObjectMapper objectMapper;
+    private final String stateLevelTenantId;
+    private final boolean abacEnabled;
+
     @Autowired
-    private AuditService auditService;
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Value(("${state.level.tenant.id}"))
-    private String stateLevelTenantId;
-
-    @Value(("${decryption.abac.enabled}"))
-    private boolean abacEnabled;
-
-    public EncryptionDecryptionUtil(EncryptionService encryptionService) {
+    public EncryptionDecryptionUtil(@Qualifier("caseEncryptionServiceImpl") EncryptionService encryptionService,
+                                    AuditService auditService,
+                                    ObjectMapper objectMapper,
+                                    @Value("${state.level.tenant.id}") String stateLevelTenantId,
+                                    @Value("${decryption.abac.enabled}") boolean abacEnabled) {
         this.encryptionService = encryptionService;
+        this.auditService = auditService;
+        this.objectMapper = objectMapper;
+        this.stateLevelTenantId = stateLevelTenantId;
+        this.abacEnabled = abacEnabled;
     }
 
     public <T> T encryptObject(Object objectToEncrypt, String key, Class<T> classType) {
@@ -81,7 +82,7 @@ public class EncryptionDecryptionUtil {
             requestInfo.setUserInfo(encrichedUserInfo);
 
             Map<String, String> keyPurposeMap = getKeyToDecrypt(objectToDecrypt, encrichedUserInfo);
-            String purpose = keyPurposeMap.get("purpose");
+            String purpose = keyPurposeMap.get(ServiceConstants.PURPOSE);
 
             if (key == null)
                 key = keyPurposeMap.get("key");
@@ -105,35 +106,26 @@ public class EncryptionDecryptionUtil {
     }
 
     public boolean isUserDecryptingForSelf(Object objectToDecrypt, User userInfo) {
-//        org.egov.user.domain.model.User userToDecrypt = null;
         List<Party> usersToDecrypt = null;
-        if (objectToDecrypt instanceof List) {
-            if (((List) objectToDecrypt).isEmpty())
+        if (objectToDecrypt instanceof List list) {
+            if (list.isEmpty())
                 return false;
-            if (((List) objectToDecrypt).size() > 1)
+            if (list.size() > 1)
                 return false;
-//            userToDecrypt = (org.egov.user.domain.model.User) ((List) objectToDecrypt).get(0);
-            usersToDecrypt = ((CourtCase) ((List) objectToDecrypt).get(0)).getLitigants();
+            usersToDecrypt = ((CourtCase) list.get(0)).getLitigants();
         } else {
             throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of User");
         }
         List<UUID> userIDs = usersToDecrypt
                 .stream()
-                .filter(p -> p.getId().toString().equalsIgnoreCase(userInfo.getUuid()))
                 .map(Party::getId)
-                .collect(Collectors.toList());
-        if (userIDs.size() > 0) {
-            return true;
-        } else {
-            return false;
-        }
+                .filter(id -> id.toString().equalsIgnoreCase(userInfo.getUuid()))
+                .toList();
+        return !userIDs.isEmpty();
     }
 
     private boolean isDecryptionForIndividualUser(Object objectToDecrypt) {
-        if (((List) objectToDecrypt).size() == 1)
-            return true;
-        else
-            return false;
+        return ((List) objectToDecrypt).size() == 1;
     }
 
     public Map<String,String> getKeyToDecrypt(Object objectToDecrypt, User userInfo) {
@@ -141,24 +133,24 @@ public class EncryptionDecryptionUtil {
 
         if (!abacEnabled){
             keyPurposeMap.put("key","CaseDecryptSelf");
-            keyPurposeMap.put("purpose","AbacDisabled");
+            keyPurposeMap.put(ServiceConstants.PURPOSE,"AbacDisabled");
         }
 
 
         else if (isUserDecryptingForSelf(objectToDecrypt, userInfo)){
             keyPurposeMap.put("key","CaseDecryptSelf");
-            keyPurposeMap.put("purpose","Self");
+            keyPurposeMap.put(ServiceConstants.PURPOSE,"Self");
         }
 
 
         else if (isDecryptionForIndividualUser(objectToDecrypt)){
             keyPurposeMap.put("key","CaseDecryptOther");
-            keyPurposeMap.put("purpose","SingleSearchResult");
+            keyPurposeMap.put(ServiceConstants.PURPOSE,"SingleSearchResult");
         }
 
         else{
             keyPurposeMap.put("key","CaseDecryptOther");
-            keyPurposeMap.put("purpose","BulkSearchResult");
+            keyPurposeMap.put(ServiceConstants.PURPOSE,"BulkSearchResult");
         }
 
         return keyPurposeMap;
@@ -178,10 +170,10 @@ public class EncryptionDecryptionUtil {
             newRoleList.add(roleFromtype);
         }
 
-        User newuserInfo = User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())
+        return User.builder().id(userInfo.getId()).userName(userInfo.getUserName()).name(userInfo.getName())
                 .type(userInfo.getType()).mobileNumber(userInfo.getMobileNumber()).emailId(userInfo.getEmailId())
                 .roles(newRoleList).tenantId(userInfo.getTenantId()).uuid(userInfo.getUuid()).build();
-        return newuserInfo;
+
     }
 
 }
