@@ -77,13 +77,13 @@ public class TaskServiceTest {
         when(config.getTaskBusinessName()).thenReturn("task-business-name");
         when(config.getTaskCreateTopic()).thenReturn("task-create-topic");
 
-        doNothing().when(validator).validateCaseRegistration(any(TaskRequest.class));
+        doNothing().when(validator).validateTaskRegistration(any(TaskRequest.class));
         doNothing().when(enrichmentUtil).enrichTaskRegistration(any(TaskRequest.class));
 
         Task result = taskService.createTask(taskRequest);
 
         assertEquals(task, result);
-        verify(validator, times(1)).validateCaseRegistration(any(TaskRequest.class));
+        verify(validator, times(1)).validateTaskRegistration(any(TaskRequest.class));
         verify(enrichmentUtil, times(1)).enrichTaskRegistration(any(TaskRequest.class));
         verify(workflowUtil, times(1)).updateWorkflowStatus(any(RequestInfo.class), anyString(), anyString(), anyString(), any(), anyString());
         verify(producer, times(1)).push(anyString(), any(TaskRequest.class));
@@ -91,7 +91,7 @@ public class TaskServiceTest {
 
     @Test
     void testCreateTaskThrowsException() {
-        doThrow(new CustomException(CREATE_TASK_ERR, "Error")).when(validator).validateCaseRegistration(any(TaskRequest.class));
+        doThrow(new CustomException(CREATE_TASK_ERR, "Error")).when(validator).validateTaskRegistration(any(TaskRequest.class));
 
         CustomException exception = assertThrows(CustomException.class, () -> taskService.createTask(taskRequest));
 

@@ -6,9 +6,11 @@ import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.repository.querybuilder.OrderQueryBuilder;
 import org.pucar.dristi.repository.rowmapper.*;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderCriteria;
 import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -40,16 +42,17 @@ public class OrderRepository {
     @Autowired
     private StatuteSectionRowMapper statuteSectionRowMapper;
 
-    public List<Order> getOrders(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status) {
+    public List<Order> getOrders(OrderCriteria criteria) {
 
         try {
             List<Order> orderList = new ArrayList<>();
+            List<Object> preparedStmtList = new ArrayList<>();
             List<Object> preparedStmtListSt = new ArrayList<>();
             List<Object> preparedStmtListDoc = new ArrayList<>();
             String orderQuery = "";
-            orderQuery = queryBuilder.getOrderSearchQuery(orderNumber,applicationNumber, cnrNumber,filingNumber, tenantId, id, status);
+            orderQuery = queryBuilder.getOrderSearchQuery(criteria, preparedStmtList);
             log.info("Final order query :: {}", orderQuery);
-            List<Order> list = jdbcTemplate.query(orderQuery, rowMapper);
+            List<Order> list = jdbcTemplate.query(orderQuery, preparedStmtList.toArray(), rowMapper);
             log.info("DB order list :: {}", list);
             if (list != null) {
                 orderList.addAll(list);
@@ -88,6 +91,10 @@ public class OrderRepository {
             }
             return orderList;
         }
+        catch (DataAccessException e) {
+            log.error("Database access exception occurred: {}", e.getMessage());
+            throw new CustomException("DB_ERROR", "Error accessing database");
+        }
         catch (CustomException e){
             log.error("Custom Exception while fetching order list :: {}",e.toString());
             throw e;
@@ -100,13 +107,15 @@ public class OrderRepository {
 
     public List<OrderExists> checkOrderExists(List<OrderExists> orderExistsRequest) {
         try {
+            List<Object> preparedStmtList = new ArrayList<>();
+
             for (OrderExists orderExists : orderExistsRequest) {
                 if (orderExists.getOrderNumber() == null && orderExists.getCnrNumber() == null && orderExists.getFilingNumber() == null && orderExists.getApplicationNumber() == null && orderExists.getOrderId()==null){
                     orderExists.setExists(false);
                 } else {
-                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber(), orderExists.getOrderId());
+                    String orderExistQuery = queryBuilder.checkOrderExistQuery(orderExists.getOrderNumber(), orderExists.getCnrNumber(), orderExists.getFilingNumber(),orderExists.getApplicationNumber(), orderExists.getOrderId(),preparedStmtList);
                     log.info("Final order exist query :: {}", orderExistQuery);
-                    Integer count = jdbcTemplate.queryForObject(orderExistQuery, Integer.class);
+                    Integer count = jdbcTemplate.queryForObject(orderExistQuery, preparedStmtList.toArray(), Integer.class);
                     orderExists.setExists(count != null && count > 0);
                 }
             }

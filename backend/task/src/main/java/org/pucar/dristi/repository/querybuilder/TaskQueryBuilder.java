@@ -31,20 +31,31 @@ public class TaskQueryBuilder {
 
     private static final String BASE_CASE_EXIST_QUERY = "SELECT COUNT(*) FROM dristi_task task";
 
-    public String checkTaskExistQuery(String cnrNumber, String filingNumber) {
+    public String checkTaskExistQuery(String cnrNumber, String filingNumber, UUID taskId, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_EXIST_QUERY);
             boolean firstCriteria = true;
 
+            if (taskId != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.id = ?");
+                preparedStmtList.add(taskId.toString());
+                firstCriteria = false;
+            }
+
             if (cnrNumber != null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = '").append(cnrNumber).append("'");
+                query.append("task.cnrNumber = ?");
+                preparedStmtList.add(cnrNumber);
                 firstCriteria = false;
             }
 
             if (filingNumber != null && !filingNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.filingnumber = '").append(filingNumber).append("'");
+                query.append("task.filingNumber = ?");
+                preparedStmtList.add(filingNumber);
+
+                firstCriteria = false;
             }
 
             return query.toString();
@@ -55,18 +66,54 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber) {
+    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", id);
-            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", tenantId);
-            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", status);
-            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", orderId != null ? orderId.toString() : null);
-            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", cnrNumber);
-            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", taskNumber);
+            if (id != null  && !id.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.id = ?");
+                preparedStmtList.add(id);
+                firstCriteria = false;
+            }
+
+            if (tenantId != null  && !tenantId.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.tenantId = ?");
+                preparedStmtList.add(tenantId);
+
+                firstCriteria = false;
+            }
+
+            if (status != null  && !status.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.status = ?");
+                preparedStmtList.add(status);
+                firstCriteria = false;
+            }
+
+            if (orderId != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.orderId = ?");
+                preparedStmtList.add(orderId.toString());
+                firstCriteria = false;
+            }
+
+            if (cnrNumber != null  && !cnrNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.cnrNumber = ?");
+                preparedStmtList.add(cnrNumber);
+                firstCriteria = false;
+            }
+            if (taskNumber != null  && !taskNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.taskNumber = ?");
+                preparedStmtList.add(taskNumber);
+
+                firstCriteria = false;
+            }
 
             query.append(ORDERBY_CREATEDTIME);
 

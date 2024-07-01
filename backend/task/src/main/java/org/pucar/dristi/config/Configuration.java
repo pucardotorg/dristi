@@ -124,12 +124,6 @@ public class Configuration {
     @Value("${egov.idgen.taskNumber}")
     private String taskNumber;
 
-    // Case Config
-    @Value("${egov.case.host}")
-    private String caseHost;
-
-    @Value("${egov.case.path}")
-    private String casePath;
 
     // Order Config
     @Value("${egov.order.host}")

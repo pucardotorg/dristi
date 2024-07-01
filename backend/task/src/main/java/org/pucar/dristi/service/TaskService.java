@@ -59,7 +59,7 @@ public class TaskService {
 
     public Task createTask(TaskRequest body) {
         try {
-            validator.validateCaseRegistration(body);
+            validator.validateTaskRegistration(body);
 
             enrichmentUtil.enrichTaskRegistration(body);
 

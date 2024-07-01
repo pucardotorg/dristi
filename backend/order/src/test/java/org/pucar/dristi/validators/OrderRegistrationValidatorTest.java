@@ -1,6 +1,5 @@
 package org.pucar.dristi.validators;
 
-import net.minidev.json.JSONArray;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +11,7 @@ import org.pucar.dristi.repository.OrderRepository;
 import org.pucar.dristi.util.CaseUtil;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.web.models.Order;
+import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.OrderRequest;
 import org.pucar.dristi.web.models.StatuteSection;
 
@@ -53,11 +53,6 @@ public class OrderRegistrationValidatorTest {
         RequestInfo requestInfo = new RequestInfo();
         orderRequest.setRequestInfo(requestInfo);
 
-        // Mock dependencies
-        Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
-        mdmsData.put("Order", new HashMap<>());
-        // Mocking MDMS data
-        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("Order"), anyList())).thenReturn(mdmsData);
 
         // Perform validation
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateOrderRegistration(orderRequest));
@@ -97,12 +92,15 @@ public class OrderRegistrationValidatorTest {
         // Mock repository response
         List<Order> existingApplications = new ArrayList<>();
         existingApplications.add(order);
-        when(repository.getOrders(anyString(),anyString(), anyString(), anyString(), anyString(), anyString(),anyString())).thenReturn(existingApplications);
 
-        // Mock MDMS data
-        Map<String, Map<String, JSONArray>> mdmsData = new HashMap<>();
-        mdmsData.put("Order", new HashMap<>());
-        when(mdmsUtil.fetchMdmsData(any(RequestInfo.class), eq("tenantId"), eq("Order"), anyList())).thenReturn(mdmsData);
+        OrderExists orderExists = new OrderExists();
+        orderExists.setFilingNumber(order.getFilingNumber());
+        orderExists.setCnrNumber(order.getCnrNumber());
+        orderExists.setOrderId(order.getId());
+        List<OrderExists> criteriaList = new ArrayList<>();
+        criteriaList.add(orderExists);
+
+        when(repository.checkOrderExists(any())).thenReturn(criteriaList);
 
         // Perform validation
         assertDoesNotThrow(() -> validator.validateApplicationExistence(orderRequest));
