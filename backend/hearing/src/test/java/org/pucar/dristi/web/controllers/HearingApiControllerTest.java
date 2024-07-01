@@ -118,5 +118,6 @@ public class HearingApiControllerTest {
         assertNotNull(response.getBody());
         assertEquals(hearing, response.getBody().getHearing());
         assertEquals(responseInfo, response.getBody().getResponseInfo());
+        assertTrue(response.getBody().getHearing().getTranscript().isEmpty());
     }
 }
