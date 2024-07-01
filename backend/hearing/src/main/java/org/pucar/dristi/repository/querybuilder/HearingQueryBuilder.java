@@ -1,7 +1,12 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -19,6 +24,9 @@ public class HearingQueryBuilder {
 
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.hearingid as hearingid ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_hearing_document doc";
+
+    @Autowired
+    private ObjectMapper mapper;
 
     /**   /** To build query using search criteria to search hearing
      * @param cnrNumber
@@ -128,5 +136,25 @@ public class HearingQueryBuilder {
             log.error("Error while building document search query");
             throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
         }
+    }
+
+    public String buildUpdateTranscriptQuery(List<Object> preparedStmtList, String hearingId, String tenantId, List<String> transcriptList, @Valid AuditDetails auditDetails) {
+        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+
+        // Convert the transcriptList to JSON
+        try {
+            String transcriptJson = mapper.writeValueAsString(transcriptList);
+            preparedStmtList.add(transcriptJson);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Error converting transcript list to JSON", e);
+        }
+
+        // Add other parameters to preparedStmtList
+        preparedStmtList.add(auditDetails.getLastModifiedBy());
+        preparedStmtList.add(auditDetails.getLastModifiedTime());
+        preparedStmtList.add(hearingId);
+        preparedStmtList.add(tenantId);
+
+        return query;
     }
 }

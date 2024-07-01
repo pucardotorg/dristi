@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.HEARING_SEARCH_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.HEARING_UPDATE_EXCEPTION;
 
 
 @Slf4j
@@ -80,5 +81,13 @@ public class HearingRepository {
 
     public List<Hearing> getHearings(Hearing hearing) {
         return getHearings(null,null,hearing.getHearingId(),null,hearing.getTenantId(),null,null,1,0,null);
+    }
+
+    public void updateHearingTranscript(Hearing hearing) {
+        List<Object> preparedStmtList = new ArrayList<>();
+        String hearingUpdateQuery = queryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearing.getHearingId() , hearing.getTenantId(), hearing.getTranscript(),hearing.getAuditDetails());
+        log.info("Final update query: {}", hearingUpdateQuery);
+        int check = jdbcTemplate.update(hearingUpdateQuery, preparedStmtList.toArray());
+        if(check==0) throw new CustomException(HEARING_UPDATE_EXCEPTION,"Error while updating transcript");
     }
 }
