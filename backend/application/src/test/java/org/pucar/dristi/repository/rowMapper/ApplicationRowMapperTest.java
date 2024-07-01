@@ -44,7 +44,6 @@ public class ApplicationRowMapperTest {
         when(resultSet.getBoolean("isactive")).thenReturn(true, false);
         when(resultSet.getString("status")).thenReturn("Pending", "Approved");
         when(resultSet.getString("comment")).thenReturn("Test comment 1", "Test comment 2");
-        when(resultSet.getString("additionaldetails")).thenReturn("Details 1", "Details 2");
 
         // Creating ApplicationRowMapper instance
         ApplicationRowMapper rowMapper = new ApplicationRowMapper();

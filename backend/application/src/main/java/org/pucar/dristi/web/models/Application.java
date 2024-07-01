@@ -106,7 +106,7 @@ public class Application   {
 
         @JsonProperty("additionalDetails")
 
-                private String additionalDetails = null;
+                private Object additionalDetails = null;
 
         @JsonProperty("auditDetails")
 
