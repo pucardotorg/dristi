@@ -19,7 +19,7 @@ alt if ordertype = summons/warrant/bail
 else
     loop for each Party
         loop for each document type
-        UI->Task: Create Task
+        UI->Task: Create Task for Document
         Task->Task: enrich taskId, orderId, caseId
         Task->UI: Return 201 : new Task created
         UI->Task: Update Task with document, person details
