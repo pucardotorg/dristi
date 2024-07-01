@@ -110,7 +110,6 @@ class StatuteSectionRowMapperTest {
 
     @Test
     void testStringToList() {
-        StatuteSectionRowMapper statuteSectionRowMapper = new StatuteSectionRowMapper();
         List<String> result = statuteSectionRowMapper.stringToList("[\"item\"]");
         assertNotNull(result);
         assertEquals(1, result.size());

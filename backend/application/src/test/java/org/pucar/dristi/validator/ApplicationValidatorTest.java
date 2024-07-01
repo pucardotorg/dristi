@@ -178,7 +178,20 @@ public class ApplicationValidatorTest {
                 () -> validator.validateApplicationExistence(new RequestInfo(), application));
         assertEquals("caseId is mandatory for updating application", exception.getMessage());
     }
+    @Test
+    public void testValidateApplicationExistence_WithMissingTenantId_ShouldThrowException() {
+        Application application = new Application();
+        application.setId(UUID.randomUUID());
+        application.setCaseId("caseId");
+        application.setCnrNumber("cnr123");
+        application.setFilingNumber("file123");
+        when(caseUtil.fetchCaseDetails(any())).thenReturn(true);
 
+        CustomException exception = assertThrows(CustomException.class,
+                () -> validator.validateApplicationExistence(new RequestInfo(), application));
+
+        assertEquals("tenantId is mandatory for updating application", exception.getMessage());
+    }
     @Test
     public void testValidateApplicationExistence_WithMissingApplicationType_ShouldThrowException() {
         Application application = new Application();
