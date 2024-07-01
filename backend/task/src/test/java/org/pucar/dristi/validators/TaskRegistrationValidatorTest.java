@@ -67,7 +67,7 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateCaseRegistrationMissingTenantId() {
         task.setTenantId(null);
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("tenantId is mandatory for creating task", exception.getMessage());
     }
@@ -75,7 +75,7 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateCaseRegistrationMissingUserInfo() {
         taskRequest.getRequestInfo().setUserInfo(null);
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("User info is mandatory for creating task", exception.getMessage());
     }
@@ -83,7 +83,7 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateCaseRegistrationMissingTaskType() {
         task.setTaskType(null);
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("Task type is mandatory for creating task", exception.getMessage());
     }
@@ -93,7 +93,7 @@ public class TaskRegistrationValidatorTest {
         task.setTaskType("task-type");
         task.setCreatedDate(LocalDate.parse("2024-01-01"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("Invalid order ID", exception.getMessage());
     }

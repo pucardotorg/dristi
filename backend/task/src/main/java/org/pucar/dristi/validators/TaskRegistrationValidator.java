@@ -7,7 +7,6 @@ import org.pucar.dristi.repository.TaskRepository;
 import org.pucar.dristi.service.TaskService;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
-import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.Task;
 import org.pucar.dristi.web.models.TaskExists;
 import org.pucar.dristi.web.models.TaskRequest;
@@ -15,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.pucar.dristi.config.ServiceConstants.CREATE_TASK_ERR;
 import static org.pucar.dristi.config.ServiceConstants.UPDATE_TASK_ERR;
@@ -45,7 +41,7 @@ public class TaskRegistrationValidator {
         this.taskService = taskService;
     }
 
-    public void validateCaseRegistration(TaskRequest taskRequest) throws CustomException {
+    public void validateTaskRegistration(TaskRequest taskRequest) throws CustomException {
         Task task = taskRequest.getTask();
 
         if (ObjectUtils.isEmpty(task.getTenantId()))

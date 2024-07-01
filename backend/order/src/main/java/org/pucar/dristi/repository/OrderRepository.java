@@ -10,6 +10,7 @@ import org.pucar.dristi.web.models.OrderCriteria;
 import org.pucar.dristi.web.models.OrderExists;
 import org.pucar.dristi.web.models.StatuteSection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -89,6 +90,10 @@ public class OrderRepository {
                 });
             }
             return orderList;
+        }
+        catch (DataAccessException e) {
+            log.error("Database access exception occurred: {}", e.getMessage());
+            throw new CustomException("DB_ERROR", "Error accessing database");
         }
         catch (CustomException e){
             log.error("Custom Exception while fetching order list :: {}",e.toString());

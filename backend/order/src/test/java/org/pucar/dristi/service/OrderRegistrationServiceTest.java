@@ -159,4 +159,50 @@ public class OrderRegistrationServiceTest {
 
         assertNotNull(result);
     }
+
+    @Test
+    public void testSearchOrder_noOrdersFound() {
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        orderSearchRequest.setCriteria(new OrderCriteria());
+
+        when(orderRepository.getOrders(any()))
+                .thenReturn(Collections.emptyList());
+
+        List<Order> result = orderRegistrationService.searchOrder(orderSearchRequest);
+
+        assertTrue(result.isEmpty());
+        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria());
+    }
+
+    @Test
+    public void testSearchOrder_invalidCriteria() {
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        OrderCriteria criteria = new OrderCriteria();
+        criteria.setOrderNumber(null); // Assuming null is invalid for this test
+        orderSearchRequest.setCriteria(criteria);
+
+        when(orderRepository.getOrders(any()))
+                .thenThrow(new CustomException("INVALID_CRITERIA", "Invalid search criteria"));
+
+        CustomException exception = assertThrows(CustomException.class, () ->
+                orderRegistrationService.searchOrder(orderSearchRequest));
+
+        assertTrue(exception.getMessage().contains("Invalid search criteria"));
+        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria());
+    }
+
+    @Test
+    public void testSearchOrder_repositoryException() {
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        orderSearchRequest.setCriteria(new OrderCriteria());
+
+        when(orderRepository.getOrders(any()))
+                .thenThrow(new RuntimeException("Database error"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () ->
+                orderRegistrationService.searchOrder(orderSearchRequest));
+
+        assertTrue(exception.getMessage().contains("Database error"));
+        verify(orderRepository, times(1)).getOrders(orderSearchRequest.getCriteria());
+    }
 }
