@@ -70,7 +70,7 @@ class ApplicationApiControllerTest {
     public void testApplicationV1SearchPost_Success() {
         // Arrange
         List<Application> expectedApplication = Collections.singletonList(new Application());
-        when(applicationService.searchApplications(any(), any(),any(), any(ApplicationSearchRequest.class)))
+        when(applicationService.searchApplications(any(ApplicationSearchRequest.class)))
                 .thenReturn(expectedApplication);
         ResponseInfo expectedResponseInfo = new ResponseInfo();
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true)))
@@ -149,7 +149,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testArtifactsV1SearchPost_InvalidRequest() {
 
-        when(applicationService.searchApplications(any(),any(),any(), any(ApplicationSearchRequest.class))).thenThrow(new CustomException("Invalid request", "The request parameters did not meet the expected format."));
+        when(applicationService.searchApplications(any(ApplicationSearchRequest.class))).thenThrow(new CustomException("Invalid request", "The request parameters did not meet the expected format."));
 
         ApplicationSearchRequest requestInfoBody = new ApplicationSearchRequest();
         requestInfoBody.setCriteria(new ApplicationCriteria());
@@ -165,8 +165,7 @@ class ApplicationApiControllerTest {
     @Test
     public void testApplicationV1SearchPost_EmptyList() {
         List<Application> emptyList = Collections.emptyList();
-        when(applicationService.searchApplications(any(),any(),any(),
-                any(ApplicationSearchRequest.class)))
+        when(applicationService.searchApplications(any(ApplicationSearchRequest.class)))
                 .thenReturn(emptyList);
 
         ResponseInfo expectedResponseInfo = new ResponseInfo();

@@ -157,7 +157,7 @@ public class OrderRepositoryTest {
         orderExists.setFilingNumber("123");
         OrderExistsList.add(orderExists);
 
-        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE filingnumber = '123'");
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE filingnumber = '123'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
 
         List<OrderExists> result = orderRepository.checkOrderExists(OrderExistsList);
@@ -172,7 +172,7 @@ public class OrderRepositoryTest {
         orderExists.setCnrNumber("456");
         OrderExistsList.add(orderExists);
 
-        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE cnrnumber = '456'");
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE cnrnumber = '456'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
 
         List<OrderExists> result = orderRepository.checkOrderExists(OrderExistsList);
@@ -187,7 +187,23 @@ public class OrderRepositoryTest {
         orderExists.setOrderNumber("111");
         OrderExistsList.add(orderExists);
 
-        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE ordernumber = '111'");
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE ordernumber = '111'");
+        when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
+
+        List<OrderExists> result = orderRepository.checkOrderExists(OrderExistsList);
+
+        assertTrue(result.get(0).getExists());
+    }
+
+    @Test
+    void testCheckOrderExists_Id() {
+        List<OrderExists> OrderExistsList = new ArrayList<>();
+        OrderExists orderExists = new OrderExists();
+        UUID id = UUID.randomUUID();
+        orderExists.setOrderId(id);
+        OrderExistsList.add(orderExists);
+
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE id = '"+id+"'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenReturn(1);
 
         List<OrderExists> result = orderRepository.checkOrderExists(OrderExistsList);
@@ -205,7 +221,7 @@ public class OrderRepositoryTest {
         orderExists.setOrderNumber("111");
         OrderExistsList.add(orderExists);
 
-        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE filingnumber = '123' AND cnrnumber = '456' AND applicationnumber::text LIKE '%789%'");
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE filingnumber = '123' AND cnrnumber = '456' AND applicationnumber::text LIKE '%789%'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new RuntimeException("Database connection failed"));
 
         assertThrows(CustomException.class, () -> orderRepository.checkOrderExists(OrderExistsList));
@@ -221,7 +237,7 @@ public class OrderRepositoryTest {
         orderExists.setOrderNumber("111");
         OrderExistsList.add(orderExists);
 
-        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE filingnumber = '123' AND cnrnumber = '456' AND applicationnumber::text LIKE '%789%'");
+        when(queryBuilder.checkOrderExistQuery(any(), any(), any(),any(),any())).thenReturn("SELECT COUNT(*) FROM orders WHERE filingnumber = '123' AND cnrnumber = '456' AND applicationnumber::text LIKE '%789%'");
         when(jdbcTemplate.queryForObject(any(), eq(Integer.class))).thenThrow(new CustomException("ORDER_EXIST_EXCEPTION", "Error occurred while building the application exist query : " ));
 
         assertThrows(CustomException.class, () -> orderRepository.checkOrderExists(OrderExistsList));

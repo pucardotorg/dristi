@@ -184,40 +184,34 @@ class ApplicationServiceTest {
         applicationList.add(mockApplication);
 
         // Act
-        List<Application> result = applicationService.searchApplications(2, 2, "cnrNum", applicationSearchRequest);
+        List<Application> result = applicationService.searchApplications(applicationSearchRequest);
 
         // Assert
         assertNotNull(result);
-        verify(applicationRepository, times(1)).getApplications(2, 2, applicationSearchRequest);
+        verify(applicationRepository, times(1)).getApplications(applicationSearchRequest);
     }
 
     @Test
     public void testSearchApplications_NoResults() {
         // Arrange
-        when(applicationRepository.getApplications(anyInt(), anyInt(),any())).thenReturn(new ArrayList<>());
+        when(applicationRepository.getApplications(any())).thenReturn(new ArrayList<>());
 
         // Act
-        List<Application> result = applicationService.searchApplications(2, 2, "cnrNumber",  new ApplicationSearchRequest());
+        List<Application> result = applicationService.searchApplications(new ApplicationSearchRequest());
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
-        verify(applicationRepository, times(1)).getApplications(anyInt(), anyInt(),any());
+        verify(applicationRepository, times(1)).getApplications(any());
     }
 
 
     @Test
     void testSearchApplicationHandleException() {
-        String id = "testId";
-        String tenantId = "testTenantId";
-        String filingNumber = "filingNumber";
-        String cnrNumber = "cnrNumber";
-        String status = "status";
-
-        when(applicationRepository.getApplications(null,null, null)).thenThrow(new RuntimeException("Database error"));
+        when(applicationRepository.getApplications(null)).thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
-                applicationService.searchApplications(null,null,null,null));
+                applicationService.searchApplications(null));
 
         assertEquals(APPLICATION_SEARCH_ERR, exception.getCode());
         assertEquals("Database error", exception.getMessage());
