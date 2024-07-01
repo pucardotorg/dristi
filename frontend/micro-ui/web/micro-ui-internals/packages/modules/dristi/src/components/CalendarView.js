@@ -5,6 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import useGetHearings from "../hooks/dristi/useGetHearings";
 import { Modal } from "@egovernments/digit-ui-react-components";
+import useGetHearingSlotMetaData from "../hooks/dristi/useGetHearingSlotMetaData";
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
@@ -17,37 +18,21 @@ const MonthlyCalendar = () => {
     "dristi",
     true
   );
+  const {data: AdvocateSlotsResponse, refetch: refetchGetHearingSlotMetaData } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
 
-  const events = {
-    tenantId: "kl",
-    moduleName: "court",
-    slots: [
-      {
-        id: 1,
-        slotName: "Slot 1",
-        slotStartTime: "00:00:00",
-        slotEndTime: "13:00:00",
-        slotDuration: "180",
-        unitOfMeasurement: "Minutes",
-      },
-      {
-        id: 2,
-        slotName: "Slot 2",
-        slotStartTime: "13:00:00",
-        slotEndTime: "23:59:59",
-        slotDuration: "180",
-        unitOfMeasurement: "Minutes",
-      },
-    ],
-  };
-
+  const events = useMemo(() => AdvocateSlotsResponse || [], [AdvocateSlotsResponse]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         await refetch();
       } catch (error) {
-        console.error("Error refetching data:", error);
+        console.error("Error refetching Hearings data:", error);
+      }
+      try {
+        await refetchGetHearingSlotMetaData();
+      } catch (error) {
+        console.error("Error refetching Advocate Slots data:", error);
       }
     };
 
