@@ -1,0 +1,81 @@
+const addNewPartiesConfig = () => ({
+    label: "Add New Parties",
+    form: [
+      {
+        head: "Party 1",
+        body: [
+          {
+            label: "Party Type",
+            type: "dropdown",
+            isMandatory: true,
+            key:"partyType",
+            populators: {
+              name: "partyType",
+              defaultValue: "Witness", 
+              options: [
+                { code: "Witness", name: "Witness" },
+                { code: "Plaintiff", name: "Plaintiff" },
+                { code: "Defendant", name: "Defendant" },
+              ]
+            }
+          },
+          {
+            label: "Party Name",
+            key:"partyName",
+            type: "text",
+            isMandatory: true,
+            populators: {
+              name: "partyName",
+            },
+          },
+          {
+            label: "Phone Number",
+            type: "text",
+            key:"phoneNumber",
+            isMandatory: true,
+            populators: {
+              name: "phoneNumber",
+            },
+          },
+          {
+            label: "Email ID",
+            key:"emailId",
+            type: "text",
+            isMandatory: true,
+            populators: {
+              name: "emailId",
+            },
+          },
+          {
+            label: "Address",
+            key:"address",
+            type: "textarea",
+            isMandatory: true,
+            populators: {
+              name: "address",
+            },
+          },
+          {
+            label: "Additional details",
+            key:"additionalDetails",
+            type: "textarea",
+            populators: {
+              name: "additionalDetails",
+            },
+          },
+        ],
+      },
+      {
+        label: "Add Party",
+        key:"addParty",
+        type: "button",
+        populators: {
+          name: "addParty",
+          onClick: "handleAddParty",
+        },
+      },
+    ],
+  });
+  
+  export default addNewPartiesConfig;
+  

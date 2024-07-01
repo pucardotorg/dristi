@@ -36,7 +36,7 @@ const CloseBtn = (props) => {
   );
 };
 
-const RescheduleHearing = ({ onSelect, onCancel, onDismiss }) => {
+const RescheduleHearing = ({ onSelect, onCancel, onDismiss , rescheduleAll}) => {
   const { t } = useTranslation();
   const history = useHistory();
   const mobileDeviceWidth = 780;
@@ -52,6 +52,7 @@ const RescheduleHearing = ({ onSelect, onCancel, onDismiss }) => {
       }
     }
   };
+  console.log(rescheduleAll,"reschedule")
 
   React.useEffect(() => {
     window.addEventListener('resize', onResize);
@@ -68,20 +69,6 @@ const RescheduleHearing = ({ onSelect, onCancel, onDismiss }) => {
     const contextPath = window?.contextPath || ''; 
     history.push(`/${contextPath}${path}`);
   };
-
-  const children = [
-    <div key="1">Case Number: {a}</div>,
-    <div key="2">Case Name: {b}</div>,
-    <div key="3">Case Type: {c}</div>,
-    <CardLabel style={{ width: "16rem", marginBottom: "0px" }}>Purpose Of Reschedule Hearing</CardLabel>,
-    <Dropdown
-      style={{ width: "100%" }}
-      option={[]}
-      optionKey={"code"}
-      select={(value) => {}}
-    />
-  ];
-
 
   return isMobileView ? (
     <Modal
@@ -139,7 +126,27 @@ const RescheduleHearing = ({ onSelect, onCancel, onDismiss }) => {
           <strong>{t("RESCHEDULE_HEARING_MESSAGE")}</strong>
         </CardText>
       </div>
-      {children}
+      {rescheduleAll?(
+          <div>
+          <div key="5">Hearing Type</div>
+          <div key="6">No. of Hearings</div>
+          <div key="7">Initial Hearing Date</div>
+          <div key="8">Initial Time Slot</div>
+          </div>
+      ):(
+        <div>
+          <div key="1">Case Number: {t(`${a}`)}</div>
+          <div key="2">Case Name: {t(`${b}`)}</div>
+          <div key="3">Case Type: {t(`${c}`)}</div>
+        </div>
+      )}
+      <CardLabel style={{ width: "16rem", marginBottom: "0px" }}>Purpose Of Reschedule Hearing</CardLabel>
+      <Dropdown
+        style={{ width: "100%" }}
+        option={[]}
+        optionKey={"code"}
+        select={(value) => {}}
+      />
     </Modal>
   );
 };
