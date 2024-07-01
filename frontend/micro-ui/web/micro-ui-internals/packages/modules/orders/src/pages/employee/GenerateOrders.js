@@ -57,7 +57,7 @@ const GenerateOrders = () => {
     BAIL: configsBail,
   };
 
-  const { data: caseData, isCaseDetailsLoading } = useSearchCaseService(
+  const { data: caseData, isLoading: isCaseDetailsLoading } = useSearchCaseService(
     {
       criteria: [
         {
@@ -73,7 +73,7 @@ const GenerateOrders = () => {
   );
 
   const cnrNumber = useMemo(() => caseData?.criteria?.[0]?.responseList?.[0]?.cnrNumber, [caseData]);
-  const { data: ordersData, refetch: refetchOrdersData, isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
+  const { data: ordersData, refetch: refetchOrdersData, isLoading: isOrdersLoading, isFetching: isOrdersFetching } = useSearchOrdersService(
     { tenantId },
     { tenantId, filingNumber, applicationNumber: "", cnrNumber },
     filingNumber,

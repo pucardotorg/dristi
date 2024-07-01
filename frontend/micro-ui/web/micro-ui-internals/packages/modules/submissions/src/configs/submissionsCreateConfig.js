@@ -34,12 +34,12 @@ export const applicationTypeConfig = [
         disable: false,
         populators: {
           name: "applicationType",
-          optionsKey: "name",
+          optionsKey: "type",
           error: "required ",
           mdmsConfig: {
             masterName: "ApplicationType",
             moduleName: "Application",
-            localePrefix: "SUBMISSION_TYPE",
+            localePrefix: "APPLICATION_TYPE",
           },
         },
       },
@@ -132,9 +132,8 @@ export const configs = [
   },
 ];
 
-const configsRescheduleRequest = [
+export const configsRescheduleRequest = [
   {
-    head: "RESCHEDULE_REQUEST",
     body: [
       {
         inline: true,
@@ -273,9 +272,8 @@ const configsRescheduleRequest = [
   },
 ];
 
-const configSubmissionExtenstionRequest = [
+export const configSubmissionExtenstionRequest = [
   {
-    head: "SUBMISSION_EXTENSION_REQUEST",
     body: [
       {
         inline: true,
