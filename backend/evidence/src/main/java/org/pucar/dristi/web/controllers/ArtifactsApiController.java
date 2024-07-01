@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("")
 public class ArtifactsApiController {
 
-	private final EvidenceService evidenceService;
-	private final ResponseInfoFactory responseInfoFactory;
+	private  EvidenceService evidenceService;
+	private  ResponseInfoFactory responseInfoFactory;
 
 	@Autowired
 	public ArtifactsApiController(EvidenceService evidenceService, ResponseInfoFactory responseInfoFactory) {
