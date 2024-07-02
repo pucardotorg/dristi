@@ -26,8 +26,8 @@ const paymentOption = [
     i18nKey: "Demand Draft",
   },
   {
-    code: "POSTAL_ORDER",
-    i18nKey: "Stamps",
+    code: "STAMP",
+    i18nKey: "Stamp",
   },
 ];
 
