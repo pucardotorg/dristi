@@ -19,7 +19,7 @@ paths:
       tags:
         - Application
       summary: create new application
-      requestBody:
+      RequestBody:
         description: Details for the new application + RequestInfo meta data.
         content:
           '*/*':
@@ -46,7 +46,7 @@ paths:
       tags:
         - Application
       summary: update application requests.
-      requestBody:
+      RequestBody:
         description: Details for the update application(s) + RequestInfo meta data.
         content:
           '*/*':
@@ -75,29 +75,13 @@ paths:
       summary: search for application(s)
       description: |
         Gets the list of Application(s)
-      requestBody:
+      RequestBody:
           description: Details for the search application(s) + RequestInfo meta data.
           content:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ApplicationSearchRequest'
           required: true
-      parameters:
-        - name: limit
-          in: query
-          description: No of records return
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          description: offset
-          schema:
-            type: integer
-        - name: sortBy
-          in: query
-          description: sorted by ascending by default if this parameter is not provided
-          schema:
-            type: string
       responses:
         "200":
           description: ResponseInfo with application(s) search successfully
@@ -117,7 +101,7 @@ paths:
       tags:
         - Application
       summary: application exits or not
-      requestBody:
+      RequestBody:
         description: check if the application(S) exists
         content:
           '*/*':
