@@ -21,7 +21,8 @@ import ViewPendingTask from "./ViewPendingTask";
 import HearingPopup from "./HearingPopUp";
 import InsideHearing from "./InsideHearing";
 import ViewCase from "./ViewCase";
-const bredCrumbStyle={ maxWidth: "min-content" };
+import MonthlyCalendar from "./CalendarView";
+const bredCrumbStyle = { maxWidth: "min-content" };
 const ProjectBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const crumbs = [
@@ -65,6 +66,8 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/view-witness-deposition`} component={() => <ViewWitnessDeposition></ViewWitnessDeposition>} />
         <PrivateRoute path={`${path}/view-pending-task`} component={() => <ViewPendingTask></ViewPendingTask>} />
         <PrivateRoute path={`${path}/submission`} component={() => <Submission></Submission>} />
+
+        <PrivateRoute exact path={`${path}/calendar`} component={() => <MonthlyCalendar />} />
       </AppContainer>
     </Switch>
   );

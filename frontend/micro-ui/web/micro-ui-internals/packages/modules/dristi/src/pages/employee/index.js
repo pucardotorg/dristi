@@ -12,7 +12,6 @@ import Breadcrumb from "../../components/BreadCrumb";
 import PaymentInbox from "./Payment/PaymentInbox";
 import ViewPaymentDetails from "./Payment/ViewPaymentDetails";
 import EFilingPaymentResponse from "./Payment/EFilingPaymentResponse";
-import MonthlyCalendar from "../../components/CalendarView";
 
 const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
   const { t } = useTranslation();
@@ -84,7 +83,6 @@ const EmployeeApp = ({ path, url, userType, tenants, parentRoute }) => {
           <PrivateRoute exact path={`${path}/cases`} component={Home} />
           <PrivateRoute exact path={`${path}/admission`} component={(props) => <CaseFileAdmission {...props} t={t} path={path} />} />
           <PrivateRoute exact path={`${path}/case`} component={(props) => <ViewCaseFile {...props} t={t} />} />
-          <PrivateRoute exact path={`${path}/calendar`} component={() => <MonthlyCalendar />} />
         </div>
         {toastMessage && (
           <Toast

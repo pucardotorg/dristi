@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from "react-query";
 
 function useGetHearingSlotMetaData(enabled) {
   const fetchAdvocateSlots = () => {
@@ -27,15 +27,11 @@ function useGetHearingSlotMetaData(enabled) {
     return events;
   };
 
-  const { isLoading, data: slotsResponse, isFetching, refetch, error } = useQuery(
-    'GET_ADVOCATE_SLOTS',
-    fetchAdvocateSlots,
-    {
-      cacheTime: 0,
-      enabled: Boolean(enabled),
-      retry: false, // Disable automatic retries to prevent flooding with requests
-    }
-  );
+  const { isLoading, data: slotsResponse, isFetching, refetch, error } = useQuery("GET_ADVOCATE_SLOTS", fetchAdvocateSlots, {
+    cacheTime: 0,
+    enabled: Boolean(enabled),
+    retry: false, // Disable automatic retries to prevent flooding with requests
+  });
 
   if (error) {
     console.error("Error fetching advocate slots:", error);
