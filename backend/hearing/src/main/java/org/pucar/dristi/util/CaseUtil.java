@@ -19,14 +19,16 @@ import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM
 @Component
 public class CaseUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper mapper;
+    private final Configuration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Configuration configs;
+    public CaseUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+        this.restTemplate = restTemplate;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
     public CaseExistsResponse fetchCaseDetails(CaseExistsRequest caseExistsRequest) {
         StringBuilder uri = new StringBuilder();

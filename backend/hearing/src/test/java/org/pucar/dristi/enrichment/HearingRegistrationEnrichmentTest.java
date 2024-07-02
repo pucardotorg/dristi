@@ -257,7 +257,6 @@ class HearingRegistrationEnrichmentTest {
     void enrichHearingApplicationUponUpdateExceptionTest() {
         // Setup mock request
         HearingRequest hearingRequest = new HearingRequest();
-        Hearing hearing = new Hearing();
         hearingRequest.setHearing(null); // This should trigger an exception
         RequestInfo requestInfo = new RequestInfo();
         User userInfo = new User();
