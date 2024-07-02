@@ -28,17 +28,17 @@ import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTIO
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository repository;
+    private final Configuration config;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private Configuration config;
-
-
-    /**
+    public WorkflowService(ObjectMapper mapper, ServiceRequestRepository repository, Configuration config) {
+        this.mapper = mapper;
+        this.repository = repository;
+        this.config = config;
+    }
+        /**
      * For updating workflow status of hearing by calling workflow
      *
      * @param hearingRequest
