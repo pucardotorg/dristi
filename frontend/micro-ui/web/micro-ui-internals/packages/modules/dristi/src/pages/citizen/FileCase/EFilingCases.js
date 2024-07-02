@@ -41,6 +41,7 @@ import {
   validateDateForDelayApplication,
 } from "./EfilingValidationUtils";
 import _, { isEqual, isMatch } from "lodash";
+import CorrectionsSubmitModal from "../../../components/CorrectionsSubmitModal";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -146,6 +147,7 @@ function EFilingCases({ path }) {
   const [showConfirmMandatoryModal, setShowConfirmMandatoryModal] = useState(false);
   const [showConfirmOptionalModal, setShowConfirmOptionalModal] = useState(false);
   const [showReviewCorrectionModal, setShowReviewCorrectionModal] = useState(false);
+  const [caseResubmitSuccess, setCaseResubmitSuccess] = useState(false);
   const [prevSelected, setPrevSelected] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const homepagePath = "/digit-ui/citizen/dristi/home";
@@ -349,9 +351,14 @@ function EFilingCases({ path }) {
   }, [scrutinyObj]);
 
   const errorPages = useMemo(() => {
-    return Object.values(scrutinyErrors)
+    const pages = Object.values(scrutinyErrors)
       .flatMap((val) => val?.pages)
       .filter((val) => val !== undefined);
+    return pages.sort((a, b) => {
+      const keyA = a.key;
+      const keyB = b.key;
+      return getAllKeys.indexOf(keyA) - getAllKeys.indexOf(keyB);
+    });
   }, [scrutinyErrors]);
 
   const sectionWiseErrors = useMemo(() => {
@@ -977,6 +984,9 @@ function EFilingCases({ path }) {
                 if (selected === "debtLiabilityDetails" && ["dropdown", "radio"].includes(formComponent.type)) {
                   key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
+                if (selected === "delayApplications" && formComponent.component === "CustomRadioInfoComponent") {
+                  key = formComponent.key + "." + formComponent?.populators?.optionsKey;
+                }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
@@ -1008,6 +1018,13 @@ function EFilingCases({ path }) {
                     if (formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name in scrutiny?.[selected]?.form?.[index]) {
                       key = formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name;
                     }
+                  }
+                  if (
+                    selected === "debtLiabilityDetails" &&
+                    formComponent.component === "CustomInput" &&
+                    scrutiny?.[selected]?.form?.[index]?.["liabilityType.name"]?.FSOError
+                  ) {
+                    modifiedFormComponent.disable = false;
                   }
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     modifiedFormComponent.disable = false;
@@ -1384,7 +1401,8 @@ function EFilingCases({ path }) {
             setFormdata(caseData);
             setIsDisabled(false);
             if (action === CaseWorkflowAction.EDIT_CASE) {
-              return history.push(`/${window.contextPath}/citizen/dristi/home`);
+              setCaseResubmitSuccess(true);
+              return;
             }
             setPrevSelected(selected);
             history.push(`?caseId=${caseId}&selected=${nextSelected}`);
@@ -1449,7 +1467,6 @@ function EFilingCases({ path }) {
             JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
           )
         : false;
-    debugger;
     updateCaseDetails({
       isCompleted: isDrafted,
       caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
@@ -1485,7 +1502,9 @@ function EFilingCases({ path }) {
       {
         cases: {
           ...caseDetails,
-          caseTitle: `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+          caseTitle:
+            caseDetails?.caseTitle ||
+            `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
@@ -1549,6 +1568,14 @@ function EFilingCases({ path }) {
     history.push(`?caseId=${caseId}&selected=${selectedPage}`);
     setShowConfirmOptionalModal(false);
   };
+
+  const handleGoToPage = (key) => {
+    history.push(`?caseId=${caseId}&selected=${key}`);
+  };
+  const handleGoToHome = () => {
+    history.push(homepagePath);
+  };
+
   if (isDisableAllFieldsMode && selected !== "reviewCaseFile" && caseDetails) {
     setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
@@ -1586,6 +1613,8 @@ function EFilingCases({ path }) {
                 pages={errorPages}
                 handlePageChange={handlePageChange}
                 showConfirmModal={confirmModalConfig ? true : false}
+                handleGoToPage={handleGoToPage}
+                selected={selected}
               />
             )}
             <div className="total-error-note">
@@ -1711,7 +1740,15 @@ function EFilingCases({ path }) {
                   </div>
                 )}
                 <FormComposerV2
-                  label={selected === "addSignature" ? t("CS_SUBMIT_CASE") : isDisableAllFieldsMode ? t("CS_GO_TO_HOME") : t("CS_COMMON_CONTINUE")}
+                  label={
+                    selected === "addSignature"
+                      ? t("CS_SUBMIT_CASE")
+                      : isDisableAllFieldsMode
+                      ? t("CS_GO_TO_HOME")
+                      : isCaseReAssigned
+                      ? t("CS_COMMONS_NEXT")
+                      : t("CS_COMMON_CONTINUE")
+                  }
                   config={config}
                   onSubmit={() => onSubmit("SAVE_DRAFT", index)}
                   onSecondayActionClick={onSaveDraft}
@@ -1913,6 +1950,7 @@ function EFilingCases({ path }) {
       {openConfirmCorrectionModal && (
         <ConfirmCorrectionModal onCorrectionCancel={() => setOpenConfirmCorrectionModal(false)} onSubmit={onErrorCorrectionSubmit} />
       )}
+      {caseResubmitSuccess && <CorrectionsSubmitModal t={t} filingNumber={caseDetails?.filingNumber} handleGoToHome={handleGoToHome} />}
       {selected === "witnessDetails" && Object.keys(formdata.filter((data) => data.isenabled)?.[0] || {}).length === 0 && (
         <ActionBar className={"e-filing-action-bar"}>
           <SubmitBar

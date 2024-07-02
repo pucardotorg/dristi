@@ -4,7 +4,14 @@ import { FlagIcon, LeftArrow } from "../icons/svgIndex";
 import { CloseSvg } from "@egovernments/digit-ui-react-components";
 import DocViewerWrapper from "../pages/employee/docViewerWrapper";
 
-function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef, showFlag }) {
+function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef, showFlag, isPrevScrutiny }) {
+  let showFlagNew = showFlag;
+
+  if (isPrevScrutiny) {
+    showFlagNew = imageInfo?.inputlist?.some((key) => {
+      return Boolean(imageInfo?.dataError?.[key]?.FSOError);
+    });
+  }
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const Heading = (props) => {
     return (
@@ -22,7 +29,7 @@ function ImageModal({ imageInfo, handleCloseModal, handleOpenPopup, t, anchorRef
   const HeaderBarEnd = () => {
     return (
       <React.Fragment>
-        {showFlag && (
+        {showFlagNew && (
           <div
             ref={anchorRef}
             className="flag-icon"

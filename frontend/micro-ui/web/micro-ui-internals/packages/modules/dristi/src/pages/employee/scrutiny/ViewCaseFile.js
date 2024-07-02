@@ -286,7 +286,7 @@ function ViewCaseFile({ t }) {
     return <Loader />;
   }
   if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
-    history.push("/digit-ui/employee/dristi/cases");
+    // history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
@@ -503,7 +503,7 @@ function ViewCaseFile({ t }) {
               onCancel={handleCloseSucessModal}
               onSubmit={handleNextCase}
               type={"caseSendBackSuccess"}
-              data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+              data={{ caseId: caseDetails?.filingNumber, caseName:  newCaseName !== "" ? newCaseName : caseDetails?.caseTitle, errorsMarked: totalErrors.total }}
             />
           )} */}
 
@@ -517,7 +517,11 @@ function ViewCaseFile({ t }) {
               onCancel={handleCloseSucessModal}
               onSubmit={handleAllocationJudge}
               type={"caseRegisterSuccess"}
-              data={{ caseId: "KA92327392232", caseName: "Complainant vs. Respondent", errorsMarked: totalErrors.total }}
+              data={{
+                caseId: caseDetails?.filingNumber,
+                caseName: newCaseName !== "" ? newCaseName : caseDetails?.caseTitle,
+                errorsMarked: totalErrors.total,
+              }}
             />
           )}
         </div>

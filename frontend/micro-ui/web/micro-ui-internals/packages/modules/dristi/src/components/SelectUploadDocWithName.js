@@ -187,6 +187,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
           );
         })}
       <Button
+        isDisabled={config?.disable}
         variation="secondary"
         onButtonClick={handleAddDocument}
         className="add-new-document"
