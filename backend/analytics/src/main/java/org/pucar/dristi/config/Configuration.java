@@ -78,6 +78,13 @@ public class Configuration {
 	@Value("${egov.application.search.endpoint}")
 	private String applicationSearchPath;
 
+	//Order Config
+	@Value("${egov.order.host}")
+	private String orderHost;
+
+	@Value("${egov.order.search.endpoint}")
+	private String orderSearchPath;
+
 	@Value("${api.call.delay.in.seconds}")
 	private Integer apiCallDelayInSeconds;
 }

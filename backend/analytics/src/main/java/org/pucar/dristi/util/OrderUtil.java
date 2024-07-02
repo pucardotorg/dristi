@@ -25,27 +25,27 @@ public class OrderUtil {
 		this.util = util;
 	}
 
-	public Object getOrder(JSONObject request, String tenantId, String taskNumber) {
-		StringBuilder url = getSearchURLWithParams(tenantId, taskNumber);
-		log.info("Inside TaskUtil getTask :: URL: {}", url);
-
+	public Object getOrder(JSONObject request, String orderNumber, String tenantId) {
+		StringBuilder url = getSearchURLWithParams(tenantId, orderNumber);
+		log.info("Inside OrderUtil getOrder :: URL: {}", url);
+		request.put("tenantId", tenantId);
 		try {
 			String response = repository.fetchResult(url, request);
-			log.info("Inside TaskUtil getTask :: Response: {}", response);
+			log.info("Inside OrderUtil getOrder :: Response: {}", response);
 
-			JSONArray tasks = util.constructArray(response, TASK_PATH);
-			return tasks.length() > 0 ? tasks.get(0) : null;
+			JSONArray orders = util.constructArray(response, ORDER_PATH);
+			return orders.length() > 0 ? orders.get(0) : null;
 		} catch (Exception e) {
-			log.error("Error while fetching or processing the task response", e);
-			throw new RuntimeException("Error while fetching or processing the task response", e);
+			log.error("Error while fetching or processing the order response", e);
+			throw new RuntimeException("Error while fetching or processing the order response", e);
 		}
 	}
 
-	private StringBuilder getSearchURLWithParams(String tenantId, String taskNumber) {
-		StringBuilder url = new StringBuilder(config.getTaskHost());
-		url.append(config.getTaskSearchPath());
+	private StringBuilder getSearchURLWithParams(String tenantId, String orderNumber) {
+		StringBuilder url = new StringBuilder(config.getOrderHost());
+		url.append(config.getOrderSearchPath());
 		url.append(TENANT_ID).append(tenantId);
-		url.append(TASK_NUMBER).append(taskNumber);
+		url.append(ORDER_NUMBER).append(orderNumber);
 		return url;
 	}
 }

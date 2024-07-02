@@ -25,6 +25,7 @@ public class ServiceConstants {
 	public static final String STATUS = "&status=";
 	public static final String FILLING_NUMBER = "?filingNumber=";
 	public static final String TASK_NUMBER = "&taskNumber=";
+	public static final String ORDER_NUMBER = "&orderNumber=";
 
 
 	//JSON path
@@ -46,6 +47,7 @@ public class ServiceConstants {
 	public static final String CASE_PATH = "$.criteria.*.responseList[0]";
 	public static final String ARTIFACT_PATH = "$.artifacts.*";
 	public static final String TASK_PATH = "$.list.*";
+	public static final String ORDER_PATH = "$.list.*";
 	public static final String APPLICATION_PATH = "$.applicationList.*";
 	public static final String CNR_NUMBERS_PATH = "$.cnrNumbers";
 	public static final String CNR_NUMBER_PATH = "$.cnrNumber";
