@@ -26,16 +26,21 @@ import static org.pucar.dristi.config.ServiceConstants.HEARING_UPDATE_EXCEPTION;
 @Repository
 public class HearingRepository {
 
-    @Autowired
     private HearingQueryBuilder queryBuilder;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     private HearingRowMapper rowMapper;
-    @Autowired
+
     private HearingDocumentRowMapper hearingDocumentRowMapper;
+
+    @Autowired
+    public HearingRepository(HearingQueryBuilder queryBuilder, JdbcTemplate jdbcTemplate, HearingRowMapper rowMapper, HearingDocumentRowMapper hearingDocumentRowMapper) {
+        this.queryBuilder = queryBuilder;
+        this.jdbcTemplate = jdbcTemplate;
+        this.rowMapper = rowMapper;
+        this.hearingDocumentRowMapper = hearingDocumentRowMapper;
+    }
 
 
     public List<Hearing> getHearings(String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
