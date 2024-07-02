@@ -46,7 +46,9 @@
             try {
                 List<Object> preparedStmtListDoc = new ArrayList<>();
                 List<Object> preparedStmtListCom = new ArrayList<>();
+                List<Object> preparedStmtList=new ArrayList<>();
                 String artifactQuery = queryBuilder.getArtifactSearchQuery(
+                        preparedStmtList,
                         evidenceSearchCriteria.getId(),
                         evidenceSearchCriteria.getCaseId(),
                         evidenceSearchCriteria.getApplicationId(),
@@ -58,7 +60,7 @@
                 );
                 log.info("Final artifact query: {}", artifactQuery);
 
-                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery, evidenceRowMapper);
+                List<Artifact> artifactList = jdbcTemplate.query(artifactQuery,preparedStmtList.toArray(), evidenceRowMapper);
                 log.info("DB artifact list :: {}", artifactList);
 
                 List<String> artifactIds = new ArrayList<>();

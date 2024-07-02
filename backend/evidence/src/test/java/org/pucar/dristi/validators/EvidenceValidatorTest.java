@@ -70,8 +70,6 @@ public class EvidenceValidatorTest {
 
     @Test
     void testValidateApplicationExistence_Success() {
-        // Create test data
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         RequestInfo requestInfo = new RequestInfo();
         evidenceRequest.setRequestInfo(requestInfo);
 
@@ -99,8 +97,6 @@ public class EvidenceValidatorTest {
 
     @Test
     void testValidateApplicationExistence_NoExistingApplication() {
-        // Create test data
-        EvidenceRequest evidenceRequest = new EvidenceRequest();
         RequestInfo requestInfo = new RequestInfo();
         evidenceRequest.setRequestInfo(requestInfo);
 

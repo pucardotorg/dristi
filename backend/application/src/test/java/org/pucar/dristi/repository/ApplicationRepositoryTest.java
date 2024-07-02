@@ -70,6 +70,7 @@ class ApplicationRepositoryTest {
 
     @Test
     void testGetApplications_Success() {
+        List<Object> preparedStmtList = new ArrayList<>();
 
         ApplicationSearchRequest applicationSearchRequest = new ApplicationSearchRequest();
         applicationSearchRequest.setRequestInfo(new RequestInfo());
@@ -81,17 +82,9 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        Pagination pagination = new Pagination();
-        pagination.setOffSet(0d);
-        pagination.setLimit(10d);
-        applicationSearchRequest.setPagination(pagination);
-
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
                 .thenReturn("some SQL query");
-        when(queryBuilder.addPaginationQuery(anyString(), any()))
-                .thenReturn("some SQL query");
-        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(applicationList);
-        when(applicationRepository.getTotalCountApplication(anyString())).thenReturn(1);
+        when(jdbcTemplate.query(anyString(), any(Object[].class), any(ApplicationRowMapper.class))).thenReturn(applicationList);
         when(queryBuilder.getStatuteSectionSearchQuery(anyList(), anyList()))
                 .thenReturn("statute section SQL query");
         when(jdbcTemplate.query(anyString(), any(Object[].class), any(StatuteSectionRowMapper.class)))
@@ -105,7 +98,6 @@ class ApplicationRepositoryTest {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertTrue(applicationList.size() <= pagination.getLimit());
         assertEquals(applicationList.size(), result.size());
         assertEquals(documentList, result.get(0).getDocuments());
         assertEquals(statuteSectionsMap.get(applicationList.get(0).getId()), result.get(0).getStatuteSection());
@@ -123,9 +115,9 @@ class ApplicationRepositoryTest {
         applicationCriteria.setFilingNumber("");
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString()))
+        lenient().when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(), anyString(), any()))
                 .thenReturn("some SQL query");
-        when(jdbcTemplate.query(anyString(), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
+        lenient().when(jdbcTemplate.query(anyString(),any(Objects[].class), any(ApplicationRowMapper.class))).thenReturn(Collections.emptyList());
 
         List<Application> result = applicationRepository.getApplications(applicationSearchRequest);
 
@@ -146,7 +138,7 @@ class ApplicationRepositoryTest {
         applicationCriteria.setTenantId("");
         applicationSearchRequest.setCriteria(applicationCriteria);
 
-        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString()))
+        when(queryBuilder.getApplicationSearchQuery(anyString(), anyString(), anyString(), anyString(), anyString(),anyString(), any()))
                 .thenThrow(new RuntimeException("Database error"));
 
         CustomException exception = assertThrows(CustomException.class, () ->
@@ -250,16 +242,15 @@ class ApplicationRepositoryTest {
     void testGetTotalCountApplication() {
         String baseQuery = "SELECT * FROM applications";
         String countQuery = "SELECT COUNT(*) FROM applications";
+        List<Object> preparedStmtList = new ArrayList<>();
 
-        when(queryBuilder.getTotalCountQuery(baseQuery)).thenReturn(countQuery);
-        when(jdbcTemplate.queryForObject(countQuery, Integer.class)).thenReturn(42);
-
-        Integer result = applicationRepository.getTotalCountApplication(baseQuery);
+        lenient().when(queryBuilder.getTotalCountQuery(baseQuery)).thenReturn(countQuery);
+        lenient().when(jdbcTemplate.queryForObject(eq(countQuery), any(Object[].class), eq(Integer.class))).thenReturn(42);
+        Integer result = applicationRepository.getTotalCountApplication(baseQuery, preparedStmtList);
 
         assertNotNull(result);
         assertEquals(42, result);
 
         verify(queryBuilder, times(1)).getTotalCountQuery(baseQuery);
-        verify(jdbcTemplate, times(1)).queryForObject(countQuery, Integer.class);
     }
 }

@@ -45,7 +45,7 @@ public class UserUtil {
 		else if (uri.toString().contains(configs.getUserCreateEndpoint()))
 			dobFormat = DOB_FORMAT_D_M_Y;
 		try {
-			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, userRequest);
+			LinkedHashMap<String, Object> responseMap =(LinkedHashMap)  serviceRequestRepository.fetchResult(uri, userRequest);
 			parseResponse(responseMap, dobFormat);
 			UserDetailResponse userDetailResponse = mapper.convertValue(responseMap, UserDetailResponse.class);
 			return userDetailResponse;
@@ -60,17 +60,17 @@ public class UserUtil {
 	 * @param responseMap LinkedHashMap got from user api response
 	 */
 
-	public void parseResponse(LinkedHashMap responseMap, String dobFormat) {
-		List<LinkedHashMap> users = (List<LinkedHashMap>) responseMap.get(USER);
+	public void parseResponse(LinkedHashMap<String, Object> responseMap, String dobFormat) {
+		List<LinkedHashMap<String, Object>> users = (List<LinkedHashMap<String, Object>>) responseMap.get(USER);
 		String format1 = DOB_FORMAT_D_M_Y_H_M_S;
 		if (users != null) {
 			users.forEach(map -> {
 				map.put(CREATED_DATE, dateTolong((String) map.get(CREATED_DATE), format1));
-				if ((String) map.get(LAST_MODIFIED_DATE) != null)
+				if (map.get(LAST_MODIFIED_DATE) != null)
 					map.put(LAST_MODIFIED_DATE, dateTolong((String) map.get(LAST_MODIFIED_DATE), format1));
-				if ((String) map.get(DOB) != null)
+				if (map.get(DOB) != null)
 					map.put(DOB, dateTolong((String) map.get(DOB), dobFormat));
-				if ((String) map.get(PWD_EXPIRY_DATE) != null)
+				if (map.get(PWD_EXPIRY_DATE) != null)
 					map.put(PWD_EXPIRY_DATE, dateTolong((String) map.get(PWD_EXPIRY_DATE), format1));
 			});
 		}

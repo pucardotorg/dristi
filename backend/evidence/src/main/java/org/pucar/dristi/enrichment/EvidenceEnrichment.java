@@ -10,7 +10,9 @@ import org.pucar.dristi.web.models.EvidenceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.pucar.dristi.config.ServiceConstants.*;
@@ -66,23 +68,30 @@ public class EvidenceEnrichment {
         }
     }
 
-    String getIdgenByArtifactTypeAndSourceType(String artifactType, String sourceType) {
-        if (("DOCUMENTARY".equals(artifactType) || AFFIDAVIT.equals(artifactType)) && COMPLAINANT.equals(sourceType)) {
-            return "document.evidence_complainant";
-        } else if ((DOCUMENTARY.equals(artifactType) || AFFIDAVIT.equals(artifactType)) && ACCUSED.equals(sourceType)) {
-            return "document.evidence_accused";
-        } else if ((DOCUMENTARY.equals(artifactType) || AFFIDAVIT.equals(artifactType)) && COURT.equals(sourceType)) {
-            return "document.evidence_court";
-        } else if (DEPOSITION.equals(artifactType) && COMPLAINANT.equals(sourceType)) {
-            return "document.witness_complainant";
-        } else if (DEPOSITION.equals(artifactType) && ACCUSED.equals(sourceType)) {
-            return "document.witness_accused";
-        } else if (DEPOSITION.equals(artifactType) && COURT.equals(sourceType)) {
-            return "document.witness_court";
+    private static final Map<String, String> artifactSourceMap = new HashMap<>();
+
+    static {
+        artifactSourceMap.put("DOCUMENTARY_COMPLAINANT", "document.evidence_complainant");
+        artifactSourceMap.put("DOCUMENTARY_ACCUSED", "document.evidence_accused");
+        artifactSourceMap.put("DOCUMENTARY_COURT", "document.evidence_court");
+        artifactSourceMap.put("AFFIDAVIT_COMPLAINANT", "document.evidence_complainant");
+        artifactSourceMap.put("AFFIDAVIT_ACCUSED", "document.evidence_accused");
+        artifactSourceMap.put("AFFIDAVIT_COURT", "document.evidence_court");
+        artifactSourceMap.put("DEPOSITION_COMPLAINANT", "document.witness_complainant");
+        artifactSourceMap.put("DEPOSITION_ACCUSED", "document.witness_accused");
+        artifactSourceMap.put("DEPOSITION_COURT", "document.witness_court");
+    }
+
+    public String getIdgenByArtifactTypeAndSourceType(String artifactType, String sourceType) {
+        String key = artifactType + "_" + sourceType;
+        String result = artifactSourceMap.get(key);
+        if (result != null) {
+            return result;
         } else {
             throw new CustomException(ENRICHMENT_EXCEPTION, "Invalid artifact type or source type provided");
         }
     }
+
 
     public void enrichEvidenceNumber(EvidenceRequest evidenceRequest) {
         try {
