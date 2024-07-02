@@ -991,7 +991,7 @@ function EFilingCases({ path }) {
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
                 }
-
+                modifiedFormComponent.state = state;
                 if (
                   modifiedFormComponent?.labelChildren === "OutlinedInfoIcon" &&
                   Object.keys(caseDetails?.additionalDetails?.scrutiny?.data || {}).length === 0
@@ -1035,6 +1035,7 @@ function EFilingCases({ path }) {
                         component: "ScrutinyInfo",
                         key: `${key}Scrutiny`,
                         label: modifiedFormComponent.label,
+                        withoutLabel: true,
                         populators: {
                           scrutinyMessage: scrutiny?.[selected].form[index][key].FSOError,
                         },

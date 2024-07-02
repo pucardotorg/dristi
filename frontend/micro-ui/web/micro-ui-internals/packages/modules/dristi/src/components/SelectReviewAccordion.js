@@ -376,7 +376,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                 label={!defaultError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_DELETE")}
                 onButtonClick={() => {
                   if (!defaultError) {
-                    handleDeleteError();
+                    handleClosePopup();
                   } else {
                     setDeletePopup(true);
                   }
@@ -437,6 +437,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
             } else handleCloseImageModal();
           }}
           isPrevScrutiny={isPrevScrutiny}
+          disableScrutiny={false}
         />
       )}
     </div>

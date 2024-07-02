@@ -113,7 +113,9 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                 <h1>{`${t("DOCUMENT_NUMBER_HEADING")} ${index + 1}`}</h1>
                 <span
                   onClick={() => {
-                    handleDeleteDocument(index);
+                    if (!config?.disable) {
+                      handleDeleteDocument(index);
+                    }
                   }}
                   style={{ cursor: "pointer" }}
                 >
@@ -162,6 +164,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                             t={t}
                             uploadErrorInfo={fileErrors}
                             input={input}
+                            disableUploadDelete={config?.disable}
                           />
                         )}
                         {showFileUploader && (
@@ -174,6 +177,7 @@ function SelectUploadDocWithName({ t, config, formData = {}, onSelect }) {
                               types={input?.fileTypes}
                               children={dragDropJSX}
                               key={input?.name}
+                              // disabled={config?.disable}
                             />
                             <div className="upload-guidelines-div">{input.uploadGuidelines && <p>{t(input.uploadGuidelines)}</p>}</div>
                           </div>
