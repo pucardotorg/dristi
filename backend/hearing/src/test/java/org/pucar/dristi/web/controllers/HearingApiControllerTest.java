@@ -102,4 +102,22 @@ public class HearingApiControllerTest {
         assertEquals(hearing, response.getBody().getHearing());
         assertEquals(responseInfo, response.getBody().getResponseInfo());
     }
+
+    @Test
+    void testHearingV1UpdateTranscriptPost_Success() {
+        HearingRequest hearingRequest = new HearingRequest();  // Set up the request
+        Hearing hearing = new Hearing();  // Set up the response
+        ResponseInfo responseInfo = new ResponseInfo();
+
+        when(hearingService.updateHearingTranscript(any(HearingRequest.class))).thenReturn(hearing);
+        when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(responseInfo);
+
+        ResponseEntity<HearingResponse> response = hearingApiController.hearingV1UpdateTranscriptPost(hearingRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(hearing, response.getBody().getHearing());
+        assertEquals(responseInfo, response.getBody().getResponseInfo());
+        assertTrue(response.getBody().getHearing().getTranscript().isEmpty());
+    }
 }

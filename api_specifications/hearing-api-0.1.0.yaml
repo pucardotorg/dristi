@@ -165,6 +165,33 @@ paths:
             '*/*':
               schema:
                 $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+  
+  /hearing/v1/updateTranscript:
+    post:
+      tags:
+        - Hearing
+      summary: update hearing transcript requests.
+      requestBody:
+        description: Details for the update hearing(s) + RequestInfo meta data.
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/HearingRequest'
+        required: true
+      responses:
+        "200":
+          description: ResponseInfo with hearing(s) updated successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/HearingResponse'
+        "400":
+          description: hearing(s) update failed
+          content:
+            '*/*':
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/ErrorResponse'
+      x-codegen-request-body-name: hearingRequest
 
 components:
   schemas:

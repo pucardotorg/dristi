@@ -1,7 +1,12 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -9,8 +14,7 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
-import static org.pucar.dristi.config.ServiceConstants.SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Component
 @Slf4j
@@ -20,16 +24,13 @@ public class HearingQueryBuilder {
     private static final String DOCUMENT_SELECT_QUERY = "Select doc.id as id, doc.documenttype as documenttype, doc.filestore as filestore, doc.documentuid as documentuid, doc.additionaldetails as additionaldetails, doc.hearingid as hearingid ";
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_hearing_document doc";
 
-    /**   /** To build query using search criteria to search hearing
-     * @param cnrNumber
-     * @param preparedStmtList
-     * @param hearingId
-     * @param applicationNumber
-     * @param filingNumber
-     * @param limit
-     * @param offset
-     * @return
-     */
+    private final ObjectMapper mapper;
+
+    @Autowired
+    public HearingQueryBuilder(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
+
     public String getHearingSearchQuery(List<Object> preparedStmtList, String cnrNumber, String applicationNumber, String hearingId, String filingNumber, String tenantId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
         try {
             StringBuilder query = new StringBuilder(BASE_ATR_QUERY);
@@ -96,22 +97,6 @@ public class HearingQueryBuilder {
         }
     }
 
-    private void addClauseIfRequired(StringBuilder query, boolean isFirstCriteria) {
-        if (isFirstCriteria) {
-            query.append(" WHERE (");
-        } else {
-            query.append(" OR ");
-        }
-    }
-
-    private void addClauseIfRequiredForStatus(StringBuilder query, boolean isFirstCriteria) {
-        if (isFirstCriteria) {
-            query.append(" WHERE ");
-        } else {
-            query.append(" AND ");
-        }
-    }
-
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {
             StringBuilder query = new StringBuilder(DOCUMENT_SELECT_QUERY);
@@ -128,5 +113,25 @@ public class HearingQueryBuilder {
             log.error("Error while building document search query");
             throw new CustomException(DOCUMENT_SEARCH_QUERY_EXCEPTION,"Error occurred while building the query: "+ e.getMessage());
         }
+    }
+
+    public String buildUpdateTranscriptQuery(List<Object> preparedStmtList, String hearingId, String tenantId, List<String> transcriptList, @Valid AuditDetails auditDetails) throws CustomException {
+        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+
+        // Convert the transcriptList to JSON
+        try {
+            String transcriptJson = mapper.writeValueAsString(transcriptList);
+            preparedStmtList.add(transcriptJson);
+        } catch (JsonProcessingException e) {
+            throw new CustomException(PARSING_ERROR,"Error parsing transcript list to JSON : " + e.getMessage());
+        }
+
+        // Add other parameters to preparedStmtList
+        preparedStmtList.add(auditDetails.getLastModifiedBy());
+        preparedStmtList.add(auditDetails.getLastModifiedTime());
+        preparedStmtList.add(hearingId);
+        preparedStmtList.add(tenantId);
+
+        return query;
     }
 }
