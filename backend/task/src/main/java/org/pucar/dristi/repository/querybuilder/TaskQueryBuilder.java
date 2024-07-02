@@ -38,15 +38,15 @@ public class TaskQueryBuilder {
 
             if (cnrNumber != null && !cnrNumber.isEmpty()) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.cnrnumber = '").append(cnrNumber).append("'");
+                query.append("task.cnrnumber = ").append("'").append(cnrNumber).append("'");
                 firstCriteria = false;
             }
 
-            if (filingNumber != null && !filingNumber.isEmpty()) {
+            if (filingNumber != null  && !filingNumber.isEmpty() ) {
                 addClauseIfRequired(query, firstCriteria);
-                query.append("task.filingnumber = '").append(filingNumber).append("'");
+                query.append("task.filingnumber = ").append("'").append(filingNumber).append("'");
+                firstCriteria = false;
             }
-
             return query.toString();
         } catch (Exception e) {
             log.error("Error while building task search query", e);
@@ -61,13 +61,40 @@ public class TaskQueryBuilder {
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
 
-            firstCriteria = addTaskCriteria(id, query, firstCriteria, "task.id = ?", id);
-            firstCriteria = addTaskCriteria(tenantId, query, firstCriteria, "task.tenantid = ?", tenantId);
-            firstCriteria = addTaskCriteria(status, query, firstCriteria, "task.status = ?", status);
-            firstCriteria = addTaskCriteria(orderId != null ? orderId.toString() : null, query, firstCriteria, "task.orderid = ?", orderId != null ? orderId.toString() : null);
-            firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?", cnrNumber);
-            addTaskCriteria(taskNumber, query, firstCriteria, "task.tasknumber = ?", taskNumber);
+            if (id != null  && !id.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.id = ").append("'").append(id).append("'");
+                firstCriteria = false;
+            }
 
+            if (tenantId != null  && !tenantId.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.tenantid = ").append("'").append(tenantId).append("'");
+                firstCriteria = false;
+            }
+
+            if (status != null  && !status.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.status = ").append("'").append(status).append("'");
+                firstCriteria = false;
+            }
+
+            if (orderId != null) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.orderid = ").append("'").append(orderId).append("'");
+                firstCriteria = false;
+            }
+
+            if (cnrNumber != null  && !cnrNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.cnrnumber = ").append("'").append(cnrNumber).append("'");
+                firstCriteria = false;
+            }
+            if (taskNumber != null  && !taskNumber.isEmpty()) {
+                addClauseIfRequired(query, firstCriteria);
+                query.append("task.tasknumber = ").append("'").append(taskNumber).append("'");
+                firstCriteria = false;
+            }
             query.append(ORDERBY_CREATEDTIME);
 
             return query.toString();
