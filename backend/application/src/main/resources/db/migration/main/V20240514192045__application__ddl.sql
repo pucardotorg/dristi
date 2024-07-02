@@ -15,7 +15,7 @@ CREATE TABLE dristi_application (
                                     comment varchar(64)  NULL,
                                     isActive bool NOT NULL,
                                     documents varchar(64)  NULL,
-                                    additionalDetails varchar(64) NULL,
+                                    additionalDetails JSONB NULL,
                                     createdBy varchar(64) NULL,
                                     lastModifiedBy varchar(64) NULL,
                                     createdTime int8 NULL,

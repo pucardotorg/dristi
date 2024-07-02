@@ -35,21 +35,19 @@ public class EvidenceQueryBuilder {
     private static final String FROM_COMMENTS_TABLE = " FROM dristi_evidence_comment com";
     private static final String ORDERBY_CREATEDTIME = " ORDER BY art.createdTime DESC ";
 
-    public String getArtifactSearchQuery(String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
+    public String getArtifactSearchQuery(List<Object> preparedStmtList,String id, String caseId, String application, String hearing, String order, String sourceId, String sourceName, String artifactNumber) {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
-            List<Object> preparedStmtList = new ArrayList<>();
-            boolean firstCriteria = true;
 
-            firstCriteria = addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
-            firstCriteria = addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
-            firstCriteria = addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
-            firstCriteria = addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
-            firstCriteria = addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
-            firstCriteria = addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
-            firstCriteria = addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
-            firstCriteria = addArtifactCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber = ?");
+            addArtifactCriteria(id, query, preparedStmtList, true, "art.id = ?");
+            addArtifactCriteria(caseId, query, preparedStmtList, false, "art.caseId = ?");
+            addArtifactCriteria(application, query, preparedStmtList, false, "art.application = ?");
+            addArtifactCriteria(hearing, query, preparedStmtList, false, "art.hearing = ?");
+            addArtifactCriteria(order, query, preparedStmtList, false, "art.orders = ?");
+            addArtifactCriteria(sourceId, query, preparedStmtList, false, "art.sourceId = ?");
+            addArtifactCriteria(sourceName, query, preparedStmtList, false, "art.sourceName = ?");
+            addArtifactCriteria(artifactNumber, query, preparedStmtList, false, "art.artifactNumber = ?");
 
             query.append(ORDERBY_CREATEDTIME);
 
@@ -60,15 +58,19 @@ public class EvidenceQueryBuilder {
         }
     }
 
-    private boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean isFirstCriteria, String condition) {
-        if (criteria != null && !criteria.isEmpty()) {
-            addClauseIfRequired(query, isFirstCriteria);
-            query.append(condition);
-            preparedStmtList.add(criteria);
-            return false; // Reset isFirstCriteria after adding this criterion
+    private void addArtifactCriteria(String value, StringBuilder query, List<Object> preparedStmtList, boolean isFirstCriteria, String criteriaClause) {
+        if (value != null && !value.isEmpty()) {
+            if (isFirstCriteria) {
+                query.append(" WHERE ");
+                isFirstCriteria = false;
+            } else {
+                query.append(" AND ");
+            }
+            query.append(criteriaClause);
+            preparedStmtList.add(value);
         }
-        return isFirstCriteria;
     }
+
 
     public String getDocumentSearchQuery(List<String> ids, List<Object> preparedStmtList) {
         try {

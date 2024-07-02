@@ -1,9 +1,13 @@
 package org.pucar.dristi.repository.querybuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
@@ -11,8 +15,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class HearingQueryBuilderTest {
+
+    @Mock
+    private ObjectMapper mapper;
 
     @InjectMocks
     private HearingQueryBuilder hearingQueryBuilder;
@@ -143,5 +151,53 @@ class HearingQueryBuilderTest {
 
         // Act & Assert
         assertThrows(CustomException.class, () -> hearingQueryBuilder.getDocumentSearchQuery(ids, preparedStmtList));
+    }
+
+    @Test
+    void buildUpdateTranscriptQuery_Success() throws JsonProcessingException {
+        // Arrange
+        List<Object> preparedStmtList = new ArrayList<>();
+        String hearingId = "hearing123";
+        String tenantId = "tenant1";
+        List<String> transcriptList = List.of("transcript1", "transcript2");
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setLastModifiedBy("user1");
+        auditDetails.setLastModifiedTime(123456789L);
+
+        String transcriptJson = "[\"transcript1\",\"transcript2\"]";
+        when(mapper.writeValueAsString(transcriptList)).thenReturn(transcriptJson);
+
+        // Act
+        String query = hearingQueryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails);
+
+        // Assert
+        assertEquals("UPDATE dristi_hearing SET transcript = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?", query);
+        assertEquals(5, preparedStmtList.size());
+        assertEquals(transcriptJson, preparedStmtList.get(0));
+        assertEquals("user1", preparedStmtList.get(1));
+        assertEquals(123456789L, preparedStmtList.get(2));
+        assertEquals(hearingId, preparedStmtList.get(3));
+        assertEquals(tenantId, preparedStmtList.get(4));
+    }
+
+    @Test
+    void buildUpdateTranscriptQuery_JsonProcessingException() throws JsonProcessingException {
+        // Arrange
+        List<Object> preparedStmtList = new ArrayList<>();
+        String hearingId = "hearing123";
+        String tenantId = "tenant1";
+        List<String> transcriptList = List.of("transcript1", "transcript2");
+        AuditDetails auditDetails = new AuditDetails();
+        auditDetails.setLastModifiedBy("user1");
+        auditDetails.setLastModifiedTime(123456789L);
+
+        when(mapper.writeValueAsString(transcriptList)).thenThrow(new JsonProcessingException("Error") {});
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> hearingQueryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails));
+
+        assertEquals("Error parsing transcript list to JSON : Error", exception.getMessage());
+        verify(mapper, times(1)).writeValueAsString(transcriptList);
+        assertTrue(preparedStmtList.isEmpty());
     }
 }

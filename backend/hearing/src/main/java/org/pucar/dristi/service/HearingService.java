@@ -76,18 +76,14 @@ public class HearingService {
 
     public List<Hearing> searchHearing(String cnrNumber, String applicationNumber, String hearingId, String fightingNumber, String tenentId, LocalDate fromDate, LocalDate toDate, Integer limit, Integer offset, String sortBy) {
 
-        try{
+        try {
             RequestInfo requestInfo = new RequestInfo();
             requestInfo.setUserInfo(new User());
-            if (limit == null || limit<1) limit =10;
-            if (offset == null || offset<0) offset =0;
+            if (limit == null || limit < 1) limit = 10;
+            if (offset == null || offset < 0) offset = 0;
             if (!Objects.equals(sortBy, "DESC")) sortBy = "ASC";
-            List<Hearing> hearingList = hearingRepository.getHearings(cnrNumber,applicationNumber,hearingId,fightingNumber,tenentId,fromDate,toDate,limit,offset,sortBy);
-            for (Hearing hearing : hearingList){
-                hearing.setWorkflow(workflowService.getWorkflowFromProcessInstance(workflowService.getCurrentWorkflow(requestInfo, hearing.getTenantId(), hearing.getHearingId())));
-            }
-            return hearingList;
-        }  catch (CustomException e) {
+            return hearingRepository.getHearings(cnrNumber, applicationNumber, hearingId, fightingNumber, tenentId, fromDate, toDate, limit, offset, sortBy);
+        } catch (CustomException e) {
             log.error("Custom Exception occurred while searching");
             throw e;
         } catch (Exception e) {
@@ -101,7 +97,7 @@ public class HearingService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(),hearingRequest.getHearing());
+            Hearing hearing = validator.validateHearingExistence(hearingRequest.getRequestInfo(), hearingRequest.getHearing());
 
             // Updating Hearing request
             // TODO: Extra: add previous scheduled hearing startDate and endDate to additional details with process instance id as key.
@@ -135,9 +131,33 @@ public class HearingService {
     }
 
     public HearingExists isHearingExist(HearingExistsRequest body) {
-        HearingExists order = body.getOrder();
-        List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(),order.getApplicationNumber(), order.getHearingId(),order.getFilingNumber(),body.getRequestInfo().getUserInfo().getTenantId(),null,null,1,0,null);
-        order.setExists(!hearingList.isEmpty());
-        return order;
+        try {
+            HearingExists order = body.getOrder();
+            List<Hearing> hearingList = hearingRepository.getHearings(order.getCnrNumber(), order.getApplicationNumber(), order.getHearingId(), order.getFilingNumber(), body.getRequestInfo().getUserInfo().getTenantId(), null, null, 1, 0, null);
+            order.setExists(!hearingList.isEmpty());
+            return order;
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while verifying hearing");
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while verifying hearing");
+            throw new CustomException(HEARING_SEARCH_EXCEPTION, "Error occurred while searching hearing: " + e.getMessage());
+        }
+    }
+
+    public Hearing updateHearingTranscript(HearingRequest hearingRequest) {
+        try {
+            Hearing hearing = validator.validateHearingExistenceForTranscriptUpdate(hearingRequest.getHearing());
+            enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
+            hearingRepository.updateHearingTranscript(hearingRequest.getHearing());
+            hearing.setTranscript(hearingRequest.getHearing().getTranscript());
+            hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
+            return hearing;
+        } catch (CustomException e) {
+            log.error("Custom Exception occurred while verifying hearing");
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException(HEARING_UPDATE_EXCEPTION, "Error occurred while updating hearing: " + e.getMessage());
+        }
     }
 }
