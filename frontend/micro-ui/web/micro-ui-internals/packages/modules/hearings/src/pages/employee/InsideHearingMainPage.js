@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory, Link } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
@@ -10,11 +11,43 @@ import debounce from "lodash/debounce";
 
 const fieldStyle = { marginRight: 0 };
 
-const InsideHearingMainPage = ({hearingId}) => {
+const InsideHearingMainPage = () => {
+  // const { hearingId } = Digit.Hooks.useQueryParams();
+  
+
+  const hearingId = "HEARING-ID-2024-06-26-000042" //need to change
+
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const { data: hearingResponse, refetch: refetch } = useGetHearings(
+    { tenantId: tenantId },
+    { applicationNumber: "", cnrNumber: "", hearingId: hearingId },
+    "dristi",
+    true
+  );
+  const [attendees, setAttendees] = useState([]);
+  const [formError, setFormError] = useState("");
+  const [updatedHearingDetails, setUpdatedHearingDetails] = useState({});
+
+  useEffect(() => {
+    if (hearingResponse) {
+      const hearingData = hearingResponse?.HearingList[0];
+      if (hearingData) {
+        setAttendees(hearingData.attendees || []);
+        setUpdatedHearingDetails(hearingData || []);
+      }
+    }
+  }, [hearingResponse]);
+  const { data: updatehearingResponse, refetch: updaterefetch } = useUpdateHearing( updatedHearingDetails, "dristi", true);
+
+
+  if (!hearingId) {
+    const contextPath = window?.contextPath || "";
+    history.push(`/${contextPath}/employee/hearings/home`);
+  }
   const history = useHistory();
   const [activeTab, setActiveTab] = useState("Transcript/Summary");
   const [immediateText, setImmediateText] = useState("");
-  const [hearing, setHearing] = useState({});
+ 
   const [delayedText, setDelayedText] = useState("");
   const [witnessDepositionText, setWitnessDepositionText] = useState("");
   const [userRoles, setUserRoles] = useState([]);
@@ -254,7 +287,7 @@ const InsideHearingMainPage = ({hearingId}) => {
             <Button
               label={"Mark Attendance"}
               variation={"teritiary"}
-              onClick ={handleModal}
+              onClick={handleModal}
               // onClick={() => handleNavigate("/employee/hearings/mark-attendance")}
               style={{ width: "100%" }}
             />
@@ -280,8 +313,8 @@ const InsideHearingMainPage = ({hearingId}) => {
               style={{ width: "100%" }}
             />
           </div>
-          { isOpen && <MarkAttendance  handleModal={handleModal} /> }
-    </div>
+          {isOpen && <MarkAttendance handleModal={handleModal} hearingId={hearingId} />}
+        </div>
       </ActionBar>
     </div>
   );

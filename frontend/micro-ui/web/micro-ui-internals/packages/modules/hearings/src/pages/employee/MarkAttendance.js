@@ -3,7 +3,7 @@ import { Button, CloseSvg, Modal } from "@egovernments/digit-ui-react-components
 import DisplayAttendees from './DisplayAttendees';
 import AddAttendees from './AddAttendees';
 
-const MarkAttendance = ({ handleModal }) => {
+const MarkAttendance = ({ handleModal,hearingId }) => {
   const partiesToAttend = 12;
   const onlineAttendance = 0;
   const offlineAttendance = 0;
@@ -43,7 +43,7 @@ const MarkAttendance = ({ handleModal }) => {
     >
       <div style={{ width: '100%', padding: '16px', textAlign: 'left' }}>
         {isAddingAttendees ? 
-          <AddAttendees /> : 
+          <AddAttendees hearingId = {hearingId} /> : 
           <DisplayAttendees 
             partiesToAttend={partiesToAttend} 
             offlineAttendance={offlineAttendance} 
