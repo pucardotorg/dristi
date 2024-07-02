@@ -22,10 +22,8 @@ public class IndividualUtil {
 
     @Autowired
     private ObjectMapper mapper;
-
     @Autowired
     private ServiceRequestRepository serviceRequestRepository;
-
 
     @Autowired
     public IndividualUtil(ObjectMapper mapper, ServiceRequestRepository serviceRequestRepository) {
