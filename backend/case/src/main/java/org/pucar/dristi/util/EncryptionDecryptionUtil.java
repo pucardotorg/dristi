@@ -25,7 +25,6 @@ import java.util.*;
 @Slf4j
 @Component
 public class EncryptionDecryptionUtil {
-//    @Qualifier("caseEncryptionServiceImpl")
     private final EncryptionService encryptionService;
     private final AuditService auditService;
     private final ObjectMapper objectMapper;
@@ -55,6 +54,9 @@ public class EncryptionDecryptionUtil {
                 throw new CustomException("ENCRYPTION_NULL_ERROR", "Null object found on performing encryption");
             }
             return encryptedObject;
+        } catch (CustomException e){
+            log.error(e.getCode(),e.getMessage());
+            throw e;
         } catch (IOException | HttpClientErrorException | HttpServerErrorException | ResourceAccessException e) {
             log.error("Error occurred while encrypting", e);
             throw new CustomException("ENCRYPTION_ERROR", "Error occurred in encryption process");
@@ -62,6 +64,7 @@ public class EncryptionDecryptionUtil {
             log.error("Unknown Error occurred while encrypting", e);
             throw new CustomException("UNKNOWN_ERROR", "Unknown error occurred in encryption process");
         }
+
     }
 
     public <E, P> P decryptObject(Object objectToDecrypt, String key, Class<E> classType, RequestInfo requestInfo) {
@@ -96,6 +99,9 @@ public class EncryptionDecryptionUtil {
                 decryptedObject = (P) ((List<E>) decryptedObject).get(0);
             }
             return decryptedObject;
+        } catch (CustomException e){
+            log.error(e.getCode(),e.getMessage());
+            throw e;
         } catch (IOException | HttpClientErrorException | HttpServerErrorException | ResourceAccessException e) {
             log.error("Error occurred while decrypting", e);
             throw new CustomException("DECRYPTION_SERVICE_ERROR", "Error occurred in decryption process");
@@ -114,7 +120,7 @@ public class EncryptionDecryptionUtil {
                 return false;
             usersToDecrypt = ((CourtCase) list.get(0)).getLitigants();
         } else {
-            throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of User");
+            throw new CustomException("DECRYPTION_NOTLIST_ERROR", objectToDecrypt + " is not of type List of Object");
         }
         List<UUID> userIDs = usersToDecrypt
                 .stream()
