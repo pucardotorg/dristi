@@ -208,14 +208,15 @@ public class EvidenceServiceTest {
         // Mock behavior
         when(config.getEvidenceCreateTopic()).thenReturn("create_topic");
 
-        // Execute method
-        Artifact result = evidenceService.createEvidence(evidenceRequest);
+        // Call the method under test
+        evidenceService.createEvidence(evidenceRequest);
 
         // Verify behavior
         verify(validator).validateEvidenceRegistration(evidenceRequest);
         verify(workflowService).updateWorkflowStatus(evidenceRequest);
         verify(producer).push("create_topic", evidenceRequest);
     }
+
     @Test
     public void testCreateEvidenceWithCustomException() {
         // Prepare data
@@ -261,14 +262,15 @@ public class EvidenceServiceTest {
         when(config.getUpdateEvidenceKafkaTopic()).thenReturn("update_topic");
         when(validator.validateApplicationExistence(evidenceRequest)).thenReturn(new Artifact());
 
-        // Execute method
-        Artifact result = evidenceService.updateEvidence(evidenceRequest);
+        // Call the method under test
+        evidenceService.updateEvidence(evidenceRequest);
 
         // Verify behavior
         verify(validator).validateApplicationExistence(evidenceRequest);
         verify(workflowService).updateWorkflowStatus(evidenceRequest);
         verify(producer).push("update_topic", evidenceRequest);
     }
+
     @Test
     public void testUpdateEvidenceWithValidationException() {
         // Prepare data

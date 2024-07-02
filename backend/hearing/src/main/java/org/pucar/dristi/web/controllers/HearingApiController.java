@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -64,8 +61,8 @@ public class HearingApiController {
     }
 
     @RequestMapping(value = "/hearing/v1/search", method = RequestMethod.POST)
-    public ResponseEntity<HearingListResponse> hearingV1SearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "cnrNumber", required = true) String cnrNumber,
-                                                                   @NotNull @Parameter(in = ParameterIn.QUERY, description = "the applicationNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "applicationNumber", required = true) String applicationNumber,
+    public ResponseEntity<HearingListResponse> hearingV1SearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "cnrNumber") String cnrNumber,
+                                                                   @NotNull @Parameter(in = ParameterIn.QUERY, description = "the applicationNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "applicationNumber") String applicationNumber,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "the hearing id", schema = @Schema()) @Valid @RequestParam(value = "hearingId", required = false) String hearingId,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "Search by filingNumber", schema = @Schema()) @Valid @RequestParam(value = "filingNumber", required = false) String filingNumber,
                                                                    @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId of case request", schema = @Schema()) @Valid @RequestParam(value = "tenantId", required = false) String tenantId,
@@ -84,6 +81,16 @@ public class HearingApiController {
     public ResponseEntity<HearingResponse> hearingV1UpdatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
 
         Hearing hearing = hearingService.updateHearing(body);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
+        HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
+        return new ResponseEntity<>(hearingResponse, HttpStatus.OK);
+
+    }
+
+    @PostMapping(value = "/hearing/v1/updateTranscript")
+    public ResponseEntity<HearingResponse> hearingV1UpdateTranscriptPost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
+
+        Hearing hearing = hearingService.updateHearingTranscript(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
         return new ResponseEntity<>(hearingResponse, HttpStatus.OK);

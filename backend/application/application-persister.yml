@@ -34,6 +34,8 @@ serviceMaps:
             - jsonPath: $.application.comment
             - jsonPath: $.application.isActive
             - jsonPath: $.application.additionalDetails
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.application.auditDetails.createdBy
             - jsonPath: $.application.auditDetails.lastModifiedBy
             - jsonPath: $.application.auditDetails.createdTime
@@ -106,6 +108,8 @@ serviceMaps:
             - jsonPath: $.application.comment
             - jsonPath: $.application.isActive
             - jsonPath: $.application.additionalDetails
+              type: JSON
+              dbType: JSONB
             - jsonPath: $.application.auditDetails.createdBy
             - jsonPath: $.application.auditDetails.lastModifiedBy
             - jsonPath: $.application.auditDetails.createdTime
