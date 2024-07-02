@@ -92,7 +92,7 @@ public class ServiceConstants {
 	public static final String TAX_HEADMASTER_CODE = "CASE_ADVANCE_CARRYFORWARD";
 	public static final String CREATE_DEMAND_STATUS = "PAYMENT_PENDING";
 	public static final String CASE_ADMIT_STATUS = "CASE_ADMITTED";
-	public static final int ACCESSCODE_LENGTH = 8;
+	public static final int ACCESSCODE_LENGTH = 6;
 	public static final String STATE = "KL";
 	public static final String DISTRICT = "JL";
 	public static final String ESTABLISHMENT_CODE = "01";
