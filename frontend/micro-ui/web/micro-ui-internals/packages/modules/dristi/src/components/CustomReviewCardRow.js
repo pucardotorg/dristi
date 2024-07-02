@@ -431,7 +431,7 @@ const CustomReviewCardRow = ({
                     ) : (
                       <FlagIcon isError={true} />
                     )}
-                    {`${t(error.fileName) || ""}:${error.FSOError}`}
+                    {`${t(error.fileName) || ""} : ${error.FSOError}`}
                   </div>
                 );
               })}

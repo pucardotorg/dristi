@@ -286,7 +286,7 @@ function ViewCaseFile({ t }) {
     return <Loader />;
   }
   if (isScrutiny && state !== CaseWorkflowState.UNDER_SCRUTINY) {
-    // history.push("/digit-ui/employee/dristi/cases");
+    history.push("/digit-ui/employee/dristi/cases");
   }
   const sidebar = ["litigentDetails", "caseSpecificDetails", "additionalDetails"];
   const labels = {
@@ -462,7 +462,7 @@ function ViewCaseFile({ t }) {
               totalErrors={totalErrors?.total || 0}
               onCancel={handleCloseModal}
               onSubmit={handleRegisterCase}
-              heading={"CS_REGISTER_CASE"}
+              heading={"CS_REGISTER_CASE_CONFIRMATION"}
               type="registerCase"
             />
           )}
@@ -492,20 +492,6 @@ function ViewCaseFile({ t }) {
               type="sendCaseBackPotential"
             />
           )}
-
-          {/* {actionModal === "caseSendBackSuccess" && (
-            <SuccessModal
-              header={"Vaibhav"}
-              t={t}
-              actionCancelLabel={"CS_COMMON_CLOSE"}
-              actionSaveLabel={"NEXT_CASE"}
-              bannerMessage={"CS_CASE_SENT_BACK_SUCCESS"}
-              onCancel={handleCloseSucessModal}
-              onSubmit={handleNextCase}
-              type={"caseSendBackSuccess"}
-              data={{ caseId: caseDetails?.filingNumber, caseName:  newCaseName !== "" ? newCaseName : caseDetails?.caseTitle, errorsMarked: totalErrors.total }}
-            />
-          )} */}
 
           {actionModal === "caseRegisterSuccess" && (
             <SuccessModal
