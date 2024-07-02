@@ -1,7 +1,11 @@
 import { useIndividualView } from "./useIndividualView";
 import utils from "../utils";
+import useUpdateHearingsService from "./hearings/useUpdateHearingsService";
+import useGetHearings from "./hearings/useGetHearings";
 const hearings = {
-  useIndividualView
+  useIndividualView,
+  useUpdateHearingsService,
+  useGetHearings,
 };
 
 const Hooks = {
