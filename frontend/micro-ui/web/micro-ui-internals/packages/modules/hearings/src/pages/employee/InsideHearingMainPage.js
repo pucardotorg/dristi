@@ -1,53 +1,19 @@
-import React, { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-import { Header, ActionBar, SVG, SubmitBar, Card } from "@egovernments/digit-ui-react-components";
+import { ActionBar, Card } from "@egovernments/digit-ui-react-components";
 import { Button, TextArea } from "@egovernments/digit-ui-components";
 import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
-import MarkAttendance from './MarkAttendance';
+import MarkAttendance from "./MarkAttendance";
 import debounce from "lodash/debounce";
 
 const fieldStyle = { marginRight: 0 };
 
 const InsideHearingMainPage = () => {
-  // const { hearingId } = Digit.Hooks.useQueryParams();
-  
-
-  const hearingId = "HEARING-ID-2024-06-26-000042" //need to change
-
-  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const { data: hearingResponse, refetch: refetch } = useGetHearings(
-    { tenantId: tenantId },
-    { applicationNumber: "", cnrNumber: "", hearingId: hearingId },
-    "dristi",
-    true
-  );
-  const [attendees, setAttendees] = useState([]);
-  const [formError, setFormError] = useState("");
-  const [updatedHearingDetails, setUpdatedHearingDetails] = useState({});
-
-  useEffect(() => {
-    if (hearingResponse) {
-      const hearingData = hearingResponse?.HearingList[0];
-      if (hearingData) {
-        setAttendees(hearingData.attendees || []);
-        setUpdatedHearingDetails(hearingData || []);
-      }
-    }
-  }, [hearingResponse]);
-  const { data: updatehearingResponse, refetch: updaterefetch } = useUpdateHearing( updatedHearingDetails, "dristi", true);
-
-
-  if (!hearingId) {
-    const contextPath = window?.contextPath || "";
-    history.push(`/${contextPath}/employee/hearings/home`);
-  }
   const history = useHistory();
   const [activeTab, setActiveTab] = useState("Transcript/Summary");
   const [immediateText, setImmediateText] = useState("");
- 
+  const [hearing, setHearing] = useState({});
   const [delayedText, setDelayedText] = useState("");
   const [witnessDepositionText, setWitnessDepositionText] = useState("");
   const [userRoles, setUserRoles] = useState([]);
@@ -56,8 +22,12 @@ const InsideHearingMainPage = () => {
   const [selectedWitness, setSelectedWitness] = useState({});
   const textAreaRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [attendees, setAttendees] = useState([]);
+
+  const [updatedHearingDetails, setUpdatedHearingDetails] = useState({});
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+  // const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
+  const hearingId = "HEARING-ID-2024-06-26-000042"; //need to change
 
   if (!hearingId) {
     const contextPath = window?.contextPath || "";
@@ -88,6 +58,13 @@ const InsideHearingMainPage = () => {
     !checkUserApproval("CASE_VIEWER")
   );
 
+  const { data: updatehearingResponse, refetch: updaterefetch } = Digit.Hooks.hearings.useUpdateHearingsService(
+    updatedHearingDetails,
+    "",
+    "dristi",
+    true
+  );
+
   useEffect(() => {
     if (latestText) {
       const hearingData = latestText?.HearingList[0];
@@ -105,17 +82,15 @@ const InsideHearingMainPage = () => {
         setDelayedText(hearingData?.transcript[0]);
         setSelectedWitness(processedAdditionalDetails.witnesss[0] || {});
         setWitnessDepositionText(processedAdditionalDetails.witnesss[0]?.deposition || "");
+        setAttendees(hearingData.attendees || []);
+        setUpdatedHearingDetails(hearingData || []);
       }
     }
   }, [latestText]);
 
-
-  
-
   const handleModal = () => {
     setIsOpen(!isOpen);
   };
-
 
   const updateText = debounce(async (newText) => {
     try {
@@ -313,7 +288,16 @@ const InsideHearingMainPage = () => {
               style={{ width: "100%" }}
             />
           </div>
-          {isOpen && <MarkAttendance handleModal={handleModal} hearingId={hearingId} />}
+          {isOpen && (
+            <MarkAttendance
+              handleModal={handleModal}
+              attendees={attendees}
+              setAttendees={setAttendees}
+              refetch={updaterefetch}
+              hearing={hearing}
+              setUpdatedHearingDetails={setUpdatedHearingDetails}
+            />
+          )}
         </div>
       </ActionBar>
     </div>

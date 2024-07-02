@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
-import useGetHearings from "../../../../dristi/src/hooks/dristi/useGetHearings";
-import useUpdateHearing from "../../hooks/useUpdateHearing";
+// import useGetHearings from "../../../../dristi/src/hooks/dristi/useGetHearings";
+// import useUpdateHearing from "../../hooks/useUpdateHearing";
 
-const AddAttendees = ({ hearingId }) => {
+const AddAttendees = ({ attendees=[],setAttendees ,refetch ,handleAttendees, hearingData , setUpdatedHearingDetails}) => {
+
+    const [formError, setFormError] = useState("");
 //   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 //   const { data: hearingResponse, refetch: refetch } = useGetHearings(
 //     { tenantId: tenantId },
@@ -25,18 +27,6 @@ const AddAttendees = ({ hearingId }) => {
 //     }
 //   }, [hearingResponse]);
 
-  const questions = [
-    {
-      uuid: "onlineAttendees",
-      questionStatement: "online",
-      required: true,
-    },
-    {
-      uuid: "offlineAttendees",
-      questionStatement: "offline",
-      required: true,
-    },
-  ];
 
   //   const { data: updateHearingResponse, updateRefetch } = useUpdateHearing(
   //     { hearing: { tenantId, hearing } },
@@ -45,7 +35,7 @@ const AddAttendees = ({ hearingId }) => {
   //     true
   //   );
 
-  const { data: updatehearingResponse, refetch: updaterefetch } = useUpdateHearing( updatedHearingDetails, "dristi", true);
+//   const { data: updatehearingResponse, refetch: updaterefetch } = useUpdateHearing( updatedHearingDetails, "dristi", true);
 
   const onFormSubmit = async (data) => {
     const onlineAttendees = data.onlineAttendees || [];
@@ -69,27 +59,28 @@ const AddAttendees = ({ hearingId }) => {
       }
       return attendee;
     });
-    console.log("hiiiiiiiii");
     try {
-      const details = { ...hearingResponse.HearingList[0], attendees: updatedAttendees };
+      const details = { ...hearingData, attendees: updatedAttendees };
+      console.log(details)
       setUpdatedHearingDetails({hearing: {...details}});
     } catch (error) {
       console.error("Error updating hearing:", error);
     }
-    updaterefetch();
+    refetch();
     setAttendees(updatedAttendees);
+    handleAttendees()
     setFormError("");
   };
-  const formConfig = questions.map((question) => ({
-    isMandatory: question.required,
-    key: question.uuid,
+  const formConfig =[{
+    isMandatory: true,
+    key: "onlineAttendees",
     type: "multiselectdropdown",
     inline: false,
     disable: false,
-    label: `Select ${question.questionStatement} Attendees`,
+    label: `Select online Attendees`,
     defaultValue: [],
     populators: {
-      name: question.uuid,
+      name: "onlineAttendees",
       optionsKey: "label",
       defaultText: "select attendees",
       selectedText: "attendees",
@@ -97,10 +88,29 @@ const AddAttendees = ({ hearingId }) => {
         value: attendee.individualId,
         label: attendee.name,
       })),
-      required: question.required,
       error: "Required",
     },
-  }));
+  },
+  {
+    isMandatory: true,
+    key: "offlineAttendees",
+    type: "multiselectdropdown",
+    inline: false,
+    disable: false,
+    label: `Select Offline Attendees`,
+    defaultValue: [],
+    populators: {
+      name: "offlineAttendees",
+      optionsKey: "label",
+      defaultText: "select attendees",
+      selectedText: "attendees",
+      options: attendees.map((attendee) => ({
+        value: attendee.individualId,
+        label: attendee.name,
+      })),
+      error: "Required",
+    },
+  }];
 
   return (
     <div>
