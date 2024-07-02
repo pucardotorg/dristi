@@ -10,106 +10,21 @@ export const TabSearchconfig = {
   tenantId: "mz",
   moduleName: "commonCampaignUiConfig",
   showTab: true, // setting true will enable tab screen
-  TabSearchconfig: [ // all tab config should be added in json array
+  TabSearchconfig: [
+    // all tab config should be added in json array
     {
       label: "Overview",
       type: "search",
-      apiDetails: {
-        serviceName: "/individual/v1/_search",
-        requestParam: {
-          tenantId: Digit.ULBService.getCurrentTenantId()
-        },
-        requestBody: {
-          apiOperation: "SEARCH",
-          Individual: {
-            tenantId: Digit.ULBService.getCurrentTenantId()
-          }
-        },
-        masterName: "commonUiConfig",
-        moduleName: "SearchIndividualConfig",
-        minParametersForSearchForm: 0,
-        tableFormJsonPath: "requestParam",
-        filterFormJsonPath: "requestBody.Individual",
-        searchFormJsonPath: "requestBody.Individual",
-      },
-      sections: {
-        search: {
-          uiConfig: {
-            formClassName: "custom-both-clear-search",
-            primaryLabel: "ES_COMMON_SEARCH",
-            secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-            minReqFields: 0,
-            defaultValues: defaultSearchValues, // Set default values for search fields
-            fields: [
-              {
-                label: "Applicant name ",
-                isMandatory: false,
-                key: "individualName",
-                type: "text",
-                populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
-                },
-              },
-              {
-                label: "Phone number",
-                isMandatory: false,
-                key: "Phone number",
-                type: "number",
-                disable: false,
-                populators: { name: "mobileNumber", error: "sample error message", validation: { min: 0, max: 999999999 } },
-              },
-              {
-                label: "Individual Id ",
-                isMandatory: false,
-                type: "text",
-                disable: false,
-                populators: {
-                  name: "individualId",
-                },
-              },
-            ],
-          },
-
-          show: true,
-        },
-        searchResult: {
-          tenantId: Digit.ULBService.getCurrentTenantId(),
-          uiConfig: {
-            columns: [
-              {
-                label: "IndividualID",
-                jsonPath: "individualId",
-              },
-              {
-                label: "Name",
-                jsonPath: "name.givenName",
-              },
-              {
-                label: "Address",
-                jsonPath: "address.locality.code",
-              },
-            ],
-
-            enableColumnSort: true,
-            resultsJsonPath: "Individual",
-          },
-          show: true,
-        },
-      },
     },
     {
       label: "Complaints",
       type: "search",
-      sections: {
-        search: {
-          uiConfig: {
-            columns: [],
-          },
-          show: true,
-        },
-      },
+      // sections: {
+      //   searchResult: {
+      //     uiConfig: {},
+      //   },
+      //   show: true,
+      // },
     },
     {
       label: "Hearings",
@@ -129,8 +44,8 @@ export const TabSearchconfig = {
         moduleName: "SearchIndividualConfig",
         minParametersForSearchForm: 0,
         tableFormJsonPath: "requestParam",
-        filterFormJsonPath: "requestBody.Individual",
-        searchFormJsonPath: "requestBody.Individual",
+        filterFormJsonPath: "requestBody.HearingList",
+        searchFormJsonPath: "requestBody.HearingList",
       },
       sections: {
         search: {
@@ -142,36 +57,55 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "Applicant name ",
+                label: "Type",
                 isMandatory: false,
-                key: "individualName",
-                type: "text",
+                key: "type",
+                type: "dropdown",
                 populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
+                  name: "type",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "CaseType",
+                    moduleName: "Case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
                 },
               },
               {
-                label: "Phone number",
+                label: "Stage",
                 isMandatory: false,
-                key: "Phone number",
-                type: "number",
-                disable: false,
-                populators: { name: "mobileNumber", error: "sample error message", validation: { min: 0, max: 999999999 } },
+                key: "stage",
+                type: "dropdown",
+                populators: {
+                  name: "stage",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Stage",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
               },
               {
-                label: "Individual Id ",
+                label: "Parties",
                 isMandatory: false,
-                type: "text",
-                disable: false,
+                key: "parties",
+                type: "dropdown",
                 populators: {
-                  name: "individualId",
+                  name: "parties",
+                },
+              },
+              {
+                label: "Order ID",
+                isMandatory: false,
+                key: "orderId",
+                type: "text",
+                populators: {
+                  name: "orderId",
                 },
               },
             ],
           },
-
           show: true,
         },
         searchResult: {
@@ -179,22 +113,30 @@ export const TabSearchconfig = {
           uiConfig: {
             columns: [
               {
-                label: "IndividualID",
-                jsonPath: "individualId",
-              },
-
-              {
-                label: "Name",
-                jsonPath: "name.givenName",
+                label: "Hearing Type",
+                jsonPath: "hearingType",
               },
               {
-                label: "Address",
-                jsonPath: "address.locality.code",
+                label: "Stage",
+                jsonPath: "",
+              },
+              {
+                label: "Parties",
+                jsonPath: "attendees",
+                additionalCustomization: true,
+              },
+              {
+                label: "Status",
+                jsonPath: "status",
+              },
+              {
+                label: "Date Added",
+                jsonPath: "startTime",
+                additionalCustomization: true,
               },
             ],
-
             enableColumnSort: true,
-            resultsJsonPath: "Individual",
+            resultsJsonPath: "HearingList",
           },
           show: true,
         },
@@ -231,31 +173,66 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "Applicant name ",
+                label: "Type",
                 isMandatory: false,
-                key: "individualName",
-                type: "text",
+                key: "type",
+                type: "dropdown",
                 populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
+                  name: "type",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "CaseType",
+                    moduleName: "Case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
                 },
               },
               {
-                label: "Phone number",
+                label: "Stage",
                 isMandatory: false,
-                key: "Phone number",
-                type: "number",
-                disable: false,
-                populators: { name: "mobileNumber", error: "sample error message", validation: { min: 0, max: 999999999 } },
+                key: "stage",
+                type: "dropdown",
+                populators: {
+                  name: "stage",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Stage",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
               },
               {
-                label: "Individual Id ",
+                label: "Status",
                 isMandatory: false,
-                type: "text",
-                disable: false,
+                key: "status",
+                type: "dropdown",
                 populators: {
-                  name: "individualId",
+                  name: "status",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Status",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Parties",
+                isMandatory: false,
+                key: "parties",
+                type: "dropdown",
+                populators: {
+                  name: "parties",
+                },
+              },
+              {
+                label: "Order ID",
+                isMandatory: false,
+                key: "orderId",
+                type: "text",
+                populators: {
+                  name: "orderId",
                 },
               },
             ],
@@ -330,31 +307,66 @@ export const TabSearchconfig = {
             defaultValues: defaultSearchValues, // Set default values for search fields
             fields: [
               {
-                label: "Applicant name ",
+                label: "Type",
                 isMandatory: false,
-                key: "individualName",
-                type: "text",
+                key: "type",
+                type: "dropdown",
                 populators: {
-                  name: "individualName",
-                  error: "Required",
-                  validation: { pattern: /^[A-Za-z]+$/i },
+                  name: "type",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "CaseType",
+                    moduleName: "Case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
                 },
               },
               {
-                label: "Phone number",
+                label: "Stage",
                 isMandatory: false,
-                key: "Phone number",
-                type: "number",
-                disable: false,
-                populators: { name: "mobileNumber", error: "sample error message", validation: { min: 0, max: 999999999 } },
+                key: "stage",
+                type: "dropdown",
+                populators: {
+                  name: "stage",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Stage",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
               },
               {
-                label: "Individual Id ",
+                label: "Status",
                 isMandatory: false,
-                type: "text",
-                disable: false,
+                key: "status",
+                type: "dropdown",
                 populators: {
-                  name: "individualId",
+                  name: "status",
+                  optionsKey: "value",
+                  mdmsConfig: {
+                    masterName: "Status",
+                    moduleName: "case",
+                    // localePrefix: "SUBMISSION_TYPE",
+                  },
+                },
+              },
+              {
+                label: "Owner",
+                isMandatory: false,
+                key: "owner",
+                type: "dropdown",
+                populators: {
+                  name: "owner",
+                },
+              },
+              {
+                label: "Order ID",
+                isMandatory: false,
+                key: "orderId",
+                type: "text",
+                populators: {
+                  name: "orderId",
                 },
               },
             ],
@@ -369,7 +381,7 @@ export const TabSearchconfig = {
               {
                 label: "Submission Name",
                 jsonPath: "applicationType",
-                additionalCustomization: true
+                additionalCustomization: true,
               },
               {
                 label: "Submission Id",
@@ -377,21 +389,21 @@ export const TabSearchconfig = {
               },
               {
                 label: "Stage",
-                jsonPath: ""
+                jsonPath: "",
               },
               {
                 label: "Status",
-                jsonPath: "workflow.action"
+                jsonPath: "workflow.action",
               },
               {
                 label: "Owner",
-                jsonPath: ""
+                jsonPath: "",
               },
               {
                 label: "Document",
                 jsonPath: "documents",
-                additionalCustomization: true
-              }
+                additionalCustomization: true,
+              },
             ],
 
             enableColumnSort: true,
@@ -462,7 +474,7 @@ export const TabSearchconfig = {
             ],
           },
 
-          show: true,
+          show: false,
         },
         searchResult: {
           tenantId: Digit.ULBService.getCurrentTenantId(),
@@ -472,7 +484,6 @@ export const TabSearchconfig = {
                 label: "IndividualID",
                 jsonPath: "individualId",
               },
-
               {
                 label: "Name",
                 jsonPath: "name.givenName",
@@ -568,7 +579,7 @@ export const TabSearchconfig = {
               {
                 label: "Date Added",
                 jsonPath: "auditDetails.createdTime",
-                additionalCustomization: true
+                additionalCustomization: true,
               },
             ],
 
@@ -580,5 +591,4 @@ export const TabSearchconfig = {
       },
     },
   ],
-
 };

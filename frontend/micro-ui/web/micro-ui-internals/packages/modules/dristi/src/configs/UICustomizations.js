@@ -11,7 +11,7 @@ const inboxModuleNameMap = {
   "muster-roll-approval": "muster-roll-service",
 };
 
-const user = localStorage.getItem('user-info');
+const user = localStorage.getItem("user-info");
 const userRoles = JSON.parse(user)?.roles.map((role) => role.code);
 
 export const UICustomizations = {
@@ -552,6 +552,19 @@ export const UICustomizations = {
     },
   },
   SearchIndividualConfig: {
+    preProcess: (requestCriteria, additionalDetails) => {
+      console.log(requestCriteria, additionalDetails);
+
+      return {
+        ...requestCriteria,
+
+        config: {
+          select: (data) => {
+            return { ...data };
+          },
+        },
+      };
+    },
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Document":
@@ -561,10 +574,25 @@ export const UICustomizations = {
             userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
             userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
             userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1 ||
-            row.workflow.action !== "PENDINGREVIEW" ?
+            row.workflow.action !== "PENDINGREVIEW" ? (
             <OwnerColumn rowData={row} colData={column} t={t} />
-            :
-            "";
+          ) : (
+            ""
+          );
+        case "Date Added":
+          const date = new Date(value);
+          const day = date.getDate().toString().padStart(2, "0");
+          const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+          const year = date.getFullYear();
+          const formattedDate = `${day}-${month}-${year}`;
+          return <span>{formattedDate}</span>;
+        case "Parties":
+          return (
+            <span>{`${value
+              .slice(0, 2)
+              .map((party) => party.name)
+              .join(",")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
+          );
         case "Submission Name":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         default:
@@ -580,50 +608,42 @@ export const UICustomizations = {
         config: {
           select: (data) => {
             console.log(data.criteria);
-            const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ?
-              data.criteria[0].responseList[0].litigants
-              :
-              [];
+            const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ? data.criteria[0].responseList[0].litigants : [];
             const finalLitigantsData = litigants.map((litigant) => {
               return {
                 ...litigant,
                 name: litigant.additionalDetails?.firstName + " " + litigant.additionalDetails?.lastName,
-              }
-            })
-            const reps = data.criteria[0].responseList[0].representatives?.length > 0 ?
-              data.criteria[0].responseList[0].representatives
-              :
-              [];
+              };
+            });
+            const reps = data.criteria[0].responseList[0].representatives?.length > 0 ? data.criteria[0].responseList[0].representatives : [];
             const finalRepresentativesData = reps.map((rep) => {
               return {
                 ...rep,
                 name: rep.additionalDetails?.firstName + " " + rep.additionalDetails?.lastName,
-                partyType: `Advocate (for ${rep.representing.additionalDetails?.firstName + " " + rep.representing.additionalDetails?.lastName})`
-              }
-            })
+                partyType: `Advocate (for ${rep.representing.additionalDetails?.firstName + " " + rep.representing.additionalDetails?.lastName})`,
+              };
+            });
             return {
               ...data,
               criteria: {
                 ...data.criteria[0],
                 responseList: {
                   ...data.criteria[0].responseList[0],
-                  parties: [
-                    ...finalLitigantsData,
-                    ...finalRepresentativesData
-                  ]
-                }
-              }
-            }
+                  parties: [...finalLitigantsData, ...finalRepresentativesData],
+                },
+              },
+            };
           },
         },
-      }
+      };
     },
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         // case "Document":
         //   console.log("document", row);
         //   return <OwnerColumn name={row?.name?.familyName} t={t} />;
-        case "Date Added": const date = new Date(value);
+        case "Date Added":
+          const date = new Date(value);
           const day = date.getDate().toString().padStart(2, "0");
           const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
           const year = date.getFullYear();

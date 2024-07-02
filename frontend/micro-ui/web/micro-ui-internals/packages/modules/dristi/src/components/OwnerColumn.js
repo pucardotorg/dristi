@@ -20,6 +20,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         applicationSentOn: getDate(parseInt(rowData.auditDetails.createdTime)),
         sender: rowData.createdBy,
         additionalDetails: rowData.additionalDetails,
+        applicationId: rowData.id,
       },
       applicationContent: {
         tenantId: rowData.tenantId,
@@ -29,6 +30,8 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
       comments: []
     }
   })
+
+  
   return (
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>
