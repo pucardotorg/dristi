@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import useGetHearings from "../../../../dristi/src/hooks/dristi/useGetHearings";
+import useGetHearings from "../../hooks/hearings/useGetHearings";
 import { Modal } from "@egovernments/digit-ui-react-components";
 import useGetHearingSlotMetaData from "../../hooks/services/useGetHearingSlotMetaData";
 const tenantId = window.localStorage.getItem("tenant-id");
