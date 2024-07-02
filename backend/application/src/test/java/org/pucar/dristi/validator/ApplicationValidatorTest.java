@@ -194,7 +194,6 @@ public class ApplicationValidatorTest {
     }
     @Test
     public void testValidateApplicationExistence_WithMissingApplicationType_ShouldThrowException() {
-        Application application = new Application();
         application.setId(UUID.randomUUID());
         application.setCaseId("caseId");
         application.setCnrNumber("cnr123");
