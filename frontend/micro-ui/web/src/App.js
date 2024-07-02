@@ -6,6 +6,10 @@ import {
 } from "@egovernments/digit-ui-module-core";
 import { UICustomizations } from "./Customisations/UICustomizations";
 import { initDRISTIComponents } from "@egovernments/digit-ui-module-dristi";
+import { initOrdersComponents } from "@egovernments/digit-ui-module-orders";
+import { initSubmissionsComponents } from "@egovernments/digit-ui-module-submissions";
+import { initHearingsComponents } from "@egovernments/digit-ui-module-hearings";
+import { initCasesComponents } from "@egovernments/digit-ui-module-cases";
 
 window.contextPath =
   window?.globalConfigs?.getConfig("CONTEXT_PATH") || "digit-ui";
@@ -20,6 +24,10 @@ const initDigitUI = () => {
   window.Digit.ComponentRegistryService.setupRegistry({});
   initCoreComponents();
   initDRISTIComponents();
+  initOrdersComponents();
+  initHearingsComponents();
+  initCasesComponents();
+  initSubmissionsComponents();
 };
 
 initLibraries().then(() => {
