@@ -37,7 +37,7 @@ public class TaskQueryBuilder {
             boolean firstCriteria = true;
             firstCriteria = addTaskCriteria(cnrNumber, query, firstCriteria, "task.cnrnumber = ?" ,preparedStmtList);
             firstCriteria = addTaskCriteria(filingNumber, query, firstCriteria, "task.filingnumber = ?",preparedStmtList);
-            firstCriteria = addTaskCriteria(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?",preparedStmtList);
+            addTaskCriteria(taskId != null ? taskId.toString() : null, query, firstCriteria, "task.id = ?",preparedStmtList);
 
             return query.toString();
         } catch (Exception e) {
