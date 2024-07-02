@@ -43,11 +43,11 @@ public class OrderApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1CreatePost_Success() {
-        // Mock AdvocateService response
-        Order expectedAdvocates =new Order();
+    public void testOrderV1CreatePost_Success() {
+        // Mock OrderService response
+        Order expectedOrders =new Order();
         when(orderRegistrationService.createOrder(any(OrderRequest.class)))
-                .thenReturn(expectedAdvocates);
+                .thenReturn(expectedOrders);
 
         // Mock ResponseInfoFactory response
         ResponseInfo expectedResponseInfo = new ResponseInfo();
@@ -65,16 +65,21 @@ public class OrderApiControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         OrderResponse actualResponse = response.getBody();
         assertNotNull(actualResponse);
-        assertEquals(expectedAdvocates, actualResponse.getOrder());
+        assertEquals(expectedOrders, actualResponse.getOrder());
         assertEquals(expectedResponseInfo, actualResponse.getResponseInfo());
     }
 
     @Test
-    public void testAdvocateV1SearchPost_Success() {
-        // Mock AdvocateService response
-        List<Order> expectedAdvocates = Collections.singletonList(new Order());
-        when(orderRegistrationService.searchOrder(any(), any(), any(), any(),any(),any(),any(),any()))
-                .thenReturn(expectedAdvocates);
+    public void testOrderV1SearchPost_Success() {
+
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        orderSearchRequest.setCriteria(new OrderCriteria());
+        orderSearchRequest.setRequestInfo(new RequestInfo());
+
+        // Mock OrderService response
+        List<Order> expectedOrders = Collections.singletonList(new Order());
+        when(orderRegistrationService.searchOrder(any()))
+                .thenReturn(expectedOrders);
 
         // Mock ResponseInfoFactory response
         ResponseInfo expectedResponseInfo = new ResponseInfo();
@@ -82,7 +87,7 @@ public class OrderApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Perform POST request
-        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfoWrapper(new RequestInfo()));
+        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost(orderSearchRequest);
 
         // Verify response status and content
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -92,8 +97,8 @@ public class OrderApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1UpdatePost_Success() throws Exception {
-        // Mock AdvocateService response
+    public void testOrderV1UpdatePost_Success() throws Exception {
+        // Mock OrderService response
         when(orderRegistrationService.updateOrder(any(OrderRequest.class)))
                 .thenReturn(new Order());
 
@@ -117,7 +122,7 @@ public class OrderApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1CreatePost_InvalidRequest() throws Exception {
+    public void testOrderV1CreatePost_InvalidRequest() throws Exception {
         // Prepare invalid request
         OrderRequest requestBody = new OrderRequest();  // Missing required fields
 
@@ -134,7 +139,7 @@ public class OrderApiControllerTest {
         }
     }
     @Test
-    public void testAdvocateV1CreatePost_EmptyList() throws Exception {
+    public void testOrderV1CreatePost_EmptyList() throws Exception {
         // Mock service to return empty list
         when(orderRegistrationService.createOrder(any(OrderRequest.class))).thenReturn(new Order());
 
@@ -156,14 +161,14 @@ public class OrderApiControllerTest {
         assertNotNull(actualResponse);
     }
     @Test
-    public void testAdvocateV1SearchPost_InvalidRequest() throws Exception {
+    public void testOrderV1SearchPost_InvalidRequest() throws Exception {
 
         // Expected validation error
-        when(orderRegistrationService.searchOrder(any(), any(), any(), any(),any(),any(),any(),any())).thenThrow(new IllegalArgumentException("Invalid request"));
+        when(orderRegistrationService.searchOrder(any())).thenThrow(new IllegalArgumentException("Invalid request"));
 
         // Perform POST request
         try {
-             controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfoWrapper(new RequestInfo()));
+             controller.orderV1SearchPost(new OrderSearchRequest());
         }
         catch (Exception e){
             assertInstanceOf(IllegalArgumentException.class, e);
@@ -172,10 +177,14 @@ public class OrderApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1SearchPost_EmptyList() throws Exception {
+    public void testOrderV1SearchPost_EmptyList() throws Exception {
+        OrderSearchRequest orderSearchRequest = new OrderSearchRequest();
+        orderSearchRequest.setCriteria(new OrderCriteria());
+        orderSearchRequest.setRequestInfo(new RequestInfo());
+
         // Mock service to return empty list
         List<Order> emptyList = Collections.emptyList();
-        when(orderRegistrationService.searchOrder(any(), any(), any(), any(),any(),any(),any(),any())).thenReturn(emptyList);
+        when(orderRegistrationService.searchOrder(any())).thenReturn(emptyList);
 
         // Mock ResponseInfoFactory
         ResponseInfo expectedResponseInfo = new ResponseInfo();
@@ -183,7 +192,7 @@ public class OrderApiControllerTest {
                 .thenReturn(expectedResponseInfo);
 
         // Perform POST request
-        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost("03768157-7b6d-4215-84b9-da3d13d24005","filingNum","cnrNum","123","pg","CREATE","orderNum",new RequestInfoWrapper(new RequestInfo()));
+        ResponseEntity<OrderListResponse> response = controller.orderV1SearchPost(orderSearchRequest);
 
         // Verify OK status and empty list
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -192,7 +201,7 @@ public class OrderApiControllerTest {
     }
 
     @Test
-    public void testAdvocateV1UpdatePost_InvalidRequest() throws Exception {
+    public void testOrderV1UpdatePost_InvalidRequest() throws Exception {
         // Prepare invalid request
         OrderRequest requestBody = new OrderRequest();  // Missing required fields
 

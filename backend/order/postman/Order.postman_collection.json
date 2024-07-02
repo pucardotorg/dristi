@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "903bf478-5992-4dde-9426-ca95e23f3358",
+		"_postman_id": "7b476c1c-e417-4073-b7dd-1e1cc3fea4eb",
 		"name": "Order",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24809145"
+		"_exporter_id": "33009635"
 	},
 	"item": [
 		{
@@ -66,15 +66,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"order\": {\n        \"tenantId\": \"pg\",\n        \"applicationNumber\": null\n         //   \"CLERK-2024-04-29-000124\"\n        ,\n      //  \"hearingNumber\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n        \"cnrNumber\": \"CNR111\",\n        \"filingNumber\": \"F-C.1973.002-2024-000130\",\n        \"statuteSection\": {\n            \"tenantId\": \"pg\",\n            \"auditDetails\": {\n                \"createdBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n                \"lastModifiedBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n                \"createdTime\": 1714384374834,\n                \"lastModifiedTime\": 1714384374834\n            }\n        },\n        \"orderType\":\"Bail\",\n        \"status\": \"INWORKFLOW\",\n        \"isActive\": true,\n        \"createdDate\": \"02-02-2024\",\n        \"workflow\": {\n            \"action\": \"SAVE_DRAFT\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [{\n                \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"documentType\": \"application/pdf\",\n                \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"additionalDetails\": {}\n            }],\n            \"assignes\": null,\n            \"rating\": null\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n            \"lastModifiedBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n            \"createdTime\": 1714384374834,\n            \"lastModifiedTime\": 1714384374834\n        },\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n         \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\": {\n            \"id\": 155,\n            \"uuid\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"userName\": \"devorder\",\n            \"name\": \"Ram babu\",\n            \"mobileNumber\": \"3989999999\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+					"raw": "{\n    \"order\": {\n        \"tenantId\": \"pg\",\n        \"applicationNumber\": [\n            \"CLERK-2024-04-29-000124\"]\n        ,\n        \"hearingNumber\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n      //  \"cnrNumber\": \"CNR111\",\n        \"filingNumber\": \"F-C.1973.002-2024-000512\",\n        \"statuteSection\": {\n            \"tenantId\": \"pg\",\n            \"auditDetails\": {\n                \"createdBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n                \"lastModifiedBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n                \"createdTime\": 1714384374834,\n                \"lastModifiedTime\": 1714384374834\n            }\n        },\n        \"orderType\":\"Bail\",\n        \"status\": \"\",\n        \"isActive\": true,\n        \"createdDate\": \"02-02-2024\",\n        \"workflow\": {\n            \"action\": \"SAVE_DRAFT\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [{\n                \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"documentType\": \"application/pdf\",\n                \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                \"additionalDetails\": {}\n            }],\n            \"assignes\": null,\n            \"rating\": null\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n            \"lastModifiedBy\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n            \"createdTime\": 1714384374834,\n            \"lastModifiedTime\": 1714384374834\n        },\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n         \"authToken\": \"417c699c-ac27-4819-b197-27fb92fda052\",\n        \"userInfo\": {\n            \"id\": 155,\n            \"uuid\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"userName\": \"devorder\",\n            \"name\": \"Ram babu\",\n            \"mobileNumber\": \"3989999999\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
 				},
 				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/create",
-					"protocol": "https",
+					"raw": "{{BaseUrl}}/order/order/v1/create",
 					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
+						"{{BaseUrl}}"
 					],
 					"path": [
 						"order",
@@ -146,335 +143,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"order\": {\n        \"id\": \"64263868-b3fc-4985-96cc-942a98b6e70e\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"F-C.1973.002-2024-000130\",\n        \"cnrNumber\": \"CNR111\",\n        \"applicationNumber\": null,\n        \"hearingNumber\": null,\n        \"orderNumber\": \"ORDER-NO-2024-06-26-000022\",\n        \"linkedOrderNumber\": null,\n        \"createdDate\": \"02-02-2024\",\n        \"issuedBy\": null,\n        \"orderType\": \"Bail\",\n        \"orderCategory\": null,\n        \"status\": \"INWORKFLOW\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"bc86c1e6-ccb9-47ae-a535-706332581ff9\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"createdTime\": 1719384260190,\n                \"lastModifiedTime\": 1719384260190\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": null,\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"createdTime\": 1719384260190,\n            \"lastModifiedTime\": 1719384260190\n        },\n        \"workflow\": {\n            \"action\": \"E-SIGN\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n       \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
+					"raw": "{\n    \"order\": {\n        \"id\": \"4eeac563-aae1-444b-9bc9-cf6c0feff98d\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"F-C.1973.002-2024-000512\",\n        \"cnrNumber\": null,\n        \"applicationNumber\": [\n            \"CLERK-2024-04-29-000124\"\n        ],\n        \"hearingNumber\": \"3244d158-c5cb-4769-801f-a0f94f383679\",\n        \"orderNumber\": \"ORDER-NO-2024-07-02-000044\",\n        \"linkedOrderNumber\": null,\n        \"createdDate\": \"02-02-2024\",\n        \"issuedBy\": {\"sds\":\"zsfzd\"},\n        \"orderType\": \"Bail\",\n        \"orderCategory\": null,\n        \"status\": \"DRAFT_IN_PROGRESS\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"83007bf2-c095-42a0-91be-4a999f184fbb\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n                \"lastModifiedBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n                \"createdTime\": 1719928671759,\n                \"lastModifiedTime\": 1719928671759\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": null,\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"lastModifiedBy\": \"9ebe17e8-487b-4251-b4a1-57434cb9f63c\",\n            \"createdTime\": 1719928671759,\n            \"lastModifiedTime\": 1719928671759\n        },\n        \"workflow\": {\n            \"action\": \"E-SIGN\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n       \"authToken\": \"d159b943-2969-44d4-bb44-44e8efe06094\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"scrutinyuser123\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
 				},
 				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/update",
-					"protocol": "https",
+					"raw": "{{BaseUrl}}/order/order/v1/update",
 					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
-					],
-					"path": [
-						"order",
-						"order",
-						"v1",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "fso or judge saving order in draft",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json, text/plain, */*"
-					},
-					{
-						"key": "Accept-Language",
-						"value": "en-GB,en-US;q=0.9,en;q=0.8"
-					},
-					{
-						"key": "Connection",
-						"value": "keep-alive"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json;charset=UTF-8"
-					},
-					{
-						"key": "Origin",
-						"value": "http://localhost:3000"
-					},
-					{
-						"key": "Referer",
-						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
-					},
-					{
-						"key": "Sec-Fetch-Dest",
-						"value": "empty"
-					},
-					{
-						"key": "Sec-Fetch-Mode",
-						"value": "cors"
-					},
-					{
-						"key": "Sec-Fetch-Site",
-						"value": "same-origin"
-					},
-					{
-						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-					},
-					{
-						"key": "sec-ch-ua",
-						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
-					},
-					{
-						"key": "sec-ch-ua-mobile",
-						"value": "?0"
-					},
-					{
-						"key": "sec-ch-ua-platform",
-						"value": "\"Linux\""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"order\": {\n        \"id\": \"64263868-b3fc-4985-96cc-942a98b6e70e\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"F-C.1973.002-2024-000130\",\n        \"cnrNumber\": \"CNR111\",\n        \"applicationNumber\": null,\n        \"hearingNumber\": null,\n        \"orderNumber\": \"ORDER-NO-2024-06-26-000022\",\n        \"linkedOrderNumber\": null,\n        \"createdDate\": \"02-02-2024\",\n        \"issuedBy\": null,\n        \"orderType\": \"Bail\",\n        \"orderCategory\": null,\n        \"status\": \"INWORKFLOW\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"bc86c1e6-ccb9-47ae-a535-706332581ff9\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"createdTime\": 1719384260190,\n                \"lastModifiedTime\": 1719384260190\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": null,\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"createdTime\": 1719384260190,\n            \"lastModifiedTime\": 1719384260190\n        },\n        \"workflow\": {\n            \"action\": \"SAVE_DRAFT\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n       \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
-				},
-				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/update",
-					"protocol": "https",
-					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
-					],
-					"path": [
-						"order",
-						"order",
-						"v1",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "judge e sign an order",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json, text/plain, */*"
-					},
-					{
-						"key": "Accept-Language",
-						"value": "en-GB,en-US;q=0.9,en;q=0.8"
-					},
-					{
-						"key": "Connection",
-						"value": "keep-alive"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json;charset=UTF-8"
-					},
-					{
-						"key": "Origin",
-						"value": "http://localhost:3000"
-					},
-					{
-						"key": "Referer",
-						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
-					},
-					{
-						"key": "Sec-Fetch-Dest",
-						"value": "empty"
-					},
-					{
-						"key": "Sec-Fetch-Mode",
-						"value": "cors"
-					},
-					{
-						"key": "Sec-Fetch-Site",
-						"value": "same-origin"
-					},
-					{
-						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-					},
-					{
-						"key": "sec-ch-ua",
-						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
-					},
-					{
-						"key": "sec-ch-ua-mobile",
-						"value": "?0"
-					},
-					{
-						"key": "sec-ch-ua-platform",
-						"value": "\"Linux\""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"order\": {\n        \"id\": \"64263868-b3fc-4985-96cc-942a98b6e70e\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"F-C.1973.002-2024-000130\",\n        \"cnrNumber\": \"CNR111\",\n        \"applicationNumber\": null,\n        \"hearingNumber\": null,\n        \"orderNumber\": \"ORDER-NO-2024-06-26-000022\",\n        \"linkedOrderNumber\": null,\n        \"createdDate\": \"02-02-2024\",\n        \"issuedBy\": null,\n        \"orderType\": \"Bail\",\n        \"orderCategory\": null,\n        \"status\": \"INWORKFLOW\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"bc86c1e6-ccb9-47ae-a535-706332581ff9\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"createdTime\": 1719384260190,\n                \"lastModifiedTime\": 1719384260190\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": null,\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"createdTime\": 1719384260190,\n            \"lastModifiedTime\": 1719384260190\n        },\n        \"workflow\": {\n            \"action\": \"E-SIGN\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n       \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
-				},
-				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/update",
-					"protocol": "https",
-					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
-					],
-					"path": [
-						"order",
-						"order",
-						"v1",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "judge abandon an order",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json, text/plain, */*"
-					},
-					{
-						"key": "Accept-Language",
-						"value": "en-GB,en-US;q=0.9,en;q=0.8"
-					},
-					{
-						"key": "Connection",
-						"value": "keep-alive"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json;charset=UTF-8"
-					},
-					{
-						"key": "Origin",
-						"value": "http://localhost:3000"
-					},
-					{
-						"key": "Referer",
-						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
-					},
-					{
-						"key": "Sec-Fetch-Dest",
-						"value": "empty"
-					},
-					{
-						"key": "Sec-Fetch-Mode",
-						"value": "cors"
-					},
-					{
-						"key": "Sec-Fetch-Site",
-						"value": "same-origin"
-					},
-					{
-						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-					},
-					{
-						"key": "sec-ch-ua",
-						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
-					},
-					{
-						"key": "sec-ch-ua-mobile",
-						"value": "?0"
-					},
-					{
-						"key": "sec-ch-ua-platform",
-						"value": "\"Linux\""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"order\": {\n        \"id\": \"64263868-b3fc-4985-96cc-942a98b6e70e\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"F-C.1973.002-2024-000130\",\n        \"cnrNumber\": \"CNR111\",\n        \"applicationNumber\": null,\n        \"hearingNumber\": null,\n        \"orderNumber\": \"ORDER-NO-2024-06-26-000022\",\n        \"linkedOrderNumber\": null,\n        \"createdDate\": \"02-02-2024\",\n        \"issuedBy\": null,\n        \"orderType\": \"Bail\",\n        \"orderCategory\": null,\n        \"status\": \"INWORKFLOW\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"bc86c1e6-ccb9-47ae-a535-706332581ff9\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"createdTime\": 1719384260190,\n                \"lastModifiedTime\": 1719384260190\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": null,\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"createdTime\": 1719384260190,\n            \"lastModifiedTime\": 1719384260190\n        },\n        \"workflow\": {\n            \"action\": \"ABANDON\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n       \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
-				},
-				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/update",
-					"protocol": "https",
-					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
-					],
-					"path": [
-						"order",
-						"order",
-						"v1",
-						"update"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "judge stamping an order",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Accept",
-						"value": "application/json, text/plain, */*"
-					},
-					{
-						"key": "Accept-Language",
-						"value": "en-GB,en-US;q=0.9,en;q=0.8"
-					},
-					{
-						"key": "Connection",
-						"value": "keep-alive"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json;charset=UTF-8"
-					},
-					{
-						"key": "Origin",
-						"value": "http://localhost:3000"
-					},
-					{
-						"key": "Referer",
-						"value": "http://localhost:3000/digit-ui/employee/dristi/registration-requests/details/CLERK-2024-04-29-000123?individualId=IND-2024-04-29-000144&isAction=true"
-					},
-					{
-						"key": "Sec-Fetch-Dest",
-						"value": "empty"
-					},
-					{
-						"key": "Sec-Fetch-Mode",
-						"value": "cors"
-					},
-					{
-						"key": "Sec-Fetch-Site",
-						"value": "same-origin"
-					},
-					{
-						"key": "User-Agent",
-						"value": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-					},
-					{
-						"key": "sec-ch-ua",
-						"value": "\"Google Chrome\";v=\"123\", \"Not:A-Brand\";v=\"8\", \"Chromium\";v=\"123\""
-					},
-					{
-						"key": "sec-ch-ua-mobile",
-						"value": "?0"
-					},
-					{
-						"key": "sec-ch-ua-platform",
-						"value": "\"Linux\""
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"order\": {\n        \"id\": \"64263868-b3fc-4985-96cc-942a98b6e70e\",\n        \"tenantId\": \"pg\",\n        \"filingNumber\": \"F-C.1973.002-2024-000130\",\n        \"cnrNumber\": \"CNR111\",\n        \"applicationNumber\": null,\n        \"hearingNumber\": null,\n        \"orderNumber\": \"ORDER-NO-2024-06-26-000022\",\n        \"linkedOrderNumber\": null,\n        \"createdDate\": \"02-02-2024\",\n        \"issuedBy\": null,\n        \"orderType\": \"Bail\",\n        \"orderCategory\": null,\n        \"status\": \"INWORKFLOW\",\n        \"comments\": null,\n        \"isActive\": true,\n        \"statuteSection\": {\n            \"id\": \"bc86c1e6-ccb9-47ae-a535-706332581ff9\",\n            \"tenantId\": \"pg\",\n            \"statute\": null,\n            \"sections\": null,\n            \"subsections\": null,\n            \"additionalDetails\": null,\n            \"auditDetails\": {\n                \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n                \"createdTime\": 1719384260190,\n                \"lastModifiedTime\": 1719384260190\n            },\n            \"strSections\": null,\n            \"strSubsections\": null\n        },\n        \"documents\": null,\n        \"additionalDetails\": {\n            \"username\": \"nil\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"lastModifiedBy\": \"8e59ce1d-2f78-4c36-8004-23bb0ef5a95f\",\n            \"createdTime\": 1719384260190,\n            \"lastModifiedTime\": 1719384260190\n        },\n        \"workflow\": {\n            \"action\": \"STAMP\",\n            \"comments\": \"Creating for order registration\",\n            \"documents\": [\n                {\n                    \"id\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"documentType\": \"application/pdf\",\n                    \"fileStore\": \"349a95a7-d4ef-48d6-889c-4faef7b8289e\",\n                    \"documentUid\": \"bb86207f-6ec0-4314-8260-bcdd4e441e1d\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": null,\n            \"rating\": null\n        }\n    },\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n       \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\": {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    }\n}"
-				},
-				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/update",
-					"protocol": "https",
-					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
+						"{{BaseUrl}}"
 					],
 					"path": [
 						"order",
@@ -546,39 +220,18 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n         \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\":         {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"tenantId\":\"pg\"\n}"
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n         \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\":         {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"criteria\":{\n        //  \"filingNumber\": \"F-C.1973.002-2024-000130\",\n           \"id\": \"4eeac563-aae1-444b-9bc9-cf6c0feff98d\",\n        \"applicationNumber\":  \"CLERK-2024-04-29-000124\"\n\n    }\n}"
 				},
 				"url": {
-					"raw": "https://dristi-dev.pucar.org/order/order/v1/search?applicationNumber=&filingNumber=F-C.1973.002-2024-000130&cnrNumber=&tenantId=pg",
-					"protocol": "https",
+					"raw": "{{BaseUrl}}/order/order/v1/search",
 					"host": [
-						"dristi-dev",
-						"pucar",
-						"org"
+						"{{BaseUrl}}"
 					],
 					"path": [
 						"order",
 						"order",
 						"v1",
 						"search"
-					],
-					"query": [
-						{
-							"key": "applicationNumber",
-							"value": ""
-						},
-						{
-							"key": "filingNumber",
-							"value": "F-C.1973.002-2024-000130"
-						},
-						{
-							"key": "cnrNumber",
-							"value": ""
-						},
-						{
-							"key": "tenantId",
-							"value": "pg"
-						}
 					]
 				}
 			},
@@ -644,14 +297,15 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n      \"authToken\": \"317645fd-55ae-40b7-98c5-533c6d6c30cc\",\n        \"userInfo\":         {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"tenantId\":\"pg\",\n    \"orderList\":[{\n      \"filingNumber\":\"F-C.1973.002-2024-000130\"\n    }]\n}"
+					"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n      \"authToken\": \"a031524d-75e4-49e9-bdc3-4ba01e9baa8e\",\n        \"userInfo\":         {\n            \"id\": 805,\n            \"userName\": \"devorder22\",\n            \"salutation\": \"Ms\",\n            \"name\": \"mustak\",\n            \"gender\": \"MALE\",\n            \"mobileNumber\": \"1234567890\",\n            \"alternatemobilenumber\": null,\n            \"emailId\": \"xyz@egovernments.org\",\n            \"altContactNumber\": \"\",\n            \"pan\": \"VFGGC5624P\",\n            \"aadhaarNumber\": \"96a70\",\n            \"permanentAddress\": \"Dawakhana\",\n            \"permanentCity\": \"Kaikoo\",\n            \"permanentPinCode\": \"111111\",\n            \"correspondenceAddress\": \"correAddress\",\n            \"correspondenceCity\": \"banglore\",\n            \"correspondencePinCode\": \"123456\",\n            \"active\": true,\n            \"locale\": \"string\",\n            \"type\": \"EMPLOYEE\",\n            \"accountLocked\": false,\n            \"accountLockedDate\": null,\n            \"fatherOrHusbandName\": \"Palash\",\n            \"relationship\": null,\n            \"signature\": \"\",\n            \"bloodGroup\": \"O+\",\n            \"photo\": \"a8a6cf1e-c84d-4a0c-b2d5-57ec8711ba25\",\n            \"identificationMark\": \"Wears spects\",\n            \"createdBy\": 32,\n            \"password\": null,\n            \"otpReference\": null,\n            \"lastModifiedBy\": 32,\n            \"tenantId\": \"pg\",\n            \"roles\": [\n                {\n                    \"code\": \"ORDER_APPROVER\",\n                    \"name\": \"ORDER_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"code\": \"ORDER_CREATOR\",\n                    \"name\": \"ORDER_CREATOR\",\n                    \"tenantId\": \"pg\"\n                }\n            ],\n            \"uuid\": \"8fc6afa4-fb6e-402d-8bd9-f3ac69c12d6e\",\n            \"createdDate\": \"22-05-2024 16:10:18\",\n            \"lastModifiedDate\": \"22-05-2024 16:10:18\",\n            \"dob\": \"08/08/1999\",\n            \"pwdExpiryDate\": \"20-08-2024 16:10:18\"\n        },\n        \"msgId\": \"1714385569773|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"tenantId\":\"pg\",\n    \"orderList\":[{\n        \"orderId\":\"4eeac563-aae1-444b-9bc9-cf6c0feff98d\",\n    //   \"filingNumber\":\"F-C.1973.002-2024-000512\",\n    //  \"cnrNumber\":\"F-C.1973.002-2024-000130\",\n  // \"orderNumber\":\"pg\"\n      \"applicationNumber\": \"CLERK-2024-04-29-000124\"\n    }]\n}"
 				},
 				"url": {
-					"raw": "{{BaseUrl}}order/order/v1/exists",
+					"raw": "{{BaseUrl}}/order/order/v1/exists",
 					"host": [
-						"{{BaseUrl}}order"
+						"{{BaseUrl}}"
 					],
 					"path": [
+						"order",
 						"order",
 						"v1",
 						"exists"
