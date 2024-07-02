@@ -46,7 +46,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(HearingRequest hearingRequest) {
         try {
             Hearing hearing = hearingRequest.getHearing();
-            ProcessInstance processInstance = getProcessInstanceForHearing(hearing, hearingRequest.getRequestInfo());
+            ProcessInstance processInstance = getProcessInstanceForHearing(hearing);
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(hearingRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
             State workflowState = callWorkFlow(workflowRequest);
@@ -85,10 +85,9 @@ public class WorkflowService {
      * for hearing application process instance
      *
      * @param hearing
-     * @param requestInfo
      * @return payload for workflow service call
      */
-    ProcessInstance getProcessInstanceForHearing(Hearing hearing, RequestInfo requestInfo) {
+    ProcessInstance getProcessInstanceForHearing(Hearing hearing) {
         try {
             Workflow workflow = hearing.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();
