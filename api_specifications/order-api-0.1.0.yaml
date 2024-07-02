@@ -19,7 +19,7 @@ paths:
       tags:
         - Order
       summary: create new order
-      RequestBody:
+      requestBody:
         description: Details for the new order + RequestInfo meta data.
         content:
           '*/*':
@@ -46,7 +46,7 @@ paths:
       tags:
         - Order
       summary: update hearing requests.
-      RequestBody:
+      requestBody:
         description: Details for the update order(s) + RequestInfo meta data.
         content:
           '*/*':
@@ -75,7 +75,7 @@ paths:
       summary: search for orders
       description: |
         search order(s) based on different parameters
-      RequestBody:
+      requestBody:
         description: Details for the search order(s) + RequestInfo meta data.
         content:
           '*/*':
@@ -101,7 +101,7 @@ paths:
       tags:
         - Order
       summary: order exits or not
-      RequestBody:
+      requestBody:
         description: check if the order(S) exists
         content:
           '*/*':

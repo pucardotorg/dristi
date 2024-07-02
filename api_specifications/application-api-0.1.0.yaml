@@ -19,7 +19,7 @@ paths:
       tags:
         - Application
       summary: create new application
-      RequestBody:
+      requestBody:
         description: Details for the new application + RequestInfo meta data.
         content:
           '*/*':
@@ -46,7 +46,7 @@ paths:
       tags:
         - Application
       summary: update application requests.
-      RequestBody:
+      requestBody:
         description: Details for the update application(s) + RequestInfo meta data.
         content:
           '*/*':
@@ -75,7 +75,7 @@ paths:
       summary: search for application(s)
       description: |
         Gets the list of Application(s)
-      RequestBody:
+      requestBody:
           description: Details for the search application(s) + RequestInfo meta data.
           content:
             '*/*':
@@ -101,7 +101,7 @@ paths:
       tags:
         - Application
       summary: application exits or not
-      RequestBody:
+      requestBody:
         description: check if the application(S) exists
         content:
           '*/*':
@@ -127,7 +127,7 @@ components:
     ApplicationSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/ApplicationCriteria'
@@ -138,7 +138,7 @@ components:
     ApplicationRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         application:
           $ref: '#/components/schemas/Application'
@@ -167,7 +167,7 @@ components:
     ApplicationExistsRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         applicationList:
           type: array
