@@ -15,6 +15,7 @@ import org.pucar.dristi.service.TaskService;
 import org.pucar.dristi.util.MdmsUtil;
 import org.pucar.dristi.util.OrderUtil;
 import org.pucar.dristi.web.models.Task;
+import org.pucar.dristi.web.models.TaskExists;
 import org.pucar.dristi.web.models.TaskRequest;
 
 import java.time.LocalDate;
@@ -65,35 +66,35 @@ public class TaskRegistrationValidatorTest {
     }
 
     @Test
-    void testValidateCaseRegistrationMissingTenantId() {
+    void testvalidateTaskRegistrationMissingTenantId() {
         task.setTenantId(null);
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("tenantId is mandatory for creating task", exception.getMessage());
     }
 
     @Test
-    void testValidateCaseRegistrationMissingUserInfo() {
+    void testvalidateTaskRegistrationMissingUserInfo() {
         taskRequest.getRequestInfo().setUserInfo(null);
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("User info is mandatory for creating task", exception.getMessage());
     }
 
     @Test
-    void testValidateCaseRegistrationMissingTaskType() {
+    void testvalidateTaskRegistrationMissingTaskType() {
         task.setTaskType(null);
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("Task type is mandatory for creating task", exception.getMessage());
     }
 
     @Test
-    void testValidateCaseRegistrationInvalidCaseDetails() {
+    void testvalidateTaskRegistrationInvalidCaseDetails() {
         task.setTaskType("task-type");
         task.setCreatedDate(LocalDate.parse("2024-01-01"));
 
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateCaseRegistration(taskRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> validator.validateTaskRegistration(taskRequest));
         assertEquals(CREATE_TASK_ERR, exception.getCode());
         assertEquals("Invalid order ID", exception.getMessage());
     }
@@ -101,12 +102,12 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateApplicationExistenceSuccess() {
         task.setId(UUID.randomUUID());
-        when(repository.getApplications(any(), any(), any(), any(), any(),any())).thenReturn(Collections.singletonList(task));
+        when(repository.checkTaskExists(any())).thenReturn(TaskExists.builder().exists(true).build());
 
         boolean result = validator.validateApplicationExistence(task, requestInfo);
 
         assertTrue(result);
-        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any(),any());
+        verify(repository, times(1)).checkTaskExists(any());
     }
 
     @Test
@@ -128,11 +129,11 @@ public class TaskRegistrationValidatorTest {
     @Test
     void testValidateApplicationExistenceNoExistingApplications() {
         task.setId(UUID.randomUUID());
-        when(repository.getApplications(any(), any(), any(), any(), any(),any())).thenReturn(Collections.emptyList());
+        when(repository.checkTaskExists(any())).thenReturn(TaskExists.builder().exists(false).build());
 
         boolean result = validator.validateApplicationExistence(task, requestInfo);
 
         assertFalse(result);
-        verify(repository, times(1)).getApplications(any(), any(), any(), any(), any(),any());
+        verify(repository, times(1)).checkTaskExists(any());
     }
 }

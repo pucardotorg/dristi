@@ -101,12 +101,14 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_CustomException() {
+        LocalDate fromDate = LocalDate.now();
+        LocalDate toDate = LocalDate.now();
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
                 .thenThrow(new CustomException("Search failed","Throw custom exception"));
 
         // Act & Assert
-        assertThrows(CustomException.class, () -> hearingService.searchHearing("cnrNumber", "applicationNumber", "hearingId", "fightingNumber", "tenentId", LocalDate.now(), LocalDate.now(), 10, 0, "DESC"));
+        assertThrows(CustomException.class, () -> hearingService.searchHearing("cnrNumber", "applicationNumber", "hearingId", "fightingNumber", "tenentId", fromDate, toDate, 10, 0, "DESC"));
     }
 
     @Test
