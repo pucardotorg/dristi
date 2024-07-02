@@ -18,8 +18,12 @@ import static org.pucar.dristi.config.ServiceConstants.ENRICHMENT_EXCEPTION;
 @Slf4j
 public class HearingRegistrationEnrichment {
 
-    @Autowired
     private IdgenUtil idgenUtil;
+
+    @Autowired
+    public HearingRegistrationEnrichment(IdgenUtil idgenUtil) {
+        this.idgenUtil = idgenUtil;
+    }
 
     /**
      * Enrich the hearing application by setting values in different field
