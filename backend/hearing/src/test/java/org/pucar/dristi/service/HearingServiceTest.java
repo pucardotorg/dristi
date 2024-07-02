@@ -191,7 +191,7 @@ public class HearingServiceTest {
     }
 
     @Test
-    void testUpdateHearingTranscript_Success() {
+    void testUpdateHearingNoWorkflow_Success() {
         // Arrange
         Hearing hearing = new Hearing();
         hearing.setTranscript(Collections.singletonList("old transcript"));
@@ -205,56 +205,56 @@ public class HearingServiceTest {
         hearingRequest.setRequestInfo(new RequestInfo());
         hearingRequest.setHearing(updatedHearing);
 
-        when(validator.validateHearingExistenceForTranscriptUpdate(any(Hearing.class))).thenReturn(hearing);
+        when(validator.validateHearingExistenceNoWorkflowUpdate(any(Hearing.class))).thenReturn(hearing);
 
         // Act
-        Hearing result = hearingService.updateHearingTranscript(hearingRequest);
+        Hearing result = hearingService.updateHearingNoWorkflow(hearingRequest);
 
         // Assert
         assertNotNull(result);
         assertEquals("new transcript", result.getTranscript().get(0));
         verify(enrichmentUtil, times(1)).enrichHearingApplicationUponUpdate(hearingRequest);
-        verify(hearingRepository, times(1)).updateHearingTranscript(updatedHearing);
+        verify(hearingRepository, times(1)).updateHearingNoWorkflow(updatedHearing);
         assertEquals(updatedHearing.getAuditDetails(), result.getAuditDetails());
     }
 
     @Test
-    void testUpdateHearingTranscript_CustomException() {
+    void testUpdateHearingNoWorkflow_CustomException() {
         // Arrange
         HearingRequest hearingRequest = new HearingRequest();
         hearingRequest.setRequestInfo(new RequestInfo());
         hearingRequest.setHearing(new Hearing());
 
-        when(validator.validateHearingExistenceForTranscriptUpdate(any(Hearing.class)))
+        when(validator.validateHearingExistenceNoWorkflowUpdate(any(Hearing.class)))
                 .thenReturn(new Hearing());
         doThrow(new RuntimeException("Unexpected error"))
-                .when(hearingRepository).updateHearingTranscript(any(Hearing.class));
+                .when(hearingRepository).updateHearingNoWorkflow(any(Hearing.class));
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateHearingTranscript(hearingRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateHearingNoWorkflow(hearingRequest));
 
         assertEquals(HEARING_UPDATE_EXCEPTION, exception.getCode());
         assertTrue(exception.getMessage().contains("Error occurred while updating hearing: Unexpected error"));
         verify(enrichmentUtil, times(1)).enrichHearingApplicationUponUpdate(hearingRequest);
-        verify(hearingRepository, times(1)).updateHearingTranscript(any(Hearing.class));
+        verify(hearingRepository, times(1)).updateHearingNoWorkflow(any(Hearing.class));
     }
 
     @Test
-    void updateHearingTranscript_ValidationFails() {
+    void updateHearingNoWorkflow_ValidationFails() {
         // Arrange
         HearingRequest hearingRequest = new HearingRequest();
         hearingRequest.setRequestInfo(new RequestInfo());
         hearingRequest.setHearing(new Hearing());
 
-        when(validator.validateHearingExistenceForTranscriptUpdate(any(Hearing.class)))
+        when(validator.validateHearingExistenceNoWorkflowUpdate(any(Hearing.class)))
                 .thenThrow(new CustomException("VALIDATION_ERROR", "Validation failed"));
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateHearingTranscript(hearingRequest));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingService.updateHearingNoWorkflow(hearingRequest));
 
         assertEquals("VALIDATION_ERROR", exception.getCode());
         assertEquals("Validation failed", exception.getMessage());
         verify(enrichmentUtil, never()).enrichHearingApplicationUponUpdate(any(HearingRequest.class));
-        verify(hearingRepository, never()).updateHearingTranscript(any(Hearing.class));
+        verify(hearingRepository, never()).updateHearingNoWorkflow(any(Hearing.class));
     }
 }

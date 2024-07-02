@@ -1035,6 +1035,58 @@
 					"response": []
 				},
 				{
+					"name": "Update hearing No Workflow",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"a37af469-03e3-460a-9605-59fef5458d32\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a31\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"HEARING_DATE_REQUESTOR\",\n                    \"code\": \"HEARING_DATE_REQUESTOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"HEARING_APPROVER\",\n                    \"code\": \"HEARING_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_START\",\n                    \"code\":\"HEARING_START\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_CLOSER\",\n                    \"code\":\"HEARING_CLOSER\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_ACCEPTOR\",\n                    \"code\":\"HEARING_ACCEPTOR\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_CREATOR\",\n                    \"code\":\"HEARING_CREATOR\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"hearing\": {\n        \"id\": \"ea34ba02-5228-44be-907c-14c3b3ce0c59\",\n        \"tenantId\": \"pg\",\n        \"hearingId\": \"HEARING-ID-2024-06-14-000032\",\n        \"filingNumber\": [],\n        \"cnrNumbers\": [],\n        \"applicationNumbers\": [],\n        \"hearingType\": \"EVIDENCE\",\n        \"status\": \"SCHEDULED\",\n        \"startTime\": 1715266873067,\n        \"endTime\": 1715286873067,\n        \"presidedBy\": {\n            \"benchID\": \"bench2\",\n            \"judgeID\": [\n                \"judge2\"\n            ],\n            \"courtID\": null\n        },\n        \"attendees\": [\n            {\n                \"name\": \"Verify Attendee update\",\n                \"individualId\": \"IND-2024-05-13-000180\",\n                \"type\": \"EMPLOYEE\",\n                \"associatedWith\": \"Party3\",\n                \"wasPresent\": true\n            }\n        ],\n        \"transcript\": [\n            \"string123\"\n        ],\n        \"vcLink\": \"vc1\",\n        \"isActive\": false,\n        \"documents\": [\n            {\n                \"id\": \"a642da9b-42eb-4679-acb0-4f69aa28039c\",\n                \"documentType\": \"PDF\",\n                \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                \"documentUid\": \"a642da9b-42eb-4679-acb0-4f69aa28039c\",\n                \"additionalDetails\": {\n                    \"name\": \"Ram babu\"\n                }\n            }\n        ],\n        \"additionalDetails\": {\n            \"name\": \"Ram babu\",\n            \"witnessDespo\": \"witness sign\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"lastModifiedBy\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"createdTime\": 1718314757927,\n            \"lastModifiedTime\": 1718314757928\n        },\n        \"workflow\": {\n            \"action\": \"CLOSE\",\n            \"comments\": \"Approve new Hearing date\",\n            \"documents\": [\n                {\n                    \"id\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": null,\n                    \"documentUid\": \"\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": [],\n            \"rating\": null\n        },\n        \"notes\": \"string\"\n    }\n}"
+						},
+						"url": {
+							"raw": "https://dristi-dev.pucar.org/hearing/v1/updateNoWorkflow",
+							"protocol": "https",
+							"host": [
+								"dristi-dev",
+								"pucar",
+								"org"
+							],
+							"path": [
+								"hearing",
+								"v1",
+								"updateNoWorkflow"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Exist hearing",
 					"event": [
 						{
@@ -1207,58 +1259,6 @@
 									"key": "offset",
 									"value": "0"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update hearing Transcript",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {
-							"accept": true
-						}
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"RequestInfo\": {\n        \"apiId\": \"Rainmaker\",\n        \"authToken\": \"a37af469-03e3-460a-9605-59fef5458d32\",\n        \"userInfo\": {\n            \"id\": 191,\n            \"uuid\": \"703af68b-2f01-479d-8e21-416e50a95a32\",\n            \"userName\": \"rajatUser1\",\n            \"name\": \"Rajat\",\n            \"mobileNumber\": \"9996301590\",\n            \"emailId\": null,\n            \"locale\": null,\n            \"type\": \"EMPLOYEE\",\n            \"roles\": [\n                {\n                    \"name\": \"HEARING_DATE_REQUESTOR\",\n                    \"code\": \"HEARING_DATE_REQUESTOR\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"HEARING_APPROVER\",\n                    \"code\": \"HEARING_APPROVER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Employee\",\n                    \"code\": \"EMPLOYEE\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Super User\",\n                    \"code\": \"SUPERUSER\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\": \"Citizen\",\n                    \"code\": \"CITIZEN\",\n                    \"tenantId\": \"pg\"\n                },\n                {\n                    \"name\":\"HEARING_SCHEDULER\",\n                    \"code\":\"HEARING_SCHEDULER\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_START\",\n                    \"code\":\"HEARING_START\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_CLOSER\",\n                    \"code\":\"HEARING_CLOSER\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_ACCEPTOR\",\n                    \"code\":\"HEARING_ACCEPTOR\",\n                    \"tenantId\":\"pg\"\n                },\n                {\n                    \"name\":\"HEARING_CREATOR\",\n                    \"code\":\"HEARING_CREATOR\",\n                    \"tenantId\":\"pg\"\n                }\n            ],\n            \"active\": true,\n            \"tenantId\": \"pg\",\n            \"permanentCity\": null\n        },\n        \"msgId\": \"1716373887208|en_IN\",\n        \"plainAccessRequest\": {}\n    },\n    \"hearing\": {\n        \"id\": \"ea34ba02-5228-44be-907c-14c3b3ce0c59\",\n        \"tenantId\": \"pg\",\n        \"hearingId\": \"HEARING-ID-2024-06-14-000032\",\n        \"filingNumber\": [],\n        \"cnrNumbers\": [],\n        \"applicationNumbers\": [],\n        \"hearingType\": \"EVIDENCE\",\n        \"status\": \"SCHEDULED\",\n        \"startTime\": 1715266873067,\n        \"endTime\": 1715286873067,\n        \"presidedBy\": {\n            \"benchID\": \"bench2\",\n            \"judgeID\": [\n                \"judge2\"\n            ],\n            \"courtID\": null\n        },\n        \"attendees\": [\n            {\n                \"name\": \"Verify Attendee update\",\n                \"individualId\": \"IND-2024-05-13-000180\",\n                \"type\": \"EMPLOYEE\",\n                \"associatedWith\": \"Party3\",\n                \"wasPresent\": true\n            }\n        ],\n        \"transcript\": [\n            \"string12\",\n            \"string13\",\n            \"stifndkj\"\n        ],\n        \"vcLink\": \"vc1\",\n        \"isActive\": false,\n        \"documents\": [\n            {\n                \"id\": \"a642da9b-42eb-4679-acb0-4f69aa28039c\",\n                \"documentType\": \"PDF\",\n                \"fileStore\": \"b0c5a846-c75a-11ea-87d0-0242ac130003\",\n                \"documentUid\": \"a642da9b-42eb-4679-acb0-4f69aa28039c\",\n                \"additionalDetails\": {\n                    \"name\": \"Ram babu\"\n                }\n            }\n        ],\n        \"additionalDetails\": {\n            \"name\": \"Ram babu\"\n        },\n        \"auditDetails\": {\n            \"createdBy\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"lastModifiedBy\": \"bf5d8028-18c7-41e6-abea-82eecf79da29\",\n            \"createdTime\": 1718314757927,\n            \"lastModifiedTime\": 1718314757928\n        },\n        \"workflow\": {\n            \"action\": \"CLOSE\",\n            \"comments\": \"Approve new Hearing date\",\n            \"documents\": [\n                {\n                    \"id\": null,\n                    \"documentType\": \"PDF\",\n                    \"fileStore\": null,\n                    \"documentUid\": \"\",\n                    \"additionalDetails\": {}\n                }\n            ],\n            \"assignes\": [],\n            \"rating\": null\n        },\n        \"notes\": \"string\"\n    }\n}"
-						},
-						"url": {
-							"raw": "https://dristi-dev.pucar.org/hearing/v1/updateTranscript",
-							"protocol": "https",
-							"host": [
-								"dristi-dev",
-								"pucar",
-								"org"
-							],
-							"path": [
-								"hearing",
-								"v1",
-								"updateTranscript"
 							]
 						}
 					},

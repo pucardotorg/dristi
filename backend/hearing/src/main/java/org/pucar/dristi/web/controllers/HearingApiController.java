@@ -87,10 +87,10 @@ public class HearingApiController {
 
     }
 
-    @PostMapping(value = "/hearing/v1/updateTranscript")
-    public ResponseEntity<HearingResponse> hearingV1UpdateTranscriptPost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
+    @PostMapping(value = "/hearing/v1/updateNoWorkflow")
+    public ResponseEntity<HearingResponse> hearingV1UpdateNoWorkflowPost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the update hearing(s) + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody HearingRequest body) {
 
-        Hearing hearing = hearingService.updateHearingTranscript(body);
+        Hearing hearing = hearingService.updateHearingNoWorkflow(body);
         ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
         HearingResponse hearingResponse = HearingResponse.builder().hearing(hearing).responseInfo(responseInfo).build();
         return new ResponseEntity<>(hearingResponse, HttpStatus.OK);

@@ -115,15 +115,17 @@ public class HearingQueryBuilder {
         }
     }
 
-    public String buildUpdateTranscriptQuery(List<Object> preparedStmtList, String hearingId, String tenantId, List<String> transcriptList, @Valid AuditDetails auditDetails) throws CustomException {
-        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+    public String buildUpdateHearingNoWorkflowQuery(List<Object> preparedStmtList, String hearingId, String tenantId, List<String> transcriptList, @Valid AuditDetails auditDetails, Object additionalDetails) throws CustomException {
+        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
-        // Convert the transcriptList to JSON
+        // Convert the objects to JSON
         try {
             String transcriptJson = mapper.writeValueAsString(transcriptList);
+            String additionalDetailsJson = mapper.writeValueAsString(additionalDetails);
             preparedStmtList.add(transcriptJson);
+            preparedStmtList.add(additionalDetailsJson);
         } catch (JsonProcessingException e) {
-            throw new CustomException(PARSING_ERROR,"Error parsing transcript list to JSON : " + e.getMessage());
+            throw new CustomException(PARSING_ERROR,"Error parsing data to JSON : " + e.getMessage());
         }
 
         // Add other parameters to preparedStmtList

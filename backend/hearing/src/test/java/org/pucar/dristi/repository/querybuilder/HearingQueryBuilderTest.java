@@ -12,10 +12,12 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.pucar.dristi.config.ServiceConstants.PARSING_ERROR;
 
 class HearingQueryBuilderTest {
 
@@ -154,7 +156,7 @@ class HearingQueryBuilderTest {
     }
 
     @Test
-    void buildUpdateTranscriptQuery_Success() throws JsonProcessingException {
+    void buildUpdateHearingNoWorkflowQuery_Success() throws JsonProcessingException {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingId = "hearing123";
@@ -163,25 +165,31 @@ class HearingQueryBuilderTest {
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setLastModifiedBy("user1");
         auditDetails.setLastModifiedTime(123456789L);
+        Object additionalDetails = new HashMap<String, Object>();  // Mock or actual object
 
         String transcriptJson = "[\"transcript1\",\"transcript2\"]";
+        String additionalDetailsJson = "{}";  // Mock JSON representation of additionalDetails
+
         when(mapper.writeValueAsString(transcriptList)).thenReturn(transcriptJson);
+        when(mapper.writeValueAsString(additionalDetails)).thenReturn(additionalDetailsJson);
 
         // Act
-        String query = hearingQueryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails);
+        String query = hearingQueryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails, additionalDetails);
 
         // Assert
-        assertEquals("UPDATE dristi_hearing SET transcript = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?", query);
-        assertEquals(5, preparedStmtList.size());
+        assertEquals("UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?", query);
+        assertEquals(6, preparedStmtList.size());
         assertEquals(transcriptJson, preparedStmtList.get(0));
-        assertEquals("user1", preparedStmtList.get(1));
-        assertEquals(123456789L, preparedStmtList.get(2));
-        assertEquals(hearingId, preparedStmtList.get(3));
-        assertEquals(tenantId, preparedStmtList.get(4));
+        assertEquals(additionalDetailsJson, preparedStmtList.get(1));
+        assertEquals("user1", preparedStmtList.get(2));
+        assertEquals(123456789L, preparedStmtList.get(3));
+        assertEquals(hearingId, preparedStmtList.get(4));
+        assertEquals(tenantId, preparedStmtList.get(5));
     }
 
+
     @Test
-    void buildUpdateTranscriptQuery_JsonProcessingException() throws JsonProcessingException {
+    void buildUpdateHearingNoWorkflowQuery_JsonProcessingException() throws JsonProcessingException {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingId = "hearing123";
@@ -190,14 +198,19 @@ class HearingQueryBuilderTest {
         AuditDetails auditDetails = new AuditDetails();
         auditDetails.setLastModifiedBy("user1");
         auditDetails.setLastModifiedTime(123456789L);
+        Object additionalDetails = new HashMap<String, Object>();  // Mock or actual object
 
         when(mapper.writeValueAsString(transcriptList)).thenThrow(new JsonProcessingException("Error") {});
+        when(mapper.writeValueAsString(additionalDetails)).thenReturn("{}");
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> hearingQueryBuilder.buildUpdateTranscriptQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearingId, tenantId, transcriptList, auditDetails, additionalDetails));
 
-        assertEquals("Error parsing transcript list to JSON : Error", exception.getMessage());
+        assertEquals(PARSING_ERROR, exception.getCode());
+        assertEquals("Error parsing data to JSON : Error", exception.getMessage());
         verify(mapper, times(1)).writeValueAsString(transcriptList);
+        verify(mapper, times(0)).writeValueAsString(additionalDetails);
         assertTrue(preparedStmtList.isEmpty());
     }
+
 }

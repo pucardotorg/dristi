@@ -145,13 +145,14 @@ public class HearingService {
         }
     }
 
-    public Hearing updateHearingTranscript(HearingRequest hearingRequest) {
+    public Hearing updateHearingNoWorkflow(HearingRequest hearingRequest) {
         try {
-            Hearing hearing = validator.validateHearingExistenceForTranscriptUpdate(hearingRequest.getHearing());
+            Hearing hearing = validator.validateHearingExistenceNoWorkflowUpdate(hearingRequest.getHearing());
             enrichmentUtil.enrichHearingApplicationUponUpdate(hearingRequest);
-            hearingRepository.updateHearingTranscript(hearingRequest.getHearing());
+            hearingRepository.updateHearingNoWorkflow(hearingRequest.getHearing());
             hearing.setTranscript(hearingRequest.getHearing().getTranscript());
             hearing.setAuditDetails(hearingRequest.getHearing().getAuditDetails());
+            hearing.setAdditionalDetails(hearingRequest.getHearing().getAdditionalDetails());
             return hearing;
         } catch (CustomException e) {
             log.error("Custom Exception occurred while verifying hearing");
