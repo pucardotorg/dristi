@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 @Component
 public class ServiceConstants {
+	private ServiceConstants() {
+	}
 
 	public static final String EXTERNAL_SERVICE_EXCEPTION = "External Service threw an Exception: ";
 	public static final String SEARCHER_SERVICE_EXCEPTION = "Exception while fetching from searcher: ";
@@ -102,4 +104,5 @@ public class ServiceConstants {
 	public static final String INVALID_COMPLAINANT_DETAILS = "Invalid complainant details";
 	public static final String INVALID_DOCUMENT_DETAILS = "Invalid document details";
 	public static final String INVALID_ADVOCATE_DETAILS = "Invalid advocate details";
+	public static final String AND = " AND ";
 }

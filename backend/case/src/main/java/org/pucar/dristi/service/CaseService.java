@@ -32,23 +32,29 @@ public class CaseService {
 
     private CaseRegistrationValidator validator;
 
-    @Autowired
     private CaseRegistrationEnrichment enrichmentUtil;
 
-    @Autowired
     private CaseRepository caseRepository;
 
-    @Autowired
     private WorkflowService workflowService;
 
-    @Autowired
     private Configuration config;
 
-    @Autowired
     private Producer producer;
 
-    @Autowired
     private BillingUtil billingUtil;
+
+
+    @Autowired
+    public CaseService(CaseRegistrationEnrichment enrichmentUtil, CaseRepository caseRepository, WorkflowService workflowService, Configuration config, Producer producer, BillingUtil billingUtil) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.caseRepository = caseRepository;
+        this.workflowService = workflowService;
+        this.config = config;
+        this.producer = producer;
+        this.billingUtil = billingUtil;
+    }
 
     @Autowired
     public void setValidator(@Lazy CaseRegistrationValidator validator) {

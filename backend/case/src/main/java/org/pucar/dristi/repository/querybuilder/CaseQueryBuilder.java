@@ -83,7 +83,7 @@ public class CaseQueryBuilder {
             }
 
             if (!conditions.isEmpty()) {
-                query.append(String.join(" AND ", conditions)).append(";");
+                query.append(String.join("AND", conditions)).append(";");
             }
 
             return query.toString();
@@ -136,9 +136,9 @@ public class CaseQueryBuilder {
     private static void addRegistrationDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query) {
         if (criteria.getRegistrationFromDate() != null && criteria.getRegistrationToDate() != null) {
             if (!firstCriteria)
-                query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(" AND ").append(criteria.getRegistrationToDate()).append(" ");
+                query.append("OR cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append("AND").append(criteria.getRegistrationToDate()).append(" ");
             else {
-                query.append("WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append(" AND ").append(criteria.getRegistrationToDate()).append(" ");
+                query.append("WHERE cases.registrationdate BETWEEN ").append(criteria.getRegistrationFromDate()).append("AND").append(criteria.getRegistrationToDate()).append(" ");
             }
             firstCriteria = false;
         }
@@ -147,9 +147,9 @@ public class CaseQueryBuilder {
     private static boolean addFilingDateCriteria(CaseCriteria criteria, boolean firstCriteria, StringBuilder query) {
         if (criteria.getFilingFromDate() != null && criteria.getFilingToDate() != null) {
             if (!firstCriteria)
-                query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
+                query.append("OR cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append("AND").append(criteria.getFilingToDate()).append(" ");
             else {
-                query.append("WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append(" AND ").append(criteria.getFilingToDate()).append(" ");
+                query.append("WHERE cases.filingdate BETWEEN ").append(criteria.getFilingFromDate()).append("AND").append(criteria.getFilingToDate()).append(" ");
             }
             firstCriteria = false;
         }
@@ -159,7 +159,7 @@ public class CaseQueryBuilder {
     private boolean addAdvocateCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
+            query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?)AND(cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS'ANDcases.createdby = ?)");
             preparedStmtList.add(criteria.getAdvocateId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -170,7 +170,7 @@ public class CaseQueryBuilder {
     private boolean addLitigantCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
+            query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?)AND(cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS'ANDcases.createdby = ?)");
             preparedStmtList.add(criteria.getLitigantId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -192,7 +192,7 @@ public class CaseQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
-            query.append(" AND ");
+            query.append("AND");
         }
     }
 

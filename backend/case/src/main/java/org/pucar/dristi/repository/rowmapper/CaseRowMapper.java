@@ -89,11 +89,14 @@ public class CaseRowMapper implements ResultSetExtractor<List<CourtCase>> {
 
     private LocalDate stringToLocalDate(String str){
         LocalDate localDate = null;
-        if(str!=null)
         try {
-            DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-            localDate = LocalDate.parse(str, pattern);
-        } catch (DateTimeParseException e) {}
+            if(str!=null){
+                DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                localDate = LocalDate.parse(str, pattern);
+            }
+        } catch (DateTimeParseException e) {
+            log.error("Error Occurred while parsing Date Time");
+        }
 
         return localDate;
     }
