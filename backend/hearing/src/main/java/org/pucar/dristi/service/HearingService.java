@@ -27,26 +27,31 @@ import static org.pucar.dristi.config.ServiceConstants.*;
 @Slf4j
 public class HearingService {
 
-    @Autowired
-    private HearingRegistrationValidator validator;
+    private final HearingRegistrationValidator validator;
+    private final HearingRegistrationEnrichment enrichmentUtil;
+    private final WorkflowService workflowService;
+    private final IndividualService individualService;
+    private final HearingRepository hearingRepository;
+    private final Producer producer;
+    private final Configuration config;
 
     @Autowired
-    private HearingRegistrationEnrichment enrichmentUtil;
-
-    @Autowired
-    private WorkflowService workflowService;
-
-    @Autowired
-    private IndividualService individualService;
-
-    @Autowired
-    private HearingRepository hearingRepository;
-
-    @Autowired
-    private Producer producer;
-
-    @Autowired
-    private Configuration config;
+    public HearingService(
+            HearingRegistrationValidator validator,
+            HearingRegistrationEnrichment enrichmentUtil,
+            WorkflowService workflowService,
+            IndividualService individualService,
+            HearingRepository hearingRepository,
+            Producer producer,
+            Configuration config) {
+        this.validator = validator;
+        this.enrichmentUtil = enrichmentUtil;
+        this.workflowService = workflowService;
+        this.individualService = individualService;
+        this.hearingRepository = hearingRepository;
+        this.producer = producer;
+        this.config = config;
+    }
 
     public Hearing createHearing(HearingRequest body) {
         try {
