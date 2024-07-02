@@ -26,8 +26,7 @@ const InsideHearingMainPage = () => {
 
   const [updatedHearingDetails, setUpdatedHearingDetails] = useState({});
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-  // const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
-  const hearingId = "HEARING-ID-2024-06-26-000042"; //need to change
+  const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
 
   if (!hearingId) {
     const contextPath = window?.contextPath || "";

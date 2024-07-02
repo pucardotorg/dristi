@@ -1,42 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
-// import useGetHearings from "../../../../dristi/src/hooks/dristi/useGetHearings";
-// import useUpdateHearing from "../../hooks/useUpdateHearing";
 
 const AddAttendees = ({ attendees=[],setAttendees ,refetch ,handleAttendees, hearingData , setUpdatedHearingDetails}) => {
 
     const [formError, setFormError] = useState("");
-//   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
-//   const { data: hearingResponse, refetch: refetch } = useGetHearings(
-//     { tenantId: tenantId },
-//     { applicationNumber: "", cnrNumber: "", hearingId: hearingId },
-//     "dristi",
-//     true
-//   );
-//   const [attendees, setAttendees] = useState([]);
-//   const [formError, setFormError] = useState("");
-//   const [updatedHearingDetails, setUpdatedHearingDetails] = useState({});
-
-//   useEffect(() => {
-//     if (hearingResponse) {
-//       const hearingData = hearingResponse?.HearingList[0];
-//       if (hearingData) {
-//         setAttendees(hearingData.attendees || []);
-//         setUpdatedHearingDetails(hearingData || []);
-//       }
-//     }
-//   }, [hearingResponse]);
-
-
-  //   const { data: updateHearingResponse, updateRefetch } = useUpdateHearing(
-  //     { hearing: { tenantId, hearing } },
-  //     { applicationNumber: "", cnrNumber: "" },
-  //     "dristi",
-  //     true
-  //   );
-
-//   const { data: updatehearingResponse, refetch: updaterefetch } = useUpdateHearing( updatedHearingDetails, "dristi", true);
-
   const onFormSubmit = async (data) => {
     const onlineAttendees = data.onlineAttendees || [];
     const offlineAttendees = data.offlineAttendees || [];
