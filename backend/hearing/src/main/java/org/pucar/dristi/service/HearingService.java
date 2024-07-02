@@ -30,7 +30,6 @@ public class HearingService {
     private final HearingRegistrationValidator validator;
     private final HearingRegistrationEnrichment enrichmentUtil;
     private final WorkflowService workflowService;
-    private final IndividualService individualService;
     private final HearingRepository hearingRepository;
     private final Producer producer;
     private final Configuration config;
@@ -40,14 +39,12 @@ public class HearingService {
             HearingRegistrationValidator validator,
             HearingRegistrationEnrichment enrichmentUtil,
             WorkflowService workflowService,
-            IndividualService individualService,
             HearingRepository hearingRepository,
             Producer producer,
             Configuration config) {
         this.validator = validator;
         this.enrichmentUtil = enrichmentUtil;
         this.workflowService = workflowService;
-        this.individualService = individualService;
         this.hearingRepository = hearingRepository;
         this.producer = producer;
         this.config = config;
