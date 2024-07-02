@@ -15,6 +15,7 @@ import CustomReviewCard from "./CustomReviewCard";
 import ImageModal from "./ImageModal";
 import useSearchCaseService from "../hooks/dristi/useSearchCaseService";
 import { CaseWorkflowState } from "../Utils/caseWorkflow";
+import ReactTooltip from "react-tooltip";
 
 const extractValue = (data, key) => {
   if (!key.includes(".")) {
@@ -248,7 +249,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
   return (
     <div className="accordion-wrapper" onClick={() => {}}>
       <div className={`accordion-title ${isOpen ? "open" : ""}`} onClick={() => setOpen(!isOpen)}>
-        <span>{t(config?.label)}</span>
+        <span>
+          {config?.number}. {t(config?.label)}
+        </span>
         <span className="reverse-arrow">
           <CustomArrowDownIcon />
         </span>
@@ -294,7 +297,19 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
                       }}
                       key={index}
                     >
-                      {sectionError ? <EditPencilIcon /> : <FlagIcon />}
+                      {sectionError ? (
+                        <React.Fragment>
+                          <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                            {" "}
+                            <EditPencilIcon />
+                          </span>
+                          <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                            {t("CS_CLICK_TO_EDIT")}
+                          </ReactTooltip>
+                        </React.Fragment>
+                      ) : (
+                        <FlagIcon />
+                      )}
                     </div>
                   )}
                 </div>

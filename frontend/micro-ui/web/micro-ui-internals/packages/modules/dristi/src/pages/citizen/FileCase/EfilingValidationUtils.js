@@ -1245,7 +1245,7 @@ export const updateCaseDetails = async ({
     };
   }
   if (selected === "chequeDetails") {
-    const infoBoxData = { header: "CS_COMMON_NOTE", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
+    const infoBoxData = { header: "CS_YOU_HAVE_CONFIRMED", scrutinyHeader: "CS_COMPLAINANT_HAVE_CONFIRMED", data: ["CS_CHEQUE_RETURNED_INSUFFICIENT_FUND"] };
     const newFormData = await Promise.all(
       formdata
         .filter((item) => item.isenabled)
