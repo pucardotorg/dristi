@@ -26,20 +26,14 @@ import java.util.*;
 @Component
 public class EncryptionDecryptionUtil {
     private final EncryptionService encryptionService;
-    private final AuditService auditService;
-    private final ObjectMapper objectMapper;
     private final String stateLevelTenantId;
     private final boolean abacEnabled;
 
     @Autowired
     public EncryptionDecryptionUtil(@Qualifier("caseEncryptionServiceImpl") EncryptionService encryptionService,
-                                    AuditService auditService,
-                                    ObjectMapper objectMapper,
                                     @Value("${state.level.tenant.id}") String stateLevelTenantId,
                                     @Value("${decryption.abac.enabled}") boolean abacEnabled) {
         this.encryptionService = encryptionService;
-        this.auditService = auditService;
-        this.objectMapper = objectMapper;
         this.stateLevelTenantId = stateLevelTenantId;
         this.abacEnabled = abacEnabled;
     }
