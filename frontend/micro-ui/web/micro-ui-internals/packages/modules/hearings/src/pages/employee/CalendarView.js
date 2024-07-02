@@ -3,9 +3,9 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import useGetHearings from "../hooks/dristi/useGetHearings";
+import useGetHearings from "../../../../dristi/src/hooks/dristi/useGetHearings";
 import { Modal } from "@egovernments/digit-ui-react-components";
-import useGetHearingSlotMetaData from "../hooks/dristi/useGetHearingSlotMetaData";
+import useGetHearingSlotMetaData from "../../hooks/services/useGetHearingSlotMetaData";
 const tenantId = window.localStorage.getItem("tenant-id");
 
 const MonthlyCalendar = () => {
@@ -18,7 +18,7 @@ const MonthlyCalendar = () => {
     "dristi",
     true
   );
-  const {data: AdvocateSlotsResponse, refetch: refetchGetHearingSlotMetaData } = useGetHearingSlotMetaData(true);
+  const { data: AdvocateSlotsResponse, refetch: refetchGetHearingSlotMetaData } = useGetHearingSlotMetaData(true);
   const hearingDetails = useMemo(() => hearingResponse?.HearingList || [], [hearingResponse]);
 
   const events = useMemo(() => AdvocateSlotsResponse || [], [AdvocateSlotsResponse]);
@@ -145,7 +145,14 @@ const MonthlyCalendar = () => {
       />
 
       {showModal && (
-        <Modal headerBarMain={<Heading label={"hearings"} />} headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />} onClose={closeModal}>
+        <Modal
+          headerBarMain={<Heading label={"hearings"} />}
+          headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
+          onClose={closeModal}
+          popupModuleActionBarStyles={{
+            display: "none",
+          }}
+        >
           {currentEvent.extendedProps.hearings.map((hearing) => (
             <div>
               <div key={hearing.id}>id :- {hearing.id}</div>
