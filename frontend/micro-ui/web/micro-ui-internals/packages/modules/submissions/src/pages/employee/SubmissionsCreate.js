@@ -5,6 +5,10 @@ import { FormComposerV2, Header } from "@egovernments/digit-ui-react-components"
 import { applicationTypeConfig, configsRescheduleRequest, submissionTypeConfig } from "../../configs/submissionsCreateConfig";
 import { transformCreateData } from "../../utils/createUtils";
 import { submissionService } from "../../hooks/services";
+import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
+import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
+import PaymentModal from "../../components/PaymentModal";
+import SuccessModal from "../../components/SuccessModal";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -16,6 +20,11 @@ const SubmissionsCreate = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const filingNumber = urlParams.get("filingNumber");
   const [formdata, setFormdata] = useState({});
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [showsignatureModal, setShowsignatureModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
   const reqCreate = {
     url: `/application/application/v1/create`,
     params: {},
@@ -70,6 +79,7 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
+  console.log("caseDetails", caseDetails);
 
   const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
   const onError = (resp) => {
@@ -105,7 +115,7 @@ const SubmissionsCreate = () => {
         filingNumber,
         cnrNumber: caseDetails?.cnrNumber,
         caseId: caseDetails?.id,
-        // referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
+        referenceId: "db3b2f72-ec26-4a5e-976a-6e42c6b6f06d",
         createdDate: formatDate(new Date()),
         applicationType,
         // applicationNumber: "example_application_number",
@@ -114,7 +124,7 @@ const SubmissionsCreate = () => {
         // comment: "example_comment",
         // isActive: true,
         additionalDetails: { formdata: formdata },
-        documents: [],
+        documents: [{}],
         workflow: {
           id: "workflow123",
           action: "CREATE",
@@ -149,6 +159,46 @@ const SubmissionsCreate = () => {
       }
     );
   };
+
+  const handleBack = () => {};
+
+  const handleProceed = () => {};
+
+  const handleCloseSignaturePopup = () => {
+    setShowsignatureModal(false);
+    setShowReviewModal(true);
+  };
+
+  const handleClosePaymentModal = () => {
+    setShowPaymentModal(false);
+    //
+  };
+
+  const handleSkipPayment = () => {
+    setShowPaymentModal(false);
+    setShowSuccessModal(true);
+    //
+  };
+
+  const handleMakePayment = () => {
+    setShowPaymentModal(false);
+    setShowSuccessModal(true);
+    //
+    //
+  };
+
+  const handleDownloadSubmission = () => {
+    ///
+  };
+
+  const handleCloseSuccessModal = () => {
+    //
+  };
+
+  const handlePendingPayment = () => {
+    //
+  };
+
   return (
     <div>
       <Header> {t("CREATE_SUBMISSION")}</Header>
@@ -161,6 +211,33 @@ const SubmissionsCreate = () => {
         onSubmit={createOrder}
         fieldStyle={fieldStyle}
       />
+      {showReviewModal && (
+        <ReviewSubmissionModal
+          t={t}
+          // order={currentOrder}
+          setShowReviewModal={setShowReviewModal}
+          setShowsignatureModal={setShowsignatureModal}
+          handleBack={handleBack}
+        />
+      )}
+      {showsignatureModal && <SubmissionSignatureModal t={t} handleProceed={handleProceed} handleCloseSignaturePopup={handleCloseSignaturePopup} />}
+      {showPaymentModal && (
+        <PaymentModal
+          t={t}
+          handleClosePaymentModal={handleClosePaymentModal}
+          handleSkipPayment={handleSkipPayment}
+          handleMakePayment={handleMakePayment}
+        />
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          t={t}
+          handleDownloadSubmission={handleDownloadSubmission}
+          isPaymentDone={true}
+          handleCloseSuccessModal={handleCloseSuccessModal}
+          handlePendingPayment={handlePendingPayment}
+        />
+      )}
     </div>
   );
 };
