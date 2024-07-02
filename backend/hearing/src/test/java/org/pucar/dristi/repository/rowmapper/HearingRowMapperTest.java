@@ -29,15 +29,14 @@ public class HearingRowMapperTest {
 
     @Mock
     private ResultSet rs;
-    private ObjectMapper objectMapper;
 
+    private ObjectMapper objectMapper;
     private HearingRowMapper rowMapper;
 
     @BeforeEach
     void setUp() {
-        rowMapper = new HearingRowMapper();
         objectMapper = new ObjectMapper();
-        rowMapper.objectMapper = objectMapper;
+        rowMapper = new HearingRowMapper(objectMapper);
     }
 
     @Test
