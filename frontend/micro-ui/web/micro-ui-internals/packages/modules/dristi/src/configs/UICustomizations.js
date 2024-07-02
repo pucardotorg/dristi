@@ -289,6 +289,10 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -297,6 +301,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
           tenantId: window?.Digit.ULBService.getStateId(),
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -305,6 +313,12 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId: window?.Digit.ULBService.getStateId(),
+          config: {
+            ...requestCriteria?.config,
+            select: (data) => {
+              return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+            },
+          },
         },
       };
     },
@@ -318,7 +332,7 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t, searchResult) => {
       switch (key) {
         case "Stage":
-          return <span>{t("CS_UNDER_SCRUTINY")}</span>;
+          return <span>{t("UNDER_SCRUTINY")}</span>;
         case "Case Type":
           return <span>NIA S138</span>;
         case "Days Since Filing":
@@ -338,11 +352,16 @@ export const UICustomizations = {
   paymentInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
       // We need to change tenantId "processSearchCriteria" here
+      const tenantId = window?.Digit.ULBService.getStateId();
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -350,7 +369,11 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -358,7 +381,13 @@ export const UICustomizations = {
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
@@ -420,6 +449,10 @@ export const UICustomizations = {
           ...requestCriteria?.state?.searchForm,
           tenantId,
           ...additionalDetails,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails?.searchKey in criteria[0] && !criteria[0][additionalDetails?.searchKey]) {
@@ -429,6 +462,10 @@ export const UICustomizations = {
           [additionalDetails.searchKey]: "",
           ...additionalDetails,
           tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -437,6 +474,12 @@ export const UICustomizations = {
           ...requestCriteria?.body,
           criteria,
           tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
@@ -453,12 +496,17 @@ export const UICustomizations = {
   },
   judgeInboxConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
+      const tenantId = window?.Digit.ULBService.getStateId();
       // We need to change tenantId "processSearchCriteria" here
       const criteria = [
         {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         },
       ];
       if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
@@ -466,7 +514,11 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           [additionalDetails]: "",
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+          pagination: {
+            limit: requestCriteria?.body?.inbox?.limit,
+            offSet: requestCriteria?.body?.inbox?.offset,
+          },
         });
       }
       return {
@@ -474,7 +526,13 @@ export const UICustomizations = {
         body: {
           ...requestCriteria?.body,
           criteria,
-          tenantId: window?.Digit.ULBService.getStateId(),
+          tenantId,
+        },
+        config: {
+          ...requestCriteria?.config,
+          select: (data) => {
+            return { ...data, totalCount: data?.criteria?.[0]?.pagination?.totalCount };
+          },
         },
       };
     },
@@ -491,7 +549,6 @@ export const UICustomizations = {
     additionalCustomizations: (row, key, column, value, t) => {
       switch (key) {
         case "Document":
-          console.log("document", row);
           return <OwnerColumn name={row?.name.familyName} t={t} />;
           break;
 
@@ -523,7 +580,6 @@ export const UICustomizations = {
 };
 
 const CommentComponent = ({ key, comment }) => {
-  console.log("comment", comment);
   return (
     <div className="comment-body" key={key}>
       <div className="name-logo">

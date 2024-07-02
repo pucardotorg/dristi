@@ -1,5 +1,5 @@
 import { Card, Header } from "@egovernments/digit-ui-react-components";
-import React from "react";
+import React, { useMemo } from "react";
 import CustomCard from "./CustomCard";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import JudgeScreen from "../pages/employee/Judge/JudgeScreen";
@@ -8,12 +8,17 @@ const DRISTICard = () => {
   const Digit = window?.Digit || {};
   const history = useHistory();
   const roles = Digit.UserService.getUser()?.info?.roles;
-  const isJudge = roles.some((role) => role.code === "CASE_APPROVER");
+  const isJudge = useMemo(() => roles.some((role) => role.code === "CASE_APPROVER"), [roles]);
+  const isScrutiny = useMemo(() => roles.some((role) => role.code === "CASE_REVIEWER"), [roles]);
   const isNyayMitra = ["CASE_CREATOR", "CASE_EDITOR", "CASE_VIEWER", "ADVOCATE_APPROVER", "ADVOCATE_CLERK_APPROVER"].reduce((res, curr) => {
     if (!res) return res;
     res = roles.some((role) => role.code === curr);
     return res;
   }, true);
+
+  if (isScrutiny && !isNyayMitra && !isJudge) {
+    history.push("/digit-ui/employee/dristi/cases");
+  }
 
   let roleType = isJudge ? "isJudge" : "default";
   return (

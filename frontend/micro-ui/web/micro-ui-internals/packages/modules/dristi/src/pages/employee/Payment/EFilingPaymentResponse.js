@@ -1,4 +1,4 @@
-import { Banner } from "@egovernments/digit-ui-react-components";
+import { Banner, CardLabel } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import Button from "../../../components/Button";
 import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
@@ -11,14 +11,15 @@ function EFilingPaymentResponse() {
   const { state } = useLocation();
   return (
     <div className="user-registration">
-      <div className="e-filing-payment" style={{ minHeight: "330px" }}>
+      <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%" }}>
         <Banner
           whichSvg={"tick"}
           successful={state?.state?.success ? true : false}
-          message={state?.state?.success ? "CS_PAYMENT_SUCCESSFUL" : "CS_PAYMENT_FAILED"}
+          message={state?.state?.success ? t("CS_PAYMENT_SUCCESSFUL") : t("CS_PAYMENT_FAILED")}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
+        {state?.state?.success && <CardLabel className={"e-filing-card-label"}>{t("CS_PAYMENT_SUCCESSFUL_SUB_TEXT")}</CardLabel>}
         {state?.state?.receiptData && state?.state?.success && (
           <CustomCopyTextDiv
             t={t}

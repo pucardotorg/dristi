@@ -18,7 +18,7 @@
     background-color: white;
     border: 1px solid var(--Grey-200, #bbbbbd);
 
-    >h2 {
+    > h2 {
       font-weight: 700;
       font-size: 24px;
       border-bottom: 1px solid var(--Grey-200, #bbbbbd);
@@ -365,7 +365,8 @@
   }
 }
 
-.witness-details {}
+.witness-details {
+}
 
 .debt-liability {
   .select-wrap {
@@ -416,9 +417,29 @@
   }
 }
 
-.adhaar-verification-info-card {
+.adhaar-verification-info-card,
+.custom-info-card {
   padding: 8px;
   background-color: #ecf3fd;
+
+  &.error {
+    background-color: #fce8e8;
+    svg {
+      transform: rotate(180);
+      path {
+        fill: #bb2c2f;
+      }
+    }
+  }
+
+  &.warning {
+    background-color: #fff6e8;
+    svg {
+      path {
+        fill: #9e400a;
+      }
+    }
+  }
 
   div {
     display: flex;
@@ -871,6 +892,10 @@
             &.section {
               background: #fce8e8;
             }
+
+            &.prevsection{
+              background: #ecf3fd
+            }
           }
 
           .item-header {
@@ -936,6 +961,11 @@
               &.preverror {
                 background-color: #ecf3fd;
               }
+
+              &.preverrorside{
+                background-color: #ecf3fd;
+                border-left: 2px #4d83cf solid;
+              }
             }
 
             .address {
@@ -953,6 +983,11 @@
 
               &.preverror {
                 background-color: #ecf3fd;
+              }
+
+              &.preverrorside{
+                background-color: #ecf3fd;
+                border-left: 2px #4d83cf solid;
               }
             }
 
@@ -1453,7 +1488,8 @@
 }
 
 .action-bar-wrap.e-filing-action-bar {
-  .submit-bar {
+  .submit-bar,
+  .submit-bar-disabled {
     display: flex;
     gap: 8px;
     justify-content: center;
@@ -1639,6 +1675,7 @@
     td {
       border-right: 1px #0000001a solid;
       padding: 0px 16px;
+      vertical-align: top;
     }
 
     td:last-child {
@@ -1651,15 +1688,16 @@
     }
 
     td {
-      .case-info-title {
-        font-family: Roboto;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 16.41px;
-        text-align: left;
-        color: #77787b;
-        margin: 0px 0px 8px;
-      }
     }
   }
+}
+
+.case-info-title {
+  font-family: Roboto;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.41px;
+  text-align: left;
+  color: #77787b;
+  margin: 0px 0px 8px;
 }

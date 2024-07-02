@@ -6,6 +6,7 @@ import CustomCopyTextDiv from "../../../components/CustomCopyTextDiv";
 
 const mockSubmitModalInfo = {
   header: "CS_PAYMENT_SUCCESSFUL",
+  subHeader: "CS_PAYMENT_SUCCESSFUL_SUB_TEXT",
   backButtonText: "Back to Home",
   nextButtonText: "Schedule next hearing",
   isArrow: false,
@@ -30,14 +31,15 @@ function EFilingPaymentResponse({ t, setShowModal, header, subHeader, submitModa
   const receiptData = location.state.state.receiptData;
   return (
     <div className=" user-registration">
-      <div className="e-filing-payment" style={{ minHeight: "330px" }}>
+      <div className="e-filing-payment" style={{ minHeight: "100%", height: "100%"  }}>
         <Banner
           whichSvg={"tick"}
           successful={true}
-          message={submitModalInfo?.header}
+          message={t(submitModalInfo?.header)}
           headerStyles={{ fontSize: "32px" }}
           style={{ minWidth: "100%", marginTop: "10px" }}
         ></Banner>
+        {submitModalInfo?.subHeader && <CardLabel className={"e-filing-card-label"}>{t(submitModalInfo?.subHeader)}</CardLabel>}
         {receiptData && (
           <CustomCopyTextDiv
             t={t}

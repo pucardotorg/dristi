@@ -3,7 +3,7 @@ const delayApplicationFormConfig = [
     body: [
       {
         type: "radio",
-        key: "delayApplicationType",
+        key: "delayCondonationType",
         label: "CS_QUESTION_DELAY_APPLICATION",
         isMandatory: true,
         populators: {
@@ -36,7 +36,7 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -57,7 +57,7 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",
@@ -78,7 +78,7 @@ const delayApplicationFormConfig = [
     ],
   },
   {
-    dependentKey: { delayApplicationType: ["showForm"] },
+    dependentKey: { delayCondonationType: ["showForm"] },
     body: [
       {
         type: "component",

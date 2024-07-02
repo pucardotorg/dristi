@@ -20,17 +20,21 @@ const extractValue = (data, key) => {
 
 const CustomRadioInfoComponent = ({ t, config, onSelect, formData = {}, errors, formState, control, setError }) => {
   function setValue(value, name) {
-    onSelect(config.key, { ...value });
+    onSelect(config.key, { ...value }, { shouldValidate: true });
   }
 
   return (
     <React.Fragment>
-      {extractValue(formData, config.noteDependentOn) && <SelectCustomNote t={t} config={config.notes} onClick={() => {}} />}
+      {config.noteDependentOnValue
+        ? extractValue(formData, config.noteDependentOn) === config.noteDependentOnValue && (
+            <SelectCustomNote t={t} config={config.notes} onClick={() => {}} />
+          )
+        : extractValue(formData, config.noteDependentOn) && <SelectCustomNote t={t} config={config.notes} onClick={() => {}} />}
       <CardSectionHeader style={{ margin: "5px 0px" }}>{t(config.head)}</CardSectionHeader>
       <div className="select-user-type-component">
         <React.Fragment>
           <LabelFieldPair>
-            <CardLabel className="card-label-smaller" style={{ display: "flex" }}>
+            <CardLabel className="card-label-smaller" style={{ display: "flex", ...config?.labelStyles }}>
               {t(config.label)}
             </CardLabel>
 

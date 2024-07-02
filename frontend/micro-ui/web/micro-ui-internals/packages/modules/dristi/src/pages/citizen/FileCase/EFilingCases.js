@@ -2,11 +2,18 @@ import { ActionBar, Button, CloseSvg, FormComposerV2, Header, Loader, SubmitBar,
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import ReactTooltip from "react-tooltip";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
 import Accordion from "../../../components/Accordion";
+import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
 import ConfirmCourtModal from "../../../components/ConfirmCourtModal";
+import ErrorsAccordion from "../../../components/ErrorsAccordion";
+import FlagBox from "../../../components/FlagBox";
 import Modal from "../../../components/Modal";
+import ScrutinyInfo from "../../../components/ScrutinyInfo";
+import SelectCustomNote from "../../../components/SelectCustomNote";
 import { useToast } from "../../../components/Toast/useToast";
+import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
 import useSearchCaseService from "../../../hooks/dristi/useSearchCaseService";
 import { ReactComponent as InfoIcon } from "../../../icons/info.svg";
 import { CustomAddIcon, CustomArrowDownIcon, CustomDeleteIcon, RightArrow } from "../../../icons/svgIndex";
@@ -15,10 +22,13 @@ import { formatDate } from "./CaseType";
 import { sideMenuConfig } from "./Config";
 import EditFieldsModal from "./EditFieldsModal";
 import {
+  advocateDetailsFileValidation,
+  checkDuplicateMobileEmailValidation,
   checkIfscValidation,
   checkNameValidation,
   checkOnlyCharInCheque,
   chequeDateValidation,
+  chequeDetailFileValidation,
   complainantValidation,
   delayApplicationValidation,
   demandNoticeFileValidation,
@@ -29,15 +39,8 @@ import {
   signatureValidation,
   updateCaseDetails,
   validateDateForDelayApplication,
-  chequeDetailFileValidation,
-  advocateDetailsFileValidation,
-  checkDuplicateMobileEmailValidation,
 } from "./EfilingValidationUtils";
-import ConfirmCorrectionModal from "../../../components/ConfirmCorrectionModal";
-import useGetAllCasesConfig from "../../../hooks/dristi/useGetAllCasesConfig";
-import ErrorsAccordion from "../../../components/ErrorsAccordion";
-import ReactTooltip from "react-tooltip";
-import FlagBox from "../../../components/FlagBox";
+import _, { isEqual, isMatch } from "lodash";
 const OutlinedInfoIcon = () => (
   <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ position: "absolute", right: -22, top: 0 }}>
     <g clip-path="url(#clip0_7603_50401)">
@@ -87,7 +90,7 @@ const Heading = (props) => {
 };
 
 const selectedArray = [
-  "complaintDetails",
+  "complainantDetails",
   "respondentDetails",
   "chequeDetails",
   "debtLiabilityDetails",
@@ -351,6 +354,18 @@ function EFilingCases({ path }) {
       .filter((val) => val !== undefined);
   }, [scrutinyErrors]);
 
+  const sectionWiseErrors = useMemo(() => {
+    let obj = {};
+    Object.values(scrutinyObj || {}).forEach((item) => {
+      Object.keys(item || {}).forEach((key) => {
+        if (item[key]?.scrutinyMessage?.FSOError) {
+          obj[key] = item[key]?.scrutinyMessage?.FSOError;
+        }
+      });
+    });
+    return obj;
+  }, [scrutinyObj]);
+
   const totalErrors = useMemo(() => {
     let total = 0;
     let sectionErrors = 0;
@@ -382,7 +397,7 @@ function EFilingCases({ path }) {
   useEffect(() => {
     if (Object.keys(caseDetails).length !== 0) {
       const fieldsRemainingCopy = structuredClone(fieldsRemaining);
-      const additionalDetailsArray = ["complaintDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
+      const additionalDetailsArray = ["complainantDetails", "respondentDetails", "witnessDetails", "prayerSwornStatement", "advocateDetails"];
       const caseDetailsArray = ["chequeDetails", "debtLiabilityDetails", "demandNoticeDetails", "delayApplications"];
       for (const key of additionalDetailsArray) {
         if (caseDetails?.additionalDetails?.[key]) {
@@ -396,7 +411,11 @@ function EFilingCases({ path }) {
           fieldsRemainingCopy[index] = setMandatoryAndOptionalRemainingFields(caseDetails?.caseDetails?.[key]?.formdata, key);
         }
       }
-      setFieldsRemaining(fieldsRemainingCopy);
+      if (isDraftInProgress) {
+        setFieldsRemaining(fieldsRemainingCopy);
+      } else {
+        setFieldsRemaining([{ mandatoryTotalCount: 0, optionalTotalCount: 0 }]);
+      }
     }
   }, [caseDetails]);
 
@@ -432,9 +451,18 @@ function EFilingCases({ path }) {
     return () => clearTimeout(timer);
   }, [showErrorToast, showSuccessToast]);
 
+  useEffect(() => {
+    if (!errorCaseDetails && isCaseReAssigned) {
+      setErrorCaseDetails(caseDetails);
+    }
+  }, [caseDetails, errorCaseDetails]);
+
   const getDefaultValues = useCallback(
     (index) => {
       if (isCaseReAssigned && errorCaseDetails) {
+        if (selected === "reviewCaseFile") {
+          return scrutinyObj;
+        }
         return (
           errorCaseDetails?.additionalDetails?.[selected]?.formdata?.[index]?.data ||
           errorCaseDetails?.caseDetails?.[selected]?.formdata?.[index]?.data ||
@@ -448,7 +476,7 @@ function EFilingCases({ path }) {
         formdata[index]?.data
       );
     },
-    [caseDetails?.additionalDetails, caseDetails?.caseDetails, errorCaseDetails, formdata, isCaseReAssigned, selected]
+    [caseDetails?.additionalDetails, caseDetails?.caseDetails, errorCaseDetails, formdata, isCaseReAssigned, selected, scrutinyObj]
   );
 
   const accordion = useMemo(() => {
@@ -730,7 +758,7 @@ function EFilingCases({ path }) {
                   caseDetails?.caseDetails?.["demandNoticeDetails"]?.formdata?.some(
                     (data) => new Date(data?.data?.dateOfAccrual).getTime() + 30 * 24 * 60 * 60 * 1000 < new Date().getTime()
                   ) &&
-                  body?.key === "delayApplicationType"
+                  body?.key === "delayCondonationType"
                 ) {
                   body.disable = true;
                 }
@@ -822,11 +850,12 @@ function EFilingCases({ path }) {
                           data?.addressDetails?.some(
                             (address) =>
                               ((address?.addressDetails?.pincode !==
-                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
-                                caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code === "INDIVIDUAL") ||
+                                caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressDetails?.pincode &&
+                                caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
+                                  "INDIVIDUAL") ||
                                 (address?.addressDetails?.pincode !==
-                                  caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
-                                  caseDetails?.additionalDetails?.["complaintDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
+                                  caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.addressCompanyDetails?.pincode &&
+                                  caseDetails?.additionalDetails?.["complainantDetails"]?.formdata?.[0]?.data?.complainantType?.code ===
                                     "REPRESENTATIVE")) &&
                               body?.key === "inquiryAffidavitFileUpload"
                           )
@@ -834,11 +863,17 @@ function EFilingCases({ path }) {
                           delete input.isOptional;
                           return {
                             ...input,
+                            hideDocument: false,
+                          };
+                        } else if (body?.key === "inquiryAffidavitFileUpload") {
+                          return {
+                            ...input,
+                            isOptional: "CS_IS_OPTIONAL",
+                            hideDocument: true,
                           };
                         } else {
                           return {
                             ...input,
-                            isOptional: "CS_IS_OPTIONAL",
                           };
                         }
                       }
@@ -907,8 +942,10 @@ function EFilingCases({ path }) {
             updatedBody = config.body
               .map((formComponent) => {
                 let key = formComponent.key || formComponent.populators?.name;
-                if (formComponent.type === "component" && formComponent.component === "SelectCustomDragDrop") {
-                  key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                if (formComponent.type === "component") {
+                  if (["SelectCustomDragDrop", "SelectBulkInputs"].includes(formComponent.component)) {
+                    key = formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name;
+                  }
                 }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
@@ -931,8 +968,8 @@ function EFilingCases({ path }) {
                     </React.Fragment>
                   );
                 }
-                modifiedFormComponent.disable = true;
-                if (scrutiny?.[selected] && key in scrutiny?.[selected]?.form?.[index]) {
+                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
+                if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index] && key in scrutiny?.[selected]?.form?.[index]) {
                   modifiedFormComponent.disable = false;
                   modifiedFormComponent.withoutLabel = true;
                   return [
@@ -991,7 +1028,7 @@ function EFilingCases({ path }) {
   //   setConfirmDeleteModal(true);
   //   setFormdata(newArray);
   // };
-  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index) => {
+  const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index, currentDisplayIndex) => {
     if (formData.advocateBarRegNumberWithName?.[0] && !formData.advocateBarRegNumberWithName[0].modified) {
       setValue("advocateBarRegNumberWithName", [
         {
@@ -1004,7 +1041,7 @@ function EFilingCases({ path }) {
     checkIfscValidation({ formData, setValue, selected });
     checkNameValidation({ formData, setValue, selected, formdata, index, reset });
     checkOnlyCharInCheque({ formData, setValue, selected });
-    if (JSON.stringify(formData) !== JSON.stringify(formdata[index].data)) {
+    if (!isEqual(formData, formdata[index].data)) {
       chequeDateValidation({ formData, setError, clearErrors, selected });
       showDemandNoticeModal({
         setValue,
@@ -1017,7 +1054,18 @@ function EFilingCases({ path }) {
         setReceiptDemandNoticeModal,
         setServiceOfDemandNoticeModal,
       });
-      checkDuplicateMobileEmailValidation({ formData, setValue, selected, formdata, index, reset, setError, clearErrors, caseDetails });
+      checkDuplicateMobileEmailValidation({
+        formData,
+        setValue,
+        selected,
+        formdata,
+        index,
+        reset,
+        setError,
+        clearErrors,
+        caseDetails,
+        currentDisplayIndex,
+      });
       validateDateForDelayApplication({ setValue, caseDetails, selected, toast, t, history, caseId });
       showToastForComplainant({ formData, setValue, selected, setSuccessToast });
       setFormdata(
@@ -1180,14 +1228,24 @@ function EFilingCases({ path }) {
     ) {
       return;
     }
-    if (formdata.filter((data) => data.isenabled).some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
-      return;
-    }
-    if (formdata.filter((data) => data.isenabled).some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast }))) {
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => demandNoticeFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+    ) {
       return;
     }
     if (
-      formdata.filter((data) => data.isenabled).some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast }))
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => chequeDetailFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
+    ) {
+      return;
+    }
+    if (
+      formdata
+        .filter((data) => data.isenabled)
+        .some((data) => advocateDetailsFileValidation({ formData: data?.data, selected, setShowErrorToast, setFormErrors: setFormErrors.current }))
     ) {
       return;
     }
@@ -1219,7 +1277,18 @@ function EFilingCases({ path }) {
     if (
       formdata
         .filter((data) => data.isenabled)
-        .some((data) => prayerAndSwornValidation({ t, formData: data?.data, selected, setShowErrorToast, setErrorMsg, toast }))
+        .some((data) =>
+          prayerAndSwornValidation({
+            t,
+            formData: data?.data,
+            selected,
+            setShowErrorToast,
+            setErrorMsg,
+            toast,
+            setFormErrors: setFormErrors.current,
+            clearFormDataErrors: clearFormDataErrors.current,
+          })
+        )
     ) {
       return;
     }
@@ -1278,7 +1347,7 @@ function EFilingCases({ path }) {
 
   const onSaveDraft = (props) => {
     setParmas({ ...params, [pageConfig.key]: formdata });
-    updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+    updateCaseDetails({ caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId, setErrorCaseDetails })
       .then(() => {
         refetchCaseData().then(() => {
           const caseData = caseDetails?.additionalDetails?.[nextSelected]?.formdata ||
@@ -1291,7 +1360,7 @@ function EFilingCases({ path }) {
         setIsDisabled(false);
       })
       .finally(() => {
-        toast.success("Successfully Saved Draft");
+        toast.success(t("CS_SUCCESSFULLY_SAVED_DRAFT"));
       });
   };
 
@@ -1315,8 +1384,20 @@ function EFilingCases({ path }) {
       setIsDisabled(false);
     }
     setIsOpen(false);
-
-    updateCaseDetails({ isCompleted: "PAGE_CHANGE", caseDetails, formdata, pageConfig, selected, setIsDisabled, tenantId })
+    const isDrafted = isMatch(
+      JSON.parse(JSON.stringify(caseDetails?.additionalDetails?.[selected].formdata || caseDetails?.caseDetails?.[nextSelected]?.formdata)),
+      JSON.parse(JSON.stringify(formdata.filter((data) => data.isenabled)))
+    );
+    updateCaseDetails({
+      isCompleted: isDrafted,
+      caseDetails: isCaseReAssigned && errorCaseDetails ? errorCaseDetails : caseDetails,
+      formdata,
+      pageConfig,
+      selected,
+      setIsDisabled,
+      tenantId,
+      setErrorCaseDetails,
+    })
       .then(() => {
         if (!isCaseReAssigned) {
           refetchCaseData().then(() => {
@@ -1342,7 +1423,7 @@ function EFilingCases({ path }) {
       {
         cases: {
           ...caseDetails,
-          caseTitle: `${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complaintDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
+          caseTitle: `${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.firstName} ${caseDetails?.additionalDetails?.complainantDetails?.formdata?.[0]?.data?.lastName} VS ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentFirstName} ${caseDetails?.additionalDetails?.respondentDetails?.formdata?.[0]?.data?.respondentLastName}`,
           filingDate: formatDate(new Date()),
           workflow: {
             ...caseDetails?.workflow,
@@ -1362,7 +1443,7 @@ function EFilingCases({ path }) {
       return "disable-form";
     }
 
-    if (selected === "delayApplications" && formdata?.[0]?.data?.delayApplicationType?.code) {
+    if (selected === "delayApplications" && formdata?.[0]?.data?.delayCondonationType?.code) {
       return "disable-form";
     }
     return "";
@@ -1410,6 +1491,11 @@ function EFilingCases({ path }) {
     setPrevSelected(selected);
     history.push(`?caseId=${caseId}&selected=reviewCaseFile`);
   }
+
+  if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
+    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+  }
+
   return (
     <div className="file-case">
       <div className="file-case-side-stepper">
@@ -1526,13 +1612,30 @@ function EFilingCases({ path }) {
             </div>
             <p>{t(pageConfig.subtext || "")}</p>
           </div>
+          {isCaseReAssigned && selected === "reviewCaseFile" && (
+            <SelectCustomNote
+              t={t}
+              config={{
+                populators: {
+                  inputs: [
+                    {
+                      infoHeader: "Note",
+                      infoText: `${t("CS_YOU_MADE")} ${totalErrors?.total} ${"CS_REVIEW_CAREFULLY"}`,
+                      type: "InfoComponent",
+                    },
+                  ],
+                },
+              }}
+            />
+          )}
+          {sectionWiseErrors?.[selected] && <ScrutinyInfo t={t} config={{ populators: { scrutinyMessage: sectionWiseErrors?.[selected] } }} />}
           {modifiedFormConfig.map((config, index) => {
             return formdata[index].isenabled ? (
               <div key={`${selected}-${index}`} className="form-wrapper-d">
                 {pageConfig?.addFormText && (
                   <div className="form-item-name">
                     <h1>{`${t(pageConfig?.formItemName)} ${formdata[index]?.displayindex + 1}`}</h1>
-                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && (
+                    {(activeForms > 1 || t(pageConfig?.formItemName) === "Witness" || pageConfig?.isOptional) && isDraftInProgress && (
                       <span
                         style={{ cursor: "pointer" }}
                         onClick={() => {
@@ -1552,7 +1655,18 @@ function EFilingCases({ path }) {
                   onSecondayActionClick={onSaveDraft}
                   defaultValues={getDefaultValues(index)}
                   onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
-                    onFormValueChange(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues, index);
+                    onFormValueChange(
+                      setValue,
+                      formData,
+                      formState,
+                      reset,
+                      setError,
+                      clearErrors,
+                      trigger,
+                      getValues,
+                      index,
+                      formdata[index].displayindex
+                    );
                   }}
                   isDisabled={isSubmitDisabled}
                   cardStyle={{ minWidth: "100%" }}
@@ -1674,7 +1788,7 @@ function EFilingCases({ path }) {
           {showOptionalFieldsRemainingModal && showConfirmOptionalModal && !mandatoryFieldsLeftTotalCount && !isDisableAllFieldsMode && (
             <Modal
               headerBarMain={<Heading label={t("TIPS_FOR_STRONGER_CASE")} />}
-              headerBarEnd={<CloseBtn onClick={() => takeUserToRemainingOptionalFieldsPage()} />}
+              headerBarEnd={<CloseBtn onClick={() => setShowConfirmOptionalModal(false)} />}
               actionCancelLabel={t("SKIP_AND_CONTINUE")}
               actionCancelOnSubmit={() => setShowConfirmOptionalModal(false)}
               actionSaveLabel={t("FILL_NOW")}

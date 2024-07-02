@@ -34,6 +34,7 @@ const ProjectBreadCrumb = ({ location }) => {
 };
 
 const App = ({ path, stateCode, userType, tenants }) => {
+  const { t } = useTranslation();
   return (
     <Switch>
       <AppContainer className="ground-container">
@@ -41,7 +42,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
           <ProjectBreadCrumb location={location} />
         </React.Fragment>
         <PrivateRoute path={`${path}/cases-response`} component={() => <CasesResponse></CasesResponse>} />
-        <PrivateRoute path={`${path}/join-case`} component={() => <JoinCaseHome />} />
+        <PrivateRoute path={`${path}/join-case`} component={() => <JoinCaseHome t={t} />} />
         <PrivateRoute path={`${path}/join-case-litigant`} component={() => <AdvocateRegistration></AdvocateRegistration>} />
         <PrivateRoute path={`${path}/search-case`} component={() => <SearchCase />} />
         <PrivateRoute path={`${path}/join-case-advocate`} component={() => <AdvocateMain />} />
