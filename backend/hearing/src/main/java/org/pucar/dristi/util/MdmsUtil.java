@@ -51,7 +51,6 @@ public class MdmsUtil {
         }
 
         return mdmsResponse.getMdmsRes();
-        //log.info(ulbToCategoryListMap.toString());
     }
 
     private MdmsCriteriaReq getMdmsRequest(RequestInfo requestInfo, String tenantId,

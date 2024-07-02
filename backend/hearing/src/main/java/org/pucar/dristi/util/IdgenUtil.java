@@ -48,6 +48,6 @@ public class IdgenUtil {
         if (CollectionUtils.isEmpty(idResponses))
             throw new CustomException(IDGEN_ERROR, NO_IDS_FOUND_ERROR);
 
-        return idResponses.stream().map(IdResponse::getId).collect(Collectors.toList());
+        return idResponses.stream().map(IdResponse::getId).toList();
     }
 }

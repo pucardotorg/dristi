@@ -45,7 +45,6 @@ public class IndividualServiceTest {
         individualSearch.setIndividualId(individualId);
         individualSearchRequest.setRequestInfo(requestInfo);
         individualSearchRequest.setIndividual(individualSearch);
-        StringBuilder uri = new StringBuilder("individualHost").append("searchEndpoint").append("?limit=1000").append("&offset=0").append("&tenantId=tenantId").append("&includeDeleted=true");
 
         when(config.getIndividualHost()).thenReturn("individualHost");
         when(config.getIndividualSearchEndpoint()).thenReturn("searchEndpoint");

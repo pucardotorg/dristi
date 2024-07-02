@@ -27,19 +27,19 @@ import java.util.List;
 public class HearingApiController {
 
     private final ObjectMapper objectMapper;
+
     private final HttpServletRequest request;
-    private final HearingService hearingService;
-    private final ResponseInfoFactory responseInfoFactory;
 
     @Autowired
-    public HearingApiController(ObjectMapper objectMapper,
-                                HttpServletRequest request,
-                                HearingService hearingService,
-                                ResponseInfoFactory responseInfoFactory) {
+    private HearingService hearingService;
+
+    @Autowired
+    private ResponseInfoFactory responseInfoFactory;
+
+    @Autowired
+    public HearingApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
         this.request = request;
-        this.hearingService = hearingService;
-        this.responseInfoFactory = responseInfoFactory;
     }
 
     @RequestMapping(value = "/hearing/v1/create", method = RequestMethod.POST)
