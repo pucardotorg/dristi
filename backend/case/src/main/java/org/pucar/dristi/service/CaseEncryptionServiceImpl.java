@@ -5,9 +5,11 @@
 
 package org.pucar.dristi.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
+
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.encryption.EncryptionServiceImpl;
 import org.pucar.dristi.util.CaseConvertClass;
@@ -31,6 +33,29 @@ public class CaseEncryptionServiceImpl extends EncryptionServiceImpl {
         this.encryptionServiceRestConnection = encryptionServiceRestConnection;
         this.objectMapper = objectMapper;
     }
+
+    @Override
+    public JsonNode encryptJson(Object plaintextJson, String model, String tenantId) throws IOException {
+        return super.encryptJson(plaintextJson, model, tenantId);
+    }
+
+
+
+    @Override
+    public JsonNode decryptJson(RequestInfo requestInfo, Object ciphertextJson, String model, String purpose) throws IOException {
+        return super.decryptJson(requestInfo, ciphertextJson, model, purpose);
+    }
+
+    @Override
+    public String encryptValue(Object plaintext, String tenantId) throws IOException {
+        return super.encryptValue(plaintext,tenantId);
+    }
+
+    @Override
+    public String encryptValue(Object plaintext, String tenantId, String type) throws IOException {
+        return super.encryptValue(plaintext,tenantId,type);
+    }
+
 
     @Override
     public <E, P> P encryptJson(Object plaintextJson, String model, String tenantId, Class<E> valueType) throws IOException {
