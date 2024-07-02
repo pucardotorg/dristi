@@ -2,6 +2,7 @@ package org.pucar.dristi.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.util.IndexerUtils;
 import org.pucar.dristi.util.Util;
@@ -15,35 +16,67 @@ import static org.pucar.dristi.config.ServiceConstants.PROCESS_INSTANCE_PATH;
 @Slf4j
 public class IndexerService {
 
-	@Autowired
-	private IndexerUtils indexerUtils;
+	private final IndexerUtils indexerUtils;
+
+	private final Configuration config;
+
+	private final RestTemplate restTemplate;
+
+	private final Util util;
 
 	@Autowired
-	private Configuration config;
+    public IndexerService(IndexerUtils indexerUtils, Configuration config, RestTemplate restTemplate, Util util) {
+        this.indexerUtils = indexerUtils;
+        this.config = config;
+        this.restTemplate = restTemplate;
+        this.util = util;
+    }
 
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private Util util;
-
-	public void esIndexer(String topic, String kafkaJson) {
-		log.info("Inside indexer service:: Topic: "+topic + ", kafkaJson: " + kafkaJson);
-		JSONArray kafkaJsonArray;
-		StringBuilder bulkRequest = new StringBuilder();
+    public void esIndexer(String topic, String kafkaJson) {
+		log.info("Inside indexer service:: Topic: {}, kafkaJson: {}", topic, kafkaJson);
 		try {
-			kafkaJsonArray = util.constructArray(kafkaJson, PROCESS_INSTANCE_PATH);
-			for (int i = 0; i < kafkaJsonArray.length(); i++) {
-				if (null != kafkaJsonArray.get(i)) {
-					String stringifiedObject = indexerUtils.buildString(kafkaJsonArray.get(i));
-					String payload = indexerUtils.buildPayload(stringifiedObject);
-					bulkRequest.append(payload);
-				}
+			JSONArray kafkaJsonArray = util.constructArray(kafkaJson, PROCESS_INSTANCE_PATH);
+			StringBuilder bulkRequest = buildBulkRequest(kafkaJsonArray);
+			if (!bulkRequest.isEmpty()) {
+				String uri = config.getEsHostUrl() + config.getBulkPath();
+				indexerUtils.esPost(uri, bulkRequest.toString());
 			}
 		} catch (Exception e) {
-			log.error("Error while building curl for indexing", e);
+			log.error("Error while processing Kafka JSON for indexing", e);
 		}
-		String uri = config.getEsHostUrl() + config.getBulkPath();
-		indexerUtils.esPost(uri, bulkRequest.toString());
+	}
+
+	private StringBuilder buildBulkRequest(JSONArray kafkaJsonArray) {
+		StringBuilder bulkRequest = new StringBuilder();
+		for (int i = 0; i < kafkaJsonArray.length(); i++) {
+			JSONObject jsonObject = kafkaJsonArray.optJSONObject(i);
+			if (jsonObject != null) {
+				processJsonObject(jsonObject, bulkRequest);
+			}
+		}
+		return bulkRequest;
+	}
+
+	private void processJsonObject(JSONObject jsonObject, StringBuilder bulkRequest) {
+		try {
+			String stringifiedObject = indexerUtils.buildString(jsonObject);
+			String payload = indexerUtils.buildPayload(stringifiedObject);
+			bulkRequest.append(payload);
+			checkAndPublishToCaseOverallStatus(stringifiedObject);
+		} catch (Exception e) {
+			log.error("Error while processing JSON object: {}", jsonObject, e);
+		}
+	}
+
+	private void checkAndPublishToCaseOverallStatus(String stringifiedObject) {
+		try {
+			String payload = indexerUtils.buildCaseOverallStatusPayload(stringifiedObject);
+			if (payload != null && !payload.isEmpty()) {
+				String uri = config.getEsHostUrl() + config.getBulkPath();
+				indexerUtils.esPost(uri, payload);
+			}
+		} catch (Exception e) {
+			log.error("Error in checkAndPublishToCaseOverallStatus method", e);
+		}
 	}
 }

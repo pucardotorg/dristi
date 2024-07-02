@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -55,6 +52,9 @@ public class IndexerUtils {
 
 	@Autowired
 	private ApplicationUtil applicationUtil;
+
+	@Autowired
+	private OrderUtil orderUtil;
 
 	public static JSONObject createRequestInfo() {
 		JSONObject userInfo = new JSONObject();
@@ -148,7 +148,7 @@ public class IndexerUtils {
 		String assignedTo = new JSONArray(assignedToList).toString();
 		String assignedRole = new JSONArray(assignedRoleList).toString();
 		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
-		log.info("Inside indexer utils build payload:: entityType: " + entityType + ", referenceId: " + referenceId);
+        log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}", entityType, referenceId);
 		Map<String, String> details = processEntity(entityType, referenceId);
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
@@ -178,16 +178,16 @@ public class IndexerUtils {
 				else {
 					log.info("Inside indexer util processEntity:: Both cnr and filing numbers are not present");
 				}
-				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber);
+				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber,null);
 				cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 			} else {
 				cnrNumber = cnrNumbers.get(0);
-				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
+				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null,null);
 				filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
 			}
 		} else if (entityType.equalsIgnoreCase("case")) {
 			filingNumber = referenceId;
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber);
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber,null);
 			cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 		} else if (entityType.equalsIgnoreCase("evidence")) {
 			Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
@@ -195,10 +195,10 @@ public class IndexerUtils {
 			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, null, caseId);
 			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
 			cnrNumber = JsonPath.read(caseObject.toString(),CNR_NUMBER_PATH);
-		} else if (entityType.equalsIgnoreCase("task")) {
+		} else if (entityType.contains("task")) {
 			Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
 			cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null);
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null,null);
 			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
 		} else if (entityType.equalsIgnoreCase("application")) {
 			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
@@ -218,9 +218,108 @@ public class IndexerUtils {
 		return caseDetails;
 	}
 
+	public String buildCaseOverallStatusPayload(String jsonItem) {
+		String id = JsonPath.read(jsonItem, ID_PATH);
+		String entityType = JsonPath.read(jsonItem, BUSINESS_SERVICE_PATH);
+		String referenceId = JsonPath.read(jsonItem, BUSINESS_ID_PATH);
+		String status = JsonPath.read(jsonItem, STATE_PATH);
+		String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
+		String action = JsonPath.read(jsonItem, ACTION_PATH);
+		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
+
+		StageAndSubStage stageAndSubStage = determineStageAndSubStage(entityType, action, referenceId, tenantId, status);
+
+		log.info("Inside IndexerUtils buildCaseOverallStatusPayload :: entityType: {}, referenceId: {}", entityType, referenceId);
+
+		if (stageAndSubStage == null) {
+			return null;
+		}
+
+		return String.format(
+				ES_INDEX_HEADER_FORMAT + ES_INDEX_CASE_OVERALL_STATUS_DOCUMENT_FORMAT,
+				config.getCaseOverallStatusIndex(), referenceId, id, entityType, referenceId, status, tenantId, action, isCompleted, stageAndSubStage.stage, stageAndSubStage.subStage);
+	}
+
+	private StageAndSubStage determineStageAndSubStage(String entityType, String action, String referenceId, String tenantId, String status) {
+		switch (entityType.toLowerCase()) {
+			case "case":
+				return determineCaseStage(action);
+			case "hearing":
+				return determineHearingStage(referenceId, tenantId, status);
+			case "order":
+				return determineOrderStage(referenceId, tenantId, status);
+			default:
+				log.error("Unexpected entityType: {}", entityType);
+				return null;
+		}
+	}
+
+	private StageAndSubStage determineCaseStage(String action) {
+		switch (action.toLowerCase()) {
+			case "submit_case":
+			case "send_back":
+				return new StageAndSubStage("Pre-Trial", "Filing");
+			case "validate":
+				return new StageAndSubStage("Pre-Trial", "Cognizance");
+			case "admit":
+				return new StageAndSubStage("Pre-Trial", "Appearance");
+			default:
+				return null;
+		}
+	}
+
+	private StageAndSubStage determineHearingStage(String referenceId, String tenantId, String status) {
+		JSONObject request = new JSONObject();
+		request.put("RequestInfo", createRequestInfo());
+		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, tenantId);
+		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
+
+		switch (hearingType.toLowerCase()) {
+			case "evidence":
+				if (status.equalsIgnoreCase("scheduled")) {
+					return new StageAndSubStage("Trial", "Evidence");
+				}
+				break;
+			case "arguments":
+				if (status.equalsIgnoreCase("scheduled")) {
+					return new StageAndSubStage("Trial", "Arguments");
+				}
+				break;
+			case "judgement":
+				if (status.equalsIgnoreCase("scheduled")) {
+					return new StageAndSubStage("Post-Trial", "Judgment");
+				}
+				break;
+		}
+		return null;
+	}
+
+	private StageAndSubStage determineOrderStage(String referenceId, String tenantId, String status) {
+		JSONObject request = new JSONObject();
+		request.put("RequestInfo", createRequestInfo());
+		Object orderObject = orderUtil.getOrder(request, referenceId, tenantId);
+		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
+
+		if (orderType.equalsIgnoreCase("judgement") && status.equalsIgnoreCase("published")) {
+			return new StageAndSubStage("Post-Trial", "Post-Judgement");
+		}
+		return null;
+	}
+
+	private static class StageAndSubStage {
+		String stage;
+		String subStage;
+
+		StageAndSubStage(String stage, String subStage) {
+			this.stage = stage;
+			this.subStage = subStage;
+		}
+	}
+
+
 	public void esPost(String uri, String request) {
 		try {
-			log.debug("Record being indexed: " + request);
+            log.debug("Record being indexed: {}", request);
 
 			final HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -230,7 +329,7 @@ public class IndexerUtils {
 			String response = restTemplate.postForObject(uri, entity, String.class);
 			if (uri.contains("_bulk") && JsonPath.read(response, ERRORS_PATH).equals(true)) {
 				log.info("Indexing FAILED!!!!");
-				log.info("Response from ES: " + response);
+                log.info("Response from ES: {}", response);
 			}
 		} catch (final ResourceAccessException e) {
 			log.error("ES is DOWN, Pausing kafka listener.......");

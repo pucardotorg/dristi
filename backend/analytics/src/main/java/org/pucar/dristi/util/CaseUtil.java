@@ -14,81 +14,52 @@ import static org.pucar.dristi.config.ServiceConstants.CASE_PATH;
 @Component
 public class CaseUtil {
 
-	@Autowired
-	private Configuration config;
+	private final Configuration config;
+	private final ServiceRequestRepository repository;
+	private final Util util;
 
 	@Autowired
-	private ServiceRequestRepository repository;
-
-	@Autowired
-	private Util util;
-
-
-
-	public Object getCase(JSONObject request, String tenantId, String cnrNumber, String filingNumber) {
-		StringBuilder url = getSearchURLWithParams();
-		request.put("tenantId", tenantId);
-
-		JSONArray criteriaArray = new JSONArray();
-		JSONObject criteria = new JSONObject();
-		if (cnrNumber != null) {
-			criteria.put("cnrNumber", cnrNumber);
-		}
-		if (filingNumber != null) {
-			criteria.put("filingNumber", filingNumber);
-		}
-		criteriaArray.put(criteria);
-
-		request.put("criteria", criteriaArray);
-		String response = repository.fetchResult(url, request);
-		JSONArray cases = null;
-		try{
-			cases = util.constructArray(response, CASE_PATH);
-		} catch (Exception e){
-			log.error("Error while building from case response", e);
-		}
-
-		return cases.get(0);
+	public CaseUtil(Configuration config, ServiceRequestRepository repository, Util util) {
+		this.config = config;
+		this.repository = repository;
+		this.util = util;
 	}
 
-	public Object getCase(JSONObject request, String tenantId, String cnrNumber, String filingNumber,String caseId) {
+	public Object getCase(JSONObject request, String tenantId, String cnrNumber, String filingNumber, String caseId) {
 		StringBuilder url = getSearchURLWithParams();
-		log.info("Inside Case util getCase with caseId :: url: " + url);
+		log.info("Inside CaseUtil getCaseInternal :: URL: {}", url);
 
 		request.put("tenantId", tenantId);
-
 		JSONArray criteriaArray = new JSONArray();
 		JSONObject criteria = new JSONObject();
+
 		if (cnrNumber != null) {
 			criteria.put("cnrNumber", cnrNumber);
 		}
 		if (filingNumber != null) {
 			criteria.put("filingNumber", filingNumber);
 		}
-		if (filingNumber != null) {
+		if (caseId != null) {
 			criteria.put("caseId", caseId);
 		}
 		criteriaArray.put(criteria);
-
 		request.put("criteria", criteriaArray);
-		log.info("Inside Case util getCase with caseId :: criteria: " + criteriaArray);
-		String response = repository.fetchResult(url, request);
-		log.info("Inside Case util getCase with caseId :: response: " + response);
 
-		JSONArray cases = null;
-		try{
-			cases = util.constructArray(response, CASE_PATH);
-		} catch (Exception e){
-			log.error("Error while building from case response", e);
+		log.info("Inside CaseUtil getCaseInternal :: Criteria: {}", criteriaArray);
+
+		try {
+			String response = repository.fetchResult(url, request);
+			log.info("Inside CaseUtil getCaseInternal :: Response: {}", response);
+			JSONArray cases = util.constructArray(response, CASE_PATH);
+			return cases.length() > 0 ? cases.get(0) : null;
+		} catch (Exception e) {
+			log.error("Error while processing case response", e);
+			throw new RuntimeException("Error while processing case response", e);
 		}
-
-		return cases.get(0);
 	}
 
-
 	private StringBuilder getSearchURLWithParams() {
-		StringBuilder url = new StringBuilder(config.getCaseHost());
-		url.append(config.getCaseSearchPath());
-		return url;
+		return new StringBuilder(config.getCaseHost())
+				.append(config.getCaseSearchPath());
 	}
 }

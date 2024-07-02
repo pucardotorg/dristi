@@ -8,35 +8,41 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.APPLICATION_NUMBER;
+import static org.pucar.dristi.config.ServiceConstants.CNR_NUMBER;
+import static org.pucar.dristi.config.ServiceConstants.HEARING_ID;
+import static org.pucar.dristi.config.ServiceConstants.TENANT_ID;
+import static org.pucar.dristi.config.ServiceConstants.HEARING_PATH;
 
 @Slf4j
 @Component
 public class HearingUtil {
 
-	@Autowired
-	private Configuration config;
+	private final Configuration config;
+	private final ServiceRequestRepository repository;
+	private final Util util;
 
 	@Autowired
-	private ServiceRequestRepository repository;
-
-	@Autowired
-	private Util util;
-
+	public HearingUtil(Configuration config, ServiceRequestRepository repository, Util util) {
+		this.config = config;
+		this.repository = repository;
+		this.util = util;
+	}
 
 	public Object getHearing(JSONObject request, String applicationNumber, String cnrNumber, String hearingId, String tenantId) {
 		StringBuilder url = getSearchURLWithParams(applicationNumber, cnrNumber, hearingId, tenantId);
-		log.info("Inside hearing util getHearing :: url: " + url);
-		String response = repository.fetchResult(url, request);
-		log.info("Inside hearing util getHearing:: response: " + response);
-		JSONArray hearings = null;
-		try {
-			hearings = util.constructArray(response, HEARING_PATH);
-		} catch (Exception e) {
-			log.error("Error while building from hearing response", e);
-		}
+		log.info("Inside HearingUtil getHearing :: URL: {}", url);
 
-		return hearings.get(0);
+		try {
+			String response = repository.fetchResult(url, request);
+			log.info("Inside HearingUtil getHearing :: Response: {}", response);
+
+			JSONArray hearings = util.constructArray(response, HEARING_PATH);
+			return hearings.length() > 0 ? hearings.get(0) : null;
+		} catch (Exception e) {
+			log.error("Error while fetching or processing the hearing response", e);
+			throw new RuntimeException("Error while fetching or processing the hearing response", e);
+		}
 	}
 
 	private StringBuilder getSearchURLWithParams(String applicationNumber, String cnrNumber, String hearingId, String tenantId) {

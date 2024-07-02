@@ -8,26 +8,24 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.pucar.dristi.config.ServiceConstants.TASK_PATH;
-import static org.pucar.dristi.config.ServiceConstants.TENANT_ID;
-import static org.pucar.dristi.config.ServiceConstants.TASK_NUMBER;
+import static org.pucar.dristi.config.ServiceConstants.*;
 
 @Slf4j
 @Component
-public class TaskUtil {
+public class OrderUtil {
 
 	private final Configuration config;
 	private final ServiceRequestRepository repository;
 	private final Util util;
 
 	@Autowired
-	public TaskUtil(Configuration config, ServiceRequestRepository repository, Util util) {
+	public OrderUtil(Configuration config, ServiceRequestRepository repository, Util util) {
 		this.config = config;
 		this.repository = repository;
 		this.util = util;
 	}
 
-	public Object getTask(JSONObject request, String tenantId, String taskNumber) {
+	public Object getOrder(JSONObject request, String tenantId, String taskNumber) {
 		StringBuilder url = getSearchURLWithParams(tenantId, taskNumber);
 		log.info("Inside TaskUtil getTask :: URL: {}", url);
 

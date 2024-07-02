@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.ServiceCallException;
 import org.json.JSONObject;
+import org.pucar.dristi.config.Configuration;
 import org.pucar.dristi.config.ServiceConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -20,15 +21,18 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class ServiceRequestRepository {
 
-	private ObjectMapper mapper;
+	private final ObjectMapper mapper;
 
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
+
+	private final Configuration configuration;
 
 
 	@Autowired
-	public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate) {
+	public ServiceRequestRepository(ObjectMapper mapper, RestTemplate restTemplate,Configuration configuration) {
 		this.mapper = mapper;
 		this.restTemplate = restTemplate;
+		this.configuration = configuration;
 	}
 
 
@@ -36,7 +40,7 @@ public class ServiceRequestRepository {
 		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 		String response = null;
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(configuration.getApiCallDelayInSeconds()*1000);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<String> entity = new HttpEntity<>(request.toString(), headers);

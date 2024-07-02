@@ -8,25 +8,26 @@ import org.pucar.dristi.repository.ServiceRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.ARTIFACT_PATH;
 
 @Slf4j
 @Component
 public class EvidenceUtil {
 
-	@Autowired
-	private Configuration config;
+	private final Configuration config;
+	private final ServiceRequestRepository repository;
+	private final Util util;
 
 	@Autowired
-	private ServiceRequestRepository repository;
-
-	@Autowired
-	private Util util;
-
+	public EvidenceUtil(Configuration config, ServiceRequestRepository repository, Util util) {
+		this.config = config;
+		this.repository = repository;
+		this.util = util;
+	}
 
 	public Object getEvidence(JSONObject request, String tenantId, String artifactNumber) {
 		StringBuilder url = getSearchURLWithParams();
-		log.info("Inside Evidence util getEvidence :: url: " + url);
+		log.info("Inside EvidenceUtil getEvidence :: URL: {}", url);
 
 		request.put("tenantId", tenantId);
 
@@ -36,22 +37,20 @@ public class EvidenceUtil {
 		}
 		request.put("criteria", criteria);
 
-		String response = repository.fetchResult(url, request);
-		log.info("Inside Evidence util getEvidence :: response: " + response);
+		try {
+			String response = repository.fetchResult(url, request);
+			log.info("Inside EvidenceUtil getEvidence :: Response: {}", response);
 
-		JSONArray artifacts = null;
-		try{
-			artifacts = util.constructArray(response, ARTIFACT_PATH);
-		} catch (Exception e){
-			log.error("Error while building from case response", e);
+			JSONArray artifacts = util.constructArray(response, ARTIFACT_PATH);
+			return artifacts.length() > 0 ? artifacts.get(0) : null;
+		} catch (Exception e) {
+			log.error("Error while fetching or processing the evidence response", e);
+			throw new RuntimeException("Error while fetching or processing the evidence response", e);
 		}
-
-		return artifacts.get(0);
 	}
 
 	private StringBuilder getSearchURLWithParams() {
-		StringBuilder url = new StringBuilder(config.getEvidenceHost());
-		url.append(config.getEvidenceSearchPath());
-		return url;
+		return new StringBuilder(config.getEvidenceHost())
+				.append(config.getEvidenceSearchPath());
 	}
 }
