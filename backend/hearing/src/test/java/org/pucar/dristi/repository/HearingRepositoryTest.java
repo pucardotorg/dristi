@@ -279,7 +279,7 @@ public class HearingRepositoryTest {
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingUpdateQuery = "UPDATE dristi_hearing SET transcript = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
-        when(queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId(), hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails()))
+        when(queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing))
                 .thenReturn(hearingUpdateQuery);
         when(jdbcTemplate.update(any(String.class), any(Object[].class))).thenReturn(1);
 
@@ -287,7 +287,7 @@ public class HearingRepositoryTest {
         assertDoesNotThrow(() -> hearingRepository.updateHearingNoWorkflow(hearing));
 
         // Assert
-        verify(queryBuilder, times(1)).buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId(), hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails());
+        verify(queryBuilder, times(1)).buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing);
         verify(jdbcTemplate, times(1)).update(hearingUpdateQuery, preparedStmtList.toArray());
     }
 
@@ -308,7 +308,7 @@ public class HearingRepositoryTest {
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingUpdateQuery = "UPDATE dristi_hearing SET transcript = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
-        when(queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId(), hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails()))
+        when(queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing))
                 .thenReturn(hearingUpdateQuery);
         when(jdbcTemplate.update(any(String.class), any(Object[].class))).thenReturn(0);
 
@@ -316,7 +316,7 @@ public class HearingRepositoryTest {
         CustomException exception = assertThrows(CustomException.class, () -> hearingRepository.updateHearingNoWorkflow(hearing));
 
         assertEquals("Error while updating hearing", exception.getMessage());
-        verify(queryBuilder, times(1)).buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId(), hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails());
+        verify(queryBuilder, times(1)).buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing);
         verify(jdbcTemplate, times(1)).update(hearingUpdateQuery, preparedStmtList.toArray());
     }
 
@@ -337,7 +337,7 @@ public class HearingRepositoryTest {
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingUpdateQuery = "UPDATE dristi_hearing SET transcript = ? , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
-        when(queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId(), hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails()))
+        when(queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing))
                 .thenReturn(hearingUpdateQuery);
         when(jdbcTemplate.update(any(String.class), any(Object[].class))).thenThrow(new RuntimeException("Database error"));
 
@@ -345,7 +345,7 @@ public class HearingRepositoryTest {
         RuntimeException exception = assertThrows(RuntimeException.class, () -> hearingRepository.updateHearingNoWorkflow(hearing));
 
         assertEquals("Database error", exception.getMessage());
-        verify(queryBuilder, times(1)).buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId(), hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails());
+        verify(queryBuilder, times(1)).buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing);
         verify(jdbcTemplate, times(1)).update(hearingUpdateQuery, preparedStmtList.toArray());
     }
 }

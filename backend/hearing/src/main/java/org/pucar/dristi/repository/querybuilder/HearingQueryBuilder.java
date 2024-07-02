@@ -2,10 +2,9 @@ package org.pucar.dristi.repository.querybuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.egov.common.contract.models.AuditDetails;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.Hearing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -115,24 +114,26 @@ public class HearingQueryBuilder {
         }
     }
 
-    public String buildUpdateHearingNoWorkflowQuery(List<Object> preparedStmtList, String hearingId, String tenantId, List<String> transcriptList, @Valid AuditDetails auditDetails, Object additionalDetails) throws CustomException {
-        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
+    public String buildUpdateHearingNoWorkflowQuery(List<Object> preparedStmtList, Hearing hearing) throws CustomException {
+        String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
         // Convert the objects to JSON
         try {
-            String transcriptJson = mapper.writeValueAsString(transcriptList);
-            String additionalDetailsJson = mapper.writeValueAsString(additionalDetails);
+            String transcriptJson = mapper.writeValueAsString(hearing.getTranscript());
+            String additionalDetailsJson = mapper.writeValueAsString(hearing.getAdditionalDetails());
+            String attendeesJson = mapper.writeValueAsString(hearing.getAttendees());
             preparedStmtList.add(transcriptJson);
             preparedStmtList.add(additionalDetailsJson);
+            preparedStmtList.add(attendeesJson);
         } catch (JsonProcessingException e) {
             throw new CustomException(PARSING_ERROR,"Error parsing data to JSON : " + e.getMessage());
         }
 
         // Add other parameters to preparedStmtList
-        preparedStmtList.add(auditDetails.getLastModifiedBy());
-        preparedStmtList.add(auditDetails.getLastModifiedTime());
-        preparedStmtList.add(hearingId);
-        preparedStmtList.add(tenantId);
+        preparedStmtList.add(hearing.getAuditDetails().getLastModifiedBy());
+        preparedStmtList.add(hearing.getAuditDetails().getLastModifiedTime());
+        preparedStmtList.add(hearing.getHearingId());
+        preparedStmtList.add(hearing.getTenantId());
 
         return query;
     }

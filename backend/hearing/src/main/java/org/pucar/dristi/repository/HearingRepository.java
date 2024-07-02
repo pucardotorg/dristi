@@ -90,7 +90,7 @@ public class HearingRepository {
 
     public void updateHearingNoWorkflow(Hearing hearing) {
         List<Object> preparedStmtList = new ArrayList<>();
-        String hearingUpdateQuery = queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing.getHearingId() , hearing.getTenantId(), hearing.getTranscript(), hearing.getAuditDetails(), hearing.getAdditionalDetails());
+        String hearingUpdateQuery = queryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing);
         log.info("Final update query: {}", hearingUpdateQuery);
         int check = jdbcTemplate.update(hearingUpdateQuery, preparedStmtList.toArray());
         if(check==0) throw new CustomException(HEARING_UPDATE_EXCEPTION,"Error while updating hearing");
