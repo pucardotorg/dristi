@@ -4,6 +4,7 @@ import { Header, ActionBar, SVG, SubmitBar, Card } from "@egovernments/digit-ui-
 import { Button, TextArea } from "@egovernments/digit-ui-components";
 import EvidenceHearingHeader from "./EvidenceHeader";
 import HearingSideCard from "./HearingSideCard";
+import EndHearing from "./EndHearing";
 import debounce from "lodash/debounce";
 
 const fieldStyle = { marginRight: 0 };
@@ -19,6 +20,7 @@ const InsideHearingMainPage = () => {
   const [options, setOptions] = useState([]);
   const [additionalDetails, setAdditionalDetails] = useState({});
   const [selectedWitness, setSelectedWitness] = useState({});
+  const [endHearingModalOpen, setEndHearingModalOpen] = useState(false);
   const textAreaRef = useRef(null);
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const { hearingId: hearingId } = Digit.Hooks.useQueryParams(); // query paramas
@@ -121,6 +123,10 @@ const InsideHearingMainPage = () => {
     const selectedWitness = additionalDetails.witnesss.find((w) => w.name === selectedName);
     setSelectedWitness(selectedWitness);
     setWitnessDepositionText(selectedWitness?.deposition || "");
+  };
+
+  const handleEndHearingModal = () => {
+    setEndHearingModalOpen(!endHearingModalOpen);
   };
 
   return (
@@ -269,12 +275,15 @@ const InsideHearingMainPage = () => {
             <Button
               label={"End Hearing"}
               variation={"primary"}
-              onClick={() => handleNavigate("/employee/orders/orders-create?orderType=SUMMON")}
+              onClick={handleEndHearingModal}
+              // onClick={() => handleNavigate("/employee/hearings/end-hearing")}
               style={{ width: "100%" }}
             />
           </div>
         </div>
       </ActionBar>
+
+      {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} />}
     </div>
   );
 };
