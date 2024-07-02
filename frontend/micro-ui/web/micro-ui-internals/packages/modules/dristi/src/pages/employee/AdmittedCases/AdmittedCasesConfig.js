@@ -247,6 +247,7 @@ export const TabSearchconfig = {
               {
                 label: "Order Type",
                 jsonPath: "orderType",
+                additionalCustomization: true,
               },
               {
                 label: "Order Id",
@@ -263,6 +264,11 @@ export const TabSearchconfig = {
               {
                 label: "Status",
                 jsonPath: "status",
+              },
+              {
+                label: "Date Added",
+                jsonPath: "auditDetails.createdTime",
+                additionalCustomization: true,
               },
             ],
 
@@ -398,6 +404,11 @@ export const TabSearchconfig = {
               {
                 label: "Owner",
                 jsonPath: "",
+              },
+              {
+                label: "Date Added",
+                jsonPath: "auditDetails.createdTime",
+                additionalCustomization: true,
               },
               {
                 label: "Document",

@@ -44,6 +44,36 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
     true
   );
 
+  console.log(documentSubmission);
+  const markAsReadPayload = {
+    artifact: {
+      tenantId: tenantId,
+      caseId: caseId,
+      application: documentSubmission[0].details.applicationId,
+      isActive: true,
+      isEvidence: true,
+      status: documentSubmission[0].status,
+      file: documentSubmission.map((doc) => {
+        return {
+          id: doc?.applicationContent?.id,
+          documentType: doc?.applicationContent?.documentType,
+          fileStore: doc?.applicationContent?.fileStore,
+          documentUid: doc?.applicationContent?.documentUid,
+          additionalDetails: doc?.applicationContent?.additionalDetails,
+        };
+      }),
+      comments: [],
+      auditDetails: documentSubmission[0].details.auditDetails,
+      workflow: {
+        comments: "Workflow comments",
+        documents: [{}],
+        assignes: null,
+        rating: null,
+        action: "TYPE DEPOSITION",
+      },
+    },
+  };
+
   return (
     <Modal
       headerBarEnd={<CloseBtn onClick={() => setShow(false)} />}
@@ -59,6 +89,14 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
           : null
       }
       actionSaveOnSubmit={() => {
+        if (
+          (userRoles.indexOf("APPLICATION_APPROVER") !== -1 ||
+            userRoles.indexOf("DEPOSITION_CREATOR") !== -1 ||
+            userRoles.indexOf("DEPOSITION_ESIGN") !== -1 ||
+            userRoles.indexOf("DEPOSITION_PUBLISHER") !== -1) &&
+          documentSubmission[0].status !== "PENDINGREVIEW"
+        ) {
+        }
         setShow(false);
       }}
       hideSubmit={userRoles.indexOf("APPLICATION_APPROVER") !== -1 && documentSubmission.status === "PENDINGREVIEW"}

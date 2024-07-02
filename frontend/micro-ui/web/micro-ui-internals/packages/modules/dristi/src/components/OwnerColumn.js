@@ -2,7 +2,6 @@ import React from "react";
 import { FactCheckIcon } from "../icons/svgIndex";
 
 export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = false, t }) => {
-
   const getDate = (value) => {
     const date = new Date(value);
     const day = date.getDate().toString().padStart(2, "0");
@@ -10,7 +9,7 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
     const year = date.getFullYear();
     const formattedDate = `${day}-${month}-${year}`;
     return formattedDate;
-  }
+  };
 
   const docObj = rowData.documents.map((doc) => {
     return {
@@ -21,17 +20,20 @@ export const OwnerColumn = ({ rowData, colData, value = "", showAsHeading = fals
         sender: rowData.createdBy,
         additionalDetails: rowData.additionalDetails,
         applicationId: rowData.id,
+        auditDetails: rowData.auditDetails,
       },
       applicationContent: {
         tenantId: rowData.tenantId,
         fileStoreId: doc.fileStore,
-        fileName: doc.documentName,
+        id: doc.id,
+        documentType: doc.documentType,
+        documentUid: doc.documentUid,
+        additionalDetails: doc.additionalDetails,
       },
-      comments: []
-    }
-  })
+      comments: [],
+    };
+  });
 
-  
   return (
     <React.Fragment>
       <div className="fack-check-icon" onClick={() => colData?.clickFunc(docObj)}>

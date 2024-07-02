@@ -1,10 +1,14 @@
-import { Button, Header, InboxSearchComposer } from "@egovernments/digit-ui-react-components";
+import { Button as ActionButton } from "@egovernments/digit-ui-components";
+import { Header, InboxSearchComposer, Menu } from "@egovernments/digit-ui-react-components";
 import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import OrderReviewModal from "../../../../../orders/src/pageComponents/OrderReviewModal";
 import ViewCaseFile from "../scrutiny/ViewCaseFile";
 import { TabSearchconfig } from "./AdmittedCasesConfig";
 import CaseOverview from "./CaseOverview";
 import EvidenceModal from "./EvidenceModal";
+import ExtraComponent from "./ExtraComponent";
 import "./tabs.css";
 const fieldStyle = { marginRight: 0 };
 
@@ -21,17 +25,30 @@ const AdmittedCases = () => {
   const cnr = searchParams.get("cnr");
   const title = searchParams.get("title");
   const caseId = searchParams.get("caseId");
-  console.log(TabSearchconfig?.TabSearchconfig);
   const [show, setShow] = useState(false);
   const [comment, setComment] = useState("");
   const user = localStorage.getItem("user-info");
   const userRoles = JSON.parse(user).roles.map((role) => role.code);
   const [documentSubmission, setDocumentSubmission] = useState();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState();
+  const [showMenu, setShowMenu] = useState(false);
+  const history = useHistory();
 
   const docSetFunc = (docObj) => {
     setDocumentSubmission(docObj);
     console.log(docObj);
     setShow(true);
+  };
+
+  const orderSetFunc = (order) => {
+    setCurrentOrder(order);
+    setShowReviewModal(true);
+  };
+
+  const handleTakeAction = () => {
+    setShowMenu(!showMenu);
   };
 
   const configList = useMemo(() => {
@@ -51,9 +68,50 @@ const AdmittedCases = () => {
               },
             },
           }
+        : tabConfig.label === "Orders"
+        ? {
+            ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  filingNumber: filingNumber,
+                  tenantId: tenantId,
+                },
+              },
+            },
+            sections: {
+              ...tabConfig.sections,
+              searchResult: {
+                ...tabConfig.sections.searchResult,
+                uiConfig: {
+                  ...tabConfig.sections.searchResult.uiConfig,
+                  columns: tabConfig.sections.searchResult.uiConfig.columns.map((column) => {
+                    return column.label === "Order Type"
+                      ? {
+                          ...column,
+                          clickFunc: orderSetFunc,
+                        }
+                      : column;
+                  }),
+                },
+              },
+            },
+          }
         : tabConfig.label === "Submissions"
         ? {
             ...tabConfig,
+            apiDetails: {
+              ...tabConfig.apiDetails,
+              requestBody: {
+                ...tabConfig.apiDetails.requestBody,
+                criteria: {
+                  filingNumber: filingNumber,
+                  tenantId: tenantId,
+                },
+              },
+            },
             sections: {
               ...tabConfig.sections,
               searchResult: {
@@ -109,11 +167,37 @@ const AdmittedCases = () => {
     setConfig(newTabSearchConfig?.TabSearchconfig?.[n]); // as per tab number filtering the config
   };
 
+  const handleSelect = (option) => {
+    console.log(option);
+
+    if (option == "Generate Order / Home") {
+      history.push(`/${window.contextPath}/employee/orders/generate-orders?filingNumber=${filingNumber}`);
+    }
+  };
+
   return (
     <React.Fragment>
-      <div style={{ display: "flex", gap: "20px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px" }}>
         <Header styles={{ fontSize: "32px", marginTop: "40px" }}>{t(title)}</Header>
-        <Button className={"generate-order"} label={"Generate Order / Notice"} />
+        <div className="evidence-header-wrapper">
+          <div className="evidence-hearing-header" style={{ background: "transparent" }}>
+            <div className="evidence-actions">
+              <ActionButton
+                variation={"primary"}
+                label={"Take Action"}
+                icon={showMenu ? "ExpandLess" : "ExpandMore"}
+                isSuffix={true}
+                onClick={handleTakeAction}
+              ></ActionButton>
+              {showMenu && (
+                <Menu
+                  options={["Generate Order / Home", "Schedule Hearing", "Refer to ADR", "Abate Case"]}
+                  onSelect={(option) => handleSelect(option)}
+                ></Menu>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
       <div className="search-tabs-container">
         <div>
@@ -129,6 +213,7 @@ const AdmittedCases = () => {
           ))}
         </div>
       </div>
+      <ExtraComponent tab={config.label} />
       <div className="inbox-search-wrapper">
         {/* Pass defaultValues as props to InboxSearchComposer */}
         <InboxSearchComposer
@@ -157,6 +242,16 @@ const AdmittedCases = () => {
           comment={comment}
           setComment={setComment}
           userRoles={userRoles}
+        />
+      )}
+      {showReviewModal && (
+        <OrderReviewModal
+          t={t}
+          order={currentOrder}
+          setShowReviewModal={setShowReviewModal}
+          setShowsignatureModal={() => {}}
+          handleSaveDraft={() => {}}
+          showActions={false}
         />
       )}
     </React.Fragment>

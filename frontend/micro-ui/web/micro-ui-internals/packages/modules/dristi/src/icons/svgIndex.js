@@ -189,6 +189,20 @@ const CustomArrowDownIcon = () => (
   </svg>
 );
 
+const CustomArrowOut = () => (
+  <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_2520_70201)">
+      <path d="M4.33203 12L12.332 4" stroke="#231F20" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M5.83203 4H12.332V10.5" stroke="#231F20" stroke-linecap="round" stroke-linejoin="round" />
+    </g>
+    <defs>
+      <clipPath id="clip0_2520_70201">
+        <rect width="16" height="16" fill="white" transform="translate(0.332031)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 const CustomSchedule = () => (
   <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
@@ -701,47 +715,48 @@ const FactCheckIcon = () => (
   </svg>
 );
 export {
-  RegisterIcon,
-  LoginIcon,
-  RegistrationRequestIcon,
-  CasesIcon,
-  FileCaseIcon,
+  AdvocateIcon,
+  CalendarLeftArrow,
+  CalendarRightArrow,
   CaseInProgressIcon,
-  MyHearingsIcon,
-  JoinCaseIcon,
-  ClosedCasesIcon,
-  PendingActionsIcon,
-  CustomDeleteIcon,
-  CustomAddIcon,
-  CustomArrowDownIcon,
-  CustomArrowUpIcon,
-  CustomSchedule,
-  CustomCompleteIcon,
+  CasesIcon,
+  ChequeDetailsIcon,
   CloseIcon,
   CloseIconWhite,
+  ClosedCasesIcon,
   ComplainantDetailsIcon,
-  RespondentDetailsIcon,
-  ChequeDetailsIcon,
+  CopyIcon,
+  CustomAddIcon,
+  CustomArrowDownIcon,
+  CustomArrowOut,
+  CustomArrowUpIcon,
+  CustomCompleteIcon,
+  CustomDeleteIcon,
+  CustomSchedule,
   DebtLiabilityIcon,
   DemandDetailsNoticeIcon,
-  PrayerSwornIcon,
+  ErrorInfoIcon,
+  FSOErrorIcon,
+  FactCheckIcon,
+  FileCaseIcon,
+  FileDownloadIcon,
   FileIcon,
   FileUploadIcon,
-  AdvocateIcon,
-  LitigentIcon,
-  ErrorInfoIcon,
   FlagIcon,
+  InfoIconRed,
+  JoinCaseIcon,
+  LeftArrow,
+  LitigentIcon,
+  LoginIcon,
+  MyHearingsIcon,
+  PendingActionsIcon,
+  PrayerSwornIcon,
+  RegisterIcon,
+  RegistrationRequestIcon,
+  RespondentDetailsIcon,
+  RightArrow,
   SuccessIcon,
   UploadIcon,
   WaitIcon,
-  InfoIconRed,
-  FSOErrorIcon,
-  CopyIcon,
-  RightArrow,
-  CalendarLeftArrow,
-  CalendarRightArrow,
   WhiteRightArrow,
-  LeftArrow,
-  FileDownloadIcon,
-  FactCheckIcon,
 };

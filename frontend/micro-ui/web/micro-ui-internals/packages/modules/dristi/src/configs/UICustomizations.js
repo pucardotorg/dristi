@@ -1,6 +1,7 @@
 import { ArrowDirection } from "@egovernments/digit-ui-react-components";
 import React from "react";
 import { Link } from "react-router-dom";
+import { OrderName } from "../components/OrderName";
 import { OwnerColumn } from "../components/OwnerColumn";
 
 const businessServiceMap = {
@@ -593,6 +594,8 @@ export const UICustomizations = {
               .map((party) => party.name)
               .join(",")}${value.length > 2 ? `+${value.length - 2}` : ""}`}</span>
           );
+        case "Order Type":
+          return <OrderName rowData={row} colData={column} value={value} />;
         case "Submission Name":
           return <OwnerColumn rowData={row} colData={column} t={t} value={value} showAsHeading={true} />;
         default:
