@@ -49,6 +49,7 @@ const CustomReviewCardRow = ({
   isPrevScrutiny,
   setShowImageModal,
   isCaseReAssigned,
+  disableScrutiny,
 }) => {
   const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
@@ -79,8 +80,8 @@ const CustomReviewCardRow = ({
   );
   const renderCard = useMemo(() => {
     let bgclassname = "";
-    let showFlagIcon = isScrutiny ? true : false;
-    if (isPrevScrutiny) {
+    let showFlagIcon = isScrutiny && !disableScrutiny ? true : false;
+    if (isPrevScrutiny && !disableScrutiny) {
       showFlagIcon = prevDataError ? true : false;
     }
     if (isScrutiny) {
@@ -95,7 +96,7 @@ const CustomReviewCardRow = ({
       case "title":
         const titleError = dataError?.title?.FSOError;
         const prevTitleError = prevDataError?.title?.FSOError;
-        if (isPrevScrutiny && !prevTitleError) {
+        if (isPrevScrutiny && !prevTitleError && !disableScrutiny) {
           showFlagIcon = false;
         }
         let title = "";
@@ -294,7 +295,7 @@ const CustomReviewCardRow = ({
         bgclassname =
           isScrutiny && FSOErrors?.length > 0 ? (JSON.stringify(dataError) === JSON.stringify(prevDataError) ? "preverror" : "error") : "";
         bgclassname = FSOErrors?.length > 0 && isCaseReAssigned ? "preverrorside" : bgclassname;
-        if (isPrevScrutiny) {
+        if (isPrevScrutiny && !disableScrutiny) {
           showFlagIcon = prevDataError?.[type]?.FSOError;
         }
         const files = value?.map((value) => extractValue(data, value)) || [];

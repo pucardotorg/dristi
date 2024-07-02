@@ -46,6 +46,7 @@ function CustomReviewCard({
             handleClickImage={handleClickImage}
             setShowImageModal={setShowImageModal}
             isCaseReAssigned={isCaseReAssigned}
+            disableScrutiny={input?.disableScrutiny}
           />
         );
       })}

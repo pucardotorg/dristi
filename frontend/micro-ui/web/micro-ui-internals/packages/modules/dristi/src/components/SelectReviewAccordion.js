@@ -266,6 +266,9 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
               showFlagIcon = prevSectionError ? true : false;
               bgclassname = prevSectionError ? "preverror" : "";
             }
+            if (input?.disableScrutiny) {
+              showFlagIcon = false;
+            }
             return (
               <div className={`content-item ${bgclassname}`}>
                 <div className="item-header">

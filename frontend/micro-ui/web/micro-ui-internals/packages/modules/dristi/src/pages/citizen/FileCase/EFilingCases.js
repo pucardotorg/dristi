@@ -351,7 +351,6 @@ function EFilingCases({ path }) {
   }, [scrutinyObj]);
 
   const errorPages = useMemo(() => {
-    console.debug(scrutinyErrors);
     return Object.values(scrutinyErrors)
       .flatMap((val) => val?.pages)
       .filter((val) => val !== undefined);
@@ -980,6 +979,9 @@ function EFilingCases({ path }) {
                 if (selected === "debtLiabilityDetails" && ["dropdown", "radio"].includes(formComponent.type)) {
                   key = formComponent.key + "." + formComponent?.populators?.optionsKey;
                 }
+                if (selected === "delayApplications" && formComponent.component === "CustomRadioInfoComponent") {
+                  key = formComponent.key + "." + formComponent?.populators?.optionsKey;
+                }
                 const modifiedFormComponent = structuredClone(formComponent);
                 if (modifiedFormComponent?.labelChildren === "optional") {
                   modifiedFormComponent.labelChildren = <span style={{ color: "#77787B" }}>&nbsp;{`${t("CS_IS_OPTIONAL")}`}</span>;
@@ -1011,6 +1013,13 @@ function EFilingCases({ path }) {
                     if (formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name in scrutiny?.[selected]?.form?.[index]) {
                       key = formComponent.key + "." + formComponent.populators?.inputs?.[1]?.name;
                     }
+                  }
+                  if (
+                    selected === "debtLiabilityDetails" &&
+                    formComponent.component === "CustomInput" &&
+                    scrutiny?.[selected]?.form?.[index]?.["liabilityType.name"]?.FSOError
+                  ) {
+                    modifiedFormComponent.disable = false;
                   }
                   if (key in scrutiny?.[selected]?.form?.[index] && scrutiny?.[selected]?.form?.[index]?.[key]?.FSOError) {
                     modifiedFormComponent.disable = false;
