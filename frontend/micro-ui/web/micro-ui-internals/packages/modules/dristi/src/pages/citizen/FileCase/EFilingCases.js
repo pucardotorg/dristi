@@ -351,9 +351,14 @@ function EFilingCases({ path }) {
   }, [scrutinyObj]);
 
   const errorPages = useMemo(() => {
-    return Object.values(scrutinyErrors)
+    const pages = Object.values(scrutinyErrors)
       .flatMap((val) => val?.pages)
       .filter((val) => val !== undefined);
+    return pages.sort((a, b) => {
+      const keyA = a.key;
+      const keyB = b.key;
+      return getAllKeys.indexOf(keyA) - getAllKeys.indexOf(keyB);
+    });
   }, [scrutinyErrors]);
 
   const sectionWiseErrors = useMemo(() => {
@@ -1564,8 +1569,8 @@ function EFilingCases({ path }) {
     setShowConfirmOptionalModal(false);
   };
 
-  const handleGoNextPage = () => {
-    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+  const handleGoToPage = (key) => {
+    history.push(`?caseId=${caseId}&selected=${key}`);
   };
   const handleGoToHome = () => {
     history.push(homepagePath);
@@ -1608,6 +1613,8 @@ function EFilingCases({ path }) {
                 pages={errorPages}
                 handlePageChange={handlePageChange}
                 showConfirmModal={confirmModalConfig ? true : false}
+                handleGoToPage={handleGoToPage}
+                selected={selected}
               />
             )}
             <div className="total-error-note">
