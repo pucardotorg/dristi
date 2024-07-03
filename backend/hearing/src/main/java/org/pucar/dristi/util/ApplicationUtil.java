@@ -19,14 +19,16 @@ import static org.pucar.dristi.config.ServiceConstants.ERROR_WHILE_FETCHING_FROM
 @Component
 public class ApplicationUtil {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final ObjectMapper mapper;
+    private final Configuration configs;
 
     @Autowired
-    private ObjectMapper mapper;
-
-    @Autowired
-    private Configuration configs;
+    public ApplicationUtil(RestTemplate restTemplate, ObjectMapper mapper, Configuration configs) {
+        this.restTemplate = restTemplate;
+        this.mapper = mapper;
+        this.configs = configs;
+    }
 
     public ApplicationExistsResponse fetchApplicationDetails(ApplicationExistsRequest applicationExistsRequest) {
         StringBuilder uri = new StringBuilder();

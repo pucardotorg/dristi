@@ -82,22 +82,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApplicationSearchRequest'
           required: true
-      parameters:
-        - name: limit
-          in: query
-          description: No of records return
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          description: offset
-          schema:
-            type: integer
-        - name: sortBy
-          in: query
-          description: sorted by ascending by default if this parameter is not provided
-          schema:
-            type: string
       responses:
         "200":
           description: ResponseInfo with application(s) search successfully
@@ -143,7 +127,7 @@ components:
     ApplicationSearchRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         criteria:
           $ref: '#/components/schemas/ApplicationCriteria'
@@ -154,7 +138,7 @@ components:
     ApplicationRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         application:
           $ref: '#/components/schemas/Application'
@@ -183,7 +167,7 @@ components:
     ApplicationExistsRequest:
       type: object
       properties:
-        requestInfo:
+        RequestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/DIGIT-Specs/common-contract-update/Common%20Services/common-contract.yaml#/components/schemas/RequestInfo'
         applicationList:
           type: array

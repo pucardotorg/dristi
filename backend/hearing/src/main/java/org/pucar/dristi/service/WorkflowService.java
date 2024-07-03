@@ -28,17 +28,17 @@ import static org.pucar.dristi.config.ServiceConstants.WORKFLOW_SERVICE_EXCEPTIO
 @Slf4j
 public class WorkflowService {
 
-    @Autowired
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
+    private final ServiceRequestRepository repository;
+    private final Configuration config;
 
     @Autowired
-    private ServiceRequestRepository repository;
-
-    @Autowired
-    private Configuration config;
-
-
-    /**
+    public WorkflowService(ObjectMapper mapper, ServiceRequestRepository repository, Configuration config) {
+        this.mapper = mapper;
+        this.repository = repository;
+        this.config = config;
+    }
+        /**
      * For updating workflow status of hearing by calling workflow
      *
      * @param hearingRequest
@@ -46,7 +46,7 @@ public class WorkflowService {
     public void updateWorkflowStatus(HearingRequest hearingRequest) {
         try {
             Hearing hearing = hearingRequest.getHearing();
-            ProcessInstance processInstance = getProcessInstanceForHearing(hearing, hearingRequest.getRequestInfo());
+            ProcessInstance processInstance = getProcessInstanceForHearing(hearing);
             ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(hearingRequest.getRequestInfo(), Collections.singletonList(processInstance));
             log.info("ProcessInstance Request :: {}", workflowRequest);
             State workflowState = callWorkFlow(workflowRequest);
@@ -85,10 +85,9 @@ public class WorkflowService {
      * for hearing application process instance
      *
      * @param hearing
-     * @param requestInfo
      * @return payload for workflow service call
      */
-    ProcessInstance getProcessInstanceForHearing(Hearing hearing, RequestInfo requestInfo) {
+    ProcessInstance getProcessInstanceForHearing(Hearing hearing) {
         try {
             Workflow workflow = hearing.getWorkflow();
             ProcessInstance processInstance = new ProcessInstance();

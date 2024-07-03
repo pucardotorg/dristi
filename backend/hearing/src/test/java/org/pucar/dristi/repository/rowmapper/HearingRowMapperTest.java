@@ -29,15 +29,14 @@ public class HearingRowMapperTest {
 
     @Mock
     private ResultSet rs;
-    private ObjectMapper objectMapper;
 
+    private ObjectMapper objectMapper;
     private HearingRowMapper rowMapper;
 
     @BeforeEach
     void setUp() {
-        rowMapper = new HearingRowMapper();
         objectMapper = new ObjectMapper();
-        rowMapper.objectMapper = objectMapper;
+        rowMapper = new HearingRowMapper(objectMapper);
     }
 
     @Test
@@ -113,12 +112,6 @@ public class HearingRowMapperTest {
     void shouldHandleNullAndEmptyJsonGracefully() throws SQLException, JsonProcessingException {
         // Arrange
         String uuid = "921e3cc0-64df-490f-adc1-91c3492219e6";
-        String cnrNumbersJson = "[\"cnr1\"]";
-        String filingNumberJson = "[\"file1\"]";
-        String applicationNumbersJson = "[\"app1\"]";
-        String presidedByJson = "{\"benchID\":\"bench1\"}";
-        String attendeesJson = "[{\"name\":\"Attendee1\"}]";
-        String transcriptJson = "[\"transcript1\"]";
         String additionalDetailsJson = "{\"key\":\"value\"}";
         when(rs.next()).thenReturn(true).thenReturn(false);
         when(rs.getString("id")).thenReturn(uuid);

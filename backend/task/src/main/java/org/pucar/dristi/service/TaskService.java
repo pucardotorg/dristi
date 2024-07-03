@@ -59,7 +59,7 @@ public class TaskService {
 
     public Task createTask(TaskRequest body) {
         try {
-            validator.validateCaseRegistration(body);
+            validator.validateTaskRegistration(body);
 
             enrichmentUtil.enrichTaskRegistration(body);
 
@@ -106,7 +106,7 @@ public class TaskService {
 
             workflowUpdate(body);
 
-            producer.push(config.getTaskCreateTopic(), body);
+            producer.push(config.getTaskUpdateTopic(), body);
 
             return body.getTask();
 

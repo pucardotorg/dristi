@@ -42,9 +42,10 @@ public class ApplicationEnrichment {
                 application.setApplicationNumber(applicationIdList.get(0));//FIXME
                 application.setIsActive(true);
 
-                application.getStatuteSection().setId(UUID.randomUUID());
-                application.getStatuteSection().setAuditdetails(auditDetails);
-
+                if (application.getStatuteSection() != null) {
+                    application.getStatuteSection().setId(UUID.randomUUID());
+                    application.getStatuteSection().setAuditdetails(auditDetails);
+                }
                 if (application.getDocuments() != null) {
                     application.getDocuments().forEach(document -> {
                         document.setId(String.valueOf(UUID.randomUUID()));

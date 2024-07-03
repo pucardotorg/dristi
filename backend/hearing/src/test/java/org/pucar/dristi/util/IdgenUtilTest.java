@@ -52,8 +52,6 @@ class IdgenUtilTest {
         for (int i = 0; i < count; i++) {
             reqList.add(IdRequest.builder().idName(idName).format(idFormat).tenantId(tenantId).build());
         }
-        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder("http://example.com").append("/idgen/v1/_generate");
 
         List<IdResponse> idResponses = new ArrayList<>();
         idResponses.add(IdResponse.builder().id("ID1").build());
@@ -89,8 +87,6 @@ class IdgenUtilTest {
         for (int i = 0; i < count; i++) {
             reqList.add(IdRequest.builder().idName(idName).format(idFormat).tenantId(tenantId).build());
         }
-        IdGenerationRequest request = IdGenerationRequest.builder().idRequests(reqList).requestInfo(requestInfo).build();
-        StringBuilder uri = new StringBuilder("http://example.com").append("/idgen/v1/_generate");
 
         IdGenerationResponse response = IdGenerationResponse.builder().idResponses(Collections.emptyList()).build();
 

@@ -63,10 +63,10 @@ public class OrderRegistrationService {
         }
     }
 
-    public List<Order> searchOrder(String orderNumber,String applicationNumber, String cnrNumber, String filingNumber, String tenantId, String id, String status,RequestInfo requestInfo) {
+    public List<Order> searchOrder(OrderSearchRequest request) {
         try {
             // Fetch applications from database according to the given search criteria
-            List<Order> orderList = orderRepository.getOrders(orderNumber,applicationNumber, cnrNumber, filingNumber, tenantId, id, status);
+            List<Order> orderList = orderRepository.getOrders(request.getCriteria());
 
             // If no applications are found matching the given criteria, return an empty list
             if (CollectionUtils.isEmpty(orderList))
@@ -84,14 +84,8 @@ public class OrderRegistrationService {
         try {
 
             // Validate whether the application that is being requested for update indeed exists
-            Order existingApplication;
-            try {
-                existingApplication = validator.validateApplicationExistence(body);
-            } catch (Exception e) {
-                log.error("Error validating existing application :: {}",e.toString());
-                throw new CustomException(ORDER_UPDATE_EXCEPTION, "Error validating existing application: " + e.getMessage());
-            }
-            existingApplication.setWorkflow(body.getOrder().getWorkflow());
+             if(!validator.validateApplicationExistence(body))
+                throw new CustomException(ORDER_UPDATE_EXCEPTION, "Order don't exist");
 
             // Enrich application upon update
             enrichmentUtil.enrichOrderRegistrationUponUpdate(body);

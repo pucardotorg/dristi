@@ -100,8 +100,10 @@ public class HearingRepositoryTest {
                 .thenThrow(RuntimeException.class);
 
         // Assert
+        LocalDate fromDate = LocalDate.now();
+        LocalDate toDate = LocalDate.now();
         assertThrows(CustomException.class, () ->
-                hearingRepository.getHearings("cnrNumber", "applicationNumber", "hearingId", "filingNumber", "tenantId", LocalDate.now(), LocalDate.now(), 10, 0, "sortBy"));
+                hearingRepository.getHearings("cnrNumber", "applicationNumber", "hearingId", "filingNumber", "tenantId", fromDate, toDate, 10, 0, "sortBy"));
     }
 
     @Test

@@ -2,26 +2,19 @@ package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.egov.common.contract.request.RequestInfo;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * CaseSearchRequest
  */
 @Validated
 @jakarta.annotation.Generated(value = "org.egov.codegen.SpringBootCodegen", date = "2024-04-15T11:31:40.281899+05:30[Asia/Kolkata]")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class CaseExistsRequest {
+@Getter
+@Setter
+public class OrderSearchRequest {
 
     @JsonProperty("RequestInfo")
     @Valid
@@ -29,11 +22,6 @@ public class CaseExistsRequest {
 
     @JsonProperty("criteria")
     @Valid
-    private List<CaseExists> criteria = new ArrayList<>();
-
-    public CaseExistsRequest addCriteriaItem(CaseExists criteriaItem) {
-        this.criteria.add(criteriaItem);
-        return this;
-    }
+    private OrderCriteria criteria = null;
 
 }
