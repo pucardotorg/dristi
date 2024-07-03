@@ -24,23 +24,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class EvidenceResponse {
-	@JsonProperty("ResponseInfo")
+	@JsonProperty("responseInfo")
 
 	@Valid
 	private ResponseInfo responseInfo = null;
 
-	@JsonProperty("artifact")
+	@JsonProperty("artifacts")
 	@Valid
-	private Artifact artifact;
-
+	private List<Artifact> artifacts = null;
 
 	@JsonProperty("pagination")
 
 	@Valid
 	private Pagination pagination = null;
 
-	public EvidenceResponse addArtifact(Artifact artifact) {
-		this.artifact = artifact;
+	public EvidenceResponse addArtifactsItem(Artifact artifactsItem) {
+		if (this.artifacts == null) {
+			this.artifacts = new ArrayList<>();
+		}
+		this.artifacts.add(artifactsItem);
 		return this;
 	}
 

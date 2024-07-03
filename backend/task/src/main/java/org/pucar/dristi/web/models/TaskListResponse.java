@@ -1,11 +1,9 @@
 package org.pucar.dristi.web.models;
 
 import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,25 +27,27 @@ import lombok.Builder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class TaskListResponse {
+public class TaskListResponse   {
+        @JsonProperty("responseInfo")
 
-    @JsonProperty("ResponseInfo")
-    @Valid
-    private ResponseInfo responseInfo = null;
+          @Valid
+                private ResponseInfo responseInfo = null;
 
-    @JsonProperty("TotalCount")
-    private Integer totalCount = null;
+        @JsonProperty("TotalCount")
 
-    @JsonProperty("list")
-    @Valid
-    private List<Task> list = null;
+                private Integer totalCount = null;
 
-    public TaskListResponse addListItem(Task listItem) {
-        if (this.list == null) {
+        @JsonProperty("list")
+          @Valid
+                private List<Task> list = null;
+
+
+        public TaskListResponse addListItem(Task listItem) {
+            if (this.list == null) {
             this.list = new ArrayList<>();
-        }
+            }
         this.list.add(listItem);
         return this;
-    }
+        }
 
 }

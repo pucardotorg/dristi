@@ -24,28 +24,33 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class Amount   {
-
         @JsonProperty("id")
-        @Valid
-        private UUID id = null;
+
+          @Valid
+                private UUID id = null;
 
         @JsonProperty("amount")
-        @NotNull
-        private String amount = null;
+          @NotNull
+
+                private String amount = null;
 
         @JsonProperty("type")
-        @NotNull
-        private String type = null;
+          @NotNull
+
+                private String type = null;
 
         @JsonProperty("paymentRefNumber")
-        private String paymentRefNumber = null;
+
+                private String paymentRefNumber = null;
 
         @JsonProperty("additionalDetails")
-        private Object additionalDetails = null;
+
+                private String additionalDetails = null;
 
         @JsonProperty("status")
-        @NotNull
-        private String status = null;
+          @NotNull
+
+                private String status = null;
 
 
 }

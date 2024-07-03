@@ -1,13 +1,14 @@
 package org.pucar.dristi.web.controllers;
 
-import java.util.Collections;
-import java.util.List;
+import java.io.IOException;
 
-import org.egov.common.contract.response.ResponseInfo;
-import org.pucar.dristi.service.CaseService;
-import org.pucar.dristi.service.WitnessService;
-import org.pucar.dristi.util.ResponseInfoFactory;
-import org.pucar.dristi.web.models.*;
+import org.pucar.dristi.web.models.CaseExistsResponse;
+import org.pucar.dristi.web.models.CaseRequest;
+import org.pucar.dristi.web.models.CaseResponse;
+import org.pucar.dristi.web.models.CaseSearchRequest;
+import org.pucar.dristi.web.models.WitnessRequest;
+import org.pucar.dristi.web.models.WitnessResponse;
+import org.pucar.dristi.web.models.WitnessSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,95 +30,119 @@ import jakarta.validation.Valid;
 @RequestMapping("")
 public class CaseApiController {
 
-    private final ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
 
-    private final HttpServletRequest request;
+	private final HttpServletRequest request;
 
-    @Autowired
-    private CaseService caseService;
+	@Autowired
+	public CaseApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+		this.objectMapper = objectMapper;
+		this.request = request;
+	}
 
-    @Autowired
-    private WitnessService witnessService;
+	@RequestMapping(value = "/case/v1/_create", method = RequestMethod.POST)
+	public ResponseEntity<CaseResponse> caseV1CreatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<CaseResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-    @Autowired
-    private ResponseInfoFactory responseInfoFactory;
+		return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
+	@RequestMapping(value = "/case/v1/_exists", method = RequestMethod.POST)
+	public ResponseEntity<CaseExistsResponse> caseV1ExistsPost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<CaseExistsResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<CaseExistsResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-    @Autowired
-    public CaseApiController(ObjectMapper objectMapper, HttpServletRequest request) {
-        this.objectMapper = objectMapper;
-        this.request = request;
-    }
+		return new ResponseEntity<CaseExistsResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    @RequestMapping(value = "/case/v1/_create", method = RequestMethod.POST)
-    public ResponseEntity<CaseResponse> caseV1CreatePost(@Parameter(in = ParameterIn.DEFAULT, description = "Details for the new court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
+	@RequestMapping(value = "/case/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<CaseResponse> caseV1SearchPost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<CaseResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-        CourtCase cases = caseService.createCase(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(cases)).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(caseResponse, HttpStatus.OK);
-        }
+		return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    @RequestMapping(value = "/case/v1/_exists", method = RequestMethod.POST)
-    public ResponseEntity<CaseExistsResponse> caseV1ExistsPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Case search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseExistsRequest body){
+	@RequestMapping(value = "/case/v1/_update", method = RequestMethod.POST)
+	public ResponseEntity<CaseResponse> caseV1UpdatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<CaseResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-        List<CaseExists> caseExists = caseService.existCases(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        CaseExistsResponse caseExistsResponse = CaseExistsResponse.builder().criteria(caseExists).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(caseExistsResponse, HttpStatus.OK);
-    }
+		return new ResponseEntity<CaseResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    @RequestMapping(value = "/case/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<CaseListResponse> caseV1SearchPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Search criteria + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseSearchRequest body){
+	@RequestMapping(value = "/case/witness/v1/_create", method = RequestMethod.POST)
+	public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-        caseService.searchCases(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        CaseListResponse caseResponse = CaseListResponse.builder().criteria(body.getCriteria()).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(caseResponse, HttpStatus.OK);
-    }
+		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    @RequestMapping(value = "/case/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<CaseResponse> caseV1UpdatePost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for updating all editable fields in the court case + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody CaseRequest body){
+	@RequestMapping(value = "/case/witness/v1/_search", method = RequestMethod.POST)
+	public ResponseEntity<WitnessResponse> caseWitnessV1SearchPost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-        CourtCase cases = caseService.updateCase(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        CaseResponse caseResponse = CaseResponse.builder().cases(Collections.singletonList(cases)).responseInfo(responseInfo).build();
-        return new ResponseEntity<>(caseResponse, HttpStatus.OK);
-    }
+		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    @RequestMapping(value = "/case/witness/v1/_create", method = RequestMethod.POST)
-    public ResponseEntity<WitnessResponse> caseWitnessV1CreatePost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
+	@RequestMapping(value = "/case/witness/v1/_update", method = RequestMethod.POST)
+	public ResponseEntity<WitnessResponse> caseWitnessV1UpdatePost(
+			@Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body) {
+		String accept = request.getHeader("Accept");
+		if (accept != null && accept.contains("application/json")) {
+			try {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+			} catch (Exception e) {
+				return new ResponseEntity<WitnessResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-        Witness witness = witnessService.registerWitnessRequest(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(Collections.singletonList(witness)).requestInfo(responseInfo).build();
-        return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
-    }
+		return new ResponseEntity<WitnessResponse>(HttpStatus.NOT_IMPLEMENTED);
+	}
 
-    @RequestMapping(value = "/case/witness/v1/_search", method = RequestMethod.POST)
-    public ResponseEntity<WitnessResponse> caseWitnessV1SearchPost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessSearchRequest body){
-
-        List<Witness> witnessList = witnessService.searchWitnesses(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(witnessList).requestInfo(responseInfo).build();
-        return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/case/witness/v1/_update", method = RequestMethod.POST)
-    public ResponseEntity<WitnessResponse> caseWitnessV1UpdatePost (
-            @Parameter(in = ParameterIn.DEFAULT, description = "Details for the witness + RequestInfo meta data.", required = true, schema = @Schema()) @Valid @RequestBody WitnessRequest body){
-
-        Witness witness= witnessService.updateWitness(body);
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(body.getRequestInfo(), true);
-        WitnessResponse witnessResponse = WitnessResponse.builder().witnesses(Collections.singletonList(witness)).requestInfo(responseInfo).build();
-        return new ResponseEntity<>(witnessResponse, HttpStatus.OK);
-    }
-
-    }
-
-
+}

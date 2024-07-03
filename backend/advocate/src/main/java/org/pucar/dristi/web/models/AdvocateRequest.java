@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.models;
+package org.pucar.web.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +24,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AdvocateRequest {
+	@JsonProperty("requestInfo")
 
-	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo = null;
 
-	@JsonProperty("advocate")
+	@JsonProperty("advocates")
 	@Valid
-	private Advocate advocate = null;
+	private List<Advocate> advocates = new ArrayList<>();
+
+	public AdvocateRequest addAdvocatesItem(Advocate advocatesItem) {
+		this.advocates.add(advocatesItem);
+		return this;
+	}
 
 }

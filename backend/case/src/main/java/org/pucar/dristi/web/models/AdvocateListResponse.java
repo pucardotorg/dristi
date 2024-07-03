@@ -1,4 +1,4 @@
-package org.pucar.dristi.web.models;
+package org.pucar.web.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,24 +23,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdvocateListResponse {
+public class AdvocateResponse {
 	@JsonProperty("responseInfo")
+
 	@Valid
 	private ResponseInfo responseInfo = null;
 
 	@JsonProperty("advocates")
 	@Valid
-	private List<AdvocateSearchCriteria> advocates = null;
+	private List<Advocate> advocates = new ArrayList<>();
 
 	@JsonProperty("pagination")
 
 	@Valid
 	private Pagination pagination = null;
 
-	public AdvocateListResponse addAdvocatesItem(AdvocateSearchCriteria advocatesItem) {
-		if (this.advocates == null) {
-			this.advocates = new ArrayList<>();
-		}
+	public AdvocateResponse addAdvocatesItem(Advocate advocatesItem) {
 		this.advocates.add(advocatesItem);
 		return this;
 	}

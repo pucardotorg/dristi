@@ -171,25 +171,4 @@ public class WorkflowUtil {
         response = mapper.convertValue(optional, ProcessInstanceResponse.class);
         return response.getProcessInstances().get(0).getState();
     }
-
-    public ProcessInstance getCurrentWorkflow(RequestInfo requestInfo, String tenantId, String businessId) {
-        try {
-            RequestInfoWrapper requestInfoWrapper = RequestInfoWrapper.builder().requestInfo(requestInfo).build();
-            StringBuilder url = getSearchURLWithParams(tenantId, businessId);
-            Object res = repository.fetchResult(url, requestInfoWrapper);
-            ProcessInstanceResponse response = mapper.convertValue(res, ProcessInstanceResponse.class);
-            if (response != null && !CollectionUtils.isEmpty(response.getProcessInstances()) && response.getProcessInstances().get(0) != null)
-                return response.getProcessInstances().get(0);
-            return null;
-        } catch (Exception e) {
-            throw new CustomException("GET_WORKFLOW_EXCEPTION", e.getMessage());
-        }
-    }
-
-    public Workflow getWorkflowFromProcessInstance(ProcessInstance processInstance) {
-        if(processInstance == null) {
-            return null;
-        }
-        return Workflow.builder().action(processInstance.getState().getState()).comments(processInstance.getComment()).build();
-    }
 }

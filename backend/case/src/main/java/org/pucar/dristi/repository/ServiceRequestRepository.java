@@ -33,7 +33,7 @@ public class ServiceRequestRepository {
 		try {
 			response = restTemplate.postForObject(uri.toString(), request, Map.class);
 		} catch (HttpClientErrorException e) {
-			log.error(EXTERNAL_SERVICE_EXCEPTION + " URI: " + uri.toString(), e);
+			log.error(EXTERNAL_SERVICE_EXCEPTION, e);
 			throw new ServiceCallException(e.getResponseBodyAsString());
 		} catch (Exception e) {
 			log.error(SEARCHER_SERVICE_EXCEPTION, e);

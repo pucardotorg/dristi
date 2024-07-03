@@ -27,18 +27,20 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 public class TaskRequest   {
-
         @JsonProperty("orderId")
-        @Valid
-        private UUID orderId = null;
 
-        @JsonProperty("RequestInfo")
-        @Valid
-        private RequestInfo requestInfo = null;
+          @Valid
+                private UUID orderId = null;
+
+        @JsonProperty("requestInfo")
+
+          @Valid
+                private RequestInfo requestInfo = null;
 
         @JsonProperty("task")
-        @Valid
-        private Task task = null;
+
+          @Valid
+                private Task task = null;
 
 
 }

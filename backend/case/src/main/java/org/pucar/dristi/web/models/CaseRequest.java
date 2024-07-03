@@ -24,13 +24,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CaseRequest {
+	@JsonProperty("requestInfo")
 
-	@JsonProperty("RequestInfo")
 	@Valid
 	private RequestInfo requestInfo = null;
 
 	@JsonProperty("cases")
 	@Valid
-	private CourtCase cases = null;
+	private List<CourtCase> cases = new ArrayList<>();
+
+	public CaseRequest addCasesItem(CourtCase casesItem) {
+		this.cases.add(casesItem);
+		return this;
+	}
 
 }

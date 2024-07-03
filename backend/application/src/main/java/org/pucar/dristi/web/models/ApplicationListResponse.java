@@ -24,7 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ApplicationListResponse   {
-        @JsonProperty("ResponseInfo")
+        @JsonProperty("responseInfo")
 
           @Valid
                 private ResponseInfo responseInfo = null;
@@ -33,16 +33,16 @@ public class ApplicationListResponse   {
 
                 private Integer totalCount = null;
 
-        @JsonProperty("applicationList")
+        @JsonProperty("HearingList")
           @Valid
-                private List<Application> applicationList = null;
+                private List<Application> hearingList = null;
 
 
-        public ApplicationListResponse addApplicationListItem(Application applicationListItem) {
-            if (this.applicationList == null) {
-            this.applicationList = new ArrayList<>();
+        public ApplicationListResponse addHearingListItem(Application hearingListItem) {
+            if (this.hearingList == null) {
+            this.hearingList = new ArrayList<>();
             }
-        this.applicationList.add(applicationListItem);
+        this.hearingList.add(hearingListItem);
         return this;
         }
 

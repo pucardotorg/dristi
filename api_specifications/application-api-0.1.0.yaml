@@ -237,7 +237,7 @@ components:
           description: This is tenantId of the case
         caseId:
           type: string
-          description: This is the caseId of the associated case
+          description: This is the required caseId of the associated case, which uniquely identifies it.
         filingNumber:
           type: string
           description: the associated case
@@ -253,7 +253,7 @@ components:
         createdDate:
           type: string
           format: datetime
-          description: the date on which the application was created
+          description: the epoch datetime on which the application was created
         createdBy:
           type: string
           format: uuid
@@ -265,10 +265,8 @@ components:
             format: uuid
             description: ID of the users for whom the application has been raised
         applicationType:
-          type: array
-          items:
-            type: integer
-            description: array of Master Data ID since an application can be of multiple application types
+          type: string
+          description: Master Data ID from ApplicationType master
         applicationNumber:
           type: string
           minLength: 24

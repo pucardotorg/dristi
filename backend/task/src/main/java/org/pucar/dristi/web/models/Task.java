@@ -1,6 +1,5 @@
 package org.pucar.dristi.web.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -30,70 +29,75 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class Task {
-
     @JsonProperty("id")
+
     @Valid
     private UUID id = null;
 
     @JsonProperty("tenantId")
     @NotNull
+
     private String tenantId = null;
 
     @JsonProperty("orderId")
     @NotNull
+
     @Valid
     private UUID orderId = null;
 
     @JsonProperty("filingNumber")
+
     private String filingNumber = null;
 
-    @JsonProperty("taskNumber")
-    private String taskNumber = null;
-
     @JsonProperty("cnrNumber")
+
     private String cnrNumber = null;
 
     @JsonProperty("createdDate")
     @NotNull
+
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate createdDate = null;
 
     @JsonProperty("dateCloseBy")
+
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateCloseBy = null;
 
     @JsonProperty("dateClosed")
+
     @Valid
-    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate dateClosed = null;
 
     @JsonProperty("taskDescription")
+
     private String taskDescription = null;
 
     @JsonProperty("taskType")
     @NotNull
+
     private String taskType = null;
 
     @JsonProperty("taskDetails")
+
     private Object taskDetails = null;
 
     @JsonProperty("amount")
+
     @Valid
     private Amount amount = null;
 
     @JsonProperty("status")
     @NotNull
+
     private String status = null;
 
     @JsonProperty("assignedTo")
+
     private Object assignedTo = null;
 
-    @JsonProperty("validate")
-    private Boolean validate = null;
-
     @JsonProperty("isActive")
+
     private Boolean isActive = null;
 
     @JsonProperty("documents")
@@ -101,13 +105,16 @@ public class Task {
     private List<Document> documents = new ArrayList<>();
 
     @JsonProperty("additionalDetails")
-    private Object additionalDetails = null;
+
+    private String additionalDetails = null;
 
     @JsonProperty("auditDetails")
+
     @Valid
     private AuditDetails auditDetails = null;
 
     @JsonProperty("workflow")
+
     @Valid
     private Workflow workflow = null;
 

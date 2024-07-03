@@ -19,7 +19,7 @@
               "action": "CREATE",
               "nextState": "PENDINGSUBMISSION",
               "roles": [
-                "Judge"
+                "SUBMISSION_CREATOR"
               ]
             }
           ]
@@ -35,64 +35,30 @@
           "actions": [
             {
               "action": "SUBMIT",
-              "nextState": "ISRESPONSEREQUIRED",
+              "nextState": "COMPLETED",
               "roles": [
-                "Lawyer"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
               "action": "DELAY",
               "nextState": "REQUESTDELAY",
               "roles": [
-                "Lawyer"
+                "SUBMISSION_RESPONDER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 5,
-          "state": "ISRESPONSEREQUIRED",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": true,
-          "actions": [
-            {
-              "action": "APPROVE",
-              "nextState": "RESPONSEPENDING",
-              "roles": [
-                "System"
-              ]
-            },
-            {
-              "action": "REJECT",
-              "nextState": "PENDINGAPPROVAL",
-              "roles": [
-                "System"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
         },
         {
           "sla": 10,
-          "state": "PENDINGAPPROVAL",
+          "state": "REQUESTDELAY",
           "applicationStatus": "INWORKFLOW",
           "docUploadRequired": true,
           "isStartState": false,
@@ -101,57 +67,23 @@
           "actions": [
             {
               "action": "APPROVE",
-              "nextState": "COMPLETED",
+              "nextState": "PENDINGSUBMISSION",
               "roles": [
-                "Judge"
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "REJECT",
-              "nextState": "REJECTED",
+              "nextState": "PENDINGSUBMISSION",
               "roles": [
-                "Judge"
+                "SUBMISSION_APPROVER"
               ]
             },
             {
               "action": "ABANDON",
               "nextState": "ABATED",
               "roles": [
-                "Judge",
-                "System"
-              ]
-            }
-          ]
-        },
-        {
-          "sla": 10,
-          "state": "RESPONSEPENDING",
-          "applicationStatus": "INWORKFLOW",
-          "docUploadRequired": true,
-          "isStartState": false,
-          "isTerminateState": false,
-          "isStateUpdatable": false,
-          "actions": [
-            {
-              "action": "RESPOND",
-              "nextState": "PENDINGAPPROVAL",
-              "roles": [
-                "lawyer"
-              ]
-            },
-            {
-              "action": "AUTOESCALATE",
-              "nextState": "PENDINGAPPROVAL",
-              "roles": [
-                "System"
-              ]
-            },
-            {
-              "action": "ABANDON",
-              "nextState": "ABATED",
-              "roles": [
-                "Judge",
-                "System"
+                "WORKFLOW_ABANDON"
               ]
             }
           ]
@@ -160,15 +92,6 @@
           "sla": 5,
           "state": "COMPLETED",
           "applicationStatus": "ACTIVE",
-          "isStateUpdatable": false,
-          "docUploadRequired": false,
-          "isStartState": false,
-          "isTerminateState": true
-        },
-        {
-          "sla": 5,
-          "state": "REJECTED",
-          "applicationStatus": "INACTIVE",
           "isStateUpdatable": false,
           "docUploadRequired": false,
           "isStartState": false,

@@ -16,16 +16,18 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class WitnessSearchCriteria {
+public class WitnessSearchCriteria   {
+        @JsonProperty("caseId")
 
-    @JsonProperty("caseId")
-    private String caseId = null;
+                private String caseId = null;
 
-    @JsonProperty("individualId")
-    private String individualId = null;
+        @JsonProperty("individualId")
 
-    @JsonProperty("includeInactive")
-    private Boolean includeInactive = false;
+                private String individualId = null;
+
+        @JsonProperty("includeInactive")
+
+                private Boolean includeInactive = false;
 
 
 }

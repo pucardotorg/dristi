@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +13,7 @@ import org.egov.common.contract.models.Document;
 import org.egov.common.contract.models.Workflow;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,11 +39,6 @@ public class Hearing {
 
     private String tenantId = null;
 
-    @JsonProperty("hearingId")
-    @Size(min = 2, max = 64)
-    @Valid
-    private String hearingId = null;
-
     @JsonProperty("filingNumber")
 
     private List<String> filingNumber = new ArrayList<>();
@@ -63,26 +58,22 @@ public class Hearing {
 
     @JsonProperty("status")
     @NotNull
-// Hearing workflow state,
-    private String status = null;
+
+    private Boolean status = null;
 
     @JsonProperty("startTime")
 
     @Valid
-    private Long startTime = null;
+    private LocalDate startTime = null;
 
     @JsonProperty("endTime")
 
     @Valid
-    private Long endTime = null;
-
-    @JsonProperty("presidedBy")
-
-    private PresidedBy presidedBy = null;
+    private LocalDate endTime = null;
 
     @JsonProperty("attendees")
 
-    private List<Attendee> attendees = new ArrayList<>();
+    private List<Object> attendees = new ArrayList<>();
 
     @JsonProperty("transcript")
 
@@ -102,7 +93,7 @@ public class Hearing {
 
     @JsonProperty("additionalDetails")
 
-    private Object additionalDetails = null;
+    private String additionalDetails = null;
 
     @JsonProperty("auditDetails")
 
@@ -134,7 +125,7 @@ public class Hearing {
         return this;
     }
 
-    public Hearing addAttendeesItem(Attendee attendeesItem) {
+    public Hearing addAttendeesItem(Object attendeesItem) {
         if (this.attendees == null) {
             this.attendees = new ArrayList<>();
         }

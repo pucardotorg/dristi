@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.UUID;
 
 /**
  * HearingExists
@@ -22,7 +23,7 @@ public class HearingExists   {
         @JsonProperty("hearingId")
 
         @Valid
-        private String hearingId = null;
+        private UUID hearingId = null;
 
         @JsonProperty("filingNumber")
 

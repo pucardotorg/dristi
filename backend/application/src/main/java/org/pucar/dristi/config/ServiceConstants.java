@@ -45,21 +45,6 @@ public class ServiceConstants {
     public static final String NOT_FOUND = " is not found";
     public static final String TENANTID = "?tenantId=";
     public static final String BUSINESS_SERVICES = "&businessServices=";
-    public static final String CREATE_APPLICATION_ERR = "CREATE_APPLICATION_ERR";
-    public static final String UPDATE_APPLICATION_ERR = "UPDATE_APPLICATION_ERR";
-    public static final String APPLICATION_SEARCH_ERR = "APPLICATION_SEARCH_ERR";
-    public static final String APPLICATION_SEARCH_QUERY_EXCEPTION = "APPLICATION_SEARCH_QUERY_EXCEPTION";
-    public static final String DOCUMENT_SEARCH_QUERY_EXCEPTION = "DOCUMENT_SEARCH_QUERY_EXCEPTION";
-    public static final String STATUTE_SEARCH_QUERY_EXCEPTION = "STATUTE_SEARCH_QUERY_EXCEPTION";
-    public static final String ROW_MAPPER_EXCEPTION = "ROW_MAPPER_EXCEPTION";
-    public static final String DOCUMENT_ROW_MAPPER_EXCEPTION = "DOCUMENT_ROW_MAPPER_EXCEPTION";
-    public static final String STATUTE_ROW_MAPPER_EXCEPTION = "STATUTE_ROW_MAPPER_EXCEPTION";
-    public static final String APPLICATION_EXIST_EXCEPTION = "APPLICATION_EXIST_EXCEPTION";
-    public static final String ERROR_WHILE_FETCHING_FROM_CASE = "ERROR_WHILE_FETCHING_FROM_CASE";
-    public static final String ENRICHMENT_EXCEPTION = "ENRICHMENT_EXCEPTION";
-    public static final String VALIDATION_ERR = "VALIDATION_ERR";
-    public static final String WORKFLOW_SERVICE_EXCEPTION = "WORKFLOW_SERVICE_EXCEPTION";
-    public static final String JSON_PARSE_ERROR = "JSON_PARSE_ERROR";
 
 
 }

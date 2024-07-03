@@ -1,7 +1,6 @@
 package org.pucar.dristi.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.config.Configuration;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONArray;
@@ -48,7 +47,6 @@ public class MdmsUtil {
             mdmsResponse = mapper.convertValue(response, MdmsResponse.class);
         }catch(Exception e) {
             log.error(ERROR_WHILE_FETCHING_FROM_MDMS,e);
-            throw new CustomException(e.getMessage(),ERROR_WHILE_FETCHING_FROM_MDMS);
         }
 
         return mdmsResponse.getMdmsRes();

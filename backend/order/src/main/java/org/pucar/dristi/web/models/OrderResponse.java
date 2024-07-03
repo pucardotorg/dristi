@@ -18,15 +18,16 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderResponse {
+public class OrderResponse   {
+        @JsonProperty("responseInfo")
 
-    @JsonProperty("ResponseInfo")
-    @Valid
-    private ResponseInfo responseInfo = null;
+          @Valid
+                private ResponseInfo responseInfo = null;
 
-    @JsonProperty("order")
-    @Valid
-    private Order order = null;
+        @JsonProperty("order")
+
+          @Valid
+                private Order order = null;
 
 
 }

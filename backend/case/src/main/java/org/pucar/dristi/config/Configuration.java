@@ -45,49 +45,6 @@ public class Configuration {
 	@Value("${egov.idgen.path}")
 	private String idGenPath;
 
-	@Value("${egov.idgen.caseFilingNumberCp}")
-	private String caseFilingNumberCp;
-
-	@Value("${egov.idgen.caseFilingNumberNia}")
-	private String caseFilingNumberNia;
-
-	@Value("${egov.idgen.caseNumberCc}")
-	private String caseNumberCc;
-
-	@Value("${egov.idgen.caseNumberWp}")
-	private String caseNumberWp;
-
-
-	// Filestore Config
-	@Value("${egov.filestore.host}")
-	private String fileStoreHost;
-
-	@Value("${egov.filestore.path}")
-	private String fileStorePath;
-
-	// Advocate Config
-	@Value("${egov.advocate.host}")
-	private String advocateHost;
-
-	@Value("${egov.advocate.path}")
-	private String advocatePath;
-
-    //Individual Service
-    @Value("${egov.individual.host}")
-    private String individualHost;
-
-    @Value("${egov.individual.path}")
-    private String individualPath;
-
-    @Value("${egov.individual.create.path}")
-    private String individualCreateEndpoint;
-
-    @Value("${egov.individual.search.path}")
-    private String individualSearchEndpoint;
-
-    @Value("${egov.individual.update.path}")
-    private String individualUpdateEndpoint;
-
 	// Workflow Config
 	@Value("${egov.workflow.host}")
 	private String wfHost;
@@ -125,31 +82,4 @@ public class Configuration {
 	// SMSNotification
 	@Value("${egov.sms.notification.topic}")
 	private String smsNotificationTopic;
-
-	//Case
-	@Value("${case.kafka.update.topic}")
-	private String caseUpdateTopic;
-
-	@Value("${case.kafka.create.topic}")
-	private String caseCreateTopic;
-
-	@Value("${witness.kafka.create.topic}")
-	private String witnessCreateTopic;
-
-	@Value("${witness.kafka.update.topic}")
-	private String witnessUpdateTopic;
-
-	@Value("${egov.workflow.case.business.name}")
-	private String caseBusinessName;
-
-	@Value("${egov.workflow.case.business.service.name}")
-	private String caseBusinessServiceName;
-
-	//Billing
-	@Value("${egov.billing.host}")
-	private String billingHost;
-
-	@Value("${egov.demand.create.endpoint}")
-	private String demandCreateEndPoint;
-
 }

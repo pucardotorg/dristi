@@ -17,19 +17,23 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 public class OrderExists {
-
     @JsonProperty("filingNumber")
+
     private String filingNumber = null;
 
     @JsonProperty("cnrNumber")
+
     private String cnrNumber = null;
 
     @JsonProperty("applicationNumber")
+
     private String applicationNumber = null;
 
     @JsonProperty("orderNumber")
+
     private String orderNumber = null;
 
     @JsonProperty("exists")
+
     private Boolean exists = null;
 }
