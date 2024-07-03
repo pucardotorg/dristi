@@ -2,6 +2,7 @@ package org.pucar.dristi.repository.querybuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
+import org.pucar.dristi.web.models.TaskCriteria;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,8 +48,15 @@ public class TaskQueryBuilder {
     }
 
 
-    public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber, List<Object> preparedStmtList) {
+    public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList) {
         try {
+            String taskNumber = criteria.getTaskNumber();
+            String cnrNumber = criteria.getCnrNumber();
+            String tenantId = criteria.getTenantId();
+            String id = criteria.getId();
+            String status = criteria.getStatus();
+            UUID orderId = criteria.getOrderId();
+
             StringBuilder query = new StringBuilder(BASE_CASE_QUERY);
             query.append(FROM_TASK_TABLE);
             boolean firstCriteria = true; // To check if it's the first criteria
