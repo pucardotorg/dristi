@@ -46,7 +46,6 @@
     width: 40vw;
     .popup-module-main {
       .add-signature-main-div {
-        height: 30vh;
         display: flex;
         margin-bottom: 10px;
         .not-signed {
@@ -56,20 +55,24 @@
             gap: 20px;
             height: 40px;
             margin-bottom: 10px;
-            .submission-upload-signature-label {
+            .upload-signature {
               max-height: 40px !important;
               align-items: center;
               display: flex;
               background: white !important;
-              color: #007e7e !important;
               border: solid 2px #007e7e;
+              h2 {
+                color: #007e7e !important;
+              }
             }
-            .submission-aadhar-sign-in {
+            .aadhar-sign-in {
               max-height: 40px !important;
               align-items: center;
               display: flex;
               background: white !important;
-              color: #007e7e !important;
+              h2 {
+                color: #007e7e !important;
+              }
             }
           }
           .click-for-download {
@@ -82,6 +85,33 @@
           }
         }
         .signed {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 10px;
+
+          h1 {
+            font-family: Roboto;
+            font-size: 24px;
+            font-weight: 700;
+            line-height: 28.13px;
+            text-align: left;
+            color: #3d3c3c;
+          }
+
+          span {
+            padding: 5px 0px 5px 0px;
+            border-radius: 15px;
+            width: 59px;
+            height: 28px;
+            font-family: Roboto;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 16.41px;
+            text-align: center;
+            color: #00703c;
+            background-color: #e4f2e4;
+          }
         }
       }
     }
@@ -136,6 +166,21 @@
             }
           }
         }
+      }
+    }
+  }
+}
+
+.submission-success-modal {
+  &.popup-module {
+    width: 536px;
+    .popup-module-main {
+      .submission-success-modal-body-main {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 20px;
+        margin-top: 20px;
       }
     }
   }

@@ -9,6 +9,8 @@ import ReviewSubmissionModal from "../../components/ReviewSubmissionModal";
 import SubmissionSignatureModal from "../../components/SubmissionSignatureModal";
 import PaymentModal from "../../components/PaymentModal";
 import SuccessModal from "../../components/SuccessModal";
+import useSearchSubmissionService from "../../hooks/submissions/useSearchSubmissionService";
+import { CaseWorkflowState } from "../../utils/caseWorkFlow";
 
 const fieldStyle = { marginRight: 0 };
 
@@ -79,20 +81,21 @@ const SubmissionsCreate = () => {
   const caseDetails = useMemo(() => {
     return caseData?.criteria?.[0]?.responseList?.[0];
   }, [caseData]);
-  console.log("caseDetails", caseDetails);
 
-  const mutation = Digit.Hooks.useCustomAPIMutationHook(reqCreate);
-  const onError = (resp) => {
-    history.push(`/${window.contextPath}/employee/submissions/submissions-response?isSuccess=${false}`, { message: "SUBMISSION_CREATION_FAILED" });
-  };
+  // const searchReqBody = {
+  //   tenantId,
+  //   criteria: {
+  //     tenantId,
+  //     filingNumber,
+  //   },
+  // };
 
-  const onSuccess = (resp) => {
-    history.push(`/${window.contextPath}/employee/submissions/submissions-response?appNo=${"NEW-NO-1"}&isSuccess=${true}`, {
-      message: "SUBMISSION_CREATION_SUCCESS",
-      showID: true,
-      label: "SUBMISSION_ID",
-    });
-  };
+  // const {
+  //   data: submissionData,
+  //   refetch: refetchSubmissionData,
+  //   isLoading: isSubmissionLoading,
+  //   isFetching: isSubmissionFetching,
+  // } = useSearchSubmissionService(searchReqBody, { tenantId, filingNumber }, filingNumber, Boolean(filingNumber));
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata)) {
@@ -107,7 +110,7 @@ const SubmissionsCreate = () => {
     return `${day}-${month}-${year}`;
   };
 
-  const createOrder = () => {
+  const createSubmission = () => {
     const reqbody = {
       tenantId,
       application: {
@@ -120,9 +123,12 @@ const SubmissionsCreate = () => {
         applicationType,
         // applicationNumber: "example_application_number",
         // issuedBy: null,
-        // status: "example_status",
+        status: caseDetails?.status,
         // comment: "example_comment",
-        // isActive: true,
+        isActive: true,
+        statuteSection: {
+          tenantId: tenantId,
+        },
         additionalDetails: { formdata: formdata },
         documents: [{}],
         workflow: {
@@ -136,33 +142,19 @@ const SubmissionsCreate = () => {
     };
     submissionService
       .createApplication(reqbody, { tenantId })
-      .then((res) => {
-        console.debug(res);
-      })
-      .catch();
+      .then((res) => {})
+      .catch(() => {});
   };
 
-  const onSubmit = async (data) => {
-    console.log(data, "data");
-    await mutation.mutate(
-      {
-        url: `application/application/v1/create`,
-        params: { tenantId },
-        body: transformCreateData(data),
-        config: {
-          enable: true,
-        },
-      },
-      {
-        onSuccess,
-        onError,
-      }
-    );
+  const handleBack = () => {
+    setShowReviewModal(false);
   };
 
-  const handleBack = () => {};
-
-  const handleProceed = () => {};
+  const handleProceed = () => {
+    setShowsignatureModal(false);
+    setShowPaymentModal(true);
+    createSubmission();
+  };
 
   const handleCloseSignaturePopup = () => {
     setShowsignatureModal(false);
@@ -171,20 +163,16 @@ const SubmissionsCreate = () => {
 
   const handleClosePaymentModal = () => {
     setShowPaymentModal(false);
-    //
   };
 
   const handleSkipPayment = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
-    //
   };
 
   const handleMakePayment = () => {
     setShowPaymentModal(false);
     setShowSuccessModal(true);
-    //
-    //
   };
 
   const handleDownloadSubmission = () => {
@@ -208,13 +196,16 @@ const SubmissionsCreate = () => {
         config={modifiedFormConfig}
         defaultValues={defaultValue}
         onFormValueChange={onFormValueChange}
-        onSubmit={createOrder}
+        onSubmit={() => setShowReviewModal(true)}
         fieldStyle={fieldStyle}
       />
       {showReviewModal && (
         <ReviewSubmissionModal
           t={t}
-          // order={currentOrder}
+          applicationType={formdata?.applicationType?.name}
+          submissionDate={formatDate(new Date())}
+          sender={caseDetails?.additionalDetails?.payerName}
+          additionalDetails={"additional-details"}
           setShowReviewModal={setShowReviewModal}
           setShowsignatureModal={setShowsignatureModal}
           handleBack={handleBack}
@@ -233,7 +224,7 @@ const SubmissionsCreate = () => {
         <SuccessModal
           t={t}
           handleDownloadSubmission={handleDownloadSubmission}
-          isPaymentDone={true}
+          // isPaymentDone={true}
           handleCloseSuccessModal={handleCloseSuccessModal}
           handlePendingPayment={handlePendingPayment}
         />

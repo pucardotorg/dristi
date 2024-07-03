@@ -18,7 +18,7 @@ const customNoteConfig = {
   },
 };
 
-function SuccessModal({ t, handleDownloadSubmission, isPaymentDone, handleCloseSuccessModal, handlePendingPayment }) {
+function SuccessModal({ t, handleDownloadSubmission, isPaymentDone = false, handleCloseSuccessModal, handlePendingPayment }) {
   const submissionData = [
     { key: "SUBMISSION_DATE", value: "04/04/24", copyData: false },
     { key: "SUBMISSION_ID", value: "KA454894943", copyData: true },
