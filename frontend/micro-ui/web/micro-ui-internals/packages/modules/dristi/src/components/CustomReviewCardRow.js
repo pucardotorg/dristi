@@ -349,7 +349,8 @@ const CustomReviewCardRow = ({
           showFlagIcon = prevDataError?.[type]?.FSOError;
         }
         value?.forEach((val) => {
-          if (extractValue(data, val)) {
+          const getFile = extractValue(data, val);
+          if (getFile && getFile?.length > 0) {
             valuesAvailable.push(val);
           }
         });

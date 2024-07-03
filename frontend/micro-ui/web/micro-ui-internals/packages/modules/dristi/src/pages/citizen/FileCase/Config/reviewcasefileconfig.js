@@ -204,6 +204,11 @@ export const reviewCaseFileFormConfig = [
                   value: "liabilityType.name",
                 },
                 {
+                  type: "amount",
+                  label: "CS_PARIAL_AMOUNT",
+                  value: "totalAmount",
+                },
+                {
                   type: "text",
                   label: "CS_DEBT_ADDITIONAL_DETAILS",
                   value: "additionalDebtLiabilityDetails.text",
