@@ -153,6 +153,7 @@ class CaseRepositoryTest {
         List<CourtCase> expectedCourtCaseList = new ArrayList<>(); // Add expected court cases
         expectedCourtCaseList.add(courtCase);
         lenient().when(queryBuilder.getCasesSearchQuery(any(), any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
+        lenient().when(queryBuilder.addOrderByQuery(any(), any())).thenReturn("SELECT * FROM cases WHERE ...");
         lenient().when(jdbcTemplate.query(anyString(), any(Object[].class), any(CaseRowMapper.class))).thenReturn(expectedCourtCaseList);
 
         lenient().when(queryBuilder.getLinkedCaseSearchQuery(anyList(), any())).thenReturn("SELECT * FROM dristi_linked_case WHERE ...");
