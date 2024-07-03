@@ -164,13 +164,4 @@ public class HearingRegistrationValidator {
         return applicationExistsRequest;
     }
 
-    public Hearing validateHearingExistenceForTranscriptUpdate(Hearing hearing) {
-        //checking if hearing exist or not
-        List<Hearing> existingHearings = repository.getHearings(hearing);
-        log.info("Existing Hearing :: {}", existingHearings);
-        if (existingHearings.isEmpty())
-            throw new CustomException(VALIDATION_EXCEPTION, "Hearing for transcript does not exist");
-
-        return existingHearings.get(0);
-    }
 }
