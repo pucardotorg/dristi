@@ -53,6 +53,7 @@ jobs:
           docker push pucardev.azurecr.io/pucar_order_db:v1.0.0-${{ github.sha }}
         working-directory: backend/order/src/main/resources/db
       - name: Trigger Deployment Pipeline
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
           curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \

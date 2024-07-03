@@ -51,12 +51,16 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
-            workflowService.updateWorkflowStatus(body);
-
-            // Push the application to the topic for persister to listen and persist
-
-            producer.push(config.getEvidenceCreateTopic(), body);
-
+            if(body.getArtifact().getArtifactType().equals(DEPOSITION)) {
+                workflowService.updateWorkflowStatus(body);
+                producer.push(config.getEvidenceCreateTopic(), body);
+            }
+            else {
+                if(body.getArtifact().getIsEvidence().equals(true)) {
+                    evidenceEnrichment.enrichEvidenceNumber(body);
+                }
+                producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
+            }
             return body.getArtifact();
         } catch (CustomException e){
             log.error("Custom Exception occurred while creating evidence");
@@ -68,7 +72,7 @@ public class EvidenceService {
     }
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
         try {
-                // Fetch applications from database according to the given search criteria
+            // Fetch applications from database according to the given search criteria
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
 
             // If no applications are found matching the given criteria, return an empty list
@@ -97,15 +101,17 @@ public class EvidenceService {
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-            // Update workflow status
-            workflowService.updateWorkflowStatus(evidenceRequest);
-
-            // Enrich based on artifact status
-            enrichBasedOnStatus(evidenceRequest);
-
-            // Push to Kafka
-            producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
-
+            if(evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
+                workflowService.updateWorkflowStatus(evidenceRequest);
+                enrichBasedOnStatus(evidenceRequest);
+                producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
+            }
+            else {
+                if(evidenceRequest.getArtifact().getIsEvidence().equals(true) && evidenceRequest.getArtifact().getEvidenceNumber() == null) {
+                    evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+                }
+                producer.push(config.getUpdateEvidenceWithoutWorkflowKafkaTopic(), evidenceRequest);
+            }
             return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
@@ -117,7 +123,7 @@ public class EvidenceService {
         }
     }
 
-    private Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
+    Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
         try {
             return validator.validateApplicationExistence(evidenceRequest);
         } catch (Exception e) {
@@ -126,9 +132,8 @@ public class EvidenceService {
         }
     }
 
-    private void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
+    void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
         String status = evidenceRequest.getArtifact().getStatus();
-
         if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
         } else if (ABATED_STATE.equalsIgnoreCase(status)) {

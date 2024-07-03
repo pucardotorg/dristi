@@ -45,6 +45,7 @@ jobs:
           docker tag pucar_casemanagement:v1.0.0-${{ github.sha }} pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
           docker push pucardev.azurecr.io/pucar_casemanagement:v1.0.0-${{ github.sha }}
       - name: Trigger Deployment Pipeline
+        if: github.ref == 'refs/heads/develop' && github.event_name == 'push'
         run: |
           curl -X POST \
           -H "Accept: application/vnd.github.v3+json" \
