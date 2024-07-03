@@ -1896,7 +1896,7 @@ function EFilingCases({ path }) {
               actionSaveOnSubmit={() => takeUserToRemainingOptionalFieldsPage()}
             ></Modal>
           )}
-          {showReviewCorrectionModal && (
+          {showReviewCorrectionModal && isDraftInProgress && (
             <Modal
               headerBarMain={<Heading label={t("REVIEW_CASE_HEADER")} />}
               headerBarEnd={
