@@ -348,6 +348,7 @@ public class IndexerUtils {
 				log.error("Filing number not present for Case overall workflow update");
 			}
 			else{
+				log.info("Publishing to kafka topic: {}, Data: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
 				producer.push(config.getCaseOverallStatusTopic(), caseOverallStatus);
 			}
 		} catch (Exception e) {

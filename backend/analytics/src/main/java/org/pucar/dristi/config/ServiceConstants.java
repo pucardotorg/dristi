@@ -24,8 +24,8 @@ public class ServiceConstants {
 	public static final String ORDER_ID = "?orderId=";
 	public static final String STATUS = "&status=";
 	public static final String FILLING_NUMBER = "?filingNumber=";
-	public static final String TASK_NUMBER = "&taskNumber=";
-	public static final String ORDER_NUMBER = "&orderNumber=";
+	public static final String TASK_NUMBER = "?taskNumber=";
+	public static final String ORDER_NUMBER = "?orderNumber=";
 
 
 	//JSON path

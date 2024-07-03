@@ -46,8 +46,8 @@ public class TaskUtil {
 	private StringBuilder getSearchURLWithParams(String tenantId, String taskNumber) {
 		StringBuilder url = new StringBuilder(config.getTaskHost());
 		url.append(config.getTaskSearchPath());
-		url.append(TENANT_ID).append(tenantId);
 		url.append(TASK_NUMBER).append(taskNumber);
+		url.append(TENANT_ID).append(tenantId);
 		return url;
 	}
 }

@@ -44,8 +44,8 @@ public class OrderUtil {
 	private StringBuilder getSearchURLWithParams(String tenantId, String orderNumber) {
 		StringBuilder url = new StringBuilder(config.getOrderHost());
 		url.append(config.getOrderSearchPath());
-		url.append(TENANT_ID).append(tenantId);
 		url.append(ORDER_NUMBER).append(orderNumber);
+		url.append(TENANT_ID).append(tenantId);
 		return url;
 	}
 }
