@@ -1,5 +1,5 @@
 import { CardText, Modal, Toast } from "@egovernments/digit-ui-react-components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FormComposerV2 } from "@egovernments/digit-ui-react-components";
 
 import { modalConfig } from "../../citizen/FileCase/Config/admissionActionConfig";
@@ -30,7 +30,7 @@ const Close = () => (
 
 const CloseBtn = (props) => {
   return (
-    <div style={{ padding: "10px" }} onClick={props.onClick}>
+    <div style={{ padding: "10px", cursor: "pointer" }} onClick={props.onClick}>
       <Close />
     </div>
   );
@@ -49,14 +49,16 @@ function AdmissionActionModal({
   updatedConfig,
   tenantId,
   // hearingDetails,
+  handleScheduleNextHearing,
 }) {
   const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [label, setLabel] = useState(false);
 
-  const closeToast = () => {
+  const closeToast = useCallback(() => {
     setShowErrorToast(false);
-  };
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       closeToast();
@@ -64,18 +66,17 @@ function AdmissionActionModal({
 
     return () => clearTimeout(timer);
   }, [closeToast]);
-  const stepItems = useMemo(() =>
-    modalConfig.map(
-      (step) => {
-        const texts = {};
-        for (const key in step.texts) {
-          texts[key] = t(step.texts[key]);
-        }
-        return { ...step, texts };
-      },
-      [modalConfig]
-    )
-  );
+
+  const stepItems = useMemo(() => {
+    return modalConfig.map((step) => {
+      const texts = {};
+      for (const key in step?.texts) {
+        texts[key] = t(step?.texts[key]);
+      }
+      return { ...step, texts };
+    });
+  }, [t]);
+
   const [scheduleHearingParams, setScheduleHearingParam] = useState({ purpose: "Admission Purpose" });
 
   const onSubmit = (props, wordLimit) => {
@@ -128,6 +129,7 @@ function AdmissionActionModal({
       date: newSelectedChip,
     });
   };
+
   return (
     <React.Fragment>
       {modalInfo?.page == 0 && modalInfo?.type === "sendCaseBack" && (
@@ -243,8 +245,10 @@ function AdmissionActionModal({
             </div>
           }
           actionCancelLabel={t(submitModalInfo?.backButtonText)}
-          actionCancelOnSubmit={() => history.push(`/employee`)} // to be changed aster per req, for next hearing
-          actionSaveOnSubmit={() => history.push(`/employee`)}
+          actionCancelOnSubmit={() => {
+            history.push(`/employee`);
+          }}
+          actionSaveOnSubmit={handleScheduleNextHearing}
           className="case-types"
           formId="modal-action"
         >

@@ -14,6 +14,7 @@ import useGetHearings from "../../../hooks/dristi/useGetHearings";
 
 function CaseFileAdmission({ t, path }) {
   const [isDisabled, setIsDisabled] = useState(false);
+  const history = useHistory();
   const [showErrorToast, setShowErrorToast] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalInfo, setModalInfo] = useState(null);
@@ -191,6 +192,11 @@ function CaseFileAdmission({ t, path }) {
       setModalInfo({ ...modalInfo, page: 2 });
     });
   };
+
+  const handleScheduleNextHearing = () => {
+    history.push(`/digit-ui/employee/orders/generate-orders?filingNumber=${caseDetails?.filingNumber}`);
+  };
+
   const updateConfigWithCaseDetails = (config, caseDetails) => {
     const complainantNames = complainantFormData?.map((form) => {
       const firstName = form?.data?.firstName || "";
@@ -304,6 +310,7 @@ function CaseFileAdmission({ t, path }) {
                   updatedConfig={updatedConfig}
                   // hearingDetails={hearingDetails}
                   tenantId={tenantId}
+                  handleScheduleNextHearing={handleScheduleNextHearing}
                 ></AdmissionActionModal>
               )}
             </div>
