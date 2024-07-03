@@ -25,8 +25,8 @@ public class Configuration {
 	@Value("${egov.bulk.index}")
 	private String index;
 
-	@Value("${egov.case.overall.status.index}")
-	private String caseOverallStatusIndex;
+	@Value("${egov.case.overall.status.topic}")
+	private String caseOverallStatusTopic;
 
 	@Value("${egov.bulk.index.path}")
 	private String bulkPath;

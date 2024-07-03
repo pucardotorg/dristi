@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.pucar.dristi.config.Configuration;
+import org.pucar.dristi.kafka.Producer;
 import org.pucar.dristi.kafka.consumer.EventConsumerConfig;
+import org.pucar.dristi.web.models.CaseOverallStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,6 +57,9 @@ public class IndexerUtils {
 
 	@Autowired
 	private OrderUtil orderUtil;
+
+	@Autowired
+	private Producer producer;
 
 	public static JSONObject createRequestInfo() {
 		JSONObject userInfo = new JSONObject();
@@ -132,24 +137,25 @@ public class IndexerUtils {
 	}
 
 	public String buildPayload(String jsonItem) {
+
 		String id = JsonPath.read(jsonItem, ID_PATH);
 		String entityType = JsonPath.read(jsonItem, BUSINESS_SERVICE_PATH);
 		String referenceId = JsonPath.read(jsonItem, BUSINESS_ID_PATH);
 		String status = JsonPath.read(jsonItem, STATE_PATH);
-
 		Object stateSlaObj = JsonPath.read(jsonItem, STATE_SLA_PATH);
 		Long stateSla = stateSlaObj != null ? ((Number) stateSlaObj).longValue() : null;
-
 		Object businessServiceSlaObj = JsonPath.read(jsonItem, BUSINESS_SERVICE_SLA_PATH);
 		Long businessServiceSla = businessServiceSlaObj != null ? ((Number) businessServiceSlaObj).longValue() : null;
-
 		List<Object> assignedToList = JsonPath.read(jsonItem, ASSIGNES_PATH);
 		List<String> assignedRoleList = JsonPath.read(jsonItem, ASSIGNED_ROLE_PATH);
 		String assignedTo = new JSONArray(assignedToList).toString();
 		String assignedRole = new JSONArray(assignedRoleList).toString();
 		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
+		String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
+		String action = JsonPath.read(jsonItem, ACTION_PATH);
+
         log.info("Inside indexer utils build payload:: entityType: {}, referenceId: {}", entityType, referenceId);
-		Map<String, String> details = processEntity(entityType, referenceId);
+		Map<String, String> details = processEntity(entityType, referenceId,status,action,tenantId);
 		String cnrNumber = details.get("cnrNumber");
 		String filingNumber = details.get("filingNumber");
 
@@ -159,163 +165,195 @@ public class IndexerUtils {
 		);
 	}
 
-	private Map<String, String> processEntity(String entityType, String referenceId) {
+	private Map<String, String> processEntity(String entityType, String referenceId, String status, String action, String tenantId) {
 		Map<String, String> caseDetails = new HashMap<>();
-		String cnrNumber = null;
-		String filingNumber = null;
-
 		JSONObject request = new JSONObject();
 		request.put("RequestInfo", createRequestInfo());
 
-		if (entityType.equalsIgnoreCase("hearing")) {
-			Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
-			List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
-			if (cnrNumbers == null || cnrNumbers.isEmpty()) {
-				List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
-				if (filingNumberList != null && !filingNumberList.isEmpty()) {
-					filingNumber = filingNumberList.get(0);
+		switch (entityType.toLowerCase()) {
+			case "hearing":
+				caseDetails = processHearingEntity(request, referenceId, action, tenantId);
+				break;
+			case "case":
+				caseDetails = processCaseEntity(request, referenceId, action, tenantId);
+				break;
+			case "evidence":
+				caseDetails = processEvidenceEntity(request, referenceId);
+				break;
+			case "application":
+				caseDetails = processApplicationEntity(request, referenceId);
+				break;
+			default:
+				if (entityType.toLowerCase().contains("task")) {
+					caseDetails = processTaskEntity(request, referenceId);
+				}
+				else if (entityType.toLowerCase().contains("order")) {
+					caseDetails = processOrderEntity(request, referenceId, status, tenantId);
 				}
 				else {
-					log.info("Inside indexer util processEntity:: Both cnr and filing numbers are not present");
+					log.error("Unexpected entityType: {}", entityType);
 				}
-				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber,null);
-				cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
-			} else {
-				cnrNumber = cnrNumbers.get(0);
-				Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null,null);
-				filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-			}
-		} else if (entityType.equalsIgnoreCase("case")) {
-			filingNumber = referenceId;
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber,null);
-			cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
-		} else if (entityType.equalsIgnoreCase("evidence")) {
-			Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
-			String caseId = JsonPath.read(artifactObject.toString(), CASE_ID_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, null, caseId);
-			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-			cnrNumber = JsonPath.read(caseObject.toString(),CNR_NUMBER_PATH);
-		} else if (entityType.contains("task")) {
-			Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
-			cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null,null);
-			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-		} else if (entityType.equalsIgnoreCase("application")) {
-			Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
-			String caseId = JsonPath.read(applicationObject.toString(), CASE_ID_PATH);
-			cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
-			filingNumber = JsonPath.read(applicationObject.toString(),FILING_NUMBER_PATH);
-			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber,caseId);
-			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
-			cnrNumber = JsonPath.read(caseObject.toString(),CNR_NUMBER_PATH);
+				break;
 		}
-	else {
-            log.error("Unexpected entityType: {}", entityType);
+		return caseDetails;
+	}
+
+	private Map<String, String> processHearingEntity(JSONObject request, String referenceId, String action, String tenantId) {
+		Map<String, String> caseDetails = new HashMap<>();
+		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, config.getStateLevelTenantId());
+
+		List<String> cnrNumbers = JsonPath.read(hearingObject.toString(), CNR_NUMBERS_PATH);
+		String cnrNumber;
+		String filingNumber = null;
+
+		if (cnrNumbers == null || cnrNumbers.isEmpty()) {
+			List<String> filingNumberList = JsonPath.read(hearingObject.toString(), FILING_NUMBER_PATH);
+			if (filingNumberList != null && !filingNumberList.isEmpty()) {
+				filingNumber = filingNumberList.get(0);
+			} else {
+				log.info("Inside indexer util processEntity:: Both cnr and filing numbers are not present");
+				return caseDetails;
+			}
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, filingNumber, null);
+			cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
+		} else {
+			cnrNumber = cnrNumbers.get(0);
+			Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null, null);
+			filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
 		}
 
 		caseDetails.put("cnrNumber", cnrNumber);
 		caseDetails.put("filingNumber", filingNumber);
+
+		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
+		publishToCaseOverallStatus(determineHearingStage( filingNumber, tenantId, hearingType, action ));
 		return caseDetails;
 	}
 
-	public String buildCaseOverallStatusPayload(String jsonItem) {
-		String id = JsonPath.read(jsonItem, ID_PATH);
-		String entityType = JsonPath.read(jsonItem, BUSINESS_SERVICE_PATH);
-		String referenceId = JsonPath.read(jsonItem, BUSINESS_ID_PATH);
-		String status = JsonPath.read(jsonItem, STATE_PATH);
-		String tenantId = JsonPath.read(jsonItem, TENANT_ID_PATH);
-		String action = JsonPath.read(jsonItem, ACTION_PATH);
-		Boolean isCompleted = JsonPath.read(jsonItem, IS_TERMINATE_STATE_PATH);
+	private Map<String, String> processCaseEntity(JSONObject request, String referenceId, String action, String tenantId) {
+		Map<String, String> caseDetails = new HashMap<>();
+        Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, referenceId, null);
+		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
 
-		StageAndSubStage stageAndSubStage = determineStageAndSubStage(entityType, action, referenceId, tenantId, status);
+		publishToCaseOverallStatus(determineCaseStage(referenceId,tenantId,action));
 
-		log.info("Inside IndexerUtils buildCaseOverallStatusPayload :: entityType: {}, referenceId: {}", entityType, referenceId);
+		caseDetails.put("cnrNumber", cnrNumber);
+		caseDetails.put("filingNumber", referenceId);
 
-		if (stageAndSubStage == null) {
-			return null;
-		}
-
-		return String.format(
-				ES_INDEX_HEADER_FORMAT + ES_INDEX_CASE_OVERALL_STATUS_DOCUMENT_FORMAT,
-				config.getCaseOverallStatusIndex(), referenceId, id, entityType, referenceId, status, tenantId, action, isCompleted, stageAndSubStage.stage, stageAndSubStage.subStage);
+		return caseDetails;
 	}
 
-	private StageAndSubStage determineStageAndSubStage(String entityType, String action, String referenceId, String tenantId, String status) {
-		switch (entityType.toLowerCase()) {
-			case "case":
-				return determineCaseStage(action);
-			case "hearing":
-				return determineHearingStage(referenceId, tenantId, status);
-			case "order":
-				return determineOrderStage(referenceId, tenantId, status);
-			default:
-				log.error("Unexpected entityType: {}", entityType);
-				return null;
-		}
+	private Map<String, String> processEvidenceEntity(JSONObject request, String referenceId) {
+		Map<String, String> caseDetails = new HashMap<>();
+		Object artifactObject = evidenceUtil.getEvidence(request, config.getStateLevelTenantId(), referenceId);
+		String caseId = JsonPath.read(artifactObject.toString(), CASE_ID_PATH);
+		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), null, null, caseId);
+		String filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+		String cnrNumber = JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH);
+
+		caseDetails.put("cnrNumber", cnrNumber);
+		caseDetails.put("filingNumber", filingNumber);
+
+		return caseDetails;
 	}
 
-	private StageAndSubStage determineCaseStage(String action) {
-		switch (action.toLowerCase()) {
-			case "submit_case":
-			case "send_back":
-				return new StageAndSubStage("Pre-Trial", "Filing");
-			case "validate":
-				return new StageAndSubStage("Pre-Trial", "Cognizance");
-			case "admit":
-				return new StageAndSubStage("Pre-Trial", "Appearance");
-			default:
-				return null;
-		}
+	private Map<String, String> processTaskEntity(JSONObject request, String referenceId) {
+		Map<String, String> caseDetails = new HashMap<>();
+		Object taskObject = taskUtil.getTask(request, config.getStateLevelTenantId(), referenceId);
+		String cnrNumber = JsonPath.read(taskObject.toString(), CNR_NUMBER_PATH);
+		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, null, null);
+		String filingNumber = JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH);
+
+		caseDetails.put("cnrNumber", cnrNumber);
+		caseDetails.put("filingNumber", filingNumber);
+
+		return caseDetails;
 	}
 
-	private StageAndSubStage determineHearingStage(String referenceId, String tenantId, String status) {
-		JSONObject request = new JSONObject();
-		request.put("RequestInfo", createRequestInfo());
-		Object hearingObject = hearingUtil.getHearing(request, null, null, referenceId, tenantId);
-		String hearingType = JsonPath.read(hearingObject.toString(), HEARING_TYPE_PATH);
+	private Map<String, String> processApplicationEntity(JSONObject request, String referenceId) {
+		Map<String, String> caseDetails = new HashMap<>();
+		Object applicationObject = applicationUtil.getApplication(request, config.getStateLevelTenantId(), referenceId);
+		String caseId = JsonPath.read(applicationObject.toString(), CASE_ID_PATH);
+		String cnrNumber = JsonPath.read(applicationObject.toString(), CNR_NUMBER_PATH);
+		String filingNumber = JsonPath.read(applicationObject.toString(), FILING_NUMBER_PATH);
+		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber, caseId);
+
+		caseDetails.put("cnrNumber", JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH));
+		caseDetails.put("filingNumber", JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH));
+
+		return caseDetails;
+	}
+
+	private Map<String, String> processOrderEntity(JSONObject request, String referenceId, String status, String tenantId) {
+		Map<String, String> caseDetails = new HashMap<>();
+		Object orderObject = orderUtil.getOrder(request, referenceId, config.getStateLevelTenantId());
+		String cnrNumber = JsonPath.read(orderObject.toString(), CNR_NUMBER_PATH);
+		String filingNumber = JsonPath.read(orderObject.toString(), FILING_NUMBER_PATH);
+		Object caseObject = caseUtil.getCase(request, config.getStateLevelTenantId(), cnrNumber, filingNumber, null);
+
+		caseDetails.put("cnrNumber", JsonPath.read(caseObject.toString(), CNR_NUMBER_PATH));
+		caseDetails.put("filingNumber", JsonPath.read(caseObject.toString(), FILING_NUMBER_PATH));
+		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
+
+		publishToCaseOverallStatus(determineOrderStage(filingNumber, tenantId, orderType, status));
+		return caseDetails;
+	}
+
+
+	private CaseOverallStatus determineCaseStage(String filingNumber, String tenantId, String action) {
+        return switch (action.toLowerCase()) {
+            case "submit_case" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Filing");
+            case "validate" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Cognizance");
+            case "admit" -> new CaseOverallStatus(filingNumber, tenantId, "Pre-Trial", "Appearance");
+            default -> null;
+        };
+	}
+
+	private CaseOverallStatus determineHearingStage(String filingNumber, String tenantId, String hearingType, String action) {
 
 		switch (hearingType.toLowerCase()) {
 			case "evidence":
-				if (status.equalsIgnoreCase("scheduled")) {
-					return new StageAndSubStage("Trial", "Evidence");
+				if (action.equalsIgnoreCase("create")) {
+					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Evidence");
 				}
 				break;
 			case "arguments":
-				if (status.equalsIgnoreCase("scheduled")) {
-					return new StageAndSubStage("Trial", "Arguments");
+				if (action.equalsIgnoreCase("create")) {
+					return new CaseOverallStatus(filingNumber, tenantId, "Trial", "Arguments");
 				}
 				break;
 			case "judgement":
-				if (status.equalsIgnoreCase("scheduled")) {
-					return new StageAndSubStage("Post-Trial", "Judgment");
+				if (action.equalsIgnoreCase("create")) {
+					return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Judgment");
 				}
 				break;
 		}
 		return null;
 	}
 
-	private StageAndSubStage determineOrderStage(String referenceId, String tenantId, String status) {
-		JSONObject request = new JSONObject();
-		request.put("RequestInfo", createRequestInfo());
-		Object orderObject = orderUtil.getOrder(request, referenceId, tenantId);
-		String orderType = JsonPath.read(orderObject.toString(), ORDER_TYPE_PATH);
+	private CaseOverallStatus determineOrderStage(String filingNumber, String tenantId, String orderType, String status) {
 
 		if (orderType.equalsIgnoreCase("judgement") && status.equalsIgnoreCase("published")) {
-			return new StageAndSubStage("Post-Trial", "Post-Judgement");
+			return new CaseOverallStatus(filingNumber, tenantId, "Post-Trial", "Post-Judgement");
 		}
 		return null;
 	}
 
-	private static class StageAndSubStage {
-		String stage;
-		String subStage;
-
-		StageAndSubStage(String stage, String subStage) {
-			this.stage = stage;
-			this.subStage = subStage;
+	private void publishToCaseOverallStatus(CaseOverallStatus caseOverallStatus) {
+		try {
+			if(caseOverallStatus==null){
+				log.info("Case overall workflow update not eligible");
+			}
+			else if(caseOverallStatus.getFilingNumber()==null){
+				log.error("Filing number not present for Case overall workflow update");
+			}
+			else{
+				producer.push(config.getCaseOverallStatusTopic(), caseOverallStatus);
+			}
+		} catch (Exception e) {
+			log.error("Error in publishToCaseOverallStatus method", e);
 		}
 	}
-
 
 	public void esPost(String uri, String request) {
 		try {

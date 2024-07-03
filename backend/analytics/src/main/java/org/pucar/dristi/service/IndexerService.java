@@ -62,21 +62,8 @@ public class IndexerService {
 			String stringifiedObject = indexerUtils.buildString(jsonObject);
 			String payload = indexerUtils.buildPayload(stringifiedObject);
 			bulkRequest.append(payload);
-			checkAndPublishToCaseOverallStatus(stringifiedObject);
 		} catch (Exception e) {
 			log.error("Error while processing JSON object: {}", jsonObject, e);
-		}
-	}
-
-	private void checkAndPublishToCaseOverallStatus(String stringifiedObject) {
-		try {
-			String payload = indexerUtils.buildCaseOverallStatusPayload(stringifiedObject);
-			if (payload != null && !payload.isEmpty()) {
-				String uri = config.getEsHostUrl() + config.getBulkPath();
-				indexerUtils.esPost(uri, payload);
-			}
-		} catch (Exception e) {
-			log.error("Error in checkAndPublishToCaseOverallStatus method", e);
 		}
 	}
 }
