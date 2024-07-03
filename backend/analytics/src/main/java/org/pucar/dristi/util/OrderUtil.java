@@ -33,6 +33,9 @@ public class OrderUtil {
 		criteria.put("tenantId", tenantId);
 		request.put("criteria", criteria);
 		request.put("tenantId", tenantId);
+
+		log.info("Inside Order util getOrder :: Request: {}", request);
+
 		try {
 			String response = repository.fetchResult(url, request);
 			log.info("Inside OrderUtil getOrder :: Response: {}", response);
