@@ -1,18 +1,15 @@
 package org.pucar.dristi.repository.querybuilder;
 
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.egov.tracer.model.CustomException;
 import org.pucar.dristi.web.models.AdvocateSearchCriteria;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static org.pucar.dristi.config.ServiceConstants.*;
+import static org.pucar.dristi.config.ServiceConstants.ADVOCATE_SEARCH_QUERY_EXCEPTION;
+import static org.pucar.dristi.config.ServiceConstants.DOCUMENT_SEARCH_QUERY_EXCEPTION;
 
 @Component
 @Slf4j
@@ -24,6 +21,8 @@ public class AdvocateQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY adv.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY adv.createdtime ASC ";
+    public static final String AND = " AND ";
+
 
     /**   /** To build query using search criteria to search advocate
      * @param preparedStmtList
@@ -173,7 +172,7 @@ public class AdvocateQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE (");
         } else {
-            query.append(" OR ");
+            query.append(AND);
         }
     }
 
@@ -181,7 +180,7 @@ public class AdvocateQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE (");
         } else {
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
@@ -189,7 +188,7 @@ public class AdvocateQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE ");
         } else {
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
