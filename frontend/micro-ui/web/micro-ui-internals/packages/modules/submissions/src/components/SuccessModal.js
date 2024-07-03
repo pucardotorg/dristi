@@ -27,7 +27,7 @@ function SuccessModal({ t, handleDownloadSubmission, isPaymentDone = false, hand
     <Modal
       actionCancelLabel={t("SKIP")}
       actionCancelOnSubmit={() => handleDownloadSubmission()}
-      actionSaveLabel={t("MAKE_PAYMENT")}
+      actionSaveLabel={t("CS_MAKE_PAYMENT")}
       actionSaveOnSubmit={
         isPaymentDone
           ? () => {
