@@ -89,7 +89,7 @@ const SubmissionReview = () => {
           Submissions To Review ({applicationRes?.applicationList?.length})
         </div>
         <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-          {applicationRes?.applicationList?.map((app) => (
+          {applicationRes?.applicationList?.slice(0, 5).map((app) => (
             <div
               style={{
                 padding: "12px 16px",

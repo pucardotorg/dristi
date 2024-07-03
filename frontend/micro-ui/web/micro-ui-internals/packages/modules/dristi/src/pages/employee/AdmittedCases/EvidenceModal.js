@@ -57,7 +57,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
         return {
           id: doc?.applicationContent?.id,
           documentType: doc?.applicationContent?.documentType,
-          fileStore: doc?.applicationContent?.fileStore,
+          fileStore: doc?.applicationContent?.fileStoreId,
           documentUid: doc?.applicationContent?.documentUid,
           additionalDetails: doc?.applicationContent?.additionalDetails,
         };
@@ -73,6 +73,7 @@ const EvidenceModal = ({ documentSubmission, setShow, comment, setComment, userR
       },
     },
   };
+  console.log(markAsReadPayload);
 
   return (
     <Modal

@@ -159,7 +159,7 @@ const CaseOverview = () => {
           Recent Orders
         </div>
         <div style={{ display: "flex", gap: "16px", marginTop: "10px" }}>
-          {ordersRes?.list?.map((order) => (
+          {ordersRes?.list?.slice(0, 5).map((order) => (
             <div
               style={{
                 padding: "12px 16px",

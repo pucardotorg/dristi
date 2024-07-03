@@ -162,6 +162,8 @@ const AdmittedCases = () => {
     setDefaultValues(defaultSearchValues);
   }, []);
 
+  console.log(config, tabData, "Admitted Cases Config");
+
   const onTabChange = (n) => {
     setTabData((prev) => prev.map((i, c) => ({ ...i, active: c === n ? true : false }))); //setting tab enable which is being clicked
     setConfig(newTabSearchConfig?.TabSearchconfig?.[n]); // as per tab number filtering the config

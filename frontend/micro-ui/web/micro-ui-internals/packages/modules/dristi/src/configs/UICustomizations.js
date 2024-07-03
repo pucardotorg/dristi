@@ -554,16 +554,16 @@ export const UICustomizations = {
   },
   SearchIndividualConfig: {
     preProcess: (requestCriteria, additionalDetails) => {
-      console.log(requestCriteria, additionalDetails);
+      console.log(requestCriteria, additionalDetails, "PREPROCESS");
 
       return {
         ...requestCriteria,
-
-        config: {
-          select: (data) => {
-            return { ...data };
-          },
-        },
+        // config: {
+        //   ...requestCriteria,
+        //   select: (data) => {
+        //     return { ...data };
+        //   },
+        // },
       };
     },
     additionalCustomizations: (row, key, column, value, t) => {
@@ -609,8 +609,9 @@ export const UICustomizations = {
       return {
         ...requestCriteria,
         config: {
+          ...requestCriteria.config,
           select: (data) => {
-            console.log(data.criteria);
+            console.log(data, "CONFIG");
             const litigants = data.criteria[0].responseList[0].litigants?.length > 0 ? data.criteria[0].responseList[0].litigants : [];
             const finalLitigantsData = litigants.map((litigant) => {
               return {
