@@ -51,12 +51,14 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
-            if(body.getArtifact().getHearing() != null) {
+            if(body.getArtifact().getArtifactType().equals(DEPOSITION)) {
                 workflowService.updateWorkflowStatus(body);
                 producer.push(config.getEvidenceCreateTopic(), body);
             }
             else {
-                evidenceEnrichment.enrichEvidenceNumber(body);
+                if(body.getArtifact().getIsEvidence().equals(true)) {
+                    evidenceEnrichment.enrichEvidenceNumber(body);
+                }
                 producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
             }
             return body.getArtifact();
@@ -70,7 +72,7 @@ public class EvidenceService {
     }
     public List<Artifact> searchEvidence(RequestInfo requestInfo, EvidenceSearchCriteria evidenceSearchCriteria) {
         try {
-                // Fetch applications from database according to the given search criteria
+            // Fetch applications from database according to the given search criteria
             List<Artifact> artifacts = repository.getArtifacts(evidenceSearchCriteria);
 
             // If no applications are found matching the given criteria, return an empty list
@@ -99,15 +101,18 @@ public class EvidenceService {
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-            if(evidenceRequest.getArtifact().getHearing() != null) {
+            if(evidenceRequest.getArtifact().getArtifactType().equals(DEPOSITION)) {
                 workflowService.updateWorkflowStatus(evidenceRequest);
                 enrichBasedOnStatus(evidenceRequest);
                 producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
             }
             else {
+                if(evidenceRequest.getArtifact().getIsEvidence().equals(true) && evidenceRequest.getArtifact().getEvidenceNumber() == null) {
+                    evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
+                }
                 producer.push(config.getUpdateEvidenceWithoutWorkflowKafkaTopic(), evidenceRequest);
             }
-                return evidenceRequest.getArtifact();
+            return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
             log.error("Custom Exception occurred while updating evidence", e);
