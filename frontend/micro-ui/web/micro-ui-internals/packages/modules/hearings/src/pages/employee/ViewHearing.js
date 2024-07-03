@@ -26,7 +26,7 @@ const ViewHearing = () => {
 
   const handleNavigate = (path) => {
     const contextPath = window?.contextPath || ''; // Adjust as per your context path logic
-    window.location.href = `/${contextPath}${path}`;
+    history.push(`/${contextPath}${path}`);
   };
 
   const dropdownItems = [

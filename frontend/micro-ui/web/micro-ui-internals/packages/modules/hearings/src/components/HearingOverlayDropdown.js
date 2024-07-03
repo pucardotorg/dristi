@@ -54,14 +54,8 @@ const OverlayDropdown = ({column}) => {
               key={item.path}
               style={{ padding: '10px', cursor: 'pointer' }}
               onClick={() => {
-                return item.onClick?.();
-                console.log("Hello")
-                if (item.label === 'Reschedule hearing') {
-                  setShowModal(true);
-                } else {
-                  handleNavigate(item.path);
-                }
                 setIsDropdownOpen(false);
+                return item.onClick?.();
               }}
             >
               {item.label}

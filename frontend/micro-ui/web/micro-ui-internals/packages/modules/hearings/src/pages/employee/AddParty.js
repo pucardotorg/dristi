@@ -1,45 +1,41 @@
-import React, { useState , useMemo} from "react";
-import { FormComposer, Modal, Button, FormComposerV2 } from "@egovernments/digit-ui-react-components";
+import React, { useState, useCallback } from "react";
+import { FormComposerV2, Modal, Button } from "@egovernments/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
-import addNewPartiesConfig from "../../configs/AddNewPartyConfig";
+import addPartyConfig from "../../configs/AddNewPartyConfig.js";
 
 const AddParty = ({ onClose }) => {
   const { t } = useTranslation();
-  const [partyFields, setPartyFields] = useState([
-    { partyType: "Witness", partyName: "", phoneNumber: "", emailId: "", address: "", additionalDetails: "" },
-  ]);
+  const [formConfigs, setFormConfigs] = useState([addPartyConfig(1)]);
+  const [aFormData, setFormData] = useState([{}]);
 
   const handleAddParty = () => {
-    setPartyFields([...partyFields, { partyType: "Witness", partyName: "", phoneNumber: "", emailId: "", address: "", additionalDetails: "" }]);
+    const newConfig = addPartyConfig(formConfigs.length + 1);
+    setFormConfigs([...formConfigs, newConfig]);
+    setFormData((prev) => [...prev, {}]);
   };
 
-  const handleSubmit = (data) => {
-    console.log("Form data:", data);
+  const handleRemoveParty = () => {
+    if (formConfigs.length > 1) {
+      setFormConfigs(formConfigs.slice(0, -1));
+    }
+    if (aFormData.length > 1) {
+      setFormData(aFormData.slice(0, -1));
+    }
   };
 
-  const config = addNewPartiesConfig();
-  console.log(config,"config");
-
-  const simpleConfig = {
-    label: "Simple Form",
-    form: [
-      {
-        head: "Section 1",
-        body: [
-          {
-            label: "Field 1",
-            type: "text",
-            key: "field1",
-            isMandatory: true,
-            populators: {
-              name: "field1",
-            },
-          },
-        ],
-      },
-    ],
+  const handleSubmit = () => {
+    console.log("Form data:", aFormData);
   };
-  console.log(simpleConfig,"simpleconfig")
+
+  const onFormValueChange = useCallback((formData, index) => {
+    if (JSON.stringify(formData) !== JSON.stringify(aFormData[index].data)) {
+      setFormData(prevData =>
+        prevData.map((item, i) =>
+          i === index ? { ...item, data: formData } : item
+        )
+      );
+    }
+  }, [aFormData]);
 
   return (
     <Modal
@@ -50,11 +46,19 @@ const AddParty = ({ onClose }) => {
       actionSaveLabel="Add"
       actionSaveOnSubmit={handleSubmit}
     >
-      <FormComposerV2
-        config={simpleConfig}
-        onSubmit={handleSubmit}
-        inlineChildren
-      ></FormComposerV2>
+      {formConfigs.map((config, index) => (
+        <FormComposerV2
+          key={index}
+          config={[config]}
+          onFormValueChange={(setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
+            onFormValueChange(formData, index);
+          }}
+        />
+      ))}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: "3rem" }}>
+        <Button onButtonClick={handleAddParty} label="Add Party" />
+        <Button onButtonClick={handleRemoveParty} label="Remove Party" />
+      </div>
     </Modal>
   );
 };
