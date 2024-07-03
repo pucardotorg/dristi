@@ -978,7 +978,14 @@ export const updateCaseDetails = async ({
                   !!setFormDataValue &&
                     setFormDataValue("complainantVerification", {
                       individualDetails: {
-                        document: [documentData],
+                        document: [
+                          {
+                            documentType: documentData.fileType || documentData?.documentType,
+                            fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                            documentName: documentData.filename || documentData?.documentName,
+                            fileName: "ID Proof"
+                          },
+                        ],
                       },
                     });
                   const Individual = await createIndividualUser({ data: data?.data, documentData, tenantId });
@@ -997,7 +1004,14 @@ export const updateCaseDetails = async ({
 
                   complainantVerification[index] = {
                     individualDetails: {
-                      document: [documentData],
+                      document: [
+                        {
+                          documentType: documentData.fileType || documentData?.documentType,
+                          fileStore: documentData.file?.files?.[0]?.fileStoreId || documentData?.fileStore,
+                          documentName: documentData.filename || documentData?.documentName,
+                          fileName: "ID Proof"
+                        },
+                      ],
                       individualId: Individual?.Individual?.individualId,
                       "addressDetails-select": {
                         pincode: pincode,

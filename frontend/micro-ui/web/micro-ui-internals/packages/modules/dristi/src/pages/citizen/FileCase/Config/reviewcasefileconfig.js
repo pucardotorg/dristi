@@ -31,7 +31,7 @@ export const reviewCaseFileFormConfig = [
                 {
                   type: "image",
                   label: "CS_ID_PROOF",
-                  value: ["individualDetails.document", "companyDetailsUpload.document"],
+                  value: ["complainantVerification.individualDetails.document", "companyDetailsUpload.document"],
                 },
                 {
                   type: "address",
