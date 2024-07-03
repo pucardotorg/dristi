@@ -173,7 +173,7 @@ public class AdvocateQueryBuilder {
         if (isFirstCriteria) {
             query.append(" WHERE (");
         } else {
-            query.append(" OR ");
+            query.append(" AND ");
         }
     }
 
