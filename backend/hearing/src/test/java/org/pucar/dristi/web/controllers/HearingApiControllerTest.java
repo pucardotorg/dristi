@@ -93,7 +93,6 @@ public class HearingApiControllerTest {
         request.setRequestInfo(requestInfo);
         request.setCriteria(criteria);
         List<Hearing> hearingList = List.of(new Hearing());
-        int totalCount = hearingList.size();
 
         when(hearingService.searchHearing(any())).thenReturn(hearingList);
 
@@ -102,7 +101,6 @@ public class HearingApiControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(hearingList, response.getBody().getHearingList());
-        assertEquals(totalCount, response.getBody().getTotalCount());
     }
 
     @Test

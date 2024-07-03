@@ -2,7 +2,6 @@ package org.pucar.dristi.web.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +19,6 @@ public class HearingCriteria {
     private String hearingId = null;
 
     @JsonProperty("cnrNumber")
-    @NotNull
     @Valid
     private String cnrNumber = null;
 
@@ -34,7 +32,6 @@ public class HearingCriteria {
 
     @JsonProperty("applicationNumber")
     @Valid
-    @NotNull
     private String applicationNumber = null;
 
     @JsonProperty("fromDate")
