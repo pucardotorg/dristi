@@ -219,9 +219,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
 
   const handleAddError = () => {
     const trimmedError = scrutinyError.trim();
-    if (!trimmedError) {
-      return;
-    }
+
     const { name, configKey, index, fieldName, inputlist, fileName } = popupInfo;
     let fieldObj = { [fieldName]: { FSOError: trimmedError } };
     inputlist.forEach((key) => {
@@ -400,6 +398,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
               />
               <Button
                 label={!defaultError ? t("CS_MARK_ERROR") : defaultError === scrutinyError ? t("CS_COMMON_CANCEL") : t("CS_COMMON_UPDATE")}
+                isDisabled={!scrutinyError?.trim()}
                 onButtonClick={() => {
                   if (defaultError === scrutinyError) {
                     handleClosePopup();

@@ -334,6 +334,7 @@ const CustomReviewCardRow = ({
         );
       case "image":
         let FSOErrors = [];
+        let valuesAvailable = [];
         if (typeof dataError === "object") {
           value?.forEach((val) => {
             if (dataError?.[val]?.FSOError) {
@@ -347,6 +348,11 @@ const CustomReviewCardRow = ({
         if (isPrevScrutiny && !disableScrutiny) {
           showFlagIcon = prevDataError?.[type]?.FSOError;
         }
+        value?.forEach((val) => {
+          if (extractValue(data, val)) {
+            valuesAvailable.push(val);
+          }
+        });
         const files = value?.map((value) => extractValue(data, value)) || [];
         let hasImages = false;
         files.forEach((file) => {
@@ -462,7 +468,7 @@ const CustomReviewCardRow = ({
                 <div
                   className="flag"
                   onClick={(e) => {
-                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...value, type]);
+                    handleOpenPopup(e, configKey, name, dataIndex, Array.isArray(value) ? type : value, [...valuesAvailable, type]);
                   }}
                   key={dataIndex}
                 >
