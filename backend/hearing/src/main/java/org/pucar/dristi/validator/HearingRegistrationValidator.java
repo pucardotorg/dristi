@@ -153,13 +153,4 @@ public class HearingRegistrationValidator {
         return applicationExistsRequest;
     }
 
-    public Hearing validateHearingExistenceNoWorkflowUpdate(Hearing hearing) {
-        //checking if hearing exist or not
-        List<Hearing> existingHearings = repository.getHearings(hearing);
-        log.info("Existing Hearing no workflow :: {}", existingHearings);
-        if (existingHearings.isEmpty())
-            throw new CustomException(VALIDATION_EXCEPTION, "Hearing does not exist");
-
-        return existingHearings.get(0);
-    }
 }

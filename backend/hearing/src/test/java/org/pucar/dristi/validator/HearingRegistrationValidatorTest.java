@@ -292,33 +292,4 @@ class HearingRegistrationValidatorTest {
         CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingExistence(requestInfo,hearing));
         assertEquals("Hearing does not exist", exception.getMessage());
     }
-
-    @Test
-    void testValidateHearingExistenceNoWorkflowUpdate_Success() {
-        // Arrange
-        Hearing hearing = new Hearing();
-        List<Hearing> existingHearings = Collections.singletonList(hearing);
-
-        when(repository.getHearings(any())).thenReturn(existingHearings);
-
-        // Act
-        Hearing result = validator.validateHearingExistenceNoWorkflowUpdate(hearing);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(hearing, result);
-    }
-
-    @Test
-    void testValidateHearingExistenceNoWorkflowUpdate_NotFound() {
-        // Arrange
-        Hearing hearing = new Hearing();
-        List<Hearing> existingHearings = Collections.emptyList();
-
-        when(repository.getHearings(any())).thenReturn(existingHearings);
-
-        // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> validator.validateHearingExistenceNoWorkflowUpdate(hearing));
-        assertEquals("Hearing does not exist", exception.getMessage());
-    }
 }

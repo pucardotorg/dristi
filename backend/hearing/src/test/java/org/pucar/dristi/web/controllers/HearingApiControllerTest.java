@@ -109,10 +109,10 @@ public class HearingApiControllerTest {
         Hearing hearing = new Hearing();  // Set up the response
         ResponseInfo responseInfo = new ResponseInfo();
 
-        when(hearingService.updateHearingNoWorkflow(any(HearingRequest.class))).thenReturn(hearing);
+        when(hearingService.updateTranscriptAdditionalAttendees(any(HearingRequest.class))).thenReturn(hearing);
         when(responseInfoFactory.createResponseInfoFromRequestInfo(any(), eq(true))).thenReturn(responseInfo);
 
-        ResponseEntity<HearingResponse> response = hearingApiController.hearingV1UpdateNoWorkflowPost(hearingRequest);
+        ResponseEntity<HearingResponse> response = hearingApiController.hearingV1UpdateHearingTranscriptAdditionAuditDetailsPost(hearingRequest);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

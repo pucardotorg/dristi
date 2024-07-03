@@ -114,7 +114,7 @@ public class HearingQueryBuilder {
         }
     }
 
-    public String buildUpdateHearingNoWorkflowQuery(List<Object> preparedStmtList, Hearing hearing) throws CustomException {
+    public String buildUpdateTranscriptAdditionalAttendeesQuery(List<Object> preparedStmtList, Hearing hearing) throws CustomException {
         String query = "UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?";
 
         // Convert the objects to JSON

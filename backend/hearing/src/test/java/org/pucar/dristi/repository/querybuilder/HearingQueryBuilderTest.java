@@ -158,7 +158,7 @@ class HearingQueryBuilderTest {
     }
 
     @Test
-    void buildUpdateHearingNoWorkflowQuery_Success() throws JsonProcessingException {
+    void buildUpdateTranscriptAdditionalAttendeesQuery_Success() throws JsonProcessingException {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingId = "hearing123";
@@ -188,7 +188,7 @@ class HearingQueryBuilderTest {
         when(mapper.writeValueAsString(attendees)).thenReturn(attendeesJson);
 
         // Act
-        String query = hearingQueryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing);
+        String query = hearingQueryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing);
 
         // Assert
         assertEquals("UPDATE dristi_hearing SET transcript = ?::jsonb , additionaldetails = ?::jsonb , attendees = ?::jsonb , lastModifiedBy = ? , lastModifiedTime = ? WHERE hearingId = ? AND tenantId = ?", query);
@@ -205,7 +205,7 @@ class HearingQueryBuilderTest {
 
 
     @Test
-    void buildUpdateHearingNoWorkflowQuery_JsonProcessingException() throws JsonProcessingException {
+    void buildUpdateTranscriptAdditionalAttendeesQuery_JsonProcessingException() throws JsonProcessingException {
         // Arrange
         List<Object> preparedStmtList = new ArrayList<>();
         String hearingId = "hearing123";
@@ -231,7 +231,7 @@ class HearingQueryBuilderTest {
         when(mapper.writeValueAsString(attendees)).thenReturn("[{}]");
 
         // Act & Assert
-        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.buildUpdateHearingNoWorkflowQuery(preparedStmtList, hearing));
+        CustomException exception = assertThrows(CustomException.class, () -> hearingQueryBuilder.buildUpdateTranscriptAdditionalAttendeesQuery(preparedStmtList, hearing));
 
         assertEquals(PARSING_ERROR, exception.getCode());
         assertEquals("Error parsing data to JSON : Error", exception.getMessage());
