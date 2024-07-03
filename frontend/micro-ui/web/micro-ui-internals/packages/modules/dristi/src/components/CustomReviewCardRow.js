@@ -51,7 +51,7 @@ const CustomReviewCardRow = ({
   isCaseReAssigned,
   disableScrutiny,
 }) => {
-  const { type = null, label = null, value = null, badgeType = null, docName = {} } = config;
+  const { type = null, label = null, value = null, badgeType = null } = config;
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
 
   const extractValue = (data, key) => {
@@ -72,7 +72,7 @@ const CustomReviewCardRow = ({
   const handleImageClick = useCallback(
     (configKey, name, dataIndex, fieldName, data, inputlist, dataError) => {
       if (isScrutiny && data) {
-        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError);
+        handleClickImage(null, configKey, name, dataIndex, fieldName, data, inputlist, dataError, disableScrutiny);
       }
       return null;
     },

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import DependentCheckBoxComponent from "../../../components/DependentCheckBoxComponent";
 import { Button, CardHeader, CardLabel, CardText, SubmitBar, Toast } from "@egovernments/digit-ui-react-components";
 import { formatDateInMonth } from "../../../Utils";
@@ -28,9 +28,9 @@ function SelectParticipant({
       handleScheduleCase({ ...scheduleHearingParams, participant: selectedValues });
     }
   };
-  const closeToast = () => {
+  const closeToast = useCallback(() => {
     setShowErrorToast(false);
-  };
+  }, []);
   useEffect(() => {
     const timer = setTimeout(() => {
       closeToast();

@@ -161,7 +161,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
     );
   };
 
-  const handleClickImage = (e, configKey, name, index = null, fieldName, data, inputlist = [], dataError = {}) => {
+  const handleClickImage = (e, configKey, name, index = null, fieldName, data, inputlist = [], dataError = {}, disableScrutiny = false) => {
     setValue(
       "scrutinyMessage",
       {
@@ -172,6 +172,7 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
         data,
         inputlist,
         dataError,
+        disableScrutiny,
       },
       "imagePopupInfo"
     );
