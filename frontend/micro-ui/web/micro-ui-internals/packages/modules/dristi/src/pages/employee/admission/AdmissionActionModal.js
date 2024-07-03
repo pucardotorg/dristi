@@ -176,6 +176,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
+          popupStyles={{ width: "917px" }}
         >
           <ScheduleAdmission
             config={stepItems[2]}
@@ -199,6 +200,7 @@ function AdmissionActionModal({
           headerBarMain={<Heading label={t(stepItems[2].headModal)} />}
           headerBarEnd={<CloseBtn onClick={() => setShowModal(false)} />}
           hideSubmit={true}
+          popmoduleClassName={"schedule-admission-select-participants-modal"}
         >
           <SelectParticipant
             config={updatedConfig}
@@ -223,6 +225,7 @@ function AdmissionActionModal({
           headerBarEnd={<CloseBtn onClick={() => setModalInfo({ ...modalInfo, page: 0, showDate: false, showCustomDate: false })} />}
           // actionSaveLabel={t("CS_COMMON_CONFIRM")}
           hideSubmit={true}
+          popmoduleClassName={"custom-date-selector-modal"}
 
           // actionSaveOnSubmit={onSelect}
         >
