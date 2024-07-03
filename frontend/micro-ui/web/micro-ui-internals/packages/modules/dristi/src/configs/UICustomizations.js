@@ -363,24 +363,16 @@ export const UICustomizations = {
           ...requestCriteria?.body?.criteria[0],
           ...requestCriteria?.state?.searchForm,
           tenantId,
+          ...("sortBy" in additionalDetails && {
+            ...requestCriteria?.state?.searchForm[additionalDetails.sortBy],
+            [additionalDetails.sortBy]: undefined,
+          }),
           pagination: {
             limit: requestCriteria?.body?.inbox?.limit,
             offSet: requestCriteria?.body?.inbox?.offset,
           },
         },
       ];
-      if (additionalDetails in criteria[0] && !criteria[0][additionalDetails]) {
-        criteria.splice(0, 1, {
-          ...requestCriteria?.body?.criteria[0],
-          ...requestCriteria?.state?.searchForm,
-          [additionalDetails]: "",
-          tenantId,
-          pagination: {
-            limit: requestCriteria?.body?.inbox?.limit,
-            offSet: requestCriteria?.body?.inbox?.offset,
-          },
-        });
-      }
       return {
         ...requestCriteria,
         body: {

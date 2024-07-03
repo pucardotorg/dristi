@@ -26,19 +26,50 @@ export const paymentInboxConfig = {
         type: "registration-requests-table-search",
         primaryLabel: "ES_COMMON_SEARCH",
         secondaryLabel: "ES_COMMON_CLEAR_SEARCH",
-        minReqFields: 1,
+        minReqFields: 0,
         defaultValues: {
           filingNumber: "",
           isActive: false,
+          stage: "",
         },
         fields: [
           {
-            label: "CS_FILING_NO",
+            type: "component",
+            component: "CustomSortComponent",
+            isMandatory: false,
+            disable: false,
+            name: "Sort by",
+            key: "sortCaseListByDate",
+            sortBy: "createdtime",
+            ascText: "Newest to Oldest",
+            descText: "Oldest to Newest",
+            showAdditionalText: true,
+            showIcon: true,
+            icon: "ArrowDownIcon",
+            populators: {},
+          },
+          {
+            label: "Stage",
+            isMandatory: false,
+            key: "stage",
+            type: "dropdown",
+            disable: false,
+            populators: {
+              name: "stage",
+              options: ["Pre-Trial", "Trial", "Post-Trial"],
+              optionsCustomStyle: {
+                overflowX: "hidden",
+              },
+            },
+          },
+          {
+            label: "Case ID",
             type: "text",
             isMandatory: false,
             disable: false,
             populators: {
               name: "filingNumber",
+              placeholder: "Case ID",
               error: "BR_PATTERN_ERR_MSG",
               validation: {
                 pattern: {},
@@ -95,5 +126,5 @@ export const paymentInboxConfig = {
     },
   },
   additionalSections: {},
-  additionalDetails: "filingNumber",
+  additionalDetails: { filingNumber: "", stage: "", sortBy: "sortCaseListByDate" },
 };
