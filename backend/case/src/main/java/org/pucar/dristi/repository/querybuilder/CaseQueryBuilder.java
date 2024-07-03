@@ -159,7 +159,7 @@ public class CaseQueryBuilder {
     private boolean addAdvocateCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getAdvocateId() != null && !criteria.getAdvocateId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
+            query.append("cases.id IN ( SELECT advocate.case_id from dristi_case_representatives advocate WHERE advocate.advocateId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getAdvocateId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
@@ -170,7 +170,7 @@ public class CaseQueryBuilder {
     private boolean addLitigantCriteria(CaseCriteria criteria, List<Object> preparedStmtList, RequestInfo requestInfo, StringBuilder query, boolean firstCriteria) {
         if (criteria.getLitigantId() != null && !criteria.getLitigantId().isEmpty()) {
             addClauseIfRequired(query, firstCriteria);
-            query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?)");
+            query.append("cases.id IN ( SELECT litigant.case_id from dristi_case_litigants litigant WHERE litigant.individualId = ?) AND (cases.status not in ('DRAFT_IN_PROGRESS') OR cases.status ='DRAFT_IN_PROGRESS' AND cases.createdby = ?) AND (cases.status NOT IN ('DELETED_DRAFT'))");
             preparedStmtList.add(criteria.getLitigantId());
             preparedStmtList.add(requestInfo.getUserInfo().getUuid());
             firstCriteria = false;
