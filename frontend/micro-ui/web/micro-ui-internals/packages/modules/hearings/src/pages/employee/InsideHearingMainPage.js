@@ -283,7 +283,7 @@ const InsideHearingMainPage = () => {
         </div>
       </ActionBar>
 
-      {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} />}
+      {endHearingModalOpen && <EndHearing handleEndHearingModal={handleEndHearingModal} hearingId={hearingId} hearing={hearing} />}
     </div>
   );
 };

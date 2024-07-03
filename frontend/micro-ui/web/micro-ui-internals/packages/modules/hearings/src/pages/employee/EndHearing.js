@@ -41,11 +41,28 @@ const CloseBtn = (props) => {
   );
 };
 
-const EndHearing = ({ handleEndHearingModal, hearingId }) => {
+const EndHearing = ({ handleEndHearingModal, hearingId, hearing }) => {
   const { t } = useTranslation();
+  const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [openConfirmationModal, setOpenConfirmationModal] = useState(false);
 
+  const { data: hearingResponse, refetch } = Digit.Hooks.hearings.useUpdateHearingsService(
+    { hearing: { tenantId, hearing } },
+    { applicationNumber: "", cnrNumber: "" },
+    "dristi",
+    true
+  );
+
+  const updateHearing = async () => {
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error updating hearing:", error);
+    }
+  };
+
   const handleConfirmationModal = () => {
+    updateHearing();
     setOpenConfirmationModal(!openConfirmationModal);
     if (openConfirmationModal === true) {
       handleEndHearingModal();

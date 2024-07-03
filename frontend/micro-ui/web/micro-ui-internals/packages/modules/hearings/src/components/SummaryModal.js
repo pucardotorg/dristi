@@ -77,7 +77,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
   const tenantId = window?.Digit.ULBService.getCurrentTenantId();
   const [transcript, setTranscript] = useState("");
 
-  const { data: latestText } = Digit.Hooks.hearings.useGetHearings(
+  const { data: latestText, refetch } = Digit.Hooks.hearings.useGetHearings(
     { hearing: { tenantId } },
     { applicationNumber: "", cnrNumber: "", hearingId },
     "dristi",
@@ -85,14 +85,24 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
   );
 
   useEffect(() => {
-    if (latestText) {
-      const hearingData = latestText?.HearingList[0];
-      setTranscript(hearingData?.transcript[0]);
-    }
+    const fetchData = async () => {
+      try {
+        await refetch();
+        if (latestText) {
+          const hearingData = latestText?.HearingList[0];
+          setTranscript(hearingData?.transcript[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching hearing data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
     <div>
+      {/* make this below modal same conditional as End Hearing Modal */}
       <Modal
         popupStyles={{
           height: "432px",
@@ -127,7 +137,7 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
         headerBarEnd={<CloseBtn onClick={handleConfirmationModal} />}
         actionSaveLabel={<BackBtn text={t("Set Next Hearing Date")} />}
         actionCancelLabel={t("Back")}
-        actionSaveOnSubmit={() => alert("clicked")}
+        actionSaveOnSubmit={() => alert("clicked")} // pass the handler of next modal
         formId="modal-action"
       >
         <div style={{ height: "308px", padding: "5px 24px 16px 24px", width: "100%" }}>
@@ -146,7 +156,6 @@ const SummaryModal = ({ handleConfirmationModal, hearingId }) => {
               <TextArea
                 style={{ padding: "10px", width: "100%", minHeight: "100%", fontWeight: 400, fontSize: "16px", color: "#3D3C3C" }}
                 value={transcript}
-                disabled={true}
               />
             </div>
           </CardText>
