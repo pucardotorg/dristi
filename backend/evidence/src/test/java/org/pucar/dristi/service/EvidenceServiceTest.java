@@ -1,6 +1,5 @@
 package org.pucar.dristi.service;
 
-import org.egov.common.contract.models.Workflow;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.workflow.ProcessInstance;
 import org.egov.common.contract.workflow.State;
@@ -27,6 +26,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EvidenceServiceTest {
 
+    @InjectMocks
+    private EvidenceService evidenceService;
+
     @Mock
     private EvidenceValidator validator;
 
@@ -45,8 +47,10 @@ class EvidenceServiceTest {
     @Mock
     private Configuration config;
 
-    @InjectMocks
-    private EvidenceService evidenceService;
+    private EvidenceRequest evidenceRequest;
+    private RequestInfo requestInfo;
+    private EvidenceSearchCriteria evidenceSearchCriteria;
+    private Artifact artifact;
 
     private EvidenceRequest evidenceRequest;
     private Artifact artifact;
@@ -146,6 +150,7 @@ class EvidenceServiceTest {
 
     @Test
     void testEnrichBasedOnStatus_Published() {
+
         artifact.setStatus("PUBLISHED");
 
         evidenceService.enrichBasedOnStatus(evidenceRequest);
@@ -155,6 +160,7 @@ class EvidenceServiceTest {
 
     @Test
     void testEnrichBasedOnStatus_Abated() {
+
         artifact.setStatus("ABATED");
 
         evidenceService.enrichBasedOnStatus(evidenceRequest);
