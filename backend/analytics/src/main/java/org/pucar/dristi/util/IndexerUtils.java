@@ -349,12 +349,19 @@ public class IndexerUtils {
 			}
 			else{
 				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
-				JSONObject jsonObject = new JSONObject();
-				jsonObject.put("case",caseOverallStatus);
-				producer.push(config.getCaseOverallStatusTopic(), jsonObject);
+				CaseObject caseObject = new CaseObject(caseOverallStatus);
+
+				producer.push(config.getCaseOverallStatusTopic(), caseObject);
 			}
 		} catch (Exception e) {
 			log.error("Error in publishToCaseOverallStatus method", e);
+		}
+	}
+
+	private static class CaseObject {
+		CaseOverallStatus caseOverallStatus;
+		CaseObject(CaseOverallStatus caseOverallStatus) {
+			this.caseOverallStatus = caseOverallStatus;
 		}
 	}
 
