@@ -26,8 +26,12 @@ public class OrderUtil {
 	}
 
 	public Object getOrder(JSONObject request, String orderNumber, String tenantId) {
-		StringBuilder url = getSearchURLWithParams(tenantId, orderNumber);
+		StringBuilder url = getSearchURLWithParams();
 		log.info("Inside OrderUtil getOrder :: URL: {}", url);
+		JSONObject criteria = new JSONObject();
+		criteria.put("orderNumber", orderNumber);
+		criteria.put("tenantId", tenantId);
+		request.put("criteria", criteria);
 		request.put("tenantId", tenantId);
 		try {
 			String response = repository.fetchResult(url, request);
@@ -41,11 +45,9 @@ public class OrderUtil {
 		}
 	}
 
-	private StringBuilder getSearchURLWithParams(String tenantId, String orderNumber) {
+	private StringBuilder getSearchURLWithParams() {
 		StringBuilder url = new StringBuilder(config.getOrderHost());
 		url.append(config.getOrderSearchPath());
-		url.append(ORDER_NUMBER).append(orderNumber);
-		url.append(TENANT_ID).append(tenantId);
 		return url;
 	}
 }
