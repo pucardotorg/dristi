@@ -348,8 +348,10 @@ public class IndexerUtils {
 				log.error("Filing number not present for Case overall workflow update");
 			}
 			else{
-				log.info("Publishing to kafka topic: {}, Data: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
-				producer.push(config.getCaseOverallStatusTopic(), caseOverallStatus);
+				log.info("Publishing to kafka topic: {}, case: {}",config.getCaseOverallStatusTopic(), caseOverallStatus);
+				JSONObject jsonObject = new JSONObject();
+				jsonObject.put("case",caseOverallStatus);
+				producer.push(config.getCaseOverallStatusTopic(), jsonObject);
 			}
 		} catch (Exception e) {
 			log.error("Error in publishToCaseOverallStatus method", e);
