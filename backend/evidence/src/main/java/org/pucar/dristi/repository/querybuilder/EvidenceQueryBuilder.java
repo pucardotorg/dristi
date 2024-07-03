@@ -39,15 +39,16 @@ public class EvidenceQueryBuilder {
         try {
             StringBuilder query = new StringBuilder(BASE_ARTIFACT_QUERY);
             query.append(FROM_ARTIFACTS_TABLE);
+            boolean firstCriteria = true; // To check if it's the first criteria
 
-            addArtifactCriteria(id, query, preparedStmtList, true, "art.id = ?");
-            addArtifactCriteria(caseId, query, preparedStmtList, false, "art.caseId = ?");
-            addArtifactCriteria(application, query, preparedStmtList, false, "art.application = ?");
-            addArtifactCriteria(hearing, query, preparedStmtList, false, "art.hearing = ?");
-            addArtifactCriteria(order, query, preparedStmtList, false, "art.orders = ?");
-            addArtifactCriteria(sourceId, query, preparedStmtList, false, "art.sourceId = ?");
-            addArtifactCriteria(sourceName, query, preparedStmtList, false, "art.sourceName = ?");
-            addArtifactCriteria(artifactNumber, query, preparedStmtList, false, "art.artifactNumber = ?");
+            firstCriteria =addArtifactCriteria(id, query, preparedStmtList, firstCriteria, "art.id = ?");
+            firstCriteria =addArtifactCriteria(caseId, query, preparedStmtList, firstCriteria, "art.caseId = ?");
+            firstCriteria =addArtifactCriteria(application, query, preparedStmtList, firstCriteria, "art.application = ?");
+            firstCriteria =addArtifactCriteria(hearing, query, preparedStmtList, firstCriteria, "art.hearing = ?");
+            firstCriteria =addArtifactCriteria(order, query, preparedStmtList, firstCriteria, "art.orders = ?");
+            firstCriteria =addArtifactCriteria(sourceId, query, preparedStmtList, firstCriteria, "art.sourceId = ?");
+            firstCriteria =addArtifactCriteria(sourceName, query, preparedStmtList, firstCriteria, "art.sourceName = ?");
+            addArtifactCriteria(artifactNumber, query, preparedStmtList, firstCriteria, "art.artifactNumber = ?");
 
             query.append(ORDERBY_CREATEDTIME);
 
@@ -57,18 +58,14 @@ public class EvidenceQueryBuilder {
             throw new CustomException(EVIDENCE_SEARCH_QUERY_EXCEPTION, "Error occurred while building the artifact search query: " + e.toString());
         }
     }
-
-    private void addArtifactCriteria(String value, StringBuilder query, List<Object> preparedStmtList, boolean isFirstCriteria, String criteriaClause) {
-        if (value != null && !value.isEmpty()) {
-            if (isFirstCriteria) {
-                query.append(" WHERE ");
-                isFirstCriteria = false;
-            } else {
-                query.append(" AND ");
-            }
+    private boolean addArtifactCriteria(String criteria, StringBuilder query, List<Object> preparedStmtList, boolean firstCriteria, String criteriaClause) {
+        if (criteria != null && !criteria.isEmpty()) {
+            addClauseIfRequired(query, firstCriteria);
             query.append(criteriaClause);
-            preparedStmtList.add(value);
+            preparedStmtList.add(criteria);
+            firstCriteria = false;
         }
+        return firstCriteria;
     }
 
 

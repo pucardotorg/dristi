@@ -51,12 +51,14 @@ public class EvidenceService {
             evidenceEnrichment.enrichEvidenceRegistration(body);
 
             // Initiate workflow for the new application-
-            workflowService.updateWorkflowStatus(body);
-
-            // Push the application to the topic for persister to listen and persist
-
-            producer.push(config.getEvidenceCreateTopic(), body);
-
+            if(body.getArtifact().getHearing() != null) {
+                workflowService.updateWorkflowStatus(body);
+                producer.push(config.getEvidenceCreateTopic(), body);
+            }
+            else {
+                evidenceEnrichment.enrichEvidenceNumber(body);
+                producer.push(config.getEvidenceCreateWithoutWorkflowTopic(), body);
+            }
             return body.getArtifact();
         } catch (CustomException e){
             log.error("Custom Exception occurred while creating evidence");
@@ -97,16 +99,15 @@ public class EvidenceService {
             // Enrich application upon update
             evidenceEnrichment.enrichEvidenceRegistrationUponUpdate(evidenceRequest);
 
-            // Update workflow status
-            workflowService.updateWorkflowStatus(evidenceRequest);
-
-            // Enrich based on artifact status
-            enrichBasedOnStatus(evidenceRequest);
-
-            // Push to Kafka
-            producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
-
-            return evidenceRequest.getArtifact();
+            if(evidenceRequest.getArtifact().getHearing() != null) {
+                workflowService.updateWorkflowStatus(evidenceRequest);
+                enrichBasedOnStatus(evidenceRequest);
+                producer.push(config.getUpdateEvidenceKafkaTopic(), evidenceRequest);
+            }
+            else {
+                producer.push(config.getUpdateEvidenceWithoutWorkflowKafkaTopic(), evidenceRequest);
+            }
+                return evidenceRequest.getArtifact();
 
         } catch (CustomException e) {
             log.error("Custom Exception occurred while updating evidence", e);
@@ -117,7 +118,7 @@ public class EvidenceService {
         }
     }
 
-    private Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
+    Artifact validateExistingApplication(EvidenceRequest evidenceRequest) {
         try {
             return validator.validateApplicationExistence(evidenceRequest);
         } catch (Exception e) {
@@ -126,9 +127,8 @@ public class EvidenceService {
         }
     }
 
-    private void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
+    void enrichBasedOnStatus(EvidenceRequest evidenceRequest) {
         String status = evidenceRequest.getArtifact().getStatus();
-
         if (PUBLISHED_STATE.equalsIgnoreCase(status)) {
             evidenceEnrichment.enrichEvidenceNumber(evidenceRequest);
         } else if (ABATED_STATE.equalsIgnoreCase(status)) {

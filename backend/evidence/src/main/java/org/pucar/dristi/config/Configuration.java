@@ -87,8 +87,14 @@ public class Configuration {
 	@Value("${evidence.kafka.create.topic}")
 	private String evidenceCreateTopic;
 
+	@Value("${evidence.kafka.create.withoutWorkflow.topic}")
+	private String evidenceCreateWithoutWorkflowTopic;
+
 	@Value("${evidence.kafka.update.topic}")
 	private String updateEvidenceKafkaTopic;
+
+	@Value("${evidence.kafka.update.withoutWorkflow.topic}")
+	private String updateEvidenceWithoutWorkflowKafkaTopic;
 
 	// Workflow/Business Module name
 	@Value("${egov.workflow.businessservice.module}")
