@@ -74,7 +74,7 @@ function CaseFileAdmission({ t, path }) {
         };
       }),
     ];
-  }, [reviewCaseFileFormConfig, caseDetails]);
+  }, [caseDetails]);
 
   const updateCaseDetails = async (action, data = {}) => {
     const newcasedetails = { ...caseDetails, additionalDetails: { ...caseDetails.additionalDetails, judge: data } };
@@ -99,7 +99,7 @@ function CaseFileAdmission({ t, path }) {
   const caseInfo = [
     {
       key: "CASE_NUMBER",
-      value: caseDetails?.caseNumber,
+      value: caseDetails?.filingNumber,
     },
     {
       key: "CASE_CATEGORY",
@@ -236,25 +236,6 @@ function CaseFileAdmission({ t, path }) {
   if (isLoading) {
     return <Loader />;
   }
-  if (showModal) {
-    return (
-      <AdmissionActionModal
-        t={t}
-        setShowModal={setShowModal}
-        setSubmitModalInfo={setSubmitModalInfo}
-        submitModalInfo={submitModalInfo}
-        modalInfo={modalInfo}
-        setModalInfo={setModalInfo}
-        handleSendCaseBack={handleSendCaseBack}
-        handleAdmitCase={handleAdmitCase}
-        path={path}
-        handleScheduleCase={handleScheduleCase}
-        updatedConfig={updatedConfig}
-        // hearingDetails={hearingDetails}
-        tenantId={tenantId}
-      ></AdmissionActionModal>
-    );
-  }
 
   return (
     <div className={"case-and-admission"}>
@@ -307,6 +288,23 @@ function CaseFileAdmission({ t, path }) {
               />
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
+              )}
+              {showModal && (
+                <AdmissionActionModal
+                  t={t}
+                  setShowModal={setShowModal}
+                  setSubmitModalInfo={setSubmitModalInfo}
+                  submitModalInfo={submitModalInfo}
+                  modalInfo={modalInfo}
+                  setModalInfo={setModalInfo}
+                  handleSendCaseBack={handleSendCaseBack}
+                  handleAdmitCase={handleAdmitCase}
+                  path={path}
+                  handleScheduleCase={handleScheduleCase}
+                  updatedConfig={updatedConfig}
+                  // hearingDetails={hearingDetails}
+                  tenantId={tenantId}
+                ></AdmissionActionModal>
               )}
             </div>
           </div>
