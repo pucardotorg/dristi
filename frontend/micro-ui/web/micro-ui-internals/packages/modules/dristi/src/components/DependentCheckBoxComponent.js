@@ -18,7 +18,7 @@ function DependentFields({ t, option, selectedValues, handleInputChange }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", marginLeft: "20px" }}>
       <CardText>{t(option.dependentText)}</CardText>
-      {option.dependentFields.map((field) => (
+      {option?.dependentFields.map((field) => (
         <div key={field}>
           <label>
             <CheckBox
@@ -56,7 +56,7 @@ function DependentCheckBoxComponent({ t, options, onInputChange, selectedValues 
 
   return (
     <div className="select-checkbox-dependent">
-      <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly" }}>
+      <div className="select-checkbox-dependent-child">
         {options?.checkBoxes?.map((option) => (
           <div key={option?.name} style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
             <CheckboxItem t={t} name={t(option?.name)} checked={!!selectedValues[option?.name]} onToggle={() => toggleCheckbox(option?.name)} />

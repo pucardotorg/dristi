@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FormComposerV2, Header, Loader, Toast } from "@egovernments/digit-ui-react-components";
+import { FormComposerV2, Header, Loader, Toast, BackButton } from "@egovernments/digit-ui-react-components";
 import { CustomArrowDownIcon, RightArrow } from "../../../icons/svgIndex";
 import { reviewCaseFileFormConfig } from "../../citizen/FileCase/Config/reviewcasefileconfig";
 import AdmissionActionModal from "./AdmissionActionModal";
@@ -259,6 +259,7 @@ function CaseFileAdmission({ t, path }) {
             </div>
           </div>
           <div className="file-case-form-section">
+            <BackButton style={{ marginBottom: 0 }}></BackButton>
             <div className="employee-card-wrapper">
               <div className="header-content">
                 <div className="header-details">
@@ -286,11 +287,12 @@ function CaseFileAdmission({ t, path }) {
                 secondaryLabel={t("CS_SCHEDULE_ADMISSION_HEARING")}
                 showSecondaryLabel={true}
                 // actionClassName="admission-action-buttons"
-                actionClassName="e-filing-action-bar"
+                actionClassName="case-file-admission-action-bar"
                 showSkip={true}
                 onSkip={onSendBack}
                 noBreakLine
                 submitIcon={<RightArrow />}
+                skipStyle={{ position: "fixed", left: "20px", bottom: "18px", color: "#007E7E", fontWeight: "700" }}
               />
               {showErrorToast && (
                 <Toast error={true} label={t("ES_COMMON_PLEASE_ENTER_ALL_MANDATORY_FIELDS")} isDleteBtn={true} onClose={closeToast} />
