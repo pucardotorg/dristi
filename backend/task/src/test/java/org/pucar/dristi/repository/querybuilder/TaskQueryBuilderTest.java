@@ -4,6 +4,7 @@ import org.egov.tracer.model.CustomException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
+import org.pucar.dristi.web.models.TaskCriteria;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,12 +101,12 @@ public class TaskQueryBuilderTest {
         String id = "1";
         taskQueryBuilder = new TaskQueryBuilder() {
             @Override
-            public String getTaskSearchQuery(String id, String tenantId, String status, UUID orderId, String cnrNumber, String taskNumber,List<Object> preparedStmtList ) {
+            public String getTaskSearchQuery(TaskCriteria criteria, List<Object> preparedStmtList ) {
                 throw new RuntimeException("Forced exception");
             }
         };
 
-        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(id, null, null, null, null,null,null));
+        assertThrows(Exception.class, () -> taskQueryBuilder.getTaskSearchQuery(new TaskCriteria(), null));
     }
 
     @Test

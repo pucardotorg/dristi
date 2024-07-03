@@ -59,15 +59,9 @@ public class TaskApiController {
     }
 
     @RequestMapping(value = "/task/v1/search", method = RequestMethod.POST)
-    public ResponseEntity<TaskListResponse> taskV1SearchPost( @Parameter(in = ParameterIn.DEFAULT, description = "RequestInfo for the creation of task", schema = @Schema()) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-                                                              @Parameter(in = ParameterIn.QUERY, description = "the order ID whose task(s) are being queried", schema = @Schema()) @Valid @RequestParam(value = "orderId", required = false) UUID orderId,
-                                                              @Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose task(s) are being queried", schema = @Schema()) @Valid @RequestParam(value = "cnrNumber", required = false) String cnrNumber,
-                                                              @Parameter(in = ParameterIn.QUERY, description = "the taskNumber whose task(s) are being searched", schema = @Schema()) @Valid @RequestParam(value = "taskNumber", required = false) String taskNumber,
-                                                              @Parameter(in = ParameterIn.QUERY, description = "id of the task(s) being searched", schema = @Schema()) @Valid @RequestParam(value = "id", required = false) String id,
-                                                              @Parameter(in = ParameterIn.QUERY, description = "tenantId whose task(s) are being searched", schema = @Schema()) @Valid @RequestParam(value = "tenantId", required = false) String tenantId,
-                                                              @Parameter(in = ParameterIn.QUERY, description = "the status of the task(s) being searched", schema = @Schema()) @Valid @RequestParam(value = "status", required = false) String status) {
-        List<Task> tasks = taskService.searchTask(id, tenantId, status, orderId, cnrNumber, taskNumber,requestInfoWrapper.getRequestInfo());
-        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true);
+    public ResponseEntity<TaskListResponse> taskV1SearchPost( @Parameter(in = ParameterIn.DEFAULT, schema = @Schema()) @Valid @RequestBody TaskSearchRequest request){
+        List<Task> tasks = taskService.searchTask(request);
+        ResponseInfo responseInfo = responseInfoFactory.createResponseInfoFromRequestInfo(request.getRequestInfo(), true);
         TaskListResponse taskListResponse = TaskListResponse.builder().list(tasks).totalCount(tasks.size()).responseInfo(responseInfo).build();
         return new ResponseEntity<>(taskListResponse, HttpStatus.OK);
     }
