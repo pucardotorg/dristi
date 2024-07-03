@@ -26,6 +26,7 @@ public class AdvocateClerkQueryBuilder {
     private static final String FROM_DOCUMENTS_TABLE = " FROM dristi_document doc";
     private static final String ORDERBY_CREATEDTIME_DESC = " ORDER BY advc.createdtime DESC ";
     private static final String ORDERBY_CREATEDTIME_ASC = " ORDER BY advc.createdtime ASC ";
+    public static final String AND = " AND ";
 
     /** To build query using search criteria to search clerks
      * @param criteria
@@ -179,7 +180,7 @@ public class AdvocateClerkQueryBuilder {
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE (");
         }else{
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
@@ -187,7 +188,7 @@ public class AdvocateClerkQueryBuilder {
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE ");
         }else{
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
