@@ -172,7 +172,7 @@ public class AdvocateClerkQueryBuilder {
         if(preparedStmtList.isEmpty()){
             query.append(" WHERE (");
         }else{
-            query.append(" AND ");
+            query.append(AND);
         }
     }
 
