@@ -6,6 +6,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "litigentDetails",
         label: "CS_LITIGENT_DETAILS",
+        number: 1,
         withoutLabel: true,
         textAreaMaxLength: "255",
         populators: {
@@ -114,6 +115,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "caseSpecificDetails",
         label: "CS_CASE_SPECIFIC_DETAILS",
+        number: 2,
         withoutLabel: true,
         populators: {
           inputs: [
@@ -290,6 +292,7 @@ export const reviewCaseFileFormConfig = [
         component: "SelectReviewAccordion",
         key: "additionalDetails",
         label: "CS_ADDITIONAL_DETAILS",
+        number: 3,
         withoutLabel: true,
         populators: {
           inputs: [

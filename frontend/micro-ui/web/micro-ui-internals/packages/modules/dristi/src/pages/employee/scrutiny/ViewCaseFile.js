@@ -22,6 +22,7 @@ import { DRISTIService } from "../../../services";
 import CustomCaseInfoDiv from "../../../components/CustomCaseInfoDiv";
 import Modal from "../../../components/Modal";
 import { CaseWorkflowAction, CaseWorkflowState } from "../../../Utils/caseWorkflow";
+import ReactTooltip from "react-tooltip";
 
 function ViewCaseFile({ t }) {
   const history = useHistory();
@@ -37,6 +38,7 @@ function ViewCaseFile({ t }) {
   const [showEditCaseNameModal, setShowEditCaseNameModal] = useState(false);
   const [newCaseName, setNewCaseName] = useState("");
   const [modalCaseName, setModalCaseName] = useState("");
+  const [highlightChecklist, setHighlightChecklist] = useState(false);
 
   const onFormValueChange = (setValue, formData, formState, reset, setError, clearErrors, trigger, getValues) => {
     if (JSON.stringify(formData) !== JSON.stringify(formdata.data)) {
@@ -276,6 +278,10 @@ function ViewCaseFile({ t }) {
   };
   const handleCloseModal = () => {
     setActionModal(false);
+    setHighlightChecklist(true);
+    setTimeout(() => {
+      setHighlightChecklist(false);
+    }, 2000)
   };
 
   if (!caseId) {
@@ -364,7 +370,15 @@ function ViewCaseFile({ t }) {
                         setShowEditCaseNameModal(true);
                       }}
                     >
-                      <EditIcon />
+                      <React.Fragment>
+                        <span style={{ color: "#77787B", position: "relative" }} data-tip data-for={`Click`}>
+                          {" "}
+                          <EditIcon />
+                        </span>
+                        <ReactTooltip id={`Click`} place="bottom" content={t("CS_CLICK_TO_EDIT") || ""}>
+                          {t("CS_CLICK_TO_EDIT")}
+                        </ReactTooltip>
+                      </React.Fragment>
                     </div>
                   </div>
                   <div className="header-icon" onClick={() => {}}>
@@ -402,7 +416,7 @@ function ViewCaseFile({ t }) {
               )}
             </div>
           </div>
-          <div className="file-case-checklist">
+          <div className={highlightChecklist ? "file-case-checklist-highlight" : "file-case-checklist"}>
             <div className="checklist-main">
               <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
               {checkList.map((item, index) => {
@@ -435,7 +449,7 @@ function ViewCaseFile({ t }) {
                 setShowEditCaseNameModal(false);
               }}
               formId="modal-action"
-              headerBarMain={<Heading label={t("CS_Change_Case_Name")} />}
+              headerBarMain={<Heading label={t("CS_CHANGE_CASE_NAME")} />}
               className="edit-case-name-modal"
             >
               <h3 className="input-label">{t("CS_CASE_NAME")}</h3>
@@ -511,21 +525,6 @@ function ViewCaseFile({ t }) {
             />
           )}
         </div>
-        <div className="file-case-checklist">
-          <div className="checklist-main">
-            <h3 className="checklist-title">{t("CS_CHECKLIST_HEADER")}</h3>
-            {checkList.map((item, index) => {
-              return (
-                <div className="checklist-item" key={index}>
-                  <div className="item-logo">
-                    <CheckSvg />
-                  </div>
-                  <h3 className="item-text">{t(item)}</h3>
-                </div>
-              );
-            })}
-          </div>
-        </div>
         {actionModal == "sendCaseBack" && (
           <SendCaseBackModal
             actionCancelLabel={"CS_COMMON_BACK"}
@@ -538,19 +537,6 @@ function ViewCaseFile({ t }) {
             type="sendCaseBack"
           />
         )}
-        {actionModal == "registerCase" && (
-          <SendCaseBackModal
-            actionCancelLabel={"CS_COMMON_BACK"}
-            actionSaveLabel={"CS_COMMON_CONFIRM"}
-            t={t}
-            totalErrors={totalErrors?.total || 0}
-            onCancel={handleCloseModal}
-            onSubmit={handleRegisterCase}
-            heading={"CS_REGISTER_CASE"}
-            type="registerCase"
-          />
-        )}
-
         {actionModal == "sendCaseBackPotential" && (
           <SendCaseBackModal
             actionCancelLabel={"CS_NO_REGISTER_CASE"}
