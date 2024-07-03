@@ -258,19 +258,18 @@ function SelectReviewAccordion({ t, config, onSelect, formData = {}, errors, for
       <div className={`accordion-item ${!isOpen ? "collapsed" : ""}`}>
         <div className="accordion-content">
           {inputs.map((input, index) => {
+            showFlagIcon = isScrutiny && !input?.disableScrutiny ? true : false;
             const sectionValue = formData && formData[config.key] && formData[config.key]?.[input.name];
             const sectionError = sectionValue?.scrutinyMessage?.FSOError;
             const prevSectionError = input?.prevErrors?.scrutinyMessage?.FSOError;
             let bgclassname = sectionError && isScrutiny ? "error" : "";
             bgclassname = sectionError && isCaseReAssigned ? "preverror" : bgclassname;
             const sectionErrorClassname = sectionError === prevSectionError ? "prevsection" : "section";
-            if (isPrevScrutiny) {
+            if (isPrevScrutiny && !input?.disableScrutiny) {
               showFlagIcon = prevSectionError ? true : false;
               bgclassname = prevSectionError ? "preverror" : "";
             }
-            if (input?.disableScrutiny) {
-              showFlagIcon = false;
-            }
+
             return (
               <div className={`content-item ${bgclassname}`}>
                 <div className="item-header">
