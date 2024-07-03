@@ -83,6 +83,11 @@ export const reviewCaseFileFormConfig = [
                 { type: "text", label: "CS_NATURE_OF_DEBT", value: "liabilityNature.name" },
                 { type: "text", label: "CS_CHEQUE_RECIEVED_FOR", value: "liabilityType.name" },
                 {
+                  type: "amount",
+                  label: "CS_PARIAL_AMOUNT",
+                  value: "totalAmount",
+                },
+                {
                   type: "image",
                   label: "CS_DOCUMENT",
                   value: ["debtLiabilityFileUpload.document"],
