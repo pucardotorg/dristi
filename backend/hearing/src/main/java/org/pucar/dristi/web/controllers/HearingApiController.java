@@ -61,18 +61,10 @@ public class HearingApiController {
     }
 
     @RequestMapping(value = "/hearing/v1/search", method = RequestMethod.POST)
-    public ResponseEntity<HearingListResponse> hearingV1SearchPost(@NotNull @Parameter(in = ParameterIn.QUERY, description = "the cnrNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "cnrNumber") String cnrNumber,
-                                                                   @NotNull @Parameter(in = ParameterIn.QUERY, description = "the applicationNumber of the case whose hearing(s) are being queried", required = true, schema = @Schema()) @Valid @RequestParam(value = "applicationNumber") String applicationNumber,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "the hearing id", schema = @Schema()) @Valid @RequestParam(value = "hearingId", required = false) String hearingId,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "Search by filingNumber", schema = @Schema()) @Valid @RequestParam(value = "filingNumber", required = false) String filingNumber,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "Search by tenantId of case request", schema = @Schema()) @Valid @RequestParam(value = "tenantId", required = false) String tenantId,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "search hearings within date range. if only fromDate is specified, then hearing for this data will be retrieved", schema = @Schema()) @Valid @RequestParam(value = "fromDate", required = false) LocalDate fromDate,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "search hearings within date range", schema = @Schema()) @Valid @RequestParam(value = "toDate", required = false) LocalDate toDate,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "No of record return", schema = @Schema()) @Valid @RequestParam(value = "limit", required = false) Integer limit,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "offset", schema = @Schema()) @Valid @RequestParam(value = "offset", required = false) Integer offset,
-                                                                   @Parameter(in = ParameterIn.QUERY, description = "sorted by ascending by default if this parameter is not provided", schema = @Schema()) @Valid @RequestParam(value = "sortBy", required = false) String sortBy) {
-
-        List<Hearing> hearingList = hearingService.searchHearing(cnrNumber, applicationNumber, hearingId, filingNumber, tenantId, fromDate, toDate, limit, offset, sortBy);
+    public ResponseEntity<HearingListResponse> hearingV1SearchPost(
+            @Parameter(in = ParameterIn.DEFAULT, required=true, schema=@Schema()) @Valid @RequestBody HearingSearchRequest request)
+    {
+        List<Hearing> hearingList = hearingService.searchHearing(request);
         HearingListResponse hearingListResponse = HearingListResponse.builder().hearingList(hearingList).totalCount(hearingList.size()).build();
         return new ResponseEntity<>(hearingListResponse, HttpStatus.OK);
     }

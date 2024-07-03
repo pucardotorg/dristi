@@ -87,13 +87,31 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_Success() {
+        HearingCriteria criteria = new HearingCriteria();
+        criteria.setHearingId("hearingId");
+        criteria.setApplicationNumber("applicationNumber");
+        criteria.setCnrNumber("cnrNumber");
+        criteria.setFilingNumber("filingNumber");
+        criteria.setTenantId("tenantId");
+        criteria.setFromDate(LocalDate.now());
+        criteria.setToDate(LocalDate.now());
+        criteria.setLimit(10);
+        criteria.setOffset(0);
+        criteria.setSortBy("ASC");
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        HearingSearchRequest request = new HearingSearchRequest();
+        request.setRequestInfo(requestInfo);
+        request.setCriteria(criteria);
+
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
                 .thenReturn(Collections.singletonList(new Hearing()));
 
         // Act
-        List<Hearing> hearingList = hearingService.searchHearing("cnrNumber", "applicationNumber", "hearingId", "fightingNumber", "tenentId", LocalDate.now(), LocalDate.now(), 10, 0, "DESC");
-
+        List<Hearing> hearingList = hearingService.searchHearing(request);
         // Assert
         assertNotNull(hearingList);
         assertFalse(hearingList.isEmpty());
@@ -101,14 +119,30 @@ public class HearingServiceTest {
 
     @Test
     void testSearchHearing_CustomException() {
-        LocalDate fromDate = LocalDate.now();
-        LocalDate toDate = LocalDate.now();
+        HearingCriteria criteria = new HearingCriteria();
+        criteria.setHearingId("hearingId");
+        criteria.setApplicationNumber("applicationNumber");
+        criteria.setCnrNumber("cnrNumber");
+        criteria.setFilingNumber("filingNumber");
+        criteria.setTenantId("tenantId");
+        criteria.setFromDate(LocalDate.now());
+        criteria.setToDate(LocalDate.now());
+        criteria.setLimit(10);
+        criteria.setOffset(0);
+        criteria.setSortBy("ASC");
+
+        User user = new User();
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setUserInfo(user);
+        HearingSearchRequest request = new HearingSearchRequest();
+        request.setRequestInfo(requestInfo);
+        request.setCriteria(criteria);
         // Arrange
         when(hearingRepository.getHearings(anyString(), anyString(), anyString(), anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt(), anyString()))
                 .thenThrow(new CustomException("Search failed","Throw custom exception"));
 
         // Act & Assert
-        assertThrows(CustomException.class, () -> hearingService.searchHearing("cnrNumber", "applicationNumber", "hearingId", "fightingNumber", "tenentId", fromDate, toDate, 10, 0, "DESC"));
+        assertThrows(CustomException.class, () -> hearingService.searchHearing(request));
     }
 
     @Test
