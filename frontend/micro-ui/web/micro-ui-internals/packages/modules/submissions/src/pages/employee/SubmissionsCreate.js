@@ -38,6 +38,13 @@ const SubmissionsCreate = () => {
 
   const applicationConfigKeys = {
     RE_SCHEDULE: configsRescheduleRequest,
+    // CHECKOUT: ,
+    // DELAY: ,
+    // PENALTY_WAIVER: ,
+    // CASE_EDITING: ,
+    // DOCUMENT_SUBMISSION: ,
+    // RESPONSE_ON_DOCUMENT: ,
+    // OTHERS: ,
   };
   const submissionConfigKeys = {
     APPLICATION_TYPE: applicationTypeConfig,

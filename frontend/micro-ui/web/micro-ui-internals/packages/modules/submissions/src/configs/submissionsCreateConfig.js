@@ -272,7 +272,7 @@ export const configsRescheduleRequest = [
   },
 ];
 
-export const configSubmissionExtenstionRequest = [
+export const configsExtensionSubmissionDeadline = [
   {
     body: [
       {
