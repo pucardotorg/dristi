@@ -51,7 +51,7 @@ const App = ({ path, stateCode, userType, tenants }) => {
         <PrivateRoute path={`${path}/inside-hearing`} component={() => <InsideHearingMainPage />} />
         <PrivateRoute path={`${path}/generate-orders`} component={() => <GenerateOrders />} />
         <PrivateRoute path={`${path}/end-hearing`} component={() => <EndHearing />} />
-        <PrivateRoute path={`${path}/add-party`} component={() => <AddParty />} />
+        {/* <PrivateRoute path={`${path}/add-party`} component={() => <AddParty />} /> */}
         <PrivateRoute path={`${path}/adjourn-hearing`} component={() => <AdjournHearing />} />
         <PrivateRoute path={`${path}/orders`} component={() => <Orders />} />
         <PrivateRoute path={`${path}/parties`} component={() => <Parties />} />
