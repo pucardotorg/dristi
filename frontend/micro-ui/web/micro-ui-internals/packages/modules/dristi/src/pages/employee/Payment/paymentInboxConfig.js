@@ -55,8 +55,8 @@ export const paymentInboxConfig = {
             type: "dropdown",
             disable: false,
             populators: {
-              name: "stage",
-              options: ["Pre-Trial", "Trial", "Post-Trial"],
+              name: "substage",
+              options: ["Filing", "Cognizance", "Inquiry", "Appearance", "Framing of charges", "Evidence", "Arguments", "Judgment", "Post-Judgement"],
               optionsCustomStyle: {
                 overflowX: "hidden",
               },
@@ -102,7 +102,7 @@ export const paymentInboxConfig = {
           },
           {
             label: "Stage",
-            jsonPath: "",
+            jsonPath: "substage",
             additionalCustomization: true,
           },
 
