@@ -1009,7 +1009,8 @@ function EFilingCases({ path }) {
                   );
                 }
 
-                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError ? false : true;
+                modifiedFormComponent.disable = scrutiny?.[selected]?.scrutinyMessage?.FSOError || judgeObj ? false : true;
+
                 if (scrutiny?.[selected] && scrutiny?.[selected]?.form?.[index]) {
                   if (formComponent.component == "SelectUploadFiles") {
                     if (formComponent.key + "." + formComponent.populators?.inputs?.[0]?.name in scrutiny?.[selected]?.form?.[index]) {
@@ -1593,7 +1594,9 @@ function EFilingCases({ path }) {
   }
 
   if (isCaseReAssigned && !errorPages.some((item) => item.key === selected) && selected !== "reviewCaseFile" && selected !== "addSignature") {
-    history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    if (!judgeObj) {
+      history.push(`?caseId=${caseId}&selected=${nextSelected}`);
+    }
   }
 
   return (
